@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>{{ group_name }}</groupId>
+    <artifactId>{{ service.code }}</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <artifactId>hap-cloud-parent</artifactId>
+        <groupId>com.hand.hap.cloud</groupId>
+        <version>1.0.0-Release</version>
+    </parent>
+
+    <repositories>
+        <repository>
+            <id>hand-snapshot-repository</id>
+            <name>Hand Snapshot Repository</name>
+            <url>http://nexus.saas.hand-china.com/content/repositories/rdcsnapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hand-release-repository</id>
+            <name>Hand Release Repository</name>
+            <url>http://nexus.saas.hand-china.com/content/repositories/rdc/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hand.hap.cloud</groupId>
+            <artifactId>hap-swagger-starter</artifactId>
+            <version>1.0.0-Release</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hand.hap.cloud</groupId>
+            <artifactId>hap-resource-server-starter</artifactId>
+            <version>1.0.0-Release</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hand.hap.cloud</groupId>
+            <artifactId>hap-feign-replay-starter</artifactId>
+            <version>1.0.0-Release</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.hand.hap.cloud</groupId>-->
+            <!--<artifactId>hap-mybatis-mapper-starter</artifactId>-->
+            <!--<version>1.0.0-Release</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>mysql</groupId>-->
+            <!--<artifactId>mysql-connector-java</artifactId>-->
+        <!--</dependency>-->
+        <!-- config server -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+        <!-- test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hand.hap.cloud</groupId>
+            <artifactId>hap-hitoa-starter</artifactId>
+            <version>1.0.0-Release</version>
+        </dependency>
+        <!--监控相关依赖 -->
+        <dependency><!-- 如果服务需要监控功能则需要此依赖 -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+        </dependency>
+        <dependency><!-- 如果服务需要hystrix监控功能则需要此依赖 -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix-hystrix-stream</artifactId>
+        </dependency>
+        <dependency><!-- 如果服务需要zipkin监控功能则需要此依赖 -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-stream</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>app</finalName>
+    </build>
+
+</project>

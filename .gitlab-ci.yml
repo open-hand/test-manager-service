@@ -1,0 +1,102 @@
+image: registry.saas.hand-china.com/tools/devops-ci:1.0.1
+
+stages:
+  - maven-build
+  - docker-build
+  - web-hook
+
+unit-test-branches:
+  stage: maven-build
+  script:
+    - unit_test
+  only:
+    - /^feature-.*$/
+
+maven-unit-test:
+  stage: maven-build
+  script:
+    - update_pom_version
+    - maven_build
+  only:
+    - develop
+    - /^release-.*$/
+    - /^hotfix-.*$/
+    - tags
+
+docker-build:
+  stage: docker-build
+  script:
+    - docker_build
+  only:
+    - develop
+    - /^release-.*$/
+    - /^hotfix-.*$/
+    - tags
+
+notification:
+  stage: web-hook
+  script:
+    - devops_ci_notification
+  only:
+    - develop
+    - /^release-.*$/
+    - /^hotfix-.*$/
+    - tags
+
+.auto_devops: &auto_devops |
+  export CI_TAG_SUF=$(echo $CI_COMMIT_REF_NAME | awk -F '-' '{print $1}')
+  export CI_TAG_PRE=$(echo $CI_COMMIT_REF_NAME | awk -F '-' '{print $2}')
+  export CI_COMMIT_TIME=$(git log -1 --pretty=format:"%ci" | awk '{print $1$2}' | sed 's/[-:]//g')
+  if [ ! $CI_TAG_PRE ]; then
+    export CI_APPLICATION_TAG=$CI_TAG_SUF.$CI_COMMIT_TIME
+  else
+    export CI_APPLICATION_TAG=$CI_TAG_PRE-beta.$CI_COMMIT_TIME.$CI_TAG_SUF
+  fi
+  if [ ! $CI_COMMIT_TAG ]; then
+    export CI_COMMIT_TAG=$CI_APPLICATION_TAG
+  fi
+
+  function update_pom_version(){
+    find . -name pom.xml | xargs xml ed \
+        -L -N x=http://maven.apache.org/POM/4.0.0 -u '/x:project/x:version' -v "${CI_COMMIT_TAG}"
+    find . -name pom.xml | grep -v "\./pom.xml" | xargs xml ed \
+        -L -N x=http://maven.apache.org/POM/4.0.0 -u '/x:project/x:parent/x:version' -v "${CI_COMMIT_TAG}" 2>/dev/null || true
+  }
+
+  function unit_test() {
+    git config user.name $GITLAB_USER_NAME
+    git config user.email $GITLAB_USER_EMAIL
+    git checkout origin/develop
+    git merge $CI_COMMIT_SHA --no-commit --no-ff
+    mvn package -U -DskipTests=false
+    mvn --batch-mode verify sonar:sonar \
+        -Dsonar.host.url=$SONAR_URL \
+        -Dsonar.analysis.mode=preview \
+        -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA \
+        -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME \
+        -Dsonar.gitlab.project_id=$CI_PROJECT_ID \
+        -Dsonar.gitlab.user_token=$SONAR_TOKEN || true
+  }
+
+  function maven_build() {
+    mvn package -U -DskipTests=false
+    cat target/site/jacoco/index.html || true
+    mvn --batch-mode verify sonar:sonar \
+        -Dsonar.host.url=$SONAR_URL \
+        -Dsonar.analysis.serviceGroup=$SERVICE_GROUP \
+        -Dsonar.analysis.commitId=$CI_COMMIT_SHA || true
+    mkdir -p $HOME/.m2/$CI_COMMIT_SHA
+    cp target/app.jar $HOME/.m2/$CI_COMMIT_SHA/app.jar
+  }
+
+  function docker_build() {
+    cp $HOME/.m2/$CI_COMMIT_SHA/app.jar src/main/docker/app.jar
+    # docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $REGISTRY_ADDRESS
+    docker login -u $REGISTRY_USER -p $REGISTRY_PWD $REGISTRY_ADDRESS
+    docker build --pull -t $REGISTRY_ADDRESS/$PROJECT_NAME/$APPLICATION_NAME:$CI_COMMIT_TAG src/main/docker
+    docker push $REGISTRY_ADDRESS/$PROJECT_NAME/$APPLICATION_NAME:$CI_COMMIT_TAG
+    rm -rf $HOME/.m2/$CI_COMMIT_SHA
+  }
+
+before_script:
+  - *auto_devops

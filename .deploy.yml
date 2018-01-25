@@ -1,0 +1,102 @@
+apiVersion: devops/v1alpha2
+kind: {{ service_type_code }}
+group: {{ group_name }}
+code: {{ service.code }}
+name: {{ service.name }}
+version: ${VERSION}
+image: {{ registry_address }}/{{ project_code }}/{{ service.code }}:${IMAEG_TAG}
+commit: ${COMMIT}
+gatewayPath: "/test/**"
+{% verbatim %}
+vars:
+- name: memory_limits
+  description: "内存上限"
+  value: "2560Mi"
+- name: memory_requests
+  description: "内存请求"
+  value: "1536Mi"
+
+services:
+- kind: MicroService
+  group: com.hand.hapcloud
+  code: hap-api-gateway
+  require: 1
+- kind: MicroService
+  group: com.hand.hapcloud
+  code: hap-oauth-service
+  require: 1
+
+resources:
+- name: db
+  type: mysql
+- name: configdb
+  type: mysql
+- name: rabbitmq
+  type: rabbitmq
+- name: eureka
+  type: url
+- name: config_uri
+  type: url
+
+stages:
+- name: 初始化数据库
+  type: PrepareDB
+  description: "初始化当前服务数据库和用户服务数据库"
+  config:
+    db:
+    - name: 初始化当前服务数据库
+      host: "{{ db.HOST }}"
+      port: "{{ db.PORT }}"
+      schema: "{{ db.SCHEMA }}"
+      username: "{{ db.USERNAME }}"
+      password: "{{ db.PASSWORD }}"
+      dataJar: /app.jar
+- name: 初始化配置
+  type: ConfigJob
+  description: "初始化当前服务配置数据"
+  config:
+    db:
+    - name: 初始化当前服务配置数据
+      host: "{{ configdb.HOST }}"
+      port: "{{ configdb.PORT }}"
+      schema: "{{ configdb.SCHEMA }}"
+      username: "{{ configdb.USERNAME }}"
+      password: "{{ configdb.PASSWORD }}"
+      configFile: application-default.yml
+- name: 部署
+  type: Deploy
+  description: "部署当前服务"
+  config:
+    port: 8090
+    managementPort: 8091
+    env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: sit
+    - name: SPRING_CLOUD_CONFIG_URI
+      value: "{{ config_uri.HOST }}"
+    - name: EUREKA_DEFAULT_ZONE
+      value: "{{ eureka.HOST }}"
+    - name: SPRING_RABBITMQ_HOST
+      value: "{{ rabbitmq.HOST }}"
+    - name: SPRING_DATASOURCE_URL
+      value: "jdbc:mysql://{{ db.HOST }}:{{ db.PORT }}/{{ db.SCHEMA }}?useUnicode=true&characterEncoding=utf-8&useSSL=false"
+    - name: SPRING_DATASOURCE_USERNAME
+      value: "{{ db.USERNAME }}"
+    - name: SPRING_DATASOURCE_PASSWORD
+      value: "{{ db.PASSWORD }}"
+    resources:
+      limits:
+        memory: "{{ vars.memory_limits }}"
+      requests:
+        memory: "{{ vars.memory_requests }}"
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 8091
+        scheme: HTTP
+      failureThreshold: 3
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+{% endverbatim %}
