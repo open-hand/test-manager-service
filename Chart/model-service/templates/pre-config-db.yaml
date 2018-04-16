@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "manager-service.fullname" . }}-init-db
+  labels:
+    app: {{ template "manager-service.name" . }}
+    chart: {{ template "manager-service.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    metadata:
+      name: {{ template "manager-service.fullname" . }}-init-db
+      labels:
+        app: {{ template "manager-service.name" . }}
+        chart: {{ template "manager-service.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - cp -rf /var/choerodon/* /tools
+        image: registry.saas.hand-china.com/tools/choerodon-tools:1.0
+        imagePullPolicy: Always
+        name: tools
+        volumeMounts:
+        - mountPath: /tools
+          name: tools-jar
+      containers:
+      - name: {{ template "manager-service.fullname" . }}-init-db
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command:
+        - /bin/sh
+        - -c
+        - '
+          java -Dspring.datasource.url="jdbc:mysql://{{ .Values.preJob.preInitDB.mysql.host }}:{{ .Values.preJob.preInitDB.mysql.port }}/{{ .Values.preJob.preInitDB.mysql.database }}?useUnicode=true&characterEncoding=utf-8&useSSL=false" -Dspring.datasource.username={{ .Values.preJob.preInitDB.mysql.username }} -Dspring.datasource.password={{ .Values.preJob.preInitDB.mysql.password }} -Ddata.init=true -Ddata.jar=/app.jar -jar /var/choerodon/choerodon-tool-liquibase.jar;
+          '
+        volumeMounts:
+        - mountPath: /var/choerodon
+          name: tools-jar
+      restartPolicy: Never
+      volumes:
+      - emptyDir: {}
+        name: tools-jar
