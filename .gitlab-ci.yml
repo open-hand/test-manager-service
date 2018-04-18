@@ -27,7 +27,7 @@ maven-test-feature:
   script:
     - git_merge develop
     - update_pom_version
-    - mvn_package false
+    - maven_package false
     - sonar_test_feature || true
   only:
     - /^feature-.*$/
