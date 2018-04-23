@@ -1,60 +1,43 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "manager-service.fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
-    app: {{ template "manager-service.name" . }}
-    chart: {{ template "manager-service.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "manager-service.labels.standard" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "manager-service.name" . }}
-      release: {{ .Release.Name }}
+{{ include "manager-service.labels.standard" . | indent 6 }}
   template:
     metadata:
       labels:
-        app: {{ template "manager-service.name" . }}
-        release: {{ .Release.Name }}
+{{ include "manager-service.labels.standard" . | indent 8 }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-          - name: EUREKA_DEFAULT_ZONE
-            value: http://register-server.io-choerodon:8000/eureka/
-          - name: SPRING_DATASOURCE_URL
-            value: jdbc:mysql://devops-mysql.db.svc:3307/devops_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
-          - name: SPRING_DATASOURCE_USERNAME
-            value: root
-          - name: SPRING_DATASOURCE_PASSWORD
-            value: handhand
-          - name: CHOERODON_EVENT_CONSUMER_KAFKA_BOOTSTRAP_SERVERS
-            value: kafka-0.kafka-headless.kafka.svc.cluster.local:9092, kafka-1.kafka-headless.kafka.svc.cluster.local:9092, kafka-2.kafka-headless.kafka.svc.cluster.local:9092
-          - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
-            value: kafka-0.kafka-headless.kafka.svc.cluster.local:9092, kafka-1.kafka-headless.kafka.svc.cluster.local:9092, kafka-2.kafka-headless.kafka.svc.cluster.local:9092
-          - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES
-            value: zookeeper-0.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-1.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-2.zookeeper-headless.zookeeper.svc.cluster.local:2181
-          - name: SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER
-            value: org.apache.kafka.common.serialization.ByteArraySerializer
-          - name: SPRING_CLOUD_CONFIG_URI
-            value: http://config-server:8010/
+{{- range $name, $value := .Values.env.open }}
+{{- if not (empty $value) }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+{{- end }}
+{{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           readinessProbe:
-              exec:
-                command:
-                - curl
-                - localhost:{{ .Values.deployment.managementPort }}/health
-              failureThreshold: 3
-              initialDelaySeconds: 60
-              periodSeconds: 10
-              successThreshold: 1
-              timeoutSeconds: 10
+            httpGet:
+              path: /health
+              port: {{ .Values.deployment.managementPort }}
+              scheme: HTTP
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
           resources:
 {{ toYaml .Values.resources | indent 12 }}

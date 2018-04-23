@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "manager-service.name" -}}
+{{- define "{{service.code}}.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -29,4 +29,20 @@ Create chart name and version as used by the chart label.
 */}}
 {{- define "manager-service.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- /*
+manager-service.labels.standard prints the standard manager-service Helm labels.
+The standard labels are frequently used in metadata.
+*/ -}}
+{{- define "manager-service.labels.standard" -}}
+app: {{ include "manager-service.name" . }}
+chart: {{ include "manager-service.fullname" . }}
+heritage: {{ .Release.Service | quote }}
+release: {{ .Release.Name | quote }}
+com.hand.hap.cloud.devops/deploy-stage-type: Deploy
+com.hand.hap.cloud.devops/service-code: {{ include "manager-service.name" . }}
+com.hand.hap.cloud.devops/service-managementPort: {{ .Values.service.port | quote }}
+com.hand.hap.cloud.devops/service-type: MicroService
+choerodon.io/app-instance: {{ include "manager-service.fullname" . }}
 {{- end -}}

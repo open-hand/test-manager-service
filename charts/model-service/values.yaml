@@ -1,28 +1,61 @@
+# Default values for manager-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
 replicaCount: 1
 
+image:
+  repository: registry.saas.hand-china.com/choerodon-framework/manager-service
+  tag: develop.20180327155006
+  pullPolicy: IfNotPresent
+
 preJob:
+  preConfig:
+    configFile: application-default.yml
+    mysql:
+      host: 192.168.12.113
+      port: 3309
+      database: helm_test
+      username: root
+      password: handhand
   preInitDB:
     mysql:
-      host: 192.168.12.156
-      port: 3307
-      database: devops_test
+      host: 192.168.12.113
+      port: 3309
+      database: helm_test
       username: root
       password: handhand
 
 deployment:
-  managementPort: 8091
+  managementPort: 8964
 
-image:
-  repository: registry.saas.hand-china.com/string-younger/younger-service
-  tag: 0.1.0-dev.20180418093612
-  pullPolicy: IfNotPresent
+env:
+  open:
+    LOGGING_LEVEL_IO_CHOERODON_MANAGER: debug
+    EUREKA_DEFAULT_ZONE: http://register-server.io-choerodon:8000/eureka/
+    SPRING_DATASOURCE_URL: jdbc:mysql://hapcloud-mysql.db.svc:3306/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    SPRING_DATASOURCE_USERNAME: root
+    SPRING_DATASOURCE_PASSWORD: handhand
+    CHOERODON_GATEWAY_DOMAIN: gateway.staging.saas.hand-china.com
+    CHOERODON_SWAGGER_OAUTH_URL: http://gateway.staging.saas.hand-china.com/oauth/oauth/authorize
+    CHOERODON_EVENT_CONSUMER_KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
+    SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
+    SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
+    SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES: zookeeper-0.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-1.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-2.zookeeper-headless.zookeeper.svc.cluster.local:2181
+    SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER: org.apache.kafka.common.serialization.ByteArraySerializer
 
 service:
   type: ClusterIP
-  port: 8090
+  port: 8963
 
-resources:
+resources: 
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
   limits:
-   memory: 3Gi
+    # cpu: 100m
+    memory: 3Gi
   requests:
-   memory: 2Gi
+    # cpu: 100m
+    memory: 2Gi

@@ -1,17 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Chart.Name }}-init-db
+  name: {{ .Chart.Name }}-init-config
   labels:
 {{ include "manager-service.labels.standard" . | indent 4 }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-weight": "2"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   template:
     metadata:
-      name: {{ .Chart.Name }}-init-db
+      name: {{ .Chart.Name }}-init-config
       labels:
 {{ include "manager-service.labels.standard" . | indent 8 }}
     spec:
@@ -27,13 +27,13 @@ spec:
         - mountPath: /tools
           name: tools-jar
       containers:
-      - name: {{ .Chart.Name }}-init-db
+      - name: {{ .Chart.Name }}-init-config
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command:
         - /bin/sh
         - -c
         - '
-          java -Dspring.datasource.url="jdbc:mysql://{{ .Values.preJob.preInitDB.mysql.host }}:{{ .Values.preJob.preInitDB.mysql.port }}/{{ .Values.preJob.preInitDB.mysql.database }}?useUnicode=true&characterEncoding=utf-8&useSSL=false" -Dspring.datasource.username={{ .Values.preJob.preInitDB.mysql.username }} -Dspring.datasource.password={{ .Values.preJob.preInitDB.mysql.password }} -Ddata.init=true -Ddata.jar=/app.jar -jar /var/choerodon/choerodon-tool-liquibase.jar;
+          java -Dspring.datasource.url="jdbc:mysql://{{ .Values.preJob.preConfig.mysql.host }}:{{ .Values.preJob.preConfig.mysql.port }}/{{ .Values.preJob.preConfig.mysql.database }}?useUnicode=true&characterEncoding=utf-8&useSSL=false" -Dspring.datasource.username={{ .Values.preJob.preConfig.mysql.username }} -Dspring.datasource.password={{ .Values.preJob.preConfig.mysql.password }} -Dservice.name={{ .Chart.Name }} -Dservice.version={{ .Values.image.tag }} -Dconfig.file={{ .Values.preJob.preConfig.configFile }} -Dconfig.jar=/app.jar -jar /var/choerodon/choerodon-tool-config.jar;
           '
         volumeMounts:
         - mountPath: /var/choerodon

@@ -1,12 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "manager-service.fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
-    app: {{ template "manager-service.name" . }}
-    chart: {{ template "manager-service.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+{{ include "manager-service.labels.standard" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -15,5 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "manager-service.name" . }}
-    release: {{ .Release.Name }}
+{{ include "manager-service.labels.standard" . | indent 4 }}
