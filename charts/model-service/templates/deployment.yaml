@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
   labels:
-{{ include "manager-service.labels.standard" . | indent 4 }}
+{{ include "{{service.code}}.labels.standard" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-{{ include "manager-service.labels.standard" . | indent 6 }}
+{{ include "{{service.code}}.labels.standard" . | indent 6 }}
   template:
     metadata:
       labels:
-{{ include "manager-service.labels.standard" . | indent 8 }}
+{{ include "{{service.code}}.labels.standard" . | indent 8 }}
     spec:
       containers:
         - name: {{ .Chart.Name }}

@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ .Chart.Name }}
   labels:
-{{ include "manager-service.labels.standard" . | indent 4 }}
+{{ include "{{service.code}}.labels.standard" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-{{ include "manager-service.labels.standard" . | indent 4 }}
+{{ include "{{service.code}}.labels.standard" . | indent 4 }}

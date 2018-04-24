@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "manager-service.fullname" -}}
+{{- define "{{service.code}}.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,22 +27,22 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "manager-service.chart" -}}
+{{- define "{{service.code}}.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- /*
-manager-service.labels.standard prints the standard manager-service Helm labels.
+{{service.code}}.labels.standard prints the standard {{service.code}} Helm labels.
 The standard labels are frequently used in metadata.
 */ -}}
-{{- define "manager-service.labels.standard" -}}
-app: {{ include "manager-service.name" . }}
-chart: {{ include "manager-service.fullname" . }}
+{{- define "{{service.code}}.labels.standard" -}}
+app: {{ include "{{service.code}}.name" . }}
+chart: {{ include "{{service.code}}.fullname" . }}
 heritage: {{ .Release.Service | quote }}
 release: {{ .Release.Name | quote }}
 com.hand.hap.cloud.devops/deploy-stage-type: Deploy
-com.hand.hap.cloud.devops/service-code: {{ include "manager-service.name" . }}
+com.hand.hap.cloud.devops/service-code: {{ include "{{service.code}}.name" . }}
 com.hand.hap.cloud.devops/service-managementPort: {{ .Values.service.port | quote }}
 com.hand.hap.cloud.devops/service-type: MicroService
-choerodon.io/app-instance: {{ include "manager-service.fullname" . }}
+choerodon.io/app-instance: {{ include "{{service.code}}.fullname" . }}
 {{- end -}}
