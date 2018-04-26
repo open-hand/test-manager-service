@@ -19,7 +19,7 @@ spec:
         - sh
         - -c
         - cp -rf /var/choerodon/* /tools
-        image: registry.saas.hand-china.com/tools/choerodon-tools:1.0
+        image: registry.saas.hand-china.com/tools/choerodon-tools:0.1.0
         imagePullPolicy: Always
         name: tools
         volumeMounts:
