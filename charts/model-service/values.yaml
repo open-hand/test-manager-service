@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: registry.saas.hand-china.com/choerodon-framework/manager-service
-  tag: develop.20180327155006
+  repository: registry.saas.hand-china.com/operation-organization-mi/da-service
+  tag: 0.1.0-dev.20180424113537
   pullPolicy: IfNotPresent
 
 preJob:
@@ -27,7 +27,7 @@ preJob:
       password: handhand
 
 deployment:
-  managementPort: 8964
+  managementPort: 8091
 
 env:
   open:
@@ -46,7 +46,7 @@ env:
 
 service:
   type: ClusterIP
-  port: 8963
+  port: 8090
 
 resources: 
   # We usually recommend not to specify default resources and to leave this as a conscious
