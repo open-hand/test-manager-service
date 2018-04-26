@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Chart.Name }}-init-db
+  name: {{ include "{{service.code}}.fullname" . }}-init-db
   labels:
 {{ include "{{service.code}}.labels.standard" . | indent 4 }}
   annotations:

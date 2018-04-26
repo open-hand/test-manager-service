@@ -1,7 +1,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: {{ include "{{service.code}}.fullname" . }}
   labels:
 {{ include "{{service.code}}.labels.standard" . | indent 4 }}
 spec:
@@ -15,7 +15,7 @@ spec:
 {{ include "{{service.code}}.labels.standard" . | indent 8 }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "{{service.code}}.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
