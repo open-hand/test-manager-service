@@ -10,7 +10,7 @@ metadata:
 spec:
   template:
     metadata:
-      name: {{ .Chart.Name }}-init-config
+      name: {{ include "{{service.code}}.fullname" . }}-init-config
       labels:
 {{ include "{{service.code}}.labels.standard" . | indent 8 }}
     spec:
@@ -26,7 +26,7 @@ spec:
         - mountPath: /tools
           name: tools-jar
       containers:
-      - name: {{ .Chart.Name }}-init-config
+      - name: {{ include "{{service.code}}.fullname" . }}-init-config
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command:
         - /bin/sh
