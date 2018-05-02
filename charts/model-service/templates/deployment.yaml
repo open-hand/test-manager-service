@@ -30,9 +30,10 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.deployment.managementPort }}
+            exec:
+              command:
+                - curl
+                - localhost:{{ .Values.deployment.managementPort }}/health
               scheme: HTTP
             failureThreshold: 3
             initialDelaySeconds: 60
