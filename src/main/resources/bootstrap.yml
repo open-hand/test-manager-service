@@ -1,0 +1,50 @@
+spring:
+  profiles: default
+  cloud:
+    config:
+      enabled: false
+---
+spring:
+  profiles: sit
+  cloud:
+    config:
+      failFast: true
+      retry:
+        maxAttempts: 32
+        multiplier: 1.5
+        maxInterval: 10000
+      uri: ${SPRING_CLOUD_CONFIG_URI:http://localhost:8010}
+---
+server:
+  port: 8090
+mybatis:
+  mapperLocations: classpath*:/mapper/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+spring:
+  application:
+    name: {{service.code}}
+  sleuth:
+    integration:
+      enabled: false
+    scheduled:
+      enabled: false
+    sampler:
+      percentage: 1.0
+feign:
+  hystrix:
+    enabled: true
+hystrix.command.default.execution.timeout.enabled: false
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 3
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8000/eureka/}
+    registryFetchIntervalSeconds: 1
+management:
+  port: 8091
+  security:
+    enabled: false

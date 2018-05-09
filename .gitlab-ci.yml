@@ -1,0 +1,66 @@
+image: registry.saas.hand-china.com/tools/devops-ci:1.1.0
+
+stages:
+  - maven-package
+  - docker-build
+
+# database_test:
+#   stage: maven-package
+#   services:
+#     - registry.saas.hand-china.com/tools/mysql
+#   variables:
+#     MYSQL_ROOT_PASSWORD: root
+#   artifacts:
+#     paths:
+#     - .auto_devops.sh
+#   script:
+#     - database_test
+#   only:
+#     - develop
+#     - /^feature-.*$/
+#     - /^release-.*$/
+#     - /^hotfix-.*$/
+#     - tags
+
+maven-test-feature:
+  stage: maven-package
+  script:
+    - git_merge develop
+    - update_pom_version
+    - mvn package -U -DskipTests=false
+    - mvn --batch-mode verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=${CI_COMMIT_SHA} -Dsonar.gitlab.ref_name=${CI_COMMIT_REF_NAME} -Dsonar.gitlab.project_id=${CI_PROJECT_ID}
+  only:
+    - /^feature-.*$/
+
+maven-test-develop:
+  stage: maven-package
+  script:
+    - update_pom_version
+    - mvn package -U -DskipTests=false
+    - mvn --batch-mode verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.analysis.serviceGroup=${GROUP_NAME} -Dsonar.analysis.commitId=${CI_COMMIT_SHA}
+    - cache_jar
+  only:
+    - develop
+    - /^release-.*$/
+    - /^hotfix-.*$/
+    - tags
+
+docker-build:
+  stage: docker-build
+  script:
+    - docker_build
+    - clean_cache
+    - chart_build
+  only:
+    - develop
+    - /^release-.*$/
+    - /^hotfix-.*$/
+    - tags
+
+.auto_devops: &auto_devops |
+    curl -o .auto_devops.sh \
+        "${CHOERODON_URL}/devops/ci?token=${Token}&type=microservice"
+    source .auto_devops.sh
+
+before_script:
+  - *auto_devops
