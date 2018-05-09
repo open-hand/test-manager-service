@@ -1,21 +1,21 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ include "{{service.code}}.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-{{ include "{{service.code}}.labels.standard" . | indent 4 }}
+{{ include "service.labels.standard" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-{{ include "{{service.code}}.labels.standard" . | indent 6 }}
+{{ include "service.labels.standard" . | indent 6 }}
   template:
     metadata:
       labels:
-{{ include "{{service.code}}.labels.standard" . | indent 8 }}
+{{ include "service.labels.standard" . | indent 8 }}
     spec:
       containers:
-        - name: {{ include "{{service.code}}.fullname" . }}
+        - name: {{ .Release.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
@@ -29,12 +29,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: {{ .Values.deployment.managementPort }}
+          #     scheme: HTTP
           readinessProbe:
             exec:
               command:
-                - curl
-                - localhost:{{ .Values.deployment.managementPort }}/health
-              scheme: HTTP
+              - curl
+              - localhost:{{ .Values.deployment.managementPort }}/health
             failureThreshold: 3
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -42,3 +46,17 @@ spec:
             timeoutSeconds: 10
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+          volumeMounts:
+          - mountPath: /Charts
+            name: data
+{{- if not (empty .Values.persistence.subPath) }}
+            subPath: {{ .Values.persistence.subPath }}
+{{- end }}
+      volumes:
+      - name: data
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim | default ( .Release.Name ) }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}

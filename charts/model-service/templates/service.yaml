@@ -1,9 +1,10 @@
+{{- if .Values.service.enable }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "{{service.code}}.fullname" . }}
+  name: {{ .Release.Name }}
   labels:
-{{ include "{{service.code}}.labels.standard" . | indent 4 }}
+{{ include "service.labels.standard" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +13,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-{{ include "{{service.code}}.labels.standard" . | indent 4 }}
+{{ include "service.labels.standard" . | indent 4 }}
+{{- end }}
