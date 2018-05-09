@@ -27,8 +27,8 @@ maven-test-feature:
   script:
     - git_merge develop
     - update_pom_version
-    - maven_package false
-    - sonar_test_feature || true
+    - mvn package -U -DskipTests=false
+    - mvn --batch-mode verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.analysis.mode=preview -Dsonar.gitlab.commit_sha=${CI_COMMIT_SHA} -Dsonar.gitlab.ref_name=${CI_COMMIT_REF_NAME} -Dsonar.gitlab.project_id=${CI_PROJECT_ID}
   only:
     - /^feature-.*$/
 
@@ -36,8 +36,8 @@ maven-test-develop:
   stage: maven-package
   script:
     - update_pom_version
-    - maven_package false
-    - sonar_test_develop || true
+    - mvn package -U -DskipTests=false
+    - mvn --batch-mode verify sonar:sonar -Dsonar.host.url=${SONAR_URL} -Dsonar.analysis.serviceGroup=${GROUP_NAME} -Dsonar.analysis.commitId=${CI_COMMIT_SHA}
     - cache_jar
   only:
     - develop
