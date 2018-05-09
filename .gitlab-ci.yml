@@ -59,7 +59,7 @@ docker-build:
 
 .auto_devops: &auto_devops |
     curl -o .auto_devops.sh \
-        "${API_GATEWAY}/devops/ci?token=${Token}&type=microservice"
+        "${CHOERODON_URL}/devops/ci?token=${Token}&type=microservice"
     source .auto_devops.sh
 
 before_script:
