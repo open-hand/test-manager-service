@@ -10,3 +10,7 @@ choerodon.io/version: {{ .Chart.Version | quote }}
 choerodon.io/service: {{ .Chart.Name | quote }}
 choerodon.io/metrics-port: {{ .Values.deployment.managementPort | quote }}
 {{- end -}}
+
+{{- define "service.match.labels" -}}
+choerodon.io/release: {{ .Release.Name | quote }}
+{{- end -}}
