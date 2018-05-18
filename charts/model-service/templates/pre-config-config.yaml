@@ -3,11 +3,13 @@ kind: Job
 metadata:
   name: {{ .Release.Name }}-init-config
   labels:
-  {{ include "service.labels.standard" . | indent 4 }}
+{{ include "service.labels.standard" . | indent 4 }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "2"
 spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 120
   template:
     metadata:
       name: {{ .Release.Name }}-init-config
@@ -30,7 +32,7 @@ spec:
         - /bin/sh
         - -c
         - '
-          java -Dspring.datasource.url="jdbc:mysql://{{ .Values.preJob.preConfig.mysql.host }}:{{ .Values.preJob.preConfig.mysql.port }}/{{ .Values.preJob.preConfig.mysql.database }}?useUnicode=true&characterEncoding=utf-8&useSSL=false" -Dspring.datasource.username={{ .Values.preJob.preConfig.mysql.username }} -Dspring.datasource.password={{ .Values.preJob.preConfig.mysql.password }} -Dservice.name={{ .Release.Name }} -Dservice.version={{ .Values.image.tag }} -Dconfig.file={{ .Values.preJob.preConfig.configFile }} -Dconfig.jar=/app.jar -jar /var/choerodon/choerodon-tool-config.jar;
+          java -Dspring.datasource.url="jdbc:mysql://{{ .Values.preJob.preConfig.mysql.host }}:{{ .Values.preJob.preConfig.mysql.port }}/{{ .Values.preJob.preConfig.mysql.database }}?useUnicode=true&characterEncoding=utf-8&useSSL=false" -Dspring.datasource.username={{ .Values.preJob.preConfig.mysql.username }} -Dspring.datasource.password={{ .Values.preJob.preConfig.mysql.password }} -Dservice.name={{ .Chart.Name }} -Dservice.version={{ .Values.image.tag }} -Dconfig.file={{ .Values.preJob.preConfig.configFile }} -Dconfig.jar=/app.jar -jar /var/choerodon/choerodon-tool-config.jar;
           '
         volumeMounts:
         - mountPath: /var/choerodon
