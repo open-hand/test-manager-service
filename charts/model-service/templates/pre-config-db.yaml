@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-init-db
+<<<<<<< HEAD
   labels:
   {{ include "service.labels.standard" . | indent 4 }}
   annotations:
@@ -10,6 +11,7 @@ metadata:
 spec:
   backoffLimit: 1
   activeDeadlineSeconds: 120
+spec:
   template:
     metadata:
       name: {{ .Release.Name }}-init-db
