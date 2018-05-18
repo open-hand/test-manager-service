@@ -2,7 +2,6 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ .Release.Name }}-init-db
-<<<<<<< HEAD
   labels:
   {{ include "service.labels.standard" . | indent 4 }}
   annotations:
