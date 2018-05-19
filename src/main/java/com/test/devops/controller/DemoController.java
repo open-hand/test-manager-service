@@ -1,12 +1,13 @@
-package com.hand.hap.devops.controller;
+package com.test.devops.controller;
 
-import com.hand.hap.cloud.swagger.annotation.Permission;
-import com.hand.hap.devops.service.DemoService;
+import com.test.devops.service.DemoService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.choerodon.swagger.annotation.Permission;
 
 @RestController
 @RequestMapping("/v1")

@@ -1,4 +1,4 @@
-package com.hand.hap.devops.controller;
+package com.test.devops.controller;
 
 import org.junit.Assert;
 import org.junit.Test;

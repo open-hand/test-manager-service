@@ -1,26 +1,10 @@
-image: registry.saas.hand-china.com/tools/devops-ci:1.1.0
+image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/cibase:0.5.0
 
 stages:
   - maven-package
   - docker-build
 
-# database_test:
-#   stage: maven-package
-#   services:
-#     - registry.saas.hand-china.com/tools/mysql
-#   variables:
-#     MYSQL_ROOT_PASSWORD: root
-#   artifacts:
-#     paths:
-#     - .auto_devops.sh
-#   script:
-#     - database_test
-#   only:
-#     - develop
-#     - /^feature-.*$/
-#     - /^release-.*$/
-#     - /^hotfix-.*$/
-#     - tags
+
 
 maven-test-feature:
   stage: maven-package

@@ -1,4 +1,4 @@
-package com.hand.hap.devops.controller;
+package com.test.devops.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;

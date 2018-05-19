@@ -1,6 +1,6 @@
-package com.hand.hap.devops.service.impl;
+package com.test.devops.service.impl;
 
-import com.hand.hap.devops.service.DemoService;
+import com.test.devops.service.DemoService;
 import org.springframework.stereotype.Service;
 
 @Service

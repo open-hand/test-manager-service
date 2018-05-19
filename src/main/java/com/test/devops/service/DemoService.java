@@ -1,4 +1,4 @@
-package com.hand.hap.devops.service;
+package com.test.devops.service;
 
 public interface DemoService {
     String hello();
