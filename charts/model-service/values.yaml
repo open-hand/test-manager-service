@@ -32,7 +32,7 @@ env:
   open:
     SPRING_REDIS_HOST: devops-redis.devops.svc
     EUREKA_DEFAULT_ZONE: http://register-server.io-choerodon:8000/eureka/
-    SPRING_DATASOURCE_URL: jdbc:mysql://hapcloud-mysql.db.svc:3306/devops_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    SPRING_DATASOURCE_URL: jdbc:mysql://localhost/devops_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
     SPRING_DATASOURCE_USERNAME: root
     SPRING_DATASOURCE_PASSWORD: choerodon
     CHOERODON_EVENT_CONSUMER_KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092,kafka-1.kafka-headless.kafka.svc.cluster.local:9092,kafka-2.kafka-headless.kafka.svc.cluster.local:9092
