@@ -23,7 +23,7 @@ mybatis:
     mapUnderscoreToCamelCase: true
 spring:
   application:
-    name: {{service.code}}
+    name: test-manager-service
   sleuth:
     integration:
       enabled: false
