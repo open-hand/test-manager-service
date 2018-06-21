@@ -3,10 +3,14 @@ package com.test.devops.api.controller;
 import com.test.devops.api.dto.TestCycleCaseDTO;
 import com.test.devops.api.dto.TestCycleCaseStepDTO;
 import com.test.devops.app.service.TestCycleCaseStepService;
+import io.choerodon.core.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/14/18.
@@ -25,8 +29,11 @@ public class TestCycleCaseStepController {
 	 * @return
 	 */
 	@PutMapping
-	List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
-		return testCycleCaseStepService.update(testCycleCaseStepDTO);
+	ResponseEntity<List<TestCycleCaseStepDTO>> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+		return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+
 	}
 
 
@@ -37,9 +44,12 @@ public class TestCycleCaseStepController {
 	 * @return
 	 */
 	@GetMapping("/query/{CycleCaseId}")
-	List<TestCycleCaseStepDTO> querySubStep(@PathVariable Long cycleCaseId) {
+	ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@PathVariable Long cycleCaseId) {
 
-		return testCycleCaseStepService.querySubStep(cycleCaseId);
+		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
+
 	}
 
 //	/**启动循环测试下所有步骤

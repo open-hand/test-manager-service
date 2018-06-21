@@ -4,15 +4,18 @@ import com.test.devops.api.dto.TestCycleDTO;
 import com.test.devops.app.service.TestCycleService;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/12/18.
@@ -26,8 +29,11 @@ public class TestCycleController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("增加测试循环")
 	@PostMapping
-	public TestCycleDTO insert(@RequestBody TestCycleDTO testCycleDTO) {
-		return testCycleService.insert(testCycleDTO);
+	public ResponseEntity<TestCycleDTO> insert(@RequestBody TestCycleDTO testCycleDTO) {
+		return Optional.ofNullable(testCycleService.insert(testCycleDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.insert"));
+
 	}
 
 	@Permission(permissionPublic = true)
@@ -40,8 +46,10 @@ public class TestCycleController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("修改测试循环")
 	@PutMapping
-	List<TestCycleDTO> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
-		return testCycleService.update(testCycleDTO);
+	ResponseEntity<List<TestCycleDTO>> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
+		return Optional.ofNullable(testCycleService.update(testCycleDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));
 	}
 
 //	@Permission(permissionPublic = true)
@@ -54,8 +62,10 @@ public class TestCycleController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("查询测试循环")
 	@GetMapping("/query/{versionId}")
-	List<TestCycleDTO> getTestCycle(@PathVariable(name = "versionId") Long versionId) {
-		return testCycleService.getTestCycle(versionId);
+	ResponseEntity<List<TestCycleDTO>> getTestCycle(@PathVariable(name = "versionId") Long versionId) {
+		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.query"));
 	}
 
 

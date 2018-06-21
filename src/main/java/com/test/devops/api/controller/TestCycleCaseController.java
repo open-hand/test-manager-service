@@ -3,13 +3,17 @@ package com.test.devops.api.controller;
 import com.test.devops.api.dto.TestCycleCaseDTO;
 import com.test.devops.app.service.TestCycleCaseService;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/12/18.
@@ -31,23 +35,28 @@ public class TestCycleCaseController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("查询所有测试循环用例")
 	@PostMapping("/query")
-	public Page<TestCycleCaseDTO> query(@RequestBody TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest) {
-		return testCycleCaseService.query(testCycleCaseDTO, pageRequest);
+	public ResponseEntity<Page<TestCycleCaseDTO>> query(@RequestBody TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest) {
+		return Optional.ofNullable(testCycleCaseService.query(testCycleCaseDTO, pageRequest))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 	}
 
 	@Permission(permissionPublic = true)
 	@ApiOperation("查询测试组下循环用例")
 	@GetMapping("/query/{cycleId}")
-	public List<TestCycleCaseDTO> queryByCycle(@PathVariable(name = "cycleId") Long cycleId) {
-
-		return testCycleCaseService.queryByCycle(cycleId);
+	public ResponseEntity<List<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId) {
+		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 	}
 
 	@Permission(permissionPublic = true)
 	@ApiOperation("查询一个循环用例")
 	@GetMapping("/query/one/{executeId}")
-	public TestCycleCaseDTO queryOne(Long executeId) {
-		return testCycleCaseService.queryOne(executeId);
+	public ResponseEntity<TestCycleCaseDTO> queryOne(Long executeId) {
+		return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 	}
 
 
