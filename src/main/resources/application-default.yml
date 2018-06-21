@@ -1,23 +1,30 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/devops_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
-    password: 123456
-choerodon:
-  event:
-    consumer:
-      enabled: true # 是否开启，不设置默认开启
-      queue-type: kafka # 消息队列类型
-      enable-duplicate-remove: false # 是否开启去重
-      failed-strategy: nothing # 失败策略。支持nothing(什么都不做), send_back_event_store(回传到event store)两种
-      retry:
-        enabled: true # 是否开启重试功能
-      kafka:
-        bootstrap-servers: localhost:9092 # kafka地址
-  swagger:
-    oauthUrl: http://localhost:8080/oauth/oauth/authorize
-    skip:
-        service: register-server, api-gateway, gateway-helper, oauth-server, config-server
-  gateway:
-    domain: localhost:8080
-    names: api-gateway, gateway-helper
+    password: 842767365
+  cloud:
+      bus:
+        enabled: true
+      stream:
+        kafka:
+          binder:
+            brokers: 10.211.111.130:9092
+            zkNodes: 10.211.111.130:2181
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+    leaseExpirationDurationInSeconds: 30
+    metadata-map:
+      VERSION: v1
+  client:
+    serviceUrl:
+      #defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8000/eureka/}
+      defaultZone: ${EUREKA_DEFAULT_ZONE:http://10.211.111.130:8000/eureka/}
+    registryFetchIntervalSeconds: 10
+
+logging:
+  level:
+    root: info
+    io.choerodon.workflow: debug

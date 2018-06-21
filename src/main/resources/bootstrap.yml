@@ -1,50 +1,24 @@
 spring:
   profiles: default
-  cloud:
-    config:
-      enabled: false
----
-spring:
-  profiles: sit
-  cloud:
-    config:
-      failFast: true
-      retry:
-        maxAttempts: 32
-        multiplier: 1.5
-        maxInterval: 10000
-      uri: ${SPRING_CLOUD_CONFIG_URI:http://localhost:8010}
----
+  application:
+    name: test-manager-service
 server:
-  port: 8090
+  port: 8093
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration:
     mapUnderscoreToCamelCase: true
-spring:
-  application:
-    name: test-manager-service
-  sleuth:
-    integration:
-      enabled: false
-    scheduled:
-      enabled: false
-    sampler:
-      percentage: 1.0
+management:
+  port: 8101
+  security:
+    enabled: false
 feign:
   hystrix:
     enabled: true
-hystrix.command.default.execution.timeout.enabled: false
-eureka:
-  instance:
-    preferIpAddress: true
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 3
-  client:
-    serviceUrl:
-      defaultZone: ${EUREKA_DEFAULT_ZONE:http://localhost:8000/eureka/}
-    registryFetchIntervalSeconds: 1
-management:
-  port: 8091
-  security:
+security:
+  basic:
     enabled: false
+  ignored: /v2/choerodon/api-docs
+
+swagger:
+    basepackage: io.choerodon #扫描api包路径
