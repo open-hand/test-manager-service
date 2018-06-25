@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.api.dto;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseAttachmentRelE;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
