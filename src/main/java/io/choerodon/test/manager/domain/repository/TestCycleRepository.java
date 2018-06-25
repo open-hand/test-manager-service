@@ -20,5 +20,5 @@ public interface TestCycleRepository {
 
 	List<TestCycleE> query(TestCycleE testCycleE);
 
-	List<TestCycleE> queryBar(TestCycleE testCycleE);
+	List<TestCycleE> queryBar(Long versionId);
 }

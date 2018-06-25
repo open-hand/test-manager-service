@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
@@ -32,18 +33,34 @@ public class TestCycleCaseStepDO extends AuditDomain {
 	private String expectedResult;
 
 	@Transient
-	private String caseAttachUrl;
-	@Transient
-	private String caseAttachName;
-	@Transient
-	private Long caseAttachId;
+	private List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
 	@Transient
-	private String stepAttachUrl;
+	private List<TestCycleCaseAttachmentRelDO> stepAttachment;
+
 	@Transient
-	private String stepAttachName;
-	@Transient
-	private Long stepAttachId;
+	private List<TestCycleCaseDefectRelDO> defects;
+
+//	@Transient
+//	private String caseAttachUrl;
+//	@Transient
+//	private String caseAttachName;
+//	@Transient
+//	private Long caseAttachId;
+//
+//	@Transient
+//	private String stepAttachUrl;
+//	@Transient
+//	private String stepAttachName;
+//	@Transient
+//	private Long stepAttachId;
+
+//	@Transient
+//	private Long defectId;
+//	@Transient
+//	private Long defectIssueId;
+//	@Transient
+//	private String defectName;
 
 	public Long getExecuteStepId() {
 		return executeStepId;
@@ -102,51 +119,27 @@ public class TestCycleCaseStepDO extends AuditDomain {
 		this.expectedResult = expectedResult;
 	}
 
-	public String getCaseAttachUrl() {
-		return caseAttachUrl;
+	public List<TestCycleCaseAttachmentRelDO> getCaseAttachment() {
+		return caseAttachment;
 	}
 
-	public void setCaseAttachUrl(String caseAttachUrl) {
-		this.caseAttachUrl = caseAttachUrl;
+	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+		this.caseAttachment = caseAttachment;
 	}
 
-	public String getCaseAttachName() {
-		return caseAttachName;
+	public List<TestCycleCaseAttachmentRelDO> getStepAttachment() {
+		return stepAttachment;
 	}
 
-	public void setCaseAttachName(String caseAttachName) {
-		this.caseAttachName = caseAttachName;
+	public void setStepAttachment(List<TestCycleCaseAttachmentRelDO> stepAttachment) {
+		this.stepAttachment = stepAttachment;
 	}
 
-	public Long getCaseAttachId() {
-		return caseAttachId;
+	public List<TestCycleCaseDefectRelDO> getDefects() {
+		return defects;
 	}
 
-	public void setCaseAttachId(Long caseAttachId) {
-		this.caseAttachId = caseAttachId;
-	}
-
-	public String getStepAttachUrl() {
-		return stepAttachUrl;
-	}
-
-	public void setStepAttachUrl(String stepAttachUrl) {
-		this.stepAttachUrl = stepAttachUrl;
-	}
-
-	public String getStepAttachName() {
-		return stepAttachName;
-	}
-
-	public void setStepAttachName(String stepAttachName) {
-		this.stepAttachName = stepAttachName;
-	}
-
-	public Long getStepAttachId() {
-		return stepAttachId;
-	}
-
-	public void setStepAttachId(Long stepAttachId) {
-		this.stepAttachId = stepAttachId;
+	public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
+		this.defects = defects;
 	}
 }

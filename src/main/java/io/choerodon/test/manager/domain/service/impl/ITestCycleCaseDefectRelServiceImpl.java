@@ -20,19 +20,28 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 	}
 
 	@Override
-	public void delete(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE) {
-		testCycleCaseDefectRelE.forEach(v -> v.deleteSelf());
+	public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+		testCycleCaseDefectRelE.deleteSelf();
+	}
+
+//	@Override
+//	public List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE) {
+//		List<TestCycleCaseDefectRelE> testCaseES = new ArrayList<>();
+//		testCycleCaseDefectRelE.forEach(v -> testCaseES.add(v.updateSelf()));
+//		return testCaseES;
+//	}
+
+	@Override
+	public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+		return testCycleCaseDefectRelE.querySelf();
 	}
 
 	@Override
-	public List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE) {
-		List<TestCycleCaseDefectRelE> testCaseES = new ArrayList<>();
-		testCycleCaseDefectRelE.forEach(v -> testCaseES.add(v.updateSelf()));
-		return testCaseES;
-	}
-
-	@Override
-	public Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest) {
-		return testCycleCaseDefectRelE.querySelf(pageRequest);
+	public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
+//		TestCycleCaseDefectRelE testCycleCaseDefectRelE=TestCycleCaseDefectRelEFactory.create();
+//		testCycleCaseDefectRelE.setDefectLinkId(linkId);
+//		testCycleCaseDefectRelE.setDefectType(defectType);
+//		testCycleCaseDefectRelE.querySelf()
+		return null;
 	}
 }

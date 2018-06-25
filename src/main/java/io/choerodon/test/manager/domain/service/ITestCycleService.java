@@ -21,4 +21,6 @@ public interface ITestCycleService {
 	List<TestCycleE> querySubCycle(TestCycleE testCycleE);
 
 	List<TestCycleE> getTestCycle(Long versionId);
+
+	List<TestCycleE> queryCycleWithBar(Long versionId);
 }

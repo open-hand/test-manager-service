@@ -12,9 +12,11 @@ import java.util.List;
 public interface ITestCycleCaseDefectRelService {
 	TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	void delete(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
+	void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
+//	List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
 
-	Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
+	List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+
+	List<TestCycleCaseDefectRelE> query(Long linkId, String defectType);
 }

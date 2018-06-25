@@ -12,9 +12,9 @@ import java.util.List;
 public interface TestCycleCaseDefectRelService {
 	TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
 
-	void delete(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO);
+	void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
 
-	List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO);
+//	List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO);
 
-	Page<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, PageRequest pageRequest);
+	List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
 }

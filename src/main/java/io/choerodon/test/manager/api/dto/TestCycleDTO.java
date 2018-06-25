@@ -13,6 +13,9 @@ public class TestCycleDTO {
         this.type = "Ad hoc";
 	}
 
+	public TestCycleDTO() {
+	}
+
 	private Long cycleId;
 
 	private Long parentCycleId;

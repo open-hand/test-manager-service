@@ -6,12 +6,14 @@ import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
@@ -20,6 +22,9 @@ import java.util.List;
 public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService {
 	@Autowired
 	ITestCaseStepService iTestCaseStepService;
+
+	@Autowired
+	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
 
 	@Override
@@ -47,7 +52,19 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 	public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
 		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
 		testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-		return testCycleCaseStepE.querySelf();
+		List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
+		testCycleCaseEs.forEach(v -> {
+			v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
+		});
+//		testCycleCaseEs.forEach(v->{
+//			Optional.ofNullable(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(),"CYCLE_STEP"))
+//					.ifPresent(u->{
+//						v.setDefectId(u.getId());
+//						v.setDefectIssueId(u.getIssueId());
+//						v.setDefectName(u.getDefectName());
+//					});
+//		});
+		return testCycleCaseEs;
 	}
 
 

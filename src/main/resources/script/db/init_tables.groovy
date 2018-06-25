@@ -244,10 +244,15 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
-        createIndex(tableName: "test_status", indexName: "idx_status_name") {
-            column(name: "status_name")
-        }
 
+        createIndex(indexName: 'uk_test_status_name', tableName: 'test_status', unique: true) {
+            column(name: 'status_type')
+            column(name: 'status_name')
+        }
+        createIndex(indexName: 'uk_test_status_color', tableName: 'test_status', unique: true) {
+            column(name: 'status_type')
+            column(name: 'status_color')
+        }
     }
 
 

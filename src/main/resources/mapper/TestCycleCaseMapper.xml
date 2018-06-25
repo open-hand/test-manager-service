@@ -11,9 +11,12 @@
         <id column="execution_status" property="executionStatus"/>
         <id column="assigned_to" property="assignedTo"/>
         <id column="comment" property="comment"/>
-        <id column="url" property="attachUrl"/>
-        <id column="attachment_name" property="attachName"/>
-        <id column="id" property="attachId"/>
+        <collection property="caseAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="url" property="url"/>
+            <id column="attachment_name" property="attachmentName"/>
+            <id column="id" property="id"/>
+        </collection>
     </resultMap>
 
 

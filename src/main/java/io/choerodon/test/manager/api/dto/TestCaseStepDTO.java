@@ -1,5 +1,10 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+
+import java.util.List;
+
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
@@ -22,11 +27,7 @@ public class TestCaseStepDTO {
 
 	private String nextRank;
 
-	private String attachUrl;
-
-	private String attachName;
-
-	private Long attachId;
+	private List<TestCycleCaseAttachmentRelDTO> attachments;
 
 	public Long getStepId() {
 		return stepId;
@@ -100,27 +101,11 @@ public class TestCaseStepDTO {
 		this.nextRank = nextRank;
 	}
 
-	public void setAttachUrl(String attachUrl) {
-		this.attachUrl = attachUrl;
+	public List<TestCycleCaseAttachmentRelDTO> getAttachments() {
+		return attachments;
 	}
 
-	public void setAttachName(String attachName) {
-		this.attachName = attachName;
-	}
-
-	public void setAttachId(Long attachId) {
-		this.attachId = attachId;
-	}
-
-	public String getAttachUrl() {
-		return attachUrl;
-	}
-
-	public String getAttachName() {
-		return attachName;
-	}
-
-	public Long getAttachId() {
-		return attachId;
+	public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
+		this.attachments = ConvertHelper.convertList(attachments, TestCycleCaseAttachmentRelDTO.class);
 	}
 }

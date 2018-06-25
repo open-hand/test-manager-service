@@ -10,9 +10,12 @@
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="test_data" property="testData"/>
         <id column="expected_result" property="expectedResult"/>
-        <id column="url" property="attachUrl"/>
-        <id column="attachment_name" property="attachName"/>
-        <id column="id" property="attachId"/>
+        <collection property="attachments"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="url" property="url"/>
+            <id column="attachment_name" property="attachmentName"/>
+            <id column="id" property="id"/>
+        </collection>
     </resultMap>
 
     <select id="query" resultMap="BaseResultMap">
