@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,11 +33,7 @@ public class TestCaseStepE {
 
 	private String nextRank;
 
-	private String attachUrl;
-
-	private String attachName;
-
-	private Long attachId;
+	private List<TestCycleCaseAttachmentRelE> attachments;
 
 	@Autowired
 	private TestCaseStepRepository testCaseStepRepository;
@@ -154,27 +152,13 @@ public class TestCaseStepE {
 		return testCaseStepRepository;
 	}
 
-	public String getAttachUrl() {
-		return attachUrl;
+	public List<TestCycleCaseAttachmentRelE> getAttachments() {
+		return attachments;
 	}
 
-	public void setAttachUrl(String attachUrl) {
-		this.attachUrl = attachUrl;
-	}
-
-	public String getAttachName() {
-		return attachName;
-	}
-
-	public void setAttachName(String attachName) {
-		this.attachName = attachName;
-	}
-
-	public Long getAttachId() {
-		return attachId;
-	}
-
-	public void setAttachId(Long attachId) {
-		this.attachId = attachId;
+	public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
+		this.attachments = ConvertHelper.convertList(attachments, TestCycleCaseAttachmentRelE.class);
+		;
+		;
 	}
 }

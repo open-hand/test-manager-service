@@ -1,5 +1,13 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.domain.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
+
+import java.util.List;
+
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
@@ -18,18 +26,13 @@ public class TestCycleCaseStepDTO {
 
 	private String expectedResult;
 
-	private String caseAttachUrl;
-
-	private String caseAttachName;
-
-	private Long caseAttachId;
+	private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
 
-	private String stepAttachUrl;
+	private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
 
-	private String stepAttachName;
 
-	private Long stepAttachId;
+	private List<TestCycleCaseDefectRelDTO> defects;
 
 
 	public String getTestStep() {
@@ -96,51 +99,29 @@ public class TestCycleCaseStepDTO {
 		this.objectVersionNumber = objectVersionNumber;
 	}
 
-	public String getCaseAttachUrl() {
-		return caseAttachUrl;
+	public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
+		return caseAttachment;
 	}
 
-	public void setCaseAttachUrl(String caseAttachUrl) {
-		this.caseAttachUrl = caseAttachUrl;
+	public void setCaseAttachment(List<TestCycleCaseAttachmentRelE> caseAttachment) {
+		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
 	}
 
-	public String getCaseAttachName() {
-		return caseAttachName;
+	public List<TestCycleCaseAttachmentRelDTO> getStepAttachment() {
+		return stepAttachment;
 	}
 
-	public void setCaseAttachName(String caseAttachName) {
-		this.caseAttachName = caseAttachName;
+	public void setStepAttachment(List<TestCycleCaseAttachmentRelE> stepAttachment) {
+		this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelDTO.class);
+		;
 	}
 
-	public Long getCaseAttachId() {
-		return caseAttachId;
+	public List<TestCycleCaseDefectRelDTO> getDefects() {
+		return defects;
 	}
 
-	public void setCaseAttachId(Long caseAttachId) {
-		this.caseAttachId = caseAttachId;
-	}
-
-	public String getStepAttachUrl() {
-		return stepAttachUrl;
-	}
-
-	public void setStepAttachUrl(String stepAttachUrl) {
-		this.stepAttachUrl = stepAttachUrl;
-	}
-
-	public String getStepAttachName() {
-		return stepAttachName;
-	}
-
-	public void setStepAttachName(String stepAttachName) {
-		this.stepAttachName = stepAttachName;
-	}
-
-	public Long getStepAttachId() {
-		return stepAttachId;
-	}
-
-	public void setStepAttachId(Long stepAttachId) {
-		this.stepAttachId = stepAttachId;
+	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
+		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
+		;
 	}
 }

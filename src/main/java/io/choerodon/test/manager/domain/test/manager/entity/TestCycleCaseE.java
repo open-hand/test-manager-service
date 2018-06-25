@@ -1,12 +1,16 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Transient;
 import java.util.List;
 
 /**
@@ -33,15 +37,13 @@ public class TestCycleCaseE {
 
 	private String nextRank;
 
-	private String attachUrl;
-
-	private String attachName;
-
-	private Long attachId;
+	List<TestCycleCaseAttachmentRelE> caseAttachment;
 
 	private Long objectVersionNumber;
 
 	private List<TestCycleCaseStepE> testCycleCaseStepES;
+
+	private List<TestCycleCaseDefectRelE> defects;
 
 
 	@Autowired
@@ -168,27 +170,20 @@ public class TestCycleCaseE {
 		this.nextRank = nextRank;
 	}
 
-	public String getAttachUrl() {
-		return attachUrl;
+	public List<TestCycleCaseAttachmentRelE> getCaseAttachment() {
+		return caseAttachment;
 	}
 
-	public void setAttachUrl(String attachUrl) {
-		this.attachUrl = attachUrl;
+	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelE.class);
+		;
 	}
 
-	public String getAttachName() {
-		return attachName;
+	public List<TestCycleCaseDefectRelE> getDefects() {
+		return defects;
 	}
 
-	public void setAttachName(String attachName) {
-		this.attachName = attachName;
-	}
-
-	public Long getAttachId() {
-		return attachId;
-	}
-
-	public void setAttachId(Long attachId) {
-		this.attachId = attachId;
+	public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
+		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
 	}
 }

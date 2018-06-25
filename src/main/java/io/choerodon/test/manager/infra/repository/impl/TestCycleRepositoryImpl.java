@@ -65,9 +65,8 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 	}
 
 	@Override
-	public List<TestCycleE> queryBar(TestCycleE testCycleE) {
-		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
-		return ConvertHelper.convertList(cycleMapper.query(testCycleE.getVersionId()), TestCycleE.class);
+	public List<TestCycleE> queryBar(Long versionId) {
+		return ConvertHelper.convertList(cycleMapper.query(versionId), TestCycleE.class);
 
 	}
 

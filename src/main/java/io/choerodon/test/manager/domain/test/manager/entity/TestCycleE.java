@@ -49,6 +49,10 @@ public class TestCycleE {
 		return testCycleRepository.query(this);
 	}
 
+	public List<TestCycleE> querySelfWithBar() {
+		return testCycleRepository.queryBar(this.versionId);
+	}
+
 	public TestCycleE addSelf() {
 		return testCycleRepository.insert(this);
 	}

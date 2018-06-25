@@ -1,6 +1,9 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
 import java.util.List;
 
@@ -28,11 +31,9 @@ public class TestCycleCaseDTO {
 
 	private String nextRank;
 
-	private String attachUrl;
+	private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
-	private String attachName;
-
-	private Long attachId;
+	private List<TestCycleCaseDefectRelDTO> defects;
 
 	private List<TestCycleCaseStepE> testCycleCaseStepES;
 
@@ -124,27 +125,19 @@ public class TestCycleCaseDTO {
 		this.nextRank = nextRank;
 	}
 
-	public String getAttachUrl() {
-		return attachUrl;
+	public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
+		return caseAttachment;
 	}
 
-	public void setAttachUrl(String attachUrl) {
-		this.attachUrl = attachUrl;
+	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
 	}
 
-	public String getAttachName() {
-		return attachName;
+	public List<TestCycleCaseDefectRelDTO> getDefects() {
+		return defects;
 	}
 
-	public void setAttachName(String attachName) {
-		this.attachName = attachName;
-	}
-
-	public Long getAttachId() {
-		return attachId;
-	}
-
-	public void setAttachId(Long attachId) {
-		this.attachId = attachId;
+	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
+		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
 	}
 }

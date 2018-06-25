@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRelService {
 	@Autowired
-    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
+	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
 	@Override
 	public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
@@ -27,20 +27,20 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 	}
 
 	@Override
-	public void delete(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
-		iTestCycleCaseDefectRelService.delete(ConvertHelper.convertList(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
+	public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+		iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
 	}
 
-	@Override
-	public List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
-		return ConvertHelper.convertList(iTestCycleCaseDefectRelService.update(ConvertHelper.convertList(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
+//	@Override
+//	public List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
+//		return ConvertHelper.convertList(iTestCycleCaseDefectRelService.update(ConvertHelper.convertList(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
+//
+//	}
 
-	}
-
 	@Override
-	public Page<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, PageRequest pageRequest) {
-		Page<TestCycleCaseDefectRelE> serviceEPage = iTestCycleCaseDefectRelService.query(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class), pageRequest);
-		return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDefectRelDTO.class);
+	public List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+		List<TestCycleCaseDefectRelE> serviceEPage = iTestCycleCaseDefectRelService.query(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
+		return ConvertHelper.convertList(serviceEPage, TestCycleCaseDefectRelDTO.class);
 	}
 }

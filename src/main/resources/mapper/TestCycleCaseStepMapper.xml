@@ -12,14 +12,18 @@
         <id column="test_step" property="testStep"/>
         <id column="test_data" property="testData"/>
         <id column="expected_result" property="expectedResult"/>
-        <id column="case_attach_url" property="caseAttachUrl"/>
-        <id column="case_attach_name" property="caseAttachName"/>
-        <id column="case_attach_id" property="caseAttachId"/>
-
-        <id column="url" property="stepAttachUrl"/>
-        <id column="attachment_name" property="stepAttachName"/>
-        <id column="id" property="stepAttachId"/>
-
+        <collection property="caseAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="url" property="url"/>
+            <id column="attachment_name" property="attachmentName"/>
+            <id column="id" property="id"/>
+        </collection>
+        <collection property="stepAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="case_attach_url" property="url"/>
+            <id column="case_attach_name" property="attachmentName"/>
+            <id column="case_attach_id" property="id"/>
+        </collection>
     </resultMap>
 
     <select id="queryWithTestCaseStep" resultMap="BaseResultMap">

@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
@@ -32,11 +33,7 @@ public class TestCaseStepDO extends AuditDomain {
 	private String expectedResult;
 
 	@Transient
-	private String attachUrl;
-	@Transient
-	private String attachName;
-	@Transient
-	private Long attachId;
+	private List<TestCycleCaseAttachmentRelDO> attachments;
 
 	public Long getStepId() {
 		return stepId;
@@ -86,27 +83,11 @@ public class TestCaseStepDO extends AuditDomain {
 		this.expectedResult = expectedResult;
 	}
 
-	public String getAttachUrl() {
-		return attachUrl;
+	public List<TestCycleCaseAttachmentRelDO> getAttachments() {
+		return attachments;
 	}
 
-	public void setAttachUrl(String attachUrl) {
-		this.attachUrl = attachUrl;
-	}
-
-	public String getAttachName() {
-		return attachName;
-	}
-
-	public void setAttachName(String attachName) {
-		this.attachName = attachName;
-	}
-
-	public Long getAttachId() {
-		return attachId;
-	}
-
-	public void setAttachId(Long attachId) {
-		this.attachId = attachId;
+	public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
+		this.attachments = attachments;
 	}
 }
