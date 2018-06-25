@@ -16,6 +16,7 @@
         <id column="id" property="attachId"/>
     </resultMap>
 
+
     <select id="query" resultMap="BaseResultMap">
         SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
         cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id
@@ -38,3 +39,6 @@
 
 
 </mapper>
+
+
+

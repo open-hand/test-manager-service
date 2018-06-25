@@ -7,7 +7,10 @@ import io.choerodon.mybatis.domain.AuditDomain;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/11/18.
@@ -37,6 +40,9 @@ public class TestCycleDO extends AuditDomain {
 	private Date toDate;
 
 	private String type;
+
+	@Transient
+	private List<Map> cycleCaseList;
 
 	public Long getCycleId() {
 		return cycleId;
@@ -116,5 +122,13 @@ public class TestCycleDO extends AuditDomain {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public List<Map> getCycleCaseList() {
+		return cycleCaseList;
+	}
+
+	public void setCycleCaseList(List<Map> cycleCaseList) {
+		this.cycleCaseList = cycleCaseList;
 	}
 }

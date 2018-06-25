@@ -229,7 +229,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'status_name', type: 'VARCHAR(30)', remarks: '状态名称') {
                 constraints(nullable: false)
             }
-            column(name: 'description', type: 'VARCHAR(300)', remarks: '附件关联Id')
+            column(name: 'description', type: 'VARCHAR(300)', remarks: '描述')
 
             column(name: 'status_color', type: 'VARCHAR(30)', remarks: "颜色") {
                 constraints(nullable: false)

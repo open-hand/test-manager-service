@@ -2,6 +2,7 @@ package com.test.devops.api.controller;
 
 import com.test.devops.api.dto.TestCycleDTO;
 import com.test.devops.app.service.TestCycleService;
+import com.test.devops.infra.mapper.TestCycleMapper;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
@@ -25,6 +26,9 @@ import java.util.Optional;
 public class TestCycleController {
 	@Autowired
 	TestCycleService testCycleService;
+
+	@Autowired
+	TestCycleMapper cycleMapperl;
 
 	@Permission(permissionPublic = true)
 	@ApiOperation("增加测试循环")
@@ -62,10 +66,12 @@ public class TestCycleController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("查询测试循环")
 	@GetMapping("/query/{versionId}")
-	ResponseEntity<List<TestCycleDTO>> getTestCycle(@PathVariable(name = "versionId") Long versionId) {
-		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
+//		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+//				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+		cycleMapperl.query(versionId);
+		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 
 

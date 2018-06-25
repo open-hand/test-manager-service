@@ -20,4 +20,6 @@ public interface TestCycleRepository {
 	Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
 
 	List<TestCycleE> query(TestCycleE testCycleE);
+
+	List<TestCycleE> queryBar(TestCycleE testCycleE);
 }
