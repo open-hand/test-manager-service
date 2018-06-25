@@ -1,7 +1,7 @@
 package io.choerodon.agile.api.dto;
 
 
-import com.test.devops.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
 import java.math.BigDecimal;
