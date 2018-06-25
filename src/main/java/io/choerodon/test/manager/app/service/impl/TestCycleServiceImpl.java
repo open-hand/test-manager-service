@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.domain.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;

@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.test.manager.domain.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
-import io.choerodon.test.manager.domain.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import io.choerodon.agile.infra.common.utils.RankUtil;

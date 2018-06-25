@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.domain.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;

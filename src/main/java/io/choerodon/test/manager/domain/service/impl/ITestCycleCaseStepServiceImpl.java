@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.test.manager.domain.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
-import io.choerodon.test.manager.domain.factory.TestCaseStepEFactory;
-import io.choerodon.test.manager.domain.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import org.springframework.beans.factory.annotation.Autowired;

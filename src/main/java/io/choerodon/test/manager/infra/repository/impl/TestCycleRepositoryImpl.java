@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;

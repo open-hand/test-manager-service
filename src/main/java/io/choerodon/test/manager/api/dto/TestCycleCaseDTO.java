@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.domain.event.VersionEvent;
+import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

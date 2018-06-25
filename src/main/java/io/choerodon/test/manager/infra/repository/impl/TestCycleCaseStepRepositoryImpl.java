@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;

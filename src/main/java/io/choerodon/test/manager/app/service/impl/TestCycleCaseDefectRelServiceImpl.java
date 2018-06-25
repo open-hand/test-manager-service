@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;

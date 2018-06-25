@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.test.manager.domain.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.entity.TestCycleE;
-import io.choerodon.test.manager.domain.factory.TestCycleCaseEFactory;
-import io.choerodon.test.manager.domain.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;

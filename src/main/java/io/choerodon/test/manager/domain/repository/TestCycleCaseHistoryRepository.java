@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.domain.repository;
 
-import io.choerodon.test.manager.domain.entity.TestCycleCaseHistoryE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 

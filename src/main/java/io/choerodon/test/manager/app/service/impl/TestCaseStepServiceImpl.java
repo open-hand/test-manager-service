@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.domain.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.core.convertor.ConvertHelper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,6 +12,8 @@ public class TestCycleDTO {
         this.cycleName = "临时";
         this.type = "Ad hoc";
 	}
+	public TestCycleDTO(){
+	}
 
 	private Long cycleId;
 

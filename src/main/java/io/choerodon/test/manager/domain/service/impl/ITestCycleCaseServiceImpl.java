@@ -2,9 +2,9 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.entity.TestCycleE;
-import io.choerodon.test.manager.domain.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;

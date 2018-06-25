@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.test.manager.domain.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
 import java.util.List;
 

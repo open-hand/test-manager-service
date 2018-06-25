@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;

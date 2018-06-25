@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.domain.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
