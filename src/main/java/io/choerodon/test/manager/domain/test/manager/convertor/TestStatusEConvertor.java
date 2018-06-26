@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/25/18.
+ * Created by 842767365@qq.com on 6/25/18.
  */
 @Component
 public class TestStatusEConvertor implements ConvertorI<TestStatusE, TestStatusDO, TestStatusDTO> {

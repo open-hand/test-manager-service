@@ -4,7 +4,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachm
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleCaseAttachmentRelService {
 

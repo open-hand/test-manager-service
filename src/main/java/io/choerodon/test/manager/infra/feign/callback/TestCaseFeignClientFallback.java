@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/13/18.
+ * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
 public class TestCaseFeignClientFallback implements TestCaseFeignClient {

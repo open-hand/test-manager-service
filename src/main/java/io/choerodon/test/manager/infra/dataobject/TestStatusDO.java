@@ -7,7 +7,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 import javax.persistence.Table;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/25/18.
+ * Created by 842767365@qq.com on 6/25/18.
  */
 @ModifyAudit
 @VersionAudit

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/13/18.
+ * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
 public class ProductionVersionClientFallback implements ProductionVersionClient {

@@ -7,7 +7,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import java.util.List;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleService {
 	TestCycleE insert(TestCycleE testCycleE);

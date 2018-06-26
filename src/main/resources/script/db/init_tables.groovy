@@ -185,7 +185,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
-        addUniqueConstraint(tableName: "test_cycle_case_defect_rel", columnNames: "defect_type, issue_id,defect_link_id")
+        addUniqueConstraint(tableName: "test_cycle_case_defect_rel", columnNames: "defect_type,defect_link_id,issue_id")
 
     }
 

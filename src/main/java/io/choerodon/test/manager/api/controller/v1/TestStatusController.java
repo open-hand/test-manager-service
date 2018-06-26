@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/25/18.
+ * Created by 842767365@qq.com on 6/25/18.
  */
 @RestController
 @RequestMapping(value = "/test/status")

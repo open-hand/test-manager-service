@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.ResponseEntity;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCaseService {
 	IssueDTO insert(Long projectId, IssueCreateDTO issueCreateDTO);

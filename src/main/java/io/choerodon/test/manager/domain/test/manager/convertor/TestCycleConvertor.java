@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/12/18.
+ * Created by 842767365@qq.com on 6/12/18.
  */
 @Component
 public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, TestCycleDTO> {

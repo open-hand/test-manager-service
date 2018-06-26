@@ -1,14 +1,23 @@
 package io.choerodon.test.manager.api.dto;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 
 public class TestCycleCaseDefectRelDTO {
+	private Long id;
 	private String defectType;
 	private Long defectLinkId;
 	private Long issueId;
 	private Long objectVersionNumber;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getDefectType() {
 		return defectType;

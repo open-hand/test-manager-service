@@ -14,7 +14,7 @@ import javax.persistence.Transient;
 import java.util.List;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
 @Scope("prototype")
@@ -183,7 +183,7 @@ public class TestCycleCaseE {
 		return defects;
 	}
 
-	public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
+	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
 		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
 	}
 }
