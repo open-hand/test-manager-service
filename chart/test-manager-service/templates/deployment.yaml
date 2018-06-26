@@ -4,19 +4,23 @@ metadata:
   name: {{ .Release.Name }}
   labels:
 {{ include "service.labels.standard" . | indent 4 }}
+{{ include "service.logging.deployment.label" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-{{ include "service.labels.standard" . | indent 6 }}
+{{ include "service.match.labels" . | indent 6 }}
   template:
     metadata:
+      annotations:
+{{ include "service.monitoring.pod.annotations" . | indent 8 }}
       labels:
+{{ include "service.microservice.labels" . | indent 8 }}
 {{ include "service.labels.standard" . | indent 8 }}
     spec:
       containers:
         - name: {{ .Release.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Chart.Version }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
 {{- range $name, $value := .Values.env.open }}
@@ -46,17 +50,15 @@ spec:
             timeoutSeconds: 10
           resources:
 {{ toYaml .Values.resources | indent 12 }}
-          volumeMounts:
-          - mountPath: /Charts
-            name: data
-{{- if not (empty .Values.persistence.subPath) }}
-            subPath: {{ .Values.persistence.subPath }}
-{{- end }}
-      volumes:
-      - name: data
-        {{- if .Values.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: {{ .Values.persistence.existingClaim | default ( .Release.Name ) }}
-        {{- else }}
-        emptyDir: {}
-        {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

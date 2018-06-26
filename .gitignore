@@ -1,35 +1,26 @@
-# maven ignore
 target/
-*.versionsBackup
+!.mvn/wrapper/maven-wrapper.jar
 
-# eclipse ignore
-.settings/
-.project
+### STS ###
+.apt_generated
 .classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# idea ignore
-.idea/
-*.ipr
-*.iml
+### IntelliJ IDEA ###
+.idea
 *.iws
+*.iml
+*.ipr
 
-# temp ignore
-*.log
-*.cache
-*.diff
-*.patch
-*.tmp
-
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# system ignore
-.DS_Store
-Thumbs.db
-
-.vscode
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+application-default.yml

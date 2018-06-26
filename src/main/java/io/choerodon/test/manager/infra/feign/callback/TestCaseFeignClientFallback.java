@@ -4,7 +4,7 @@ import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 

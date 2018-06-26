@@ -3,7 +3,7 @@ package io.choerodon.test.manager.infra.feign;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

@@ -18,7 +18,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <choerodon.starters.version>0.5.1.RELEASE</choerodon.starters.version>
+        <choerodon.starters.version>0.5.2.RELEASE</choerodon.starters.version>
     </properties>
 
     <dependencies>
@@ -83,11 +83,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
         <!-- config server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -100,10 +95,6 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zuul</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -141,34 +132,10 @@
             <artifactId>spring-cloud-sleuth-stream</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-jackson</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-        <dependency>
             <groupId>io.choerodon</groupId>
             <artifactId>choerodon-starter-event-consumer</artifactId>
             <version>${choerodon.starters.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.choerodon</groupId>
-            <artifactId>choerodon-starter-event-producer</artifactId>
-            <version>${choerodon.starters.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>io.github.openfeign.form</groupId>
             <artifactId>feign-form</artifactId>
@@ -178,6 +145,11 @@
             <groupId>io.github.openfeign.form</groupId>
             <artifactId>feign-form-spring</artifactId>
             <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
         </dependency>
     </dependencies>
 

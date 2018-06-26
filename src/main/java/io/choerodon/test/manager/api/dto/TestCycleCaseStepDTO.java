@@ -113,7 +113,6 @@ public class TestCycleCaseStepDTO {
 
 	public void setStepAttachment(List<TestCycleCaseAttachmentRelE> stepAttachment) {
 		this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelDTO.class);
-		;
 	}
 
 	public List<TestCycleCaseDefectRelDTO> getDefects() {
@@ -122,6 +121,5 @@ public class TestCycleCaseStepDTO {
 
 	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
 		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
-		;
 	}
 }

@@ -1,4 +1,4 @@
 FROM registry.cn-hangzhou.aliyuncs.com/choerodon-tools/javabase:0.5.0
-COPY app.jar /app.jar
-ENTRYPOINT [ "java", "-jar", "/app.jar" ]
+COPY app.jar /test-manager-service.jar
+ENTRYPOINT exec java $JAVA_OPTS -jar test-manager-service.jar
 

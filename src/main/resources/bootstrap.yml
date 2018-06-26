@@ -1,24 +1,16 @@
-spring:
-  profiles: default
-  application:
-    name: test-manager-service
 server:
   port: 8093
-mybatis:
-  mapperLocations: classpath*:/mapper/*.xml
-  configuration:
-    mapUnderscoreToCamelCase: true
+spring:
+  application:
+    name: test-manager-service
+  cloud:
+    config:
+      failFast: true
+      retry:
+        maxAttempts: 6
+        multiplier: 1.5
+        maxInterval: 2000
+      uri: localhost:8010
+      enabled: false
 management:
-  port: 8101
-  security:
-    enabled: false
-feign:
-  hystrix:
-    enabled: true
-security:
-  basic:
-    enabled: false
-  ignored: /v2/choerodon/api-docs
-
-swagger:
-    basepackage: io.choerodon #扫描api包路径
+  port: 8094
