@@ -20,28 +20,28 @@ import java.util.Optional;
 @RequestMapping(value = "/v1/project/test/case/attachment")
 public class TestAttachmentController {
 
-	@Autowired
+    @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("增加测试")
-	@PostMapping
-	public ResponseEntity<TestCycleCaseAttachmentRelE> uploadFile(@RequestParam("bucket_name") String bucketName,
+    @Permission(permissionPublic = true)
+    @ApiOperation("增加测试")
+    @PostMapping
+    public ResponseEntity<TestCycleCaseAttachmentRelE> uploadFile(@RequestParam("bucket_name") String bucketName,
                                                                   @RequestParam("file_name") String fileName,
                                                                   @RequestPart("file") MultipartFile multipartFile,
                                                                   @RequestParam("attachmentLinkId") Long attachmentLinkId,
                                                                   @RequestParam("attachmentType") String attachmentType,
                                                                   @RequestParam("comment") String comment) {
-		return Optional.ofNullable(testCycleCaseAttachmentRelService.upload(bucketName, fileName, multipartFile, attachmentLinkId, attachmentType, comment))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.upload(bucketName, fileName, multipartFile, attachmentLinkId, attachmentType, comment))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 
-	}
+    }
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("删除附件")
-	@DeleteMapping
-	public void removeAttachment(String bucketName, Long attachId) {
-		testCycleCaseAttachmentRelService.delete(bucketName, attachId);
-	}
+    @Permission(permissionPublic = true)
+    @ApiOperation("删除附件")
+    @DeleteMapping
+    public void removeAttachment(String bucketName, Long attachId) {
+        testCycleCaseAttachmentRelService.delete(bucketName, attachId);
+    }
 }

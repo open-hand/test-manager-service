@@ -10,11 +10,11 @@ import java.util.List;
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
 public interface ITestCycleCaseHistoryService {
-	TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
+    TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 
-	void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
+    void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
 
-	List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
+    List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
 
-	Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
+    Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
 }

@@ -14,25 +14,25 @@ import java.util.List;
  */
 @Component
 public class ITestCycleCaseHistoryServiceImpl implements ITestCycleCaseHistoryService {
-	@Override
-	public TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE) {
-		return testCycleCaseHistoryE.addSelf();
-	}
+    @Override
+    public TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE) {
+        return testCycleCaseHistoryE.addSelf();
+    }
 
-	@Override
-	public void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
-		testCycleCaseHistoryE.forEach(v -> v.deleteSelf());
-	}
+    @Override
+    public void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
+        testCycleCaseHistoryE.forEach(v -> v.deleteSelf());
+    }
 
-	@Override
-	public List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
-		List<TestCycleCaseHistoryE> list = new ArrayList<>();
-		testCycleCaseHistoryE.forEach(v -> list.add(v.updateSelf()));
-		return list;
-	}
+    @Override
+    public List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
+        List<TestCycleCaseHistoryE> list = new ArrayList<>();
+        testCycleCaseHistoryE.forEach(v -> list.add(v.updateSelf()));
+        return list;
+    }
 
-	@Override
-	public Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
-		return testCycleCaseHistoryE.querySelf(pageRequest);
-	}
+    @Override
+    public Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
+        return testCycleCaseHistoryE.querySelf(pageRequest);
+    }
 }

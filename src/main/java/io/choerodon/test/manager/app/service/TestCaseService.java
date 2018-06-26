@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
 public interface TestCaseService {
-	IssueDTO insert(Long projectId, IssueCreateDTO issueCreateDTO);
+    IssueDTO insert(Long projectId, IssueCreateDTO issueCreateDTO);
 
-	void delete(Long projectId, Long issueId);
+    void delete(Long projectId, Long issueId);
 
-	ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate);
+    ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate);
 
-	ResponseEntity<IssueDTO> query(Long projectId, Long issueId);
+    ResponseEntity<IssueDTO> query(Long projectId, Long issueId);
 
-	ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest);
+    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest);
 }

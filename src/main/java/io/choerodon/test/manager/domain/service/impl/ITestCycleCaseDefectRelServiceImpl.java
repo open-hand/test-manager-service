@@ -14,34 +14,34 @@ import java.util.List;
  */
 @Component
 public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectRelService {
-	@Override
-	public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		return testCycleCaseDefectRelE.addSelf();
-	}
+    @Override
+    public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        return testCycleCaseDefectRelE.addSelf();
+    }
 
-	@Override
-	public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		testCycleCaseDefectRelE.deleteSelf();
-	}
+    @Override
+    public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        testCycleCaseDefectRelE.deleteSelf();
+    }
 
-//	@Override
-//	public List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE) {
-//		List<TestCycleCaseDefectRelE> testCaseES = new ArrayList<>();
-//		testCycleCaseDefectRelE.forEach(v -> testCaseES.add(v.updateSelf()));
-//		return testCaseES;
-//	}
+//    @Override
+//    public List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE) {
+//        List<TestCycleCaseDefectRelE> testCaseES = new ArrayList<>();
+//        testCycleCaseDefectRelE.forEach(v -> testCaseES.add(v.updateSelf()));
+//        return testCaseES;
+//    }
 
-	@Override
-	public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		return testCycleCaseDefectRelE.querySelf();
-	}
+    @Override
+    public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        return testCycleCaseDefectRelE.querySelf();
+    }
 
-	@Override
-	public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
-//		TestCycleCaseDefectRelE testCycleCaseDefectRelE=TestCycleCaseDefectRelEFactory.create();
-//		testCycleCaseDefectRelE.setDefectLinkId(linkId);
-//		testCycleCaseDefectRelE.setDefectType(defectType);
-//		testCycleCaseDefectRelE.querySelf()
-		return null;
-	}
+    @Override
+    public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
+//        TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+//        testCycleCaseDefectRelE.setDefectLinkId(linkId);
+//        testCycleCaseDefectRelE.setDefectType(defectType);
+//        testCycleCaseDefectRelE.querySelf()
+        return null;
+    }
 }

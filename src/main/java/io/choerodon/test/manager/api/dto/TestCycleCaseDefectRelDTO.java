@@ -5,40 +5,40 @@ package io.choerodon.test.manager.api.dto;
  */
 
 public class TestCycleCaseDefectRelDTO {
-	private String defectType;
-	private Long defectLinkId;
-	private Long issueId;
-	private Long objectVersionNumber;
+    private String defectType;
+    private Long defectLinkId;
+    private Long issueId;
+    private Long objectVersionNumber;
 
-	public String getDefectType() {
-		return defectType;
-	}
+    public String getDefectType() {
+        return defectType;
+    }
 
-	public void setDefectType(String defectType) {
-		this.defectType = defectType;
-	}
+    public void setDefectType(String defectType) {
+        this.defectType = defectType;
+    }
 
-	public Long getDefectLinkId() {
-		return defectLinkId;
-	}
+    public Long getDefectLinkId() {
+        return defectLinkId;
+    }
 
-	public void setDefectLinkId(Long defectLinkId) {
-		this.defectLinkId = defectLinkId;
-	}
+    public void setDefectLinkId(Long defectLinkId) {
+        this.defectLinkId = defectLinkId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 }

@@ -14,31 +14,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestCycleCaseConvertor implements ConvertorI<TestCycleCaseE, TestCycleCaseDO, TestCycleCaseDTO> {
 
-	@Override
-	public TestCycleCaseE dtoToEntity(TestCycleCaseDTO dto) {
-		TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseE dtoToEntity(TestCycleCaseDTO dto) {
+        TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
+        BeanUtils.copyProperties(dto, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseDTO entityToDto(TestCycleCaseE entity) {
-		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseDTO entityToDto(TestCycleCaseE entity) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 
-	@Override
-	public TestCycleCaseE doToEntity(TestCycleCaseDO dataObject) {
-		TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseE doToEntity(TestCycleCaseDO dataObject) {
+        TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
+        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseDO entityToDo(TestCycleCaseE entity) {
-		TestCycleCaseDO testCycleCaseDTO = new TestCycleCaseDO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseDO entityToDo(TestCycleCaseE entity) {
+        TestCycleCaseDO testCycleCaseDTO = new TestCycleCaseDO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 }

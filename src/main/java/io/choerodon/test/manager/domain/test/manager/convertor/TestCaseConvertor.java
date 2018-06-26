@@ -15,32 +15,32 @@
 //@Component
 //public class TestCaseConvertor implements ConvertorI<TestCaseE, TestCaseDO, TestCaseDTO> {
 //
-//	@Override
-//	public TestCaseE doToEntity(TestCaseDO dataObject) {
-//		TestCaseE testCaseE=TestCaseEFactory.create();
-//		BeanUtils.copyProperties(dataObject,testCaseE);
-//		return testCaseE;
-//	}
+//    @Override
+//    public TestCaseE doToEntity(TestCaseDO dataObject) {
+//        TestCaseE testCaseE = TestCaseEFactory.create();
+//        BeanUtils.copyProperties(dataObject, testCaseE);
+//        return testCaseE;
+//    }
 //
-//	@Override
-//	public TestCaseDO entityToDo(TestCaseE entity) {
-//		TestCaseDO taskDO = new TestCaseDO();
-//		BeanUtils.copyProperties(entity, taskDO);
-//		return taskDO;
-//	}
+//    @Override
+//    public TestCaseDO entityToDo(TestCaseE entity) {
+//        TestCaseDO taskDO = new TestCaseDO();
+//        BeanUtils.copyProperties(entity, taskDO);
+//        return taskDO;
+//    }
 //
-//	@Override
-//	public TestCaseE dtoToEntity(TestCaseDTO testCaseDTO) {
-//		TestCaseE testCaseE=TestCaseEFactory.create();
-//		BeanUtils.copyProperties(testCaseDTO,testCaseE);
-//		return testCaseE;
-//	}
+//    @Override
+//    public TestCaseE dtoToEntity(TestCaseDTO testCaseDTO) {
+//        TestCaseE testCaseE = TestCaseEFactory.create();
+//        BeanUtils.copyProperties(testCaseDTO, testCaseE);
+//        return testCaseE;
+//    }
 //
-//	@Override
-//	public TestCaseDTO entityToDto(TestCaseE testCaseE) {
-//		TestCaseDTO entity = new TestCaseDTO();
-//		BeanUtils.copyProperties(testCaseE, entity);
-//		return entity;
-//	}
+//    @Override
+//    public TestCaseDTO entityToDto(TestCaseE testCaseE) {
+//        TestCaseDTO entity = new TestCaseDTO();
+//        BeanUtils.copyProperties(testCaseE, entity);
+//        return entity;
+//    }
 //
 //}

@@ -17,86 +17,86 @@ import java.util.List;
 @VersionAudit
 @Table(name = "test_cycle_case")
 public class TestCycleCaseDO extends AuditDomain {
-	@Id
-	@GeneratedValue
-	private Long executeId;
+    @Id
+    @GeneratedValue
+    private Long executeId;
 
-	private Long cycleId;
+    private Long cycleId;
 
-	private Long issueId;
+    private Long issueId;
 
-	private String rank;
+    private String rank;
 
-	private String executionStatus;
+    private String executionStatus;
 
-	private String assignedTo;
+    private String assignedTo;
 
-	private String comment;
+    private String comment;
 
-	@Transient
-	List<TestCycleCaseAttachmentRelDO> caseAttachment;
+    @Transient
+    List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
-	public Long getExecuteId() {
-		return executeId;
-	}
+    public Long getExecuteId() {
+        return executeId;
+    }
 
-	public void setExecuteId(Long executeId) {
-		this.executeId = executeId;
-	}
+    public void setExecuteId(Long executeId) {
+        this.executeId = executeId;
+    }
 
-	public Long getCycleId() {
-		return cycleId;
-	}
+    public Long getCycleId() {
+        return cycleId;
+    }
 
-	public void setCycleId(Long cycleId) {
-		this.cycleId = cycleId;
-	}
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getExecutionStatus() {
-		return executionStatus;
-	}
+    public String getExecutionStatus() {
+        return executionStatus;
+    }
 
-	public void setExecutionStatus(String executionStatus) {
-		this.executionStatus = executionStatus;
-	}
+    public void setExecutionStatus(String executionStatus) {
+        this.executionStatus = executionStatus;
+    }
 
-	public String getAssignedTo() {
-		return assignedTo;
-	}
+    public String getAssignedTo() {
+        return assignedTo;
+    }
 
-	public void setAssignedTo(String assignedTo) {
-		this.assignedTo = assignedTo;
-	}
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public String getRank() {
-		return rank;
-	}
+    public String getRank() {
+        return rank;
+    }
 
-	public void setRank(String rank) {
-		this.rank = rank;
-	}
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
 
-	public List<TestCycleCaseAttachmentRelDO> getCaseAttachment() {
-		return caseAttachment;
-	}
+    public List<TestCycleCaseAttachmentRelDO> getCaseAttachment() {
+        return caseAttachment;
+    }
 
-	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
-		this.caseAttachment = caseAttachment;
-	}
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+        this.caseAttachment = caseAttachment;
+    }
 }

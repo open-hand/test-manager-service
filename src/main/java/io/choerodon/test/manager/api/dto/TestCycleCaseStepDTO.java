@@ -13,113 +13,113 @@ import java.util.List;
  */
 
 public class TestCycleCaseStepDTO {
-	private Long executeStepId;
-	private Long executeId;
-	private Long stepId;
-	private String comment;
-	private Long objectVersionNumber;
+    private Long executeStepId;
+    private Long executeId;
+    private Long stepId;
+    private String comment;
+    private Long objectVersionNumber;
 
 
-	private String testStep;
+    private String testStep;
 
-	private String testData;
+    private String testData;
 
-	private String expectedResult;
+    private String expectedResult;
 
-	private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
-
-
-	private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
+    private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
 
-	private List<TestCycleCaseDefectRelDTO> defects;
+    private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
 
 
-	public String getTestStep() {
-		return testStep;
-	}
+    private List<TestCycleCaseDefectRelDTO> defects;
 
-	public void setTestStep(String testStep) {
-		this.testStep = testStep;
-	}
 
-	public String getTestData() {
-		return testData;
-	}
+    public String getTestStep() {
+        return testStep;
+    }
 
-	public void setTestData(String testData) {
-		this.testData = testData;
-	}
+    public void setTestStep(String testStep) {
+        this.testStep = testStep;
+    }
 
-	public String getExpectedResult() {
-		return expectedResult;
-	}
+    public String getTestData() {
+        return testData;
+    }
 
-	public void setExpectedResult(String expectedResult) {
-		this.expectedResult = expectedResult;
-	}
+    public void setTestData(String testData) {
+        this.testData = testData;
+    }
 
-	public Long getExecuteStepId() {
-		return executeStepId;
-	}
+    public String getExpectedResult() {
+        return expectedResult;
+    }
 
-	public void setExecuteStepId(Long executeStepId) {
-		this.executeStepId = executeStepId;
-	}
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult;
+    }
 
-	public Long getExecuteId() {
-		return executeId;
-	}
+    public Long getExecuteStepId() {
+        return executeStepId;
+    }
 
-	public void setExecuteId(Long executeId) {
-		this.executeId = executeId;
-	}
+    public void setExecuteStepId(Long executeStepId) {
+        this.executeStepId = executeStepId;
+    }
 
-	public Long getStepId() {
-		return stepId;
-	}
+    public Long getExecuteId() {
+        return executeId;
+    }
 
-	public void setStepId(Long stepId) {
-		this.stepId = stepId;
-	}
+    public void setExecuteId(Long executeId) {
+        this.executeId = executeId;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public Long getStepId() {
+        return stepId;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setStepId(Long stepId) {
+        this.stepId = stepId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
-		return caseAttachment;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setCaseAttachment(List<TestCycleCaseAttachmentRelE> caseAttachment) {
-		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public List<TestCycleCaseAttachmentRelDTO> getStepAttachment() {
-		return stepAttachment;
-	}
+    public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
+        return caseAttachment;
+    }
 
-	public void setStepAttachment(List<TestCycleCaseAttachmentRelE> stepAttachment) {
-		this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelDTO.class);
-	}
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelE> caseAttachment) {
+        this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
+    }
 
-	public List<TestCycleCaseDefectRelDTO> getDefects() {
-		return defects;
-	}
+    public List<TestCycleCaseAttachmentRelDTO> getStepAttachment() {
+        return stepAttachment;
+    }
 
-	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
-	}
+    public void setStepAttachment(List<TestCycleCaseAttachmentRelE> stepAttachment) {
+        this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelDTO.class);
+    }
+
+    public List<TestCycleCaseDefectRelDTO> getDefects() {
+        return defects;
+    }
+
+    public void setDefects(List<TestCycleCaseDefectRelE> defects) {
+        this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
+    }
 }

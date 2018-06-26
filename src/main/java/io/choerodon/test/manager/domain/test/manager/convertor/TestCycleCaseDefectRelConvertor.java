@@ -13,31 +13,31 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TestCycleCaseDefectRelConvertor implements ConvertorI<TestCycleCaseDefectRelE, TestCycleCaseDefectRelDO, TestCycleCaseDefectRelDTO> {
-	@Override
-	public TestCycleCaseDefectRelE dtoToEntity(TestCycleCaseDefectRelDTO dto) {
-		TestCycleCaseDefectRelE testCaseStepE = TestCycleCaseDefectRelEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseDefectRelE dtoToEntity(TestCycleCaseDefectRelDTO dto) {
+        TestCycleCaseDefectRelE testCaseStepE = TestCycleCaseDefectRelEFactory.create();
+        BeanUtils.copyProperties(dto, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseDefectRelDTO entityToDto(TestCycleCaseDefectRelE entity) {
-		TestCycleCaseDefectRelDTO testCycleCaseDTO = new TestCycleCaseDefectRelDTO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseDefectRelDTO entityToDto(TestCycleCaseDefectRelE entity) {
+        TestCycleCaseDefectRelDTO testCycleCaseDTO = new TestCycleCaseDefectRelDTO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 
-	@Override
-	public TestCycleCaseDefectRelE doToEntity(TestCycleCaseDefectRelDO dataObject) {
-		TestCycleCaseDefectRelE testCaseStepE = TestCycleCaseDefectRelEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseDefectRelE doToEntity(TestCycleCaseDefectRelDO dataObject) {
+        TestCycleCaseDefectRelE testCaseStepE = TestCycleCaseDefectRelEFactory.create();
+        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseDefectRelDO entityToDo(TestCycleCaseDefectRelE entity) {
-		TestCycleCaseDefectRelDO testCycleCaseDTO = new TestCycleCaseDefectRelDO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseDefectRelDO entityToDo(TestCycleCaseDefectRelE entity) {
+        TestCycleCaseDefectRelDO testCycleCaseDTO = new TestCycleCaseDefectRelDO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 }

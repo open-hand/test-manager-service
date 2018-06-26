@@ -20,70 +20,70 @@ import java.util.Optional;
  */
 @Component
 public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService {
-	@Autowired
-	ITestCaseStepService iTestCaseStepService;
+    @Autowired
+    ITestCaseStepService iTestCaseStepService;
 
-	@Autowired
-	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
-
-
-	@Override
-	public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-		testCycleCaseStepE.deleteSelf();
-	}
-
-	@Override
-	public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
-		testCycleCaseStepE.deleteSelf();
-	}
+    @Autowired
+    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
 
-	@Override
-	public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
-		List<TestCycleCaseStepE> list = new ArrayList<>();
-		testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
-		return list;
-	}
+    @Override
+    public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+        testCycleCaseStepE.deleteSelf();
+    }
+
+    @Override
+    public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
+        testCycleCaseStepE.deleteSelf();
+    }
 
 
-	@Override
-	public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-		List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
-		testCycleCaseEs.forEach(v -> {
-			v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
-		});
-//		testCycleCaseEs.forEach(v->{
-//			Optional.ofNullable(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(),"CYCLE_STEP"))
-//					.ifPresent(u->{
-//						v.setDefectId(u.getId());
-//						v.setDefectIssueId(u.getIssueId());
-//						v.setDefectName(u.getDefectName());
-//					});
-//		});
-		return testCycleCaseEs;
-	}
+    @Override
+    public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
+        List<TestCycleCaseStepE> list = new ArrayList<>();
+        testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
+        return list;
+    }
 
 
-	/**
-	 * 启动测试例分步任务
-	 *
-	 * @param testCycleCaseE
-	 */
-	@Override
-	public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-		testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
-		List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
+    @Override
+    public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+        List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
+        testCycleCaseEs.forEach(v -> {
+            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
+        });
+//        testCycleCaseEs.forEach(v -> {
+//            Optional.ofNullable(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"))
+//                    .ifPresent(u -> {
+//                        v.setDefectId(u.getId());
+//                        v.setDefectIssueId(u.getIssueId());
+//                        v.setDefectName(u.getDefectName());
+//                    });
+//        });
+        return testCycleCaseEs;
+    }
 
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCaseStepES.forEach(v -> {
-			testCycleCaseStepE.setStepId(v.getStepId());
-			testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-			testCycleCaseStepE.addSelf();
-		});
-	}
+
+    /**
+     * 启动测试例分步任务
+     *
+     * @param testCycleCaseE
+     */
+    @Override
+    public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
+        List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
+
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCaseStepES.forEach(v -> {
+            testCycleCaseStepE.setStepId(v.getStepId());
+            testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+            testCycleCaseStepE.addSelf();
+        });
+    }
 }

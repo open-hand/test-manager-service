@@ -13,32 +13,32 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TestCaseStepConvertor implements ConvertorI<TestCaseStepE, TestCaseStepDO, TestCaseStepDTO> {
-	@Override
-	public TestCaseStepE doToEntity(TestCaseStepDO dataObject) {
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCaseStepE doToEntity(TestCaseStepDO dataObject) {
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCaseStepDO entityToDo(TestCaseStepE entity) {
-		TestCaseStepDO stepDO = new TestCaseStepDO();
-		BeanUtils.copyProperties(entity, stepDO);
-		return stepDO;
-	}
+    @Override
+    public TestCaseStepDO entityToDo(TestCaseStepE entity) {
+        TestCaseStepDO stepDO = new TestCaseStepDO();
+        BeanUtils.copyProperties(entity, stepDO);
+        return stepDO;
+    }
 
-	@Override
-	public TestCaseStepE dtoToEntity(TestCaseStepDTO dto) {
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE);
+    @Override
+    public TestCaseStepE dtoToEntity(TestCaseStepDTO dto) {
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        BeanUtils.copyProperties(dto, testCaseStepE);
 
-		return testCaseStepE;
-	}
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCaseStepDTO entityToDto(TestCaseStepE entity) {
-		TestCaseStepDTO stepDTO = new TestCaseStepDTO();
-		BeanUtils.copyProperties(entity, stepDTO);
-		return stepDTO;
-	}
+    @Override
+    public TestCaseStepDTO entityToDto(TestCaseStepE entity) {
+        TestCaseStepDTO stepDTO = new TestCaseStepDTO();
+        BeanUtils.copyProperties(entity, stepDTO);
+        return stepDTO;
+    }
 }

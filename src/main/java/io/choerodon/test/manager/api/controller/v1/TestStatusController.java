@@ -18,33 +18,33 @@ import java.util.Optional;
 @RequestMapping(value = "/test/status")
 public class TestStatusController {
 
-	@Autowired
-	TestStatusService testStatusService;
+    @Autowired
+    TestStatusService testStatusService;
 
-	@PostMapping("/query")
-	public ResponseEntity<List<TestStatusDTO>> query(TestStatusDTO testStatusDTO) {
-		return Optional.ofNullable(testStatusService.query(testStatusDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testStatus.query"));
+    @PostMapping("/query")
+    public ResponseEntity<List<TestStatusDTO>> query(TestStatusDTO testStatusDTO) {
+        return Optional.ofNullable(testStatusService.query(testStatusDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.query"));
 
-	}
+    }
 
-	@DeleteMapping
-	public void delete(TestStatusDTO testStatusDTO) {
-		testStatusService.delete(testStatusDTO);
-	}
+    @DeleteMapping
+    public void delete(TestStatusDTO testStatusDTO) {
+        testStatusService.delete(testStatusDTO);
+    }
 
-	@PostMapping
-	public ResponseEntity<TestStatusDTO> insert(TestStatusDTO testStatusDTO) {
-		return Optional.ofNullable(testStatusService.insert(testStatusDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
-	}
+    @PostMapping
+    public ResponseEntity<TestStatusDTO> insert(TestStatusDTO testStatusDTO) {
+        return Optional.ofNullable(testStatusService.insert(testStatusDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.insert"));
+    }
 
-	@PutMapping
-	public ResponseEntity<TestStatusDTO> update(TestStatusDTO testStatusDTO) {
-		return Optional.ofNullable(testStatusService.update(testStatusDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testStatus.update"));
-	}
+    @PutMapping
+    public ResponseEntity<TestStatusDTO> update(TestStatusDTO testStatusDTO) {
+        return Optional.ofNullable(testStatusService.update(testStatusDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.update"));
+    }
 }

@@ -14,96 +14,96 @@ import java.util.List;
 @Scope("prototype")
 public class TestCycleCaseAttachmentRelE {
 
-	private Long id;
-	private String attachmentType;
-	private Long attachmentLinkId;
-	private String attachmentName;
-	private String url;
-	private String comment;
-	private Long objectVersionNumber;
+    private Long id;
+    private String attachmentType;
+    private Long attachmentLinkId;
+    private String attachmentName;
+    private String url;
+    private String comment;
+    private Long objectVersionNumber;
 
 
-	@Autowired
-	private TestCycleCaseAttachmentRelRepository testCycleCaseAttachmentRelRepository;
+    @Autowired
+    private TestCycleCaseAttachmentRelRepository testCycleCaseAttachmentRelRepository;
 
-	public List<TestCycleCaseAttachmentRelE> querySelf() {
-		return testCycleCaseAttachmentRelRepository.query(this);
-	}
+    public List<TestCycleCaseAttachmentRelE> querySelf() {
+        return testCycleCaseAttachmentRelRepository.query(this);
+    }
 
-	public TestCycleCaseAttachmentRelE addSelf() {
-		return testCycleCaseAttachmentRelRepository.insert(this);
-	}
+    public TestCycleCaseAttachmentRelE addSelf() {
+        return testCycleCaseAttachmentRelRepository.insert(this);
+    }
 
-	public TestCycleCaseAttachmentRelE updateSelf() {
-		return testCycleCaseAttachmentRelRepository.update(this);
-	}
+    public TestCycleCaseAttachmentRelE updateSelf() {
+        return testCycleCaseAttachmentRelRepository.update(this);
+    }
 
-	public void deleteSelf() {
-		testCycleCaseAttachmentRelRepository.delete(this);
-	}
+    public void deleteSelf() {
+        testCycleCaseAttachmentRelRepository.delete(this);
+    }
 
-	public String getAttachmentType() {
-		return attachmentType;
-	}
+    public String getAttachmentType() {
+        return attachmentType;
+    }
 
-	public void setAttachmentType(String attachmentType) {
+    public void setAttachmentType(String attachmentType) {
 
-		this.attachmentType = attachmentType;
-	}
+        this.attachmentType = attachmentType;
+    }
 
-	public Long getAttachmentLinkId() {
-		return attachmentLinkId;
-	}
+    public Long getAttachmentLinkId() {
+        return attachmentLinkId;
+    }
 
-	public void setAttachmentLinkId(Long attachmentLinkId) {
-		this.attachmentLinkId = attachmentLinkId;
-	}
+    public void setAttachmentLinkId(Long attachmentLinkId) {
+        this.attachmentLinkId = attachmentLinkId;
+    }
 
-	public String getAttachmentName() {
-		return attachmentName;
-	}
+    public String getAttachmentName() {
+        return attachmentName;
+    }
 
-	public void setAttachmentName(String attachmentName) {
-		this.attachmentName = attachmentName;
-	}
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public TestCycleCaseAttachmentRelRepository getTestCycleCaseAttachmentRelRepository() {
-		return testCycleCaseAttachmentRelRepository;
-	}
+    public TestCycleCaseAttachmentRelRepository getTestCycleCaseAttachmentRelRepository() {
+        return testCycleCaseAttachmentRelRepository;
+    }
 
-	public void setTestCycleCaseAttachmentRelRepository(TestCycleCaseAttachmentRelRepository testCycleCaseAttachmentRelRepository) {
-		this.testCycleCaseAttachmentRelRepository = testCycleCaseAttachmentRelRepository;
-	}
+    public void setTestCycleCaseAttachmentRelRepository(TestCycleCaseAttachmentRelRepository testCycleCaseAttachmentRelRepository) {
+        this.testCycleCaseAttachmentRelRepository = testCycleCaseAttachmentRelRepository;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 }

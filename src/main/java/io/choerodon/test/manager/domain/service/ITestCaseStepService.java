@@ -9,12 +9,12 @@ import java.util.List;
  */
 public interface ITestCaseStepService {
 
-	List<TestCaseStepE> query(TestCaseStepE testCaseStepE);
+    List<TestCaseStepE> query(TestCaseStepE testCaseStepE);
 
-	void removeStep(TestCaseStepE testCaseStepE);
+    void removeStep(TestCaseStepE testCaseStepE);
 
-	List<TestCaseStepE> batchInsertStep(List<TestCaseStepE> testCaseStepES);
+    List<TestCaseStepE> batchInsertStep(List<TestCaseStepE> testCaseStepES);
 
-	TestCaseStepE changeStep(TestCaseStepE testCaseStepE);
+    TestCaseStepE changeStep(TestCaseStepE testCaseStepE);
 
 }

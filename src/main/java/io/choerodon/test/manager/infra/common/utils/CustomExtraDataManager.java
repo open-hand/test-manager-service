@@ -10,13 +10,13 @@ import io.choerodon.swagger.custom.extra.ExtraDataManager;
  */
 @ChoerodonExtraData
 public class CustomExtraDataManager implements ExtraDataManager {
-	@Override
-	public ExtraData getData() {
-		ChoerodonRouteData choerodonRouteData = new ChoerodonRouteData();
-		choerodonRouteData.setName("test");
-		choerodonRouteData.setPath("/test/**");
-		choerodonRouteData.setServiceId("test-manager-service");
-		extraData.put(ExtraData.ZUUL_ROUTE_DATA, choerodonRouteData);
-		return extraData;
-	}
+    @Override
+    public ExtraData getData() {
+        ChoerodonRouteData choerodonRouteData = new ChoerodonRouteData();
+        choerodonRouteData.setName("test");
+        choerodonRouteData.setPath("/test/**");
+        choerodonRouteData.setServiceId("test-manager-service");
+        extraData.put(ExtraData.ZUUL_ROUTE_DATA, choerodonRouteData);
+        return extraData;
+    }
 }

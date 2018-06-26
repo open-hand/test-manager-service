@@ -14,31 +14,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestCycleCaseHistoryConvertor implements ConvertorI<TestCycleCaseHistoryE, TestCycleCaseHistoryDO, TestCycleCaseHistoryDTO> {
 
-	@Override
-	public TestCycleCaseHistoryE dtoToEntity(TestCycleCaseHistoryDTO dto) {
-		TestCycleCaseHistoryE testCaseStepE = TestCycleCaseHistoryEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseHistoryE dtoToEntity(TestCycleCaseHistoryDTO dto) {
+        TestCycleCaseHistoryE testCaseStepE = TestCycleCaseHistoryEFactory.create();
+        BeanUtils.copyProperties(dto, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseHistoryDTO entityToDto(TestCycleCaseHistoryE entity) {
-		TestCycleCaseHistoryDTO testCycleCaseDTO = new TestCycleCaseHistoryDTO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseHistoryDTO entityToDto(TestCycleCaseHistoryE entity) {
+        TestCycleCaseHistoryDTO testCycleCaseDTO = new TestCycleCaseHistoryDTO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 
-	@Override
-	public TestCycleCaseHistoryE doToEntity(TestCycleCaseHistoryDO dataObject) {
-		TestCycleCaseHistoryE testCaseStepE = TestCycleCaseHistoryEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseHistoryE doToEntity(TestCycleCaseHistoryDO dataObject) {
+        TestCycleCaseHistoryE testCaseStepE = TestCycleCaseHistoryEFactory.create();
+        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseHistoryDO entityToDo(TestCycleCaseHistoryE entity) {
-		TestCycleCaseHistoryDO testCycleCaseDTO = new TestCycleCaseHistoryDO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO);
-		return testCycleCaseDTO;
-	}
+    @Override
+    public TestCycleCaseHistoryDO entityToDo(TestCycleCaseHistoryE entity) {
+        TestCycleCaseHistoryDO testCycleCaseDTO = new TestCycleCaseHistoryDO();
+        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        return testCycleCaseDTO;
+    }
 }

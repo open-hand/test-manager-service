@@ -7,123 +7,124 @@ import java.util.Date;
  */
 public class TestCycleDTO {
 
-	public TestCycleDTO(Long versionId){
-		this.versionId = versionId;
+    public TestCycleDTO(Long versionId) {
+        this.versionId = versionId;
         this.cycleName = "临时";
         this.type = "Ad hoc";
-	}
-	public TestCycleDTO(){
-	}
+    }
 
-	private Long cycleId;
+    public TestCycleDTO() {
+    }
 
-	private Long parentCycleId;
+    private Long cycleId;
 
-	private String cycleName;
+    private Long parentCycleId;
 
-	private Long versionId;
+    private String cycleName;
 
-	private String description;
+    private Long versionId;
 
-	private String build;
+    private String description;
 
-	private String environment;
+    private String build;
 
-	//	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-	private Date fromDate;
+    private String environment;
 
-	//	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-	private Date toDate;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private Date fromDate;
 
-	private String type;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private Date toDate;
 
-	private Long objectVersionNumber;
+    private String type;
 
-	public Long getCycleId() {
-		return cycleId;
-	}
+    private Long objectVersionNumber;
 
-	public void setCycleId(Long cycleId) {
-		this.cycleId = cycleId;
-	}
+    public Long getCycleId() {
+        return cycleId;
+    }
 
-	public Long getParentCycleId() {
-		return parentCycleId;
-	}
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
-	public void setParentCycleId(Long parentCycleId) {
-		this.parentCycleId = parentCycleId;
-	}
+    public Long getParentCycleId() {
+        return parentCycleId;
+    }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public void setParentCycleId(Long parentCycleId) {
+        this.parentCycleId = parentCycleId;
+    }
 
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getBuild() {
-		return build;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setBuild(String build) {
-		this.build = build;
-	}
+    public String getBuild() {
+        return build;
+    }
 
-	public String getEnvironment() {
-		return environment;
-	}
+    public void setBuild(String build) {
+        this.build = build;
+    }
 
-	public void setEnvironment(String environment) {
-		this.environment = environment;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 }

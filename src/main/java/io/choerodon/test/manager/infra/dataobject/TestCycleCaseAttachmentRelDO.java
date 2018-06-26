@@ -15,60 +15,60 @@ import javax.persistence.Table;
 @VersionAudit
 @Table(name = "test_cycle_case_attachment_rel")
 public class TestCycleCaseAttachmentRelDO extends AuditDomain {
-	@Id
-	@GeneratedValue
-	private Long id;
-	private String attachmentType;
-	private Long attachmentLinkId;
-	private String attachmentName;
-	private String url;
-	private String comment;
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String attachmentType;
+    private Long attachmentLinkId;
+    private String attachmentName;
+    private String url;
+    private String comment;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getAttachmentType() {
-		return attachmentType;
-	}
+    public String getAttachmentType() {
+        return attachmentType;
+    }
 
-	public void setAttachmentType(String attachmentType) {
-		this.attachmentType = attachmentType;
-	}
+    public void setAttachmentType(String attachmentType) {
+        this.attachmentType = attachmentType;
+    }
 
-	public Long getAttachmentLinkId() {
-		return attachmentLinkId;
-	}
+    public Long getAttachmentLinkId() {
+        return attachmentLinkId;
+    }
 
-	public void setAttachmentLinkId(Long attachmentLinkId) {
-		this.attachmentLinkId = attachmentLinkId;
-	}
+    public void setAttachmentLinkId(Long attachmentLinkId) {
+        this.attachmentLinkId = attachmentLinkId;
+    }
 
-	public String getAttachmentName() {
-		return attachmentName;
-	}
+    public String getAttachmentName() {
+        return attachmentName;
+    }
 
-	public void setAttachmentName(String attachmentName) {
-		this.attachmentName = attachmentName;
-	}
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

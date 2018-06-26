@@ -16,146 +16,146 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestCycleE {
-	private Long cycleId;
+    private Long cycleId;
 
-	private Long parentCycleId;
+    private Long parentCycleId;
 
-	private String cycleName;
+    private String cycleName;
 
-	private Long versionId;
+    private Long versionId;
 
-	private String description;
+    private String description;
 
-	private String build;
+    private String build;
 
-	private String environment;
+    private String environment;
 
-	private Date fromDate;
+    private Date fromDate;
 
-	private Date toDate;
+    private Date toDate;
 
-	private String type;
+    private String type;
 
-	private Long objectVersionNumber;
+    private Long objectVersionNumber;
 
-	@Autowired
+    @Autowired
     TestCycleRepository testCycleRepository;
 
-	public Page<TestCycleE> querySelf(PageRequest pageRequest) {
-		return testCycleRepository.query(this, pageRequest);
-	}
+    public Page<TestCycleE> querySelf(PageRequest pageRequest) {
+        return testCycleRepository.query(this, pageRequest);
+    }
 
-	public List<TestCycleE> querySelf() {
-		return testCycleRepository.query(this);
-	}
+    public List<TestCycleE> querySelf() {
+        return testCycleRepository.query(this);
+    }
 
-	public List<TestCycleE> querySelfWithBar() {
-		return testCycleRepository.queryBar(this.versionId);
-	}
+    public List<TestCycleE> querySelfWithBar() {
+        return testCycleRepository.queryBar(this.versionId);
+    }
 
-	public TestCycleE addSelf() {
-		return testCycleRepository.insert(this);
-	}
+    public TestCycleE addSelf() {
+        return testCycleRepository.insert(this);
+    }
 
-	public TestCycleE updateSelf() {
-		return testCycleRepository.update(this);
-	}
+    public TestCycleE updateSelf() {
+        return testCycleRepository.update(this);
+    }
 
-	public void deleteSelf() {
-		testCycleRepository.delete(this);
-	}
+    public void deleteSelf() {
+        testCycleRepository.delete(this);
+    }
 
-	public Long getCycleId() {
-		return cycleId;
-	}
+    public Long getCycleId() {
+        return cycleId;
+    }
 
-	public Long getParentCycleId() {
-		return parentCycleId;
-	}
+    public Long getParentCycleId() {
+        return parentCycleId;
+    }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getBuild() {
-		return build;
-	}
+    public String getBuild() {
+        return build;
+    }
 
-	public String getEnvironment() {
-		return environment;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
-
-
-	public void setCycleId(Long cycleId) {
-		this.cycleId = cycleId;
-	}
-
-	public void setParentCycleId(Long parentCycleId) {
-		this.parentCycleId = parentCycleId;
-	}
-
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
-	public void setBuild(String build) {
-		this.build = build;
-	}
+    public void setParentCycleId(Long parentCycleId) {
+        this.parentCycleId = parentCycleId;
+    }
 
-	public void setEnvironment(String environment) {
-		this.environment = environment;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setBuild(String build) {
+        this.build = build;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 
-	public void setTestCycleRepository(TestCycleRepository testCycleRepository) {
-		this.testCycleRepository = testCycleRepository;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public void setTestCycleRepository(TestCycleRepository testCycleRepository) {
+        this.testCycleRepository = testCycleRepository;
+    }
 }

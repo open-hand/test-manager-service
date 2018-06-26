@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
-	List<TestCycleDO> query(@Param("versionId") Long versionId);
+    List<TestCycleDO> query(@Param("versionId") Long versionId);
 
-//	List<Map<String,Long>> queryAboutBar(@Param("cycleId") Long cycleId);
+//    List<Map<String, Long>> queryAboutBar(@Param("cycleId") Long cycleId);
 }

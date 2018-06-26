@@ -22,18 +22,18 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/test/defect")
 public class TestCycleCaseDefectRelController {
 
-	@Autowired
-	TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+    @Autowired
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
-	@PostMapping
-	public ResponseEntity<TestCycleCaseDefectRelDTO> insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTOS) {
-		return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTOS))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
-	}
+    @PostMapping
+    public ResponseEntity<TestCycleCaseDefectRelDTO> insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTOS) {
+        return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTOS))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testStatus.insert"));
+    }
 
-	@DeleteMapping
-	public void remove(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
-	}
+    @DeleteMapping
+    public void remove(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
+    }
 }

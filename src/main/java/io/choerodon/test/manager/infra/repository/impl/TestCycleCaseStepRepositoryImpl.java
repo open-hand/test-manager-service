@@ -21,47 +21,47 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepRepository {
-	@Autowired
-	TestCycleCaseStepMapper testCycleCaseStepMapper;
+    @Autowired
+    TestCycleCaseStepMapper testCycleCaseStepMapper;
 
-	@Override
-	public TestCycleCaseStepE insert(TestCycleCaseStepE testCycleCaseStepE) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-		if (testCycleCaseStepMapper.insert(convert) != 1) {
-			throw new CommonException("error.testStepCase.insert");
-		}
-		return testCycleCaseStepE;
-	}
+    @Override
+    public TestCycleCaseStepE insert(TestCycleCaseStepE testCycleCaseStepE) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+        if (testCycleCaseStepMapper.insert(convert) != 1) {
+            throw new CommonException("error.testStepCase.insert");
+        }
+        return testCycleCaseStepE;
+    }
 
-	@Override
-	public void delete(TestCycleCaseStepE testCycleCaseStepE) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-		testCycleCaseStepMapper.delete(convert);
-	}
+    @Override
+    public void delete(TestCycleCaseStepE testCycleCaseStepE) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+        testCycleCaseStepMapper.delete(convert);
+    }
 
-	@Override
-	public TestCycleCaseStepE update(TestCycleCaseStepE testCycleCaseStepE) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-		if (testCycleCaseStepMapper.updateByPrimaryKeySelective(convert) != 1) {
-			throw new CommonException("error.testStepCase.update");
-		}
-		return testCycleCaseStepE;
-	}
+    @Override
+    public TestCycleCaseStepE update(TestCycleCaseStepE testCycleCaseStepE) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+        if (testCycleCaseStepMapper.updateByPrimaryKeySelective(convert) != 1) {
+            throw new CommonException("error.testStepCase.update");
+        }
+        return testCycleCaseStepE;
+    }
 
-	@Override
-	public Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+    @Override
+    public Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
 
-		Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-				() -> testCycleCaseStepMapper.select(convert));
+        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testCycleCaseStepMapper.select(convert));
 
-		return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseStepE.class);
-	}
+        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseStepE.class);
+    }
 
-	@Override
-	public List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+    @Override
+    public List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
 
-		return ConvertHelper.convertList(testCycleCaseStepMapper.queryWithTestCaseStep(convert), TestCycleCaseStepE.class);
-	}
+        return ConvertHelper.convertList(testCycleCaseStepMapper.queryWithTestCaseStep(convert), TestCycleCaseStepE.class);
+    }
 }

@@ -10,17 +10,17 @@ import java.util.List;
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
 public interface ITestCycleService {
-	TestCycleE insert(TestCycleE testCycleE);
+    TestCycleE insert(TestCycleE testCycleE);
 
-	void delete(TestCycleE testCycleE);
+    void delete(TestCycleE testCycleE);
 
-	List<TestCycleE> update(List<TestCycleE> testCycleE);
+    List<TestCycleE> update(List<TestCycleE> testCycleE);
 
-	Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
+    Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
 
-	List<TestCycleE> querySubCycle(TestCycleE testCycleE);
+    List<TestCycleE> querySubCycle(TestCycleE testCycleE);
 
-	List<TestCycleE> getTestCycle(Long versionId);
+    List<TestCycleE> getTestCycle(Long versionId);
 
-	List<TestCycleE> queryCycleWithBar(Long versionId);
+    List<TestCycleE> queryCycleWithBar(Long versionId);
 }

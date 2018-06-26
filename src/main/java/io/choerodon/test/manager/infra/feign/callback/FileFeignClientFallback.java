@@ -12,13 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class FileFeignClientFallback implements FileFeignClient {
 
-	@Override
-	public ResponseEntity<String> uploadFile(String bucketName, String fileName, MultipartFile multipartFile) {
-		throw new CommonException("error.file.upload");
-	}
+    @Override
+    public ResponseEntity<String> uploadFile(String bucketName, String fileName, MultipartFile multipartFile) {
+        throw new CommonException("error.file.upload");
+    }
 
-	@Override
-	public ResponseEntity deleteFile(String bucketName, String url) {
-		throw new CommonException("error.file.delete");
-	}
+    @Override
+    public ResponseEntity deleteFile(String bucketName, String url) {
+        throw new CommonException("error.file.delete");
+    }
 }

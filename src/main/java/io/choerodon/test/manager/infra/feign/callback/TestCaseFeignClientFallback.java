@@ -13,40 +13,40 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TestCaseFeignClientFallback implements TestCaseFeignClient {
-	private static final String QUERY_ERROR = "error.UserFeign.query";
-	private static final String UPDATE_ERROR = "error.UserFeign.update";
-	private static final String CREATE_ERROR = "error.UserFeign.create";
-	private static final String DELETE_ERROR = "error.UserFeign.delete";
-	private static final String BATCH_QUERY_ERROR = "error.UserFeign.queryList";
+    private static final String QUERY_ERROR = "error.UserFeign.query";
+    private static final String UPDATE_ERROR = "error.UserFeign.update";
+    private static final String CREATE_ERROR = "error.UserFeign.create";
+    private static final String DELETE_ERROR = "error.UserFeign.delete";
+    private static final String BATCH_QUERY_ERROR = "error.UserFeign.queryList";
 
-	@Override
-	public ResponseEntity<IssueDTO> createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
-		throw new CommonException(CREATE_ERROR);
-	}
+    @Override
+    public ResponseEntity<IssueDTO> createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
+        throw new CommonException(CREATE_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<IssueDTO> updateIssue(Long projectId, JSONObject issueUpdate) {
-		throw new CommonException(UPDATE_ERROR);
-	}
+    @Override
+    public ResponseEntity<IssueDTO> updateIssue(Long projectId, JSONObject issueUpdate) {
+        throw new CommonException(UPDATE_ERROR);
+    }
 
-	@Override
-	public ResponseEntity deleteIssue(Long projectId, Long issueId) {
-		throw new CommonException(DELETE_ERROR);
-	}
+    @Override
+    public ResponseEntity deleteIssue(Long projectId, Long issueId) {
+        throw new CommonException(DELETE_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
-		throw new CommonException(QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
+        throw new CommonException(QUERY_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(int page, int size,
-																  String orders, Long projectId, SearchDTO searchDTO) {
-		throw new CommonException(BATCH_QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(int page, int size,
+                                                                  String orders, Long projectId, SearchDTO searchDTO) {
+        throw new CommonException(BATCH_QUERY_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<Page<IssueCommonDTO>> listByOptions(Long projectId, String typeCode, int page, int size, String orders) {
-		throw new CommonException(BATCH_QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<Page<IssueCommonDTO>> listByOptions(Long projectId, String typeCode, int page, int size, String orders) {
+        throw new CommonException(BATCH_QUERY_ERROR);
+    }
 }

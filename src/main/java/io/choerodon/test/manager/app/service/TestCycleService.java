@@ -12,15 +12,15 @@ import java.util.Map;
  * Created by jialongZuo@hand-china.com on 6/11/18.
  */
 public interface TestCycleService {
-	TestCycleDTO insert(TestCycleDTO testCycleDTO);
+    TestCycleDTO insert(TestCycleDTO testCycleDTO);
 
-	void delete(TestCycleDTO testCycleDTO);
+    void delete(TestCycleDTO testCycleDTO);
 
-	List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO);
+    List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO);
 
-//	Page<TestCycleDTO> query(TestCycleDTO testCycleDTO, PageRequest pageRequest);
+//    Page<TestCycleDTO> query(TestCycleDTO testCycleDTO, PageRequest pageRequest);
 
-	List<TestCycleDTO> getTestCycle(Long versionId);
+    List<TestCycleDTO> getTestCycle(Long versionId);
 
-	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
+    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
 }

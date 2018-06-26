@@ -18,29 +18,29 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRelService {
-	@Autowired
-	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
+    @Autowired
+    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
-	@Override
-	public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		return ConvertHelper.convert(iTestCycleCaseDefectRelService.insert(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
-	}
+    @Override
+    public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+        return ConvertHelper.convert(iTestCycleCaseDefectRelService.insert(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
+    }
 
-	@Override
-	public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
+    @Override
+    public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+        iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
-	}
+    }
 
-//	@Override
-//	public List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
-//		return ConvertHelper.convertList(iTestCycleCaseDefectRelService.update(ConvertHelper.convertList(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
+//    @Override
+//    public List<TestCycleCaseDefectRelDTO> update(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
+//        return ConvertHelper.convertList(iTestCycleCaseDefectRelService.update(ConvertHelper.convertList(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
 //
-//	}
+//    }
 
-	@Override
-	public List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		List<TestCycleCaseDefectRelE> serviceEPage = iTestCycleCaseDefectRelService.query(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
-		return ConvertHelper.convertList(serviceEPage, TestCycleCaseDefectRelDTO.class);
-	}
+    @Override
+    public List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+        List<TestCycleCaseDefectRelE> serviceEPage = iTestCycleCaseDefectRelService.query(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
+        return ConvertHelper.convertList(serviceEPage, TestCycleCaseDefectRelDTO.class);
+    }
 }

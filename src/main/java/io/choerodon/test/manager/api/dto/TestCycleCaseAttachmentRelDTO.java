@@ -7,40 +7,40 @@ import java.sql.Blob;
  */
 
 public class TestCycleCaseAttachmentRelDTO {
-	private String attachmentType;
-	private Long attachmentId;
-	private String attachmentName;
-	private Blob attachment;
+    private String attachmentType;
+    private Long attachmentId;
+    private String attachmentName;
+    private Blob attachment;
 
-	public String getAttachmentType() {
-		return attachmentType;
-	}
+    public String getAttachmentType() {
+        return attachmentType;
+    }
 
-	public void setAttachmentType(String attachmentType) {
-		this.attachmentType = attachmentType;
-	}
+    public void setAttachmentType(String attachmentType) {
+        this.attachmentType = attachmentType;
+    }
 
-	public Long getAttachmentId() {
-		return attachmentId;
-	}
+    public Long getAttachmentId() {
+        return attachmentId;
+    }
 
-	public void setAttachmentId(Long attachmentId) {
-		this.attachmentId = attachmentId;
-	}
+    public void setAttachmentId(Long attachmentId) {
+        this.attachmentId = attachmentId;
+    }
 
-	public String getAttachmentName() {
-		return attachmentName;
-	}
+    public String getAttachmentName() {
+        return attachmentName;
+    }
 
-	public void setAttachmentName(String attachmentName) {
-		this.attachmentName = attachmentName;
-	}
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
+    }
 
-	public Blob getAttachment() {
-		return attachment;
-	}
+    public Blob getAttachment() {
+        return attachment;
+    }
 
-	public void setAttachment(Blob attachment) {
-		this.attachment = attachment;
-	}
+    public void setAttachment(Blob attachment) {
+        this.attachment = attachment;
+    }
 }

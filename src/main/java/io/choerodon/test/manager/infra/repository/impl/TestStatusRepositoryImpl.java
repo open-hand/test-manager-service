@@ -16,38 +16,38 @@ import java.util.List;
  */
 @Component
 public class TestStatusRepositoryImpl implements TestStatusRepository {
-	@Autowired
-	TestStatusMapper testStatusMapper;
+    @Autowired
+    TestStatusMapper testStatusMapper;
 
-	@Override
-	public List<TestStatusE> query(TestStatusE testStatusE) {
-		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		return ConvertHelper.convertList(testStatusMapper.select(testStatusDO), TestStatusE.class);
-	}
+    @Override
+    public List<TestStatusE> query(TestStatusE testStatusE) {
+        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+        return ConvertHelper.convertList(testStatusMapper.select(testStatusDO), TestStatusE.class);
+    }
 
-	@Override
-	public TestStatusE insert(TestStatusE testStatusE) {
-		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		if (testStatusMapper.insert(testStatusDO) != 1) {
-			throw new CommonException("error.test.status.insert");
-		}
-		return ConvertHelper.convert(testStatusDO, TestStatusE.class);
-	}
+    @Override
+    public TestStatusE insert(TestStatusE testStatusE) {
+        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+        if (testStatusMapper.insert(testStatusDO) != 1) {
+            throw new CommonException("error.test.status.insert");
+        }
+        return ConvertHelper.convert(testStatusDO, TestStatusE.class);
+    }
 
-	@Override
-	public void delete(TestStatusE testStatusE) {
-		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		if (testStatusMapper.delete(testStatusDO) != 1) {
-			throw new CommonException("error.test.status.delete");
-		}
-	}
+    @Override
+    public void delete(TestStatusE testStatusE) {
+        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+        if (testStatusMapper.delete(testStatusDO) != 1) {
+            throw new CommonException("error.test.status.delete");
+        }
+    }
 
-	@Override
-	public TestStatusE update(TestStatusE testStatusE) {
-		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
-			throw new CommonException("error.test.status.update");
-		}
-		return ConvertHelper.convert(testStatusDO, TestStatusE.class);
-	}
+    @Override
+    public TestStatusE update(TestStatusE testStatusE) {
+        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+        if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
+            throw new CommonException("error.test.status.update");
+        }
+        return ConvertHelper.convert(testStatusDO, TestStatusE.class);
+    }
 }

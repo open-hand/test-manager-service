@@ -17,12 +17,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class FeignMultipartSupportConfig {
 
-	@Autowired
-	private ObjectFactory<HttpMessageConverters> messageConverters;
+    @Autowired
+    private ObjectFactory<HttpMessageConverters> messageConverters;
 
-	@Bean
-	public Encoder feignFormEncoder() {
-		return new SpringFormEncoder(new SpringEncoder(messageConverters));
-	}
+    @Bean
+    public Encoder feignFormEncoder() {
+        return new SpringFormEncoder(new SpringEncoder(messageConverters));
+    }
 }
 

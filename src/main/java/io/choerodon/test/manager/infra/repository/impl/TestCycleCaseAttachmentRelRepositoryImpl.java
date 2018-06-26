@@ -21,46 +21,46 @@ import java.util.List;
 @Component
 public class TestCycleCaseAttachmentRelRepositoryImpl implements TestCycleCaseAttachmentRelRepository {
 
-	@Autowired
-	TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
+    @Autowired
+    TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
-	@Override
-	public TestCycleCaseAttachmentRelE insert(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
-		TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-		if (testCycleCaseAttachmentRelMapper.insert(convert) != 1) {
-			throw new CommonException("error.testStepCase.insert");
-		}
-		return ConvertHelper.convert(convert, TestCycleCaseAttachmentRelE.class);
-	}
+    @Override
+    public TestCycleCaseAttachmentRelE insert(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
+        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
+        if (testCycleCaseAttachmentRelMapper.insert(convert) != 1) {
+            throw new CommonException("error.testStepCase.insert");
+        }
+        return ConvertHelper.convert(convert, TestCycleCaseAttachmentRelE.class);
+    }
 
-	@Override
-	public void delete(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
-		TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-		testCycleCaseAttachmentRelMapper.delete(convert);
-	}
+    @Override
+    public void delete(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
+        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
+        testCycleCaseAttachmentRelMapper.delete(convert);
+    }
 
-	@Override
-	public TestCycleCaseAttachmentRelE update(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
-		TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-		if (testCycleCaseAttachmentRelMapper.updateByPrimaryKeySelective(convert) != 1) {
-			throw new CommonException("error.testStepCase.update");
-		}
-		return testCycleCaseAttachmentRelE;
-	}
+    @Override
+    public TestCycleCaseAttachmentRelE update(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
+        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
+        if (testCycleCaseAttachmentRelMapper.updateByPrimaryKeySelective(convert) != 1) {
+            throw new CommonException("error.testStepCase.update");
+        }
+        return testCycleCaseAttachmentRelE;
+    }
 
-	@Override
-	public Page<TestCycleCaseAttachmentRelE> query(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE, PageRequest pageRequest) {
-		TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
+    @Override
+    public Page<TestCycleCaseAttachmentRelE> query(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE, PageRequest pageRequest) {
+        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
 
-		Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-				() -> testCycleCaseAttachmentRelMapper.select(convert));
-		return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseAttachmentRelE.class);
-	}
+        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testCycleCaseAttachmentRelMapper.select(convert));
+        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseAttachmentRelE.class);
+    }
 
-	@Override
-	public List<TestCycleCaseAttachmentRelE> query(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
-		TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
+    @Override
+    public List<TestCycleCaseAttachmentRelE> query(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
+        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
 
-		return ConvertHelper.convertList(testCycleCaseAttachmentRelMapper.select(convert), TestCycleCaseAttachmentRelE.class);
-	}
+        return ConvertHelper.convertList(testCycleCaseAttachmentRelMapper.select(convert), TestCycleCaseAttachmentRelE.class);
+    }
 }

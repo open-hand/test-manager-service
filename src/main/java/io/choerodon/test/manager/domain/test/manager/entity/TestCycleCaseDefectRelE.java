@@ -16,85 +16,85 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestCycleCaseDefectRelE {
-	private Long id;
-	private String defectType;
-	private Long defectLinkId;
-	private Long issueId;
-	private String defectName;
-	private Long objectVersionNumber;
+    private Long id;
+    private String defectType;
+    private Long defectLinkId;
+    private Long issueId;
+    private String defectName;
+    private Long objectVersionNumber;
 
-	@Autowired
-	private TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository;
+    @Autowired
+    private TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository;
 
-	public List<TestCycleCaseDefectRelE> querySelf() {
-		return testCycleCaseDefectRelRepository.query(this);
-	}
+    public List<TestCycleCaseDefectRelE> querySelf() {
+        return testCycleCaseDefectRelRepository.query(this);
+    }
 
-	public TestCycleCaseDefectRelE addSelf() {
-		return testCycleCaseDefectRelRepository.insert(this);
-	}
+    public TestCycleCaseDefectRelE addSelf() {
+        return testCycleCaseDefectRelRepository.insert(this);
+    }
 
-	public TestCycleCaseDefectRelE updateSelf() {
-		return testCycleCaseDefectRelRepository.update(this);
-	}
+    public TestCycleCaseDefectRelE updateSelf() {
+        return testCycleCaseDefectRelRepository.update(this);
+    }
 
-	public void deleteSelf() {
-		testCycleCaseDefectRelRepository.delete(this);
-	}
+    public void deleteSelf() {
+        testCycleCaseDefectRelRepository.delete(this);
+    }
 
-	public String getDefectType() {
-		return defectType;
-	}
+    public String getDefectType() {
+        return defectType;
+    }
 
-	public Long getDefectLinkId() {
-		return defectLinkId;
-	}
+    public Long getDefectLinkId() {
+        return defectLinkId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setDefectType(String defectType) {
-		this.defectType = defectType;
-	}
+    public void setDefectType(String defectType) {
+        this.defectType = defectType;
+    }
 
-	public void setDefectLinkId(Long defectLinkId) {
-		this.defectLinkId = defectLinkId;
-	}
+    public void setDefectLinkId(Long defectLinkId) {
+        this.defectLinkId = defectLinkId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getDefectName() {
-		return defectName;
-	}
+    public String getDefectName() {
+        return defectName;
+    }
 
-	public void setDefectName(String defectName) {
-		this.defectName = defectName;
-	}
+    public void setDefectName(String defectName) {
+        this.defectName = defectName;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public TestCycleCaseDefectRelRepository getTestCycleCaseDefectRelRepository() {
-		return testCycleCaseDefectRelRepository;
-	}
+    public TestCycleCaseDefectRelRepository getTestCycleCaseDefectRelRepository() {
+        return testCycleCaseDefectRelRepository;
+    }
 
-	public void setTestCycleCaseDefectRelRepository(TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository) {
-		this.testCycleCaseDefectRelRepository = testCycleCaseDefectRelRepository;
-	}
+    public void setTestCycleCaseDefectRelRepository(TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository) {
+        this.testCycleCaseDefectRelRepository = testCycleCaseDefectRelRepository;
+    }
 }
