@@ -10,13 +10,14 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
 public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService {
@@ -26,7 +27,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
     @Autowired
     ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
@@ -34,6 +35,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCycleCaseStepE.deleteSelf();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
         testCycleCaseStepE.deleteSelf();
@@ -41,6 +43,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
         List<TestCycleCaseStepE> list = new ArrayList<>();
         testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
@@ -56,14 +59,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCycleCaseEs.forEach(v -> {
             v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
         });
-//        testCycleCaseEs.forEach(v -> {
-//            Optional.ofNullable(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"))
-//                    .ifPresent(u -> {
-//                        v.setDefectId(u.getId());
-//                        v.setDefectIssueId(u.getIssueId());
-//                        v.setDefectName(u.getDefectName());
-//                    });
-//        });
         return testCycleCaseEs;
     }
 
@@ -73,6 +68,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
      *
      * @param testCycleCaseE
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
         TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();

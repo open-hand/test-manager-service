@@ -11,59 +11,59 @@ import io.choerodon.agile.infra.common.utils.StringUtil;
  */
 public class IssueLinkDTO {
 
-	private Long issueId;
+    private Long issueId;
 
-	private String issueLinkTypeCode;
+    private String issueLinkTypeCode;
 
-	private Long linkedIssueId;
+    private Long linkedIssueId;
 
-	private Long objectVersionNumber;
+    private Long objectVersionNumber;
 
-	private String summary;
+    private String summary;
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getIssueLinkTypeCode() {
-		return issueLinkTypeCode;
-	}
+    public String getIssueLinkTypeCode() {
+        return issueLinkTypeCode;
+    }
 
-	public void setIssueLinkTypeCode(String issueLinkTypeCode) {
-		this.issueLinkTypeCode = issueLinkTypeCode;
-	}
+    public void setIssueLinkTypeCode(String issueLinkTypeCode) {
+        this.issueLinkTypeCode = issueLinkTypeCode;
+    }
 
-	public Long getLinkedIssueId() {
-		return linkedIssueId;
-	}
+    public Long getLinkedIssueId() {
+        return linkedIssueId;
+    }
 
-	public void setLinkedIssueId(Long linkedIssueId) {
-		this.linkedIssueId = linkedIssueId;
-	}
+    public void setLinkedIssueId(Long linkedIssueId) {
+        this.linkedIssueId = linkedIssueId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }

@@ -10,34 +10,34 @@ import java.util.Map;
  */
 public class SearchDTO {
 
-	/**
-	 * 输入查询参数
-	 */
-	private Map<String, Object> searchArgs;
+    /**
+     * 输入查询参数
+     */
+    private Map<String, Object> searchArgs;
 
-	/**
-	 * 过滤查询参数
-	 */
-	private Map<String, Object> advancedSearchArgs;
+    /**
+     * 过滤查询参数
+     */
+    private Map<String, Object> advancedSearchArgs;
 
-	public Map<String, Object> getSearchArgs() {
-		return searchArgs;
-	}
+    public Map<String, Object> getSearchArgs() {
+        return searchArgs;
+    }
 
-	public void setSearchArgs(Map<String, Object> searchArgs) {
-		this.searchArgs = searchArgs;
-	}
+    public void setSearchArgs(Map<String, Object> searchArgs) {
+        this.searchArgs = searchArgs;
+    }
 
-	public Map<String, Object> getAdvancedSearchArgs() {
-		return advancedSearchArgs;
-	}
+    public Map<String, Object> getAdvancedSearchArgs() {
+        return advancedSearchArgs;
+    }
 
-	public void setAdvancedSearchArgs(Map<String, Object> advancedSearchArgs) {
-		this.advancedSearchArgs = advancedSearchArgs;
-	}
+    public void setAdvancedSearchArgs(Map<String, Object> advancedSearchArgs) {
+        this.advancedSearchArgs = advancedSearchArgs;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 }

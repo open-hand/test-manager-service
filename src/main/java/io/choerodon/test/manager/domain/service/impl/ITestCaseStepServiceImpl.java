@@ -15,7 +15,7 @@ import java.util.List;
 
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 
 @Service
@@ -74,46 +74,5 @@ public class ITestCaseStepServiceImpl implements ITestCaseStepService {
         return testCaseStepE;
     }
 
-//    enum Operation {
-//        INSERT {
-//            @Override
-//            public String getRank(String lastRank, String nextRank) {
-//                String rank;
-//                if (StringUtils.isEmpty(lastRank) && StringUtils.isEmpty(nextRank)) {
-//                    rank = RankUtil.mid();
-//                } else {
-//                    rank = super.getRank(lastRank, nextRank);
-//                }
-//                return rank;
-//            }
-//        }, UPDATE {
-//            @Override
-//            public String getRank(String lastRank, String nextRank) {
-//                String rank;
-//                if (StringUtils.isEmpty(lastRank) && StringUtils.isEmpty(nextRank)) {
-//                    rank = null;
-//                } else {
-//                    rank = super.getRank(lastRank, nextRank);
-//                }
-//                return rank;
-//            }
-//        };
-//
-//        public String getRank(String lastRank, String nextRank) {
-//            String rank;
-//            if (StringUtils.isEmpty(lastRank) && StringUtils.isEmpty(nextRank)) {
-//                throw new CommonException("error.get.rank");
-//            } else if (StringUtils.isEmpty(lastRank)) {
-//                lastRank = RankUtil.genPre(nextRank);
-//                rank = RankUtil.between(lastRank, nextRank);
-//            } else if (StringUtils.isEmpty(nextRank)) {
-//                nextRank = RankUtil.genNext(lastRank);
-//                rank = RankUtil.between(lastRank, nextRank);
-//            } else {
-//                rank = RankUtil.between(lastRank, nextRank);
-//            }
-//            return rank;
-//        }
-//    }
 
 }

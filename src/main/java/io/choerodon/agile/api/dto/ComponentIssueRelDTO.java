@@ -9,59 +9,59 @@ import io.choerodon.agile.infra.common.utils.StringUtil;
  */
 public class ComponentIssueRelDTO {
 
-	private Long componentId;
+    private Long componentId;
 
-	private Long issueId;
+    private Long issueId;
 
-	private String name;
+    private String name;
 
-	private Long projectId;
+    private Long projectId;
 
-	private Long objectVersionNumber;
+    private Long objectVersionNumber;
 
-	public Long getComponentId() {
-		return componentId;
-	}
+    public Long getComponentId() {
+        return componentId;
+    }
 
-	public void setComponentId(Long componentId) {
-		this.componentId = componentId;
-	}
+    public void setComponentId(Long componentId) {
+        this.componentId = componentId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/13/18.
+ * Created by 842767365@qq.com on 6/13/18.
  */
 @Component
 @FeignClient(value = "agile-service", fallback = ProductionVersionClientFallback.class)

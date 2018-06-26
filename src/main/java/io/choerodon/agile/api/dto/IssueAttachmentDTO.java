@@ -9,79 +9,79 @@ import io.choerodon.agile.infra.common.utils.StringUtil;
  */
 public class IssueAttachmentDTO {
 
-	private Long attachmentId;
+    private Long attachmentId;
 
-	private Long issueId;
+    private Long issueId;
 
-	private Long commentId;
+    private Long commentId;
 
-	private String url;
+    private String url;
 
-	private String fileName;
+    private String fileName;
 
-	private Long projectId;
+    private Long projectId;
 
-	private Long objectVersionNumber;
+    private Long objectVersionNumber;
 
-	public Long getAttachmentId() {
-		return attachmentId;
-	}
+    public Long getAttachmentId() {
+        return attachmentId;
+    }
 
-	public void setAttachmentId(Long attachmentId) {
-		this.attachmentId = attachmentId;
-	}
+    public void setAttachmentId(Long attachmentId) {
+        this.attachmentId = attachmentId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public Long getCommentId() {
-		return commentId;
-	}
+    public Long getCommentId() {
+        return commentId;
+    }
 
-	public void setCommentId(Long commentId) {
-		this.commentId = commentId;
-	}
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getFileName() {
-		return fileName;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }

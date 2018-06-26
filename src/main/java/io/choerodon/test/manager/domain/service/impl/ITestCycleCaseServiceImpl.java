@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
@@ -22,7 +23,7 @@ import java.util.*;
 
 
 /**
- * Created by jialongZuo@hand-china.com on 6/11/18.
+ * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
 public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
@@ -30,12 +31,15 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
     ITestCycleCaseStepService iTestCycleCaseStepService;
 
     @Autowired
+    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
+
+    @Autowired
     ProductionVersionClient productionVersionClient;
 
     private final String TEMP_CYCLE_NAME = "临时";
     private final String TEMP_CYCLE_TYPE = "CYCLE";
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(TestCycleCaseE testCycleCaseE) {
         List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
@@ -63,6 +67,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
         testCycleCaseE = testCycleCaseE.queryOne();
         if (testCycleCaseE != null) {
             testCycleCaseE.setTestCycleCaseStepES(iTestCycleCaseStepService.querySubStep(testCycleCaseE));
+            testCycleCaseE.setDefects(iTestCycleCaseDefectRelService.query(testCycleCaseE.getExecuteId(), "CYCLE_CASE"));
         }
         return testCycleCaseE;
     }
