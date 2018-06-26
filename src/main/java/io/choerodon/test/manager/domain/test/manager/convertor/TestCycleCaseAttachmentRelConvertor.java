@@ -14,31 +14,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestCycleCaseAttachmentRelConvertor implements ConvertorI<TestCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO, TestCycleCaseAttachmentRelDTO> {
 
-	@Override
-	public TestCycleCaseAttachmentRelE dtoToEntity(TestCycleCaseAttachmentRelDTO dto) {
-		TestCycleCaseAttachmentRelE testCaseStepE = TestCycleCaseAttachmentRelEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseAttachmentRelE dtoToEntity(TestCycleCaseAttachmentRelDTO dto) {
+        TestCycleCaseAttachmentRelE testCaseStepE = TestCycleCaseAttachmentRelEFactory.create();
+        BeanUtils.copyProperties(dto, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseAttachmentRelDTO entityToDto(TestCycleCaseAttachmentRelE entity) {
-		TestCycleCaseAttachmentRelDTO stepDO = new TestCycleCaseAttachmentRelDTO();
-		BeanUtils.copyProperties(entity, stepDO);
-		return stepDO;
-	}
+    @Override
+    public TestCycleCaseAttachmentRelDTO entityToDto(TestCycleCaseAttachmentRelE entity) {
+        TestCycleCaseAttachmentRelDTO stepDO = new TestCycleCaseAttachmentRelDTO();
+        BeanUtils.copyProperties(entity, stepDO);
+        return stepDO;
+    }
 
-	@Override
-	public TestCycleCaseAttachmentRelE doToEntity(TestCycleCaseAttachmentRelDO dataObject) {
-		TestCycleCaseAttachmentRelE testCaseStepE = TestCycleCaseAttachmentRelEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE);
-		return testCaseStepE;
-	}
+    @Override
+    public TestCycleCaseAttachmentRelE doToEntity(TestCycleCaseAttachmentRelDO dataObject) {
+        TestCycleCaseAttachmentRelE testCaseStepE = TestCycleCaseAttachmentRelEFactory.create();
+        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        return testCaseStepE;
+    }
 
-	@Override
-	public TestCycleCaseAttachmentRelDO entityToDo(TestCycleCaseAttachmentRelE entity) {
-		TestCycleCaseAttachmentRelDO stepDO = new TestCycleCaseAttachmentRelDO();
-		BeanUtils.copyProperties(entity, stepDO);
-		return stepDO;
-	}
+    @Override
+    public TestCycleCaseAttachmentRelDO entityToDo(TestCycleCaseAttachmentRelE entity) {
+        TestCycleCaseAttachmentRelDO stepDO = new TestCycleCaseAttachmentRelDO();
+        BeanUtils.copyProperties(entity, stepDO);
+        return stepDO;
+    }
 }

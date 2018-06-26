@@ -16,28 +16,28 @@ import org.springframework.web.multipart.MultipartFile;
 public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAttachmentRelService {
 
 
-	@Autowired
-	FileFeignClient fileFeignClient;
+    @Autowired
+    FileFeignClient fileFeignClient;
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void delete(String bucketName, Long attachId) {
-		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
-		attachmentRelE.setId(attachId);
-		fileFeignClient.deleteFile(bucketName, attachmentRelE.querySelf().get(0).getUrl());
-		attachmentRelE.deleteSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(String bucketName, Long attachId) {
+        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
+        attachmentRelE.setId(attachId);
+        fileFeignClient.deleteFile(bucketName, attachmentRelE.querySelf().get(0).getUrl());
+        attachmentRelE.deleteSelf();
+    }
 
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
-		attachmentRelE.setAttachmentLinkId(attachmentLinkId);
-		attachmentRelE.setAttachmentName(fileName);
-		attachmentRelE.setComment(comment);
-		attachmentRelE.setUrl(fileFeignClient.uploadFile(bucketName, fileName, file).getBody());
-		attachmentRelE.setAttachmentType(attachmentType);
-		return attachmentRelE.addSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
+        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
+        attachmentRelE.setAttachmentLinkId(attachmentLinkId);
+        attachmentRelE.setAttachmentName(fileName);
+        attachmentRelE.setComment(comment);
+        attachmentRelE.setUrl(fileFeignClient.uploadFile(bucketName, fileName, file).getBody());
+        attachmentRelE.setAttachmentType(attachmentType);
+        return attachmentRelE.addSelf();
+    }
 }

@@ -11,95 +11,95 @@ import java.util.List;
  */
 
 public class ProductVersionPageDTO {
-	private Long versionId;
-	private String name;
-	private String description;
-	private Date startDate;
-	private Date releaseDate;
-	private String statusCode;
-	private String status;
-	private Long projectId;
-	private Long objectVersionNumber;
-	@Transient
-	private List<TestCycleDTO> testCycleDTOS;
+    private Long versionId;
+    private String name;
+    private String description;
+    private Date startDate;
+    private Date releaseDate;
+    private String statusCode;
+    private String status;
+    private Long projectId;
+    private Long objectVersionNumber;
+    @Transient
+    private List<TestCycleDTO> testCycleDTOS;
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Date getReleaseDate() {
-		return releaseDate;
-	}
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
 
-	public void setReleaseDate(Date releaseDate) {
-		this.releaseDate = releaseDate;
-	}
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
+    }
 
-	public String getStatusCode() {
-		return statusCode;
-	}
+    public String getStatusCode() {
+        return statusCode;
+    }
 
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
-	}
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public List<TestCycleDTO> getTestCycleDTOS() {
-		return testCycleDTOS;
-	}
+    public List<TestCycleDTO> getTestCycleDTOS() {
+        return testCycleDTOS;
+    }
 
-	public void setTestCycleDTOS(List<TestCycleDTO> testCycleDTOS) {
-		this.testCycleDTOS = testCycleDTOS;
-	}
+    public void setTestCycleDTOS(List<TestCycleDTO> testCycleDTOS) {
+        this.testCycleDTOS = testCycleDTOS;
+    }
 }

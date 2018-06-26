@@ -12,29 +12,29 @@ import java.util.List;
 public interface ITestCycleCaseService {
 //	TestCycleCaseE insert(TestCycleCaseE testCycleCaseE);
 
-	/**
-	 * 创建一个测试例
-	 *
-	 * @param testCycleCaseE
-	 * @return
-	 */
-	TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
+    /**
+     * 创建一个测试例
+     *
+     * @param testCycleCaseE
+     * @return
+     */
+    TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 
-	void delete(TestCycleCaseE testCycleCaseE);
+    void delete(TestCycleCaseE testCycleCaseE);
 
-//	void deleteByCycleId(Long cycleId);
+//    void deleteByCycleId(Long cycleId);
 
-//	List<TestCycleCaseE> update(List<TestCycleCaseE> testCycleCaseE);
+//    List<TestCycleCaseE> update(List<TestCycleCaseE> testCycleCaseE);
 
-	Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
+    Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
-//	List<TestCycleCaseE> querySubCase(TestCycleCaseE testCycleCaseE);
+//    List<TestCycleCaseE> querySubCase(TestCycleCaseE testCycleCaseE);
 
-	List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
+    List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 
-	TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
+    TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
 
-//	List<TestCycleCaseE> changeCycleCase(List<TestCycleCaseE> testCycleCaseES);
+//    List<TestCycleCaseE> changeCycleCase(List<TestCycleCaseE> testCycleCaseES);
 
-	TestCycleCaseE changeStep(TestCycleCaseE currentStepE, Long projectId);
+    TestCycleCaseE changeStep(TestCycleCaseE currentStepE, Long projectId);
 }

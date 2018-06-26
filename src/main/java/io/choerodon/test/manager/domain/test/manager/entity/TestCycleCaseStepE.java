@@ -19,151 +19,151 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestCycleCaseStepE {
-	private Long executeStepId;
+    private Long executeStepId;
 
-	private Long executeId;
+    private Long executeId;
 
-	private Long stepId;
+    private Long stepId;
 
-	private String comment;
+    private String comment;
 
-	private String testStep;
+    private String testStep;
 
-	private String testData;
+    private String testData;
 
-	private String expectedResult;
+    private String expectedResult;
 
-	private Long objectVersionNumber;
-
-
-	private List<TestCycleCaseAttachmentRelE> caseAttachment;
+    private Long objectVersionNumber;
 
 
-	private List<TestCycleCaseAttachmentRelE> stepAttachment;
+    private List<TestCycleCaseAttachmentRelE> caseAttachment;
 
 
-	private List<TestCycleCaseDefectRelE> defects;
+    private List<TestCycleCaseAttachmentRelE> stepAttachment;
 
 
-	@Autowired
-	private TestCycleCaseStepRepository testCycleCaseStepRepository;
-
-	public Page<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
-		return testCycleCaseStepRepository.query(this, pageRequest);
-	}
-
-	public List<TestCycleCaseStepE> querySelf() {
-		return testCycleCaseStepRepository.query(this);
-	}
-
-	public TestCycleCaseStepE addSelf() {
-		return testCycleCaseStepRepository.insert(this);
-	}
-
-	public TestCycleCaseStepE updateSelf() {
-		return testCycleCaseStepRepository.update(this);
-	}
-
-	public void deleteSelf() {
-		testCycleCaseStepRepository.delete(this);
-	}
-
-	public Long getExecuteStepId() {
-		return executeStepId;
-	}
-
-	public Long getExecuteId() {
-		return executeId;
-	}
-
-	public Long getStepId() {
-		return stepId;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
-
-	public void setExecuteStepId(Long executeStepId) {
-		this.executeStepId = executeStepId;
-	}
-
-	public void setExecuteId(Long executeId) {
-		this.executeId = executeId;
-	}
-
-	public void setStepId(Long stepId) {
-		this.stepId = stepId;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
-
-	public void setTestCycleCaseStepRepository(TestCycleCaseStepRepository testCycleCaseStepRepository) {
-		this.testCycleCaseStepRepository = testCycleCaseStepRepository;
-	}
+    private List<TestCycleCaseDefectRelE> defects;
 
 
-	public String getTestStep() {
-		return testStep;
-	}
+    @Autowired
+    private TestCycleCaseStepRepository testCycleCaseStepRepository;
 
-	public void setTestStep(String testStep) {
-		this.testStep = testStep;
-	}
+    public Page<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
+        return testCycleCaseStepRepository.query(this, pageRequest);
+    }
 
-	public String getTestData() {
-		return testData;
-	}
+    public List<TestCycleCaseStepE> querySelf() {
+        return testCycleCaseStepRepository.query(this);
+    }
 
-	public void setTestData(String testData) {
-		this.testData = testData;
-	}
+    public TestCycleCaseStepE addSelf() {
+        return testCycleCaseStepRepository.insert(this);
+    }
 
-	public String getExpectedResult() {
-		return expectedResult;
-	}
+    public TestCycleCaseStepE updateSelf() {
+        return testCycleCaseStepRepository.update(this);
+    }
 
-	public void setExpectedResult(String expectedResult) {
-		this.expectedResult = expectedResult;
-	}
+    public void deleteSelf() {
+        testCycleCaseStepRepository.delete(this);
+    }
 
-	public TestCycleCaseStepRepository getTestCycleCaseStepRepository() {
-		return testCycleCaseStepRepository;
-	}
+    public Long getExecuteStepId() {
+        return executeStepId;
+    }
 
-	public List<TestCycleCaseAttachmentRelE> getCaseAttachment() {
-		return caseAttachment;
-	}
+    public Long getExecuteId() {
+        return executeId;
+    }
+
+    public Long getStepId() {
+        return stepId;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setExecuteStepId(Long executeStepId) {
+        this.executeStepId = executeStepId;
+    }
+
+    public void setExecuteId(Long executeId) {
+        this.executeId = executeId;
+    }
+
+    public void setStepId(Long stepId) {
+        this.stepId = stepId;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public void setTestCycleCaseStepRepository(TestCycleCaseStepRepository testCycleCaseStepRepository) {
+        this.testCycleCaseStepRepository = testCycleCaseStepRepository;
+    }
 
 
-	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
-		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelE.class);
-	}
+    public String getTestStep() {
+        return testStep;
+    }
 
-	public List<TestCycleCaseAttachmentRelE> getStepAttachment() {
-		return stepAttachment;
-	}
+    public void setTestStep(String testStep) {
+        this.testStep = testStep;
+    }
 
-	public void setStepAttachment(List<TestCycleCaseAttachmentRelDO> stepAttachment) {
-		this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelE.class);
-	}
+    public String getTestData() {
+        return testData;
+    }
 
-	public List<TestCycleCaseDefectRelE> getDefects() {
-		return defects;
-	}
+    public void setTestData(String testData) {
+        this.testData = testData;
+    }
 
-	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-		this.defects = defects;
-	}
+    public String getExpectedResult() {
+        return expectedResult;
+    }
+
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult;
+    }
+
+    public TestCycleCaseStepRepository getTestCycleCaseStepRepository() {
+        return testCycleCaseStepRepository;
+    }
+
+    public List<TestCycleCaseAttachmentRelE> getCaseAttachment() {
+        return caseAttachment;
+    }
+
+
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+        this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelE.class);
+    }
+
+    public List<TestCycleCaseAttachmentRelE> getStepAttachment() {
+        return stepAttachment;
+    }
+
+    public void setStepAttachment(List<TestCycleCaseAttachmentRelDO> stepAttachment) {
+        this.stepAttachment = ConvertHelper.convertList(stepAttachment, TestCycleCaseAttachmentRelE.class);
+    }
+
+    public List<TestCycleCaseDefectRelE> getDefects() {
+        return defects;
+    }
+
+    public void setDefects(List<TestCycleCaseDefectRelE> defects) {
+        this.defects = defects;
+    }
 
 }

@@ -15,30 +15,30 @@ import java.util.List;
  */
 @Component
 public class TestCaseStepServiceImpl implements TestCaseStepService {
-	@Autowired
+    @Autowired
     ITestCaseStepService iTestCaseStepService;
 
 
-	@Override
-	public void removeStep(TestCaseStepDTO testCaseStepDTO) {
-		iTestCaseStepService.removeStep(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class));
-	}
+    @Override
+    public void removeStep(TestCaseStepDTO testCaseStepDTO) {
+        iTestCaseStepService.removeStep(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class));
+    }
 
 
-	@Override
-	public List<TestCaseStepDTO> query(TestCaseStepDTO testCaseStepDTO) {
-		return ConvertHelper.convertList(iTestCaseStepService.query(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
-	}
+    @Override
+    public List<TestCaseStepDTO> query(TestCaseStepDTO testCaseStepDTO) {
+        return ConvertHelper.convertList(iTestCaseStepService.query(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
+    }
 
-	@Override
-	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO) {
-		return ConvertHelper.convert(iTestCaseStepService.changeStep(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
-	}
+    @Override
+    public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO) {
+        return ConvertHelper.convert(iTestCaseStepService.changeStep(ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
+    }
 
 
-	@Override
-	public List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO) {
-		return ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(ConvertHelper.convertList(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
-	}
+    @Override
+    public List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO) {
+        return ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(ConvertHelper.convertList(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
+    }
 
 }

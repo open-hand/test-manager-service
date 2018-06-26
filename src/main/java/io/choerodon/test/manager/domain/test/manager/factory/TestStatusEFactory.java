@@ -7,8 +7,8 @@ import io.choerodon.core.convertor.ApplicationContextHelper;
  * Created by 842767365@qq.com on 6/25/18.
  */
 public class TestStatusEFactory {
-	public static TestStatusE create() {
-		return ApplicationContextHelper.getSpringFactory().getBean(TestStatusE.class);
-	}
+    public static TestStatusE create() {
+        return ApplicationContextHelper.getSpringFactory().getBean(TestStatusE.class);
+    }
 
 }

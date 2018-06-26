@@ -10,34 +10,34 @@ import java.util.List;
  */
 public interface TestCycleCaseStepService {
 
-	/**
-	 * 更新循环步骤
-	 *
-	 * @param testCycleCaseStepDTO
-	 * @return
-	 */
-	List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO);
+    /**
+     * 更新循环步骤
+     *
+     * @param testCycleCaseStepDTO
+     * @return
+     */
+    List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO);
 
 
-	/**
-	 * 查询循环测试步骤
-	 *
-	 * @param testCycleCaseDTO
-	 * @return
-	 */
-	List<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId);
+    /**
+     * 查询循环测试步骤
+     *
+     * @param testCycleCaseDTO
+     * @return
+     */
+    List<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId);
 
-	/**
-	 * 启动循环测试下所有步骤
-	 *
-	 * @param testCycleCaseDTO
-	 */
-	void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
+    /**
+     * 启动循环测试下所有步骤
+     *
+     * @param testCycleCaseDTO
+     */
+    void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 
-	/**
-	 * 删除CycleCase下所有Step
-	 *
-	 * @param testCycleCaseDTO
-	 */
-	void deleteByTestCycleCase(TestCycleCaseDTO testCycleCaseDTO);
+    /**
+     * 删除CycleCase下所有Step
+     *
+     * @param testCycleCaseDTO
+     */
+    void deleteByTestCycleCase(TestCycleCaseDTO testCycleCaseDTO);
 }

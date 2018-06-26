@@ -11,133 +11,133 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public class TestCycleCaseDTO {
-	private Long executeId;
+    private Long executeId;
 
-	private Long cycleId;
+    private Long cycleId;
 
-	private Long issueId;
+    private Long issueId;
 
-	private String rank;
+    private String rank;
 
-	private String executionStatus;
+    private String executionStatus;
 
-	private String assignedTo;
+    private String assignedTo;
 
-	private String comment;
+    private String comment;
 
-	private Long objectVersionNumber;
+    private Long objectVersionNumber;
 
-	private String lastRank;
+    private String lastRank;
 
-	private String nextRank;
+    private String nextRank;
 
-	private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
+    private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
-	private List<TestCycleCaseDefectRelDTO> defects;
+    private List<TestCycleCaseDefectRelDTO> defects;
 
-	private List<TestCycleCaseStepE> testCycleCaseStepES;
+    private List<TestCycleCaseStepE> testCycleCaseStepES;
 
-	public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-		return testCycleCaseStepES;
-	}
+    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
+        return testCycleCaseStepES;
+    }
 
-	public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-		this.testCycleCaseStepES = testCycleCaseStepES;
-	}
+    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
+        this.testCycleCaseStepES = testCycleCaseStepES;
+    }
 
-	public Long getExecuteId() {
-		return executeId;
-	}
+    public Long getExecuteId() {
+        return executeId;
+    }
 
-	public void setExecuteId(Long executeId) {
-		this.executeId = executeId;
-	}
+    public void setExecuteId(Long executeId) {
+        this.executeId = executeId;
+    }
 
-	public Long getCycleId() {
-		return cycleId;
-	}
+    public Long getCycleId() {
+        return cycleId;
+    }
 
-	public void setCycleId(Long cycleId) {
-		this.cycleId = cycleId;
-	}
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getExecutionStatus() {
-		return executionStatus;
-	}
+    public String getExecutionStatus() {
+        return executionStatus;
+    }
 
-	public void setExecutionStatus(String executionStatus) {
-		this.executionStatus = executionStatus;
-	}
+    public void setExecutionStatus(String executionStatus) {
+        this.executionStatus = executionStatus;
+    }
 
-	public String getAssignedTo() {
-		return assignedTo;
-	}
+    public String getAssignedTo() {
+        return assignedTo;
+    }
 
-	public void setAssignedTo(String assignedTo) {
-		this.assignedTo = assignedTo;
-	}
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 
-	public String getRank() {
-		return rank;
-	}
+    public String getRank() {
+        return rank;
+    }
 
-	public void setRank(String rank) {
-		this.rank = rank;
-	}
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
 
-	public String getLastRank() {
-		return lastRank;
-	}
+    public String getLastRank() {
+        return lastRank;
+    }
 
-	public void setLastRank(String lastRank) {
-		this.lastRank = lastRank;
-	}
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
 
-	public String getNextRank() {
-		return nextRank;
-	}
+    public String getNextRank() {
+        return nextRank;
+    }
 
-	public void setNextRank(String nextRank) {
-		this.nextRank = nextRank;
-	}
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
+    }
 
-	public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
-		return caseAttachment;
-	}
+    public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
+        return caseAttachment;
+    }
 
-	public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
-		this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
-	}
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+        this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
+    }
 
-	public List<TestCycleCaseDefectRelDTO> getDefects() {
-		return defects;
-	}
+    public List<TestCycleCaseDefectRelDTO> getDefects() {
+        return defects;
+    }
 
-	public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-		this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
-	}
+    public void setDefects(List<TestCycleCaseDefectRelE> defects) {
+        this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
+    }
 }

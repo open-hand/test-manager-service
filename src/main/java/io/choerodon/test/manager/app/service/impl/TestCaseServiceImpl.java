@@ -26,55 +26,55 @@ import java.util.List;
 public class TestCaseServiceImpl implements TestCaseService {
 
 
-	@Autowired
-	TestCaseFeignClient testCaseFeignClient;
+    @Autowired
+    TestCaseFeignClient testCaseFeignClient;
 
-	@Autowired
-	private ITestCaseStepService iTestCaseStepService;
+    @Autowired
+    private ITestCaseStepService iTestCaseStepService;
 
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public IssueDTO insert(Long projectId, IssueCreateDTO issueCreateDTO) {
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public IssueDTO insert(Long projectId, IssueCreateDTO issueCreateDTO) {
 
-		ResponseEntity<IssueDTO> responseEntity = testCaseFeignClient.createIssue(projectId, issueCreateDTO);
+        ResponseEntity<IssueDTO> responseEntity = testCaseFeignClient.createIssue(projectId, issueCreateDTO);
 
-		List<TestCaseStepDTO> testCaseStepDTO = issueCreateDTO.getTestCaseStepDTOS();
-		IssueDTO testCaseDto = responseEntity.getBody();
-		testCaseStepDTO.forEach(v -> v.setIssueId(testCaseDto.getIssueId()));
-		testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(ConvertHelper.convertList(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
-		testCaseDto.setTestCaseStepDTOS(testCaseStepDTO);
-		return testCaseDto;
-	}
+        List<TestCaseStepDTO> testCaseStepDTO = issueCreateDTO.getTestCaseStepDTOS();
+        IssueDTO testCaseDto = responseEntity.getBody();
+        testCaseStepDTO.forEach(v -> v.setIssueId(testCaseDto.getIssueId()));
+        testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(ConvertHelper.convertList(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
+        testCaseDto.setTestCaseStepDTOS(testCaseStepDTO);
+        return testCaseDto;
+    }
 
-	@Override
-	public void delete(Long projectId, Long issueId) {
-		TestCaseStepDTO dto = new TestCaseStepDTO();
-		dto.setIssueId(issueId);
-		iTestCaseStepService.removeStep(ConvertHelper.convert(dto, TestCaseStepE.class));
-		testCaseFeignClient.deleteIssue(projectId, issueId);
-	}
+    @Override
+    public void delete(Long projectId, Long issueId) {
+        TestCaseStepDTO dto = new TestCaseStepDTO();
+        dto.setIssueId(issueId);
+        iTestCaseStepService.removeStep(ConvertHelper.convert(dto, TestCaseStepE.class));
+        testCaseFeignClient.deleteIssue(projectId, issueId);
+    }
 
-	@Override
-	public ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate) {
-		return testCaseFeignClient.updateIssue(projectId, issueUpdate);
-	}
+    @Override
+    public ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate) {
+        return testCaseFeignClient.updateIssue(projectId, issueUpdate);
+    }
 
-	@Override
-	public ResponseEntity<IssueDTO> query(Long projectId, Long issueId) {
-		ResponseEntity<IssueDTO> responseEntity = testCaseFeignClient.queryIssue(projectId, issueId);
-		IssueDTO issueDTO = responseEntity.getBody();
-		if (issueDTO == null) {
-			return responseEntity;
-		}
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-		testCaseStepE.setIssueId(issueDTO.getIssueId());
-		issueDTO.setTestCaseStepDTOS(ConvertHelper.convertList(iTestCaseStepService.query(testCaseStepE), TestCaseStepDTO.class));
-		return responseEntity;
-	}
+    @Override
+    public ResponseEntity<IssueDTO> query(Long projectId, Long issueId) {
+        ResponseEntity<IssueDTO> responseEntity = testCaseFeignClient.queryIssue(projectId, issueId);
+        IssueDTO issueDTO = responseEntity.getBody();
+        if (issueDTO == null) {
+            return responseEntity;
+        }
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        testCaseStepE.setIssueId(issueDTO.getIssueId());
+        issueDTO.setTestCaseStepDTOS(ConvertHelper.convertList(iTestCaseStepService.query(testCaseStepE), TestCaseStepDTO.class));
+        return responseEntity;
+    }
 
-	@Override
-	public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest) {
-		return testCaseFeignClient.listByOptions(projectId, typeCode, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
-	}
+    @Override
+    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest) {
+        return testCaseFeignClient.listByOptions(projectId, typeCode, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
+    }
 }

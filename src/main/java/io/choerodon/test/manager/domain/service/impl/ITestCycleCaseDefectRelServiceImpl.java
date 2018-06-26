@@ -17,38 +17,37 @@ import java.util.stream.Collectors;
 @Component
 public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectRelService {
 
-	@Autowired
-	TestCaseFeignClient testCaseFeignClient;
+    @Autowired
+    TestCaseFeignClient testCaseFeignClient;
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		return testCycleCaseDefectRelE.addSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        return testCycleCaseDefectRelE.addSelf();
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		testCycleCaseDefectRelE.deleteSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        testCycleCaseDefectRelE.deleteSelf();
+    }
 
 
+    @Override
+    public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        return testCycleCaseDefectRelE.querySelf();
+    }
 
-	@Override
-	public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-		return testCycleCaseDefectRelE.querySelf();
-	}
-
-	@Override
-	public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
-		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
-		testCycleCaseDefectRelE.setDefectLinkId(linkId);
-		testCycleCaseDefectRelE.setDefectType(defectType);
-		List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
-		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-		//testCaseFeignClient
-		//获取issueName
-		//插入返回值
-		return lists;
-	}
+    @Override
+    public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
+        TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+        testCycleCaseDefectRelE.setDefectLinkId(linkId);
+        testCycleCaseDefectRelE.setDefectType(defectType);
+        List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
+        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+        //testCaseFeignClient
+        //获取issueName
+        //插入返回值
+        return lists;
+    }
 }

@@ -11,32 +11,32 @@ import java.util.List;
  */
 public interface TestCycleCaseService {
 
-	void delete(Long cycleCaseId);
+    void delete(Long cycleCaseId);
 
-//	List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
+//    List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
 
-	Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest);
+    Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest);
 
-	List<TestCycleCaseDTO> queryByCycle(Long cycleId);
+    List<TestCycleCaseDTO> queryByCycle(Long cycleId);
 
-	TestCycleCaseDTO queryOne(Long cycleCaseId);
+    TestCycleCaseDTO queryOne(Long cycleCaseId);
 
-	/**
-	 * 启动一个测试例
-	 *
-	 * @param testCycleCaseDTO
-	 * @return
-	 */
-	TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+    /**
+     * 启动一个测试例
+     *
+     * @param testCycleCaseDTO
+     * @return
+     */
+    TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 
-//	List<TestCycleCaseDTO> changeCycleCase(List<TestCycleCaseDTO> testCycleCaseES);
+//    List<TestCycleCaseDTO> changeCycleCase(List<TestCycleCaseDTO> testCycleCaseES);
 
-	/**
-	 * 增加|修改一个case
-	 *
-	 * @param testCycleCaseDTO
-	 */
-	void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+    /**
+     * 增加|修改一个case
+     *
+     * @param testCycleCaseDTO
+     */
+    void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 }

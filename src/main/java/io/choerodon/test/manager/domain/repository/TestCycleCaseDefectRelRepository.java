@@ -10,14 +10,14 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleCaseDefectRelRepository {
-	TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	TestCycleCaseDefectRelE update(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    TestCycleCaseDefectRelE update(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
+    Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
 
 }

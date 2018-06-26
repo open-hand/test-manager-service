@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface TestCycleCaseStepMapper extends BaseMapper<TestCycleCaseStepDO> {
 
-	List<TestCycleCaseStepDO> queryWithTestCaseStep(TestCycleCaseStepDO testCycleCaseStepDO);
+    List<TestCycleCaseStepDO> queryWithTestCaseStep(TestCycleCaseStepDO testCycleCaseStepDO);
 }

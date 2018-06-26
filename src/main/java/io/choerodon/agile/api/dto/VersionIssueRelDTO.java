@@ -9,59 +9,59 @@ import io.choerodon.agile.infra.common.utils.StringUtil;
  */
 public class VersionIssueRelDTO {
 
-	private Long versionId;
+    private Long versionId;
 
-	private Long issueId;
+    private Long issueId;
 
-	private String name;
+    private String name;
 
-	private Long projectId;
+    private Long projectId;
 
-	private String relationType;
+    private String relationType;
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public String getRelationType() {
-		return relationType;
-	}
+    public String getRelationType() {
+        return relationType;
+    }
 
-	public void setRelationType(String relationType) {
-		this.relationType = relationType;
-	}
+    public void setRelationType(String relationType) {
+        this.relationType = relationType;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }

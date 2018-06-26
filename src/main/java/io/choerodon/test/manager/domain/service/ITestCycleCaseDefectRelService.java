@@ -10,13 +10,13 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleCaseDefectRelService {
-	TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-//	List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
+//    List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
 
-	List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+    List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-	List<TestCycleCaseDefectRelE> query(Long linkId, String defectType);
+    List<TestCycleCaseDefectRelE> query(Long linkId, String defectType);
 }

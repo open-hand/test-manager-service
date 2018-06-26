@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface TestCaseStepRepository {
 
-	TestCaseStepE insert(TestCaseStepE testCaseStepE);
+    TestCaseStepE insert(TestCaseStepE testCaseStepE);
 
-	void delete(TestCaseStepE testCaseStepE);
+    void delete(TestCaseStepE testCaseStepE);
 
-	TestCaseStepE update(TestCaseStepE testCaseStepE);
+    TestCaseStepE update(TestCaseStepE testCaseStepE);
 
-	List<TestCaseStepE> query(TestCaseStepE testCaseStepE);
+    List<TestCaseStepE> query(TestCaseStepE testCaseStepE);
 
-//	public TestCaseStepE queryOne(TestCaseStepE testCaseStepE);
+//    public TestCaseStepE queryOne(TestCaseStepE testCaseStepE);
 }

@@ -21,59 +21,59 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
-	@Autowired
-	TestCycleCaseMapper testCycleCaseMapper;
+    @Autowired
+    TestCycleCaseMapper testCycleCaseMapper;
 
-	@Override
-	public TestCycleCaseE insert(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseMapper.insert(convert) != 1) {
-			throw new CommonException("error.testStepCase.insert");
-		}
-		return ConvertHelper.convert(convert, TestCycleCaseE.class);
-	}
+    @Override
+    public TestCycleCaseE insert(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+        if (testCycleCaseMapper.insert(convert) != 1) {
+            throw new CommonException("error.testStepCase.insert");
+        }
+        return ConvertHelper.convert(convert, TestCycleCaseE.class);
+    }
 
-	@Override
-	public void delete(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		testCycleCaseMapper.delete(convert);
-	}
+    @Override
+    public void delete(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+        testCycleCaseMapper.delete(convert);
+    }
 
-	@Override
-	public TestCycleCaseE update(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseMapper.updateByPrimaryKey(convert) != 1) {
-			throw new CommonException("error.testStepCase.update");
-		}
-		return testCycleCaseE;
-	}
+    @Override
+    public TestCycleCaseE update(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+        if (testCycleCaseMapper.updateByPrimaryKey(convert) != 1) {
+            throw new CommonException("error.testStepCase.update");
+        }
+        return testCycleCaseE;
+    }
 
-	@Override
-	public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+    @Override
+    public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-		Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-				() -> testCycleCaseMapper.select(convert));
+        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testCycleCaseMapper.select(convert));
 
-		return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseE.class);
-	}
+        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseE.class);
+    }
 
-	@Override
-	public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+    @Override
+    public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-		return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
-	}
+        return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
+    }
 
-	@Override
-	public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
-		if (list.size() != 1) {
-			throw new CommonException("error.cycle.case.query.too.much.rows");
-		}
-		return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
-	}
+    @Override
+    public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+        List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
+        if (list.size() != 1) {
+            throw new CommonException("error.cycle.case.query.too.much.rows");
+        }
+        return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
+    }
 
 
 }

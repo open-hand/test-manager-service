@@ -20,43 +20,43 @@ import java.util.Map;
  */
 @Component
 public class TestCycleServiceImpl implements TestCycleService {
-	@Autowired
-	ITestCycleService iTestCycleService;
+    @Autowired
+    ITestCycleService iTestCycleService;
 
-	@Autowired
-	ProductionVersionClient productionVersionClient;
+    @Autowired
+    ProductionVersionClient productionVersionClient;
 
-	@Override
-	public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
-		return ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+    @Override
+    public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
+        return ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
 
-	}
+    }
 
-	@Override
-	public void delete(TestCycleDTO testCycleDTO) {
-		iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+    @Override
+    public void delete(TestCycleDTO testCycleDTO) {
+        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
 
-	}
+    }
 
-	@Override
-	public List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO) {
-		return ConvertHelper.convertList(iTestCycleService.update(ConvertHelper.convertList(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+    @Override
+    public List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO) {
+        return ConvertHelper.convertList(iTestCycleService.update(ConvertHelper.convertList(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
 
-	}
+    }
 
-//	@Override
-//	public Page<TestCycleDTO> query(TestCycleDTO testCycleDTO, PageRequest pageRequest) {
-//		Page<TestCycleE> serviceEPage = iTestCycleService.query(ConvertHelper.convert(testCycleDTO, TestCycleE.class), pageRequest);
-//		return ConvertPageHelper.convertPage(serviceEPage, TestCycleDTO.class);
-//	}
+//    @Override
+//    public Page<TestCycleDTO> query(TestCycleDTO testCycleDTO, PageRequest pageRequest) {
+//        Page<TestCycleE> serviceEPage = iTestCycleService.query(ConvertHelper.convert(testCycleDTO, TestCycleE.class), pageRequest);
+//        return ConvertPageHelper.convertPage(serviceEPage, TestCycleDTO.class);
+//    }
 
-	@Override
-	public List<TestCycleDTO> getTestCycle(Long versionId) {
-		return ConvertHelper.convertList(iTestCycleService.getTestCycle(versionId), TestCycleDTO.class);
-	}
+    @Override
+    public List<TestCycleDTO> getTestCycle(Long versionId) {
+        return ConvertHelper.convertList(iTestCycleService.getTestCycle(versionId), TestCycleDTO.class);
+    }
 
-	@Override
-	public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
-		return productionVersionClient.listByOptions(projectId, searchParamMap);
-	}
+    @Override
+    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
+        return productionVersionClient.listByOptions(projectId, searchParamMap);
+    }
 }

@@ -18,48 +18,48 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
-	@Autowired
+    @Autowired
     ITestCycleCaseService iTestCycleCaseService;
 
-	@Override
-	public void delete(Long cycleCaseId) {
-		TestCycleCaseDTO dto = new TestCycleCaseDTO();
-		dto.setExecuteId(cycleCaseId);
-		iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
-	}
+    @Override
+    public void delete(Long cycleCaseId) {
+        TestCycleCaseDTO dto = new TestCycleCaseDTO();
+        dto.setExecuteId(cycleCaseId);
+        iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
+    }
 
 
-	@Override
-	public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest) {
-		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
-		return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-	}
+    @Override
+    public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest) {
+        Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
+        return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
+    }
 
-	@Override
-	public List<TestCycleCaseDTO> queryByCycle(Long cycleId) {
-		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-		testCycleCaseDTO.setCycleId(cycleId);
-		List<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
-		return ConvertHelper.convertList(serviceEPage, TestCycleCaseDTO.class);
-	}
+    @Override
+    public List<TestCycleCaseDTO> queryByCycle(Long cycleId) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setCycleId(cycleId);
+        List<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
+        return ConvertHelper.convertList(serviceEPage, TestCycleCaseDTO.class);
+    }
 
-	@Override
-	public TestCycleCaseDTO queryOne(Long cycleCaseId) {
-		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-		testCycleCaseDTO.setExecuteId(cycleCaseId);
-		return ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-	}
+    @Override
+    public TestCycleCaseDTO queryOne(Long cycleCaseId) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setExecuteId(cycleCaseId);
+        return ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+    }
 
-	@Override
-	public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-		return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
-	}
+    @Override
+    public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+        return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
+    }
 
 
-	@Override
-	public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-		iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId);
-	}
+    @Override
+    public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+        iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId);
+    }
 
 
 }

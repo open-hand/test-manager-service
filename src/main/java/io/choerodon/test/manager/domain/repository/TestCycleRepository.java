@@ -10,15 +10,15 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleRepository {
-	TestCycleE insert(TestCycleE testCycleE);
+    TestCycleE insert(TestCycleE testCycleE);
 
-	void delete(TestCycleE testCycleE);
+    void delete(TestCycleE testCycleE);
 
-	TestCycleE update(TestCycleE testCycleE);
+    TestCycleE update(TestCycleE testCycleE);
 
-	Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
+    Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
 
-	List<TestCycleE> query(TestCycleE testCycleE);
+    List<TestCycleE> query(TestCycleE testCycleE);
 
-	List<TestCycleE> queryBar(Long versionId);
+    List<TestCycleE> queryBar(Long versionId);
 }

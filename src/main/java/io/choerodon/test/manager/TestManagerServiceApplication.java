@@ -14,7 +14,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 @EnableEurekaClient
 public class TestManagerServiceApplication {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         SpringApplication.run(TestManagerServiceApplication.class, args);
     }
 

@@ -18,29 +18,29 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryService {
-	@Autowired
+    @Autowired
     ITestCycleCaseHistoryService iTestCycleCaseHistoryService;
 
 
-	@Override
-	public TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO) {
-		return ConvertHelper.convert(iTestCycleCaseHistoryService.insert(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
+    @Override
+    public TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO) {
+        return ConvertHelper.convert(iTestCycleCaseHistoryService.insert(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
 
-	}
+    }
 
-	@Override
-	public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-		iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
-	}
+    @Override
+    public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
+        iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
+    }
 
-	@Override
-	public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-		return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
-	}
+    @Override
+    public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
+        return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
+    }
 
-	@Override
-	public Page<TestCycleCaseHistoryDTO> query(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO, PageRequest pageRequest) {
-		Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class), pageRequest);
-		return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
-	}
+    @Override
+    public Page<TestCycleCaseHistoryDTO> query(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO, PageRequest pageRequest) {
+        Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class), pageRequest);
+        return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
+    }
 }

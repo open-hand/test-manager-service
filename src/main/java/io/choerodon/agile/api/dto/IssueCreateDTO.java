@@ -12,190 +12,190 @@ import java.util.List;
  */
 public class IssueCreateDTO {
 
-	private String issueNum;
+    private String issueNum;
 
-	private String typeCode;
+    private String typeCode;
 
-	private String summary;
+    private String summary;
 
-	private String priorityCode;
+    private String priorityCode;
 
-	private String description;
+    private String description;
 
-	private Long assigneeId;
+    private Long assigneeId;
 
-	private Long projectId;
+    private Long projectId;
 
-	private Long epicId;
+    private Long epicId;
 
-	private Long sprintId;
+    private Long sprintId;
 
-	private Integer storyPoints;
+    private Integer storyPoints;
 
-	@Transient
-	private List<TestCaseStepDTO> testCaseStepDTOS;
+    @Transient
+    private List<TestCaseStepDTO> testCaseStepDTOS;
 
-	private List<VersionIssueRelDTO> versionIssueRelDTOList;
+    private List<VersionIssueRelDTO> versionIssueRelDTOList;
 
-	private List<LabelIssueRelDTO> labelIssueRelDTOList;
+    private List<LabelIssueRelDTO> labelIssueRelDTOList;
 
-	private List<ComponentIssueRelDTO> componentIssueRelDTOList;
+    private List<ComponentIssueRelDTO> componentIssueRelDTOList;
 
-	private List<IssueLinkDTO> issueLinkDTOList;
+    private List<IssueLinkDTO> issueLinkDTOList;
 
-	private BigDecimal remainingTime;
+    private BigDecimal remainingTime;
 
-	private BigDecimal estimateTime;
+    private BigDecimal estimateTime;
 
-	private String epicName;
+    private String epicName;
 
-	public String getIssueNum() {
-		return issueNum;
-	}
+    public String getIssueNum() {
+        return issueNum;
+    }
 
-	public void setIssueNum(String issueNum) {
-		this.issueNum = issueNum;
-	}
+    public void setIssueNum(String issueNum) {
+        this.issueNum = issueNum;
+    }
 
-	public String getTypeCode() {
-		return typeCode;
-	}
+    public String getTypeCode() {
+        return typeCode;
+    }
 
-	public void setTypeCode(String typeCode) {
-		this.typeCode = typeCode;
-	}
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public String getPriorityCode() {
-		return priorityCode;
-	}
+    public String getPriorityCode() {
+        return priorityCode;
+    }
 
-	public void setPriorityCode(String priorityCode) {
-		this.priorityCode = priorityCode;
-	}
+    public void setPriorityCode(String priorityCode) {
+        this.priorityCode = priorityCode;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Long getAssigneeId() {
-		return assigneeId;
-	}
+    public Long getAssigneeId() {
+        return assigneeId;
+    }
 
-	public void setAssigneeId(Long assigneeId) {
-		this.assigneeId = assigneeId;
-	}
+    public void setAssigneeId(Long assigneeId) {
+        this.assigneeId = assigneeId;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public Long getEpicId() {
-		return epicId;
-	}
+    public Long getEpicId() {
+        return epicId;
+    }
 
-	public void setEpicId(Long epicId) {
-		this.epicId = epicId;
-	}
+    public void setEpicId(Long epicId) {
+        this.epicId = epicId;
+    }
 
-	public Long getSprintId() {
-		return sprintId;
-	}
+    public Long getSprintId() {
+        return sprintId;
+    }
 
-	public void setSprintId(Long sprintId) {
-		this.sprintId = sprintId;
-	}
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
+    }
 
-	public Integer getStoryPoints() {
-		return storyPoints;
-	}
+    public Integer getStoryPoints() {
+        return storyPoints;
+    }
 
-	public void setStoryPoints(Integer storyPoints) {
-		this.storyPoints = storyPoints;
-	}
+    public void setStoryPoints(Integer storyPoints) {
+        this.storyPoints = storyPoints;
+    }
 
-	public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
-		return versionIssueRelDTOList;
-	}
+    public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
+        return versionIssueRelDTOList;
+    }
 
-	public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelDTOList) {
-		this.versionIssueRelDTOList = versionIssueRelDTOList;
-	}
+    public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelDTOList) {
+        this.versionIssueRelDTOList = versionIssueRelDTOList;
+    }
 
-	public List<LabelIssueRelDTO> getLabelIssueRelDTOList() {
-		return labelIssueRelDTOList;
-	}
+    public List<LabelIssueRelDTO> getLabelIssueRelDTOList() {
+        return labelIssueRelDTOList;
+    }
 
-	public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelDTOList) {
-		this.labelIssueRelDTOList = labelIssueRelDTOList;
-	}
+    public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelDTOList) {
+        this.labelIssueRelDTOList = labelIssueRelDTOList;
+    }
 
-	public List<ComponentIssueRelDTO> getComponentIssueRelDTOList() {
-		return componentIssueRelDTOList;
-	}
+    public List<ComponentIssueRelDTO> getComponentIssueRelDTOList() {
+        return componentIssueRelDTOList;
+    }
 
-	public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
-		this.componentIssueRelDTOList = componentIssueRelDTOList;
-	}
+    public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
+        this.componentIssueRelDTOList = componentIssueRelDTOList;
+    }
 
-	public List<IssueLinkDTO> getIssueLinkDTOList() {
-		return issueLinkDTOList;
-	}
+    public List<IssueLinkDTO> getIssueLinkDTOList() {
+        return issueLinkDTOList;
+    }
 
-	public void setIssueLinkDTOList(List<IssueLinkDTO> issueLinkDTOList) {
-		this.issueLinkDTOList = issueLinkDTOList;
-	}
+    public void setIssueLinkDTOList(List<IssueLinkDTO> issueLinkDTOList) {
+        this.issueLinkDTOList = issueLinkDTOList;
+    }
 
-	public BigDecimal getRemainingTime() {
-		return remainingTime;
-	}
+    public BigDecimal getRemainingTime() {
+        return remainingTime;
+    }
 
-	public BigDecimal getEstimateTime() {
-		return estimateTime;
-	}
+    public BigDecimal getEstimateTime() {
+        return estimateTime;
+    }
 
-	public void setEstimateTime(BigDecimal estimateTime) {
-		this.estimateTime = estimateTime;
-	}
+    public void setEstimateTime(BigDecimal estimateTime) {
+        this.estimateTime = estimateTime;
+    }
 
-	public void setRemainingTime(BigDecimal remainingTime) {
-		this.remainingTime = remainingTime;
-	}
+    public void setRemainingTime(BigDecimal remainingTime) {
+        this.remainingTime = remainingTime;
+    }
 
-	public String getEpicName() {
-		return epicName;
-	}
+    public String getEpicName() {
+        return epicName;
+    }
 
-	public void setEpicName(String epicName) {
-		this.epicName = epicName;
-	}
+    public void setEpicName(String epicName) {
+        this.epicName = epicName;
+    }
 
-	public List<TestCaseStepDTO> getTestCaseStepDTOS() {
-		return testCaseStepDTOS;
-	}
+    public List<TestCaseStepDTO> getTestCaseStepDTOS() {
+        return testCaseStepDTOS;
+    }
 
-	public void setTestCaseStepDTOS(List<TestCaseStepDTO> testCaseStepDTOS) {
-		this.testCaseStepDTOS = testCaseStepDTOS;
-	}
+    public void setTestCaseStepDTOS(List<TestCaseStepDTO> testCaseStepDTOS) {
+        this.testCaseStepDTOS = testCaseStepDTOS;
+    }
 
-	@Override
-	public String toString() {
-		return StringUtil.getToString(this);
-	}
+    @Override
+    public String toString() {
+        return StringUtil.getToString(this);
+    }
 
 }

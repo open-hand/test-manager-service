@@ -13,17 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttachmentRelService {
 
-	@Autowired
+    @Autowired
     ITestCycleCaseAttachmentRelService iTestCycleCaseAttachmentRelService;
 
 
-	@Override
-	public void delete(String bucketName, Long attachId) {
-		iTestCycleCaseAttachmentRelService.delete(bucketName, attachId);
-	}
+    @Override
+    public void delete(String bucketName, Long attachId) {
+        iTestCycleCaseAttachmentRelService.delete(bucketName, attachId);
+    }
 
-	public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-		return iTestCycleCaseAttachmentRelService.upload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment);
-	}
+    public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
+        return iTestCycleCaseAttachmentRelService.upload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment);
+    }
 
 }

@@ -21,58 +21,58 @@ import java.util.List;
 @Service
 public class ITestCaseStepServiceImpl implements ITestCaseStepService {
 
-	@Autowired
-	ITestCycleCaseStepService testCycleCaseStepService;
+    @Autowired
+    ITestCycleCaseStepService testCycleCaseStepService;
 
 
-	@Override
-	public List<TestCaseStepE> query(TestCaseStepE testCaseStepE) {
-		return testCaseStepE.querySelf();
-	}
+    @Override
+    public List<TestCaseStepE> query(TestCaseStepE testCaseStepE) {
+        return testCaseStepE.querySelf();
+    }
 
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void removeStep(TestCaseStepE testCaseStepE) {
-		testCaseStepE.querySelf().forEach(v -> deleteCycleCaseStep(v));
-		testCaseStepE.deleteSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void removeStep(TestCaseStepE testCaseStepE) {
+        testCaseStepE.querySelf().forEach(v -> deleteCycleCaseStep(v));
+        testCaseStepE.deleteSelf();
+    }
 
-	private void deleteCycleCaseStep(TestCaseStepE testCaseStepE) {
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setStepId(testCaseStepE.getStepId());
-		testCycleCaseStepService.deleteStep(testCycleCaseStepE);
-	}
-
-
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public List<TestCaseStepE> batchInsertStep(List<TestCaseStepE> testCaseStepES) {
-		List<TestCaseStepE> result = new ArrayList<>();
-		String[] rank = new String[1];
-		testCaseStepES.forEach(v -> {
-			v.setLastRank(rank[0]);
-			TestCaseStepE temp = changeStep(v);
-			rank[0] = temp.getRank();
-			result.add(temp);
-		});
-		return result;
-	}
+    private void deleteCycleCaseStep(TestCaseStepE testCaseStepE) {
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setStepId(testCaseStepE.getStepId());
+        testCycleCaseStepService.deleteStep(testCycleCaseStepE);
+    }
 
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public TestCaseStepE changeStep(TestCaseStepE testCaseStepE) {
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public List<TestCaseStepE> batchInsertStep(List<TestCaseStepE> testCaseStepES) {
+        List<TestCaseStepE> result = new ArrayList<>();
+        String[] rank = new String[1];
+        testCaseStepES.forEach(v -> {
+            v.setLastRank(rank[0]);
+            TestCaseStepE temp = changeStep(v);
+            rank[0] = temp.getRank();
+            result.add(temp);
+        });
+        return result;
+    }
 
-		if (testCaseStepE.getStepId() == null) {
-			testCaseStepE.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepE.getLastRank(), testCaseStepE.getNextRank()));
-			testCaseStepE = testCaseStepE.addSelf();
-		} else {
-			testCaseStepE.setRank(RankUtil.Operation.UPDATE.getRank(testCaseStepE.getLastRank(), testCaseStepE.getNextRank()));
-			testCaseStepE = testCaseStepE.updateSelf();
-		}
-		return testCaseStepE;
-	}
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCaseStepE changeStep(TestCaseStepE testCaseStepE) {
+
+        if (testCaseStepE.getStepId() == null) {
+            testCaseStepE.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepE.getLastRank(), testCaseStepE.getNextRank()));
+            testCaseStepE = testCaseStepE.addSelf();
+        } else {
+            testCaseStepE.setRank(RankUtil.Operation.UPDATE.getRank(testCaseStepE.getLastRank(), testCaseStepE.getNextRank()));
+            testCaseStepE = testCaseStepE.updateSelf();
+        }
+        return testCaseStepE;
+    }
 
 
 }

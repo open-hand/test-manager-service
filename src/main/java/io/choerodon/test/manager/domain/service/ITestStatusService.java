@@ -8,11 +8,11 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/25/18.
  */
 public interface ITestStatusService {
-	List<TestStatusE> query(TestStatusE testStatusE);
+    List<TestStatusE> query(TestStatusE testStatusE);
 
-	TestStatusE insert(TestStatusE testStatusE);
+    TestStatusE insert(TestStatusE testStatusE);
 
-	void delete(TestStatusE testStatusE);
+    void delete(TestStatusE testStatusE);
 
-	TestStatusE update(TestStatusE testStatusE);
+    TestStatusE update(TestStatusE testStatusE);
 }

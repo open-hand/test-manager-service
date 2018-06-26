@@ -21,65 +21,65 @@ import java.util.Optional;
  */
 @Component
 public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService {
-	@Autowired
-	ITestCaseStepService iTestCaseStepService;
+    @Autowired
+    ITestCaseStepService iTestCaseStepService;
 
-	@Autowired
-	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
+    @Autowired
+    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-		testCycleCaseStepE.deleteSelf();
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+        testCycleCaseStepE.deleteSelf();
+    }
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
-		testCycleCaseStepE.deleteSelf();
-	}
-
-
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
-		List<TestCycleCaseStepE> list = new ArrayList<>();
-		testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
-		return list;
-	}
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
+        testCycleCaseStepE.deleteSelf();
+    }
 
 
-	@Override
-	public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-		List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
-		testCycleCaseEs.forEach(v -> {
-			v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
-		});
-		return testCycleCaseEs;
-	}
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
+        List<TestCycleCaseStepE> list = new ArrayList<>();
+        testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
+        return list;
+    }
 
 
-	/**
-	 * 启动测试例分步任务
-	 *
-	 * @param testCycleCaseE
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-		testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
-		List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
+    @Override
+    public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+        List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
+        testCycleCaseEs.forEach(v -> {
+            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
+        });
+        return testCycleCaseEs;
+    }
 
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCaseStepES.forEach(v -> {
-			testCycleCaseStepE.setStepId(v.getStepId());
-			testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-			testCycleCaseStepE.addSelf();
-		});
-	}
+
+    /**
+     * 启动测试例分步任务
+     *
+     * @param testCycleCaseE
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
+        List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
+
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCaseStepES.forEach(v -> {
+            testCycleCaseStepE.setStepId(v.getStepId());
+            testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+            testCycleCaseStepE.addSelf();
+        });
+    }
 }

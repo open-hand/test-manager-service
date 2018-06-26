@@ -14,10 +14,10 @@ import java.util.Map;
  */
 @Component
 public class ProductionVersionClientFallback implements ProductionVersionClient {
-	private static final String QUERY_ERROR = "error.production.version.query";
+    private static final String QUERY_ERROR = "error.production.version.query";
 
-	@Override
-	public ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(Long projectId, Map<String, Object> searchParamMap) {
-		throw new CommonException(QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(Long projectId, Map<String, Object> searchParamMap) {
+        throw new CommonException(QUERY_ERROR);
+    }
 }

@@ -23,62 +23,62 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/test/cycle/{project_id}")
 public class TestCycleController {
-	@Autowired
-	TestCycleService testCycleService;
+    @Autowired
+    TestCycleService testCycleService;
 
-	@Autowired
-	TestCycleMapper cycleMapperl;
+    @Autowired
+    TestCycleMapper cycleMapperl;
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("增加测试循环")
-	@PostMapping
-	public ResponseEntity<TestCycleDTO> insert(@RequestBody TestCycleDTO testCycleDTO) {
-		return Optional.ofNullable(testCycleService.insert(testCycleDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.insert"));
+    @Permission(permissionPublic = true)
+    @ApiOperation("增加测试循环")
+    @PostMapping
+    public ResponseEntity<TestCycleDTO> insert(@RequestBody TestCycleDTO testCycleDTO) {
+        return Optional.ofNullable(testCycleService.insert(testCycleDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycle.insert"));
 
-	}
+    }
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("删除测试循环")
-	@DeleteMapping
-	void delete(@RequestBody TestCycleDTO testCycleDTO) {
-		testCycleService.delete(testCycleDTO);
-	}
+    @Permission(permissionPublic = true)
+    @ApiOperation("删除测试循环")
+    @DeleteMapping
+    void delete(@RequestBody TestCycleDTO testCycleDTO) {
+        testCycleService.delete(testCycleDTO);
+    }
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("修改测试循环")
-	@PutMapping
-	ResponseEntity<List<TestCycleDTO>> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
-		return Optional.ofNullable(testCycleService.update(testCycleDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));
-	}
+    @Permission(permissionPublic = true)
+    @ApiOperation("修改测试循环")
+    @PutMapping
+    ResponseEntity<List<TestCycleDTO>> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
+        return Optional.ofNullable(testCycleService.update(testCycleDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.error.testCycle.update"));
+    }
 
-//	@Permission(permissionPublic = true)
-//	@ApiOperation("查询测试循环")
-//	@PostMapping("/query")
-//	Page<TestCycleDTO> query(@RequestBody TestCycleDTO testCycleDTO, PageRequest pageRequest){
-//		return testCycleService.query(testCycleDTO,pageRequest);
-//	}
+//    @Permission(permissionPublic = true)
+//    @ApiOperation("查询测试循环")
+//    @PostMapping("/query")
+//    Page<TestCycleDTO> query(@RequestBody TestCycleDTO testCycleDTO, PageRequest pageRequest) {
+//        return testCycleService.query(testCycleDTO, pageRequest);
+//    }
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("查询测试循环")
-	@GetMapping("/query/{versionId}")
-	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
-//		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
-//				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//				.orElseThrow(() -> new CommonException("error.testCycle.query"));
-		cycleMapperl.query(versionId);
-		return new ResponseEntity<>(true, HttpStatus.OK);
-	}
+    @Permission(permissionPublic = true)
+    @ApiOperation("查询测试循环")
+    @GetMapping("/query/{versionId}")
+    ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
+//        return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//                .orElseThrow(() -> new CommonException("error.testCycle.query"));
+//        cycleMapperl.query(versionId);
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 
 
-	@Permission(permissionPublic = true)
-	@ApiOperation("查询测试循环")
-	@PostMapping("/query/case/version")
-	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
-		return testCycleService.getTestCycleVersion(projectId, searchParamMap);
-	}
+    @Permission(permissionPublic = true)
+    @ApiOperation("查询测试循环")
+    @PostMapping("/query/case/version")
+    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
+        return testCycleService.getTestCycleVersion(projectId, searchParamMap);
+    }
 
 }

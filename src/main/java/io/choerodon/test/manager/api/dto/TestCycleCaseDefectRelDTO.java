@@ -5,49 +5,50 @@ package io.choerodon.test.manager.api.dto;
  */
 
 public class TestCycleCaseDefectRelDTO {
-	private Long id;
-	private String defectType;
-	private Long defectLinkId;
-	private Long issueId;
-	private Long objectVersionNumber;
 
-	public Long getId() {
-		return id;
-	}
+    private Long id;
+    private String defectType;
+    private Long defectLinkId;
+    private Long issueId;
+    private Long objectVersionNumber;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getDefectType() {
-		return defectType;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setDefectType(String defectType) {
-		this.defectType = defectType;
-	}
+    public String getDefectType() {
+        return defectType;
+    }
 
-	public Long getDefectLinkId() {
-		return defectLinkId;
-	}
+    public void setDefectType(String defectType) {
+        this.defectType = defectType;
+    }
 
-	public void setDefectLinkId(Long defectLinkId) {
-		this.defectLinkId = defectLinkId;
-	}
+    public Long getDefectLinkId() {
+        return defectLinkId;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public void setDefectLinkId(Long defectLinkId) {
+        this.defectLinkId = defectLinkId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public Long getObjectVersionNumber() {
-		return objectVersionNumber;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public void setObjectVersionNumber(Long objectVersionNumber) {
-		this.objectVersionNumber = objectVersionNumber;
-	}
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
 }

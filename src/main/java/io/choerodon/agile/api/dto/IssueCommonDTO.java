@@ -6,134 +6,134 @@ package io.choerodon.agile.api.dto;
  */
 public class IssueCommonDTO {
 
-	private Long issueId;
+    private Long issueId;
 
-	private String issueNum;
+    private String issueNum;
 
-	private String typeCode;
+    private String typeCode;
 
-	private String statusCode;
+    private String statusCode;
 
-	private String summary;
+    private String summary;
 
-	private String priorityCode;
+    private String priorityCode;
 
-	private Long assigneeId;
+    private Long assigneeId;
 
-	private Long projectId;
+    private Long projectId;
 
-	private String assigneeName;
+    private String assigneeName;
 
-	private String imageUrl;
+    private String imageUrl;
 
-	private String priorityName;
+    private String priorityName;
 
-	private String statusName;
+    private String statusName;
 
-	private String statusColor;
+    private String statusColor;
 
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getIssueNum() {
-		return issueNum;
-	}
+    public String getIssueNum() {
+        return issueNum;
+    }
 
-	public void setIssueNum(String issueNum) {
-		this.issueNum = issueNum;
-	}
+    public void setIssueNum(String issueNum) {
+        this.issueNum = issueNum;
+    }
 
-	public String getTypeCode() {
-		return typeCode;
-	}
+    public String getTypeCode() {
+        return typeCode;
+    }
 
-	public void setTypeCode(String typeCode) {
-		this.typeCode = typeCode;
-	}
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
 
-	public String getStatusCode() {
-		return statusCode;
-	}
+    public String getStatusCode() {
+        return statusCode;
+    }
 
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
-	}
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
+    }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-	public String getPriorityCode() {
-		return priorityCode;
-	}
+    public String getPriorityCode() {
+        return priorityCode;
+    }
 
-	public void setPriorityCode(String priorityCode) {
-		this.priorityCode = priorityCode;
-	}
+    public void setPriorityCode(String priorityCode) {
+        this.priorityCode = priorityCode;
+    }
 
-	public Long getAssigneeId() {
-		return assigneeId;
-	}
+    public Long getAssigneeId() {
+        return assigneeId;
+    }
 
-	public void setAssigneeId(Long assigneeId) {
-		this.assigneeId = assigneeId;
-	}
+    public void setAssigneeId(Long assigneeId) {
+        this.assigneeId = assigneeId;
+    }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
-	public String getAssigneeName() {
-		return assigneeName;
-	}
+    public String getAssigneeName() {
+        return assigneeName;
+    }
 
-	public void setAssigneeName(String assigneeName) {
-		this.assigneeName = assigneeName;
-	}
+    public void setAssigneeName(String assigneeName) {
+        this.assigneeName = assigneeName;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public String getPriorityName() {
-		return priorityName;
-	}
+    public String getPriorityName() {
+        return priorityName;
+    }
 
-	public void setPriorityName(String priorityName) {
-		this.priorityName = priorityName;
-	}
+    public void setPriorityName(String priorityName) {
+        this.priorityName = priorityName;
+    }
 
-	public String getStatusName() {
-		return statusName;
-	}
+    public String getStatusName() {
+        return statusName;
+    }
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
-	}
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
-	public String getStatusColor() {
-		return statusColor;
-	}
+    public String getStatusColor() {
+        return statusColor;
+    }
 
-	public void setStatusColor(String statusColor) {
-		this.statusColor = statusColor;
-	}
+    public void setStatusColor(String statusColor) {
+        this.statusColor = statusColor;
+    }
 }
