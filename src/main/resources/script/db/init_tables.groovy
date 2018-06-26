@@ -39,7 +39,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
                 constraints(primaryKey: true)
             }
             column(name: 'parent_cycle_id', type: 'BIGINT UNSIGNED', remarks: '上级目录id')
-            column(name: 'cycle_name', type: 'VARCHAR(300)', remarks: '循环名称') {
+            column(name: 'cycle_name', type: 'VARCHAR(100)', remarks: '循环名称') {
                 constraints(nullable: false)
             }
             column(name: 'version_id', type: 'BIGINT UNSIGNED', remarks: '版本')
