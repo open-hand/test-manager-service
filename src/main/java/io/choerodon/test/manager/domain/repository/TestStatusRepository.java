@@ -1,13 +1,13 @@
-package com.test.devops.domain.service;
+package io.choerodon.test.manager.domain.repository;
 
-import com.test.devops.domain.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 
 import java.util.List;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/25/18.
  */
-public interface ITestStatusService {
+public interface TestStatusRepository {
 	List<TestStatusE> query(TestStatusE testStatusE);
 
 	TestStatusE insert(TestStatusE testStatusE);

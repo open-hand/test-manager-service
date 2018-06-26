@@ -1,7 +1,7 @@
-package com.test.devops.domain.service.impl;
+package io.choerodon.test.manager.domain.service.impl;
 
-import com.test.devops.domain.entity.TestStatusE;
-import com.test.devops.domain.service.ITestStatusService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.service.ITestStatusService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

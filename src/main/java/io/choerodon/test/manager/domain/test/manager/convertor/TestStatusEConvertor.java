@@ -1,9 +1,9 @@
-package com.test.devops.domain.convertor;
+package io.choerodon.test.manager.domain.test.manager.convertor;
 
-import com.test.devops.api.dto.TestStatusDTO;
-import com.test.devops.domain.entity.TestStatusE;
-import com.test.devops.domain.factory.TestStatusEFactory;
-import com.test.devops.infra.dataobject.TestStatusDO;
+import io.choerodon.test.manager.api.dto.TestStatusDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.core.convertor.ConvertorI;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

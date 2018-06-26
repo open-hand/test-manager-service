@@ -47,7 +47,7 @@ public class TestCycleCaseController {
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId) {
 		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
 
 	@Permission(permissionPublic = true)
@@ -56,7 +56,7 @@ public class TestCycleCaseController {
 	public ResponseEntity<TestCycleCaseDTO> queryOne(Long executeId) {
 		return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
 	}
 
 

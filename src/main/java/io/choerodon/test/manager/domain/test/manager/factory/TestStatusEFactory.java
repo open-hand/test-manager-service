@@ -1,6 +1,6 @@
-package com.test.devops.domain.factory;
+package io.choerodon.test.manager.domain.test.manager.factory;
 
-import com.test.devops.domain.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 
 /**

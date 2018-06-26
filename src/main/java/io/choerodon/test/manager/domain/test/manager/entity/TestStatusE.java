@@ -1,6 +1,6 @@
-package com.test.devops.domain.entity;
+package io.choerodon.test.manager.domain.test.manager.entity;
 
-import com.test.devops.domain.repository.TestStatusRepository;
+import io.choerodon.test.manager.domain.repository.TestStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

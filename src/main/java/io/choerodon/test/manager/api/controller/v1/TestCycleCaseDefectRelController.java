@@ -1,4 +1,4 @@
-package com.test.devops.api.controller;
+package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;

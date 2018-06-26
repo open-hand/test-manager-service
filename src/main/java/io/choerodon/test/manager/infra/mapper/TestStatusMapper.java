@@ -1,6 +1,6 @@
-package com.test.devops.infra.mapper;
+package io.choerodon.test.manager.infra.mapper;
 
-import com.test.devops.infra.dataobject.TestStatusDO;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.mybatis.common.BaseMapper;
 
 /**

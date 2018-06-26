@@ -1,4 +1,4 @@
-package com.test.devops.api.dto;
+package io.choerodon.test.manager.api.dto;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/25/18.

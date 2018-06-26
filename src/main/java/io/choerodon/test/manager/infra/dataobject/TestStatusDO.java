@@ -1,4 +1,4 @@
-package com.test.devops.infra.dataobject;
+package io.choerodon.test.manager.infra.dataobject;
 
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;

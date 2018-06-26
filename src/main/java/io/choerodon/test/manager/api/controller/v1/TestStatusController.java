@@ -1,7 +1,7 @@
-package com.test.devops.api.controller;
+package io.choerodon.test.manager.api.controller.v1;
 
-import com.test.devops.api.dto.TestStatusDTO;
-import com.test.devops.app.service.TestStatusService;
+import io.choerodon.test.manager.api.dto.TestStatusDTO;
+import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.core.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

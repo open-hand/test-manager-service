@@ -1,6 +1,6 @@
-package com.test.devops.app.service;
+package io.choerodon.test.manager.app.service;
 
-import com.test.devops.api.dto.TestStatusDTO;
+import io.choerodon.test.manager.api.dto.TestStatusDTO;
 
 import java.util.List;
 

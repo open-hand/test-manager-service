@@ -1,9 +1,9 @@
-package com.test.devops.infra.repository.impl;
+package io.choerodon.test.manager.infra.repository.impl;
 
-import com.test.devops.domain.entity.TestStatusE;
-import com.test.devops.domain.repository.TestStatusRepository;
-import com.test.devops.infra.dataobject.TestStatusDO;
-import com.test.devops.infra.mapper.TestStatusMapper;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.repository.TestStatusRepository;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
+import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
