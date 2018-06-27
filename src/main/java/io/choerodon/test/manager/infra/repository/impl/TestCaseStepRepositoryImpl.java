@@ -51,13 +51,6 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
         TestCaseStepDO testCaseStepDO = ConvertHelper.convert(testStepCaseE, TestCaseStepDO.class);
         return ConvertHelper.convertList(testCaseStepMapper
                 .query(testCaseStepDO), TestCaseStepE.class);
-
     }
-
-//    @Override
-//    public TestCaseStepE queryOne(TestCaseStepE testCaseStepE) {
-//        return ConvertHelper.convert(testCaseStepMapper.selectOne(ConvertHelper.convert(testCaseStepE, TestCaseStepDO.class)), TestCaseStepE.class);
-//    }
-
 
 }

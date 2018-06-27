@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -27,7 +26,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
     @Autowired
     ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
@@ -35,7 +33,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCycleCaseStepE.deleteSelf();
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
         testCycleCaseStepE.deleteSelf();
@@ -43,7 +40,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE) {
         List<TestCycleCaseStepE> list = new ArrayList<>();
         testCycleCaseStepE.forEach(v -> list.add(v.updateSelf()));
@@ -68,7 +64,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
      *
      * @param testCycleCaseE
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
         TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();

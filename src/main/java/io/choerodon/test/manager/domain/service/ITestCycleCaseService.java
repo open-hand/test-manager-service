@@ -10,7 +10,6 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleCaseService {
-//	TestCycleCaseE insert(TestCycleCaseE testCycleCaseE);
 
     /**
      * 创建一个测试例
@@ -18,23 +17,17 @@ public interface ITestCycleCaseService {
      * @param testCycleCaseE
      * @return
      */
-    TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
+	TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE);
 
     void delete(TestCycleCaseE testCycleCaseE);
 
-//    void deleteByCycleId(Long cycleId);
-
-//    List<TestCycleCaseE> update(List<TestCycleCaseE> testCycleCaseE);
 
     Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
-//    List<TestCycleCaseE> querySubCase(TestCycleCaseE testCycleCaseE);
 
     List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 
     TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
 
-//    List<TestCycleCaseE> changeCycleCase(List<TestCycleCaseE> testCycleCaseES);
-
-    TestCycleCaseE changeStep(TestCycleCaseE currentStepE, Long projectId);
+	TestCycleCaseE changeStep(TestCycleCaseE currentStepE);
 }

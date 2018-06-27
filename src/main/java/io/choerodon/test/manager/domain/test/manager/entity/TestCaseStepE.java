@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -38,26 +40,21 @@ public class TestCaseStepE {
     @Autowired
     private TestCaseStepRepository testCaseStepRepository;
 
-    public TestCaseStepE() {
+	public TestCaseStepE createOneStep() {
+		setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+		return addSelf();
     }
 
-    public TestCaseStepE(Long stepId, String rank, Long issueId, String testStep, String testData, String expectedResult, Long objectVersionNumber) {
-        this.stepId = stepId;
-        this.rank = rank;
-        this.issueId = issueId;
-        this.testStep = testStep;
-        this.testData = testData;
-        this.expectedResult = expectedResult;
-        this.objectVersionNumber = objectVersionNumber;
+	public TestCaseStepE changeOneStep() {
+		if (!StringUtils.isEmpty(lastRank) || !StringUtils.isEmpty(nextRank)) {
+			setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+		}
+		return updateSelf();
     }
 
     public List<TestCaseStepE> querySelf() {
         return testCaseStepRepository.query(this);
     }
-
-//    public TestCaseStepE queryOne() {
-//        return testCaseStepRepository.queryOne(this);
-//    }
 
     public TestCaseStepE addSelf() {
         return testCaseStepRepository.insert(this);
@@ -72,7 +69,7 @@ public class TestCaseStepE {
     }
 
 
-    public Long getStepId() {
+	public Long getStepId() {
         return stepId;
     }
 

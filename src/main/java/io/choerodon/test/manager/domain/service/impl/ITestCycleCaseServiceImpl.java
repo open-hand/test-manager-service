@@ -2,12 +2,10 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
+import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
@@ -31,15 +29,14 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
     ITestCycleCaseStepService iTestCycleCaseStepService;
 
     @Autowired
-    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
+    ITestCycleService iTestCycleService;
 
     @Autowired
-    ProductionVersionClient productionVersionClient;
+    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
-    private final String TEMP_CYCLE_NAME = "临时";
-    private final String TEMP_CYCLE_TYPE = "CYCLE";
 
-    @Transactional(rollbackFor = Exception.class)
+
+
     @Override
     public void delete(TestCycleCaseE testCycleCaseE) {
         List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
@@ -80,63 +77,18 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
      * @return
      */
     @Override
-    public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
-        if (testCycleCaseE.getCycleId() == null) {
-            testCycleCaseE.setCycleId(createTempCycle(projectId).getCycleId());
-        }
-        TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
-        createTestCaseStep(testCycleCase);
+    public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE) {
+
+        TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
+        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCaseE);
         return testCycleCase;
     }
 
-    /**
-     * 启动测试时如果位置顶cycle则默认放入未计划下的临时文件夹下。
-     *
-     * @param projectId
-     * @return
-     */
-    private TestCycleE createTempCycle(Long projectId) {
-        ResponseEntity<Page<ProductVersionPageDTO>> rs = productionVersionClient.listByOptions(projectId, Maps.asMap(Sets.newHashSet("statusCode"), v -> "version_planning"));
-        List<ProductVersionPageDTO> lists = rs.getBody().getContent();
-        switch (lists.size()) {
-            case 1:
-                TestCycleE cycle = TestCycleEFactory.create();
-                cycle.setVersionId(lists.get(0).getVersionId());
-                cycle.setCycleName(TEMP_CYCLE_NAME);
-                return cycle.querySelf().stream().findFirst().orElseGet(() -> {
-                    //新建临时文件夹 添加相关属性
-                    cycle.setType(TEMP_CYCLE_TYPE);
-                    return cycle.addSelf();
-                });
-            default:
-                throw new CommonException("error.folder.version_planning.notFound");
-        }
-
-    }
-
-    /**
-     * 启动测试例分步任务
-     *
-     * @param testCycleCaseE
-     */
-    private void createTestCaseStep(TestCycleCaseE testCycleCaseE) {
-        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCaseE);
-    }
 
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE, Long projectId) {
-
-        if (testCycleCaseE.getExecuteId() == null) {
-            testCycleCaseE.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseE.getLastRank(), testCycleCaseE.getNextRank()));
-
-            testCycleCaseE = runTestCycleCase(testCycleCaseE, projectId);
-        } else {
-            testCycleCaseE.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseE.getLastRank(), testCycleCaseE.getNextRank()));
-            testCycleCaseE = testCycleCaseE.updateSelf();
-        }
-        return testCycleCaseE;
+    public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE) {
+        return testCycleCaseE.changeOneCase();
     }
 
 }

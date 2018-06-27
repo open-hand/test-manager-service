@@ -13,8 +13,4 @@ public interface ITestCaseStepService {
 
     void removeStep(TestCaseStepE testCaseStepE);
 
-    List<TestCaseStepE> batchInsertStep(List<TestCaseStepE> testCaseStepES);
-
-    TestCaseStepE changeStep(TestCaseStepE testCaseStepE);
-
 }

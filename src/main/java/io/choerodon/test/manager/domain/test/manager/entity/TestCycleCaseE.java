@@ -1,11 +1,13 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -51,6 +53,18 @@ public class TestCycleCaseE {
 
     public Page<TestCycleCaseE> querySelf(PageRequest pageRequest) {
         return testCycleCaseRepository.query(this, pageRequest);
+    }
+
+    public TestCycleCaseE createOneCase() {
+        setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+        return addSelf();
+    }
+
+    public TestCycleCaseE changeOneCase() {
+        if (!StringUtils.isEmpty(lastRank) || !StringUtils.isEmpty(nextRank)) {
+            setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+        }
+        return updateSelf();
     }
 
     public TestCycleCaseE queryOne() {

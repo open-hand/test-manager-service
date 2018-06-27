@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -10,6 +11,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,12 +23,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     ITestCycleCaseService iTestCycleCaseService;
 
-    @Override
-    public void delete(Long cycleCaseId) {
-        TestCycleCaseDTO dto = new TestCycleCaseDTO();
-        dto.setExecuteId(cycleCaseId);
-        iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
-    }
+	@Autowired
+	ITestCycleService iTestCycleService;
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void delete(Long cycleCaseId) {
+		TestCycleCaseDTO dto = new TestCycleCaseDTO();
+		dto.setExecuteId(cycleCaseId);
+		iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
+	}
 
 
     @Override
@@ -50,16 +56,21 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
     }
 
-    @Override
-    public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-        return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+		if (testCycleCaseDTO.getCycleId() == null) {
+			testCycleCaseDTO.setCycleId(iTestCycleService.findDefaultCycle(projectId));
+		}
+		return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+	}
 
 
-    @Override
-    public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-        iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+		iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
+	}
 
 
 }

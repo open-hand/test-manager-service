@@ -20,7 +20,6 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
     @Autowired
     TestCaseFeignClient testCaseFeignClient;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
         return testCycleCaseDefectRelE.addSelf();

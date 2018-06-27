@@ -16,19 +16,16 @@ import java.util.List;
 @Component
 public class ITestCycleCaseHistoryServiceImpl implements ITestCycleCaseHistoryService {
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE) {
         return testCycleCaseHistoryE.addSelf();
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
         testCycleCaseHistoryE.forEach(v -> v.deleteSelf());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
         List<TestCycleCaseHistoryE> list = new ArrayList<>();

@@ -22,5 +22,14 @@ public interface ITestCycleService {
 
     List<TestCycleE> getTestCycle(Long versionId);
 
+	List<TestCycleE> sort(List<TestCycleE> testCycleES);
+
     List<TestCycleE> queryCycleWithBar(Long versionId);
+
+	/**
+	 * 查找Cycle存放默认路径
+	 *
+	 * @return
+	 */
+	Long findDefaultCycle(Long projectId);
 }

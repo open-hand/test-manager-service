@@ -26,8 +26,6 @@ public class TestCycleController {
     @Autowired
     TestCycleService testCycleService;
 
-    @Autowired
-    TestCycleMapper cycleMapperl;
 
     @Permission(permissionPublic = true)
     @ApiOperation("增加测试循环")
@@ -66,11 +64,9 @@ public class TestCycleController {
     @ApiOperation("查询测试循环")
     @GetMapping("/query/{versionId}")
     ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
-//        return Optional.ofNullable(testCycleService.getTestCycle(versionId))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.testCycle.query"));
-//        cycleMapperl.query(versionId);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.query"));
     }
 
 

@@ -19,7 +19,6 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
     @Autowired
     FileFeignClient fileFeignClient;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
@@ -29,7 +28,6 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
         TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();

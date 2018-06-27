@@ -10,6 +10,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,18 +22,20 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     @Autowired
     ITestCycleCaseHistoryService iTestCycleCaseHistoryService;
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO) {
         return ConvertHelper.convert(iTestCycleCaseHistoryService.insert(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
         iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
         return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);

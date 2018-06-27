@@ -1,5 +1,8 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -11,6 +14,7 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,13 +33,15 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     @Autowired
     ITestCycleCaseService iTestCycleCaseService;
 
-    @Transactional(rollbackFor = Exception.class)
+
+	private final String TEMP_CYCLE_NAME = "临时";
+	private final String TEMP_CYCLE_TYPE = "CYCLE";
+
     @Override
     public TestCycleE insert(TestCycleE testCycleE) {
         return testCycleE.addSelf();
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(TestCycleE testCycleE) {
         TestCycleE cycle = TestCycleEFactory.create();
@@ -51,7 +57,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         testCycleE.deleteSelf();
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public List<TestCycleE> update(List<TestCycleE> testCycleE) {
         List<TestCycleE> testCycleES = new ArrayList<>();
@@ -69,11 +74,12 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         return testCycleE.querySelf();
     }
 
-    public List<TestCycleE> sort(List<TestCycleE> testCycleES) {
-        List<TestCycleE> testCaseStepES = new ArrayList<>();
-        doSort(testCycleES, null, testCaseStepES);
-        return testCaseStepES;
-    }
+	@Override
+	public List<TestCycleE> sort(List<TestCycleE> testCycleES) {
+		List<TestCycleE> testCaseStepES = new ArrayList<>();
+		doSort(testCycleES, null, testCaseStepES);
+		return testCaseStepES;
+	}
 
     private void doSort(List<TestCycleE> testCycleES, Long parentId, List<TestCycleE> result) {
         Long nextParentId = parentId;
@@ -108,4 +114,21 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         testCycleE.setVersionId(versionId);
         return testCycleE.querySelfWithBar();
     }
+
+	@Override
+	public Long findDefaultCycle(Long projectId) {
+		ResponseEntity<Page<ProductVersionPageDTO>> rs = productionVersionClient.listByOptions(projectId, Maps.asMap(Sets.newHashSet("statusCode"), v -> "version_planning"));
+		List<ProductVersionPageDTO> lists = rs.getBody().getContent();
+		switch (lists.size()) {
+			case 1:
+				TestCycleE cycle = TestCycleEFactory.create();
+				cycle.setVersionId(lists.get(0).getVersionId());
+				cycle.setCycleName(TEMP_CYCLE_NAME);
+				return cycle.querySelf().stream().findFirst()
+						.orElseThrow(() -> new CommonException("error.folder.version_planning.notFound")).getCycleId();
+			default:
+				throw new CommonException("error.folder.version_planning.notFound");
+		}
+	}
+
 }

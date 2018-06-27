@@ -5,6 +5,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachm
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -16,12 +17,14 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     @Autowired
     ITestCycleCaseAttachmentRelService iTestCycleCaseAttachmentRelService;
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(String bucketName, Long attachId) {
         iTestCycleCaseAttachmentRelService.delete(bucketName, attachId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
         return iTestCycleCaseAttachmentRelService.upload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment);
     }

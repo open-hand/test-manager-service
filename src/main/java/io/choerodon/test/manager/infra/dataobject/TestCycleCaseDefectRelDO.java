@@ -13,7 +13,7 @@ import javax.persistence.Table;
  */
 @ModifyAudit
 @VersionAudit
-@Table(name = "test_cycle_defect_rel")
+@Table(name = "test_cycle_case_defect_rel")
 public class TestCycleCaseDefectRelDO extends AuditDomain {
     @Id
     @GeneratedValue

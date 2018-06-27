@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
@@ -30,7 +31,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     TestCaseFeignClient testCaseFeignClient;
 
     @Autowired
-    private ITestCaseStepService iTestCaseStepService;
+	private TestCaseStepService iTestCaseStepService;
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -42,23 +43,25 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<TestCaseStepDTO> testCaseStepDTO = issueCreateDTO.getTestCaseStepDTOS();
         IssueDTO testCaseDto = responseEntity.getBody();
         testCaseStepDTO.forEach(v -> v.setIssueId(testCaseDto.getIssueId()));
-        testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(ConvertHelper.convertList(testCaseStepDTO, TestCaseStepE.class)), TestCaseStepDTO.class);
+		testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(testCaseStepDTO), TestCaseStepDTO.class);
         testCaseDto.setTestCaseStepDTOS(testCaseStepDTO);
         return testCaseDto;
     }
 
-    @Override
-    public void delete(Long projectId, Long issueId) {
-        TestCaseStepDTO dto = new TestCaseStepDTO();
-        dto.setIssueId(issueId);
-        iTestCaseStepService.removeStep(ConvertHelper.convert(dto, TestCaseStepE.class));
-        testCaseFeignClient.deleteIssue(projectId, issueId);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void delete(Long projectId, Long issueId) {
+		TestCaseStepDTO dto = new TestCaseStepDTO();
+		dto.setIssueId(issueId);
+		iTestCaseStepService.removeStep(dto);
+		testCaseFeignClient.deleteIssue(projectId, issueId);
+	}
 
-    @Override
-    public ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate) {
-        return testCaseFeignClient.updateIssue(projectId, issueUpdate);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public ResponseEntity<IssueDTO> update(Long projectId, JSONObject issueUpdate) {
+		return testCaseFeignClient.updateIssue(projectId, issueUpdate);
+	}
 
     @Override
     public ResponseEntity<IssueDTO> query(Long projectId, Long issueId) {
@@ -67,7 +70,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (issueDTO == null) {
             return responseEntity;
         }
-        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+		TestCaseStepDTO testCaseStepE = new TestCaseStepDTO();
         testCaseStepE.setIssueId(issueDTO.getIssueId());
         issueDTO.setTestCaseStepDTOS(ConvertHelper.convertList(iTestCaseStepService.query(testCaseStepE), TestCaseStepDTO.class));
         return responseEntity;
