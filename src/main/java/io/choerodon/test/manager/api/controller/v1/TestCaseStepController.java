@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by 842767365@qq.com on 6/11/18.
  */
 @RestController
-@RequestMapping(value = "/test/case/step")
+@RequestMapping(value = "/case/step")
 public class TestCaseStepController {
 
     @Autowired

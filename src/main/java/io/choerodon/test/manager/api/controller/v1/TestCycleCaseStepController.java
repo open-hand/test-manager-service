@@ -1,8 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.core.exception.CommonException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +18,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/14/18.
  */
 @RestController
-@RequestMapping(value = "/test/cycle/case/step")
+@RequestMapping(value = "/v1/cycle/case/step")
 public class TestCycleCaseStepController {
 
     @Autowired
@@ -27,8 +30,10 @@ public class TestCycleCaseStepController {
      * @param testCycleCaseStepDTO
      * @return
      */
-    @PutMapping
-    ResponseEntity<List<TestCycleCaseStepDTO>> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+	@Permission(permissionPublic = true)
+	@ApiOperation("更新循环步骤")
+	@PutMapping
+	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
         return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
@@ -42,8 +47,11 @@ public class TestCycleCaseStepController {
      * @param cycleCaseId
      * @return
      */
-    @GetMapping("/query/{CycleCaseId}")
-    ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@PathVariable Long cycleCaseId) {
+	@Permission(permissionPublic = true)
+	@ApiOperation("查询循环步骤")
+	@GetMapping("/query/{CycleCaseId}")
+	ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@ApiParam(value = "log id", required = true)
+															@PathVariable Long cycleCaseId) {
 
         return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))

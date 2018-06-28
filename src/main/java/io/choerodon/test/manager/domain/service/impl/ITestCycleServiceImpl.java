@@ -13,6 +13,7 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -44,10 +46,10 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
     @Override
     public void delete(TestCycleE testCycleE) {
-        TestCycleE cycle = TestCycleEFactory.create();
-        cycle.setVersionId(testCycleE.getVersionId());
-        cycle.setParentCycleId(testCycleE.getCycleId());
-        cycle.querySelf().forEach(this::deleteCycleWithCase);
+//        TestCycleE cycle = TestCycleEFactory.create();
+//        cycle.setVersionId(testCycleE.getVersionId());
+//        cycle.setParentCycleId(testCycleE.getCycleId());
+		testCycleE.querySelf().forEach(this::deleteCycleWithCase);
     }
 
     private void deleteCycleWithCase(TestCycleE testCycleE) {
@@ -74,46 +76,27 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         return testCycleE.querySelf();
     }
 
-	@Override
-	public List<TestCycleE> sort(List<TestCycleE> testCycleES) {
-		List<TestCycleE> testCaseStepES = new ArrayList<>();
-		doSort(testCycleES, null, testCaseStepES);
-		return testCaseStepES;
-	}
 
-    private void doSort(List<TestCycleE> testCycleES, Long parentId, List<TestCycleE> result) {
-        Long nextParentId = parentId;
-        for (int i = 0; i < testCycleES.size(); i++) {
-            TestCycleE e = testCycleES.get(i);
-            if (e.getParentCycleId() == parentId) {
-                nextParentId = e.getCycleId();
-                result.add(e);
-                testCycleES.remove(e);
-                break;
-            }
-        }
-        if (testCycleES.isEmpty()) {
-            return;
-        }
-        if (nextParentId == parentId) {
-            throw new CommonException("error.test.case.step.sort");
-        }
-        doSort(testCycleES, nextParentId, result);
-    }
-
-    @Override
-    public List<TestCycleE> getTestCycle(Long versionId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setVersionId(versionId);
-        return querySubCycle(testCycleE);
-    }
+//    @Override
+//    public List<TestCycleE> getTestCycle(Long versionId) {
+//        TestCycleE testCycleE = TestCycleEFactory.create();
+//        testCycleE.setVersionId(versionId);
+//        return querySubCycle(testCycleE);
+//    }
 
     @Override
     public List<TestCycleE> queryCycleWithBar(Long versionId) {
         TestCycleE testCycleE = TestCycleEFactory.create();
         testCycleE.setVersionId(versionId);
-        return testCycleE.querySelfWithBar();
+		return countStatus(testCycleE.querySelfWithBar());
     }
+
+	private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {
+		testCycleES.stream().filter(v -> StringUtils.equals(v.getType(), TestCycleE.CYCLE))
+				.forEach(u -> u.countChildStatus(u.getChildFolder(testCycleES)));
+		return testCycleES;
+	}
+
 
 	@Override
 	public Long findDefaultCycle(Long projectId) {
@@ -130,5 +113,31 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 				throw new CommonException("error.folder.version_planning.notFound");
 		}
 	}
+
+	public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE) {
+		TestCycleE newCycleE = newTestCycleE.cloneCycle(protoTestCycleE);
+
+		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
+		testCycleCaseE.setCycleId(protoTestCycleE.getCycleId());
+		iTestCycleCaseService.query(testCycleCaseE).forEach(v -> {
+			v.setExecuteId(null);
+			v.setCycleId(newCycleE.getCycleId());
+			v.setObjectVersionNumber(null);
+			iTestCycleCaseService.cloneCycleCase(v);
+		});
+		return newCycleE;
+	}
+
+	@Override
+	public TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE) {
+		TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE);
+		protoTestCycleE.getChildFolder().forEach(v -> {
+			TestCycleE testCycleE = TestCycleEFactory.create();
+			testCycleE.setParentCycleId(parentCycle.getCycleId());
+			cloneFolder(v, testCycleE);
+		});
+		return parentCycle;
+	}
+
 
 }

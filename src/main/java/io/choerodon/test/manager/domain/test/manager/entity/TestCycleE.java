@@ -1,14 +1,16 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -16,6 +18,10 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestCycleE {
+
+	public static final String FOLDER = "folder";
+	public static final String CYCLE = "cycle";
+
     private Long cycleId;
 
     private Long parentCycleId;
@@ -38,6 +44,8 @@ public class TestCycleE {
 
     private Long objectVersionNumber;
 
+	private CountMap cycleCaseList;
+
     @Autowired
     TestCycleRepository testCycleRepository;
 
@@ -48,6 +56,30 @@ public class TestCycleE {
     public List<TestCycleE> querySelf() {
         return testCycleRepository.query(this);
     }
+
+	public TestCycleE cloneCycle(TestCycleE proto) {
+		parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
+		cycleName = Optional.ofNullable(cycleName).orElse(proto.getCycleName());
+		versionId = Optional.ofNullable(versionId).orElse(proto.getVersionId());
+		description = Optional.ofNullable(description).orElse(proto.getDescription());
+		build = Optional.ofNullable(build).orElse(proto.getBuild());
+		environment = Optional.ofNullable(environment).orElse(proto.getEnvironment());
+		fromDate = Optional.ofNullable(fromDate).orElse(proto.getFromDate());
+		toDate = Optional.ofNullable(toDate).orElse(proto.getToDate());
+		type = Optional.ofNullable(type).orElse(proto.getType());
+		return addSelf();
+	}
+
+	public List<TestCycleE> getChildFolder() {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setParentCycleId(cycleId);
+		testCycleE.setType(FOLDER);
+		return testCycleE.querySelf();
+	}
+
+	public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
+		return testCycleES.stream().filter(v -> v.getParentCycleId() == this.cycleId && v.getType().equals(FOLDER)).collect(Collectors.toList());
+	}
 
     public List<TestCycleE> querySelfWithBar() {
         return testCycleRepository.queryBar(this.versionId);
@@ -113,6 +145,17 @@ public class TestCycleE {
         return objectVersionNumber;
     }
 
+	public Map getCycleCaseList() {
+		return cycleCaseList;
+	}
+
+	public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
+		CountMap map = new CountMap();
+		cycleCaseList.forEach(v -> {
+			map.put((String) v.get("color"), (Long) v.get("counts"));
+		});
+		this.cycleCaseList = map;
+	}
 
     public void setCycleId(Long cycleId) {
         this.cycleId = cycleId;
@@ -155,7 +198,23 @@ public class TestCycleE {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-    public void setTestCycleRepository(TestCycleRepository testCycleRepository) {
-        this.testCycleRepository = testCycleRepository;
-    }
+	public void countChildStatus(List<TestCycleE> cycleCaseList) {
+		cycleCaseList.forEach(v -> {
+			this.cycleCaseList.merge(v.getCycleCaseList());
+		});
+
+	}
+
+	static class CountMap extends HashMap<String, Long> {
+		private void merge(Map<String, Long> plus) {
+			plus.forEach((k, v) -> {
+				if (this.containsKey(k)) {
+					this.put(k, super.get(k) + v);
+				} else {
+					this.put(k, v);
+				}
+			});
+		}
+	}
+
 }

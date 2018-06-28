@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.api.dto;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -37,6 +39,8 @@ public class TestCycleDTO {
     private Date toDate;
 
     private String type;
+
+    private Map cycleCaseList;
 
     private Long objectVersionNumber;
 
@@ -126,5 +130,13 @@ public class TestCycleDTO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Map getCycleCaseList() {
+        return cycleCaseList;
+    }
+
+    public void setCycleCaseList(Map cycleCaseList) {
+        this.cycleCaseList = cycleCaseList;
     }
 }

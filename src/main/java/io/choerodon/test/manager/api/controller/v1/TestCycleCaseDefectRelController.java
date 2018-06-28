@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * Created by 842767365@qq.com on 6/25/18.
  */
 @RestController
-@RequestMapping(value = "/test/defect")
+@RequestMapping(value = "/v1/defect")
 public class TestCycleCaseDefectRelController {
 
     @Autowired

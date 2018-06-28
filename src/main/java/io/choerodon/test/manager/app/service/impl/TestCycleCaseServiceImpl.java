@@ -42,11 +42,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<TestCycleCaseDTO> queryByCycle(Long cycleId) {
+	public Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(cycleId);
-        List<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
-        return ConvertHelper.convertList(serviceEPage, TestCycleCaseDTO.class);
+		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
+		return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+	public void changeOneCase(TestCycleCaseDTO testCycleCaseDTO) {
 		iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
 	}
 

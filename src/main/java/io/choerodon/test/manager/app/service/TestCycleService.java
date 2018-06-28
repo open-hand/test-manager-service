@@ -18,7 +18,9 @@ public interface TestCycleService {
 
     List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO);
 
-//    Page<TestCycleDTO> query(TestCycleDTO testCycleDTO, PageRequest pageRequest);
+	TestCycleDTO cloneCycle(Long cycleId, String cycleName);
+
+	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO);
 
     List<TestCycleDTO> getTestCycle(Long versionId);
 

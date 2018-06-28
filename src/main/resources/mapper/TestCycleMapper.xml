@@ -22,7 +22,7 @@
     </resultMap>
 
     <select id="query" resultMap="BaseResultMap">
-       SELECT cycle1.cycle_id,cycle1.parent_cycle_id,cycle1.cycle_name FROM test_cycle cycle1
+       SELECT cycle1.cycle_id,cycle1.parent_cycle_id,cycle1.cycle_name,cycle1.type FROM test_cycle cycle1
         where cycle1.version_id = #{versionId}
     </select>
 

@@ -17,7 +17,7 @@ public interface TestCycleCaseService {
 
     Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest);
 
-    List<TestCycleCaseDTO> queryByCycle(Long cycleId);
+	Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest);
 
     TestCycleCaseDTO queryOne(Long cycleCaseId);
 
@@ -30,13 +30,12 @@ public interface TestCycleCaseService {
     TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 
-//    List<TestCycleCaseDTO> changeCycleCase(List<TestCycleCaseDTO> testCycleCaseES);
 
     /**
-     * 增加|修改一个case
+	 * 修改一个case
      *
      * @param testCycleCaseDTO
      */
-    void changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+	void changeOneCase(TestCycleCaseDTO testCycleCaseDTO);
 
 }

@@ -24,6 +24,7 @@ public interface ITestCycleCaseService {
 
     Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
+	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE);
 
     List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 

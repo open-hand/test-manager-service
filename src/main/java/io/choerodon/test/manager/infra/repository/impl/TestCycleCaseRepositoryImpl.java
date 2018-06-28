@@ -70,7 +70,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
         List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
         if (list.size() != 1) {
-            throw new CommonException("error.cycle.case.query.too.much.rows");
+			throw new CommonException("error.cycle.case.query.not.found");
         }
         return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
     }

@@ -1,9 +1,11 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -50,11 +52,39 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public List<TestCycleDTO> getTestCycle(Long versionId) {
-        return ConvertHelper.convertList(iTestCycleService.sort(iTestCycleService.queryCycleWithBar(versionId)), TestCycleDTO.class);
+        return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
     }
 
     @Override
     public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
         return productionVersionClient.listByOptions(projectId, searchParamMap);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleDTO cloneCycle(Long cycleId, String cycleName) {
+        TestCycleE testCycleE = TestCycleEFactory.create();
+        testCycleE.setCycleId(cycleId);
+        List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
+        if (!(list.size() == 1 && list.get(0).getCycleName() != cycleName)) {
+            throw new CommonException("error.test.cycle.clone.duplicate.name");
+        }
+        TestCycleE newTestCycleE = TestCycleEFactory.create();
+        newTestCycleE.setCycleName(cycleName);
+        newTestCycleE.setType(TestCycleE.CYCLE);
+        return ConvertHelper.convert(iTestCycleService.cloneCycle(list.get(0), newTestCycleE), TestCycleDTO.class);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO) {
+        TestCycleE testCycleE = TestCycleEFactory.create();
+        testCycleE.setCycleId(cycleId);
+        List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
+        if (list.size() != 1) {
+            throw new CommonException("error.test.cycle.clone.");
+        }
+
+        return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
     }
 }

@@ -78,12 +78,17 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
      */
     @Override
     public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE) {
-
         TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
-        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCaseE);
+        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase);
         return testCycleCase;
     }
 
+    @Override
+    public TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE) {
+        TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
+        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase);
+        return testCycleCase;
+    }
 
 
     @Override

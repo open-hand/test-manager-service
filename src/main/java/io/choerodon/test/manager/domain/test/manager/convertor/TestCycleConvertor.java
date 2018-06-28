@@ -8,6 +8,7 @@ import io.choerodon.core.convertor.ConvertorI;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -17,7 +18,7 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
 
     @Override
     public TestCycleE dtoToEntity(TestCycleDTO dto) {
-        return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber());
+		return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber(), null);
     }
 
     @Override
@@ -34,15 +35,16 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
         stepDO.setFromDate(entity.getFromDate());
         stepDO.setToDate(entity.getToDate());
         stepDO.setObjectVersionNumber(entity.getObjectVersionNumber());
+		stepDO.setCycleCaseList(entity.getCycleCaseList());
         return stepDO;
     }
 
     @Override
     public TestCycleE doToEntity(TestCycleDO dto) {
-        return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber());
+		return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber(), dto.getCycleCaseList());
     }
 
-    private TestCycleE getTestCycleE(String build, String cycleName, String description, String environment, String type, Long versionId, Long cycleId, Long parentCycleId, Date fromDate, Date toDate, Long objectVersionNumber) {
+	private TestCycleE getTestCycleE(String build, String cycleName, String description, String environment, String type, Long versionId, Long cycleId, Long parentCycleId, Date fromDate, Date toDate, Long objectVersionNumber, List cycleCaseList) {
         TestCycleE testCaseStepE = TestCycleEFactory.create();
         testCaseStepE.setBuild(build);
         testCaseStepE.setCycleName(cycleName);
@@ -55,6 +57,7 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
         testCaseStepE.setFromDate(fromDate);
         testCaseStepE.setToDate(toDate);
         testCaseStepE.setObjectVersionNumber(objectVersionNumber);
+		testCaseStepE.setCycleCaseList(cycleCaseList);
         return testCaseStepE;
     }
 
