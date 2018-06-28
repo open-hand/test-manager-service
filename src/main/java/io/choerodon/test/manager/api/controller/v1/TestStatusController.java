@@ -36,8 +36,9 @@ public class TestStatusController {
 	@Permission(permissionPublic = true)
 	@ApiOperation("删除状态")
 	@DeleteMapping
-	public void delete(@RequestBody TestStatusDTO testStatusDTO) {
+	public ResponseEntity delete(@RequestBody TestStatusDTO testStatusDTO) {
 		testStatusService.delete(testStatusDTO);
+		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
 	@Permission(permissionPublic = true)
@@ -45,7 +46,7 @@ public class TestStatusController {
 	@PostMapping
 	public ResponseEntity<TestStatusDTO> insert(@RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.insert(testStatusDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
 	}
 
@@ -54,7 +55,7 @@ public class TestStatusController {
 	@PutMapping
 	public ResponseEntity<TestStatusDTO> update(@RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.update(testStatusDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testStatus.update"));
 	}
 }

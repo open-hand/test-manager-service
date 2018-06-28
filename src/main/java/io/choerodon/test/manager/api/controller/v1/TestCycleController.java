@@ -84,7 +84,7 @@ public class TestCycleController {
 	@PostMapping("/clone/cycle/{cycleId}/{cycleName}")
 	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName) {
 		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query"));
 
 	}
@@ -97,7 +97,7 @@ public class TestCycleController {
 			@PathVariable(name = "cycleId") Long cycleId
 			, @RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query"));
 
 	}

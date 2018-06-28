@@ -51,7 +51,7 @@ public class TestCaseController {
                                           @ApiParam(value = "issueId", required = true)
                                           @PathVariable Long issueId) {
         testCaseService.delete(projectId, issueId);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
     @Permission(permissionPublic = true)

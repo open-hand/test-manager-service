@@ -33,7 +33,7 @@ public class TestAttachmentController {
                                                                   @RequestParam("attachmentType") String attachmentType,
                                                                   @RequestParam("comment") String comment) {
         return Optional.ofNullable(testCycleCaseAttachmentRelService.upload(bucketName, fileName, multipartFile, attachmentLinkId, attachmentType, comment))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 
     }

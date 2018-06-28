@@ -21,25 +21,26 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/v1/defect")
 public class TestCycleCaseDefectRelController {
 
-    @Autowired
-    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+	@Autowired
+	TestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
-    @Permission(permissionPublic = true)
-    @ApiOperation("增加缺陷")
-    @PostMapping
-    public ResponseEntity<TestCycleCaseDefectRelDTO> insert(@RequestBody TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-        return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testDefect.insert"));
+	@Permission(permissionPublic = true)
+	@ApiOperation("增加缺陷")
+	@PostMapping
+	public ResponseEntity<TestCycleCaseDefectRelDTO> insert(@RequestBody TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+		return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testDefect.insert"));
 
-    }
+	}
 
-    @Permission(permissionPublic = true)
-    @ApiOperation("删除缺陷")
-    @DeleteMapping
-    public void removeAttachment(Long defectId) {
-        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
-        testCycleCaseDefectRelDTO.setId(defectId);
-        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
-    }
+	@Permission(permissionPublic = true)
+	@ApiOperation("删除缺陷")
+	@DeleteMapping
+	public ResponseEntity removeAttachment(Long defectId) {
+		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
+		testCycleCaseDefectRelDTO.setId(defectId);
+		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
 }

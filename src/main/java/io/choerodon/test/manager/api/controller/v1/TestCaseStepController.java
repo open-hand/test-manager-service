@@ -5,6 +5,8 @@ import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -28,16 +30,18 @@ public class TestCaseStepController {
     @Permission(permissionPublic = true)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
-    public void changeOneStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+    public ResponseEntity<Boolean> changeOneStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
         iTestCaseStepService.changeStep(testCaseStepDTO);
+        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
 
     @Permission(permissionPublic = true)
     @ApiOperation("删除测试步骤")
     @DeleteMapping
-    public void removeStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+    public ResponseEntity<Boolean> removeStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
         iTestCaseStepService.removeStep(testCaseStepDTO);
+        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
 }

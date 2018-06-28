@@ -12,9 +12,9 @@ import java.util.List;
 public interface TestCycleCaseHistoryService {
     TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO);
 
-    void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO);
+//    void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO);
+//
+//    List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO);
 
-    List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO);
-
-    Page<TestCycleCaseHistoryDTO> query(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO, PageRequest pageRequest);
+    Page<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest);
 }

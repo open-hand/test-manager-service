@@ -35,7 +35,7 @@ public class TestCycleCaseStepController {
 	@PutMapping
 	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
         return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
 
     }

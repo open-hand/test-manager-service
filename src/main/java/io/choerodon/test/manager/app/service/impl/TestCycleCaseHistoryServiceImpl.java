@@ -29,21 +29,23 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-        iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
-    }
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
+//        iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
+//    }
+//
+//    @Transactional(rollbackFor = Exception.class)
+//    @Override
+//    public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
+//        return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
+//    }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-        return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
-    }
-
-    @Override
-    public Page<TestCycleCaseHistoryDTO> query(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO, PageRequest pageRequest) {
-        Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class), pageRequest);
+    public Page<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest) {
+        TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
+        historyDTO.setExecuteId(cycleCaseId);
+        Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
         return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
     }
 }

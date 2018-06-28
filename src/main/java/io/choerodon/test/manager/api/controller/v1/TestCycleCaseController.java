@@ -31,8 +31,9 @@ public class TestCycleCaseController {
     @Permission(permissionPublic = true)
     @ApiOperation("删除测试循环用例")
     @DeleteMapping
-    public void delete(Long cycleCaseId) {
+    public ResponseEntity delete(Long cycleCaseId) {
         testCycleCaseService.delete(cycleCaseId);
+        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
 
@@ -62,15 +63,21 @@ public class TestCycleCaseController {
     @Permission(permissionPublic = true)
     @ApiOperation("增加一个测试组下循环用例")
     @PostMapping("/{projectId}/insert")
-    public void insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "projectId") Long projectId) {
-        testCycleCaseService.create(testCycleCaseDTO, projectId);
+    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "projectId") Long projectId) {
+        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+
     }
 
     @Permission(permissionPublic = true)
     @ApiOperation("修改一个测试组下循环用例")
     @PostMapping("/update")
-    public void updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO) {
-        testCycleCaseService.changeOneCase(testCycleCaseDTO);
+    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO) {
+        ;
+        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
 
 }
