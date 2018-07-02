@@ -12,7 +12,7 @@
         <id column="assigned_to" property="assignedTo"/>
         <id column="comment" property="comment"/>
         <id column="last_update_date" property="lastUpdateDate"/>
-        <id column="last_updated_by" property="lastUpdateBy"/>
+        <id column="last_updated_by" property="lastUpdatedBy"/>
         <collection property="caseAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
             <id column="url" property="url"/>
