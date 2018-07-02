@@ -90,7 +90,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'execution_status', type: 'VARCHAR(30)', remarks: '执行状态') {
                 constraints(nullable: false)
             }
-            column(name: 'assigned_to', type: 'VARCHAR(100)', remarks: '指定人')
+            column(name: 'assigned_to', type: 'BIGINT UNSIGNED', remarks: '指定人')
             column(name: 'comment', type: 'VARCHAR(300)', remarks: '注释')
 
 

@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -25,6 +27,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Autowired
 	ITestCycleService iTestCycleService;
+
+	@Autowired
+	UserService userService;
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -53,8 +58,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public TestCycleCaseDTO queryOne(Long cycleCaseId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(cycleCaseId);
-        return ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-    }
+		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+		Optional.ofNullable(dto.getAssignedTo()).ifPresent(v -> dto.setRealName(userService.query(v).getRealName()));
+		return dto;
+	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override

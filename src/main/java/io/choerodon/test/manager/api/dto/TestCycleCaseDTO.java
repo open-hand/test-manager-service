@@ -5,6 +5,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class TestCycleCaseDTO {
 
     private String executionStatus;
 
-    private String assignedTo;
+    private Long assignedTo;
 
     private String comment;
 
@@ -30,6 +31,12 @@ public class TestCycleCaseDTO {
     private String lastRank;
 
     private String nextRank;
+
+    private String realName;
+
+    private Long lastUpdateBy;
+
+    private Date lastUpdateDate;
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
@@ -77,13 +84,22 @@ public class TestCycleCaseDTO {
         this.executionStatus = executionStatus;
     }
 
-    public String getAssignedTo() {
+    public Long getAssignedTo() {
         return assignedTo;
     }
 
-    public void setAssignedTo(String assignedTo) {
+    public void setAssignedTo(Long assignedTo) {
         this.assignedTo = assignedTo;
     }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
 
     public String getComment() {
         return comment;
@@ -139,5 +155,21 @@ public class TestCycleCaseDTO {
 
     public void setDefects(List<TestCycleCaseDefectRelE> defects) {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
+    }
+
+    public Long getLastUpdateBy() {
+        return lastUpdateBy;
+    }
+
+    public void setLastUpdateBy(Long lastUpdateBy) {
+        this.lastUpdateBy = lastUpdateBy;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

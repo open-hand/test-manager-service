@@ -37,7 +37,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO) {
-		TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
 			testCaseStepE.createOneStep();
 		} else {

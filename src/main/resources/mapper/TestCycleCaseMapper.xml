@@ -11,6 +11,8 @@
         <id column="execution_status" property="executionStatus"/>
         <id column="assigned_to" property="assignedTo"/>
         <id column="comment" property="comment"/>
+        <id column="last_update_date" property="lastUpdateDate"/>
+        <id column="last_updated_by" property="lastUpdateBy"/>
         <collection property="caseAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
             <id column="url" property="url"/>
@@ -22,7 +24,7 @@
 
     <select id="query" resultMap="BaseResultMap">
         SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
-        cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id
+        cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id,cycle.last_update_date,cycle.last_updated_by
         FROM test_cycle_case cycle
         left join test_cycle_case_attachment_rel attach
         on cycle.execute_id=attach.attachment_link_id and attach.attachment_type="CYCLE_CASE"

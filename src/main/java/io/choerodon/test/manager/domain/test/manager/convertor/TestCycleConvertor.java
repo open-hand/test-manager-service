@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -57,7 +58,7 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
         testCaseStepE.setFromDate(fromDate);
         testCaseStepE.setToDate(toDate);
         testCaseStepE.setObjectVersionNumber(objectVersionNumber);
-		testCaseStepE.setCycleCaseList(cycleCaseList);
+        Optional.ofNullable(cycleCaseList).ifPresent(v -> testCaseStepE.setCycleCaseList(v));
         return testCaseStepE;
     }
 

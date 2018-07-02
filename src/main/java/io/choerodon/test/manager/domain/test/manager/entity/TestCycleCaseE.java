@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Transient;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class TestCycleCaseE {
 
     private String executionStatus;
 
-    private String assignedTo;
+    private Long assignedTo;
 
     private String comment;
 
@@ -42,6 +43,10 @@ public class TestCycleCaseE {
     List<TestCycleCaseAttachmentRelE> caseAttachment;
 
     private Long objectVersionNumber;
+
+    private Long lastUpdateBy;
+
+    private Date lastUpdateDate;
 
     private List<TestCycleCaseStepE> testCycleCaseStepES;
 
@@ -103,7 +108,7 @@ public class TestCycleCaseE {
         return executionStatus;
     }
 
-    public String getAssignedTo() {
+    public Long getAssignedTo() {
         return assignedTo;
     }
 
@@ -140,7 +145,7 @@ public class TestCycleCaseE {
         this.executionStatus = executionStatus;
     }
 
-    public void setAssignedTo(String assignedTo) {
+    public void setAssignedTo(Long assignedTo) {
         this.assignedTo = assignedTo;
     }
 
@@ -190,7 +195,6 @@ public class TestCycleCaseE {
 
     public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
         this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelE.class);
-        ;
     }
 
     public List<TestCycleCaseDefectRelE> getDefects() {
@@ -199,5 +203,21 @@ public class TestCycleCaseE {
 
     public void setDefects(List<TestCycleCaseDefectRelE> defects) {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
+    }
+
+    public Long getLastUpdateBy() {
+        return lastUpdateBy;
+    }
+
+    public void setLastUpdateBy(Long lastUpdateBy) {
+        this.lastUpdateBy = lastUpdateBy;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

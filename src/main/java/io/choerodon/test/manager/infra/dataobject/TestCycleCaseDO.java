@@ -29,7 +29,7 @@ public class TestCycleCaseDO extends AuditDomain {
 
     private String executionStatus;
 
-    private String assignedTo;
+    private Long assignedTo;
 
     private String comment;
 
@@ -68,11 +68,11 @@ public class TestCycleCaseDO extends AuditDomain {
         this.executionStatus = executionStatus;
     }
 
-    public String getAssignedTo() {
+    public Long getAssignedTo() {
         return assignedTo;
     }
 
-    public void setAssignedTo(String assignedTo) {
+    public void setAssignedTo(Long assignedTo) {
         this.assignedTo = assignedTo;
     }
 
