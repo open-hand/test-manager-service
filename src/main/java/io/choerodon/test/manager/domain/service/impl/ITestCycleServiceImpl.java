@@ -20,7 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -35,9 +37,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     @Autowired
     ITestCycleCaseService iTestCycleCaseService;
 
-
-	private final String TEMP_CYCLE_NAME = "临时";
-	private final String TEMP_CYCLE_TYPE = "CYCLE";
 
     @Override
     public TestCycleE insert(TestCycleE testCycleE) {
@@ -91,6 +90,15 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		return countStatus(testCycleE.querySelfWithBar());
     }
 
+	@Override
+	public List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds) {
+		Map<String, Object> filterMap = new HashMap<>();
+		filterMap.put("parameter", "+" + filter);
+		filterMap.put("versionIds", versionIds);
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		return testCycleE.filterWithBar(filterMap);
+	}
+
 	private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {
 		testCycleES.stream().filter(v -> StringUtils.equals(v.getType(), TestCycleE.CYCLE))
 				.forEach(u -> u.countChildStatus(u.getChildFolder(testCycleES)));
@@ -106,7 +114,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 			case 1:
 				TestCycleE cycle = TestCycleEFactory.create();
 				cycle.setVersionId(lists.get(0).getVersionId());
-				cycle.setCycleName(TEMP_CYCLE_NAME);
+				cycle.setCycleName(TestCycleE.TEMP_CYCLE_NAME);
 				return cycle.querySelf().stream().findFirst()
 						.orElseThrow(() -> new CommonException("error.folder.version_planning.notFound")).getCycleId();
 			default:

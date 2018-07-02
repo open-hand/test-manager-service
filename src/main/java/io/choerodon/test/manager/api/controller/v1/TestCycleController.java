@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +27,9 @@ import java.util.Optional;
 public class TestCycleController {
 	@Autowired
 	TestCycleService testCycleService;
+
+	@Autowired
+	TestCycleMapper testCycleMapper;
 
 
 	@Permission(permissionPublic = true)
@@ -66,6 +70,16 @@ public class TestCycleController {
 	@GetMapping("/query/{versionId}")
 	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
 		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+	}
+
+	@Permission(permissionPublic = true)
+	@ApiOperation("查询version下的测试循环")
+	@PostMapping("/filter/{parameter}")
+	ResponseEntity filterTestCycle(@RequestBody String parameters) {
+
+		return Optional.ofNullable(testCycleService.filterCycleWithBar(parameters))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query"));
 	}

@@ -67,7 +67,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'version_id')
             column(name: 'cycle_name')
         }
+    }
 
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-9-init_table_test_cycle_full_text_key') {
+        sql("CREATE FULLTEXT INDEX ft_test_cycle ON test_cycle (cycle_name,environment) WITH PARSER ngram;")
     }
 
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cycle_case') {

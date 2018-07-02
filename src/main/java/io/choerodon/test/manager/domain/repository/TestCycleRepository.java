@@ -5,6 +5,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -21,4 +22,6 @@ public interface TestCycleRepository {
     List<TestCycleE> query(TestCycleE testCycleE);
 
     List<TestCycleE> queryBar(Long versionId);
+
+	List<TestCycleE> filter(Map parameters);
 }

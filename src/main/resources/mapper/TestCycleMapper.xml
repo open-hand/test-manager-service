@@ -26,6 +26,23 @@
         where cycle1.version_id = #{versionId}
     </select>
 
+    <select id="filter" resultMap="BaseResultMap">
+        SELECT
+        cycle1.cycle_id,
+        cycle1.parent_cycle_id,
+        cycle1.cycle_name,
+        cycle1.type
+        FROM
+        test_cycle cycle1
+        WHERE
+        MATCH ( cycle_name, environment ) AGAINST ( #{parameter} IN boolean MODE)
+        AND cycle1.version_id IN
+        <foreach item="item" index="index" collection="versionIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 
     <resultMap id="hashmap" type="java.util.Map">
         <result column="counts" property="counts"/>

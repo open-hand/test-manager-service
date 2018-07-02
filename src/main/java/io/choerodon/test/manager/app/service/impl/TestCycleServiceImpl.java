@@ -1,5 +1,11 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
@@ -15,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +61,13 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public List<TestCycleDTO> getTestCycle(Long versionId) {
         return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
+    }
+
+    @Override
+    public List<TestCycleDTO> filterCycleWithBar(String filter) {
+        JSONObject object = JSON.parseObject(filter);
+        return ConvertHelper.convertList(iTestCycleService
+                .filterCycleWithBar(object.getString("parameter"), (Long[]) object.getJSONArray("versionIds").toArray()), TestCycleDTO.class);
     }
 
     @Override

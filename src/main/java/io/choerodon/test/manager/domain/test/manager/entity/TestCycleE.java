@@ -21,6 +21,7 @@ public class TestCycleE {
 
 	public static final String FOLDER = "folder";
 	public static final String CYCLE = "cycle";
+	public static final String TEMP_CYCLE_NAME = "临时";
 
     private Long cycleId;
 
@@ -84,6 +85,10 @@ public class TestCycleE {
     public List<TestCycleE> querySelfWithBar() {
         return testCycleRepository.queryBar(this.versionId);
     }
+
+	public List<TestCycleE> filterWithBar(Map map) {
+		return testCycleRepository.filter(map);
+	}
 
     public TestCycleE addSelf() {
         return testCycleRepository.insert(this);
@@ -205,7 +210,7 @@ public class TestCycleE {
 
 	}
 
-	static class CountMap extends HashMap<String, Long> {
+	private static class CountMap extends HashMap<String, Long> {
 		private void merge(Map<String, Long> plus) {
 			plus.forEach((k, v) -> {
 				if (this.containsKey(k)) {

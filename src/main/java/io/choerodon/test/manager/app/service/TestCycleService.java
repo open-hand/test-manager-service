@@ -5,6 +5,7 @@ import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ public interface TestCycleService {
 	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO);
 
     List<TestCycleDTO> getTestCycle(Long versionId);
+
+	List<TestCycleDTO> filterCycleWithBar(String filter);
 
     ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
 }
