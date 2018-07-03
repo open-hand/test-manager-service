@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,75 +33,77 @@ import java.util.Map;
  */
 @Component
 public class TestCycleServiceImpl implements TestCycleService {
-    @Autowired
-    ITestCycleService iTestCycleService;
+	@Autowired
+	ITestCycleService iTestCycleService;
 
-    @Autowired
-    ProductionVersionClient productionVersionClient;
+	@Autowired
+	ProductionVersionClient productionVersionClient;
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
-        return ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
+		return ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
 
-    }
+	}
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void delete(TestCycleDTO testCycleDTO) {
-        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void delete(TestCycleDTO testCycleDTO) {
+		iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
 
-    }
+	}
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO) {
-        return ConvertHelper.convertList(iTestCycleService.update(ConvertHelper.convertList(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO) {
+		return ConvertHelper.convertList(iTestCycleService.update(ConvertHelper.convertList(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
 
-    }
+	}
 
-    @Override
-    public List<TestCycleDTO> getTestCycle(Long versionId) {
-        return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
-    }
+	@Override
+	public List<TestCycleDTO> getTestCycle(Long versionId) {
+		return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
+	}
 
-    @Override
-    public List<TestCycleDTO> filterCycleWithBar(String filter) {
-        JSONObject object = JSON.parseObject(filter);
-        return ConvertHelper.convertList(iTestCycleService
-                .filterCycleWithBar(object.getString("parameter"), (Long[]) object.getJSONArray("versionIds").toArray()), TestCycleDTO.class);
-    }
+	@Override
+	public List<TestCycleDTO> filterCycleWithBar(String filter) {
+		JSONObject object = JSON.parseObject(filter);
+		return ConvertHelper.convertList(iTestCycleService
+						.filterCycleWithBar(object.getString("parameter"),
+								Arrays.stream(object.getJSONArray("versionIds").toArray()).map(p -> Long.valueOf(p.toString())).toArray(Long[]::new)),
+				TestCycleDTO.class);
+	}
 
-    @Override
-    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
-        return productionVersionClient.listByOptions(projectId, searchParamMap);
-    }
+	@Override
+	public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
+		return productionVersionClient.listByOptions(projectId, searchParamMap);
+	}
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public TestCycleDTO cloneCycle(Long cycleId, String cycleName) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
-        if (!(list.size() == 1 && list.get(0).getCycleName() != cycleName)) {
-            throw new CommonException("error.test.cycle.clone.duplicate.name");
-        }
-        TestCycleE newTestCycleE = TestCycleEFactory.create();
-        newTestCycleE.setCycleName(cycleName);
-        newTestCycleE.setType(TestCycleE.CYCLE);
-        return ConvertHelper.convert(iTestCycleService.cloneCycle(list.get(0), newTestCycleE), TestCycleDTO.class);
-    }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public TestCycleDTO cloneCycle(Long cycleId, String cycleName) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setCycleId(cycleId);
+		List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
+		if (!(list.size() == 1 && list.get(0).getCycleName() != cycleName)) {
+			throw new CommonException("error.test.cycle.clone.duplicate.name");
+		}
+		TestCycleE newTestCycleE = TestCycleEFactory.create();
+		newTestCycleE.setCycleName(cycleName);
+		newTestCycleE.setType(TestCycleE.CYCLE);
+		return ConvertHelper.convert(iTestCycleService.cloneCycle(list.get(0), newTestCycleE), TestCycleDTO.class);
+	}
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
-        if (list.size() != 1) {
-            throw new CommonException("error.test.cycle.clone.");
-        }
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setCycleId(cycleId);
+		List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
+		if (list.size() != 1) {
+			throw new CommonException("error.test.cycle.clone.");
+		}
 
-        return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
-    }
+		return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+	}
 }

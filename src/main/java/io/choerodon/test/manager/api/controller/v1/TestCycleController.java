@@ -75,7 +75,7 @@ public class TestCycleController {
 	}
 
 	@Permission(permissionPublic = true)
-	@ApiOperation("查询version下的测试循环")
+	@ApiOperation("过滤version下的测试循环")
 	@PostMapping("/filter/{parameter}")
 	ResponseEntity filterTestCycle(@RequestBody String parameters) {
 
