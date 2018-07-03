@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -59,7 +60,26 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(cycleCaseId);
 		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-		Optional.ofNullable(dto.getAssignedTo()).ifPresent(v -> dto.setRealName(userService.query(v).getRealName()));
+
+		boolean assigned = false;
+		boolean lastAssigned = false;
+		if (!(dto.getAssignedTo() == null)) {
+			assigned = true;
+		}
+		if (!(dto.getLastUpdateBy() == null)) {
+			lastAssigned = true;
+		}
+		List<UserDO> lists = userService.query(new Long[]{dto.getAssignedTo(), dto.getLastUpdateBy()});
+		int count = 0;
+		if (assigned) {
+			dto.setReporterRealName(lists.get(count).getRealName());
+			dto.setReporterJobNumber(lists.get(count).getId());
+			count++;
+		}
+		if (lastAssigned) {
+			dto.setAssignedUserRealName(lists.get(count).getRealName());
+			dto.setAssignedUserJobNumber(lists.get(count).getId());
+		}
 		return dto;
 	}
 

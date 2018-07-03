@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.core.exception.CommonException;
@@ -26,12 +27,12 @@ public class TestAttachmentController {
     @Permission(permissionPublic = true)
     @ApiOperation("增加测试")
     @PostMapping
-    public ResponseEntity<TestCycleCaseAttachmentRelE> uploadFile(@RequestParam("bucket_name") String bucketName,
-                                                                  @RequestParam("file_name") String fileName,
-                                                                  @RequestPart("file") MultipartFile multipartFile,
-                                                                  @RequestParam("attachmentLinkId") Long attachmentLinkId,
-                                                                  @RequestParam("attachmentType") String attachmentType,
-                                                                  @RequestParam("comment") String comment) {
+    public ResponseEntity<TestCycleCaseAttachmentRelDTO> uploadFile(@RequestParam("bucket_name") String bucketName,
+                                                                    @RequestParam("file_name") String fileName,
+                                                                    @RequestPart("file") MultipartFile multipartFile,
+                                                                    @RequestParam("attachmentLinkId") Long attachmentLinkId,
+                                                                    @RequestParam("attachmentType") String attachmentType,
+                                                                    @RequestParam("comment") String comment) {
         return Optional.ofNullable(testCycleCaseAttachmentRelService.upload(bucketName, fileName, multipartFile, attachmentLinkId, attachmentType, comment))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query"));

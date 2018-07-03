@@ -32,7 +32,13 @@ public class TestCycleCaseDTO {
 
     private String nextRank;
 
-    private String realName;
+	private String reporterRealName;
+
+	private Long reporterJobNumber;
+
+	private String assignedUserRealName;
+
+	private Long assignedUserJobNumber;
 
     private Long lastUpdateBy;
 
@@ -92,14 +98,29 @@ public class TestCycleCaseDTO {
         this.assignedTo = assignedTo;
     }
 
-    public String getRealName() {
-        return realName;
+	public String getReporterRealName() {
+		return reporterRealName;
+	}
+
+	public void setReporterRealName(String reporterRealName) {
+		this.reporterRealName = reporterRealName;
+	}
+
+	public Long getReporterJobNumber() {
+		return reporterJobNumber;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+	public void setReporterJobNumber(Long reporterJobNumber) {
+		this.reporterJobNumber = reporterJobNumber;
     }
 
+	public Long getAssignedUserJobNumber() {
+		return assignedUserJobNumber;
+	}
+
+	public void setAssignedUserJobNumber(Long assignedUserJobNumber) {
+		this.assignedUserJobNumber = assignedUserJobNumber;
+	}
 
     public String getComment() {
         return comment;
@@ -172,4 +193,12 @@ public class TestCycleCaseDTO {
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+
+	public String getAssignedUserRealName() {
+		return assignedUserRealName;
+	}
+
+	public void setAssignedUserRealName(String assignedUserRealName) {
+		this.assignedUserRealName = assignedUserRealName;
+	}
 }

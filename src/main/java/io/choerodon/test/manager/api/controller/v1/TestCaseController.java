@@ -76,14 +76,15 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("分页过滤查询issue列表(不包含子任务)")
     @CustomPageRequest
-    @GetMapping(value = "/query/no_sub")
-    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(@ApiIgnore
+	@PostMapping(value = "/query/no_sub")
+	public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(@ApiIgnore
                                                                     @ApiParam(value = "分页信息", required = true)
                                                                     @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
                                                                             PageRequest pageRequest,
                                                                     @ApiParam(value = "项目id", required = true)
-                                                                    @PathVariable(name = "project_id") Long projectId) {
-        return testCaseService.listIssueWithoutSub(projectId, "", pageRequest);
+																  @PathVariable(name = "project_id") Long projectId,
+																  @RequestBody SearchDTO searchDTO) {
+		return testCaseService.listIssueWithoutSub(projectId, searchDTO, pageRequest);
     }
 
 }

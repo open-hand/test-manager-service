@@ -18,5 +18,5 @@ public interface TestCaseService {
 
     ResponseEntity<IssueDTO> query(Long projectId, Long issueId);
 
-    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest);
+	ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 }
