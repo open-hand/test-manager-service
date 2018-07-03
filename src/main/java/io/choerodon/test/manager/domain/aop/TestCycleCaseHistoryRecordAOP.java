@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.aop;
 
+import com.esotericsoftware.minlog.Log;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
@@ -28,6 +29,9 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	@Pointcut("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.changeOneCase(..)) && args(testCycleCaseDTO)")
 	public void recordHistory(TestCycleCaseDTO testCycleCaseDTO) {
+		if (Log.DEBUG) {
+			Log.info("record cycle case operation history");
+		}
 	}
 
 	@Around("recordHistory(testCycleCaseDTO)")
