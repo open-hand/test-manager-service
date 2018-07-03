@@ -31,49 +31,49 @@ import java.util.stream.Collectors;
 @Component
 public class ITestCycleServiceImpl implements ITestCycleService {
 
-    @Autowired
-    ProductionVersionClient productionVersionClient;
+	@Autowired
+	ProductionVersionClient productionVersionClient;
 
-    @Autowired
-    ITestCycleCaseService iTestCycleCaseService;
+	@Autowired
+	ITestCycleCaseService iTestCycleCaseService;
 
 
-    @Override
-    public TestCycleE insert(TestCycleE testCycleE) {
-        return testCycleE.addSelf();
-    }
+	@Override
+	public TestCycleE insert(TestCycleE testCycleE) {
+		return testCycleE.addSelf();
+	}
 
-    @Override
-    public void delete(TestCycleE testCycleE) {
+	@Override
+	public void delete(TestCycleE testCycleE) {
 //        TestCycleE cycle = TestCycleEFactory.create();
 //        cycle.setVersionId(testCycleE.getVersionId());
 //        cycle.setParentCycleId(testCycleE.getCycleId());
 		testCycleE.querySelf().forEach(this::deleteCycleWithCase);
-    }
+	}
 
-    private void deleteCycleWithCase(TestCycleE testCycleE) {
-        TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
-        testCycleCaseE.setCycleId(testCycleE.getCycleId());
-        iTestCycleCaseService.delete(testCycleCaseE);
-        testCycleE.deleteSelf();
-    }
+	private void deleteCycleWithCase(TestCycleE testCycleE) {
+		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
+		testCycleCaseE.setCycleId(testCycleE.getCycleId());
+		iTestCycleCaseService.delete(testCycleCaseE);
+		testCycleE.deleteSelf();
+	}
 
-    @Override
-    public List<TestCycleE> update(List<TestCycleE> testCycleE) {
-        List<TestCycleE> testCycleES = new ArrayList<>();
-        testCycleE.forEach(v -> testCycleES.add(v.updateSelf()));
-        return testCycleES;
-    }
+	@Override
+	public List<TestCycleE> update(List<TestCycleE> testCycleE) {
+		List<TestCycleE> testCycleES = new ArrayList<>();
+		testCycleE.forEach(v -> testCycleES.add(v.updateSelf()));
+		return testCycleES;
+	}
 
-    @Override
-    public Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
-        return testCycleE.querySelf(pageRequest);
-    }
+	@Override
+	public Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
+		return testCycleE.querySelf(pageRequest);
+	}
 
-    @Override
-    public List<TestCycleE> querySubCycle(TestCycleE testCycleE) {
-        return testCycleE.querySelf();
-    }
+	@Override
+	public List<TestCycleE> querySubCycle(TestCycleE testCycleE) {
+		return testCycleE.querySelf();
+	}
 
 
 //    @Override
@@ -83,17 +83,17 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 //        return querySubCycle(testCycleE);
 //    }
 
-    @Override
-    public List<TestCycleE> queryCycleWithBar(Long versionId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setVersionId(versionId);
+	@Override
+	public List<TestCycleE> queryCycleWithBar(Long versionId) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setVersionId(versionId);
 		return countStatus(testCycleE.querySelfWithBar());
-    }
+	}
 
 	@Override
 	public List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds) {
 		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("parameter", "+" + filter);
+		filterMap.put("parameter", filter);
 		filterMap.put("versionIds", versionIds);
 		TestCycleE testCycleE = TestCycleEFactory.create();
 		return testCycleE.filterWithBar(filterMap);
