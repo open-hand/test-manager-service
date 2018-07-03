@@ -17,8 +17,9 @@ service:
   port: 8060
 
 preJob:
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.5.2
   preConfig:
-    configFile: application-default.yml
+    configFile: application.yml
     mysql:
       host: 192.168.12.175
       port: 3306
