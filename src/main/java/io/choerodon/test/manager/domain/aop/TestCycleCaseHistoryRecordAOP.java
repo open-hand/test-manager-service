@@ -28,10 +28,10 @@ public class TestCycleCaseHistoryRecordAOP {
 
 
 	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.changeOneCase(..)) && args(testCycleCaseDTO)")
-	public void afterTest(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO) throws Throwable {
+	public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO) throws Throwable {
 
 		TestCycleCaseDTO before = testCycleCaseService.queryOne(testCycleCaseDTO.getExecuteId());
-		pjp.proceed();
+		Object o = pjp.proceed();
 		if (!testCycleCaseDTO.getExecutionStatus().equals(before.getExecutionStatus())) {
 			TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 			historyDTO.setExecuteId(before.getExecuteId());
@@ -39,5 +39,6 @@ public class TestCycleCaseHistoryRecordAOP {
 			historyDTO.setOldValue(before.getExecutionStatus());
 			testCycleCaseHistoryService.insert(historyDTO);
 		}
+		return o;
 	}
 }

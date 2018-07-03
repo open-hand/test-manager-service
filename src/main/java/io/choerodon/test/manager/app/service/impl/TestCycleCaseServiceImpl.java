@@ -63,10 +63,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 		boolean assigned = false;
 		boolean lastAssigned = false;
-		if (!(dto.getAssignedTo() == null)) {
+		if (!(dto.getAssignedTo() == null || dto.getAssignedTo() == 0)) {
 			assigned = true;
 		}
-		if (!(dto.getLastUpdateBy() == null)) {
+		if (!(dto.getLastUpdateBy() == null || dto.getLastUpdateBy() == 0)) {
 			lastAssigned = true;
 		}
 		List<UserDO> lists = userService.query(new Long[]{dto.getAssignedTo(), dto.getLastUpdateBy()});

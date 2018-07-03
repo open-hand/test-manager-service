@@ -74,7 +74,6 @@ public class TestCycleCaseController {
     @ApiOperation("修改一个测试组下循环用例")
     @PostMapping("/update")
     public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO) {
-        ;
         return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
