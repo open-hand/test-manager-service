@@ -26,16 +26,10 @@ public class TestCycleCaseHistoryRecordAOP {
 	@Autowired
 	TestCycleCaseService testCycleCaseService;
 
-	@Pointcut("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.changeOneCase(..)) && args(testCycleCaseDTO)")
-	public void recordHistory(TestCycleCaseDTO testCycleCaseDTO) {
-	}
 
-	@Around("recordHistory(testCycleCaseDTO)")
+	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.changeOneCase(..)) && args(testCycleCaseDTO)")
 	public void afterTest(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO) throws Throwable {
-		if (testCycleCaseDTO.getExecuteId() == null) {
-			pjp.proceed();
-			return;
-		}
+
 		TestCycleCaseDTO before = testCycleCaseService.queryOne(testCycleCaseDTO.getExecuteId());
 		pjp.proceed();
 		if (!testCycleCaseDTO.getExecutionStatus().equals(before.getExecutionStatus())) {
