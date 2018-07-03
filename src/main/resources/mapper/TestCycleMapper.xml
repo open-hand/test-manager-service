@@ -35,7 +35,7 @@
         FROM
         test_cycle cycle1
         WHERE
-        MATCH ( cycle_name, environment ) AGAINST ( #{parameter} IN boolean MODE)
+        instr(cycle_name,#{parameter})>0 or instr(environment,#{parameter})>0
         AND cycle1.version_id IN
         <foreach item="item" index="index" collection="versionIds"
                  open="(" separator="," close=")">
