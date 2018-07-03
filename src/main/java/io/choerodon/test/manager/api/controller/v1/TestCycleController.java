@@ -71,7 +71,7 @@ public class TestCycleController {
 	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
 		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
 	}
 
 	@Permission(permissionPublic = true)
@@ -81,7 +81,7 @@ public class TestCycleController {
 
 		return Optional.ofNullable(testCycleService.filterCycleWithBar(parameters))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.filterCycleWithBar"));
 	}
 
 
@@ -99,7 +99,7 @@ public class TestCycleController {
 	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName) {
 		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
 
 	}
 
@@ -112,7 +112,7 @@ public class TestCycleController {
 			, @RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycle.query"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneFolder"));
 
 	}
 }
