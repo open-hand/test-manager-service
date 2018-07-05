@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.swagger.annotation.Permission;
@@ -20,14 +21,14 @@ public class TestCaseStepController {
     TestCaseStepService iTestCaseStepService;
 
 
-//    @Permission(permissionPublic = true)
+//    @Permission(level = ResourceLevel.PROJECT)
 //    @ApiOperation("批量变动测试步骤(添加|修改)")
 //    @PutMapping("/changes")
 //    public boolean changeStep(@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
 //        return iTestCaseStepService.changeStep(testCaseStepDTO);
 //    }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
     public ResponseEntity<Boolean> changeOneStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
@@ -36,7 +37,7 @@ public class TestCaseStepController {
     }
 
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除测试步骤")
     @DeleteMapping
     public ResponseEntity<Boolean> removeStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {

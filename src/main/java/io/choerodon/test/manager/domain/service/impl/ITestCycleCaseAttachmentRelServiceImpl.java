@@ -1,13 +1,21 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -19,11 +27,25 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
     @Autowired
     FileFeignClient fileFeignClient;
 
+    private static final String BUCKET_NAME = "test-service";
+
+
     @Override
     public void delete(String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
         attachmentRelE.setId(attachId);
-        fileFeignClient.deleteFile(bucketName, attachmentRelE.querySelf().get(0).getUrl());
+
+        String url;
+        try {
+            url = URLDecoder.decode(attachmentRelE.querySelf().get(0).getUrl(), "UTF-8");
+        } catch (IOException i) {
+            throw new CommonException(i.getMessage());
+        }
+
+        ResponseEntity<String> response = fileFeignClient.deleteFile(bucketName, url);
+        if (response == null || response.getStatusCode() != HttpStatus.OK) {
+            throw new CommonException("error.attachment.upload");
+        }
         attachmentRelE.deleteSelf();
     }
 
@@ -34,8 +56,15 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
         attachmentRelE.setAttachmentLinkId(attachmentLinkId);
         attachmentRelE.setAttachmentName(fileName);
         attachmentRelE.setComment(comment);
-        attachmentRelE.setUrl(fileFeignClient.uploadFile(bucketName, fileName, file).getBody());
+
+        ResponseEntity<String> response = fileFeignClient.uploadFile(bucketName, fileName, file);
+        if (response == null || response.getStatusCode() != HttpStatus.OK) {
+            throw new CommonException("error.attachment.upload");
+        }
+
+        attachmentRelE.setUrl(response.getBody());
         attachmentRelE.setAttachmentType(attachmentType);
         return attachmentRelE.addSelf();
     }
+
 }

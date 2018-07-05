@@ -87,7 +87,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
                 constraints(nullable: false)
             }
             column(name: 'assigned_to', type: 'BIGINT UNSIGNED', defaultValue: "0", remarks: '指定人')
-            column(name: 'comment', type: 'VARCHAR(300)', remarks: '注释')
+            column(name: 'comment', type: 'text', remarks: '注释')
 
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
@@ -119,7 +119,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'step_id', type: 'BIGINT UNSIGNED', remarks: '测试issue布 id') {
                 constraints(nullable: false)
             }
-            column(name: 'comment', type: 'VARCHAR(300)', remarks: '描述')
+            column(name: 'comment', type: 'text', remarks: '描述')
             column(name: 'step_status', type: 'VARCHAR(30)', remarks: '状态')
 
 
@@ -142,10 +142,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'execute_id', type: "BIGINT UNSIGNED") {
                 constraints(primaryKey: true)
             }
-            column(name: 'old_value', type: 'VARCHAR(300)', remarks: '旧值') {
+            column(name: 'field', type: "VARCHAR(50)", remarks: "field") {
                 constraints(nullable: false)
             }
-            column(name: 'new_value', type: 'VARCHAR(300)', remarks: '新值') {
+            column(name: 'old_value', type: 'text', remarks: '旧值') {
+                constraints(nullable: false)
+            }
+            column(name: 'new_value', type: 'text', remarks: '新值') {
                 constraints(nullable: false)
             }
 
@@ -205,7 +208,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'url', type: 'VARCHAR(300)', remarks: "附件url") {
                 constraints(nullable: false)
             }
-            column(name: 'comment', type: 'VARCHAR(300)', remarks: "comment")
+            column(name: 'comment', type: 'text', remarks: "comment")
 
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")

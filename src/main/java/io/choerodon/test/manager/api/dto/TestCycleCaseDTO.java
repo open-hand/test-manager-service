@@ -34,13 +34,13 @@ public class TestCycleCaseDTO {
 
 	private String reporterRealName;
 
-	private Long reporterJobNumber;
+	private String reporterJobNumber;
 
 	private String assignedUserRealName;
 
-	private Long assignedUserJobNumber;
+	private String assignedUserJobNumber;
 
-    private Long lastUpdateBy;
+	private Long lastUpdatedBy;
 
     private Date lastUpdateDate;
 
@@ -48,15 +48,15 @@ public class TestCycleCaseDTO {
 
     private List<TestCycleCaseDefectRelDTO> defects;
 
-    private List<TestCycleCaseStepE> testCycleCaseStepES;
+//    private List<TestCycleCaseStepE> testCycleCaseStepES;
 
-    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-        return testCycleCaseStepES;
-    }
-
-    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-        this.testCycleCaseStepES = testCycleCaseStepES;
-    }
+//    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
+//        return testCycleCaseStepES;
+//    }
+//
+//    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
+//        this.testCycleCaseStepES = testCycleCaseStepES;
+//    }
 
     public Long getExecuteId() {
         return executeId;
@@ -106,19 +106,19 @@ public class TestCycleCaseDTO {
 		this.reporterRealName = reporterRealName;
 	}
 
-	public Long getReporterJobNumber() {
+	public String getReporterJobNumber() {
 		return reporterJobNumber;
     }
 
-	public void setReporterJobNumber(Long reporterJobNumber) {
+	public void setReporterJobNumber(String reporterJobNumber) {
 		this.reporterJobNumber = reporterJobNumber;
     }
 
-	public Long getAssignedUserJobNumber() {
+	public String getAssignedUserJobNumber() {
 		return assignedUserJobNumber;
 	}
 
-	public void setAssignedUserJobNumber(Long assignedUserJobNumber) {
+	public void setAssignedUserJobNumber(String assignedUserJobNumber) {
 		this.assignedUserJobNumber = assignedUserJobNumber;
 	}
 
@@ -178,15 +178,15 @@ public class TestCycleCaseDTO {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
 
-    public Long getLastUpdateBy() {
-        return lastUpdateBy;
-    }
+	public Long getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
 
-    public void setLastUpdateBy(Long lastUpdateBy) {
-        this.lastUpdateBy = lastUpdateBy;
-    }
+	public void setLastUpdatedBy(Long lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
 
-    public Date getLastUpdateDate() {
+	public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 

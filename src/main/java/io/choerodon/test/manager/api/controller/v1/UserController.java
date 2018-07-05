@@ -29,7 +29,7 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation(value = "根据项目id分页查询该项目下的用户，可以进行模糊查询name和realName")
 	@GetMapping(value = "/users")
 	@CustomPageRequest

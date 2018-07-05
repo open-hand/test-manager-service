@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestStatusDTO;
 import io.choerodon.test.manager.app.service.TestStatusService;
@@ -23,7 +24,7 @@ public class TestStatusController {
     @Autowired
     TestStatusService testStatusService;
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询状态")
 	@PostMapping("/query")
 	public ResponseEntity<List<TestStatusDTO>> query(@RequestBody TestStatusDTO testStatusDTO) {
@@ -33,7 +34,7 @@ public class TestStatusController {
 
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除状态")
 	@DeleteMapping
 	public ResponseEntity delete(@RequestBody TestStatusDTO testStatusDTO) {
@@ -41,7 +42,7 @@ public class TestStatusController {
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("插入状态")
 	@PostMapping
 	public ResponseEntity<TestStatusDTO> insert(@RequestBody TestStatusDTO testStatusDTO) {
@@ -50,7 +51,7 @@ public class TestStatusController {
 				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("更新状态")
 	@PutMapping
 	public ResponseEntity<TestStatusDTO> update(@RequestBody TestStatusDTO testStatusDTO) {

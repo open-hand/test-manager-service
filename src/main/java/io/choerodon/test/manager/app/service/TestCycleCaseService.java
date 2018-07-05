@@ -3,6 +3,8 @@ package io.choerodon.test.manager.app.service;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,5 +39,6 @@ public interface TestCycleCaseService {
      * @param testCycleCaseDTO
      */
 	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO);
+
 
 }

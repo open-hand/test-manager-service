@@ -45,7 +45,7 @@ public class TestCycleCaseAttachmentRelRepositoryImpl implements TestCycleCaseAt
         if (testCycleCaseAttachmentRelMapper.updateByPrimaryKeySelective(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-        return testCycleCaseAttachmentRelE;
+		return ConvertHelper.convert(testCycleCaseAttachmentRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseAttachmentRelE.class);
     }
 
     @Override

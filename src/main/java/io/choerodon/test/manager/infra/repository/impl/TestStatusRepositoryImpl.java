@@ -48,6 +48,6 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
         if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
             throw new CommonException("error.test.status.update");
         }
-        return ConvertHelper.convert(testStatusDO, TestStatusE.class);
+		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(testStatusDO.getStatusId()), TestStatusE.class);
     }
 }

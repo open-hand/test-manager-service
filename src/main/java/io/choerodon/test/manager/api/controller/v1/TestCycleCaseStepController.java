@@ -1,16 +1,28 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import com.alibaba.fastjson.JSONArray;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.core.exception.CommonException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,43 +33,72 @@ import java.util.Optional;
 @RequestMapping(value = "/v1/cycle/case/step")
 public class TestCycleCaseStepController {
 
-    @Autowired
-    TestCycleCaseStepService testCycleCaseStepService;
+	@Autowired
+	TestCycleCaseStepService testCycleCaseStepService;
 
-    /**
-     * 更新循环步骤
-     *
-     * @param testCycleCaseStepDTO
-     * @return
-     */
-	@Permission(permissionPublic = true)
-	@ApiOperation("更新循环步骤")
-	@PutMapping
-	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
-        return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+//	/**
+//	 * 更新循环步骤
+//	 *
+//	 * @param testCycleCaseStepDTO
+//	 * @return
+//	 */
+//	@Permission(level = ResourceLevel.PROJECT)
+//	@ApiOperation("更新循环步骤")
+//	@PutMapping
+//	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+//		return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
+//				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+//				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+//
+//	}
 
-    }
 
-
-    /**
-     * 查询循环测试步骤
-     *
-     * @param cycleCaseId
-     * @return
-     */
-	@Permission(permissionPublic = true)
+	/**
+	 * 查询循环测试步骤
+	 *
+	 * @param cycleCaseId
+	 * @return
+	 */
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询循环步骤")
-	@GetMapping("/query/{CycleCaseId}")
-	ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@ApiParam(value = "log id", required = true)
-															@PathVariable Long cycleCaseId) {
+	@GetMapping("/query/{cycleCaseId}")
+	ResponseEntity<Page<TestCycleCaseStepDTO>> querySubStep(@ApiParam(value = "cycleCaseId", required = true)
+															@PathVariable(name = "cycleCaseId") Long cycleCaseId,
+															@ApiIgnore
+															@ApiParam(value = "分页信息", required = true)
+															@SortDefault(value = "rank", direction = Sort.Direction.DESC)
+																	PageRequest pageRequest) {
 
-        return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
+		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, pageRequest))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 
-    }
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("修改一个测试循环")
+	@PostMapping("/updateWithAttach")
+	public ResponseEntity updateOneCase(HttpServletRequest request,
+										@RequestParam(required = false, name = "comment") String comment,
+										@RequestParam(name = "stepStatus") String stepStatus) {
+		List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+		TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+		List<TestCycleCaseDefectRelDTO> defects = null;
+		String def = request.getParameter("defects");
+		if (!StringUtils.isEmpty(def)) {
+			defects = JSONArray.parseArray(def, TestCycleCaseDefectRelDTO.class);
+		}
+		testCycleCaseStepDTO.setExecuteId(Long.valueOf(request.getParameter("executeId")));
+		testCycleCaseStepDTO.setStepStatus(stepStatus.substring(1, stepStatus.length() - 1));
+		testCycleCaseStepDTO.setStepId(Long.valueOf(request.getParameter("stepId")));
+		testCycleCaseStepDTO.setExecuteStepId(Long.valueOf(request.getParameter("executeStepId")));
+		testCycleCaseStepDTO.setComment(comment);
+		testCycleCaseStepDTO.setObjectVersionNumber(Long.valueOf(request.getParameter("objectVersionNumber")));
+		return Optional.ofNullable(testCycleCaseStepService.updateOneCase(files, testCycleCaseStepDTO, defects))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
+	}
+
 
 //    /**
 //     * 启动循环测试下所有步骤

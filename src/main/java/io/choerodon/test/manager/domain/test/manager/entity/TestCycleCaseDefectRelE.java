@@ -16,6 +16,8 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestCycleCaseDefectRelE {
+
+    public static String CASE_STEP = "CASE_STEP";
     private Long id;
     private String defectType;
     private Long defectLinkId;

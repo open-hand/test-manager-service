@@ -42,8 +42,8 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
         if (testCaseStepMapper.updateByPrimaryKey(testCaseStepDO) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-        return ConvertHelper.convert(
-                testCaseStepDO, TestCaseStepE.class);
+		return ConvertHelper.convert(testCaseStepMapper.selectByPrimaryKey(testCaseStepDO.getStepId()), TestCaseStepE.class);
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import io.choerodon.core.domain.PageInfo;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
@@ -45,23 +46,25 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         if (testCycleCaseStepMapper.updateByPrimaryKeySelective(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-        return testCycleCaseStepE;
+        return ConvertHelper.convert(testCycleCaseStepMapper.selectByPrimaryKey(convert.getExecuteStepId()), TestCycleCaseStepE.class);
     }
 
     @Override
     public Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
         TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
 
-        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseStepMapper.select(convert));
+        List<TestCycleCaseStepDO> dto = testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
 
-        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseStepE.class);
+        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+        Page<TestCycleCaseStepDO> page = new Page<>(dto, info, testCycleCaseStepMapper.queryWithTestCaseStep_count());
+
+        return ConvertPageHelper.convertPage(page, TestCycleCaseStepE.class);
     }
 
-    @Override
-    public List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE) {
-        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-
-        return ConvertHelper.convertList(testCycleCaseStepMapper.queryWithTestCaseStep(convert), TestCycleCaseStepE.class);
-    }
+//    @Override
+//    public Page<TestCycleCaseStepE> queryWith(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
+//        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+//        Page<TestCycleCaseStepE> serviceDOPage=PageHelper.doPageAndSort(pageRequest,()->testCycleCaseStepMapper.queryWithTestCaseStep(convert));
+//        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseStepE.class);
+//        }
 }

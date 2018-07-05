@@ -31,7 +31,7 @@ public class TestCaseController {
     @Autowired
     TestCaseService testCaseService;
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("增加测试")
     @PostMapping
     public ResponseEntity<IssueDTO> create(@ApiParam(value = "项目id", required = true)
@@ -43,7 +43,7 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.createIssue"));
     }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除测试")
     @DeleteMapping("/{issueId}")
     public ResponseEntity<Boolean> delete(@ApiParam(value = "项目id", required = true)
@@ -54,7 +54,7 @@ public class TestCaseController {
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改测试")
     @PutMapping
     public ResponseEntity<IssueDTO> update(@ApiParam(value = "项目id", required = true) @PathVariable(name = "project_id") Long projectId,
@@ -63,7 +63,7 @@ public class TestCaseController {
         return testCaseService.update(projectId, issueUpdate);
     }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询一个测试")
     @GetMapping("/query/{issueId}")
     public ResponseEntity<IssueDTO> queryOne(@ApiParam(value = "项目id", required = true)

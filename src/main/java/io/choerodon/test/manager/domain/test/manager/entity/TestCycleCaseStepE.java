@@ -35,6 +35,7 @@ public class TestCycleCaseStepE {
 
     private Long objectVersionNumber;
 
+    private String stepStatus;
 
     private List<TestCycleCaseAttachmentRelE> caseAttachment;
 
@@ -52,9 +53,9 @@ public class TestCycleCaseStepE {
         return testCycleCaseStepRepository.query(this, pageRequest);
     }
 
-    public List<TestCycleCaseStepE> querySelf() {
-        return testCycleCaseStepRepository.query(this);
-    }
+//    public List<TestCycleCaseStepE> querySelf() {
+//        return testCycleCaseStepRepository.query(this);
+//    }
 
     public TestCycleCaseStepE addSelf() {
         return testCycleCaseStepRepository.insert(this);
@@ -112,6 +113,13 @@ public class TestCycleCaseStepE {
         this.testCycleCaseStepRepository = testCycleCaseStepRepository;
     }
 
+    public String getStepStatus() {
+        return stepStatus;
+    }
+
+    public void setStepStatus(String stepStatus) {
+        this.stepStatus = stepStatus;
+    }
 
     public String getTestStep() {
         return testStep;

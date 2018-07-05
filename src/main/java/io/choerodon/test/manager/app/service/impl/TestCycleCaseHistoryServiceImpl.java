@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -21,6 +22,9 @@ import java.util.List;
 public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryService {
     @Autowired
     ITestCycleCaseHistoryService iTestCycleCaseHistoryService;
+
+	@Autowired
+	UserService userFeignClient;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -46,6 +50,15 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
         historyDTO.setExecuteId(cycleCaseId);
         Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
-        return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
+		Page<TestCycleCaseHistoryDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
+		dto.forEach(v -> setUser(v));
+		return dto;
+	}
+
+	private void setUser(TestCycleCaseHistoryDTO dto) {
+		if (dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy() == 0) {
+			return;
+		}
+		dto.setUser(userFeignClient.query(dto.getLastUpdatedBy()));
     }
 }

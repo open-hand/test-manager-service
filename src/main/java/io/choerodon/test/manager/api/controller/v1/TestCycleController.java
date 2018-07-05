@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
@@ -32,7 +33,7 @@ public class TestCycleController {
 	TestCycleMapper testCycleMapper;
 
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("增加测试循环")
 	@PostMapping
 	public ResponseEntity<TestCycleDTO> insert(@RequestBody TestCycleDTO testCycleDTO) {
@@ -42,14 +43,14 @@ public class TestCycleController {
 
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除测试循环")
 	@DeleteMapping
 	void delete(@RequestBody TestCycleDTO testCycleDTO) {
 		testCycleService.delete(testCycleDTO);
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("修改测试循环")
 	@PutMapping
 	ResponseEntity<List<TestCycleDTO>> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
@@ -58,14 +59,14 @@ public class TestCycleController {
 				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));
 	}
 
-//    @Permission(permissionPublic = true)
+//    @Permission(level = ResourceLevel.PROJECT)
 //    @ApiOperation("查询测试循环")
 //    @PostMapping("/query")
 //    Page<TestCycleDTO> query(@RequestBody TestCycleDTO testCycleDTO, PageRequest pageRequest) {
 //        return testCycleService.query(testCycleDTO, pageRequest);
 //    }
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询version下的测试循环")
 	@GetMapping("/query/{versionId}")
 	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
@@ -74,7 +75,7 @@ public class TestCycleController {
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("过滤version下的测试循环")
 	@PostMapping("/filter/{parameter}")
 	ResponseEntity filterTestCycle(@RequestBody String parameters) {
@@ -85,7 +86,7 @@ public class TestCycleController {
 	}
 
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询项目下的计划")
 	@PostMapping("/query/version/{projectId}")
 	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "projectId") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
@@ -93,7 +94,7 @@ public class TestCycleController {
 	}
 
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆循环")
 	@PostMapping("/clone/cycle/{cycleId}/{cycleName}")
 	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName) {
@@ -103,7 +104,7 @@ public class TestCycleController {
 
 	}
 
-	@Permission(permissionPublic = true)
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆文件夹")
 	@PostMapping("/clone/folder/{cycleId}")
 	ResponseEntity cloneFolder(

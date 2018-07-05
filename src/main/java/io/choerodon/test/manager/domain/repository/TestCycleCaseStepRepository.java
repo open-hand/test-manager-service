@@ -18,5 +18,5 @@ public interface TestCycleCaseStepRepository {
 
     Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest);
 
-    List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE);
+//    List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE);
 }

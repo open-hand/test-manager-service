@@ -21,6 +21,15 @@ public class TestCycleCaseHistoryDO extends AuditDomain {
     private Long executeId;
     private String oldValue;
     private String newValue;
+	private String field;
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
 
     public Long getExecuteId() {
         return executeId;

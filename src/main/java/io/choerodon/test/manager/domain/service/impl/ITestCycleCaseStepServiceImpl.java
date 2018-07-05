@@ -1,6 +1,9 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
@@ -48,12 +51,12 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
 
     @Override
-    public List<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE) {
+    public Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-        List<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf();
+        Page<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf(pageRequest);
         testCycleCaseEs.forEach(v -> {
-            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), "CYCLE_STEP"));
+            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP));
         });
         return testCycleCaseEs;
     }
