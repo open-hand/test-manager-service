@@ -110,7 +110,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO) {
+	public TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
 		return setUser(ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class));
 	}
 

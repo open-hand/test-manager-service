@@ -13,6 +13,9 @@ import java.util.List;
 @Component
 @Scope("prototype")
 public class TestStatusE {
+
+	public static final String STATUS_UN_EXECUTED = "未执行";
+
     private Long statusId;
 
     private String statusName;
