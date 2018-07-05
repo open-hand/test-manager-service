@@ -73,9 +73,10 @@ public class TestCycleCaseController {
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改一个测试组下循环用例")
-    @PostMapping("/update")
-    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO) {
-        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO))
+    @PostMapping("/{projectId}/update")
+    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO,
+                                        @PathVariable(name = "projectId") Long projectId) {
+        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }

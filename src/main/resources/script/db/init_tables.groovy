@@ -162,6 +162,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
         createIndex(tableName: "test_cycle_case_history", indexName: "idx_case_history_execute_id") {
             column(name: "execute_id")
+            column(name: "field")
+            column(name: "old_value(7)")
         }
     }
 

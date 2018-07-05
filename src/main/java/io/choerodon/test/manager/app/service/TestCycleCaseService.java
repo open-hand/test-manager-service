@@ -38,7 +38,7 @@ public interface TestCycleCaseService {
      *
      * @param testCycleCaseDTO
      */
-	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO);
+	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 
 }

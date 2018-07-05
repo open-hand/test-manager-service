@@ -54,6 +54,6 @@
     </select>
 
     <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">
-        SELECT count(1) from test_cycle_case_step;
+        SELECT count(1) from test_cycle_case_step where execute_id=#{executeId};
     </select>
 </mapper>

@@ -56,7 +56,7 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         List<TestCycleCaseStepDO> dto = testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
 
         PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-        Page<TestCycleCaseStepDO> page = new Page<>(dto, info, testCycleCaseStepMapper.queryWithTestCaseStep_count());
+        Page<TestCycleCaseStepDO> page = new Page<>(dto, info, testCycleCaseStepMapper.queryWithTestCaseStep_count(testCycleCaseStepE.getExecuteId()));
 
         return ConvertPageHelper.convertPage(page, TestCycleCaseStepE.class);
     }
