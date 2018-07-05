@@ -10,6 +10,7 @@ public class TestCycleCaseDefectRelDTO {
     private String defectType;
     private Long defectLinkId;
     private Long issueId;
+	private String defectName;
     private Long objectVersionNumber;
 
     public Long getId() {
@@ -51,4 +52,12 @@ public class TestCycleCaseDefectRelDTO {
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
     }
+
+	public String getDefectName() {
+		return defectName;
+	}
+
+	public void setDefectName(String defectName) {
+		this.defectName = defectName;
+	}
 }

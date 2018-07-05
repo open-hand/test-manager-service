@@ -45,7 +45,7 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
         if (testCycleCaseDefectRelMapper.updateByPrimaryKeySelective(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-        return testCycleCaseDefectRelE;
+		return ConvertHelper.convert(testCycleCaseDefectRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseDefectRelE.class);
     }
 
     @Override

@@ -44,11 +44,11 @@ public class TestCycleCaseE {
 
     private Long objectVersionNumber;
 
-    private Long lastUpdateBy;
+    private Long lastUpdatedBy;
 
     private Date lastUpdateDate;
 
-    private List<TestCycleCaseStepE> testCycleCaseStepES;
+//    private List<TestCycleCaseStepE> testCycleCaseStepES;
 
     private List<TestCycleCaseDefectRelE> defects;
 
@@ -146,7 +146,11 @@ public class TestCycleCaseE {
     }
 
     public void setAssignedTo(Long assignedTo) {
-        this.assignedTo = assignedTo;
+        if (assignedTo == null) {
+            this.assignedTo = new Long(0);
+        } else {
+            this.assignedTo = assignedTo;
+        }
     }
 
     public void setComment(String comment) {
@@ -164,14 +168,14 @@ public class TestCycleCaseE {
     public void setTestCycleCaseRepository(TestCycleCaseRepository testCycleCaseRepository) {
         this.testCycleCaseRepository = testCycleCaseRepository;
     }
-
-    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-        return testCycleCaseStepES;
-    }
-
-    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-        this.testCycleCaseStepES = testCycleCaseStepES;
-    }
+//
+//    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
+//        return testCycleCaseStepES;
+//    }
+//
+//    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
+//        this.testCycleCaseStepES = testCycleCaseStepES;
+//    }
 
     public String getLastRank() {
         return lastRank;
@@ -205,12 +209,12 @@ public class TestCycleCaseE {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
     }
 
-    public Long getLastUpdateBy() {
-        return lastUpdateBy;
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
     }
 
-    public void setLastUpdateBy(Long lastUpdateBy) {
-        this.lastUpdateBy = lastUpdateBy;
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 
     public Date getLastUpdateDate() {

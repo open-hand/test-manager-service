@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -28,7 +29,7 @@ public class TestCycleCaseController {
     @Autowired
     TestCycleCaseService testCycleCaseService;
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除测试循环用例")
     @DeleteMapping
     public ResponseEntity delete(Long cycleCaseId) {
@@ -37,7 +38,7 @@ public class TestCycleCaseController {
     }
 
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询测试组下循环用例")
     @GetMapping("/query/{cycleId}")
     public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId,
@@ -50,7 +51,7 @@ public class TestCycleCaseController {
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
     }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询一个循环用例")
     @GetMapping("/query/one/{executeId}")
     public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "executeId") Long executeId) {
@@ -60,7 +61,7 @@ public class TestCycleCaseController {
     }
 
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("增加一个测试组下循环用例")
     @PostMapping("/{projectId}/insert")
     public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "projectId") Long projectId) {
@@ -70,14 +71,14 @@ public class TestCycleCaseController {
 
     }
 
-    @Permission(permissionPublic = true)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改一个测试组下循环用例")
     @PostMapping("/update")
     public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO) {
-        ;
         return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
+
 
 }

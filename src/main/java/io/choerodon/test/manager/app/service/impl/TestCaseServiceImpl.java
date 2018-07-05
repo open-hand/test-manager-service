@@ -77,7 +77,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, String typeCode, PageRequest pageRequest) {
-        return testCaseFeignClient.listByOptions(projectId, typeCode, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
+	public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+		return testCaseFeignClient.listIssueWithoutSub(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
     }
 }

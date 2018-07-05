@@ -61,12 +61,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
     @Override
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
-        testCycleCaseE = testCycleCaseE.queryOne();
-        if (testCycleCaseE != null) {
-            testCycleCaseE.setTestCycleCaseStepES(iTestCycleCaseStepService.querySubStep(testCycleCaseE));
-            testCycleCaseE.setDefects(iTestCycleCaseDefectRelService.query(testCycleCaseE.getExecuteId(), "CYCLE_CASE"));
-        }
-        return testCycleCaseE;
+        return testCycleCaseE.queryOne();
     }
 
 

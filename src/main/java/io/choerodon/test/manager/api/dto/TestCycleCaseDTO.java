@@ -32,9 +32,15 @@ public class TestCycleCaseDTO {
 
     private String nextRank;
 
-    private String realName;
+	private String reporterRealName;
 
-    private Long lastUpdateBy;
+	private String reporterJobNumber;
+
+	private String assignedUserRealName;
+
+	private String assignedUserJobNumber;
+
+	private Long lastUpdatedBy;
 
     private Date lastUpdateDate;
 
@@ -42,15 +48,15 @@ public class TestCycleCaseDTO {
 
     private List<TestCycleCaseDefectRelDTO> defects;
 
-    private List<TestCycleCaseStepE> testCycleCaseStepES;
+//    private List<TestCycleCaseStepE> testCycleCaseStepES;
 
-    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-        return testCycleCaseStepES;
-    }
-
-    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-        this.testCycleCaseStepES = testCycleCaseStepES;
-    }
+//    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
+//        return testCycleCaseStepES;
+//    }
+//
+//    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
+//        this.testCycleCaseStepES = testCycleCaseStepES;
+//    }
 
     public Long getExecuteId() {
         return executeId;
@@ -92,14 +98,29 @@ public class TestCycleCaseDTO {
         this.assignedTo = assignedTo;
     }
 
-    public String getRealName() {
-        return realName;
+	public String getReporterRealName() {
+		return reporterRealName;
+	}
+
+	public void setReporterRealName(String reporterRealName) {
+		this.reporterRealName = reporterRealName;
+	}
+
+	public String getReporterJobNumber() {
+		return reporterJobNumber;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+	public void setReporterJobNumber(String reporterJobNumber) {
+		this.reporterJobNumber = reporterJobNumber;
     }
 
+	public String getAssignedUserJobNumber() {
+		return assignedUserJobNumber;
+	}
+
+	public void setAssignedUserJobNumber(String assignedUserJobNumber) {
+		this.assignedUserJobNumber = assignedUserJobNumber;
+	}
 
     public String getComment() {
         return comment;
@@ -157,19 +178,27 @@ public class TestCycleCaseDTO {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
 
-    public Long getLastUpdateBy() {
-        return lastUpdateBy;
-    }
+	public Long getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
 
-    public void setLastUpdateBy(Long lastUpdateBy) {
-        this.lastUpdateBy = lastUpdateBy;
-    }
+	public void setLastUpdatedBy(Long lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
 
-    public Date getLastUpdateDate() {
+	public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+
+	public String getAssignedUserRealName() {
+		return assignedUserRealName;
+	}
+
+	public void setAssignedUserRealName(String assignedUserRealName) {
+		this.assignedUserRealName = assignedUserRealName;
+	}
 }

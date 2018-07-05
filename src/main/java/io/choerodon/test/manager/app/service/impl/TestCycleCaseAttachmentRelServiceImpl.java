@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
@@ -25,8 +27,8 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-        return iTestCycleCaseAttachmentRelService.upload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment);
+    public TestCycleCaseAttachmentRelDTO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
+        return ConvertHelper.convert(iTestCycleCaseAttachmentRelService.upload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelDTO.class);
     }
 
 }

@@ -43,7 +43,11 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         testCycleCaseDefectRelE.setDefectLinkId(linkId);
         testCycleCaseDefectRelE.setDefectType(defectType);
         List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
-        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+//        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+        lists.forEach(v -> {
+            v.setDefectName("TEST_DEFECT");
+        });
+//        testCycleCaseDefectRelE.setDefectName("TEST_DEFECT");
         //testCaseFeignClient
         //获取issueName
         //插入返回值

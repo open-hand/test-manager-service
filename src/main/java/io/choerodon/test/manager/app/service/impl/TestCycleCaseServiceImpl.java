@@ -1,18 +1,26 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +38,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Autowired
 	UserService userService;
+
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -55,11 +64,37 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseDTO queryOne(Long cycleCaseId) {
-        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-        testCycleCaseDTO.setExecuteId(cycleCaseId);
+	public TestCycleCaseDTO queryOne(Long cycleCaseId) {
+		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+		testCycleCaseDTO.setExecuteId(cycleCaseId);
 		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-		Optional.ofNullable(dto.getAssignedTo()).ifPresent(v -> dto.setRealName(userService.query(v).getRealName()));
+		return setUser(dto);
+	}
+
+	private TestCycleCaseDTO setUser(TestCycleCaseDTO dto) {
+		boolean assigned = false;
+		boolean lastAssigned = false;
+		if (!(dto.getAssignedTo() == null || dto.getAssignedTo() == 0)) {
+			assigned = true;
+		}
+		if (!(dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy() == 0)) {
+			lastAssigned = true;
+		}
+		Long assign = dto.getAssignedTo();
+		Long update = dto.getLastUpdatedBy();
+		List<UserDO> lists = userService.query(new Long[]{assign, update});
+		int count = 0;
+		if (assigned) {
+			dto.setReporterRealName(lists.get(count).getRealName());
+			dto.setReporterJobNumber(lists.get(count).getLoginName());
+			if (assign != update) {
+				count++;
+			}
+		}
+		if (lastAssigned) {
+			dto.setAssignedUserRealName(lists.get(count).getRealName());
+			dto.setAssignedUserJobNumber(lists.get(count).getLoginName());
+		}
 		return dto;
 	}
 
@@ -76,7 +111,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO) {
-		return ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+		return setUser(ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class));
 	}
 
 

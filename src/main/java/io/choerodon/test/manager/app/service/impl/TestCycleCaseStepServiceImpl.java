@@ -1,15 +1,28 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import com.google.common.collect.Lists;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +34,12 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     ITestCycleCaseStepService iTestCycleCaseStepService;
 
+    @Autowired
+    TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
+
+    @Autowired
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
@@ -29,10 +48,10 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public List<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId) {
+    public Page<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, PageRequest pageRequest) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-        testCycleCaseDTO.setCycleId(cycleCaseId);
-        return ConvertHelper.convertList(iTestCycleCaseStepService.querySubStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseStepDTO.class);
+        testCycleCaseDTO.setExecuteId(cycleCaseId);
+        return ConvertPageHelper.convertPage(iTestCycleCaseStepService.querySubStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest), TestCycleCaseStepDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -47,4 +66,23 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         iTestCycleCaseStepService.deleteByTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
 
     }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects) {
+        files.forEach(v -> {
+            testCycleCaseAttachmentRelService.upload(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getOriginalFilename(), v, testCycleCaseStepDTO.getStepId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CASE_STEP, null);
+        });
+        this.update(Lists.newArrayList(testCycleCaseStepDTO));
+
+        defects.forEach(u -> {
+            if (u.getId() == null) {
+                testCycleCaseDefectRelService.insert(u);
+            }
+        });
+
+        return testCycleCaseStepDTO;
+    }
+
 }

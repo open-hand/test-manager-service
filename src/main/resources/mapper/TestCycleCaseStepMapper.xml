@@ -11,6 +11,7 @@
         <id column="parent_step_id" property="parentStepId"/>
         <id column="test_step" property="testStep"/>
         <id column="test_data" property="testData"/>
+        <id column="step_status" property="stepStatus"/>
         <id column="expected_result" property="expectedResult"/>
         <collection property="caseAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
@@ -29,7 +30,7 @@
     <select id="queryWithTestCaseStep" resultMap="BaseResultMap">
         SELECT cycle.execute_step_id,cycle.execute_id,cycle.step_id,cycle.comment,cycle.object_version_number,
         attach1.url,attach1.attachment_name,attach1.id,test.test_step,test.test_data,test.expected_result,
-        test.case_attach_url,test.case_attach_id,test.case_attach_name
+        test.case_attach_url,test.case_attach_id,test.case_attach_name,cycle.step_status
         FROM test_cycle_case_step cycle
         left join (
         SELECT step.step_id,step.rank,step.issue_id,step.test_step,step.test_data,step.expected_result,attach.url
@@ -42,14 +43,17 @@
         left join test_cycle_case_attachment_rel attach1
         on cycle.execute_step_id=attach1.attachment_link_id and attach1.attachment_type="CYCLE_STEP"
         <where>
-            <if test="executeStepId != null">
-                AND cycle.execute_step_id = #{executeStepId}
+            <if test="dto!=null and dto.executeStepId != null">
+                AND cycle.execute_step_id = #{dto.executeStepId}
             </if>
-            <if test="executeId != null">
-                AND cycle.execute_id = #{executeId}
+            <if test="dto!=null and dto.executeId != null">
+                AND cycle.execute_id = #{dto.executeId}
             </if>
         </where>
-        order by test.rank
+        order by test.rank limit #{page} , #{pageSize}
     </select>
 
+    <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">
+        SELECT count(1) from test_cycle_case_step;
+    </select>
 </mapper>

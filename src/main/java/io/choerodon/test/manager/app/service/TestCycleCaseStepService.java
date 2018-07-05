@@ -1,7 +1,12 @@
 package io.choerodon.test.manager.app.service;
 
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -25,7 +30,7 @@ public interface TestCycleCaseStepService {
      * @param testCycleCaseDTO
      * @return
      */
-    List<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId);
+    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest);
 
     /**
      * 启动循环测试下所有步骤
@@ -40,4 +45,6 @@ public interface TestCycleCaseStepService {
      * @param testCycleCaseDTO
      */
     void deleteByTestCycleCase(TestCycleCaseDTO testCycleCaseDTO);
+
+    TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects);
 }

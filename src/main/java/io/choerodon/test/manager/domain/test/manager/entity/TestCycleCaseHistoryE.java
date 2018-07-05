@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
@@ -18,6 +20,9 @@ public class TestCycleCaseHistoryE {
     private String oldValue;
     private String newValue;
     private Long objectVersionNumber;
+	private Long lastUpdatedBy;
+	private Date lastUpdateDate;
+	private String field;
 
     @Autowired
     private TestCycleCaseHistoryRepository testCycleCaseHistoryRepository;
@@ -25,6 +30,14 @@ public class TestCycleCaseHistoryE {
     public Page<TestCycleCaseHistoryE> querySelf(PageRequest pageRequest) {
         return testCycleCaseHistoryRepository.query(this, pageRequest);
     }
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
+	}
 
     public TestCycleCaseHistoryE addSelf() {
         return testCycleCaseHistoryRepository.insert(this);
@@ -69,4 +82,20 @@ public class TestCycleCaseHistoryE {
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
     }
+
+	public Long getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(Long lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
 }

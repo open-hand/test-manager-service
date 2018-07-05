@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.UserDTO;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +30,10 @@ public class UserFeignClientFallback implements UserFeignClient {
 		throw new CommonException(BATCH_QUERY_ERROR);
 	}
 
-//    @Override
-//    public ResponseEntity<ProjectDTO> queryProject(Long id) {
-//        throw new CommonException(QUERY_ERROR);
-//    }
+	@Override
+	public ResponseEntity<Page<UserDTO>> list(Long id, Long userId, int page, int size, String param) {
+		throw new CommonException(QUERY_ERROR);
+
+	}
 
 }

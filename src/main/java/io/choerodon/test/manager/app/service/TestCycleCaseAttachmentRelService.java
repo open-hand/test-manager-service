@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service;
 
+import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface TestCycleCaseAttachmentRelService {
 
-    TestCycleCaseAttachmentRelE upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
+	TestCycleCaseAttachmentRelDTO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
 
     void delete(String bucketName, Long attachId);
 

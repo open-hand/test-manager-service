@@ -45,7 +45,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         if (testCycleCaseMapper.updateByPrimaryKey(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-        return testCycleCaseE;
+		return ConvertHelper.convert(testCycleCaseMapper.selectByPrimaryKey(convert.getExecuteId()), TestCycleCaseE.class);
     }
 
     @Override
