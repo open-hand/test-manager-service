@@ -24,10 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -57,7 +54,21 @@ public class TestCycleServiceImpl implements TestCycleService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCycleDTO update(TestCycleDTO testCycleDTO) {
-		return ConvertHelper.convert(iTestCycleService.update(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+		TestCycleE temp = TestCycleEFactory.create();
+		temp.setCycleId(testCycleDTO.getCycleId());
+		TestCycleE temp1 = temp.queryOne();
+		if (testCycleDTO.getType().equals(TestCycleE.FOLDER)) {
+			temp1.setCycleName(testCycleDTO.getCycleName());
+			temp1.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
+		} else if (testCycleDTO.getType().equals(TestCycleE.CYCLE)) {
+			Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(v -> temp1.setBuild(v));
+			Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(v -> temp1.setCycleName(v));
+			Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(v -> temp1.setDescription(v));
+			Optional.ofNullable(testCycleDTO.getEnvironment()).ifPresent(v -> temp1.setEnvironment(v));
+			Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(v -> temp1.setFromDate(v));
+			Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(v -> temp1.setToDate(v));
+		}
+		return ConvertHelper.convert(iTestCycleService.update(temp1), TestCycleDTO.class);
 
 	}
 
