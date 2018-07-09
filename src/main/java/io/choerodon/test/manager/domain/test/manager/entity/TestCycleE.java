@@ -58,6 +58,10 @@ public class TestCycleE {
         return testCycleRepository.query(this);
     }
 
+	public TestCycleE queryOne() {
+		return testCycleRepository.queryOne(this);
+	}
+
 	public TestCycleE cloneCycle(TestCycleE proto) {
 		parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
 		cycleName = Optional.ofNullable(cycleName).orElse(proto.getCycleName());

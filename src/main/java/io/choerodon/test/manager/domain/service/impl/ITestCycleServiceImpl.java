@@ -96,7 +96,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		filterMap.put("parameter", filter);
 		filterMap.put("versionIds", versionIds);
 		TestCycleE testCycleE = TestCycleEFactory.create();
-		return testCycleE.filterWithBar(filterMap);
+		return countStatus(testCycleE.filterWithBar(filterMap));
 	}
 
 	private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {

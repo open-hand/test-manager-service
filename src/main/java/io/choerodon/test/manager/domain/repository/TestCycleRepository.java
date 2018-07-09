@@ -21,6 +21,8 @@ public interface TestCycleRepository {
 
     List<TestCycleE> query(TestCycleE testCycleE);
 
+	TestCycleE queryOne(TestCycleE testCycleE);
+
     List<TestCycleE> queryBar(Long versionId);
 
 	List<TestCycleE> filter(Map parameters);

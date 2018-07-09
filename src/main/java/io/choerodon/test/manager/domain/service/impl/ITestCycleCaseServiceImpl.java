@@ -101,7 +101,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		LocalDate date = LocalDate.parse(day);
 		for (int i = range.intValue() - 1; i >= 0; i--) {
 			date.minusDays(i);
-			caseCountList.add(new RedisAtomicLong(projectId + ":" + date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+			caseCountList.add(new RedisAtomicLong("summary:" + projectId + ":" + date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 					, redisTemplate.getConnectionFactory()).get());
 		}
 		return caseCountList;

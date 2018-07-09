@@ -26,6 +26,10 @@ public class TestCycleDTO {
 
     private Long versionId;
 
+    private String versionName;
+
+    private String versionStatusName;
+
     private String description;
 
     private String build;
@@ -138,5 +142,21 @@ public class TestCycleDTO {
 
     public void setCycleCaseList(Map cycleCaseList) {
         this.cycleCaseList = cycleCaseList;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public String getVersionStatusName() {
+        return versionStatusName;
+    }
+
+    public void setVersionStatusName(String versionStatusName) {
+        this.versionStatusName = versionStatusName;
     }
 }
