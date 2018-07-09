@@ -17,18 +17,20 @@ public interface ITestCycleCaseService {
      * @param testCycleCaseE
      * @return
      */
-	TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE);
+	TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 
     void delete(TestCycleCaseE testCycleCaseE);
 
 
     Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
-	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE);
+	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 
     List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 
     TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
 
 	TestCycleCaseE changeStep(TestCycleCaseE currentStepE);
+
+	List<Long> getActiveCase(Long range, Long projectId, String day);
 }

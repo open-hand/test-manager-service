@@ -81,7 +81,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TestCycleDTO cloneCycle(Long cycleId, String cycleName) {
+	public TestCycleDTO cloneCycle(Long cycleId, String cycleName, Long projectId) {
 		TestCycleE testCycleE = TestCycleEFactory.create();
 		testCycleE.setCycleId(cycleId);
 		List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
@@ -91,12 +91,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 		TestCycleE newTestCycleE = TestCycleEFactory.create();
 		newTestCycleE.setCycleName(cycleName);
 		newTestCycleE.setType(TestCycleE.CYCLE);
-		return ConvertHelper.convert(iTestCycleService.cloneCycle(list.get(0), newTestCycleE), TestCycleDTO.class);
+		return ConvertHelper.convert(iTestCycleService.cloneCycle(list.get(0), newTestCycleE, projectId), TestCycleDTO.class);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO) {
+	public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId) {
 		TestCycleE testCycleE = TestCycleEFactory.create();
 		testCycleE.setCycleId(cycleId);
 		List<TestCycleE> list = iTestCycleService.querySubCycle(testCycleE);
@@ -104,6 +104,6 @@ public class TestCycleServiceImpl implements TestCycleService {
 			throw new CommonException("error.test.cycle.clone.");
 		}
 
-		return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+		return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId), TestCycleDTO.class);
 	}
 }

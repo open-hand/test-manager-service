@@ -2,10 +2,7 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
@@ -68,12 +65,13 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
      * @param testCycleCaseE
      */
     @Override
-    public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE) {
+	public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE, Long projectId) {
         TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
         testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
         List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
-
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+		TestStatusE e = new TestStatusE();
+		testCycleCaseStepE.setStepStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE_STEP));
         testCaseStepES.forEach(v -> {
             testCycleCaseStepE.setStepId(v.getStepId());
             testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());

@@ -89,7 +89,7 @@ public class TestCycleCaseStepController {
 			defects = JSONArray.parseArray(def, TestCycleCaseDefectRelDTO.class);
 		}
 		testCycleCaseStepDTO.setExecuteId(Long.valueOf(request.getParameter("executeId")));
-		testCycleCaseStepDTO.setStepStatus(stepStatus.substring(1, stepStatus.length() - 1));
+		testCycleCaseStepDTO.setStepStatus(Long.valueOf(stepStatus));
 		testCycleCaseStepDTO.setStepId(Long.valueOf(request.getParameter("stepId")));
 		testCycleCaseStepDTO.setExecuteStepId(Long.valueOf(request.getParameter("executeStepId")));
 		testCycleCaseStepDTO.setComment(comment);

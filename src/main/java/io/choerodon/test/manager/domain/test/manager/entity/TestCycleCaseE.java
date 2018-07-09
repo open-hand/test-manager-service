@@ -30,7 +30,9 @@ public class TestCycleCaseE {
 
     private String rank;
 
-    private String executionStatus;
+    private Long executionStatus;
+
+    private String executionStatusName;
 
     private Long assignedTo;
 
@@ -104,9 +106,7 @@ public class TestCycleCaseE {
         return issueId;
     }
 
-    public String getExecutionStatus() {
-        return executionStatus;
-    }
+
 
     public Long getAssignedTo() {
         return assignedTo;
@@ -141,7 +141,11 @@ public class TestCycleCaseE {
         this.rank = rank;
     }
 
-    public void setExecutionStatus(String executionStatus) {
+    public Long getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public void setExecutionStatus(Long executionStatus) {
         this.executionStatus = executionStatus;
     }
 
@@ -168,14 +172,14 @@ public class TestCycleCaseE {
     public void setTestCycleCaseRepository(TestCycleCaseRepository testCycleCaseRepository) {
         this.testCycleCaseRepository = testCycleCaseRepository;
     }
-//
-//    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-//        return testCycleCaseStepES;
-//    }
-//
-//    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-//        this.testCycleCaseStepES = testCycleCaseStepES;
-//    }
+
+    public String getExecutionStatusName() {
+        return executionStatusName;
+    }
+
+    public void setExecutionStatusName(String executionStatusName) {
+        this.executionStatusName = executionStatusName;
+    }
 
     public String getLastRank() {
         return lastRank;

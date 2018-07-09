@@ -31,7 +31,7 @@ public interface TestCycleCaseService {
      */
     TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-
+	List<Long> getActiveCase(Long range, Long projectId, String day);
 
     /**
 	 * 修改一个case

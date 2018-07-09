@@ -13,10 +13,14 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -34,8 +38,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
     @Autowired
     ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
-
-
+	@Autowired
+	RedisTemplate redisTemplate;
 
     @Override
     public void delete(TestCycleCaseE testCycleCaseE) {
@@ -72,16 +76,16 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
      * @return
      */
     @Override
-    public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE) {
+	public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
         TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
-        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase);
+		iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
         return testCycleCase;
     }
 
     @Override
-    public TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE) {
+	public TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
         TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
-        iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase);
+		iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
         return testCycleCase;
     }
 
@@ -90,5 +94,17 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
     public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE) {
         return testCycleCaseE.changeOneCase();
     }
+
+	@Override
+	public List<Long> getActiveCase(Long range, Long projectId, String day) {
+		List<Long> caseCountList = new ArrayList<>();
+		LocalDate date = LocalDate.parse(day);
+		for (int i = range.intValue() - 1; i >= 0; i--) {
+			date.minusDays(i);
+			caseCountList.add(new RedisAtomicLong(projectId + ":" + date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+					, redisTemplate.getConnectionFactory()).get());
+		}
+		return caseCountList;
+	}
 
 }

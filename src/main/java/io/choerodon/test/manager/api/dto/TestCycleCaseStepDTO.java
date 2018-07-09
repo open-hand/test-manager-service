@@ -19,7 +19,7 @@ public class TestCycleCaseStepDTO {
     private String comment;
     private Long objectVersionNumber;
 
-	private String stepStatus;
+	private Long stepStatus;
 
     private String testStep;
 
@@ -124,11 +124,11 @@ public class TestCycleCaseStepDTO {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
 
-	public String getStepStatus() {
+	public Long getStepStatus() {
 		return stepStatus;
 	}
 
-	public void setStepStatus(String stepStatus) {
+	public void setStepStatus(Long stepStatus) {
 		this.stepStatus = stepStatus;
 	}
 }

@@ -96,9 +96,9 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆循环")
-	@PostMapping("/clone/cycle/{cycleId}/{cycleName}")
-	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName) {
-		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName))
+	@PostMapping("/{projectId}/clone/cycle/{cycleId}/{cycleName}")
+	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName, @PathVariable(name = "projectId") Long projectId) {
+		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
 
@@ -106,12 +106,13 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆文件夹")
-	@PostMapping("/clone/folder/{cycleId}")
+	@PostMapping("/{projectId}/clone/folder/{cycleId}")
 	ResponseEntity cloneFolder(
 			@ApiParam(value = "循环id", required = true)
-			@PathVariable(name = "cycleId") Long cycleId
+			@PathVariable(name = "cycleId") Long cycleId,
+			@PathVariable(name = "projectId") Long projectId
 			, @RequestBody TestCycleDTO testCycleDTO) {
-		return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO))
+		return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneFolder"));
 

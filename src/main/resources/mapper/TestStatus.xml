@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestStatusMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestStatusDO" id="BaseResultMap">
+        <id column="status_id" property="statusId"/>
+        <id column="status_name" property="statusName"/>
+        <id column="description" property="description"/>
+        <id column="status_color" property="statusColor"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="status_type" property="statusType"/>
+        <id column="project_id" property="projectId"/>
+    </resultMap>
+
+    <select id="queryAllUnderProject" resultMap="BaseResultMap">
+        SELECT *
+        from test_status
+        <where>
+            project_id in(0,#{dto.projectId}) and status_type=#{dto.statusType}
+            <if test="dto.statusName != null">
+                and status_name=#{dto.statusName}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

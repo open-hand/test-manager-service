@@ -22,7 +22,14 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
     @Override
     public List<TestStatusE> query(TestStatusE testStatusE) {
         TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-        return ConvertHelper.convertList(testStatusMapper.select(testStatusDO), TestStatusE.class);
+		return ConvertHelper.convertList(testStatusMapper.queryAllUnderProject(testStatusDO), TestStatusE.class);
+	}
+
+
+	@Override
+	public List<TestStatusE> queryAllUnderProject(TestStatusE testStatusE) {
+		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+		return ConvertHelper.convertList(testStatusMapper.queryAllUnderProject(testStatusDO), TestStatusE.class);
     }
 
     @Override

@@ -37,7 +37,7 @@ public interface TestCycleCaseStepService {
      *
      * @param testCycleCaseDTO
      */
-    void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
+	void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
     /**
      * 删除CycleCase下所有Step

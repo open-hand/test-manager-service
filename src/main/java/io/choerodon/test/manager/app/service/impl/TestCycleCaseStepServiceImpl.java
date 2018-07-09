@@ -56,8 +56,8 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO) {
-        iTestCycleCaseStepService.createTestCycleCaseStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
+	public void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+		iTestCycleCaseStepService.createTestCycleCaseStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId);
     }
 
     @Transactional(rollbackFor = Exception.class)
