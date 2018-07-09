@@ -16,6 +16,8 @@ public class TestStatusDTO {
 
 	private Long objectVersionNumber;
 
+	private Long projectId;
+
 	public Long getStatusId() {
 		return statusId;
 	}
@@ -62,5 +64,13 @@ public class TestStatusDTO {
 
 	public void setObjectVersionNumber(Long objectVersionNumber) {
 		this.objectVersionNumber = objectVersionNumber;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 }

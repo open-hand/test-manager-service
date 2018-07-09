@@ -35,7 +35,7 @@ public class TestCycleCaseStepE {
 
     private Long objectVersionNumber;
 
-    private String stepStatus;
+	private Long stepStatus;
 
     private List<TestCycleCaseAttachmentRelE> caseAttachment;
 
@@ -113,11 +113,11 @@ public class TestCycleCaseStepE {
         this.testCycleCaseStepRepository = testCycleCaseStepRepository;
     }
 
-    public String getStepStatus() {
+	public Long getStepStatus() {
         return stepStatus;
     }
 
-    public void setStepStatus(String stepStatus) {
+	public void setStepStatus(Long stepStatus) {
         this.stepStatus = stepStatus;
     }
 

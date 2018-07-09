@@ -19,9 +19,9 @@ public interface TestCycleService {
 
     List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO);
 
-	TestCycleDTO cloneCycle(Long cycleId, String cycleName);
+	TestCycleDTO cloneCycle(Long cycleId, String cycleName, Long projectId);
 
-	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO);
+	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId);
 
     List<TestCycleDTO> getTestCycle(Long versionId);
 

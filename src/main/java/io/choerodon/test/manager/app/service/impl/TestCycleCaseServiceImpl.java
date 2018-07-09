@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.api.dto.TestStatusDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
@@ -16,6 +17,8 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -104,7 +107,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		if (testCycleCaseDTO.getCycleId() == null) {
 			testCycleCaseDTO.setCycleId(iTestCycleService.findDefaultCycle(projectId));
 		}
-		return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+		TestStatusE e = new TestStatusE();
+		testCycleCaseDTO.setExecutionStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE));
+
+		return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
 	}
 
 
@@ -115,4 +121,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	}
 
 
+	@Override
+	public List<Long> getActiveCase(Long range, Long projectId, String day) {
+		return iTestCycleCaseService.getActiveCase(range, projectId, day);
+	}
 }

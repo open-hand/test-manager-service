@@ -81,5 +81,13 @@ public class TestCycleCaseController {
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
 
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("获取时间内case活跃度")
+	@PostMapping("/{projectId}/range")
+	public ResponseEntity getActiveCase(Long range, Long projectId, String day) {
+		return Optional.ofNullable(testCycleCaseService.getActiveCase(range, projectId, day))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.get.range"));
+	}
 
 }

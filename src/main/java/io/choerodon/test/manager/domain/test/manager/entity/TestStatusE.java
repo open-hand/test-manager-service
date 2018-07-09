@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestStatusRepository;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,10 @@ public class TestStatusE {
 
 	public static final String STATUS_UN_EXECUTED = "未执行";
 
+	public static final String STATUS_TYPE_CASE = "CYCLE_CASE";
+
+	public static final String STATUS_TYPE_CASE_STEP = "CASE_STEP";
+
     private Long statusId;
 
     private String statusName;
@@ -28,6 +34,9 @@ public class TestStatusE {
 
     private Long objectVersionNumber;
 
+	private Long projectId;
+
+
     @Autowired
     TestStatusRepository testStatusRepository;
 
@@ -35,9 +44,33 @@ public class TestStatusE {
         return testStatusRepository.query(this);
     }
 
+	public List<TestStatusE> queryAllUnderProject() {
+		return testStatusRepository.queryAllUnderProject(this);
+	}
+
+	public Long getDefaultStatusId(Long projectId, String type) {
+		TestStatusE testStatusE = TestStatusEFactory.create();
+		testStatusE.setProjectId(projectId);
+		testStatusE.setStatusType(type);
+		testStatusE.setStatusName(TestStatusE.STATUS_UN_EXECUTED);
+		List<TestStatusE> list = testStatusE.queryAllUnderProject();
+		if (list.size() > 2) {
+			throw new CommonException("error.find.status.default");
+		}
+		return list.get(list.size() - 1).getStatusId();
+	}
+
     public TestStatusE addSelf() {
         return testStatusRepository.insert(this);
     }
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
 
     public TestStatusE updateSelf() {
         return testStatusRepository.update(this);

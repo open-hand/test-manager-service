@@ -27,7 +27,11 @@ public class TestCycleCaseDO extends AuditDomain {
 
     private String rank;
 
-    private String executionStatus;
+	private Long executionStatus;
+
+	@Transient
+	private String executionStatusName;
+
 
     private Long assignedTo;
 
@@ -60,11 +64,19 @@ public class TestCycleCaseDO extends AuditDomain {
         this.issueId = issueId;
     }
 
-    public String getExecutionStatus() {
+	public String getExecutionStatusName() {
+		return executionStatusName;
+	}
+
+	public void setExecutionStatusName(String executionStatusName) {
+		this.executionStatusName = executionStatusName;
+	}
+
+	public Long getExecutionStatus() {
         return executionStatus;
     }
 
-    public void setExecutionStatus(String executionStatus) {
+	public void setExecutionStatus(Long executionStatus) {
         this.executionStatus = executionStatus;
     }
 

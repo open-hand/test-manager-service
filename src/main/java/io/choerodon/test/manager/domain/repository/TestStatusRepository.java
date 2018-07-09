@@ -15,4 +15,6 @@ public interface TestStatusRepository {
     void delete(TestStatusE testStatusE);
 
     TestStatusE update(TestStatusE testStatusE);
+
+	List<TestStatusE> queryAllUnderProject(TestStatusE testStatusE);
 }

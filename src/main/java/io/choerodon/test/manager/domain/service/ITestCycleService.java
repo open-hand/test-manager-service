@@ -20,9 +20,9 @@ public interface ITestCycleService {
 
     List<TestCycleE> querySubCycle(TestCycleE testCycleE);
 
-	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE);
+	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
-	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE);
+	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
 //	List<TestCycleE> sort(List<TestCycle	E> testCycleES);
 

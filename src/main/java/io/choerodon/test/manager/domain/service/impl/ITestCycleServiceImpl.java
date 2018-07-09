@@ -122,7 +122,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		}
 	}
 
-	public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE) {
+	public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
 		TestCycleE newCycleE = newTestCycleE.cloneCycle(protoTestCycleE);
 
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
@@ -131,18 +131,18 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 			v.setExecuteId(null);
 			v.setCycleId(newCycleE.getCycleId());
 			v.setObjectVersionNumber(null);
-			iTestCycleCaseService.cloneCycleCase(v);
+			iTestCycleCaseService.cloneCycleCase(v, projectId);
 		});
 		return newCycleE;
 	}
 
 	@Override
-	public TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE) {
-		TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE);
+	public TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
+		TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE, projectId);
 		protoTestCycleE.getChildFolder().forEach(v -> {
 			TestCycleE testCycleE = TestCycleEFactory.create();
 			testCycleE.setParentCycleId(parentCycle.getCycleId());
-			cloneFolder(v, testCycleE);
+			cloneFolder(v, testCycleE, projectId);
 		});
 		return parentCycle;
 	}

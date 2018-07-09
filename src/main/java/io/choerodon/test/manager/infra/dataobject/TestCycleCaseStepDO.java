@@ -23,7 +23,7 @@ public class TestCycleCaseStepDO extends AuditDomain {
     private Long executeId;
     private Long stepId;
     private String comment;
-	private String stepStatus;
+	private Long stepStatus;
 
     @Transient
     private String testStep;
@@ -143,11 +143,11 @@ public class TestCycleCaseStepDO extends AuditDomain {
         this.defects = defects;
     }
 
-	public String getStepStatus() {
+	public Long getStepStatus() {
 		return stepStatus;
 	}
 
-	public void setStepStatus(String stepStatus) {
+	public void setStepStatus(Long stepStatus) {
 		this.stepStatus = stepStatus;
 	}
 }

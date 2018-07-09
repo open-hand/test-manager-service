@@ -83,7 +83,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'rank', type: 'VARCHAR(25)', remarks: 'rank') {
                 constraints(nullable: false)
             }
-            column(name: 'execution_status', type: 'VARCHAR(30)', remarks: '执行状态') {
+            column(name: 'execution_status', type: 'BIGINT UNSIGNED', remarks: '执行状态') {
                 constraints(nullable: false)
             }
             column(name: 'assigned_to', type: 'BIGINT UNSIGNED', defaultValue: "0", remarks: '指定人')
@@ -120,7 +120,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
                 constraints(nullable: false)
             }
             column(name: 'comment', type: 'text', remarks: '描述')
-            column(name: 'step_status', type: 'VARCHAR(30)', remarks: '状态')
+            column(name: 'step_status', type: 'BIGINT UNSIGNED', remarks: '状态')
 
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
@@ -241,6 +241,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'status_type', type: 'VARCHAR(30)', remarks: "状态类型") {
                 constraints(nullable: false)
             }
+            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: "项目Id") {
+                constraints(nullable: false)
+            }
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
@@ -250,14 +253,15 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
 
         createIndex(indexName: 'uk_test_status_name', tableName: 'test_status', unique: true) {
+            column(name: 'project_id')
             column(name: 'status_type')
             column(name: 'status_name')
         }
         createIndex(indexName: 'uk_test_status_color', tableName: 'test_status', unique: true) {
+            column(name: 'project_id')
             column(name: 'status_type')
             column(name: 'status_color')
         }
     }
-
 
 }

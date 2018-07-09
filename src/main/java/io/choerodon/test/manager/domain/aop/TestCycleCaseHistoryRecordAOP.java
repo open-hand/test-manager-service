@@ -71,10 +71,10 @@ public class TestCycleCaseHistoryRecordAOP {
 
 		if (!testCycleCaseDTO.getExecutionStatus().equals(before.getExecutionStatus())) {
 			historyDTO.setField(FIELD_STATUS);
-			historyDTO.setNewValue(testCycleCaseDTO.getExecutionStatus());
-			historyDTO.setOldValue(before.getExecutionStatus());
+			historyDTO.setNewValue(testCycleCaseDTO.getExecutionStatusName());
+			historyDTO.setOldValue(before.getExecutionStatusName());
 			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), before.getExecutionStatus(), testCycleCaseDTO.getExecutionStatus(), testCycleCaseDTO.getExecuteId());
+			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), before.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecuteId());
 		} else if (!testCycleCaseDTO.getAssignedTo().equals(before.getAssignedTo())) {
 			historyDTO.setField(FIELD_ASSIGNED);
 			Long after_as = testCycleCaseDTO.getAssignedTo();
@@ -123,6 +123,7 @@ public class TestCycleCaseHistoryRecordAOP {
 			entityIdCounter.decrementAndGet();
 		}
 	}
+
 
 	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
 	public void recordAttachUpload(JoinPoint jp) {

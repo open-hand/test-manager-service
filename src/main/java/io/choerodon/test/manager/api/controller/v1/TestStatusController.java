@@ -36,9 +36,11 @@ public class TestStatusController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除状态")
-	@DeleteMapping
-	public ResponseEntity delete(@RequestBody TestStatusDTO testStatusDTO) {
-		testStatusService.delete(testStatusDTO);
+	@DeleteMapping("/{statusId}")
+	public ResponseEntity delete(@PathVariable(name = "statusId") Long statusId) {
+		TestStatusDTO dto = new TestStatusDTO();
+		dto.setStatusId(statusId);
+		testStatusService.delete(dto);
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
@@ -53,7 +55,7 @@ public class TestStatusController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("更新状态")
-	@PutMapping
+	@PutMapping("/update")
 	public ResponseEntity<TestStatusDTO> update(@RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.update(testStatusDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))

@@ -20,7 +20,9 @@ public class TestCycleCaseDTO {
 
     private String rank;
 
-    private String executionStatus;
+	private Long executionStatus;
+
+	private String executionStatusName;
 
     private Long assignedTo;
 
@@ -58,6 +60,14 @@ public class TestCycleCaseDTO {
 //        this.testCycleCaseStepES = testCycleCaseStepES;
 //    }
 
+	public String getExecutionStatusName() {
+		return executionStatusName;
+	}
+
+	public void setExecutionStatusName(String executionStatusName) {
+		this.executionStatusName = executionStatusName;
+	}
+
     public Long getExecuteId() {
         return executeId;
     }
@@ -82,15 +92,15 @@ public class TestCycleCaseDTO {
         this.issueId = issueId;
     }
 
-    public String getExecutionStatus() {
-        return executionStatus;
-    }
+	public Long getExecutionStatus() {
+		return executionStatus;
+	}
 
-    public void setExecutionStatus(String executionStatus) {
-        this.executionStatus = executionStatus;
-    }
+	public void setExecutionStatus(Long executionStatus) {
+		this.executionStatus = executionStatus;
+	}
 
-    public Long getAssignedTo() {
+	public Long getAssignedTo() {
         return assignedTo;
     }
 

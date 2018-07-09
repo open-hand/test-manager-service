@@ -13,7 +13,7 @@ import java.util.List;
 public class ITestStatusServiceImpl implements ITestStatusService {
     @Override
     public List<TestStatusE> query(TestStatusE testStatusE) {
-        return testStatusE.querySelf();
+		return testStatusE.queryAllUnderProject();
     }
 
     @Override
