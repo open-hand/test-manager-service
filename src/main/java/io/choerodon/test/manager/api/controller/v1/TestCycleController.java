@@ -24,7 +24,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/12/18.
  */
 @RestController
-@RequestMapping(value = "/v1/cycle")
+@RequestMapping(value = "/v1/projects/{project_id}/cycle")
 public class TestCycleController {
 	@Autowired
 	TestCycleService testCycleService;
@@ -88,16 +88,16 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询项目下的计划")
-	@PostMapping("/query/version/{projectId}")
-	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "projectId") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
+	@PostMapping("/query/version/")
+	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
 		return testCycleService.getTestCycleVersion(projectId, searchParamMap);
 	}
 
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆循环")
-	@PostMapping("/{projectId}/clone/cycle/{cycleId}/{cycleName}")
-	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName, @PathVariable(name = "projectId") Long projectId) {
+	@PostMapping("/clone/cycle/{cycleId}/{cycleName}")
+	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName, @PathVariable(name = "project_id") Long projectId) {
 		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
@@ -106,11 +106,11 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆文件夹")
-	@PostMapping("/{projectId}/clone/folder/{cycleId}")
+	@PostMapping("/clone/folder/{cycleId}")
 	ResponseEntity cloneFolder(
 			@ApiParam(value = "循环id", required = true)
 			@PathVariable(name = "cycleId") Long cycleId,
-			@PathVariable(name = "projectId") Long projectId
+			@PathVariable(name = "project_id") Long projectId
 			, @RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))

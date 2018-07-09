@@ -18,7 +18,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/25/18.
  */
 @RestController
-@RequestMapping(value = "/v1/status")
+@RequestMapping(value = "/v1/projects/{project_id}/status")
 public class TestStatusController {
 
     @Autowired

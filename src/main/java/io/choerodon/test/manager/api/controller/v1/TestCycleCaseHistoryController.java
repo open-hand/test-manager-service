@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping(value = "/v1/cycle/case/history/{cycleCaseId}")
+@RequestMapping(value = "/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}")
 public class TestCycleCaseHistoryController {
 	@Autowired
 	TestCycleCaseHistoryService testCycleCaseHistoryService;

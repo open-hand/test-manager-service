@@ -24,7 +24,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/21/18.
  */
 @RestController
-@RequestMapping(value = "/v1/project/test/case/attachment")
+@RequestMapping(value = "/v1/projects/{project_id}/test/case/attachment")
 public class TestAttachmentController {
 
     @Autowired

@@ -23,7 +23,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/12/18.
  */
 @RestController
-@RequestMapping(value = "/v1/cycle/case")
+@RequestMapping(value = "/v1/projects/{project_id}/cycle/case")
 public class TestCycleCaseController {
 
     @Autowired
@@ -63,8 +63,8 @@ public class TestCycleCaseController {
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("增加一个测试组下循环用例")
-    @PostMapping("/{projectId}/insert")
-    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "projectId") Long projectId) {
+	@PostMapping("/insert")
+	public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
@@ -73,9 +73,9 @@ public class TestCycleCaseController {
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改一个测试组下循环用例")
-    @PostMapping("/{projectId}/update")
+	@PostMapping("/update")
     public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO,
-                                        @PathVariable(name = "projectId") Long projectId) {
+										@PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
@@ -83,8 +83,8 @@ public class TestCycleCaseController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("获取时间内case活跃度")
-	@PostMapping("/{projectId}/range")
-	public ResponseEntity getActiveCase(Long range, Long projectId, String day) {
+	@PostMapping("/range/{day}/{range}")
+	public ResponseEntity getActiveCase(@PathVariable(name = "range") Long range, @PathVariable(name = "project_id") Long projectId, @PathVariable(name = "day") String day) {
 		return Optional.ofNullable(testCycleCaseService.getActiveCase(range, projectId, day))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.get.range"));

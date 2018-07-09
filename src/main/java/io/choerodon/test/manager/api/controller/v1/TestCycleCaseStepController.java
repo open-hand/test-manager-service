@@ -30,7 +30,7 @@ import java.util.Optional;
  * Created by 842767365@qq.com on 6/14/18.
  */
 @RestController
-@RequestMapping(value = "/v1/cycle/case/step")
+@RequestMapping(value = "/v1/projects/{project_id}/cycle/case/step")
 public class TestCycleCaseStepController {
 
 	@Autowired
