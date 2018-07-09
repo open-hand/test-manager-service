@@ -17,7 +17,7 @@ public interface TestCycleService {
 
     void delete(TestCycleDTO testCycleDTO);
 
-    List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO);
+	TestCycleDTO update(TestCycleDTO testCycleDTO);
 
 	TestCycleDTO cloneCycle(Long cycleId, String cycleName, Long projectId);
 

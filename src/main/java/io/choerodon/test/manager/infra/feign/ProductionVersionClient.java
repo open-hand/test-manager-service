@@ -23,10 +23,10 @@ import java.util.Map;
 @FeignClient(value = "agile-service", fallback = ProductionVersionClientFallback.class)
 public interface ProductionVersionClient {
 
-    @PostMapping(value = "/v1/project/{project_id}/product_version/versions")
+    @PostMapping(value = "/v1/projects/{project_id}/product_version/versions")
     public ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(@PathVariable(name = "project_id") Long projectId,
                                                                      @RequestBody(required = false) Map<String, Object> searchParamMap);
 
-    @GetMapping(value = "/v1/project/{project_id}/product_version/versions")
+    @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")
     ResponseEntity<List<ProductVersionDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId);
 }

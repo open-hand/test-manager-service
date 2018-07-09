@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping(value = "/v1/project/{project_id}/case")
+@RequestMapping(value = "/v1/projects/{project_id}/case")
 public class TestCaseController {
     @Autowired
     TestCaseService testCaseService;

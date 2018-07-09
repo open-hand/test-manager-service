@@ -14,7 +14,7 @@ public interface ITestCycleService {
 
     void delete(TestCycleE testCycleE);
 
-    List<TestCycleE> update(List<TestCycleE> testCycleE);
+	TestCycleE update(TestCycleE testCycleE);
 
     Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
 

@@ -56,8 +56,8 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public List<TestCycleDTO> update(List<TestCycleDTO> testCycleDTO) {
-		return ConvertHelper.convertList(iTestCycleService.update(ConvertHelper.convertList(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+	public TestCycleDTO update(TestCycleDTO testCycleDTO) {
+		return ConvertHelper.convert(iTestCycleService.update(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
 
 	}
 

@@ -53,7 +53,7 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("修改测试循环")
 	@PutMapping
-	ResponseEntity<List<TestCycleDTO>> update(@RequestBody List<TestCycleDTO> testCycleDTO) {
+	ResponseEntity<TestCycleDTO> update(@RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.update(testCycleDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));

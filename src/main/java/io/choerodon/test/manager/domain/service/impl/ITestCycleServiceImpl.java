@@ -59,10 +59,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	}
 
 	@Override
-	public List<TestCycleE> update(List<TestCycleE> testCycleE) {
-		List<TestCycleE> testCycleES = new ArrayList<>();
-		testCycleE.forEach(v -> testCycleES.add(v.updateSelf()));
-		return testCycleES;
+	public TestCycleE update(TestCycleE testCycleE) {
+		return testCycleE.updateSelf();
 	}
 
 	@Override
