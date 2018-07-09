@@ -59,12 +59,12 @@ public class TestCycleController {
 				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));
 	}
 
-//    @Permission(level = ResourceLevel.PROJECT)
-//    @ApiOperation("查询测试循环")
-//    @PostMapping("/query")
-//    Page<TestCycleDTO> query(@RequestBody TestCycleDTO testCycleDTO, PageRequest pageRequest) {
-//        return testCycleService.query(testCycleDTO, pageRequest);
-//    }
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("查询测试循环")
+	@GetMapping("/query/one/{cycleId}")
+	TestCycleDTO queryOne(@PathVariable(name = "cycleId") Long cycleId) {
+		return testCycleService.getOneCycle(cycleId);
+	}
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询version下的测试循环")
@@ -88,7 +88,7 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询项目下的计划")
-	@PostMapping("/query/version/")
+	@PostMapping("/query/version")
 	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
 		return testCycleService.getTestCycleVersion(projectId, searchParamMap);
 	}

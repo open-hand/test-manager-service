@@ -107,7 +107,7 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId) {
 		if (StringUtils.equals(oldStatus, TestStatusE.STATUS_UN_EXECUTED)) {
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong(projectId + ":" + date, redisTemplate.getConnectionFactory());
+			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + date, redisTemplate.getConnectionFactory());
 			entityIdCounter.incrementAndGet();
 		} else if (StringUtils.equals(newStatus, TestStatusE.STATUS_UN_EXECUTED)) {
 			TestCycleCaseHistoryE e = TestCycleCaseHistoryEFactory.create();

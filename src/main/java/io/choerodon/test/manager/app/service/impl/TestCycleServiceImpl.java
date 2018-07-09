@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
@@ -60,6 +61,13 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	}
 
+	public TestCycleDTO getOneCycle(Long cycleId) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setCycleId(cycleId);
+		testCycleE.querySelf();
+		return ConvertHelper.convert(testCycleE.queryOne(), TestCycleDTO.class);
+	}
+
 	@Override
 	public List<TestCycleDTO> getTestCycle(Long versionId) {
 		return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
@@ -67,11 +75,26 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Override
 	public List<TestCycleDTO> filterCycleWithBar(String filter) {
+
 		JSONObject object = JSON.parseObject(filter);
-		return ConvertHelper.convertList(iTestCycleService
-						.filterCycleWithBar(object.getString("parameter"),
-								Arrays.stream(object.getJSONArray("versionIds").toArray()).map(p -> Long.valueOf(p.toString())).toArray(Long[]::new)),
-				TestCycleDTO.class);
+
+		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(object.getLong("projectId"));
+		List<ProductVersionDTO> versions = dto.getBody();
+		if (versions.size() == 0) {
+			return new ArrayList<>();
+		}
+		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.filterCycleWithBar(object.getString("parameter"),
+				versions.stream().map(v -> v.getVersionId()).toArray(Long[]::new)), TestCycleDTO.class);
+		cycles.forEach(v -> {
+			for (ProductVersionDTO u : versions) {
+				if (v.getVersionId() == u.getVersionId()) {
+					v.setVersionName(u.getName());
+					v.setVersionStatusName(u.getStatusName());
+					break;
+				}
+			}
+		});
+		return cycles;
 	}
 
 	@Override

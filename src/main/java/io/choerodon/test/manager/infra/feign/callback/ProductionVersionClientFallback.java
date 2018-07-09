@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
@@ -7,6 +8,7 @@ import io.choerodon.core.exception.CommonException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +21,11 @@ public class ProductionVersionClientFallback implements ProductionVersionClient 
     @Override
     public ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(Long projectId, Map<String, Object> searchParamMap) {
         throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<ProductVersionDTO>> listByProjectId(Long projectId) {
+        throw new CommonException(QUERY_ERROR);
+
     }
 }
