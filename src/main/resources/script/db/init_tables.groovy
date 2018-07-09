@@ -65,6 +65,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
         createIndex(indexName: 'uk_cycle_name_version_id', tableName: 'test_cycle', unique: true) {
             column(name: 'version_id')
+            column(name: 'parent_cycle_id')
             column(name: 'cycle_name')
         }
     }
