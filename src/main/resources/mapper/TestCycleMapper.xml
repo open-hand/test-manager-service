@@ -58,7 +58,7 @@
         WHERE
         t1.cycle_id = t2.cycle_id
         OR ( t2.type = 'folder' AND t1.cycle_id = t2.parent_cycle_id )
-        OR ( t2.type = 'folder' AND t2.cycle_id = t1.parent_cycle_id )
+        OR ( t2.type = 'cycle' AND t2.cycle_id = t1.parent_cycle_id )
     </select>
 
 
