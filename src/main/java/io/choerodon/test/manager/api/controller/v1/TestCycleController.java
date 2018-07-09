@@ -77,7 +77,7 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("过滤version下的测试循环")
-	@PostMapping("/filter/{parameter}")
+	@PostMapping("/filter")
 	ResponseEntity filterTestCycle(@RequestBody String parameters) {
 
 		return Optional.ofNullable(testCycleService.filterCycleWithBar(parameters))

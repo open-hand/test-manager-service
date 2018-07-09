@@ -77,9 +77,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 	public List<TestCycleDTO> filterCycleWithBar(String filter) {
 
 		JSONObject object = JSON.parseObject(filter);
-
 		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(object.getLong("projectId"));
 		List<ProductVersionDTO> versions = dto.getBody();
+
 		if (versions.size() == 0) {
 			return new ArrayList<>();
 		}
@@ -87,7 +87,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 				versions.stream().map(v -> v.getVersionId()).toArray(Long[]::new)), TestCycleDTO.class);
 		cycles.forEach(v -> {
 			for (ProductVersionDTO u : versions) {
-				if (v.getVersionId() == u.getVersionId()) {
+				if (v.getVersionId().equals(u.getVersionId())) {
 					v.setVersionName(u.getName());
 					v.setVersionStatusName(u.getStatusName());
 					break;
