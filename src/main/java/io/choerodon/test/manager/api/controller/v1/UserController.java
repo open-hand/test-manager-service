@@ -22,7 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 
 @RestController
-@RequestMapping(value = "/v1/user/{projectId}")
+@RequestMapping(value = "/v1/projects/{project_id}")
 public class UserController {
 
 
