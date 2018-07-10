@@ -63,7 +63,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(cycleId);
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
-		return ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
+		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
+		dots.forEach(v -> setUser(v));
+		return dots;
     }
 
     @Override

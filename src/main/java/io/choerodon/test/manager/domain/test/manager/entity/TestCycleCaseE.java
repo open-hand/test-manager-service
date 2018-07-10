@@ -150,11 +150,7 @@ public class TestCycleCaseE {
     }
 
     public void setAssignedTo(Long assignedTo) {
-        if (assignedTo == null) {
-            this.assignedTo = new Long(0);
-        } else {
             this.assignedTo = assignedTo;
-        }
     }
 
     public void setComment(String comment) {
