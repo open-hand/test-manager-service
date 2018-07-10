@@ -140,7 +140,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		version.put("type", testCycleDTO.getType());
 		version.put("cycleId", testCycleDTO.getCycleId());
 		version.put("toDate", testCycleDTO.getToDate());
-		version.put("FromDate", testCycleDTO.getFromDate());
+		version.put("fromDate", testCycleDTO.getFromDate());
 		version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
 		version.put("key", height);
 		JSONArray versionNames = new JSONArray();
