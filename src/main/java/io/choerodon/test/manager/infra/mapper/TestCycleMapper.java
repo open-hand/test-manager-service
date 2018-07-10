@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
-    List<TestCycleDO> query(@Param("versionId") Long versionId);
+	List<TestCycleDO> query(@Param("versionIds") Long[] versionId);
 
 	List<TestCycleDO> filter(Map maps);
 

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service;
 
+import com.alibaba.fastjson.JSONObject;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
@@ -23,7 +24,7 @@ public interface TestCycleService {
 
 	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId);
 
-    List<TestCycleDTO> getTestCycle(Long versionId);
+	JSONObject getTestCycle(Long versionId);
 
 	TestCycleDTO getOneCycle(Long cycleId);
 

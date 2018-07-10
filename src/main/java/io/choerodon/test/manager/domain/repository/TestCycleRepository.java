@@ -23,7 +23,7 @@ public interface TestCycleRepository {
 
 	TestCycleE queryOne(TestCycleE testCycleE);
 
-    List<TestCycleE> queryBar(Long versionId);
+	List<TestCycleE> queryBar(Long[] versionId);
 
 	List<TestCycleE> filter(Map parameters);
 }

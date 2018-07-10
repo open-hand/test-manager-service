@@ -3,10 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.core.JsonFactory;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
@@ -18,6 +15,7 @@ import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -80,9 +78,95 @@ public class TestCycleServiceImpl implements TestCycleService {
 	}
 
 	@Override
-	public List<TestCycleDTO> getTestCycle(Long versionId) {
-		return ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versionId), TestCycleDTO.class);
+	public JSONObject getTestCycle(Long projectId) {
+		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
+		List<ProductVersionDTO> versions = dto.getBody();
+
+		if (versions.size() == 0) {
+			return new JSONObject();
+		}
+		JSONObject root = new JSONObject();
+		JSONArray versionStatus = new JSONArray();
+		root.put("versions", versionStatus);
+
+
+		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(v -> v.getVersionId()).toArray(Long[]::new)), TestCycleDTO.class);
+
+		initVersionTree(versionStatus, versions, cycles);
+
+		return root;
 	}
+
+	private void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
+		Map<String, JSONObject> versionsMap = new HashMap<>();
+
+		for (ProductVersionDTO versionDTO : versionDTOList) {
+			JSONObject version;
+			if (!versionsMap.containsKey(versionDTO.getStatusName())) {
+				version = createVersionNode(versionDTO.getStatusName(), "0-" + String.valueOf(versionsMap.size()));
+				versionStatus.add(version);
+				versionsMap.put(versionDTO.getStatusName(), version);
+			} else {
+				version = versionsMap.get(versionDTO.getStatusName());
+			}
+
+			JSONArray versionNames = version.getJSONArray("children");
+
+			String nowStatusHeight = version.get("key").toString();
+			String nowNamesHeight = String.valueOf(versionNames.size());
+			JSONObject versionName = createVersionNode(versionDTO.getName(), nowStatusHeight + "-" + nowNamesHeight);
+			versionNames.add(versionName);
+
+			initCycleTree(versionName.getJSONArray("children"), versionName.get("key").toString(), versionDTO.getVersionId(), cycleDTOList);
+		}
+	}
+
+
+	private JSONObject createVersionNode(String title, String height) {
+		JSONObject version = new JSONObject();
+		version.put("title", title);
+		version.put("key", height);
+		JSONArray versionNames = new JSONArray();
+		version.put("children", versionNames);
+		return version;
+	}
+
+	private JSONObject createCycle(TestCycleDTO testCycleDTO, String height) {
+		JSONObject version = new JSONObject();
+		version.put("title", testCycleDTO.getCycleName());
+		version.put("environment", testCycleDTO.getEnvironment());
+		version.put("description", testCycleDTO.getDescription());
+		version.put("build", testCycleDTO.getBuild());
+		version.put("type", testCycleDTO.getType());
+		version.put("cycleId", testCycleDTO.getCycleId());
+		version.put("toDate", testCycleDTO.getToDate());
+		version.put("FromDate", testCycleDTO.getFromDate());
+		version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
+		version.put("key", height);
+		JSONArray versionNames = new JSONArray();
+		version.put("children", versionNames);
+		return version;
+	}
+
+
+	private void initCycleTree(JSONArray cycles, String height, Long versionId, List<TestCycleDTO> cycleDTOList) {
+
+		cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE))
+				.forEach(v -> {
+					JSONObject cycle = createCycle(v, height + "-" + cycles.size());
+					cycles.add(cycle);
+					initCycleFolderTree(cycle.getJSONArray("children"), cycle.get("key").toString(), v.getCycleId(), cycleDTOList);
+				});
+	}
+
+
+	private void initCycleFolderTree(JSONArray folders, String height, Long parentId, List<TestCycleDTO> cycleDTOList) {
+		cycleDTOList.stream().filter(v -> v.getParentCycleId() == parentId).forEach(u ->
+				folders.add(createCycle(u, height + "-" + folders.size()))
+		);
+	}
+
+
 
 	@Override
 	public List<TestCycleDTO> filterCycleWithBar(String filter) {

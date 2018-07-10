@@ -73,7 +73,7 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
     }
 
     @Override
-    public List<TestCycleE> queryBar(Long versionId) {
+	public List<TestCycleE> queryBar(Long[] versionId) {
         return ConvertHelper.convertList(cycleMapper.query(versionId), TestCycleE.class);
 
     }

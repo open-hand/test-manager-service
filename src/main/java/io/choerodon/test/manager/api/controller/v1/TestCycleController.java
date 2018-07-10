@@ -68,9 +68,9 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询version下的测试循环")
-	@GetMapping("/query/{versionId}")
-	ResponseEntity getTestCycle(@PathVariable(name = "versionId") Long versionId) {
-		return Optional.ofNullable(testCycleService.getTestCycle(versionId))
+	@GetMapping("/query")
+	ResponseEntity getTestCycle(@PathVariable(name = "project_id") Long projectId) {
+		return Optional.ofNullable(testCycleService.getTestCycle(projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
 	}

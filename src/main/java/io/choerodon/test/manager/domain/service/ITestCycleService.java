@@ -26,7 +26,7 @@ public interface ITestCycleService {
 
 //	List<TestCycleE> sort(List<TestCycle	E> testCycleES);
 
-    List<TestCycleE> queryCycleWithBar(Long versionId);
+	List<TestCycleE> queryCycleWithBar(Long[] versionId);
 
 	List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds);
 	/**

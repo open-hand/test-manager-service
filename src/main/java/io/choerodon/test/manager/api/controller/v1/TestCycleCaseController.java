@@ -44,7 +44,7 @@ public class TestCycleCaseController {
     public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId,
                                                                @ApiIgnore
                                                                @ApiParam(value = "分页信息", required = true)
-                                                               @SortDefault(value = "rank", direction = Sort.Direction.DESC)
+															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
                                                                        PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
