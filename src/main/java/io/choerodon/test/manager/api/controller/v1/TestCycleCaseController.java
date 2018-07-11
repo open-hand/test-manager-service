@@ -86,7 +86,7 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("批量添加循环用例")
 	@PostMapping("/insert/batch")
-	public ResponseEntity batchInsertCase(List<TestCycleCaseDTO> testCycleCaseDTOS, @PathVariable(name = "project_id") Long projectId) {
+	public ResponseEntity batchInsertCase(@RequestBody List<TestCycleCaseDTO> testCycleCaseDTOS, @PathVariable(name = "project_id") Long projectId) {
 		List<TestCycleCaseDTO> testCycleCaseList = new ArrayList<>();
 		String rank = null;
 		for (TestCycleCaseDTO testCycleCaseDTO : testCycleCaseDTOS) {
