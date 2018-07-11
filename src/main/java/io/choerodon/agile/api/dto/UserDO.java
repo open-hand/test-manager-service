@@ -190,6 +190,10 @@ public class UserDO {
 		isLocked = locked;
 	}
 
+	public String getFullName() {
+		return this.loginName + " " + this.realName;
+	}
+
 	@Override
 	public String toString() {
 		return StringUtil.getToString(this);

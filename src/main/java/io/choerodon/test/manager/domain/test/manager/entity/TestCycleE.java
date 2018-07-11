@@ -45,6 +45,8 @@ public class TestCycleE {
 
     private Long objectVersionNumber;
 
+	private Long createdBy;
+
 	private CountMap cycleCaseList;
 
     @Autowired
@@ -130,7 +132,15 @@ public class TestCycleE {
         return description;
     }
 
-    public String getBuild() {
+	public Long getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(Long createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getBuild() {
         return build;
     }
 

@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by jialongZuo@hand-china.com on 7/2/18.
@@ -25,13 +27,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDO query(Long userId) {
 		CustomUserDetails customUserDetails = DetailsHelper.getUserDetails();
-		//UserDO userDO = userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
-		UserDO userDO = userFeignClient.query(new Long(1), userId).getBody();
+		UserDO userDO = userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
 		return userDO;
 	}
 
-	public List<UserDO> query(Long[] ids) {
-		return userFeignClient.listUsersByIds(ids).getBody();
+	public Map<Long, String> query(Long[] ids) {
+		return userFeignClient.listUsersByIds(ids).getBody().stream().collect(Collectors.toMap(UserDO::getId, UserDO::getFullName));
 	}
 
 	@Override

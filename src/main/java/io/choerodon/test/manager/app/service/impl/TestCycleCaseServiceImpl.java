@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -95,18 +96,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		}
 		Long assign = dto.getAssignedTo();
 		Long update = dto.getLastUpdatedBy();
-		List<UserDO> lists = userService.query(new Long[]{assign, update});
-		int count = 0;
+		Map lists = userService.query(new Long[]{assign, update});
+
 		if (assigned) {
-			dto.setReporterRealName(lists.get(count).getRealName());
-			dto.setReporterJobNumber(lists.get(count).getLoginName());
-			if (assign != update) {
-				count++;
-			}
+			dto.setReporterRealName(lists.get(assign).toString());
+			String number = lists.get(assign).toString();
+			dto.setAssignedUserJobNumber(number.substring(0, number.indexOf(" ")));
 		}
 		if (lastAssigned) {
-			dto.setAssignedUserRealName(lists.get(count).getRealName());
-			dto.setAssignedUserJobNumber(lists.get(count).getLoginName());
+			dto.setAssignedUserRealName(lists.get(update).toString());
+			String number = lists.get(lastAssigned).toString();
+			dto.setAssignedUserJobNumber(number.substring(0, number.indexOf(" ")));
 		}
 		return dto;
 	}

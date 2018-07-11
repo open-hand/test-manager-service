@@ -7,6 +7,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jialongZuo@hand-china.com on 7/2/18.
@@ -14,7 +15,7 @@ import java.util.List;
 public interface UserService {
 	UserDO query(Long userId);
 
-	List<UserDO> query(Long[] ids);
+	Map<Long, String> query(Long[] ids);
 
 	ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId);
 }

@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jialongZuo@hand-china.com on 6/28/18.
@@ -80,16 +81,15 @@ public class TestCycleCaseHistoryRecordAOP {
 			Long after_as = testCycleCaseDTO.getAssignedTo();
 			Long before_as = before.getAssignedTo();
 			Long[] para = new Long[]{before_as, after_as};
-			List<UserDO> users = userService.query(para);
-			int count = 0;
+			Map users = userService.query(para);
+
 			if (before_as != 0) {
-				historyDTO.setOldValue(users.get(count).getLoginName() + users.get(count).getRealName());
-				count++;
+				historyDTO.setOldValue(users.get(before_as).toString());
 			} else {
 				historyDTO.setOldValue(FIELD_NULL);
 			}
 			if (after_as != 0) {
-				historyDTO.setNewValue(users.get(count).getLoginName() + users.get(count).getRealName());
+				historyDTO.setNewValue(users.get(after_as).toString());
 			} else {
 				historyDTO.setNewValue(FIELD_NULL);
 			}

@@ -2,7 +2,9 @@ package io.choerodon.test.manager.api.eventhandler;
 
 import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import org.slf4j.Logger;
@@ -21,6 +23,9 @@ public class TestManagerEventHandler {
 
     @Autowired
     private TestCycleService testCycleService;
+
+    @Autowired
+    private TestCaseStepService testCaseStepService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
@@ -43,4 +48,16 @@ public class TestManagerEventHandler {
         testCycleService.insert(testCycleDTO);
     }
 
+    /**
+     * 删除issue事件
+     *
+     * @param payload payload
+     */
+    @EventListener(topic = AGILE_SERVICE, businessType = "deleteIssue")
+    public void handleDeleteIssueEvent(EventPayload<Long> payload) {
+        Long issueId = payload.getData();
+        TestCaseStepDTO dto = new TestCaseStepDTO();
+        dto.setIssueId(issueId);
+        testCaseStepService.removeStep(dto);
+    }
 }

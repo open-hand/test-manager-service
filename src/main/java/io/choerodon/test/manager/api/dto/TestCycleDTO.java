@@ -34,6 +34,10 @@ public class TestCycleDTO {
 
     private String build;
 
+    private String createdName;
+
+    private Long createdBy;
+
     private String environment;
 
 //    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -158,5 +162,21 @@ public class TestCycleDTO {
 
     public void setVersionStatusName(String versionStatusName) {
         this.versionStatusName = versionStatusName;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedName() {
+        return createdName;
+    }
+
+    public void setCreatedName(String createdName) {
+        this.createdName = createdName;
     }
 }

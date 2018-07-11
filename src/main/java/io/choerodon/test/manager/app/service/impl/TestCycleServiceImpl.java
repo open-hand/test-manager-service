@@ -8,6 +8,7 @@ import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
@@ -34,6 +35,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Autowired
 	ProductionVersionClient productionVersionClient;
+
+	@Autowired
+	UserService userService;
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -89,12 +93,21 @@ public class TestCycleServiceImpl implements TestCycleService {
 		JSONArray versionStatus = new JSONArray();
 		root.put("versions", versionStatus);
 
-
 		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(v -> v.getVersionId()).toArray(Long[]::new)), TestCycleDTO.class);
-
+		Long[] usersId = cycles.stream().map(v -> v.getCreatedBy()).toArray(Long[]::new);
+		Map users = userService.query(usersId);
+		setUsers(users, cycles);
 		initVersionTree(versionStatus, versions, cycles);
 
 		return root;
+	}
+
+	private void setUsers(Map users, List<TestCycleDTO> dtos) {
+		dtos.forEach(v -> {
+			if (v.getCreatedBy() != null && !v.getCreatedBy().equals(0)) {
+				v.setCreatedName(users.get(v.getCreatedBy()).toString());
+			}
+		});
 	}
 
 	private void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
@@ -140,6 +153,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		version.put("type", testCycleDTO.getType());
 		version.put("versionId", testCycleDTO.getVersionId());
 		version.put("cycleId", testCycleDTO.getCycleId());
+		version.put("createdName", testCycleDTO.getCreatedName());
 		version.put("toDate", testCycleDTO.getToDate());
 		version.put("fromDate", testCycleDTO.getFromDate());
 		version.put("cycleCaseList", testCycleDTO.getCycleCaseList());

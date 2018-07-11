@@ -14,6 +14,7 @@
         <id column="to_date" property="toDate"/>
         <id column="type" property="type"/>
         <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="created_by" property="createdBy"/>
         <association property="cycleCaseList"
                      javaType="java.util.List"
                      select="queryAboutBar"
@@ -23,7 +24,7 @@
 
     <select id="query" resultMap="BaseResultMap">
         SELECT cycle1.cycle_id,cycle1.parent_cycle_id,cycle1.cycle_name,cycle1.type,cycle1.version_id
-        ,cycle1.description,cycle1.build,cycle1.environment,cycle1.from_date,cycle1.to_date,cycle1.object_version_number
+        ,cycle1.description,cycle1.build,cycle1.environment,cycle1.from_date,cycle1.to_date,cycle1.object_version_number,cycle1.created_by
         FROM test_cycle cycle1
         where cycle1.version_id in
         <foreach item="item" index="index" collection="versionIds"
