@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,20 +28,20 @@ import java.util.Optional;
 @RequestMapping(value = "/v1/projects/{project_id}/cycle/case")
 public class TestCycleCaseController {
 
-    @Autowired
-    TestCycleCaseService testCycleCaseService;
+	@Autowired
+	TestCycleCaseService testCycleCaseService;
 
-    @Permission(level = ResourceLevel.PROJECT)
-    @ApiOperation("删除测试循环用例")
-    @DeleteMapping
-    public ResponseEntity delete(Long cycleCaseId) {
-        testCycleCaseService.delete(cycleCaseId);
-        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
-    }
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("删除测试循环用例")
+	@DeleteMapping
+	public ResponseEntity delete(Long cycleCaseId) {
+		testCycleCaseService.delete(cycleCaseId);
+		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
+	}
 
 
-    @Permission(level = ResourceLevel.PROJECT)
-    @ApiOperation("查询测试组下循环用例")
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("查询测试组下循环用例")
 	@GetMapping("/query/issue/{issueId}")
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "issueId") Long issueId
 	) {
@@ -62,35 +63,55 @@ public class TestCycleCaseController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
 
-    @Permission(level = ResourceLevel.PROJECT)
-    @ApiOperation("查询一个循环用例")
-    @GetMapping("/query/one/{executeId}")
-    public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "executeId") Long executeId) {
-        return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
-    }
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("查询一个循环用例")
+	@GetMapping("/query/one/{executeId}")
+	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "executeId") Long executeId) {
+		return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
+	}
 
 
-    @Permission(level = ResourceLevel.PROJECT)
-    @ApiOperation("增加一个测试组下循环用例")
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("增加一个测试组下循环用例")
 	@PostMapping("/insert")
 	public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+		return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
 
-    }
+	}
 
-    @Permission(level = ResourceLevel.PROJECT)
-    @ApiOperation("修改一个测试组下循环用例")
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("批量添加循环用例")
+	@PostMapping("/insert/batch")
+	public ResponseEntity batchInsertCase(List<TestCycleCaseDTO> testCycleCaseDTOS, @PathVariable(name = "project_id") Long projectId) {
+		List<TestCycleCaseDTO> testCycleCaseList = new ArrayList<>();
+		String rank = null;
+		for (TestCycleCaseDTO testCycleCaseDTO : testCycleCaseDTOS) {
+			if (testCycleCaseDTO.getLastRank() == null) {
+				testCycleCaseDTO.setLastRank(rank);
+			}
+			TestCycleCaseDTO dto = testCycleCaseService.create(testCycleCaseDTO, projectId);
+			rank = dto.getRank();
+			testCycleCaseList.add(dto);
+		}
+		return Optional.ofNullable(testCycleCaseList)
+				.map(result -> new ResponseEntity<>(testCycleCaseList, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("修改一个测试组下循环用例")
 	@PostMapping("/update")
-    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO,
+	public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO,
 										@PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO, projectId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
-    }
+		return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO, projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.update"));
+	}
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("获取时间内case活跃度")
