@@ -59,10 +59,10 @@ public class TestCycleServiceImpl implements TestCycleService {
 		TestCycleE temp = TestCycleEFactory.create();
 		temp.setCycleId(testCycleDTO.getCycleId());
 		TestCycleE temp1 = temp.queryOne();
-		if (testCycleDTO.getType().equals(TestCycleE.FOLDER)) {
+		if (temp1.getType().equals(TestCycleE.FOLDER)) {
 			temp1.setCycleName(testCycleDTO.getCycleName());
 			temp1.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
-		} else if (testCycleDTO.getType().equals(TestCycleE.CYCLE)) {
+		} else if (temp1.getType().equals(TestCycleE.CYCLE)) {
 			Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(v -> temp1.setBuild(v));
 			Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(v -> temp1.setCycleName(v));
 			Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(v -> temp1.setDescription(v));
