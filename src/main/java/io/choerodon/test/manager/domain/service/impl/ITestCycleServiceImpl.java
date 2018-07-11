@@ -52,7 +52,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 			if (v.getType().equals(TestCycleE.CYCLE)) {
 				TestCycleE testCycle = TestCycleEFactory.create();
 				testCycle.setParentCycleId(v.getCycleId());
-				delete(testCycleE);
+				delete(testCycle);
 			} else {
 				this.deleteCycleWithCase(v);
 			}

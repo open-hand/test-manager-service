@@ -41,7 +41,7 @@ public class TestCycleCaseController {
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询测试组下循环用例")
-	@GetMapping("/query/{issueId}")
+	@GetMapping("/query/issue/{issueId}")
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "issueId") Long issueId
 	) {
 		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId))
