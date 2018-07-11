@@ -138,6 +138,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		version.put("description", testCycleDTO.getDescription());
 		version.put("build", testCycleDTO.getBuild());
 		version.put("type", testCycleDTO.getType());
+		version.put("versionId", testCycleDTO.getVersionId());
 		version.put("cycleId", testCycleDTO.getCycleId());
 		version.put("toDate", testCycleDTO.getToDate());
 		version.put("fromDate", testCycleDTO.getFromDate());
