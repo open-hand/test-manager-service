@@ -8,10 +8,12 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.aop.framework.AopContext;
@@ -53,6 +55,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 				TestCycleE testCycle = TestCycleEFactory.create();
 				testCycle.setParentCycleId(v.getCycleId());
 				delete(testCycle);
+				v.deleteSelf();
 			} else {
 				this.deleteCycleWithCase(v);
 			}
@@ -133,9 +136,11 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(protoTestCycleE.getCycleId());
+		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
 		iTestCycleCaseService.query(testCycleCaseE).forEach(v -> {
 			v.setExecuteId(null);
 			v.setCycleId(newCycleE.getCycleId());
+			v.setExecutionStatus(defaultStatus);
 			v.setObjectVersionNumber(null);
 			iTestCycleCaseService.cloneCycleCase(v, projectId);
 		});

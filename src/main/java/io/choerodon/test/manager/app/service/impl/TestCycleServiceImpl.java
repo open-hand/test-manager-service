@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonFactory;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
+import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
@@ -69,6 +70,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 			Optional.ofNullable(testCycleDTO.getEnvironment()).ifPresent(v -> temp1.setEnvironment(v));
 			Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(v -> temp1.setFromDate(v));
 			Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(v -> temp1.setToDate(v));
+			Optional.ofNullable(testCycleDTO.getObjectVersionNumber()).ifPresent(v -> temp1.setObjectVersionNumber(v));
 		}
 		return ConvertHelper.convert(iTestCycleService.update(temp1), TestCycleDTO.class);
 
@@ -85,7 +87,6 @@ public class TestCycleServiceImpl implements TestCycleService {
 	public JSONObject getTestCycle(Long projectId) {
 		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
 		List<ProductVersionDTO> versions = dto.getBody();
-
 		if (versions.size() == 0) {
 			return new JSONObject();
 		}
@@ -102,10 +103,11 @@ public class TestCycleServiceImpl implements TestCycleService {
 		return root;
 	}
 
-	private void setUsers(Map users, List<TestCycleDTO> dtos) {
+	private void setUsers(Map<Long, UserDO> users, List<TestCycleDTO> dtos) {
 		dtos.forEach(v -> {
 			if (v.getCreatedBy() != null && !v.getCreatedBy().equals(0)) {
-				v.setCreatedName(users.get(v.getCreatedBy()).toString());
+				UserDO u = users.get(v.getCreatedBy());
+				v.setCreatedName(u.getLoginName() + " " + u.getRealName());
 			}
 		});
 	}

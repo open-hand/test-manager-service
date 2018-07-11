@@ -101,7 +101,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		if (assigned) {
 			UserDO u = lists.get(assign);
 			dto.setReporterRealName(u.getRealName());
-			dto.setAssignedUserJobNumber(u.getLoginName());
+			dto.setReporterJobNumber(u.getLoginName());
 		}
 		if (lastAssigned) {
 			UserDO u = lists.get(update);
