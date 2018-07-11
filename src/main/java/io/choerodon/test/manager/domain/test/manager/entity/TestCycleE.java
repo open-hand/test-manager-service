@@ -21,6 +21,7 @@ public class TestCycleE {
 
 	public static final String FOLDER = "folder";
 	public static final String CYCLE = "cycle";
+	public static final String TEMP = "temp";
 	public static final String TEMP_CYCLE_NAME = "临时";
 
     private Long cycleId;

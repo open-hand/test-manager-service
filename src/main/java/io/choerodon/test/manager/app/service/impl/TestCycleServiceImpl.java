@@ -175,6 +175,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 					cycles.add(cycle);
 					initCycleFolderTree(cycle.getJSONArray("children"), cycle.get("key").toString(), v.getCycleId(), cycleDTOList);
 				});
+
+		cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP))
+				.forEach(v -> {
+					JSONObject cycle = createCycle(v, height + "-" + cycles.size());
+					cycles.add(cycle);
+				});
 	}
 
 
