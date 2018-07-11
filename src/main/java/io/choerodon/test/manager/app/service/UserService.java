@@ -15,7 +15,7 @@ import java.util.Map;
 public interface UserService {
 	UserDO query(Long userId);
 
-	Map<Long, String> query(Long[] ids);
+	Map<Long, UserDO> query(Long[] ids);
 
 	ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId);
 }

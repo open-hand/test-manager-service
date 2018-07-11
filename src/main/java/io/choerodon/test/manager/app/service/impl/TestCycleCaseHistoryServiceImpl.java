@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -51,14 +54,19 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         historyDTO.setExecuteId(cycleCaseId);
         Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
 		Page<TestCycleCaseHistoryDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
-		dto.forEach(v -> setUser(v));
+		Long[] users = dto.stream().map(v -> v.getLastUpdatedBy()).toArray(Long[]::new);
+		Map user = userFeignClient.query(users);
+		setUser(dto, user);
+//		dto.forEach(v -> setUser(v));
 		return dto;
 	}
 
-	private void setUser(TestCycleCaseHistoryDTO dto) {
-		if (dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy() == 0) {
-			return;
-		}
-		dto.setUser(userFeignClient.query(dto.getLastUpdatedBy()));
+
+	private void setUser(List<TestCycleCaseHistoryDTO> dto, Map<Long, UserDO> users) {
+		dto.forEach(v -> {
+			if (v.getLastUpdatedBy() != null && !v.getLastUpdatedBy().equals(0)) {
+				v.setUser(users.get(v.getLastUpdatedBy()));
+			}
+		});
     }
 }

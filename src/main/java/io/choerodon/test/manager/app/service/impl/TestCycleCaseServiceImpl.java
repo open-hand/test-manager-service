@@ -96,17 +96,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		}
 		Long assign = dto.getAssignedTo();
 		Long update = dto.getLastUpdatedBy();
-		Map lists = userService.query(new Long[]{assign, update});
+		Map<Long, UserDO> lists = userService.query(new Long[]{assign, update});
 
 		if (assigned) {
-			dto.setReporterRealName(lists.get(assign).toString());
-			String number = lists.get(assign).toString();
-			dto.setAssignedUserJobNumber(number.substring(0, number.indexOf(" ")));
+			UserDO u = lists.get(assign);
+			dto.setReporterRealName(u.getRealName());
+			dto.setAssignedUserJobNumber(u.getLoginName());
 		}
 		if (lastAssigned) {
-			dto.setAssignedUserRealName(lists.get(update).toString());
-			String number = lists.get(lastAssigned).toString();
-			dto.setAssignedUserJobNumber(number.substring(0, number.indexOf(" ")));
+			UserDO u = lists.get(update);
+			dto.setAssignedUserRealName(u.getRealName());
+			dto.setAssignedUserJobNumber(u.getLoginName());
 		}
 		return dto;
 	}
