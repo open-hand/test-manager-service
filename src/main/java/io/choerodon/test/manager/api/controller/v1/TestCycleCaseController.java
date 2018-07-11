@@ -99,7 +99,7 @@ public class TestCycleCaseController {
 		}
 		return Optional.ofNullable(testCycleCaseList)
 				.map(result -> new ResponseEntity<>(testCycleCaseList, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.batch.insert"));
 
 	}
 
