@@ -33,7 +33,7 @@ public class UserController {
 	@ApiOperation(value = "根据项目id分页查询该项目下的用户，可以进行模糊查询name和realName")
 	@GetMapping(value = "/users")
 	@CustomPageRequest
-	public ResponseEntity<Page<UserDTO>> getUserList(@PathVariable(name = "projectId") Long projectId,
+	public ResponseEntity<Page<UserDTO>> getUserList(@PathVariable(name = "project_id") Long projectId,
 													 @RequestParam(required = false, name = "id") Long userId,
 													 @ApiIgnore
 													 @ApiParam(value = "分页信息", required = true)
