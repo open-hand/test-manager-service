@@ -68,7 +68,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		return dots;
     }
 
-    @Override
+	@Override
+	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId) {
+		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+		testCycleCaseDTO.setIssueId(issuseId);
+		return ConvertHelper.convertList(iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+
+	}
+
+	@Override
 	public TestCycleCaseDTO queryOne(Long cycleCaseId) {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setExecuteId(cycleCaseId);

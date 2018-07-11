@@ -96,9 +96,9 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆循环")
-	@PostMapping("/clone/cycle/{cycleId}/{cycleName}")
-	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @PathVariable(name = "cycleName") String cycleName, @PathVariable(name = "project_id") Long projectId) {
-		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, cycleName, projectId))
+	@PostMapping("/clone/cycle/{cycleId}")
+	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @RequestBody TestCycleDTO testCycleDTO, @PathVariable(name = "project_id") Long projectId) {
+		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, testCycleDTO.getCycleName(), projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
 

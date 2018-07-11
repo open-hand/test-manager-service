@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -40,16 +41,26 @@ public class TestCycleCaseController {
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询测试组下循环用例")
-    @GetMapping("/query/{cycleId}")
-    public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId,
-                                                               @ApiIgnore
-                                                               @ApiParam(value = "分页信息", required = true)
+	@GetMapping("/query/{issueId}")
+	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "issueId") Long issueId
+	) {
+		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("查询测试用例下循环case")
+	@GetMapping("/query/{cycleId}")
+	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId,
+															   @ApiIgnore
+															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
-                                                                       PageRequest pageRequest) {
-        return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
-    }
+																	   PageRequest pageRequest) {
+		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+	}
 
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询一个循环用例")

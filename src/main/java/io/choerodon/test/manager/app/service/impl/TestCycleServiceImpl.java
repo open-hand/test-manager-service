@@ -79,14 +79,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Override
 	public JSONObject getTestCycle(Long projectId) {
-		//ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
-		//List<ProductVersionDTO> versions = dto.getBody();
-		List<ProductVersionDTO> versions = new ArrayList<>();
-		ProductVersionDTO productVersionDTO = new ProductVersionDTO();
-		productVersionDTO.setStatusName("111");
-		productVersionDTO.setName("111");
-		productVersionDTO.setVersionId(new Long(167));
-		versions.add(productVersionDTO);
+		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
+		List<ProductVersionDTO> versions = dto.getBody();
+
 		if (versions.size() == 0) {
 			return new JSONObject();
 		}

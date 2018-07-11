@@ -23,6 +23,8 @@ public interface TestCycleCaseService {
 
     TestCycleCaseDTO queryOne(Long cycleCaseId);
 
+	List<TestCycleCaseDTO> queryByIssuse(Long issuseId);
+
     /**
      * 启动一个测试例
      *
