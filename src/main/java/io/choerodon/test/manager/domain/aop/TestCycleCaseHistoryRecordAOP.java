@@ -83,13 +83,13 @@ public class TestCycleCaseHistoryRecordAOP {
 			Long[] para = new Long[]{before_as, after_as};
 			Map<Long, UserDO> users = userService.query(para);
 
-			if (before_as != 0) {
+			if (before_as.longValue() != 0) {
 				UserDO u = users.get(before_as);
 				historyDTO.setOldValue(u.getLoginName() + u.getRealName());
 			} else {
 				historyDTO.setOldValue(FIELD_NULL);
 			}
-			if (after_as != 0) {
+			if (after_as.longValue() != 0) {
 				UserDO u = users.get(after_as);
 				historyDTO.setNewValue(u.getLoginName() + u.getRealName());
 			} else {

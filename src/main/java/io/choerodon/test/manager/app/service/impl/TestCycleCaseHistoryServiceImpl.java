@@ -64,7 +64,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 
 	private void setUser(List<TestCycleCaseHistoryDTO> dto, Map<Long, UserDO> users) {
 		dto.forEach(v -> {
-			if (v.getLastUpdatedBy() != null && !v.getLastUpdatedBy().equals(0)) {
+			if (v.getLastUpdatedBy() != null && v.getLastUpdatedBy().longValue() != 0) {
 				v.setUser(users.get(v.getLastUpdatedBy()));
 			}
 		});

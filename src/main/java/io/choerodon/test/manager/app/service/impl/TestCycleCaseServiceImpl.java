@@ -88,10 +88,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	private TestCycleCaseDTO setUser(TestCycleCaseDTO dto) {
 		boolean assigned = false;
 		boolean lastAssigned = false;
-		if (!(dto.getAssignedTo() == null || dto.getAssignedTo() == 0)) {
+		if (!(dto.getAssignedTo() == null || dto.getAssignedTo().longValue() == 0)) {
 			assigned = true;
 		}
-		if (!(dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy() == 0)) {
+		if (!(dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy().longValue() == 0)) {
 			lastAssigned = true;
 		}
 		Long assign = dto.getAssignedTo();

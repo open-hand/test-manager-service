@@ -87,6 +87,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 	public JSONObject getTestCycle(Long projectId) {
 		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
 		List<ProductVersionDTO> versions = dto.getBody();
+
 		if (versions.size() == 0) {
 			return new JSONObject();
 		}
@@ -105,7 +106,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	private void setUsers(Map<Long, UserDO> users, List<TestCycleDTO> dtos) {
 		dtos.forEach(v -> {
-			if (v.getCreatedBy() != null && !v.getCreatedBy().equals(0)) {
+			if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
 				UserDO u = users.get(v.getCreatedBy());
 				v.setCreatedName(u.getLoginName() + " " + u.getRealName());
 			}
