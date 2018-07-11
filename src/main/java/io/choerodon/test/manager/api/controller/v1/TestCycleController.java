@@ -45,9 +45,11 @@ public class TestCycleController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除测试循环")
-	@DeleteMapping
-	void delete(@RequestBody TestCycleDTO testCycleDTO) {
-		testCycleService.delete(testCycleDTO);
+	@DeleteMapping("/delete/{cycleId}")
+	void delete(@PathVariable(name = "cycleId") Long cycleId) {
+		TestCycleDTO cycleDTO = new TestCycleDTO();
+		cycleDTO.setCycleId(cycleId);
+		testCycleService.delete(cycleDTO);
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
