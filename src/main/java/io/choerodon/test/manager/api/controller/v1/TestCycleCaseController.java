@@ -46,7 +46,7 @@ public class TestCycleCaseController {
 	) {
 		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)

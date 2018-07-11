@@ -14,6 +14,7 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -45,10 +46,17 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 	@Override
 	public void delete(TestCycleE testCycleE) {
-//        TestCycleE cycle = TestCycleEFactory.create();
-//        cycle.setVersionId(testCycleE.getVersionId());
-//        cycle.setParentCycleId(testCycleE.getCycleId());
-		testCycleE.querySelf().forEach(this::deleteCycleWithCase);
+
+		List<TestCycleE> testCycleES = testCycleE.querySelf();
+		testCycleES.forEach(v -> {
+			if (v.getType().equals(TestCycleE.CYCLE)) {
+				TestCycleE testCycle = TestCycleEFactory.create();
+				testCycle.setParentCycleId(v.getCycleId());
+				delete(testCycleE);
+			} else {
+				this.deleteCycleWithCase(v);
+			}
+		});
 	}
 
 	private void deleteCycleWithCase(TestCycleE testCycleE) {
