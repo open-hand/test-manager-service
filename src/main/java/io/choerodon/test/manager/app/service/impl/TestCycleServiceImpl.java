@@ -79,9 +79,14 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Override
 	public JSONObject getTestCycle(Long projectId) {
-		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
-		List<ProductVersionDTO> versions = dto.getBody();
-
+		//ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
+		//List<ProductVersionDTO> versions = dto.getBody();
+		List<ProductVersionDTO> versions = new ArrayList<>();
+		ProductVersionDTO productVersionDTO = new ProductVersionDTO();
+		productVersionDTO.setStatusName("111");
+		productVersionDTO.setName("111");
+		productVersionDTO.setVersionId(new Long(167));
+		versions.add(productVersionDTO);
 		if (versions.size() == 0) {
 			return new JSONObject();
 		}
@@ -142,6 +147,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		version.put("toDate", testCycleDTO.getToDate());
 		version.put("fromDate", testCycleDTO.getFromDate());
 		version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
+		version.put("objectVersionNumber", testCycleDTO.getObjectVersionNumber());
 		version.put("key", height);
 		JSONArray versionNames = new JSONArray();
 		version.put("children", versionNames);
