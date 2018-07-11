@@ -26,6 +26,19 @@ public class TestCaseStepController {
 
 
 	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("查询")
+	@GetMapping("/query/{caseId}")
+	public ResponseEntity<List<TestCaseStepDTO>> query(@PathVariable(name = "caseId") Long caseId) {
+		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+		testCaseStepDTO.setIssueId(caseId);
+		return Optional.ofNullable(iTestCaseStepService.query(testCaseStepDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+	}
+
+
+
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("批量变动测试步骤(添加|修改)")
 	@PutMapping("/batchInsert")
 	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
