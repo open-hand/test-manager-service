@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
@@ -120,6 +121,29 @@ public class TestCycleCaseController {
 		return Optional.ofNullable(testCycleCaseService.getActiveCase(range, projectId, day))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.get.range"));
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("根据循环过滤创建心的cycle")
+	@PostMapping("/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}")
+	public ResponseEntity createFilteredCycleCaseInCycle(@ApiIgnore
+														 @ApiParam(value = "分页信息", required = true)
+														 @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
+																 PageRequest pageRequest,
+														 @ApiParam(value = "项目id", required = true)
+														 @PathVariable(name = "project_id") Long projectId,
+														 @ApiParam(value = "循环id", required = true)
+														 @PathVariable(name = "fromCycleId") Long fromCycleId,
+														 @ApiParam(value = "循环id", required = true)
+														 @PathVariable(name = "toCycleId") Long toCycleId,
+														 @ApiParam(value = "指派人", required = true)
+														 @PathVariable(name = "assignee") Long assignee,
+														 @ApiParam(value = "查询参数", required = true)
+														 @RequestBody(required = false) SearchDTO searchDTO) {
+		return Optional.ofNullable(
+				testCycleCaseService.createFilteredCycleCaseInCycle(projectId, fromCycleId, toCycleId, assignee, searchDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
 	}
 
 }

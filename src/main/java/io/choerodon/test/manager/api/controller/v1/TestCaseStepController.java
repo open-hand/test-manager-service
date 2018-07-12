@@ -65,4 +65,14 @@ public class TestCaseStepController {
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("克隆")
+	@PostMapping("/clone")
+	public ResponseEntity clone(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+		return Optional.ofNullable(iTestCaseStepService.clone(testCaseStepDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.clone"));
+	}
+
+
 }

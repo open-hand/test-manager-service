@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,17 @@ public class TestCaseStepE {
 	public TestCaseStepE createOneStep() {
 		setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
 		return addSelf();
+    }
+
+    public String getLastedStepRank() {
+        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+        testCaseStepE.setIssueId(this.issueId);
+        List<TestCaseStepE> list = testCaseStepE.querySelf();
+        if (list.size() == 0) {
+            return null;
+        } else {
+            return list.get(list.size() - 1).getRank();
+        }
     }
 
 	public TestCaseStepE changeOneStep() {

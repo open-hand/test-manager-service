@@ -2,6 +2,7 @@ package io.choerodon.agile.api.dto;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
+import javax.persistence.Transient;
 import java.util.Map;
 
 /**
@@ -20,6 +21,9 @@ public class SearchDTO {
      */
     private Map<String, Object> advancedSearchArgs;
 
+	@Transient
+	private String[] executionStatus;
+
     public Map<String, Object> getSearchArgs() {
         return searchArgs;
     }
@@ -35,6 +39,14 @@ public class SearchDTO {
     public void setAdvancedSearchArgs(Map<String, Object> advancedSearchArgs) {
         this.advancedSearchArgs = advancedSearchArgs;
     }
+
+	public String[] getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public void setExecutionStatus(String[] executionStatus) {
+		this.executionStatus = executionStatus;
+	}
 
     @Override
     public String toString() {

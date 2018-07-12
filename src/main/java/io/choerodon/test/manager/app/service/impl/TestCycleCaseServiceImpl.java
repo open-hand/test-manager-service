@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.IssueListDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -18,16 +20,18 @@ import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -39,6 +43,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Autowired
 	ITestCycleService iTestCycleService;
+
+	@Autowired
+	TestCaseFeignClient testCaseFeignClient;
 
 	@Autowired
 	UserService userService;
@@ -134,5 +141,30 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	@Override
 	public List<Long> getActiveCase(Long range, Long projectId, String day) {
 		return iTestCycleCaseService.getActiveCase(range, projectId, day);
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO) {
+		TestCycleCaseE testCycleCaseE = new TestCycleCaseEFactory().create();
+		testCycleCaseE.setCycleId(fromCycleId);
+		Map filterMap = new HashMap();
+		filterMap.put("execution_status", searchDTO.getExecutionStatus());
+		List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
+		ResponseEntity<Page<IssueListDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
+		Set issueListDTOS = responseEntity.getBody().stream().map(v -> v.getIssueId().longValue()).collect(Collectors.toSet());
+
+		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
+		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()))
+				.forEach(u -> {
+					u.setExecuteId(null);
+					u.setAssignedTo(assignee);
+					u.setCycleId(toCycleId);
+					u.setExecutionStatus(defaultStatus);
+					u.setObjectVersionNumber(new Long(0));
+					iTestCycleCaseService.cloneCycleCase(u, projectId);
+				});
+
+		return true;
 	}
 }

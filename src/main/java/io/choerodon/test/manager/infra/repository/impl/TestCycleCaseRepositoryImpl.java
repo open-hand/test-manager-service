@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -82,5 +83,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
     }
 
+	@Override
+	public List<TestCycleCaseE> filter(Map map) {
+		return ConvertHelper.convertList(testCycleCaseMapper.filter(map), TestCycleCaseE.class);
+	}
 
 }

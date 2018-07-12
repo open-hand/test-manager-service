@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -61,6 +62,12 @@ public class TestCycleCaseE {
     public Page<TestCycleCaseE> querySelf(PageRequest pageRequest) {
         return testCycleCaseRepository.query(this, pageRequest);
     }
+
+    public List<TestCycleCaseE> filter(Map map) {
+        map.put("cycleId", this.cycleId);
+        return testCycleCaseRepository.filter(map);
+    }
+
 
     public TestCycleCaseE createOneCase() {
         setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));

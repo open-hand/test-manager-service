@@ -6,6 +6,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,16 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 			result.add(temp);
 		});
 		return result;
+	}
+
+	@Transactional
+	@Override
+	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO) {
+		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
+		testCaseStepE.setStepId(null);
+		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
+		return ((TestCaseStepService) AopContext.currentProxy()).changeStep(testCaseStepDTO);
+
 	}
 
 }

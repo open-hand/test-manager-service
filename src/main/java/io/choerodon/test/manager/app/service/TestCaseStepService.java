@@ -16,4 +16,8 @@ public interface TestCaseStepService {
     List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO);
 
     TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO);
+
+    TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO);
+
+    ;
 }
