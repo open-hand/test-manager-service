@@ -249,4 +249,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 		return ConvertHelper.convert(iTestCycleService.cloneFolder(list.get(0), ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId), TestCycleDTO.class);
 	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public List<TestCycleDTO> getCyclesByVersionId(Long versionId) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		testCycleE.setVersionId(versionId);
+		return ConvertHelper.convertList(testCycleE.getCyclesByVersionId(), TestCycleDTO.class);
+	}
 }

@@ -119,4 +119,15 @@ public class TestCycleController {
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneFolder"));
 
 	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("通过versionId获取目录下所有的循环")
+	@PostMapping("/query/cycle/versionId/{versionId}")
+	ResponseEntity getCyclesByVersionId(@PathVariable(name = "versionId") Long versionId) {
+		return Optional.ofNullable(testCycleService.getCyclesByVersionId(versionId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
+
+
+	}
 }

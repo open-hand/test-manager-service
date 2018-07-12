@@ -65,6 +65,10 @@ public class TestCycleE {
 		return testCycleRepository.queryOne(this);
 	}
 
+	public List<TestCycleE> getCyclesByVersionId() {
+		return testCycleRepository.getCyclesByVersionId(this.versionId);
+	}
+
 	public TestCycleE cloneCycle(TestCycleE proto) {
 		parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
 		cycleName = Optional.ofNullable(cycleName).orElse(proto.getCycleName());

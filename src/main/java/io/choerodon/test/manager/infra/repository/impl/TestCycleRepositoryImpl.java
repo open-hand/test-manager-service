@@ -84,5 +84,9 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 
 	}
 
+	public List<TestCycleE> getCyclesByVersionId(Long versionId) {
+		return ConvertHelper.convertList(cycleMapper.getCyclesByVersionId(versionId), TestCycleE.class);
+	}
+
 
 }

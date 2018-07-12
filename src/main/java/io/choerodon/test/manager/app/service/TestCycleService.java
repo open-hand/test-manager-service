@@ -31,4 +31,6 @@ public interface TestCycleService {
 	List<TestCycleDTO> filterCycleWithBar(String filter);
 
     ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
+
+	List<TestCycleDTO> getCyclesByVersionId(Long versionId);
 }
