@@ -51,7 +51,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseE.getAssignedTo().longValue() == 0) {
+		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
 			testCycleCaseE.setAssignedTo(null);
 		}
         Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
@@ -63,13 +63,18 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-
+		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
+			testCycleCaseE.setAssignedTo(null);
+		}
         return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
     }
 
     @Override
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
+		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
+			testCycleCaseE.setAssignedTo(null);
+		}
         List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
         if (list.size() != 1) {
 			throw new CommonException("error.cycle.case.query.not.found");
