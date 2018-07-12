@@ -128,6 +128,15 @@ public class TestCycleController {
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
 
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("通过cycleId获取目录下所有的文件夹")
+	@PostMapping("/query/folder/cycleId/{cycleId}")
+	ResponseEntity getFolderByCycleId(@PathVariable(name = "cycleId") Long cycleId) {
+		return Optional.ofNullable(testCycleService.getFolderByCycleId(cycleId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
 
 	}
 }

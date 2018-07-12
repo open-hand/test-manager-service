@@ -33,4 +33,6 @@ public interface TestCycleService {
     ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
 
 	List<TestCycleDTO> getCyclesByVersionId(Long versionId);
+
+	List<TestCycleDTO> getFolderByCycleId(Long cycleId);
 }
