@@ -51,8 +51,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
-			testCycleCaseE.setAssignedTo(null);
+		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
+			convert.setAssignedTo(null);
 		}
         Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
                 () -> testCycleCaseMapper.select(convert));
@@ -63,8 +63,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
-			testCycleCaseE.setAssignedTo(null);
+		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
+			convert.setAssignedTo(null);
 		}
         return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
     }
@@ -72,8 +72,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		if (testCycleCaseE.getAssignedTo() != null && testCycleCaseE.getAssignedTo().longValue() == 0) {
-			testCycleCaseE.setAssignedTo(null);
+		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
+			convert.setAssignedTo(null);
 		}
         List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
         if (list.size() != 1) {
