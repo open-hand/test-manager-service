@@ -51,7 +51,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-
+		if (testCycleCaseE.getAssignedTo().longValue() == 0) {
+			testCycleCaseE.setAssignedTo(null);
+		}
         Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
                 () -> testCycleCaseMapper.select(convert));
 

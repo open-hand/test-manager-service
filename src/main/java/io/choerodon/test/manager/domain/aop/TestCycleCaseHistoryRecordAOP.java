@@ -98,8 +98,16 @@ public class TestCycleCaseHistoryRecordAOP {
 
 		} else if (!StringUtils.equals(testCycleCaseDTO.getComment(), before.getComment())) {
 			historyDTO.setField(FIELD_COMMENT);
-			historyDTO.setNewValue(testCycleCaseDTO.getComment());
-			historyDTO.setOldValue(before.getComment());
+			if (StringUtils.isEmpty(testCycleCaseDTO.getComment())) {
+				historyDTO.setNewValue(FIELD_NULL);
+			} else {
+				historyDTO.setNewValue(testCycleCaseDTO.getComment());
+			}
+			if (StringUtils.isEmpty(before.getComment())) {
+				historyDTO.setOldValue(FIELD_NULL);
+			} else {
+				historyDTO.setOldValue(before.getComment());
+			}
 		} else {
 			return o;
 		}
