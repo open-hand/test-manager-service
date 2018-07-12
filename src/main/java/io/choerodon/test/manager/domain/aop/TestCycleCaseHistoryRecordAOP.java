@@ -70,13 +70,13 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(before.getExecuteId());
 
-		if (!testCycleCaseDTO.getExecutionStatus().equals(before.getExecutionStatus())) {
+		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
 			historyDTO.setField(FIELD_STATUS);
 			historyDTO.setNewValue(testCycleCaseDTO.getExecutionStatusName());
 			historyDTO.setOldValue(before.getExecutionStatusName());
 			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
 			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), before.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecuteId());
-		} else if (!testCycleCaseDTO.getAssignedTo().equals(before.getAssignedTo())) {
+		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
 			historyDTO.setField(FIELD_ASSIGNED);
 			Long after_as = testCycleCaseDTO.getAssignedTo();
 			Long before_as = before.getAssignedTo();
