@@ -12,7 +12,7 @@ public class TestCycleDTO {
     public TestCycleDTO(Long versionId) {
         this.versionId = versionId;
         this.cycleName = "临时";
-        this.type = "Ad hoc";
+        this.type = "temp";
     }
 
     public TestCycleDTO() {
