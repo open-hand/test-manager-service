@@ -51,6 +51,12 @@ public class TestCycleCaseE {
 
     private Date lastUpdateDate;
 
+
+    private String cycleName;
+
+
+    private String folderName;
+
 //    private List<TestCycleCaseStepE> testCycleCaseStepES;
 
     private List<TestCycleCaseDefectRelE> defects;
@@ -127,7 +133,21 @@ public class TestCycleCaseE {
         return issueId;
     }
 
+    public String getCycleName() {
+        return cycleName;
+    }
 
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
 
     public Long getAssignedTo() {
         return assignedTo;

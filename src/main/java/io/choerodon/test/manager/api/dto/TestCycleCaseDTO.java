@@ -46,6 +46,11 @@ public class TestCycleCaseDTO {
 
     private Date lastUpdateDate;
 
+	private String cycleName;
+
+
+	private String folderName;
+
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
     private List<TestCycleCaseDefectRelDTO> defects;
@@ -107,7 +112,23 @@ public class TestCycleCaseDTO {
         return assignedTo;
     }
 
-    public void setAssignedTo(Long assignedTo) {
+	public String getCycleName() {
+		return cycleName;
+	}
+
+	public void setCycleName(String cycleName) {
+		this.cycleName = cycleName;
+	}
+
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
+
+	public void setAssignedTo(Long assignedTo) {
         this.assignedTo = assignedTo;
     }
 
