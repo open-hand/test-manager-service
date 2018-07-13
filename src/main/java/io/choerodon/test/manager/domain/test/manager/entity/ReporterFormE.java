@@ -5,6 +5,7 @@ import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ReporterFormE {
 			this.issueId = issueId;
 			this.issueName = issueName;
 			this.summary = summary;
-			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean("TestCycleCaseService")).queryByIssuse(issueId, projectId);
+			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class)).queryByIssuse(issueId, projectId);
 			testCycleCaseES.forEach(v -> {
 				defectCount += v.getDefects().size();
 			});
