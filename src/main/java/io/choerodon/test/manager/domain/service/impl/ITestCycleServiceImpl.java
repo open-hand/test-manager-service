@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -137,12 +138,16 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(protoTestCycleE.getCycleId());
 		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
+		final String[] lastRank = new String[1];
+		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
+
 		iTestCycleCaseService.query(testCycleCaseE).forEach(v -> {
 			v.setExecuteId(null);
+			v.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
 			v.setCycleId(newCycleE.getCycleId());
 			v.setExecutionStatus(defaultStatus);
 			v.setObjectVersionNumber(null);
-			iTestCycleCaseService.cloneCycleCase(v, projectId);
+			lastRank[0] = iTestCycleCaseService.cloneCycleCase(v, projectId).getRank();
 		});
 		return newCycleE;
 	}
