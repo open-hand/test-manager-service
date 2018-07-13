@@ -22,10 +22,10 @@ public class SearchDTO {
     private Map<String, Object> advancedSearchArgs;
 
 	@Transient
-	private String[] executionStatus;
+	private Long[] executionStatus;
 
 	@Transient
-	private String[] defectStatus;
+	private Long[] defectStatus;
 
     public Map<String, Object> getSearchArgs() {
         return searchArgs;
@@ -43,19 +43,19 @@ public class SearchDTO {
         this.advancedSearchArgs = advancedSearchArgs;
     }
 
-	public String[] getExecutionStatus() {
+	public Long[] getExecutionStatus() {
 		return executionStatus;
 	}
 
-	public void setExecutionStatus(String[] executionStatus) {
+	public void setExecutionStatus(Long[] executionStatus) {
 		this.executionStatus = executionStatus;
 	}
 
-	public String[] getDefectStatus() {
+	public Long[] getDefectStatus() {
 		return defectStatus;
 	}
 
-	public void setDefectStatus(String[] defectStatus) {
+	public void setDefectStatus(Long[] defectStatus) {
 		this.defectStatus = defectStatus;
 	}
 
