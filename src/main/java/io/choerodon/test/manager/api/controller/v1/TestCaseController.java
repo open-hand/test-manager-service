@@ -36,7 +36,12 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成报表从issue到缺陷")
     @PostMapping("/get/reporter/from/issue")
-    public ResponseEntity createFormsFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+	public ResponseEntity createFormsFromIssueToDefect(@PathVariable(name = "project_id") Long projectId,
+													   @RequestBody
+															   SearchDTO searchDTO,
+													   @ApiIgnore
+													   @ApiParam(value = "分页信息", required = true)
+													   @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
 
         return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
