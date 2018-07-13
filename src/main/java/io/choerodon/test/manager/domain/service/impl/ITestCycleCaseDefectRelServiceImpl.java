@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import io.choerodon.agile.api.dto.IssueInfoDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -19,6 +21,7 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 
     @Autowired
     TestCaseFeignClient testCaseFeignClient;
+
 
     @Override
     public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
@@ -43,14 +46,13 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         testCycleCaseDefectRelE.setDefectLinkId(linkId);
         testCycleCaseDefectRelE.setDefectType(defectType);
         List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
-//        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+
+        Map map = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getIssueNum));
         lists.forEach(v -> {
-            v.setDefectName("TEST_DEFECT");
+            v.setDefectName(map.get(v.getIssueId()).toString());
         });
-//        testCycleCaseDefectRelE.setDefectName("TEST_DEFECT");
-        //testCaseFeignClient
-        //获取issueName
-        //插入返回值
+
         return lists;
     }
 }

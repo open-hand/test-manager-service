@@ -62,4 +62,10 @@ public interface TestCaseFeignClient {
 																	 @PathVariable(name = "project_id") Long projectId,
 																	 @ApiParam(value = "issueId", required = true)
 																	 @PathVariable(name = "issueId") Long issueId);
+
+	@PostMapping("/v1/projects/{project_id}/issues/issue_infos")
+	ResponseEntity<List<IssueInfoDTO>> listByIssueIds(@ApiParam(value = "项目id", required = true)
+													  @PathVariable(name = "project_id") Long projectId,
+													  @ApiParam(value = "issue ids", required = true)
+													  @RequestBody List<Long> issueIds);
 }
