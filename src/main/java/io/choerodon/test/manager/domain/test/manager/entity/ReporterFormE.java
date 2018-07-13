@@ -28,7 +28,7 @@ public class ReporterFormE {
 		this.issueName = issueListDTO.getIssueNum();
 		this.issueId = issueListDTO.getIssueId();
 		this.issueStatus = issueListDTO.getStatusName();
-		this.issueStatus = issueListDTO.getStatusColor();
+		this.issueColor = issueListDTO.getStatusColor();
 		this.summary = issueListDTO.getSummary();
 		return this;
 	}
