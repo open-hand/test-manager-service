@@ -135,12 +135,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	private void setDefects(List<TestCycleCaseDTO> testCycleCase, Long projectId) {
 		testCycleCase.forEach(v -> {
-			v.setDefects(testCycleCaseDefectRelService.query(v.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
+			v.setDefects(testCycleCaseDefectRelService.query(v.getExecuteId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
 		});
 	}
 
 	private void setDefect(TestCycleCaseDTO testCycleCase, Long projectId) {
-		testCycleCase.setDefects(testCycleCaseDefectRelService.query(testCycleCase.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
+		testCycleCase.setDefects(testCycleCaseDefectRelService.query(testCycleCase.getExecuteId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
 
 	}
 
