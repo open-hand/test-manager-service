@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -52,10 +53,12 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 			return null;
 		}
 		List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
-		Map<Long, IssueInfoDTO> map = list.stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, Function.identity()));
-		//testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getIssueNum));
-        lists.forEach(v -> {
-			v.setDefectName(map.get(v.getIssueId()).getIssueNum());
+		Map defectMap = new HashMap();
+		for (IssueInfoDTO issueInfoDTO : list) {
+			defectMap.put(issueInfoDTO.getIssueId().longValue(), issueInfoDTO.getIssueNum());
+		}
+		lists.forEach(v -> {
+			v.setDefectName(defectMap.get(v.getIssueId().longValue()).toString());
         });
 
         return lists;
