@@ -48,10 +48,10 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public Page<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, PageRequest pageRequest) {
+    public Page<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, PageRequest pageRequest, Long projectId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(cycleCaseId);
-        return ConvertPageHelper.convertPage(iTestCycleCaseStepService.querySubStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest), TestCycleCaseStepDTO.class);
+        return ConvertPageHelper.convertPage(iTestCycleCaseStepService.querySubStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest, projectId), TestCycleCaseStepDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)

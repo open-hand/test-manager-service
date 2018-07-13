@@ -30,7 +30,7 @@ public interface TestCycleCaseStepService {
      * @param testCycleCaseDTO
      * @return
      */
-    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest);
+    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest, Long projectId);
 
     /**
      * 启动循环测试下所有步骤

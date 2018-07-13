@@ -34,7 +34,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	public List<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
 		List<ReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v)));
+		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
 		return reporterFormES;
 	}
 //
@@ -43,10 +43,10 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 //		return testCaseFeignClient.listIssueWithoutSub(0,400,null,);
 //	}
 
-	private ReporterFormE doCreateFromIssueToDefect(IssueListDTO issueListDTOS) {
+	private ReporterFormE doCreateFromIssueToDefect(IssueListDTO issueListDTOS, Long projectId) {
 		ReporterFormE reporterFormE = new ReporterFormE();
 		return reporterFormE.populateIssue(issueListDTOS)
-				.populateLinkedTest(testCaseFeignClient.listIssueLinkByIssueId(issueListDTOS.getProjectId(), issueListDTOS.getIssueId()).getBody());
+				.populateLinkedTest(testCaseFeignClient.listIssueLinkByIssueId(issueListDTOS.getProjectId(), issueListDTOS.getIssueId()).getBody(), projectId);
 
 	}
 }

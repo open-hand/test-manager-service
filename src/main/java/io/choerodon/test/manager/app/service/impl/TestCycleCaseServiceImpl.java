@@ -67,41 +67,41 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 
     @Override
-    public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest) {
+	public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId) {
         Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-		setDefects(dto);
+		setDefects(dto, projectId);
 		return dto;
     }
 
     @Override
-	public Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest) {
+	public Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest, Long projectId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(cycleId);
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
 		dots.forEach(v -> {
 			setUser(v);
-			setDefect(v);
+			setDefect(v, projectId);
 		});
 		return dots;
     }
 
 	@Override
-	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId) {
+	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuseId);
 		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-		setDefects(dto);
+		setDefects(dto, projectId);
 		return dto;
 	}
 
 	@Override
-	public TestCycleCaseDTO queryOne(Long cycleCaseId) {
+	public TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId) {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setExecuteId(cycleCaseId);
 		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-		setDefect(dto);
+		setDefect(dto, projectId);
 		return setUser(dto);
 	}
 
@@ -131,14 +131,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		return dto;
 	}
 
-	private void setDefects(List<TestCycleCaseDTO> testCycleCase) {
+	private void setDefects(List<TestCycleCaseDTO> testCycleCase, Long projectId) {
 		testCycleCase.forEach(v -> {
-			v.setDefects(testCycleCaseDefectRelService.query(v.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE));
+			v.setDefects(testCycleCaseDefectRelService.query(v.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
 		});
 	}
 
-	private void setDefect(TestCycleCaseDTO testCycleCase) {
-		testCycleCase.setDefects(testCycleCaseDefectRelService.query(testCycleCase.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE));
+	private void setDefect(TestCycleCaseDTO testCycleCase, Long projectId) {
+		testCycleCase.setDefects(testCycleCaseDefectRelService.query(testCycleCase.getCycleId(), TestCycleCaseDefectRelE.CYCLE_CASE, projectId));
 
 	}
 

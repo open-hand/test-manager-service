@@ -48,7 +48,7 @@ public class TestCycleCaseController {
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
 																@PathVariable(name = "issueId") Long issueId
 	) {
-		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId))
+		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
 	}
@@ -62,7 +62,7 @@ public class TestCycleCaseController {
 															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
 																	   PageRequest pageRequest) {
-		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest))
+		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
@@ -72,7 +72,7 @@ public class TestCycleCaseController {
 	@GetMapping("/query/one/{executeId}")
 	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "project_id") Long projectId,
 													 @PathVariable(name = "executeId") Long executeId) {
-		return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
+		return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
 	}

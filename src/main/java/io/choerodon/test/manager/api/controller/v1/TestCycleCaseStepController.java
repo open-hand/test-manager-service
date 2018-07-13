@@ -70,7 +70,7 @@ public class TestCycleCaseStepController {
 															@SortDefault(value = "rank", direction = Sort.Direction.DESC)
 																	PageRequest pageRequest) {
 
-		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, pageRequest))
+		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, pageRequest, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 

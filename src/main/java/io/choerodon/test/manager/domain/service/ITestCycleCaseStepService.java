@@ -24,7 +24,7 @@ public interface ITestCycleCaseStepService {
      * @param testCycleCaseE
      * @return
      */
-	Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
+	Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId);
 
     /**
      * 启动循环测试下所有步骤

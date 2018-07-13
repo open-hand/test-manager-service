@@ -38,7 +38,7 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
     }
 
     @Override
-    public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType) {
+    public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType, Long projectId) {
         TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
         testCycleCaseDefectRelE.setDefectLinkId(linkId);
         testCycleCaseDefectRelE.setDefectType(defectType);

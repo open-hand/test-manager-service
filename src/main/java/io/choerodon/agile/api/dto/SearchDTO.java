@@ -24,6 +24,9 @@ public class SearchDTO {
 	@Transient
 	private String[] executionStatus;
 
+	@Transient
+	private String[] defectStatus;
+
     public Map<String, Object> getSearchArgs() {
         return searchArgs;
     }
@@ -48,7 +51,15 @@ public class SearchDTO {
 		this.executionStatus = executionStatus;
 	}
 
-    @Override
+	public String[] getDefectStatus() {
+		return defectStatus;
+	}
+
+	public void setDefectStatus(String[] defectStatus) {
+		this.defectStatus = defectStatus;
+	}
+
+	@Override
     public String toString() {
         return StringUtil.getToString(this);
     }

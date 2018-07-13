@@ -33,10 +33,10 @@ public class ReporterFormE {
 		return this;
 	}
 
-	public ReporterFormE populateLinkedTest(List<IssueLinkDTO> linkedTestIssues) {
+	public ReporterFormE populateLinkedTest(List<IssueLinkDTO> linkedTestIssues, Long projectId) {
 		List<LinkedTestIssue> list = new ArrayList<>();
 		linkedTestIssues.stream().forEach(v -> {
-			list.add(new LinkedTestIssue(v.getIssueId(), v.getIssueNum(), v.getSummary()));
+			list.add(new LinkedTestIssue(v.getIssueId(), v.getIssueNum(), v.getSummary(), projectId));
 		});
 		this.linkedTestIssues = list;
 		return this;
@@ -50,11 +50,11 @@ public class ReporterFormE {
 
 		private List<TestCycleCaseDTO> testCycleCaseES;
 
-		public LinkedTestIssue(Long issueId, String issueName, String summary) {
+		public LinkedTestIssue(Long issueId, String issueName, String summary, Long projectId) {
 			this.issueId = issueId;
 			this.issueName = issueName;
 			this.summary = summary;
-			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean("TestCycleCaseService")).queryByIssuse(issueId);
+			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean("TestCycleCaseService")).queryByIssuse(issueId, projectId);
 			testCycleCaseES.forEach(v -> {
 				defectCount += v.getDefects().size();
 			});

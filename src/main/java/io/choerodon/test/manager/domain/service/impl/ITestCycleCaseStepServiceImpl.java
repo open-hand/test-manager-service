@@ -48,12 +48,12 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
 
     @Override
-    public Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
+    public Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
         Page<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf(pageRequest);
         testCycleCaseEs.forEach(v -> {
-            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP));
+            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP, projectId));
         });
         return testCycleCaseEs;
     }

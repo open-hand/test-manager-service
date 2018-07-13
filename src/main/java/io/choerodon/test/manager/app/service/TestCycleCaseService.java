@@ -18,13 +18,13 @@ public interface TestCycleCaseService {
 
 //    List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
 
-    Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest);
+	Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId);
 
-	Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest);
+	Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest, Long projectId);
 
-    TestCycleCaseDTO queryOne(Long cycleCaseId);
+	TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId);
 
-	List<TestCycleCaseDTO> queryByIssuse(Long issuseId);
+	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);
 
     /**
      * 启动一个测试例

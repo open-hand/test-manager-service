@@ -18,5 +18,5 @@ public interface ITestCycleCaseDefectRelService {
 
     List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-    List<TestCycleCaseDefectRelE> query(Long linkId, String defectType);
+    List<TestCycleCaseDefectRelE> query(Long linkId, String defectType, Long projectId);
 }
