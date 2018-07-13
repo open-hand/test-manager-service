@@ -44,24 +44,24 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 
     @Override
     public List<TestCycleCaseDefectRelE> query(Long linkId, String defectType, Long projectId) {
-//        TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
-//        testCycleCaseDefectRelE.setDefectLinkId(linkId);
-//        testCycleCaseDefectRelE.setDefectType(defectType);
-//        List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
-//        if (lists.size() == 0) {
-//            return null;
-//        }
-//        List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-//
-//        List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
-//        Map defectMap = new HashMap();
-//        for (IssueInfoDTO issueInfoDTO : list) {
-//            defectMap.put(issueInfoDTO.getIssueId().longValue(), issueInfoDTO.getIssueNum());
-//        }
-//        lists.forEach(v -> {
-//            v.setDefectName(defectMap.get(v.getIssueId().longValue()).toString());
-//        });
+		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+		testCycleCaseDefectRelE.setDefectLinkId(linkId);
+		testCycleCaseDefectRelE.setDefectType(defectType);
+		List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
+		if (lists.size() == 0) {
+			return null;
+		}
+		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
 
-		return null;
+		List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
+		Map defectMap = new HashMap();
+		for (IssueInfoDTO issueInfoDTO : list) {
+			defectMap.put(issueInfoDTO.getIssueId().longValue(), issueInfoDTO.getIssueNum());
+		}
+		lists.forEach(v -> {
+			v.setDefectName(defectMap.get(v.getIssueId().longValue()).toString());
+		});
+
+		return lists;
     }
 }
