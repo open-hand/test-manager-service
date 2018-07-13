@@ -166,8 +166,9 @@ public class TestCycleCaseHistoryRecordAOP {
 		return o;
 	}
 
-	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.insert(..))&& args(testCycleCaseDefectRelDTO)")
-	public void recordDefectAdd(JoinPoint jp, TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.insert(..))")
+	public void recordDefectAdd(JoinPoint jp) {
+		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = (TestCycleCaseDefectRelDTO) jp.getArgs()[0];
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
@@ -176,8 +177,9 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	}
 
-	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))&& args(testCycleCaseDefectRelDTO)")
-	public void recordDefectDelete(JoinPoint jp, TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))")
+	public void recordDefectDelete(JoinPoint jp) {
+		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = (TestCycleCaseDefectRelDTO) jp.getArgs()[0];
 
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(FIELD_DEFECT);
