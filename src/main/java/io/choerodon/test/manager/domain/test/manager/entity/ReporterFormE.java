@@ -19,7 +19,7 @@ public class ReporterFormE {
 	private String issueName;
 	private String issueStatus;
 	private String issueColor;
-	private Long defectCount;
+	private Long defectCount = new Long(0);
 	private String summary;
 
 	private List<LinkedTestIssue> linkedTestIssues;
