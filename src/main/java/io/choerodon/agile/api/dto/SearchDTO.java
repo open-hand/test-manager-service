@@ -2,7 +2,6 @@ package io.choerodon.agile.api.dto;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
-import javax.persistence.Transient;
 import java.util.Map;
 
 /**
@@ -11,56 +10,60 @@ import java.util.Map;
  */
 public class SearchDTO {
 
-    /**
-     * 输入查询参数
-     */
-    private Map<String, Object> searchArgs;
+	/**
+	 * 输入查询参数
+	 */
+	private Map<String, Object> searchArgs;
 
-    /**
-     * 过滤查询参数
-     */
-    private Map<String, Object> advancedSearchArgs;
+	/**
+	 * 过滤查询参数
+	 */
+	private Map<String, Object> advancedSearchArgs;
 
-	@Transient
-	private Long[] executionStatus;
+	/**
+	 * 关联查询参数
+	 */
+	private Map<String, Object> otherArgs;
 
-	@Transient
-	private Long[] defectStatus;
+	/**
+	 * issueNum+summary模糊搜索
+	 */
+	private String content;
 
-    public Map<String, Object> getSearchArgs() {
-        return searchArgs;
-    }
-
-    public void setSearchArgs(Map<String, Object> searchArgs) {
-        this.searchArgs = searchArgs;
-    }
-
-    public Map<String, Object> getAdvancedSearchArgs() {
-        return advancedSearchArgs;
-    }
-
-    public void setAdvancedSearchArgs(Map<String, Object> advancedSearchArgs) {
-        this.advancedSearchArgs = advancedSearchArgs;
-    }
-
-	public Long[] getExecutionStatus() {
-		return executionStatus;
+	public Map<String, Object> getSearchArgs() {
+		return searchArgs;
 	}
 
-	public void setExecutionStatus(Long[] executionStatus) {
-		this.executionStatus = executionStatus;
+	public void setSearchArgs(Map<String, Object> searchArgs) {
+		this.searchArgs = searchArgs;
 	}
 
-	public Long[] getDefectStatus() {
-		return defectStatus;
+	public Map<String, Object> getAdvancedSearchArgs() {
+		return advancedSearchArgs;
 	}
 
-	public void setDefectStatus(Long[] defectStatus) {
-		this.defectStatus = defectStatus;
+	public void setAdvancedSearchArgs(Map<String, Object> advancedSearchArgs) {
+		this.advancedSearchArgs = advancedSearchArgs;
+	}
+
+	public Map<String, Object> getOtherArgs() {
+		return otherArgs;
+	}
+
+	public void setOtherArgs(Map<String, Object> otherArgs) {
+		this.otherArgs = otherArgs;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	@Override
-    public String toString() {
-        return StringUtil.getToString(this);
-    }
+	public String toString() {
+		return StringUtil.getToString(this);
+	}
 }

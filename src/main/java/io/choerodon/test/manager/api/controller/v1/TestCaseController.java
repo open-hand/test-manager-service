@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -47,6 +48,17 @@ public class TestCaseController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createIssue"));
     }
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("生成报表从issue到缺陷")
+	@PostMapping("/get/reporter/from/issue/by/issueId")
+	public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
+																@RequestBody Long[] issueIds) {
+
+		return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+	}
 
 //    @Permission(level = ResourceLevel.PROJECT)
 //    @ApiOperation("增加测试")

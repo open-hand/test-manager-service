@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.domain.Page;
@@ -14,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jialongZuo@hand-china.com on 7/13/18.
@@ -37,6 +40,18 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
 		return reporterFormES;
 	}
+
+	public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds) {
+		SearchDTO searchDTO = new SearchDTO();
+		Map map = new HashMap();
+		map.put("issueIds", issueIds);
+		searchDTO.setOtherArgs(map);
+		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
+		List<ReporterFormE> reporterFormES = Lists.newArrayList();
+		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
+		return reporterFormES;
+	}
+
 //
 //	@Override
 //	public List<ReporterFormE> createFromIssueToDefect(Long[] issueIds) {
