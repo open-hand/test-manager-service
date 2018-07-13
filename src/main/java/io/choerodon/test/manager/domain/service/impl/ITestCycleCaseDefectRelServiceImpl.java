@@ -48,6 +48,9 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         testCycleCaseDefectRelE.setDefectType(defectType);
         List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
         List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
+		if (issueLists.size() == 0) {
+			return null;
+		}
 		List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
 		Map<Long, IssueInfoDTO> map = list.stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, Function.identity()));
 		//testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getIssueNum));
