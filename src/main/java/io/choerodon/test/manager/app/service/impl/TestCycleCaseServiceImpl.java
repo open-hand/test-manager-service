@@ -173,7 +173,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		TestCycleCaseE testCycleCaseE = new TestCycleCaseEFactory().create();
 		testCycleCaseE.setCycleId(fromCycleId);
 		Map filterMap = new HashMap();
-		filterMap.put("execution_status", searchDTO.getExecutionStatus());
+		Optional.ofNullable(searchDTO.getExecutionStatus()).ifPresent(v -> filterMap.put("executionStatus", v));
+
 		List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
 		ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, 0, 400, null);
 		Set issueListDTOS = responseEntity.getBody().stream().map(v -> v.getIssueId().longValue()).collect(Collectors.toSet());

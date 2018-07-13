@@ -23,14 +23,14 @@
     </resultMap>
 
     <select id="filter" resultMap="BaseResultMap">
-        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,status.status_name,
-        cycle.execution_status,cycle.assigned_to,cycle.commentcycle.last_update_date,cycle.last_updated_by
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by
         FROM test_cycle_case cycle
-        where cycle.cycleId=#{map.cycleId}
-        <if test="map.execution_status != null">
+        where cycle.cycle_id=#{cycleId}
+        <if test="executionStatus != null">
             and
             cycle.execution_status in
-            <foreach item="item" index="index" collection="execution_status"
+            <foreach item="item" index="index" collection="executionStatus"
                      open="(" separator="," close=")">
                 #{item}
             </foreach>
