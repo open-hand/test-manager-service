@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by 842767365@qq.com on 6/13/18.
  */
@@ -48,5 +50,15 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     @Override
     public ResponseEntity<Page<IssueCommonDTO>> listByOptions(Long projectId, String typeCode, int page, int size, String orders) {
         throw new CommonException(BATCH_QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, int page, int size, String orders) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueLinkDTO>> listIssueLinkByIssueId(Long projectId, Long issueId) {
+        throw new CommonException(QUERY_ERROR);
     }
 }

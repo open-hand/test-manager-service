@@ -4,10 +4,13 @@ import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallbac
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -44,4 +47,19 @@ public interface TestCaseFeignClient {
             @PathVariable(name = "typeCode") String typeCode,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
             @RequestParam(name = "orders") String orders);
+
+
+	@PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub")
+	ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSubToTestComponent(
+			@PathVariable(name = "project_id") Long projectId,
+			@RequestBody(required = false) SearchDTO searchDTO,
+			@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+			@RequestParam(name = "orders") String orders);
+
+
+	@GetMapping(value = "/v1/projects/{project_id}/issue_links/{issueId}")
+	public ResponseEntity<List<IssueLinkDTO>> listIssueLinkByIssueId(@ApiParam(value = "项目id", required = true)
+																	 @PathVariable(name = "project_id") Long projectId,
+																	 @ApiParam(value = "issueId", required = true)
+																	 @PathVariable(name = "issueId") Long issueId);
 }

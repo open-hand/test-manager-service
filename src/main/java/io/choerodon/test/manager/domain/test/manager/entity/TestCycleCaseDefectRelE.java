@@ -18,6 +18,8 @@ import java.util.List;
 public class TestCycleCaseDefectRelE {
 
     public static String CASE_STEP = "CASE_STEP";
+    public static String CYCLE_CASE = "CYCLE_CASE";
+
     private Long id;
     private String defectType;
     private Long defectLinkId;
