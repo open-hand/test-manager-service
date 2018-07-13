@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.IssueCommonDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
@@ -180,14 +181,18 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Set issueListDTOS = responseEntity.getBody().stream().map(v -> v.getIssueId().longValue()).collect(Collectors.toSet());
 
 		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
+		final String[] lastRank = new String[1];
+		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
+
 		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()))
 				.forEach(u -> {
 					u.setExecuteId(null);
+					u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
 					u.setAssignedTo(assignee);
 					u.setCycleId(toCycleId);
 					u.setExecutionStatus(defaultStatus);
 					u.setObjectVersionNumber(new Long(0));
-					iTestCycleCaseService.cloneCycleCase(u, projectId);
+					lastRank[0] = iTestCycleCaseService.cloneCycleCase(u, projectId).getRank();
 				});
 
 		return true;

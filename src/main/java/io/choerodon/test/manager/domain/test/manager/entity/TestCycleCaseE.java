@@ -68,6 +68,16 @@ public class TestCycleCaseE {
         return testCycleCaseRepository.filter(map);
     }
 
+	public String getLastedRank(Long cycleId) {
+		TestCycleCaseE e = new TestCycleCaseE();
+		e.setCycleId(cycleId);
+		List<TestCycleCaseE> list = testCycleCaseRepository.query(e);
+		if (list.size() == 0) {
+			return null;
+		}
+		return list.get(list.size() - 1).getRank();
+	}
+
 
     public TestCycleCaseE createOneCase() {
         setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
