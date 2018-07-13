@@ -63,6 +63,10 @@ public class TestCycleCaseE {
         return testCycleCaseRepository.query(this, pageRequest);
     }
 
+    public List<TestCycleCaseE> queryByIssue(Long versionId) {
+        return testCycleCaseRepository.queryByIssue(versionId);
+    }
+
     public List<TestCycleCaseE> filter(Map map) {
         map.put("cycleId", this.cycleId);
         return testCycleCaseRepository.filter(map);

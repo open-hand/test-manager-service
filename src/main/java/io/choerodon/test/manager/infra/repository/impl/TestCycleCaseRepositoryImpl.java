@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
@@ -86,6 +87,13 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	@Override
 	public List<TestCycleCaseE> filter(Map map) {
 		return ConvertHelper.convertList(testCycleCaseMapper.filter(map), TestCycleCaseE.class);
+	}
+
+	@Override
+	public List<TestCycleCaseE> queryByIssue(Long issueId) {
+
+		return ConvertHelper.convertList(testCycleCaseMapper.queryByIssue(issueId), TestCycleCaseE.class);
+
 	}
 
 }

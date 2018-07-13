@@ -59,6 +59,20 @@
         order by rank
     </select>
 
+    <select id="queryByIssue" resultMap="BaseResultMap">
+                SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by,
+        case cycle1.type
+        when 'folder' then (select cycle2.cycle_name from test_cycle cycle2 where cycle1.parent_cycle_id = cycle2.cycle_id )
+        ELSE cycle1.cycle_name
+        end as cycle_name,
+        case cycle1.type
+        when 'folder' then cycle1.cycle_name
+        end as folder_name
+        FROM test_cycle_case cycle
+        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle
+        where cycle.issue_id=#{issueId}
+    </select>
 
 </mapper>
 

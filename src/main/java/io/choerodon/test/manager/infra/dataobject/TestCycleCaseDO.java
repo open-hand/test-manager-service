@@ -32,6 +32,12 @@ public class TestCycleCaseDO extends AuditDomain {
 	@Transient
 	private String executionStatusName;
 
+    @Transient
+    private String cycleName;
+
+    @Transient
+    private String folderName;
+
 
     private Long assignedTo;
 
@@ -110,5 +116,21 @@ public class TestCycleCaseDO extends AuditDomain {
 
     public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
         this.caseAttachment = caseAttachment;
+    }
+
+    public String getCycleName() {
+        return cycleName;
+    }
+
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }

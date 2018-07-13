@@ -93,7 +93,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuseId);
-		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
 		setDefects(dto, projectId);
 		return dto;
 	}

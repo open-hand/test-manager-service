@@ -33,4 +33,6 @@ public interface ITestCycleCaseService {
 	TestCycleCaseE changeStep(TestCycleCaseE currentStepE);
 
 	List<Long> getActiveCase(Long range, Long projectId, String day);
+
+	List<TestCycleCaseE> queryByIssue(Long versionId);
 }

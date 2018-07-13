@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
@@ -107,4 +108,9 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		return caseCountList;
 	}
 
+	@Override
+	public List<TestCycleCaseE> queryByIssue(Long versionId) {
+		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
+		return testCycleCaseE.queryByIssue(versionId);
+	}
 }

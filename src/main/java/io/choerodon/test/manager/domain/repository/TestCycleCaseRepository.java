@@ -24,4 +24,6 @@ public interface TestCycleCaseRepository {
     TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
 
     List<TestCycleCaseE> filter(Map map);
+
+	List<TestCycleCaseE> queryByIssue(Long issueId);
 }
