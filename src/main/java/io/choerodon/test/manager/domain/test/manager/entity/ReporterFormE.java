@@ -57,7 +57,10 @@ public class ReporterFormE {
 			this.summary = summary;
 			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class)).queryByIssuse(issueId, projectId);
 			testCycleCaseES.forEach(v -> {
-				defectCount += v.getDefects().size();
+				List defects = v.getDefects();
+				if (defects != null) {
+					defectCount += defects.size();
+				}
 			});
 		}
 

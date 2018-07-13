@@ -12,6 +12,8 @@
         <id column="status_name" property="executionStatusName"/>
         <id column="assigned_to" property="assignedTo"/>
         <id column="comment" property="comment"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="folder_name" property="folderName"/>
         <id column="last_update_date" property="lastUpdateDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
         <collection property="caseAttachment"
