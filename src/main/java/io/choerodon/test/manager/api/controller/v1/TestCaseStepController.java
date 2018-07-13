@@ -28,7 +28,8 @@ public class TestCaseStepController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询")
 	@GetMapping("/query/{caseId}")
-	public ResponseEntity<List<TestCaseStepDTO>> query(@PathVariable(name = "caseId") Long caseId) {
+	public ResponseEntity<List<TestCaseStepDTO>> query(@PathVariable(name = "project_id") Long projectId,
+													   @PathVariable(name = "caseId") Long caseId) {
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(caseId);
 		return Optional.ofNullable(iTestCaseStepService.query(testCaseStepDTO))
@@ -41,7 +42,8 @@ public class TestCaseStepController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("批量变动测试步骤(添加|修改)")
 	@PutMapping("/batchInsert")
-	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
+	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@PathVariable(name = "project_id") Long projectId,
+															@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
 
 		return Optional.ofNullable(iTestCaseStepService.batchInsertStep(testCaseStepDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -51,7 +53,8 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
-    public ResponseEntity<Boolean> changeOneStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+	public ResponseEntity<Boolean> changeOneStep(@PathVariable(name = "project_id") Long projectId,
+												 @RequestBody TestCaseStepDTO testCaseStepDTO) {
         iTestCaseStepService.changeStep(testCaseStepDTO);
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
@@ -60,7 +63,8 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除测试步骤")
     @DeleteMapping
-    public ResponseEntity<Boolean> removeStep(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+	public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
+											  @RequestBody TestCaseStepDTO testCaseStepDTO) {
         iTestCaseStepService.removeStep(testCaseStepDTO);
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
@@ -68,7 +72,8 @@ public class TestCaseStepController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("克隆")
 	@PostMapping("/clone")
-	public ResponseEntity clone(@RequestBody TestCaseStepDTO testCaseStepDTO) {
+	public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
+								@RequestBody TestCaseStepDTO testCaseStepDTO) {
 		return Optional.ofNullable(iTestCaseStepService.clone(testCaseStepDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.clone"));

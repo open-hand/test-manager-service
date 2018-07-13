@@ -27,7 +27,8 @@ public class TestStatusController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询状态")
 	@PostMapping("/query")
-	public ResponseEntity<List<TestStatusDTO>> query(@RequestBody TestStatusDTO testStatusDTO) {
+	public ResponseEntity<List<TestStatusDTO>> query(@PathVariable(name = "project_id") Long projectId,
+													 @RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.query(testStatusDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testStatus.query"));
@@ -37,7 +38,8 @@ public class TestStatusController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除状态")
 	@DeleteMapping("/{statusId}")
-	public ResponseEntity delete(@PathVariable(name = "statusId") Long statusId) {
+	public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+								 @PathVariable(name = "statusId") Long statusId) {
 		TestStatusDTO dto = new TestStatusDTO();
 		dto.setStatusId(statusId);
 		testStatusService.delete(dto);
@@ -47,7 +49,8 @@ public class TestStatusController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("插入状态")
 	@PostMapping
-	public ResponseEntity<TestStatusDTO> insert(@RequestBody TestStatusDTO testStatusDTO) {
+	public ResponseEntity<TestStatusDTO> insert(@PathVariable(name = "project_id") Long projectId,
+												@RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.insert(testStatusDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
@@ -56,7 +59,8 @@ public class TestStatusController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("更新状态")
 	@PutMapping("/update")
-	public ResponseEntity<TestStatusDTO> update(@RequestBody TestStatusDTO testStatusDTO) {
+	public ResponseEntity<TestStatusDTO> update(@PathVariable(name = "project_id") Long projectId,
+												@RequestBody TestStatusDTO testStatusDTO) {
 		return Optional.ofNullable(testStatusService.update(testStatusDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testStatus.update"));

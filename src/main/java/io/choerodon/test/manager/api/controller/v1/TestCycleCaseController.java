@@ -35,7 +35,8 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除测试循环用例")
 	@DeleteMapping
-	public ResponseEntity delete(Long cycleCaseId) {
+	public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+								 Long cycleCaseId) {
 		testCycleCaseService.delete(cycleCaseId);
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
@@ -44,7 +45,8 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询测试组下循环用例")
 	@GetMapping("/query/issue/{issueId}")
-	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "issueId") Long issueId
+	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
+																@PathVariable(name = "issueId") Long issueId
 	) {
 		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -54,7 +56,8 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询测试用例下循环case")
 	@GetMapping("/query/{cycleId}")
-	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "cycleId") Long cycleId,
+	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
+															   @PathVariable(name = "cycleId") Long cycleId,
 															   @ApiIgnore
 															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
@@ -67,7 +70,8 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询一个循环用例")
 	@GetMapping("/query/one/{executeId}")
-	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "executeId") Long executeId) {
+	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "project_id") Long projectId,
+													 @PathVariable(name = "executeId") Long executeId) {
 		return Optional.ofNullable(testCycleCaseService.queryOne(executeId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));

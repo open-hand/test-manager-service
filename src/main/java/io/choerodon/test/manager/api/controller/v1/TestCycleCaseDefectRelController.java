@@ -28,7 +28,8 @@ public class TestCycleCaseDefectRelController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("增加缺陷")
 	@PostMapping
-	public ResponseEntity<TestCycleCaseDefectRelDTO> insert(@RequestBody TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+	public ResponseEntity<TestCycleCaseDefectRelDTO> insert(@PathVariable(name = "project_id") Long projectId,
+															@RequestBody TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
 		return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testDefect.insert"));
@@ -38,7 +39,8 @@ public class TestCycleCaseDefectRelController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除缺陷")
 	@DeleteMapping
-	public ResponseEntity removeAttachment(Long defectId) {
+	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
+										   Long defectId) {
 		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
 		testCycleCaseDefectRelDTO.setId(defectId);
 		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);

@@ -36,7 +36,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("增加测试循环")
 	@PostMapping
-	public ResponseEntity<TestCycleDTO> insert(@RequestBody TestCycleDTO testCycleDTO) {
+	public ResponseEntity<TestCycleDTO> insert(@PathVariable(name = "project_id") Long projectId,
+											   @RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.insert(testCycleDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.insert"));
@@ -46,7 +47,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除测试循环")
 	@DeleteMapping("/delete/{cycleId}")
-	void delete(@PathVariable(name = "cycleId") Long cycleId) {
+	void delete(@PathVariable(name = "project_id") Long projectId,
+				@PathVariable(name = "cycleId") Long cycleId) {
 		TestCycleDTO cycleDTO = new TestCycleDTO();
 		cycleDTO.setCycleId(cycleId);
 		testCycleService.delete(cycleDTO);
@@ -55,7 +57,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("修改测试循环")
 	@PutMapping
-	ResponseEntity<TestCycleDTO> update(@RequestBody TestCycleDTO testCycleDTO) {
+	ResponseEntity<TestCycleDTO> update(@PathVariable(name = "project_id") Long projectId,
+										@RequestBody TestCycleDTO testCycleDTO) {
 		return Optional.ofNullable(testCycleService.update(testCycleDTO))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.error.testCycle.update"));
@@ -64,7 +67,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询测试循环")
 	@GetMapping("/query/one/{cycleId}")
-	TestCycleDTO queryOne(@PathVariable(name = "cycleId") Long cycleId) {
+	TestCycleDTO queryOne(@PathVariable(name = "project_id") Long projectId,
+						  @PathVariable(name = "cycleId") Long cycleId) {
 		return testCycleService.getOneCycle(cycleId);
 	}
 
@@ -80,7 +84,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("过滤version下的测试循环")
 	@PostMapping("/filter")
-	ResponseEntity filterTestCycle(@RequestBody String parameters) {
+	ResponseEntity filterTestCycle(@PathVariable(name = "project_id") Long projectId,
+								   @RequestBody String parameters) {
 
 		return Optional.ofNullable(testCycleService.filterCycleWithBar(parameters))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -123,7 +128,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("通过versionId获取目录下所有的循环")
 	@PostMapping("/query/cycle/versionId/{versionId}")
-	ResponseEntity getCyclesByVersionId(@PathVariable(name = "versionId") Long versionId) {
+	ResponseEntity getCyclesByVersionId(@PathVariable(name = "project_id") Long projectId,
+										@PathVariable(name = "versionId") Long versionId) {
 		return Optional.ofNullable(testCycleService.getCyclesByVersionId(versionId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
@@ -133,7 +139,8 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("通过cycleId获取目录下所有的文件夹")
 	@PostMapping("/query/folder/cycleId/{cycleId}")
-	ResponseEntity getFolderByCycleId(@PathVariable(name = "cycleId") Long cycleId) {
+	ResponseEntity getFolderByCycleId(@PathVariable(name = "project_id") Long projectId,
+									  @PathVariable(name = "cycleId") Long cycleId) {
 		return Optional.ofNullable(testCycleService.getFolderByCycleId(cycleId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));

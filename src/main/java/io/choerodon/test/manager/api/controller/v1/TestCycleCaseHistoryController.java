@@ -35,7 +35,8 @@ public class TestCycleCaseHistoryController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询循环历史")
 	@GetMapping
-	public ResponseEntity<Page<TestCycleCaseHistoryDTO>> query(@ApiIgnore
+	public ResponseEntity<Page<TestCycleCaseHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId,
+															   @ApiIgnore
 															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "id", direction = Sort.Direction.DESC)
 																	   PageRequest pageRequest,

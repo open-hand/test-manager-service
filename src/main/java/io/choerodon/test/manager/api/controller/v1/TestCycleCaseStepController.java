@@ -62,7 +62,8 @@ public class TestCycleCaseStepController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询循环步骤")
 	@GetMapping("/query/{cycleCaseId}")
-	ResponseEntity<Page<TestCycleCaseStepDTO>> querySubStep(@ApiParam(value = "cycleCaseId", required = true)
+	ResponseEntity<Page<TestCycleCaseStepDTO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+															@ApiParam(value = "cycleCaseId", required = true)
 															@PathVariable(name = "cycleCaseId") Long cycleCaseId,
 															@ApiIgnore
 															@ApiParam(value = "分页信息", required = true)
@@ -79,6 +80,7 @@ public class TestCycleCaseStepController {
 	@ApiOperation("修改一个测试循环")
 	@PostMapping("/updateWithAttach")
 	public ResponseEntity updateOneCase(HttpServletRequest request,
+										@PathVariable(name = "project_id") Long projectId,
 										@RequestParam(required = false, name = "comment") String comment,
 										@RequestParam(name = "stepStatus") String stepStatus) {
 		List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
