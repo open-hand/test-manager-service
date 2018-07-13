@@ -2,6 +2,7 @@ package io.choerodon.agile.api.dto;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
+import javax.persistence.Transient;
 import java.util.Map;
 
 /**
@@ -24,6 +25,12 @@ public class SearchDTO {
 	 * 关联查询参数
 	 */
 	private Map<String, Object> otherArgs;
+
+	@Transient
+	private Long[] executionStatus;
+
+	@Transient
+	private Long[] defectStatus;
 
 	/**
 	 * issueNum+summary模糊搜索
@@ -60,6 +67,22 @@ public class SearchDTO {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public Long[] getExecutionStatus() {
+		return executionStatus;
+	}
+
+	public void setExecutionStatus(Long[] executionStatus) {
+		this.executionStatus = executionStatus;
+	}
+
+	public Long[] getDefectStatus() {
+		return defectStatus;
+	}
+
+	public void setDefectStatus(Long[] defectStatus) {
+		this.defectStatus = defectStatus;
 	}
 
 	@Override
