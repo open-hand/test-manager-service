@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,9 +29,11 @@ public class TestCycleCaseDefectRelController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("增加缺陷")
 	@PostMapping
-	public ResponseEntity<TestCycleCaseDefectRelDTO> insert(@PathVariable(name = "project_id") Long projectId,
-															@RequestBody TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		return Optional.ofNullable(testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO))
+	public ResponseEntity<List<TestCycleCaseDefectRelDTO>> insert(@PathVariable(name = "project_id") Long projectId,
+																  @RequestBody List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
+		List<TestCycleCaseDefectRelDTO> dtos = new ArrayList<>();
+		testCycleCaseDefectRelDTO.forEach(v -> dtos.add(testCycleCaseDefectRelService.insert(v)));
+		return Optional.ofNullable(dtos)
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testDefect.insert"));
 
