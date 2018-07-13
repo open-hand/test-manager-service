@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import com.google.common.collect.Sets;
 import io.choerodon.agile.api.dto.IssueCommonDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
@@ -183,8 +184,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
 		final String[] lastRank = new String[1];
 		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
-
-		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()))
+		Set defectSets = Sets.newHashSet(searchDTO.getDefectStatus());
+		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()) && containsDefect(defectSets, v.getDefects()))
 				.forEach(u -> {
 					u.setExecuteId(null);
 					u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
@@ -196,5 +197,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 				});
 
 		return true;
+	}
+
+	private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelE> defects) {
+		for (TestCycleCaseDefectRelE v : defects) {
+			if (defectSet.contains(v.getIssueId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
