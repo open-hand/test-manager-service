@@ -70,7 +70,7 @@
         when 'folder' then cycle1.cycle_name
         end as folder_name
         FROM test_cycle_case cycle
-        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle
+        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
         where cycle.issue_id=#{issueId}
     </select>
 
