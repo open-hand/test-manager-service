@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -47,10 +48,11 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         testCycleCaseDefectRelE.setDefectType(defectType);
         List<TestCycleCaseDefectRelE> lists = testCycleCaseDefectRelE.querySelf();
         List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-
-        Map map = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getIssueNum));
+		List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
+		Map<Long, IssueInfoDTO> map = list.stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, Function.identity()));
+		//testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getIssueNum));
         lists.forEach(v -> {
-            v.setDefectName(map.get(v.getIssueId()).toString());
+			v.setDefectName(map.get(v.getIssueId()).getIssueNum());
         });
 
         return lists;
