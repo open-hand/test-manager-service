@@ -185,7 +185,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
 		final String[] lastRank = new String[1];
 		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
-		Set defectSets = Sets.newHashSet(searchDTO.getDefectStatus());
+		Long[] defectStatus = searchDTO.getDefectStatus();
+		Set defectSets = Sets.newHashSet();
+		if (defectStatus != null && defectStatus.length != 0) {
+			for (Long de : defectStatus) {
+				defectSets.add(de.longValue());
+			}
+		}
 		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()) && containsDefect(defectSets, v.getDefects()))
 				.forEach(u -> {
 					u.setExecuteId(null);
@@ -201,8 +207,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	}
 
 	private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelE> defects) {
+		if (defects.isEmpty()) {
+			return true;
+		}
 		for (TestCycleCaseDefectRelE v : defects) {
-			if (defectSet.contains(v.getIssueId())) {
+			if (defectSet.contains(v.getIssueId().longValue())) {
 				return true;
 			}
 		}
