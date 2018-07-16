@@ -157,7 +157,7 @@ public class TestCycleCaseController {
 		return Optional.ofNullable(
 				testCycleCaseService.countCaseNotRun(projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseNotRun"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
@@ -167,6 +167,6 @@ public class TestCycleCaseController {
 		return Optional.ofNullable(
 				testCycleCaseService.countCaseNotPlain(projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseNotPlain"));
 	}
 }

@@ -46,7 +46,7 @@ public class TestCaseController {
 
         return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
 	@Permission(level = ResourceLevel.PROJECT)
@@ -57,7 +57,7 @@ public class TestCaseController {
 
 		return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
@@ -71,7 +71,7 @@ public class TestCaseController {
 
 		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, pageRequest))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
@@ -82,7 +82,7 @@ public class TestCaseController {
 
 		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
 	}
 
 
