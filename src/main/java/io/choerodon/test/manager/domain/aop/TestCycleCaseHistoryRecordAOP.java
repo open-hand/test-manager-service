@@ -174,6 +174,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
 		historyDTO.setOldValue(FIELD_NULL);
 		historyDTO.setNewValue(testCycleCaseDefectRelDTO.getDefectName());
+		testCycleCaseHistoryService.insert(historyDTO);
 
 	}
 
@@ -186,5 +187,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
 		historyDTO.setOldValue(testCycleCaseDefectRelDTO.getDefectName());
 		historyDTO.setNewValue(FIELD_NULL);
+		testCycleCaseHistoryService.insert(historyDTO);
+
 	}
 }
