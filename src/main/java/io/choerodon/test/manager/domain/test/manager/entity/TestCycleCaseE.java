@@ -60,6 +60,8 @@ public class TestCycleCaseE {
 
     private String IssueSummary;
 
+    private String IssueColor;
+
     private String folderName;
 
 //    private List<TestCycleCaseStepE> testCycleCaseStepES;
@@ -213,6 +215,14 @@ public class TestCycleCaseE {
 
     public void setTestCycleCaseRepository(TestCycleCaseRepository testCycleCaseRepository) {
         this.testCycleCaseRepository = testCycleCaseRepository;
+    }
+
+    public String getIssueColor() {
+        return IssueColor;
+    }
+
+    public void setIssueColor(String issueColor) {
+        IssueColor = issueColor;
     }
 
     public String getExecutionStatusName() {

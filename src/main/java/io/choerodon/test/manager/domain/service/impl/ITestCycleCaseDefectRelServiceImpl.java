@@ -72,6 +72,7 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		lists.forEach(v -> {
 			v.setDefectName(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getIssueNum());
 			v.setDefectStatus(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusName());
+			v.setDefectColor(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusColor());
 		});
 
 		return lists;

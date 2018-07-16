@@ -12,6 +12,7 @@ public class TestCycleCaseDefectRelDTO {
     private Long issueId;
 	private String defectName;
 	private String defectStatus;
+	private String defectColor;
     private Long objectVersionNumber;
 
     public Long getId() {
@@ -68,5 +69,13 @@ public class TestCycleCaseDefectRelDTO {
 
 	public void setDefectStatus(String defectStatus) {
 		this.defectStatus = defectStatus;
+	}
+
+	public String getDefectColor() {
+		return defectColor;
+	}
+
+	public void setDefectColor(String defectColor) {
+		this.defectColor = defectColor;
 	}
 }

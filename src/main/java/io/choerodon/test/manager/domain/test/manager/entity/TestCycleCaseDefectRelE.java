@@ -26,6 +26,7 @@ public class TestCycleCaseDefectRelE {
     private Long issueId;
     private String defectName;
     private String defectStatus;
+    private String defectColor;
     private Long objectVersionNumber;
 
     @Autowired
@@ -113,5 +114,13 @@ public class TestCycleCaseDefectRelE {
 
     public void setTestCycleCaseDefectRelRepository(TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository) {
         this.testCycleCaseDefectRelRepository = testCycleCaseDefectRelRepository;
+    }
+
+    public String getDefectColor() {
+        return defectColor;
+    }
+
+    public void setDefectColor(String defectColor) {
+        this.defectColor = defectColor;
     }
 }

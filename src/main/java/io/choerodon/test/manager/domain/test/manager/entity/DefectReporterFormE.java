@@ -93,6 +93,7 @@ public class DefectReporterFormE {
 			v.setIssueName(d1.getIssueNum());
 			v.setIssueSummary(d1.getSummary());
 			v.setIssueStatus(d1.getStatusName());
+			v.setIssueColor(d1.getStatusColor());
 		});
 
 		testCycleCaseStepES.forEach(v -> {
@@ -100,6 +101,7 @@ public class DefectReporterFormE {
 			v.setIssueName(d1.getIssueNum());
 			v.setIssueStatus(d1.getStatusName());
 			v.setIssueSummary(d1.getSummary());
+			v.setIssueColor(d1.getStatusColor());
 		});
 
 		return this;

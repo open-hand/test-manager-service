@@ -53,6 +53,9 @@ public class TestCycleCaseStepE {
 	private String IssueStatus;
 
 	private String IssueSummary;
+
+	private String IssueColor;
+
     @Autowired
     private TestCycleCaseStepRepository testCycleCaseStepRepository;
 
@@ -223,5 +226,13 @@ public class TestCycleCaseStepE {
 
 	public void setIssueSummary(String issueSummary) {
 		IssueSummary = issueSummary;
+	}
+
+	public String getIssueColor() {
+		return IssueColor;
+	}
+
+	public void setIssueColor(String issueColor) {
+		IssueColor = issueColor;
 	}
 }
