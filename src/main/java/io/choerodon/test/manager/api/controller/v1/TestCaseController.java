@@ -50,7 +50,7 @@ public class TestCaseController {
     }
 
 	@Permission(level = ResourceLevel.PROJECT)
-	@ApiOperation("生成报表从issue到缺陷")
+	@ApiOperation("通过IssueId生成issue到缺陷的报表")
 	@PostMapping("/get/reporter/from/issue/by/issueId")
 	public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
 																@RequestBody Long[] issueIds) {
@@ -75,8 +75,8 @@ public class TestCaseController {
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
-	@ApiOperation("生成报表从issue到缺陷")
-	@PostMapping("/get/reporter/from/issue/by/issueId/by/issueId")
+	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+	@PostMapping("/get/reporter/from/defect/by/issueId")
 	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
 													@RequestBody Long[] issueIds) {
 
