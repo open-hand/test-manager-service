@@ -77,8 +77,8 @@ public class TestCaseController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
 	@PostMapping("/get/reporter/from/defect/by/issueId")
-	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
-													@RequestBody Long[] issueIds) {
+	public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
+														@RequestBody Long[] issueIds) {
 
 		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
