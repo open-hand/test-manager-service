@@ -42,7 +42,7 @@ public class TestCycleCaseDefectRelController {
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除缺陷")
 	@DeleteMapping
-	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
+	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId, @RequestBody
 										   TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
 		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
 		return new ResponseEntity<>(true, HttpStatus.OK);
