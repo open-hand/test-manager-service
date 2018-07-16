@@ -25,6 +25,7 @@ public class TestCycleCaseDefectRelE {
     private Long defectLinkId;
     private Long issueId;
     private String defectName;
+    private String defectStatus;
     private Long objectVersionNumber;
 
     @Autowired
@@ -88,6 +89,14 @@ public class TestCycleCaseDefectRelE {
 
     public String getDefectName() {
         return defectName;
+    }
+
+    public String getDefectStatus() {
+        return defectStatus;
+    }
+
+    public void setDefectStatus(String defectStatus) {
+        this.defectStatus = defectStatus;
     }
 
     public void setDefectName(String defectName) {
