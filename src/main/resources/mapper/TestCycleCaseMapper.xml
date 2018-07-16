@@ -101,7 +101,7 @@
         SELECT
         count( DISTINCT ( issue_id ) )
         FROM
-        test_cycle_case and cycle_id in
+        test_cycle_case where cycle_id in
         <foreach item="item" index="index" collection="ids"
                  open="(" separator="," close=")">
             #{item}
