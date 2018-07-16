@@ -150,4 +150,23 @@ public class TestCycleCaseController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
 	}
 
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("统计未执行测试")
+	@GetMapping("/countCaseNotRun")
+	public ResponseEntity countCaseNotRun(@PathVariable(name = "project_id") Long projectId) {
+		return Optional.ofNullable(
+				testCycleCaseService.countCaseNotRun(projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("统计未计划测试")
+	@GetMapping("/countCaseNotPlain")
+	public ResponseEntity countCaseNotPlain(@PathVariable(name = "project_id") Long projectId) {
+		return Optional.ofNullable(
+				testCycleCaseService.countCaseNotPlain(projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
+	}
 }

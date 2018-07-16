@@ -87,6 +87,27 @@
         </foreach>
     </select>
 
+    <select id="countCaseNotRun" resultType="java.lang.Long">
+        select count(*) from test_cycle_case
+        left join test_status st on execution_status=st.status_id
+        where st.status_name='未执行' and cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="countCaseNotPlain" resultType="java.lang.Long">
+        SELECT
+        count( DISTINCT ( issue_id ) )
+        FROM
+        test_cycle_case and cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>
 
 

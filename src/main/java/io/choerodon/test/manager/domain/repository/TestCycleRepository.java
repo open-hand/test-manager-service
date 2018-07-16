@@ -28,4 +28,6 @@ public interface TestCycleRepository {
 	List<TestCycleE> filter(Map parameters);
 
 	List<TestCycleE> getCyclesByVersionId(Long versionId);
+
+	List<Long> selectCyclesInVersions(Long[] versionIds);
 }

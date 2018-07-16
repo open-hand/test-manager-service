@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
@@ -41,6 +42,12 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	@Autowired
+	TestCycleCaseRepository testCycleCaseRepository;
+
+	@Autowired
+	ProductionVersionClient productionVersionClient;
 
     @Override
     public void delete(TestCycleCaseE testCycleCaseE) {
@@ -112,5 +119,19 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	public List<TestCycleCaseE> queryByIssue(Long versionId) {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		return testCycleCaseE.queryByIssue(versionId);
+	}
+
+	@Override
+	public Long countCaseNotRun(Long projectId) {
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+		return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
+	}
+
+	@Override
+	public Long countCaseNotPlain(Long projectId) {
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+		return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
 	}
 }

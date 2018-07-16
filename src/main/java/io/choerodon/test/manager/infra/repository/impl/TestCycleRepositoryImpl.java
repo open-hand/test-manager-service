@@ -10,6 +10,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -84,9 +85,15 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 
 	}
 
+    @Override
 	public List<TestCycleE> getCyclesByVersionId(Long versionId) {
 		return ConvertHelper.convertList(cycleMapper.getCyclesByVersionId(versionId), TestCycleE.class);
 	}
+
+    @Override
+    public List<Long> selectCyclesInVersions(Long[] versionIds) {
+        return cycleMapper.selectCyclesInVersions(versionIds);
+    }
 
 
 }

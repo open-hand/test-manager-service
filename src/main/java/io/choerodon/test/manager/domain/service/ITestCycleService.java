@@ -29,6 +29,8 @@ public interface ITestCycleService {
 	List<TestCycleE> queryCycleWithBar(Long[] versionId);
 
 	List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds);
+
+	List<Long> selectCyclesInVersions(Long[] versionIds);
 	/**
 	 * 查找Cycle存放默认路径
 	 *

@@ -47,4 +47,7 @@ public interface TestCycleCaseService {
 	boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO);
 
 
+	Long countCaseNotRun(Long projectId);
+
+	Long countCaseNotPlain(Long projectId);
 }

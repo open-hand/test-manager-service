@@ -35,4 +35,8 @@ public interface ITestCycleCaseService {
 	List<Long> getActiveCase(Long range, Long projectId, String day);
 
 	List<TestCycleCaseE> queryByIssue(Long versionId);
+
+	Long countCaseNotRun(Long projectId);
+
+	Long countCaseNotPlain(Long projectId);
 }

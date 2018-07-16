@@ -16,6 +16,7 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	@Autowired
 	ITestCycleCaseService iTestCycleCaseService;
 
+	@Autowired
+	TestCycleMapper testCycleMapper;
 
 	@Override
 	public TestCycleE insert(TestCycleE testCycleE) {
@@ -163,5 +166,10 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		return parentCycle;
 	}
 
+
+	@Override
+	public List<Long> selectCyclesInVersions(Long[] versionIds) {
+		return testCycleMapper.selectCyclesInVersions(versionIds);
+	}
 
 }

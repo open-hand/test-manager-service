@@ -30,4 +30,8 @@ public interface TestCycleCaseRepository {
 
     List<TestCycleCaseE> queryCycleCaseForReporter(Long[] issueIds);
 
+    Long countCaseNotRun(Long[] cycleIds);
+
+    Long countCaseNotPlain(Long[] cycleIds);
+
 }

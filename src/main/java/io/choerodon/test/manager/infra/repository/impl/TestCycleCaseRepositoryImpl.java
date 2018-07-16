@@ -103,4 +103,15 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	}
 
+	@Override
+	public Long countCaseNotRun(Long[] cycleIds) {
+		return testCycleCaseMapper.countCaseNotRun(cycleIds);
+	}
+
+	@Override
+	public Long countCaseNotPlain(Long[] cycleIds) {
+		return testCycleCaseMapper.countCaseNotPlain(cycleIds);
+
+	}
+
 }
