@@ -43,7 +43,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         List<TestCaseStepDTO> testCaseStepDTO = issueCreateDTO.getTestCaseStepDTOS();
         IssueDTO testCaseDto = responseEntity.getBody();
         testCaseStepDTO.forEach(v -> v.setIssueId(testCaseDto.getIssueId()));
-		testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(testCaseStepDTO), TestCaseStepDTO.class);
+		testCaseStepDTO = ConvertHelper.convertList(iTestCaseStepService.batchInsertStep(testCaseStepDTO, projectId), TestCaseStepDTO.class);
         testCaseDto.setTestCaseStepDTOS(testCaseStepDTO);
         return testCaseDto;
     }

@@ -45,7 +45,7 @@ public class TestCaseStepController {
 	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@PathVariable(name = "project_id") Long projectId,
 															@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
 
-		return Optional.ofNullable(iTestCaseStepService.batchInsertStep(testCaseStepDTO))
+		return Optional.ofNullable(iTestCaseStepService.batchInsertStep(testCaseStepDTO, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
@@ -55,7 +55,7 @@ public class TestCaseStepController {
     @PutMapping("/change")
 	public ResponseEntity<Boolean> changeOneStep(@PathVariable(name = "project_id") Long projectId,
 												 @RequestBody TestCaseStepDTO testCaseStepDTO) {
-        iTestCaseStepService.changeStep(testCaseStepDTO);
+		iTestCaseStepService.changeStep(testCaseStepDTO, projectId);
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
@@ -74,7 +74,7 @@ public class TestCaseStepController {
 	@PostMapping("/clone")
 	public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
 								@RequestBody TestCaseStepDTO testCaseStepDTO) {
-		return Optional.ofNullable(iTestCaseStepService.clone(testCaseStepDTO))
+		return Optional.ofNullable(iTestCaseStepService.clone(testCaseStepDTO, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.clone"));
 	}

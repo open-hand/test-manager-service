@@ -63,7 +63,6 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		map.put("issueIds", issueLists);
 		searchDTO.setOtherArgs(map);
 		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
-		;
 
 		Map defectMap = new HashMap();
 		for (IssueListDTO issueInfoDTO : issueResponse.getBody()) {
@@ -78,8 +77,4 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		return lists;
     }
 
-
-	public void populateDefects(List<TestCycleCaseE> testCycleCaseES) {
-
-	}
 }

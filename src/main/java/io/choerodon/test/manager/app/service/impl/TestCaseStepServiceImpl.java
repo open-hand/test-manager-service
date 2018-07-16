@@ -1,11 +1,19 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
+import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +31,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	ITestCaseStepService iTestCaseStepService;
 
 
+
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void removeStep(TestCaseStepDTO testCaseStepDTO) {
@@ -37,25 +46,39 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO) {
+	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO, Long projectId) {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
-			testCaseStepE.createOneStep();
+			runCycleCaseStep(testCaseStepE.createOneStep(), projectId);
 		} else {
 			testCaseStepE.changeOneStep();
 		}
 		return ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class);
 	}
 
+	private void runCycleCaseStep(TestCaseStepE testCaseStepE, Long projectId) {
+		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
+		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
+		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
+		TestCycleCaseStepE testCycleCaseStepE = new TestCycleCaseStepEFactory().create();
+		Long status = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE_STEP);
+		testCaseStepES.forEach(v -> {
+			testCycleCaseStepE.setExecuteId(v.getExecuteId());
+			testCycleCaseStepE.setStepId(testCaseStepE.getStepId());
+			testCycleCaseStepE.setStepStatus(status);
+			testCycleCaseStepE.addSelf();
+		});
+	}
+
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO) {
+	public List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO, Long projectId) {
 		List<TestCaseStepDTO> result = new ArrayList<>();
 		String[] rank = new String[1];
 		testCaseStepDTO.forEach(v -> {
 			v.setLastRank(rank[0]);
-			TestCaseStepDTO temp = changeStep(v);
+			TestCaseStepDTO temp = changeStep(v, projectId);
 			rank[0] = temp.getRank();
 			result.add(temp);
 		});
@@ -64,11 +87,11 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
 	@Transactional
 	@Override
-	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO) {
+	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId) {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		testCaseStepE.setStepId(null);
 		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
-		return ((TestCaseStepService) AopContext.currentProxy()).changeStep(testCaseStepDTO);
+		return ((TestCaseStepService) AopContext.currentProxy()).changeStep(testCaseStepDTO, projectId);
 
 	}
 

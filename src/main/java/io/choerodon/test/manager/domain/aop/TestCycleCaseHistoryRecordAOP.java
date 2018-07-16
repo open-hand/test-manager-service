@@ -186,9 +186,8 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	}
 
-	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))")
-	public void recordDefectDelete(JoinPoint jp) {
-		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = (TestCycleCaseDefectRelDTO) jp.getArgs()[0];
+	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))&& args(testCycleCaseDefectRelDTO,projectId)")
+	public Object recordDefectDelete(ProceedingJoinPoint pjp, TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) throws Throwable {
 		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
 		testCycleCaseDefectRelE.setId(testCycleCaseDefectRelDTO.getId());
 		testCycleCaseDefectRelE = testCycleCaseDefectRelE.querySelf().get(0);
@@ -197,11 +196,12 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
 		List<Long> defectIds = new ArrayList<>();
 		defectIds.add(testCycleCaseDefectRelE.getIssueId());
-		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
+		String defectName = testCaseFeignClient.listByIssueIds(projectId, defectIds).getBody().get(0).getIssueNum();
 
 		historyDTO.setOldValue(defectName);
 		historyDTO.setNewValue(FIELD_NULL);
+		Object o = pjp.proceed();
 		testCycleCaseHistoryService.insert(historyDTO);
-
+		return o;
 	}
 }
