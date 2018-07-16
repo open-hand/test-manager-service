@@ -32,7 +32,7 @@ public class TestCycleCaseDefectRelController {
 	public ResponseEntity<List<TestCycleCaseDefectRelDTO>> insert(@PathVariable(name = "project_id") Long projectId,
 																  @RequestBody List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
 		List<TestCycleCaseDefectRelDTO> dtos = new ArrayList<>();
-		testCycleCaseDefectRelDTO.forEach(v -> dtos.add(testCycleCaseDefectRelService.insert(v)));
+		testCycleCaseDefectRelDTO.forEach(v -> dtos.add(testCycleCaseDefectRelService.insert(v, projectId)));
 		return Optional.ofNullable(dtos)
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testDefect.insert"));
@@ -41,10 +41,12 @@ public class TestCycleCaseDefectRelController {
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("删除缺陷")
-	@DeleteMapping
-	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId, @RequestBody
-										   TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO);
+	@DeleteMapping("/delete/{defectId}")
+	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
+										   @PathVariable(name = "defectId") Long defectId) {
+		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
+		testCycleCaseDefectRelDTO.setId(defectId);
+		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO, projectId);
 		return new ResponseEntity<>(true, HttpStatus.OK);
 	}
 }

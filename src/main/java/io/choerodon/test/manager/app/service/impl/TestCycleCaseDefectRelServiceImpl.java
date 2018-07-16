@@ -21,13 +21,13 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+	public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) {
 		return ConvertHelper.convert(iTestCycleCaseDefectRelService.insert(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+	public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) {
 		iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
 	}

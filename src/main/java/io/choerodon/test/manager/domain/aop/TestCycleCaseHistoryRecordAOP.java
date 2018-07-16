@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.aop;
 
+import com.google.common.collect.Lists;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -17,6 +18,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseHistoryEFactory;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +59,9 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	@Autowired
 	ITestCycleCaseService testCycleCaseService;
+
+	@Autowired
+	TestCaseFeignClient testCaseFeignClient;
 
 	@Autowired
 	UserService userService;
@@ -173,7 +179,11 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setField(FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
 		historyDTO.setOldValue(FIELD_NULL);
-		historyDTO.setNewValue(testCycleCaseDefectRelDTO.getDefectName());
+		List<Long> defectIds = new ArrayList<>();
+		defectIds.add(testCycleCaseDefectRelDTO.getIssueId());
+		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
+
+		historyDTO.setNewValue(defectName);
 		testCycleCaseHistoryService.insert(historyDTO);
 
 	}
@@ -185,7 +195,11 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
-		historyDTO.setOldValue(testCycleCaseDefectRelDTO.getDefectName());
+		List<Long> defectIds = new ArrayList<>();
+		defectIds.add(testCycleCaseDefectRelDTO.getIssueId());
+		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
+
+		historyDTO.setOldValue(defectName);
 		historyDTO.setNewValue(FIELD_NULL);
 		testCycleCaseHistoryService.insert(historyDTO);
 
