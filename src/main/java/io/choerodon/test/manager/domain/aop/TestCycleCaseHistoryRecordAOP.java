@@ -11,11 +11,9 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseHistoryEFactory;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -191,12 +189,14 @@ public class TestCycleCaseHistoryRecordAOP {
 	@After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))")
 	public void recordDefectDelete(JoinPoint jp) {
 		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = (TestCycleCaseDefectRelDTO) jp.getArgs()[0];
-
+		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+		testCycleCaseDefectRelE.setId(testCycleCaseDefectRelDTO.getId());
+		testCycleCaseDefectRelE = testCycleCaseDefectRelE.querySelf().get(0);
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(FIELD_DEFECT);
-		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
+		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
 		List<Long> defectIds = new ArrayList<>();
-		defectIds.add(testCycleCaseDefectRelDTO.getIssueId());
+		defectIds.add(testCycleCaseDefectRelE.getIssueId());
 		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
 
 		historyDTO.setOldValue(defectName);
