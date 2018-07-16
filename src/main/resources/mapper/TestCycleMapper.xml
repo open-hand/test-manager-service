@@ -105,7 +105,7 @@
     </select>
 
 
-    <select id="selectCyclesInVersions" resultType="java.util.List">
+    <select id="selectCyclesInVersions" resultType="java.lang.Long">
         SELECT DISTINCT
         cycle_id
         FROM
