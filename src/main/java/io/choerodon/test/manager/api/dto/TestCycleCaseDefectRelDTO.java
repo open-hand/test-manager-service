@@ -11,6 +11,7 @@ public class TestCycleCaseDefectRelDTO {
     private Long defectLinkId;
     private Long issueId;
 	private String defectName;
+	private String defectStatus;
     private Long objectVersionNumber;
 
     public Long getId() {
@@ -59,5 +60,13 @@ public class TestCycleCaseDefectRelDTO {
 
 	public void setDefectName(String defectName) {
 		this.defectName = defectName;
+	}
+
+	public String getDefectStatus() {
+		return defectStatus;
+	}
+
+	public void setDefectStatus(String defectStatus) {
+		this.defectStatus = defectStatus;
 	}
 }
