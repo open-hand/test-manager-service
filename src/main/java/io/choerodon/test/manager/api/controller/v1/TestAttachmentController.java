@@ -50,7 +50,7 @@ public class TestAttachmentController {
 
 	@Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除附件")
-	@DeleteMapping("/delete/bucket/{bucketName}/attch/{attachId}")
+	@DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
 	public void removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,
 								 @PathVariable(name = "project_id") Long projectId) {
         testCycleCaseAttachmentRelService.delete(bucketName, attachId);
