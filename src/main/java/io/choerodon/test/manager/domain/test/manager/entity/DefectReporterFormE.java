@@ -107,4 +107,60 @@ public class DefectReporterFormE {
 		return this;
 	}
 
+
+	public String getDefectName() {
+		return defectName;
+	}
+
+	public void setDefectName(String defectName) {
+		this.defectName = defectName;
+	}
+
+	public String getDefectStatus() {
+		return defectStatus;
+	}
+
+	public void setDefectStatus(String defectStatus) {
+		this.defectStatus = defectStatus;
+	}
+
+	public Long getDefectId() {
+		return defectId;
+	}
+
+	public void setDefectId(Long defectId) {
+		this.defectId = defectId;
+	}
+
+	public String getDefectColor() {
+		return defectColor;
+	}
+
+	public void setDefectColor(String defectColor) {
+		this.defectColor = defectColor;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public List<TestCycleCaseE> getTestCycleCaseES() {
+		return testCycleCaseES;
+	}
+
+	public void setTestCycleCaseES(List<TestCycleCaseE> testCycleCaseES) {
+		this.testCycleCaseES = testCycleCaseES;
+	}
+
+	public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
+		return testCycleCaseStepES;
+	}
+
+	public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
+		this.testCycleCaseStepES = testCycleCaseStepES;
+	}
 }
