@@ -36,5 +36,17 @@
         order by rank
     </select>
 
+    <select id="getLastedRank" resultType="java.lang.String">
+SELECT
+	rank
+FROM
+	test_case_step
+WHERE
+	issue_id = #{issueId}
+ORDER BY
+	rank DESC
+	LIMIT 1
+    </select>
+
 
 </mapper>

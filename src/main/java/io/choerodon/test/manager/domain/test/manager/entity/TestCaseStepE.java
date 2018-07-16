@@ -47,14 +47,7 @@ public class TestCaseStepE {
     }
 
     public String getLastedStepRank() {
-        TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
-        testCaseStepE.setIssueId(this.issueId);
-        List<TestCaseStepE> list = testCaseStepE.querySelf();
-        if (list.size() == 0) {
-            return null;
-        } else {
-            return list.get(list.size() - 1).getRank();
-        }
+        return testCaseStepRepository.getLastedRank(issueId);
     }
 
 	public TestCaseStepE changeOneStep() {

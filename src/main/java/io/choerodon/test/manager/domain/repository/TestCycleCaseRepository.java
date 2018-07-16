@@ -39,4 +39,6 @@ public interface TestCycleCaseRepository {
 
     void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 
+    String getLastedRank(Long cycleId);
+
 }

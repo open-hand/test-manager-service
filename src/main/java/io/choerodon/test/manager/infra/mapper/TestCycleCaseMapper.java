@@ -26,4 +26,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 	Long countCaseSum(@Param("ids") Long[] cycleIds);
 
 	List<TestCycleCaseDO> validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
+
+	String getLastedRank(@Param("cycleId") Long cycleId);
 }

@@ -53,4 +53,8 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
                 .query(testCaseStepDO), TestCaseStepE.class);
     }
 
+    @Override
+    public String getLastedRank(Long issueId) {
+        return testCaseStepMapper.getLastedRank(issueId);
+    }
 }

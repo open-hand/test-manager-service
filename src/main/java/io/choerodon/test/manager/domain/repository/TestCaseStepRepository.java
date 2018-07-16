@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.repository;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface TestCaseStepRepository {
     TestCaseStepE update(TestCaseStepE testCaseStepE);
 
     List<TestCaseStepE> query(TestCaseStepE testCaseStepE);
+
+    String getLastedRank(@Param("issueId") Long issueId);
 
 //    public TestCaseStepE queryOne(TestCaseStepE testCaseStepE);
 }

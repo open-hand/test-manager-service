@@ -106,9 +106,9 @@ public class TestCycleCaseDTO {
 	}
 
 	public Long getAssignedTo() {
-		if (assignedTo == null) {
-			return new Long(0);
-		}
+//		if (assignedTo == null) {
+//			return new Long(0);
+//		}
         return assignedTo;
     }
 

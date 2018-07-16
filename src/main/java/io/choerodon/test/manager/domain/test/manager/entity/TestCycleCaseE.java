@@ -64,8 +64,6 @@ public class TestCycleCaseE {
 
     private String folderName;
 
-//    private List<TestCycleCaseStepE> testCycleCaseStepES;
-
     private List<TestCycleCaseDefectRelE> defects;
 
 
@@ -86,13 +84,7 @@ public class TestCycleCaseE {
     }
 
 	public String getLastedRank(Long cycleId) {
-		TestCycleCaseE e = new TestCycleCaseE();
-		e.setCycleId(cycleId);
-		List<TestCycleCaseE> list = testCycleCaseRepository.query(e);
-		if (list.size() == 0) {
-			return null;
-		}
-		return list.get(list.size() - 1).getRank();
+        return testCycleCaseRepository.getLastedRank(cycleId);
 	}
 
 
