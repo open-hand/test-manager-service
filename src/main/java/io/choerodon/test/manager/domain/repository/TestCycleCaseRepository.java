@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.repository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,5 +34,7 @@ public interface TestCycleCaseRepository {
     Long countCaseNotRun(Long[] cycleIds);
 
     Long countCaseNotPlain(Long[] cycleIds);
+
+    void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 
 }

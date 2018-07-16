@@ -108,6 +108,13 @@
         </foreach>
     </select>
 
+
+    <select id="validateCycleCaseInCycle" resultMap="BaseResultMap">
+        select * from test_cycle_case case1
+        left join test_cycle cycle on cycle.cycle_id=case1.cycle_id
+        where cycle.type != 'temp' and case1.cycle_id=#{cycleId} and case1.issue_id=#{issueId}
+    </select>
+
 </mapper>
 
 

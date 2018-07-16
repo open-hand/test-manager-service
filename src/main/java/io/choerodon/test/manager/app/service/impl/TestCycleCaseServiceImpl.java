@@ -153,6 +153,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		TestStatusE e = new TestStatusE();
 		testCycleCaseDTO.setExecutionStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE));
 		testCycleCaseDTO.setLastRank(TestCycleCaseEFactory.create().getLastedRank(testCycleCaseDTO.getCycleId()));
+		iTestCycleCaseService.validateCycleCaseInCycle(testCycleCaseDTO.getCycleId(), testCycleCaseDTO.getIssueId());
 		return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
 	}
 

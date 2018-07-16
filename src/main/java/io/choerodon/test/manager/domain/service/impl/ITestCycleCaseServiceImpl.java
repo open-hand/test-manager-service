@@ -8,6 +8,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
@@ -133,5 +134,13 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
 		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 		return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
+	}
+
+	@Override
+	public void validateCycleCaseInCycle(Long cycleId, Long issueId) {
+		TestCycleCaseDO testCycleCase = new TestCycleCaseDO();
+		testCycleCase.setCycleId(cycleId);
+		testCycleCase.setIssueId(issueId);
+		testCycleCaseRepository.validateCycleCaseInCycle(testCycleCase);
 	}
 }

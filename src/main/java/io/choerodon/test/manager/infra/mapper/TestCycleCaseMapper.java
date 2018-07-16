@@ -22,4 +22,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 	Long countCaseNotRun(@Param("ids") Long[] cycleIds);
 
 	Long countCaseNotPlain(@Param("ids") Long[] cycleIds);
+
+	List<TestCycleCaseDO> validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 }

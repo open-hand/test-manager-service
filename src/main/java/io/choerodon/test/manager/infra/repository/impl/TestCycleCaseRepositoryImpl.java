@@ -114,4 +114,11 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	}
 
+	@Override
+	public void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase) {
+		if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCase).size() > 0) {
+			throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
+		}
+	}
+
 }
