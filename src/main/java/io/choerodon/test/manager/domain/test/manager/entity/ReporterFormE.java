@@ -55,13 +55,21 @@ public class ReporterFormE {
 			this.issueId = issueId;
 			this.issueName = issueName;
 			this.summary = summary;
-			testCycleCaseES = ((TestCycleCaseService) ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class)).queryByIssuse(issueId, projectId);
+			testCycleCaseES = ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class).queryByIssuse(issueId, projectId);
 			testCycleCaseES.forEach(v -> {
 				List defects = v.getDefects();
 				if (defects != null) {
 					defectCount += defects.size();
 				}
 			});
+		}
+
+		public List<TestCycleCaseDTO> getTestCycleCaseES() {
+			return testCycleCaseES;
+		}
+
+		public void setTestCycleCaseES(List<TestCycleCaseDTO> testCycleCaseES) {
+			this.testCycleCaseES = testCycleCaseES;
 		}
 
 		public Long getIssueId() {
