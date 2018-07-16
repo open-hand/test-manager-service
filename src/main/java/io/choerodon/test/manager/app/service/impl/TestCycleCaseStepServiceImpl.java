@@ -70,7 +70,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects) {
+    public TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects, Long projectId) {
         files.forEach(v -> {
             testCycleCaseAttachmentRelService.upload(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getOriginalFilename(), v, testCycleCaseStepDTO.getStepId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CASE_STEP, null);
         });
@@ -78,7 +78,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
         defects.forEach(u -> {
             if (u.getId() == null) {
-                testCycleCaseDefectRelService.insert(u);
+                testCycleCaseDefectRelService.insert(u, projectId);
             }
         });
 

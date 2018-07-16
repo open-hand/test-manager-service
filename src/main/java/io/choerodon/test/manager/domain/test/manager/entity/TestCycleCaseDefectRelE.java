@@ -34,6 +34,10 @@ public class TestCycleCaseDefectRelE {
         return testCycleCaseDefectRelRepository.query(this);
     }
 
+	public Page<TestCycleCaseDefectRelE> querySelf(PageRequest pageRequest) {
+		return testCycleCaseDefectRelRepository.query(this, pageRequest);
+	}
+
     public TestCycleCaseDefectRelE addSelf() {
         return testCycleCaseDefectRelRepository.insert(this);
     }

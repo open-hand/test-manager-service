@@ -12,6 +12,8 @@
         <id column="test_step" property="testStep"/>
         <id column="test_data" property="testData"/>
         <id column="step_status" property="stepStatus"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="issue_id" property="issueId"/>
         <id column="expected_result" property="expectedResult"/>
         <collection property="caseAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
@@ -55,5 +57,17 @@
 
     <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">
         SELECT count(1) from test_cycle_case_step where execute_id=#{executeId};
+    </select>
+
+    <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
+        select step.step_status,step.execute_step_id,case1.issue_id,cycle.cycle_name
+        from test_cycle_case_step step
+        left join test_cycle_case case1 on case1.execute_id=step.execute_id
+        left join test_cycle cycle on case1.cycle_id=cycle.cycle_id
+        where step.execute_step_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

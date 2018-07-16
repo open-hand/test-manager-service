@@ -45,13 +45,24 @@ public class TestCycleCaseStepE {
 
     private List<TestCycleCaseDefectRelE> defects;
 
+	private String cycleName;
 
+	private Long issueId;
+	private String IssueName;
+
+	private String IssueStatus;
+
+	private String IssueSummary;
     @Autowired
     private TestCycleCaseStepRepository testCycleCaseStepRepository;
 
     public Page<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
         return testCycleCaseStepRepository.query(this, pageRequest);
     }
+
+	public TestCycleCaseStepE queryOne() {
+		return testCycleCaseStepRepository.queryOne(this);
+	}
 
 //    public List<TestCycleCaseStepE> querySelf() {
 //        return testCycleCaseStepRepository.query(this);
@@ -174,4 +185,43 @@ public class TestCycleCaseStepE {
         this.defects = defects;
     }
 
+	public String getCycleName() {
+		return cycleName;
+	}
+
+	public void setCycleName(String cycleName) {
+		this.cycleName = cycleName;
+	}
+
+	public Long getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(Long issueId) {
+		this.issueId = issueId;
+	}
+
+	public String getIssueName() {
+		return IssueName;
+	}
+
+	public void setIssueName(String issueName) {
+		IssueName = issueName;
+	}
+
+	public String getIssueStatus() {
+		return IssueStatus;
+	}
+
+	public void setIssueStatus(String issueStatus) {
+		IssueStatus = issueStatus;
+	}
+
+	public String getIssueSummary() {
+		return IssueSummary;
+	}
+
+	public void setIssueSummary(String issueSummary) {
+		IssueSummary = issueSummary;
+	}
 }

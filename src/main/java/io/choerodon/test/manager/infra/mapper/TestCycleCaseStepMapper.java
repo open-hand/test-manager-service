@@ -14,4 +14,6 @@ public interface TestCycleCaseStepMapper extends BaseMapper<TestCycleCaseStepDO>
     List<TestCycleCaseStepDO> queryWithTestCaseStep(@Param("dto") TestCycleCaseStepDO testCycleCaseStepDO, @Param("page") int page, @Param("pageSize") int pageSize);
 
     Long queryWithTestCaseStep_count(@Param("executeId") Long executeId);
+
+    List<TestCycleCaseStepDO> queryCycleCaseForReporter(@Param("ids") Long[] ids);
 }

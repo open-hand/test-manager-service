@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.repository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -26,4 +27,7 @@ public interface TestCycleCaseRepository {
     List<TestCycleCaseE> filter(Map map);
 
 	List<TestCycleCaseE> queryByIssue(Long issueId);
+
+    List<TestCycleCaseE> queryCycleCaseForReporter(Long[] issueIds);
+
 }

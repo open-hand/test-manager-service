@@ -46,5 +46,5 @@ public interface TestCycleCaseStepService {
      */
     void deleteByTestCycleCase(TestCycleCaseDTO testCycleCaseDTO);
 
-    TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects);
+    TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects, Long projectId);
 }

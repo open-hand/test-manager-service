@@ -33,6 +33,12 @@ public class TestCycleCaseStepDO extends AuditDomain {
     private String expectedResult;
 
     @Transient
+    private String cycleName;
+
+    @Transient
+    private Long issueId;
+
+    @Transient
     private List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
     @Transient

@@ -12,6 +12,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -93,6 +94,12 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	public List<TestCycleCaseE> queryByIssue(Long issueId) {
 
 		return ConvertHelper.convertList(testCycleCaseMapper.queryByIssue(issueId), TestCycleCaseE.class);
+
+	}
+
+	@Override
+	public List<TestCycleCaseE> queryCycleCaseForReporter(Long[] issueIds) {
+		return ConvertHelper.convertList(testCycleCaseMapper.queryCycleCaseForReporter(issueIds), TestCycleCaseE.class);
 
 	}
 

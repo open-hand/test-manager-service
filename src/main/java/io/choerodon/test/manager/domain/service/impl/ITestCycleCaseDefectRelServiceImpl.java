@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import io.choerodon.agile.api.dto.IssueInfoDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +64,9 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 
 		return lists;
     }
+
+
+	public void populateDefects(List<TestCycleCaseE> testCycleCaseES) {
+
+	}
 }

@@ -96,7 +96,7 @@ public class TestCycleCaseStepController {
 		testCycleCaseStepDTO.setExecuteStepId(Long.valueOf(request.getParameter("executeStepId")));
 		testCycleCaseStepDTO.setComment(comment);
 		testCycleCaseStepDTO.setObjectVersionNumber(Long.valueOf(request.getParameter("objectVersionNumber")));
-		return Optional.ofNullable(testCycleCaseStepService.updateOneCase(files, testCycleCaseStepDTO, defects))
+		return Optional.ofNullable(testCycleCaseStepService.updateOneCase(files, testCycleCaseStepDTO, defects, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query"));
 	}

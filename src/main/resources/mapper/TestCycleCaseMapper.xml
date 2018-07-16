@@ -76,6 +76,17 @@
         where cycle.issue_id=#{issueId}
     </select>
 
+    <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.execution_status,cycle1.cycle_name,cycle.issue_id
+        FROM test_cycle_case cycle
+        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
+        where cycle.execute_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>
 
 

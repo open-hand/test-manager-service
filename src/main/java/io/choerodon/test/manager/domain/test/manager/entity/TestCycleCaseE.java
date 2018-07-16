@@ -54,6 +54,11 @@ public class TestCycleCaseE {
 
     private String cycleName;
 
+    private String IssueName;
+
+    private String IssueStatus;
+
+    private String IssueSummary;
 
     private String folderName;
 
@@ -264,5 +269,29 @@ public class TestCycleCaseE {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getIssueName() {
+        return IssueName;
+    }
+
+    public void setIssueName(String issueName) {
+        IssueName = issueName;
+    }
+
+    public String getIssueStatus() {
+        return IssueStatus;
+    }
+
+    public void setIssueStatus(String issueStatus) {
+        IssueStatus = issueStatus;
+    }
+
+    public String getIssueSummary() {
+        return IssueSummary;
+    }
+
+    public void setIssueSummary(String issueSummary) {
+        IssueSummary = issueSummary;
     }
 }

@@ -60,6 +60,32 @@ public class TestCaseController {
 				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
 	}
 
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("生成报表从缺陷到issue")
+	@PostMapping("/get/reporter/from/defect")
+	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
+													@ApiIgnore
+													@ApiParam(value = "分页信息", required = true)
+													@SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+
+
+		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, pageRequest))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("生成报表从issue到缺陷")
+	@PostMapping("/get/reporter/from/issue/by/issueId/by/issueId")
+	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
+													@RequestBody Long[] issueIds) {
+
+		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.Issue.createIssue"));
+	}
+
+
 //    @Permission(level = ResourceLevel.PROJECT)
 //    @ApiOperation("增加测试")
 //    @PostMapping
