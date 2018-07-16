@@ -169,4 +169,14 @@ public class TestCycleCaseController {
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseNotPlain"));
 	}
+
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("统计测试总数")
+	@GetMapping("/countCaseSum")
+	public ResponseEntity countCaseSum(@PathVariable(name = "project_id") Long projectId) {
+		return Optional.ofNullable(
+				testCycleCaseService.countCaseSum(projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseSum"));
+	}
 }

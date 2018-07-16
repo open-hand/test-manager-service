@@ -108,6 +108,16 @@
         </foreach>
     </select>
 
+    <select id="countCaseSum" resultType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM
+        test_cycle_case where cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
     <select id="validateCycleCaseInCycle" resultMap="BaseResultMap">
         select * from test_cycle_case case1

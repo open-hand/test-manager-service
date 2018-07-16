@@ -50,4 +50,6 @@ public interface TestCycleCaseService {
 	Long countCaseNotRun(Long projectId);
 
 	Long countCaseNotPlain(Long projectId);
+
+	Long countCaseSum(Long projectId);
 }

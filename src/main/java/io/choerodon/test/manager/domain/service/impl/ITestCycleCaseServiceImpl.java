@@ -137,6 +137,13 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	}
 
 	@Override
+	public Long countCaseSum(Long projectId) {
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+		return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
+	}
+
+	@Override
 	public void validateCycleCaseInCycle(Long cycleId, Long issueId) {
 		TestCycleCaseDO testCycleCase = new TestCycleCaseDO();
 		testCycleCase.setCycleId(cycleId);

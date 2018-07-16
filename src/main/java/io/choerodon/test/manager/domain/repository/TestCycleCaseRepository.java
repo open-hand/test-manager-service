@@ -35,6 +35,8 @@ public interface TestCycleCaseRepository {
 
     Long countCaseNotPlain(Long[] cycleIds);
 
+    Long countCaseSum(Long[] cycleIds);
+
     void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 
 }

@@ -218,4 +218,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	public Long countCaseNotPlain(Long projectId) {
 		return iTestCycleCaseService.countCaseNotPlain(projectId);
 	}
+
+	@Override
+	public Long countCaseSum(Long projectId) {
+		return iTestCycleCaseService.countCaseSum(projectId);
+	}
+
+
 }

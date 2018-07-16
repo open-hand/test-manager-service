@@ -115,6 +115,12 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	}
 
 	@Override
+	public Long countCaseSum(Long[] cycleIds) {
+		return testCycleCaseMapper.countCaseNotPlain(cycleIds);
+
+	}
+
+	@Override
 	public void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase) {
 		if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCase).size() > 0) {
 			throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
