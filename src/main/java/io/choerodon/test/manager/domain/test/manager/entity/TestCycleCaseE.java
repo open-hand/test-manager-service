@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -51,16 +52,17 @@ public class TestCycleCaseE {
 
     private Date lastUpdateDate;
 
+    private IssueInfosDTO issueInfosDTO;
 
     private String cycleName;
-
-    private String IssueName;
-
-    private String IssueStatus;
-
-    private String IssueSummary;
-
-    private String IssueColor;
+//
+//    private String IssueName;
+//
+//    private String IssueStatus;
+//
+//    private String IssueSummary;
+//
+//    private String IssueColor;
 
     private String folderName;
 
@@ -209,13 +211,6 @@ public class TestCycleCaseE {
         this.testCycleCaseRepository = testCycleCaseRepository;
     }
 
-    public String getIssueColor() {
-        return IssueColor;
-    }
-
-    public void setIssueColor(String issueColor) {
-        IssueColor = issueColor;
-    }
 
     public String getExecutionStatusName() {
         return executionStatusName;
@@ -273,27 +268,11 @@ public class TestCycleCaseE {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public String getIssueName() {
-        return IssueName;
+    public IssueInfosDTO getIssueInfosDTO() {
+        return issueInfosDTO;
     }
 
-    public void setIssueName(String issueName) {
-        IssueName = issueName;
-    }
-
-    public String getIssueStatus() {
-        return IssueStatus;
-    }
-
-    public void setIssueStatus(String issueStatus) {
-        IssueStatus = issueStatus;
-    }
-
-    public String getIssueSummary() {
-        return IssueSummary;
-    }
-
-    public void setIssueSummary(String issueSummary) {
-        IssueSummary = issueSummary;
+    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+        this.issueInfosDTO = issueInfosDTO;
     }
 }

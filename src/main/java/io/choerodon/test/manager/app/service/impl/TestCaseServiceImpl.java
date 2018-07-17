@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,16 @@ public class TestCaseServiceImpl implements TestCaseService {
 		pageRequest.setSize(999999999);
 		pageRequest.setPage(0);
 		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
+	}
+
+	@Override
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds) {
+		Assert.notNull(issueIds, "error.getIssueWithIssueIds.issueId.not.null");
+		SearchDTO searchDTO = new SearchDTO();
+		Map map = new HashMap();
+		map.put("issueIds", issueIds);
+		searchDTO.setOtherArgs(map);
+		return getIssueInfoMap(projectId, issueIds);
 	}
 
 

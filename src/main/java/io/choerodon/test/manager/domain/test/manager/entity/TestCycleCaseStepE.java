@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -37,6 +38,8 @@ public class TestCycleCaseStepE {
 
 	private Long stepStatus;
 
+	private Long issueId;
+
     private List<TestCycleCaseAttachmentRelE> caseAttachment;
 
 
@@ -47,14 +50,16 @@ public class TestCycleCaseStepE {
 
 	private String cycleName;
 
-	private Long issueId;
-	private String IssueName;
+	private IssueInfosDTO issueInfosDTO;
 
-	private String IssueStatus;
 
-	private String IssueSummary;
-
-	private String IssueColor;
+//	private String IssueName;
+//
+//	private String IssueStatus;
+//
+//	private String IssueSummary;
+//
+//	private String IssueColor;
 
     @Autowired
     private TestCycleCaseStepRepository testCycleCaseStepRepository;
@@ -196,43 +201,19 @@ public class TestCycleCaseStepE {
 		this.cycleName = cycleName;
 	}
 
+	public IssueInfosDTO getIssueInfosDTO() {
+		return issueInfosDTO;
+	}
+
+	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+		this.issueInfosDTO = issueInfosDTO;
+	}
+
 	public Long getIssueId() {
 		return issueId;
 	}
 
 	public void setIssueId(Long issueId) {
 		this.issueId = issueId;
-	}
-
-	public String getIssueName() {
-		return IssueName;
-	}
-
-	public void setIssueName(String issueName) {
-		IssueName = issueName;
-	}
-
-	public String getIssueStatus() {
-		return IssueStatus;
-	}
-
-	public void setIssueStatus(String issueStatus) {
-		IssueStatus = issueStatus;
-	}
-
-	public String getIssueSummary() {
-		return IssueSummary;
-	}
-
-	public void setIssueSummary(String issueSummary) {
-		IssueSummary = issueSummary;
-	}
-
-	public String getIssueColor() {
-		return IssueColor;
-	}
-
-	public void setIssueColor(String issueColor) {
-		IssueColor = issueColor;
 	}
 }

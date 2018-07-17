@@ -43,9 +43,9 @@ public class TestCaseStepE {
     private TestCaseStepRepository testCaseStepRepository;
 
 	public TestCaseStepE createOneStep() {
-        if (lastRank == null) {
-            lastRank = getLastedStepRank();
-        }
+//        if (lastRank == null) {
+//            lastRank = getLastedStepRank();
+//        }
 		setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
 		return addSelf();
     }

@@ -7,6 +7,8 @@ import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.impl.TestCaseServiceImpl;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
@@ -41,10 +43,13 @@ public class DefectReporterFormE {
 
 	TestCycleCaseStepRepository testCycleCaseStepRepository;
 
+	TestCaseService testCaseService;
+
 	public DefectReporterFormE(IssueListDTO issueListDTO) {
 		issueInfosDTO = new IssueInfosDTO(issueListDTO);
 		testCycleCaseRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseRepositoryImpl.class);
 		testCycleCaseStepRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseStepRepositoryImpl.class);
+		testCaseService = ApplicationContextHelper.getContext().getBean(TestCaseServiceImpl.class);
 	}
 
 	public DefectReporterFormE createReporter(TestCaseFeignClient testCaseFeignClient, Long projectId) {
@@ -73,30 +78,38 @@ public class DefectReporterFormE {
 		List<Long> id = new ArrayList<>();
 		id.addAll(testCycleCaseES.stream().map(v -> v.getIssueId()).collect(Collectors.toList()));
 		id.addAll(testCycleCaseStepES.stream().map(v -> v.getIssueId()).collect(Collectors.toList()));
-		SearchDTO searchDTO = new SearchDTO();
-		Map map = new HashMap();
-		map.put("issueIds", id);
-		searchDTO.setOtherArgs(map);
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
-		Map<Long, IssueListDTO> map1 = new HashMap();
-		for (IssueListDTO dto : issueResponse.getBody()) {
-			map1.put(dto.getIssueId(), dto);
+		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, id.stream().toArray(Long[]::new));
+		for (TestCycleCaseE caseE : testCycleCaseES) {
+			caseE.setIssueInfosDTO(map.get(caseE.getIssueId()));
 		}
-		testCycleCaseES.forEach(v -> {
-			IssueListDTO d1 = map1.get(v.getIssueId());
-			v.setIssueName(d1.getIssueNum());
-			v.setIssueSummary(d1.getSummary());
-			v.setIssueStatus(d1.getStatusName());
-			v.setIssueColor(d1.getStatusColor());
-		});
 
-		testCycleCaseStepES.forEach(v -> {
-			IssueListDTO d1 = map1.get(v.getIssueId());
-			v.setIssueName(d1.getIssueNum());
-			v.setIssueStatus(d1.getStatusName());
-			v.setIssueSummary(d1.getSummary());
-			v.setIssueColor(d1.getStatusColor());
-		});
+		for (TestCycleCaseStepE stepE : testCycleCaseStepES) {
+			stepE.setIssueInfosDTO(map.get(stepE.getIssueId()));
+		}
+//		SearchDTO searchDTO = new SearchDTO();
+//		Map map = new HashMap();
+//		map.put("issueIds", id);
+//		searchDTO.setOtherArgs(map);
+//		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
+//		Map<Long, IssueListDTO> map1 = new HashMap();
+//		for (IssueListDTO dto : issueResponse.getBody()) {
+//			map1.put(dto.getIssueId(), dto);
+//		}
+//		testCycleCaseES.forEach(v -> {
+//			IssueListDTO d1 = map1.get(v.getIssueId());
+//			v.setIssueName(d1.getIssueNum());
+//			v.setIssueSummary(d1.getSummary());
+//			v.setIssueStatus(d1.getStatusName());
+//			v.setIssueColor(d1.getStatusColor());
+//		});
+
+//		testCycleCaseStepES.forEach(v -> {
+//			IssueListDTO d1 = map1.get(v.getIssueId());
+//			v.setIssueName(d1.getIssueNum());
+//			v.setIssueStatus(d1.getStatusName());
+//			v.setIssueSummary(d1.getSummary());
+//			v.setIssueColor(d1.getStatusColor());
+//		});
 
 		return this;
 	}
