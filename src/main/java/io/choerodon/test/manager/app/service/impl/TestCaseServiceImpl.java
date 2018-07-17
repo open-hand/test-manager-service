@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -43,6 +44,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 		PageRequest pageRequest = new PageRequest();
 		pageRequest.setSize(999999999);
 		pageRequest.setPage(0);
+		pageRequest.setSort(new Sort(Sort.Direction.ASC, new String[]{"issueId"}));
 		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
 	}
 
