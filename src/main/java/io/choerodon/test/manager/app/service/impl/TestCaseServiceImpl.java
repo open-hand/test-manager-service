@@ -72,6 +72,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
 	public List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, Long issueId) {
+		Assert.notNull(projectId, "error.get.linkId.projectId.not.null");
+		Assert.notNull(issueId, "error.get.linkId.issueId.not.null");
 		return testCaseFeignClient.listIssueLinkByIssueId(projectId, issueId).getBody();
 	}
 
