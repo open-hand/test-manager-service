@@ -21,7 +21,6 @@
                 and status_name=#{dto.statusName}
             </if>
         </where>
-        limit 1
     </select>
 
 
