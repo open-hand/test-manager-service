@@ -86,30 +86,6 @@ public class DefectReporterFormE {
 		for (TestCycleCaseStepE stepE : testCycleCaseStepES) {
 			stepE.setIssueInfosDTO(map.get(stepE.getIssueId()));
 		}
-//		SearchDTO searchDTO = new SearchDTO();
-//		Map map = new HashMap();
-//		map.put("issueIds", id);
-//		searchDTO.setOtherArgs(map);
-//		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
-//		Map<Long, IssueListDTO> map1 = new HashMap();
-//		for (IssueListDTO dto : issueResponse.getBody()) {
-//			map1.put(dto.getIssueId(), dto);
-//		}
-//		testCycleCaseES.forEach(v -> {
-//			IssueListDTO d1 = map1.get(v.getIssueId());
-//			v.setIssueName(d1.getIssueNum());
-//			v.setIssueSummary(d1.getSummary());
-//			v.setIssueStatus(d1.getStatusName());
-//			v.setIssueColor(d1.getStatusColor());
-//		});
-
-//		testCycleCaseStepES.forEach(v -> {
-//			IssueListDTO d1 = map1.get(v.getIssueId());
-//			v.setIssueName(d1.getIssueNum());
-//			v.setIssueStatus(d1.getStatusName());
-//			v.setIssueSummary(d1.getSummary());
-//			v.setIssueColor(d1.getStatusColor());
-//		});
 
 		return this;
 	}

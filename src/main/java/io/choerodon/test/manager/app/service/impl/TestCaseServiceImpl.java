@@ -53,7 +53,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 		Map map = new HashMap();
 		map.put("issueIds", issueIds);
 		searchDTO.setOtherArgs(map);
-		return getIssueInfoMap(projectId, issueIds);
+		return getIssueInfoMap(projectId, searchDTO);
 	}
 
 
