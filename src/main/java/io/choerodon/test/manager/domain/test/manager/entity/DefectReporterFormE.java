@@ -107,4 +107,12 @@ public class DefectReporterFormE {
 	public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
 		this.testCycleCaseStepES = testCycleCaseStepES;
 	}
+
+	public IssueInfosDTO getIssueInfosDTO() {
+		return issueInfosDTO;
+	}
+
+	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+		this.issueInfosDTO = issueInfosDTO;
+	}
 }
