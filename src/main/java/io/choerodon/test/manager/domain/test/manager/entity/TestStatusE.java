@@ -44,6 +44,10 @@ public class TestStatusE {
         return testStatusRepository.query(this);
     }
 
+	public TestStatusE queryOne() {
+		return testStatusRepository.queryOne(statusId);
+	}
+
 	public List<TestStatusE> queryAllUnderProject() {
 		return testStatusRepository.queryAllUnderProject(this);
 	}

@@ -6,6 +6,7 @@ import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,13 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 		return ConvertHelper.convertList(testStatusMapper.queryAllUnderProject(testStatusDO), TestStatusE.class);
     }
 
-    @Override
+	@Override
+	public TestStatusE queryOne(Long statusId) {
+		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(statusId), TestStatusE.class);
+
+	}
+
+	@Override
     public TestStatusE insert(TestStatusE testStatusE) {
         TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
         if (testStatusMapper.insert(testStatusDO) != 1) {
@@ -57,4 +64,19 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
         }
 		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(testStatusDO.getStatusId()), TestStatusE.class);
     }
+
+	@Override
+	public void validateDeleteCycleCaseAllow(Long statusId) {
+		if (testStatusMapper.ifDeleteCycleCaseAllow(statusId) > 0) {
+			throw new CommonException("error.delete.status.have.used");
+
+		}
+	}
+
+	@Override
+	public void validateDeleteCaseStepAllow(Long statusId) {
+		if (testStatusMapper.ifDeleteCaseStepAllow(statusId) > 0) {
+			throw new CommonException("error.delete.status.have.used");
+		}
+	}
 }

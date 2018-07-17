@@ -36,6 +36,7 @@ public class TestStatusServiceImpl implements TestStatusService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(TestStatusDTO testStatusDTO) {
+		// if(iTestStatusService.query(ConvertHelper.convert(testStatusDTO, TestStatusE.class)));
         iTestStatusService.delete(ConvertHelper
                 .convert(testStatusDTO, TestStatusE.class));
     }

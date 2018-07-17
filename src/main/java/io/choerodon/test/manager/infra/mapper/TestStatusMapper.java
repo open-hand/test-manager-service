@@ -12,4 +12,8 @@ import java.util.List;
 public interface TestStatusMapper extends BaseMapper<TestStatusDO> {
 
 	List<TestStatusDO> queryAllUnderProject(@Param("dto") TestStatusDO testStatusDO);
+
+	Long ifDeleteCycleCaseAllow(@Param("statusId") Long statusId);
+
+	Long ifDeleteCaseStepAllow(@Param("statusId") Long statusId);
 }

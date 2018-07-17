@@ -17,4 +17,10 @@ public interface TestStatusRepository {
     TestStatusE update(TestStatusE testStatusE);
 
 	List<TestStatusE> queryAllUnderProject(TestStatusE testStatusE);
+
+	TestStatusE queryOne(Long statusId);
+
+	void validateDeleteCycleCaseAllow(Long statusId);
+
+	void validateDeleteCaseStepAllow(Long statusId);
 }

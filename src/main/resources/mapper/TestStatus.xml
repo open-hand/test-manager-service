@@ -24,4 +24,21 @@
     </select>
 
 
+    <select id="ifDeleteCycleCaseAllow" resultType="java.lang.Long">
+SELECT
+	count( execute_id )
+FROM
+	test_cycle_case
+WHERE
+	execution_status =#{statusId}
+    </select>
+
+    <select id="ifDeleteCaseStepAllow" resultType="java.lang.Long">
+SELECT
+	count( execute_step_id )
+FROM
+	test_cycle_case_step
+WHERE
+	step_status = #{statusId}
+    </select>
 </mapper>
