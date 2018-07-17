@@ -60,7 +60,7 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		populateDefectInfo(lists, projectId);
 //		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
 //
-//		//List<IssueInfoDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
+//		//List<IssueInfosDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
 //		SearchDTO searchDTO = new SearchDTO();
 //		Map map = new HashMap();
 //		map.put("issueIds", issueLists);

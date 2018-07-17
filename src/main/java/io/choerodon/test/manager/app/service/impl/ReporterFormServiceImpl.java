@@ -67,6 +67,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 	}
 
+
 	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds) {
 		SearchDTO searchDTO = new SearchDTO();
 		Map map = new HashMap();

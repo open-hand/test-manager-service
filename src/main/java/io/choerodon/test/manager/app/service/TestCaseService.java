@@ -3,7 +3,7 @@ package io.choerodon.test.manager.app.service;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import com.alibaba.fastjson.JSONObject;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -22,5 +22,7 @@ public interface TestCaseService {
 //
 	ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
-	Map<Long, IssueListDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+
+	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO);
 }

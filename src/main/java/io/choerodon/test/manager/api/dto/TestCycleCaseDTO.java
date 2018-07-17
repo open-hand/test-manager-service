@@ -5,6 +5,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,15 +56,18 @@ public class TestCycleCaseDTO {
 
     private List<TestCycleCaseDefectRelDTO> defects;
 
-//    private List<TestCycleCaseStepE> testCycleCaseStepES;
+	private List<TestCycleCaseDefectRelDTO> subStepDefects;
 
-//    public List<TestCycleCaseStepE> getTestCycleCaseStepES() {
-//        return testCycleCaseStepES;
-//    }
-//
-//    public void setTestCycleCaseStepES(List<TestCycleCaseStepE> testCycleCaseStepES) {
-//        this.testCycleCaseStepES = testCycleCaseStepES;
-//    }
+	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
+		if (subStepDefects == null) {
+			subStepDefects = new ArrayList<>();
+		}
+		return subStepDefects;
+	}
+
+	public void setSubStepDefects(List<TestCycleCaseDefectRelDTO> subStepDefects) {
+		this.subStepDefects = subStepDefects;
+	}
 
 	public String getExecutionStatusName() {
 		return executionStatusName;
@@ -205,6 +209,9 @@ public class TestCycleCaseDTO {
     }
 
     public List<TestCycleCaseDefectRelDTO> getDefects() {
+		if (defects == null) {
+			defects = new ArrayList<>();
+		}
         return defects;
     }
 

@@ -1,27 +1,17 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
-import io.choerodon.test.manager.domain.service.ITestCaseStepService;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.api.dto.*;
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -42,8 +32,17 @@ public class TestCaseServiceImpl implements TestCaseService {
 		return testCaseFeignClient.listIssueWithoutSub(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
     }
 
-	public Map<Long, IssueListDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, Function.identity()));
+	@Override
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
+	}
+
+	@Override
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO) {
+		PageRequest pageRequest = new PageRequest();
+		pageRequest.setSize(999999999);
+		pageRequest.setPage(0);
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
 	}
 
 

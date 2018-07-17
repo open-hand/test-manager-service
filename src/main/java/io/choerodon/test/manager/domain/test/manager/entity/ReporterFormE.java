@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
@@ -21,22 +22,15 @@ import java.util.Optional;
  */
 public class ReporterFormE {
 
-	private Long issueId;
-	private String issueName;
-	private String issueStatus;
-	private String issueColor;
+	private IssueInfosDTO defectInfo;
+
 	private Long defectCount = new Long(0);
-	private String summary;
 
 	private List<LinkedTestIssue> linkedTestIssues;
 
 
 	public ReporterFormE populateIssue(IssueListDTO issueListDTO) {
-		this.issueName = issueListDTO.getIssueNum();
-		this.issueId = issueListDTO.getIssueId();
-		this.issueStatus = issueListDTO.getStatusName();
-		this.issueColor = issueListDTO.getStatusColor();
-		this.summary = issueListDTO.getSummary();
+		defectInfo = new IssueInfosDTO(issueListDTO);
 		return this;
 	}
 
@@ -57,7 +51,6 @@ public class ReporterFormE {
 
 		private List<TestCycleCaseDTO> testCycleCaseES;
 
-		private List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelES = new ArrayList<>();
 
 		public LinkedTestIssue(Long issueId, String issueName, String summary, Long projectId) {
 			this.issueId = issueId;
@@ -67,13 +60,9 @@ public class ReporterFormE {
 			ITestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(ITestCycleCaseDefectRelServiceImpl.class);
 
 			testCycleCaseES.forEach(v -> {
-				Optional.ofNullable(v.getDefects()).ifPresent(u -> {
-					testCycleCaseDefectRelES
-							.addAll(u);
-				});
 				Optional.ofNullable(defectRelService.query(v.getExecuteId(), TestCycleCaseDefectRelE.CASE_STEP, projectId))
-						.ifPresent(u -> testCycleCaseDefectRelES.addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class)));
-				defectCount = Long.valueOf(testCycleCaseDefectRelES.size());
+						.ifPresent(u -> v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class)));
+				defectCount += v.getDefects().size() + v.getSubStepDefects().size();
 			});
 		}
 
@@ -85,13 +74,6 @@ public class ReporterFormE {
 			this.testCycleCaseES = testCycleCaseES;
 		}
 
-		public List<TestCycleCaseDefectRelDTO> getTestCycleCaseDefectRelES() {
-			return testCycleCaseDefectRelES;
-		}
-
-		public void setTestCycleCaseDefectRelES(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelES) {
-			this.testCycleCaseDefectRelES = testCycleCaseDefectRelES;
-		}
 
 		public Long getIssueId() {
 			return issueId;
@@ -118,37 +100,12 @@ public class ReporterFormE {
 		}
 	}
 
-
-	public Long getIssueId() {
-		return issueId;
+	public IssueInfosDTO getDefectInfo() {
+		return defectInfo;
 	}
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
-
-	public String getIssueName() {
-		return issueName;
-	}
-
-	public void setIssueName(String issueName) {
-		this.issueName = issueName;
-	}
-
-	public String getIssueStatus() {
-		return issueStatus;
-	}
-
-	public void setIssueStatus(String issueStatus) {
-		this.issueStatus = issueStatus;
-	}
-
-	public String getIssueColor() {
-		return issueColor;
-	}
-
-	public void setIssueColor(String issueColor) {
-		this.issueColor = issueColor;
+	public void setDefectInfo(IssueInfosDTO defectInfo) {
+		this.defectInfo = defectInfo;
 	}
 
 	public Long getDefectCount() {
@@ -157,14 +114,6 @@ public class ReporterFormE {
 
 	public void setDefectCount(Long defectCount) {
 		this.defectCount = defectCount;
-	}
-
-	public String getSummary() {
-		return summary;
-	}
-
-	public void setSummary(String summary) {
-		this.summary = summary;
 	}
 
 	public List<LinkedTestIssue> getLinkedTestIssues() {

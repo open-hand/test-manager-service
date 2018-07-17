@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -42,11 +43,15 @@ public class TestCaseStepE {
     private TestCaseStepRepository testCaseStepRepository;
 
 	public TestCaseStepE createOneStep() {
+        if (lastRank == null) {
+            lastRank = getLastedStepRank();
+        }
 		setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
 		return addSelf();
     }
 
     public String getLastedStepRank() {
+        Assert.notNull(issueId, "error.case.step.insert.issueId.not.null");
         return testCaseStepRepository.getLastedRank(issueId);
     }
 

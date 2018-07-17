@@ -6,6 +6,7 @@ import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.core.domain.Page;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
@@ -30,32 +31,20 @@ import java.util.stream.Collectors;
  */
 public class DefectReporterFormE {
 
-	private String defectName;
-
-	private String defectStatus;
-
-	private Long defectId;
-
-	private String defectColor;
-
-	private String summary;
+	private IssueInfosDTO issueInfosDTO;
 
 	List<TestCycleCaseE> testCycleCaseES = new ArrayList<>();
 
 	List<TestCycleCaseStepE> testCycleCaseStepES = new ArrayList<>();
 
-	TestCycleCaseRepository testCycleCaseRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseRepositoryImpl.class);
+	TestCycleCaseRepository testCycleCaseRepository;
 
-	TestCycleCaseStepRepository testCycleCaseStepRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseStepRepositoryImpl.class);
-	;
+	TestCycleCaseStepRepository testCycleCaseStepRepository;
 
 	public DefectReporterFormE(IssueListDTO issueListDTO) {
-		this.defectName = issueListDTO.getIssueNum();
-		this.defectId = issueListDTO.getIssueId();
-		this.defectStatus = issueListDTO.getStatusName();
-		this.defectColor = issueListDTO.getStatusColor();
-		this.summary = issueListDTO.getSummary();
-
+		issueInfosDTO = new IssueInfosDTO(issueListDTO);
+		testCycleCaseRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseRepositoryImpl.class);
+		testCycleCaseStepRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseStepRepositoryImpl.class);
 	}
 
 	public DefectReporterFormE createReporter(TestCaseFeignClient testCaseFeignClient, Long projectId) {
@@ -64,7 +53,7 @@ public class DefectReporterFormE {
 
 	private DefectReporterFormE populateTestWithDefect() {
 		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
-		testCycleCaseDefectRelE.setIssueId(this.defectId);
+		testCycleCaseDefectRelE.setIssueId(this.issueInfosDTO.getIssueId());
 		List<TestCycleCaseDefectRelE> list = testCycleCaseDefectRelE.querySelf();
 		Long[] caseIds = list.stream()
 				.filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CYCLE_CASE)).map(v -> v.getDefectLinkId()).toArray(Long[]::new);
@@ -89,12 +78,12 @@ public class DefectReporterFormE {
 		map.put("issueIds", id);
 		searchDTO.setOtherArgs(map);
 		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
-		Map<Object, IssueListDTO> map1 = new HashMap();
+		Map<Long, IssueListDTO> map1 = new HashMap();
 		for (IssueListDTO dto : issueResponse.getBody()) {
-			map1.put(dto.getIssueId().longValue(), dto);
+			map1.put(dto.getIssueId(), dto);
 		}
 		testCycleCaseES.forEach(v -> {
-			IssueListDTO d1 = map1.get(v.getIssueId().longValue());
+			IssueListDTO d1 = map1.get(v.getIssueId());
 			v.setIssueName(d1.getIssueNum());
 			v.setIssueSummary(d1.getSummary());
 			v.setIssueStatus(d1.getStatusName());
@@ -102,7 +91,7 @@ public class DefectReporterFormE {
 		});
 
 		testCycleCaseStepES.forEach(v -> {
-			IssueListDTO d1 = map1.get(v.getIssueId().longValue());
+			IssueListDTO d1 = map1.get(v.getIssueId());
 			v.setIssueName(d1.getIssueNum());
 			v.setIssueStatus(d1.getStatusName());
 			v.setIssueSummary(d1.getSummary());
@@ -113,45 +102,6 @@ public class DefectReporterFormE {
 	}
 
 
-	public String getDefectName() {
-		return defectName;
-	}
-
-	public void setDefectName(String defectName) {
-		this.defectName = defectName;
-	}
-
-	public String getDefectStatus() {
-		return defectStatus;
-	}
-
-	public void setDefectStatus(String defectStatus) {
-		this.defectStatus = defectStatus;
-	}
-
-	public Long getDefectId() {
-		return defectId;
-	}
-
-	public void setDefectId(Long defectId) {
-		this.defectId = defectId;
-	}
-
-	public String getDefectColor() {
-		return defectColor;
-	}
-
-	public void setDefectColor(String defectColor) {
-		this.defectColor = defectColor;
-	}
-
-	public String getSummary() {
-		return summary;
-	}
-
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
 
 	public List<TestCycleCaseE> getTestCycleCaseES() {
 		return testCycleCaseES;
