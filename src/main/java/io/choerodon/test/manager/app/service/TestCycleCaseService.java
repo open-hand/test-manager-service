@@ -28,6 +28,8 @@ public interface TestCycleCaseService {
 
 	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);
 
+	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
+
     /**
      * 启动一个测试例
      *

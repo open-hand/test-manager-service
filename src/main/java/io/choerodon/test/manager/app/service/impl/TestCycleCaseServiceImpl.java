@@ -6,14 +6,8 @@ import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.api.dto.TestStatusDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.api.dto.*;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
@@ -53,6 +47,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	TestCaseFeignClient testCaseFeignClient;
 
 	@Autowired
+	TestCaseService testCaseService;
+
+	@Autowired
 	ITestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
 	@Autowired
@@ -86,8 +83,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			setUser(v);
 			setDefect(v, projectId);
 		});
+		populateIssue(dots, projectId);
 		return dots;
     }
+
+	@Override
+	public void populateIssue(List<TestCycleCaseDTO> dots, Long projectId) {
+		Long[] ids = dots.stream().map(v -> v.getIssueId()).toArray(Long[]::new);
+		Map<Long, IssueInfosDTO> maps = testCaseService.getIssueInfoMap(projectId, ids);
+		dots.forEach(v -> v.setIssueInfosDTO(maps.get(v.getIssueId())));
+	}
 
 	@Override
 	public Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
