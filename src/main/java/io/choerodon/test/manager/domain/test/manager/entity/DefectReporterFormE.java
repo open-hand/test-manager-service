@@ -9,6 +9,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -62,7 +63,7 @@ public class DefectReporterFormE {
 	}
 
 	private DefectReporterFormE populateTestWithDefect() {
-		TestCycleCaseDefectRelE testCycleCaseDefectRelE = new TestCycleCaseDefectRelE();
+		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
 		testCycleCaseDefectRelE.setIssueId(this.defectId);
 		List<TestCycleCaseDefectRelE> list = testCycleCaseDefectRelE.querySelf();
 		Long[] caseIds = list.stream()
