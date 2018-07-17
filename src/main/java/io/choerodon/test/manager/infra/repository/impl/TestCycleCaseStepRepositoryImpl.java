@@ -61,6 +61,12 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         return ConvertPageHelper.convertPage(page, TestCycleCaseStepE.class);
     }
 
+    public List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE) {
+        TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
+        List<TestCycleCaseStepDO> dto = testCycleCaseStepMapper.select(convert);
+        return ConvertHelper.convertList(dto, TestCycleCaseStepE.class);
+    }
+
     @Override
     public TestCycleCaseStepE queryOne(TestCycleCaseStepE testCycleCaseStepE) {
         TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);

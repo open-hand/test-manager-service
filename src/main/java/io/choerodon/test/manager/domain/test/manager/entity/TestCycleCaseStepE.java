@@ -67,9 +67,9 @@ public class TestCycleCaseStepE {
 		return testCycleCaseStepRepository.queryOne(this);
 	}
 
-//    public List<TestCycleCaseStepE> querySelf() {
-//        return testCycleCaseStepRepository.query(this);
-//    }
+	public List<TestCycleCaseStepE> querySelf() {
+		return testCycleCaseStepRepository.query(this);
+	}
 
     public TestCycleCaseStepE addSelf() {
         return testCycleCaseStepRepository.insert(this);

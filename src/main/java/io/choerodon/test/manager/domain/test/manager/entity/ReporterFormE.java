@@ -3,12 +3,18 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
+import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by jialongZuo@hand-china.com on 7/13/18.
@@ -51,16 +57,23 @@ public class ReporterFormE {
 
 		private List<TestCycleCaseDTO> testCycleCaseES;
 
+		private List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelES = new ArrayList<>();
+
 		public LinkedTestIssue(Long issueId, String issueName, String summary, Long projectId) {
 			this.issueId = issueId;
 			this.issueName = issueName;
 			this.summary = summary;
 			testCycleCaseES = ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class).queryByIssuse(issueId, projectId);
+			ITestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(ITestCycleCaseDefectRelServiceImpl.class);
+
 			testCycleCaseES.forEach(v -> {
-				List defects = v.getDefects();
-				if (defects != null) {
-					defectCount += defects.size();
-				}
+				Optional.ofNullable(v.getDefects()).ifPresent(u -> {
+					testCycleCaseDefectRelES
+							.addAll(u);
+				});
+				Optional.ofNullable(defectRelService.query(v.getExecuteId(), TestCycleCaseDefectRelE.CASE_STEP, projectId))
+						.ifPresent(u -> testCycleCaseDefectRelES.addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class)));
+				defectCount = Long.valueOf(testCycleCaseDefectRelES.size());
 			});
 		}
 
