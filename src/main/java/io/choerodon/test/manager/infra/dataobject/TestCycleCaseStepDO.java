@@ -156,4 +156,20 @@ public class TestCycleCaseStepDO extends AuditDomain {
 	public void setStepStatus(Long stepStatus) {
 		this.stepStatus = stepStatus;
 	}
+
+	public String getCycleName() {
+		return cycleName;
+	}
+
+	public void setCycleName(String cycleName) {
+		this.cycleName = cycleName;
+	}
+
+	public Long getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(Long issueId) {
+		this.issueId = issueId;
+	}
 }
