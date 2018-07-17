@@ -32,14 +32,14 @@ import java.util.*;
  */
 @Component
 public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
-    @Autowired
-    ITestCycleCaseStepService iTestCycleCaseStepService;
+	@Autowired
+	ITestCycleCaseStepService iTestCycleCaseStepService;
 
-    @Autowired
-    ITestCycleService iTestCycleService;
+	@Autowired
+	ITestCycleService iTestCycleService;
 
-    @Autowired
-    ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
+	@Autowired
+	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
 	@Autowired
 	RedisTemplate redisTemplate;
@@ -50,59 +50,59 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	@Autowired
 	ProductionVersionClient productionVersionClient;
 
-    @Override
-    public void delete(TestCycleCaseE testCycleCaseE) {
-        List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
-        removeList.forEach(v -> deleteCaseWithSubStep(v));
-    }
+	@Override
+	public void delete(TestCycleCaseE testCycleCaseE) {
+		List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
+		removeList.forEach(v -> deleteCaseWithSubStep(v));
+	}
 
-    private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE) {
-        iTestCycleCaseStepService.deleteByTestCycleCase(testCycleCaseE);
-        testCycleCaseE.deleteSelf();
-    }
-
-
-    @Override
-    public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
-        return testCycleCaseE.querySelf(pageRequest);
-    }
-
-    @Override
-    public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
-        return testCycleCaseE.querySelf();
-    }
-
-    @Override
-    public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
-        return testCycleCaseE.queryOne();
-    }
+	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE) {
+		iTestCycleCaseStepService.deleteByTestCycleCase(testCycleCaseE);
+		testCycleCaseE.deleteSelf();
+	}
 
 
-    /**
-     * 启动测试循环
-     *
-     * @param testCycleCaseE
-     * @return
-     */
-    @Override
+	@Override
+	public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
+		return testCycleCaseE.querySelf(pageRequest);
+	}
+
+	@Override
+	public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
+		return testCycleCaseE.querySelf();
+	}
+
+	@Override
+	public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
+		return testCycleCaseE.queryOne();
+	}
+
+
+	/**
+	 * 启动测试循环
+	 *
+	 * @param testCycleCaseE
+	 * @return
+	 */
+	@Override
 	public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
-        TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
+		TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
 		iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
-        return testCycleCase;
-    }
+		return testCycleCase;
+	}
 
-    @Override
+	@Override
 	public TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
-        TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
+		TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
 		iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
-        return testCycleCase;
-    }
+		return testCycleCase;
+	}
 
 
-    @Override
-    public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE) {
-        return testCycleCaseE.changeOneCase();
-    }
+	@Override
+	public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE) {
+		return testCycleCaseE.changeOneCase();
+	}
 
 	@Override
 	public List<Long> getActiveCase(Long range, Long projectId, String day) {
@@ -125,22 +125,34 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	@Override
 	public Long countCaseNotRun(Long projectId) {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
-		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-		return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
+		if (versionIds != null && versionIds.length > 0) {
+			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+			return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
+		} else {
+			return new Long(0);
+		}
 	}
 
 	@Override
 	public Long countCaseNotPlain(Long projectId) {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
-		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-		return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
+		if (versionIds != null && versionIds.length > 0) {
+			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+			return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
+		} else {
+			return new Long(0);
+		}
 	}
 
 	@Override
 	public Long countCaseSum(Long projectId) {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
-		List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-		return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
+		if (versionIds != null && versionIds.length > 0) {
+			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
+			return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
+		} else {
+			return new Long(0);
+		}
 	}
 
 	@Override

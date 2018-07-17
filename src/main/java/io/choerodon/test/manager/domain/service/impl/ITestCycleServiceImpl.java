@@ -7,6 +7,7 @@ import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
@@ -43,7 +44,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	ITestCycleCaseService iTestCycleCaseService;
 
 	@Autowired
-	TestCycleMapper testCycleMapper;
+	TestCycleRepository testCycleRepository;
 
 	@Override
 	public TestCycleE insert(TestCycleE testCycleE) {
@@ -169,7 +170,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 	@Override
 	public List<Long> selectCyclesInVersions(Long[] versionIds) {
-		return testCycleMapper.selectCyclesInVersions(versionIds);
+		return testCycleRepository.selectCyclesInVersions(versionIds);
 	}
 
 }

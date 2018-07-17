@@ -15,6 +15,7 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.DefectReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.ReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
 	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest) {
-		TestCycleCaseDefectRelE testCycleCaseDefectRelE = new TestCycleCaseDefectRelE();
+		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
 		Page<TestCycleCaseDefectRelE> defects = testCycleCaseDefectRelE.querySelf(pageRequest);
 		if (defects.size() == 0) {
 			return new ArrayList<>();

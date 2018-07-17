@@ -116,7 +116,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	@Override
 	public Long countCaseSum(Long[] cycleIds) {
-		return testCycleCaseMapper.countCaseNotPlain(cycleIds);
+		return testCycleCaseMapper.countCaseSum(cycleIds);
 
 	}
 
