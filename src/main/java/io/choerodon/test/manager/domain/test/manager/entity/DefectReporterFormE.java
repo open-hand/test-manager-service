@@ -4,12 +4,16 @@ import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.IssueInfoDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
+import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.repository.impl.TestCycleCaseRepositoryImpl;
+import io.choerodon.test.manager.infra.repository.impl.TestCycleCaseStepRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -39,11 +43,10 @@ public class DefectReporterFormE {
 
 	List<TestCycleCaseStepE> testCycleCaseStepES = new ArrayList<>();
 
-	@Autowired
-	TestCycleCaseRepository testCycleCaseRepository;
+	TestCycleCaseRepository testCycleCaseRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseRepositoryImpl.class);
 
-	@Autowired
-	TestCycleCaseStepRepository testCycleCaseStepRepository;
+	TestCycleCaseStepRepository testCycleCaseStepRepository = ApplicationContextHelper.getContext().getBean(TestCycleCaseStepRepositoryImpl.class);
+	;
 
 	public DefectReporterFormE(IssueListDTO issueListDTO) {
 		this.defectName = issueListDTO.getIssueNum();
@@ -51,6 +54,7 @@ public class DefectReporterFormE {
 		this.defectStatus = issueListDTO.getStatusName();
 		this.defectColor = issueListDTO.getStatusColor();
 		this.summary = issueListDTO.getSummary();
+
 	}
 
 	public DefectReporterFormE createReporter(TestCaseFeignClient testCaseFeignClient, Long projectId) {
