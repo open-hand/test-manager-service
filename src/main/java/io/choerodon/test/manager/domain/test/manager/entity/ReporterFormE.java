@@ -85,6 +85,14 @@ public class ReporterFormE {
 			this.testCycleCaseES = testCycleCaseES;
 		}
 
+		public List<TestCycleCaseDefectRelDTO> getTestCycleCaseDefectRelES() {
+			return testCycleCaseDefectRelES;
+		}
+
+		public void setTestCycleCaseDefectRelES(List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelES) {
+			this.testCycleCaseDefectRelES = testCycleCaseDefectRelES;
+		}
+
 		public Long getIssueId() {
 			return issueId;
 		}
