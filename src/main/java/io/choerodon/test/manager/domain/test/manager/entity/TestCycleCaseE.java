@@ -52,17 +52,7 @@ public class TestCycleCaseE {
 
     private Date lastUpdateDate;
 
-    private IssueInfosDTO issueInfosDTO;
-
     private String cycleName;
-//
-//    private String IssueName;
-//
-//    private String IssueStatus;
-//
-//    private String IssueSummary;
-//
-//    private String IssueColor;
 
     private String folderName;
 
@@ -268,11 +258,5 @@ public class TestCycleCaseE {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public IssueInfosDTO getIssueInfosDTO() {
-        return issueInfosDTO;
-    }
 
-    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
-        this.issueInfosDTO = issueInfosDTO;
-    }
 }

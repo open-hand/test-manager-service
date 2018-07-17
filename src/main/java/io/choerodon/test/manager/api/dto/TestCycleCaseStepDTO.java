@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
@@ -29,12 +30,23 @@ public class TestCycleCaseStepDTO {
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
+    private List<IssueLinkDTO> issueLinkDTOS;
 
     private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
 
+    private Long issueId;
 
     private List<TestCycleCaseDefectRelDTO> defects;
 
+    private IssueInfosDTO issueInfosDTO;
+
+    public IssueInfosDTO getIssueInfosDTO() {
+        return issueInfosDTO;
+    }
+
+    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+        this.issueInfosDTO = issueInfosDTO;
+    }
 
     public String getTestStep() {
         return testStep;
@@ -70,6 +82,14 @@ public class TestCycleCaseStepDTO {
 
     public Long getExecuteId() {
         return executeId;
+    }
+
+    public List<IssueLinkDTO> getIssueLinkDTOS() {
+        return issueLinkDTOS;
+    }
+
+    public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
+        this.issueLinkDTOS = issueLinkDTOS;
     }
 
     public void setExecuteId(Long executeId) {
@@ -124,7 +144,15 @@ public class TestCycleCaseStepDTO {
         this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
 
-	public Long getStepStatus() {
+    public Long getIssueId() {
+        return issueId;
+    }
+
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
+
+    public Long getStepStatus() {
 		return stepStatus;
 	}
 

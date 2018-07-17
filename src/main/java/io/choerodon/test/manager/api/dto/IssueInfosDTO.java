@@ -17,12 +17,15 @@ public class IssueInfosDTO {
 
 	private String summary;
 
+	private Long projectId;
+
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
 		issueName = issueListDTO.getIssueNum();
 		issueStatusName = issueListDTO.getStatusName();
 		issueId = issueListDTO.getIssueId();
 		issueColor = issueListDTO.getStatusColor();
 		summary = issueListDTO.getSummary();
+		projectId = issueListDTO.getProjectId();
 	}
 
 
@@ -64,5 +67,13 @@ public class IssueInfosDTO {
 
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
 	}
 }

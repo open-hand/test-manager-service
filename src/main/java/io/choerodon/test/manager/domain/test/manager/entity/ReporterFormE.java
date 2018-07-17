@@ -104,8 +104,9 @@ public class ReporterFormE {
 		return defectInfo;
 	}
 
-	public void setDefectInfo(IssueInfosDTO defectInfo) {
+	public ReporterFormE setDefectInfo(IssueInfosDTO defectInfo) {
 		this.defectInfo = defectInfo;
+		return this;
 	}
 
 	public Long getDefectCount() {

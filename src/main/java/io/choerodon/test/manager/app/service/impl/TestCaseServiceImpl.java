@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -51,12 +52,41 @@ public class TestCaseServiceImpl implements TestCaseService {
 	@Override
 	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds) {
 		Assert.notNull(issueIds, "error.getIssueWithIssueIds.issueId.not.null");
+		return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds));
+	}
+
+	@Override
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest) {
+		Assert.notNull(issueIds, "error.getIssueWithIssueIds.issueId.not.null");
+		return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest);
+	}
+
+	private SearchDTO buildIdsSearchDTO(Long[] issueIds) {
 		SearchDTO searchDTO = new SearchDTO();
 		Map map = new HashMap();
 		map.put("issueIds", issueIds);
 		searchDTO.setOtherArgs(map);
-		return getIssueInfoMap(projectId, searchDTO);
+		return searchDTO;
 	}
+
+
+	@Override
+	public List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, Long issueId) {
+		return testCaseFeignClient.listIssueLinkByIssueId(projectId, issueId).getBody();
+	}
+
+	@Override
+	public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, Long issueId) {
+		return listIssueLinkByIssueId(projectId, issueId).stream()
+				.filter(u -> u.getTypeCode().equals("test_issue") && u.getWard().equals("阻塞")).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, Long issueId) {
+		return listIssueLinkByIssueId(projectId, issueId).stream()
+				.filter(u -> u.getTypeCode().equals("test_issue") && u.getWard().equals("被阻塞")).collect(Collectors.toList());
+	}
+
 
 
 //

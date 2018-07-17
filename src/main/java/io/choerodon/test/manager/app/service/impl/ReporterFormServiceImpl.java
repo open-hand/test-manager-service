@@ -8,6 +8,7 @@ import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
@@ -36,46 +37,44 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
 	@Autowired
-	TestCaseFeignClient testCaseFeignClient;
+	TestCaseService testCaseService;
 
 	@Autowired
 	TestCycleCaseService testCycleCaseService;
 
 
 	public List<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, searchDTO, pageRequest);
 		List<ReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
+		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
 		return reporterFormES;
 	}
 
 	public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds) {
-		SearchDTO searchDTO = new SearchDTO();
-		Map map = new HashMap();
-		map.put("issueIds", issueIds);
-		searchDTO.setOtherArgs(map);
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
+
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds);
 		List<ReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
+		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
 		return reporterFormES;
 	}
 
-	private ReporterFormE doCreateFromIssueToDefect(IssueListDTO issueListDTOS, Long projectId) {
+	private ReporterFormE doCreateFromIssueToDefect(IssueInfosDTO issueInfosDTO, Long projectId) {
 		ReporterFormE reporterFormE = new ReporterFormE();
-		return reporterFormE.populateIssue(issueListDTOS)
-				.populateLinkedTest(testCaseFeignClient.listIssueLinkByIssueId(issueListDTOS.getProjectId(), issueListDTOS.getIssueId()).getBody(), projectId);
+		return reporterFormE.setDefectInfo(issueInfosDTO)
+				.populateLinkedTest(testCaseService.getLinkIssueFromIssueToTest(issueInfosDTO.getProjectId(), issueInfosDTO.getIssueId()), projectId);
 
 	}
 
 
 	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds) {
-		SearchDTO searchDTO = new SearchDTO();
-		Map map = new HashMap();
-		map.put("issueIds", issueIds);
-		searchDTO.setOtherArgs(map);
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 5, null, projectId, searchDTO);
+
+		PageRequest pageRequest = new PageRequest();
+		pageRequest.setPage(0);
+		pageRequest.setSize(5);
+		pageRequest.setSort(new Sort(Sort.Direction.ASC, new String[]{"issueId"}));
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, pageRequest);
 		List<DefectReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
+		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
 
 		return reporterFormES;
 	}
@@ -89,21 +88,18 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 		}
 
 		List<Long> issueLists = defects.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-		SearchDTO searchDTO = new SearchDTO();
-		Map map = new HashMap();
-		map.put("issueIds", issueLists.toArray());
-		searchDTO.setOtherArgs(map);
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 5, null, projectId, searchDTO);
+
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueLists.stream().toArray(Long[]::new), pageRequest);
 
 		List<DefectReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.getBody().stream().forEach(v -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
+		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
 
 		return reporterFormES;
 	}
 
-	private DefectReporterFormE doCreateFromDefectToIssue(IssueListDTO issueListDTOS, Long projectId) {
-		DefectReporterFormE reporterFormE = new DefectReporterFormE(issueListDTOS);
-		return reporterFormE.createReporter(testCaseFeignClient, projectId);
+	private DefectReporterFormE doCreateFromDefectToIssue(IssueInfosDTO issueInfosDTO, Long projectId) {
+		DefectReporterFormE reporterFormE = new DefectReporterFormE(issueInfosDTO);
+		return reporterFormE.createReporter(projectId);
 	}
 
 }

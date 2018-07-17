@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
@@ -49,6 +50,7 @@ public class TestCycleCaseDTO {
 
 	private String cycleName;
 
+	private IssueInfosDTO issueInfosDTO;
 
 	private String folderName;
 
@@ -58,11 +60,21 @@ public class TestCycleCaseDTO {
 
 	private List<TestCycleCaseDefectRelDTO> subStepDefects;
 
+	private List<IssueLinkDTO> issueLinkDTOS;
+
 	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
 		if (subStepDefects == null) {
 			subStepDefects = new ArrayList<>();
 		}
 		return subStepDefects;
+	}
+
+	public List<IssueLinkDTO> getIssueLinkDTOS() {
+		return issueLinkDTOS;
+	}
+
+	public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
+		this.issueLinkDTOS = issueLinkDTOS;
 	}
 
 	public void setSubStepDefects(List<TestCycleCaseDefectRelDTO> subStepDefects) {
@@ -115,6 +127,14 @@ public class TestCycleCaseDTO {
 //		}
         return assignedTo;
     }
+
+	public IssueInfosDTO getIssueInfosDTO() {
+		return issueInfosDTO;
+	}
+
+	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+		this.issueInfosDTO = issueInfosDTO;
+	}
 
 	public String getCycleName() {
 		return cycleName;

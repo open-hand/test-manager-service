@@ -50,8 +50,6 @@ public class TestCycleCaseStepE {
 
 	private String cycleName;
 
-	private IssueInfosDTO issueInfosDTO;
-
 
 //	private String IssueName;
 //
@@ -201,13 +199,7 @@ public class TestCycleCaseStepE {
 		this.cycleName = cycleName;
 	}
 
-	public IssueInfosDTO getIssueInfosDTO() {
-		return issueInfosDTO;
-	}
 
-	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
-		this.issueInfosDTO = issueInfosDTO;
-	}
 
 	public Long getIssueId() {
 		return issueId;
