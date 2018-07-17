@@ -90,6 +90,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
 	@Override
+	public Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
+		searchDTO = Optional.ofNullable(searchDTO).orElseGet(() -> new TestCycleCaseDTO());
+		searchDTO.setCycleId(cycleId);
+		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(searchDTO, TestCycleCaseE.class), pageRequest);
+		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
+		dots.forEach(v -> {
+			setUser(v);
+			setDefect(v, projectId);
+		});
+		return dots;
+	}
+
+	@Override
 	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuseId);

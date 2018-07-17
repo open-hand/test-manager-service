@@ -22,6 +22,8 @@ public interface TestCycleCaseService {
 
 	Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest, Long projectId);
 
+	Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
+
 	TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId);
 
 	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);

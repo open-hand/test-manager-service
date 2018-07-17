@@ -68,6 +68,21 @@ public class TestCycleCaseController {
 	}
 
 	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("过滤查询测试用例下循环case")
+	@PostMapping("/query/filtered/{cycleId}")
+	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
+																			 @PathVariable(name = "cycleId") Long cycleId,
+																			 @RequestBody TestCycleCaseDTO searchDTO,
+																			 @ApiIgnore
+																			 @ApiParam(value = "分页信息", required = true)
+																			 @SortDefault(value = "rank", direction = Sort.Direction.ASC)
+																					 PageRequest pageRequest) {
+		return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageRequest, projectId, searchDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+	}
+
+	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询一个循环用例")
 	@GetMapping("/query/one/{executeId}")
 	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "project_id") Long projectId,
