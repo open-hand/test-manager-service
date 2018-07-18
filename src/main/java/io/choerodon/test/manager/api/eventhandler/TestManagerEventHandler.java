@@ -2,6 +2,8 @@ package io.choerodon.test.manager.api.eventhandler;
 
 import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
@@ -78,7 +80,13 @@ public class TestManagerEventHandler {
     @EventListener(topic = AGILE_SERVICE, businessType = "deleteIssue")
     public void handleProjectIssueDeleteEvent(EventPayload<IssuePayload> payload) {
         IssuePayload issuePayload = payload.getData();
-        loggerInfo(issuePayload);
 
+		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
+		testCycleCaseService.batchDelete(testCycleCaseDTO);
+
+		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
+		testCaseStepService.removeStep(testCaseStepDTO);
     }
 }

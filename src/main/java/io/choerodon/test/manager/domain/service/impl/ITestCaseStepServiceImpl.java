@@ -1,7 +1,10 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
@@ -24,6 +27,9 @@ public class ITestCaseStepServiceImpl implements ITestCaseStepService {
     @Autowired
     ITestCycleCaseStepService testCycleCaseStepService;
 
+	@Autowired
+	TestCycleCaseAttachmentRelService attachmentRelService;
+
 
     @Override
     public List<TestCaseStepE> query(TestCaseStepE testCaseStepE) {
@@ -31,11 +37,21 @@ public class ITestCaseStepServiceImpl implements ITestCaseStepService {
     }
 
 
-    @Override
-    public void removeStep(TestCaseStepE testCaseStepE) {
-        testCaseStepE.querySelf().forEach(v -> deleteCycleCaseStep(v));
-        testCaseStepE.deleteSelf();
-    }
+	@Override
+	public void removeStep(TestCaseStepE testCaseStepE) {
+		testCaseStepE.querySelf().forEach(v -> {
+			deleteCycleCaseStep(v);
+			deleteLinkedAttachment(v.getStepId());
+		});
+		testCaseStepE.deleteSelf();
+	}
+
+	private void deleteLinkedAttachment(Long stepId) {
+		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
+		attachmentRelE.setAttachmentLinkId(stepId);
+		attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CASE_STEP);
+		attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
+	}
 
     private void deleteCycleCaseStep(TestCaseStepE testCaseStepE) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();

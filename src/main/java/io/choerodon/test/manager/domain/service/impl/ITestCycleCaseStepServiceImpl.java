@@ -2,8 +2,10 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
@@ -27,16 +29,29 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
     @Autowired
     ITestCycleCaseDefectRelService iTestCycleCaseDefectRelServicel;
 
+    @Autowired
+    TestCycleCaseAttachmentRelService attachmentRelService;
+
     @Override
     public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-        testCycleCaseStepE.deleteSelf();
+        deleteStep(testCycleCaseStepE);
     }
 
     @Override
     public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
+        testCycleCaseStepE.querySelf().forEach(v -> {
+            deleteLinkedAttachment(v.getExecuteStepId());
+        });
         testCycleCaseStepE.deleteSelf();
+    }
+
+    private void deleteLinkedAttachment(Long stepId) {
+        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
+        attachmentRelE.setAttachmentLinkId(stepId);
+        attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
+        attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
     }
 
 
