@@ -35,4 +35,6 @@ public interface TestCycleService {
 	List<TestCycleDTO> getCyclesByVersionId(Long versionId);
 
 	List<TestCycleDTO> getFolderByCycleId(Long cycleId);
+
+	void initOldData(Long projectId);
 }
