@@ -253,7 +253,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	}
 
 	private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelE> defects) {
-		if (defects.isEmpty()) {
+
+		if (defects == null || defects.isEmpty()) {
 			return true;
 		}
 		for (TestCycleCaseDefectRelE v : defects) {
