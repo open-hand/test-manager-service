@@ -91,7 +91,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 //		ProductVersionDTO v1 = new ProductVersionDTO();
 //		v1.setStatusName("111");
 //		v1.setName("1111");
-//		v1.setVersionId(new Long(167));
+//		v1.setVersionId(new Long(168));
 //		versions.add(v1);
 		if (versions.size() == 0) {
 			return new JSONObject();
@@ -191,7 +191,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 
 	private void initCycleFolderTree(JSONArray folders, String height, Long parentId, List<TestCycleDTO> cycleDTOList) {
-		cycleDTOList.stream().filter(v -> v.getParentCycleId() == parentId).forEach(u ->
+		cycleDTOList.stream().filter(v -> parentId.equals(v.getParentCycleId())).forEach(u ->
 				folders.add(createCycle(u, height + "-" + folders.size()))
 		);
 	}
