@@ -72,7 +72,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public TestCycleCaseStepDTO updateOneCase(List<MultipartFile> files, TestCycleCaseStepDTO testCycleCaseStepDTO, List<TestCycleCaseDefectRelDTO> defects, Long projectId) {
         files.forEach(v -> {
-            testCycleCaseAttachmentRelService.upload(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getOriginalFilename(), v, testCycleCaseStepDTO.getStepId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CASE_STEP, null);
+			testCycleCaseAttachmentRelService.upload(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getOriginalFilename(), v, testCycleCaseStepDTO.getExecuteStepId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP, null);
         });
         this.update(Lists.newArrayList(testCycleCaseStepDTO));
 
