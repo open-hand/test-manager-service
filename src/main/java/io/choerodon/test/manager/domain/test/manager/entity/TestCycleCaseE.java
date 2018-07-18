@@ -7,6 +7,7 @@ import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +102,11 @@ public class TestCycleCaseE {
     }
 
     public TestCycleCaseE addSelf() {
+        TestCycleCaseDO testCycleCase = new TestCycleCaseDO();
+        testCycleCase.setCycleId(cycleId);
+        testCycleCase.setIssueId(issueId);
+        testCycleCaseRepository.validateCycleCaseInCycle(testCycleCase);
+
         return testCycleCaseRepository.insert(this);
     }
 
