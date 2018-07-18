@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO" id="BaseResultMap">
+        <id column="execute_id" property="executeId"/>
+        <id column="cycle_id" property="cycleId"/>
+        <id column="issue_id" property="issueId"/>
+        <id column="rank" property="rank"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="execution_status" property="executionStatus"/>
+        <id column="status_name" property="executionStatusName"/>
+        <id column="assigned_to" property="assignedTo"/>
+        <id column="comment" property="comment"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="folder_name" property="folderName"/>
+        <id column="last_update_date" property="lastUpdateDate"/>
+        <id column="last_updated_by" property="lastUpdatedBy"/>
+        <collection property="caseAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="url" property="url"/>
+            <id column="attachment_name" property="attachmentName"/>
+            <id column="id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="filter" resultMap="BaseResultMap">
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by
+        FROM test_cycle_case cycle
+        where cycle.cycle_id=#{cycleId}
+        <if test="executionStatus != null">
+            and
+            cycle.execution_status in
+            <foreach item="item" index="index" collection="executionStatus"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="query" resultMap="BaseResultMap">
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,status.status_name,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id,cycle.last_update_date,cycle.last_updated_by
+        FROM test_cycle_case cycle
+        left join test_cycle_case_attachment_rel attach
+        on cycle.execute_id=attach.attachment_link_id and attach.attachment_type="CYCLE_CASE"
+        left join test_status status on cycle.execution_status=status.status_id
+        <where>
+            <if test="issueId != null">
+                AND cycle.issue_id = #{issueId}
+            </if>
+            <if test="cycleId != null">
+                AND cycle.cycle_id = #{cycleId}
+            </if>
+            <if test="executeId != null">
+                AND cycle.execute_id = #{executeId}
+            </if>
+        </where>
+        order by rank
+    </select>
+
+    <select id="queryByIssue" resultMap="BaseResultMap">
+                SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by,
+        case cycle1.type
+        when 'folder' then (select cycle2.cycle_name from test_cycle cycle2 where cycle1.parent_cycle_id = cycle2.cycle_id )
+        ELSE cycle1.cycle_name
+        end as cycle_name,
+        case cycle1.type
+        when 'folder' then cycle1.cycle_name
+        end as folder_name
+        FROM test_cycle_case cycle
+        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
+        where cycle.issue_id=#{issueId}
+    </select>
+
+    <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.execution_status,cycle1.cycle_name,cycle.issue_id
+        FROM test_cycle_case cycle
+        left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
+        where cycle.execute_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="countCaseNotRun" resultType="java.lang.Long">
+        select count(*) from test_cycle_case
+        left join test_status st on execution_status=st.status_id
+        where st.status_name='未执行' and cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="countCaseNotPlain" resultType="java.lang.Long">
+        SELECT
+        count( DISTINCT ( issue_id ) )
+        FROM
+        test_cycle_case where cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="countCaseSum" resultType="java.lang.Long">
+        SELECT
+        count(*)
+        FROM
+        test_cycle_case where cycle_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="validateCycleCaseInCycle" resultMap="BaseResultMap">
+        select * from test_cycle_case case1
+        left join test_cycle cycle on cycle.cycle_id=case1.cycle_id
+        where cycle.type != 'temp' and case1.cycle_id=#{cycleId} and case1.issue_id=#{issueId}
+    </select>
+
+
+    <select id="getLastedRank" resultType="java.lang.String">
+SELECT
+	rank
+FROM
+	test_cycle_case
+WHERE
+	cycle_id = #{cycleId}
+ORDER BY
+	rank DESC
+	LIMIT 1
+    </select>
+
+</mapper>
+
+
+

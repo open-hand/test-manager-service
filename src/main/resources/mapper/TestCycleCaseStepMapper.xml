@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO" id="BaseResultMap">
+        <id column="execute_step_id" property="executeStepId"/>
+        <id column="execute_id" property="executeId"/>
+        <id column="step_id" property="stepId"/>
+        <id column="comment" property="comment"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="parent_step_id" property="parentStepId"/>
+        <id column="test_step" property="testStep"/>
+        <id column="test_data" property="testData"/>
+        <id column="step_status" property="stepStatus"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="issue_id" property="issueId"/>
+        <id column="expected_result" property="expectedResult"/>
+        <collection property="caseAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="url" property="url"/>
+            <id column="attachment_name" property="attachmentName"/>
+            <id column="id" property="id"/>
+        </collection>
+        <collection property="stepAttachment"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+            <id column="case_attach_url" property="url"/>
+            <id column="case_attach_name" property="attachmentName"/>
+            <id column="case_attach_id" property="id"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryWithTestCaseStep" resultMap="BaseResultMap">
+        SELECT cycle.execute_step_id,cycle.execute_id,cycle.step_id,cycle.comment,cycle.object_version_number,
+        attach1.url,attach1.attachment_name,attach1.id,test.test_step,test.test_data,test.expected_result,
+        test.case_attach_url,test.case_attach_id,test.case_attach_name,cycle.step_status
+        FROM test_cycle_case_step cycle
+        left join (
+        SELECT step.step_id,step.rank,step.issue_id,step.test_step,step.test_data,step.expected_result,attach.url
+        case_attach_url,attach.attachment_name case_attach_name,attach.id case_attach_id
+        FROM test_case_step step
+        left join test_cycle_case_attachment_rel attach
+        on step.step_id=attach.attachment_link_id and attach.attachment_type="CASE_STEP"
+        ) test
+        on cycle.step_id=test.step_id
+        left join test_cycle_case_attachment_rel attach1
+        on cycle.execute_step_id=attach1.attachment_link_id and attach1.attachment_type="CYCLE_STEP"
+        <where>
+            <if test="dto!=null and dto.executeStepId != null">
+                AND cycle.execute_step_id = #{dto.executeStepId}
+            </if>
+            <if test="dto!=null and dto.executeId != null">
+                AND cycle.execute_id = #{dto.executeId}
+            </if>
+        </where>
+        order by test.rank limit #{page} , #{pageSize}
+    </select>
+
+    <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">
+        SELECT count(1) from test_cycle_case_step where execute_id=#{executeId};
+    </select>
+
+    <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
+        select step.step_status,step.execute_step_id,case1.issue_id,cycle.cycle_name,case_step.test_step
+        from test_cycle_case_step step
+        left join test_cycle_case case1 on case1.execute_id=step.execute_id
+        left join test_cycle cycle on case1.cycle_id=cycle.cycle_id
+        left join test_case_step case_step on case_step.step_id = step.step_id
+        where step.execute_step_id in
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
