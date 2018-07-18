@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
@@ -89,9 +90,15 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	@Override
 	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId) {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
+		List<TestCaseStepE> steps = testCaseStepE.querySelf();
+		if (steps.size() != 1) {
+			throw new CommonException("error.clone.case.step");
+		}
+		testCaseStepE = steps.get(0);
 		testCaseStepE.setStepId(null);
 		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
-		return ((TestCaseStepService) AopContext.currentProxy()).changeStep(testCaseStepDTO, projectId);
+		testCaseStepE.setObjectVersionNumber(null);
+		return changeStep(testCaseStepDTO, projectId);
 
 	}
 
