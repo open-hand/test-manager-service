@@ -79,4 +79,9 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 			throw new CommonException("error.delete.status.have.used");
 		}
 	}
+
+	@Override
+	public Long getDefaultStatus(Long projectId, String statusType) {
+		return testStatusMapper.getDefaultStatus(projectId, statusType);
+	}
 }

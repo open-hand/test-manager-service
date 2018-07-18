@@ -1,10 +1,14 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestStatusDTO;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
+import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,9 @@ public class TestStatusController {
 
     @Autowired
     TestStatusService testStatusService;
+
+	@Autowired
+	TestStatusMapper testStatusMapper;
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("查询状态")

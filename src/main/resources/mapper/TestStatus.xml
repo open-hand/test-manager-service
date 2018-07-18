@@ -20,7 +20,20 @@
             <if test="dto.statusName != null">
                 and status_name=#{dto.statusName}
             </if>
+            <if test="dto.description != null">
+                and description LIKE CONCAT(CONCAT('%', #{dto.description}), '%')
+            </if>
         </where>
+    </select>
+
+    <select id="getDefaultStatus" resultType="java.lang.Long">
+        SELECT status_id
+        from test_status
+        where
+            project_id in(0,#{projectId}) and status_type=#{statusType}
+                and status_name='未执行'
+        order by status_id desc
+        limit 1
     </select>
 
 

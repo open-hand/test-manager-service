@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.repository;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface TestStatusRepository {
 	void validateDeleteCycleCaseAllow(Long statusId);
 
 	void validateDeleteCaseStepAllow(Long statusId);
+
+	Long getDefaultStatus(Long projectId, String statusType);
 }

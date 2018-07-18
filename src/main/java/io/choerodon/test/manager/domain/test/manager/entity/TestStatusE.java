@@ -53,15 +53,7 @@ public class TestStatusE {
 	}
 
 	public Long getDefaultStatusId(Long projectId, String type) {
-		TestStatusE testStatusE = TestStatusEFactory.create();
-		testStatusE.setProjectId(projectId);
-		testStatusE.setStatusType(type);
-		testStatusE.setStatusName(TestStatusE.STATUS_UN_EXECUTED);
-		List<TestStatusE> list = testStatusE.queryAllUnderProject();
-		if (list.size() > 2) {
-			throw new CommonException("error.find.status.default");
-		}
-		return list.get(list.size() - 1).getStatusId();
+		return testStatusRepository.getDefaultStatus(projectId, type);
 	}
 
     public TestStatusE addSelf() {

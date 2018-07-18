@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.mapper;
 
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,4 +17,6 @@ public interface TestStatusMapper extends BaseMapper<TestStatusDO> {
 	Long ifDeleteCycleCaseAllow(@Param("statusId") Long statusId);
 
 	Long ifDeleteCaseStepAllow(@Param("statusId") Long statusId);
+
+	Long getDefaultStatus(@Param("projectId") Long projectId, @Param("statusType") String statusType);
 }
