@@ -236,6 +236,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Optional.ofNullable(searchDTO.getExecutionStatus()).ifPresent(v -> filterMap.put("executionStatus", v));
 
 		List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
+		List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
+		setDefects(testCycleCase, projectId);
 		ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, 0, 400, null);
 		Set issueListDTOS = responseEntity.getBody().stream().map(v -> v.getIssueId().longValue()).collect(Collectors.toSet());
 
@@ -249,7 +251,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 				defectSets.add(de);
 			}
 		}
-		testCycleCaseES.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()) && containsDefect(defectSets, v.getDefects(), projectId))
+		ConvertHelper.convertList(testCycleCase, TestCycleCaseE.class).stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()) && containsDefect(defectSets, v.getDefects(), projectId))
 				.forEach(u -> {
 					u.setExecuteId(null);
 					u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
