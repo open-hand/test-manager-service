@@ -3,7 +3,11 @@ package io.choerodon.test.manager.api.eventhandler;
 import io.choerodon.core.event.EventPayload;
 import io.choerodon.event.consumer.annotation.EventListener;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +26,15 @@ public class TestManagerEventHandler {
     @Autowired
     private TestCycleService testCycleService;
 
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private TestCaseStepService testCaseStepService;
+
+    @Autowired
+    private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
     private void loggerInfo(Object o) {
@@ -36,11 +49,36 @@ public class TestManagerEventHandler {
      * @param payload payload
      */
     @EventListener(topic = AGILE_SERVICE, businessType = "versionCreate")
-    public void handleProjectCreateEvent(EventPayload<VersionEvent> payload) {
+    public void handleProjectVersionCreateEvent(EventPayload<VersionEvent> payload) {
         VersionEvent versionEvent = payload.getData();
         loggerInfo(versionEvent);
         TestCycleDTO testCycleDTO = new TestCycleDTO(versionEvent.getVersionId());
         testCycleService.insert(testCycleDTO);
     }
 
+    /**
+     * 版本删除事件
+     *
+     * @param payload payload
+     */
+    @EventListener(topic = AGILE_SERVICE, businessType = "versionDelete")
+    public void handleProjectVersionDeleteEvent(EventPayload<VersionEvent> payload) {
+        VersionEvent versionEvent = payload.getData();
+        loggerInfo(versionEvent);
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setVersionId(versionEvent.getVersionId());
+        testCycleService.delete(testCycleDTO);
+    }
+
+    /**
+     * 问题删除事件
+     *
+     * @param payload payload
+     */
+    @EventListener(topic = AGILE_SERVICE, businessType = "deleteIssue")
+    public void handleProjectIssueDeleteEvent(EventPayload<IssuePayload> payload) {
+        IssuePayload issuePayload = payload.getData();
+        loggerInfo(issuePayload);
+
+    }
 }

@@ -60,10 +60,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 				TestCycleE testCycle = TestCycleEFactory.create();
 				testCycle.setParentCycleId(v.getCycleId());
 				delete(testCycle);
-				v.deleteSelf();
-			} else {
-				this.deleteCycleWithCase(v);
 			}
+			deleteCycleWithCase(v);
 		});
 	}
 
