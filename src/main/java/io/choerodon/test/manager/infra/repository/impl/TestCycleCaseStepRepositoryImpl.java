@@ -31,7 +31,7 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         if (testCycleCaseStepMapper.insert(convert) != 1) {
             throw new CommonException("error.testStepCase.insert");
         }
-        return testCycleCaseStepE;
+		return ConvertHelper.convert(convert, TestCycleCaseStepE.class);
     }
 
     @Override

@@ -79,10 +79,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseDTO.setCycleId(cycleId);
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-		dots.forEach(v -> {
-			setUser(v);
-			setDefect(v, projectId);
-		});
+		setDefects(dots, projectId);
+		populateUsers(dots);
 		populateIssue(dots, projectId);
 		return dots;
     }
@@ -100,10 +98,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		searchDTO.setCycleId(cycleId);
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(searchDTO, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-		dots.forEach(v -> {
-			setUser(v);
-			setDefect(v, projectId);
-		});
+
+		populateUsers(dots);
+		setDefects(dots, projectId);
 		return dots;
 	}
 
@@ -113,6 +110,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		testCycleCaseDTO.setIssueId(issuseId);
 		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
 		setDefects(dto, projectId);
+		IssueInfosDTO info = new IssueInfosDTO(testCaseService.queryIssue(projectId, issuseId).getBody());
+		dto.forEach(v -> v.setIssueInfosDTO(info));
+		populateUsers(dto);
 		return dto;
 	}
 
@@ -149,6 +149,29 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			dto.setAssignedUserJobNumber(u.getLoginName());
 		}
 		return dto;
+	}
+
+	private void populateUsers(List<TestCycleCaseDTO> users) {
+		List<Long> usersId = new ArrayList<>();
+		users.stream().forEach(v -> {
+			usersId.add(v.getAssignedTo());
+			usersId.add(v.getLastUpdatedBy());
+		});
+		usersId.stream().filter(v -> !v.equals(new Long(0))).collect(Collectors.toList());
+		if (usersId.size() != 0) {
+			Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
+			users.forEach(v -> {
+				Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(u -> {
+					v.setReporterRealName(u.getRealName());
+					v.setReporterJobNumber(u.getLoginName());
+				});
+				Optional.ofNullable(userMaps.get(v.getLastUpdatedBy())).ifPresent(u -> {
+					v.setAssignedUserRealName(u.getRealName());
+					v.setAssignedUserJobNumber(u.getLoginName());
+				});
+
+			});
+		}
 	}
 
 	private void setDefects(List<TestCycleCaseDTO> testCycleCase, Long projectId) {

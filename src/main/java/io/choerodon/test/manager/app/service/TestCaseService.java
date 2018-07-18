@@ -16,6 +16,8 @@ public interface TestCaseService {
 //
 	ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
+	ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
+
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO);

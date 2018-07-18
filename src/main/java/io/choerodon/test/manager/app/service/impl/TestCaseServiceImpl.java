@@ -36,6 +36,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
 	@Override
+	public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
+		return testCaseFeignClient.queryIssue(projectId, issueId);
+	}
+
+	@Override
 	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
 	}
