@@ -54,6 +54,8 @@ public class TestCycleCaseDTO {
 
 	private String folderName;
 
+	private String versionName;
+
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
     private List<TestCycleCaseDefectRelDTO> defects;
@@ -75,6 +77,14 @@ public class TestCycleCaseDTO {
 
 	public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
 		this.issueLinkDTOS = issueLinkDTOS;
+	}
+
+	public String getVersionName() {
+		return versionName;
+	}
+
+	public void setVersionName(String versionName) {
+		this.versionName = versionName;
 	}
 
 	public void setSubStepDefects(List<TestCycleCaseDefectRelDTO> subStepDefects) {

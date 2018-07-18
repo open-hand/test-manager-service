@@ -1,26 +1,22 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Sets;
-import io.choerodon.agile.api.dto.IssueCommonDTO;
-import io.choerodon.agile.api.dto.IssueListDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
-import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.*;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +44,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Autowired
 	TestCaseService testCaseService;
+
+	@Autowired
+	ProductionVersionClient productionVersionClient;
 
 	@Autowired
 	ITestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -118,7 +117,20 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		IssueInfosDTO info = new IssueInfosDTO(testCaseService.queryIssue(projectId, issuseId).getBody());
 		dto.forEach(v -> v.setIssueInfosDTO(info));
 		populateUsers(dto);
+		populateVersionBuild(projectId, dto);
 		return dto;
+	}
+
+	private void populateVersionBuild(Long projectId, List<TestCycleCaseDTO> dto) {
+		Map<Long, String> map = productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
+		if (map == null || map.isEmpty()) {
+			return;
+		}
+		dto.forEach(v -> {
+			TestCycleE cycleE = TestCycleEFactory.create();
+			cycleE.setCycleId(v.getCycleId());
+			v.setVersionName(map.get(cycleE.queryOne().getVersionId()));
+		});
 	}
 
 	@Override
