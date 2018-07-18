@@ -133,7 +133,7 @@ public class TestCycleCaseHistoryRecordAOP {
 			pageRequest.setSize(1);
 			pageRequest.setSort(new Sort(Sort.Direction.DESC, new String[]{"id"}));
 			LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong(projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
+			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
 			entityIdCounter.decrementAndGet();
 		}
 	}
