@@ -53,10 +53,13 @@ public class TestCaseStepController {
     @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
-	public ResponseEntity<Boolean> changeOneStep(@PathVariable(name = "project_id") Long projectId,
-												 @RequestBody TestCaseStepDTO testCaseStepDTO) {
-		iTestCaseStepService.changeStep(testCaseStepDTO, projectId);
-        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
+	public ResponseEntity<TestCaseStepDTO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
+														 @RequestBody TestCaseStepDTO testCaseStepDTO) {
+
+
+		return Optional.ofNullable(iTestCaseStepService.changeStep(testCaseStepDTO, projectId))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
 
 
