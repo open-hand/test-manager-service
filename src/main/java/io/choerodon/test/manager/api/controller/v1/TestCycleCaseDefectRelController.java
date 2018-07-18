@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
@@ -26,7 +27,7 @@ public class TestCycleCaseDefectRelController {
 	@Autowired
 	TestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("增加缺陷")
 	@PostMapping
 	public ResponseEntity<List<TestCycleCaseDefectRelDTO>> insert(@PathVariable(name = "project_id") Long projectId,
@@ -39,7 +40,7 @@ public class TestCycleCaseDefectRelController {
 
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("删除缺陷")
 	@DeleteMapping("/delete/{defectId}")
 	public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,

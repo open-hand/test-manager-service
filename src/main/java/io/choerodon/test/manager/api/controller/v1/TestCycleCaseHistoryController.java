@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -32,7 +33,7 @@ public class TestCycleCaseHistoryController {
 	@Autowired
 	TestCycleCaseHistoryService testCycleCaseHistoryService;
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询循环历史")
 	@GetMapping
 	public ResponseEntity<Page<TestCycleCaseHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId,

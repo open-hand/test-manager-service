@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
@@ -25,7 +26,7 @@ public class TestCaseStepController {
     TestCaseStepService iTestCaseStepService;
 
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询")
 	@GetMapping("/query/{caseId}")
 	public ResponseEntity<List<TestCaseStepDTO>> query(@PathVariable(name = "project_id") Long projectId,
@@ -39,7 +40,7 @@ public class TestCaseStepController {
 
 
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("批量变动测试步骤(添加|修改)")
 	@PutMapping("/batchInsert")
 	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@PathVariable(name = "project_id") Long projectId,
@@ -50,7 +51,7 @@ public class TestCaseStepController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
 	public ResponseEntity<TestCaseStepDTO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
@@ -63,7 +64,7 @@ public class TestCaseStepController {
     }
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除测试步骤")
     @DeleteMapping
 	public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
@@ -72,7 +73,7 @@ public class TestCaseStepController {
         return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
     }
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("克隆")
 	@PostMapping("/clone")
 	public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
