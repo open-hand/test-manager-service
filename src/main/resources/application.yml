@@ -27,6 +27,8 @@ spring:
       enabled: false
     sampler:
       percentage: 1.0
+  redis:
+    host: localhost:6379
 choerodon:
   event:
     consumer:
