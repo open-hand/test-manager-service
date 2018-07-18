@@ -64,6 +64,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
 	}
 
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public void batchDelete(TestCycleCaseDTO testCycleCaseDTO) {
+		iTestCycleCaseService.delete(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
+	}
 
     @Override
 	public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId) {
@@ -191,7 +196,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		if (testCycleCaseDTO.getCycleId() == null) {
 			testCycleCaseDTO.setCycleId(iTestCycleService.findDefaultCycle(projectId));
 		}
-		TestStatusE e = new TestStatusE();
+		TestStatusE e = TestStatusEFactory.create();
 		testCycleCaseDTO.setExecutionStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE));
 		testCycleCaseDTO.setLastRank(TestCycleCaseEFactory.create().getLastedRank(testCycleCaseDTO.getCycleId()));
 		iTestCycleCaseService.validateCycleCaseInCycle(testCycleCaseDTO.getCycleId(), testCycleCaseDTO.getIssueId());

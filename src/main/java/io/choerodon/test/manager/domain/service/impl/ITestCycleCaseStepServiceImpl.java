@@ -8,6 +8,7 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEF
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
         List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		TestStatusE e = new TestStatusE();
+        TestStatusE e = TestStatusEFactory.create();
 		testCycleCaseStepE.setStepStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE_STEP));
         testCaseStepES.forEach(v -> {
             testCycleCaseStepE.setStepId(v.getStepId());

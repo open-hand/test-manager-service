@@ -30,6 +30,8 @@ public interface TestCycleCaseService {
 
 	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 
+	void batchDelete(TestCycleCaseDTO testCycleCaseDTO);
+
     /**
      * 启动一个测试例
      *
