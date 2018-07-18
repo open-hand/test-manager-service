@@ -30,7 +30,7 @@ public class SearchDTO {
 	private Long[] executionStatus;
 
 	@Transient
-	private Long[] defectStatus;
+	private String[] defectStatus;
 
 	/**
 	 * issueNum+summary模糊搜索
@@ -77,11 +77,11 @@ public class SearchDTO {
 		this.executionStatus = executionStatus;
 	}
 
-	public Long[] getDefectStatus() {
+	public String[] getDefectStatus() {
 		return defectStatus;
 	}
 
-	public void setDefectStatus(Long[] defectStatus) {
+	public void setDefectStatus(String[] defectStatus) {
 		this.defectStatus = defectStatus;
 	}
 
