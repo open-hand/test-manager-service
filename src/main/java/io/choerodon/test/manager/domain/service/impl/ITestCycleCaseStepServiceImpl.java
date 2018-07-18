@@ -4,13 +4,10 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +40,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
     public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
         testCycleCaseStepE.querySelf().forEach(v -> {
             deleteLinkedAttachment(v.getExecuteStepId());
+            deleteLinkedDefect(v.getExecuteStepId());
         });
         testCycleCaseStepE.deleteSelf();
     }
@@ -52,6 +50,13 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         attachmentRelE.setAttachmentLinkId(stepId);
         attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
         attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
+    }
+
+    private void deleteLinkedDefect(Long stepId) {
+        TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+        caseDefectRelE.setDefectLinkId(stepId);
+        caseDefectRelE.setDefectType(TestCycleCaseDefectRelE.CASE_STEP);
+        caseDefectRelE.querySelf().forEach(v -> iTestCycleCaseDefectRelServicel.delete(v));
     }
 
 

@@ -36,7 +36,6 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         return testCycleCaseDefectRelE.addSelf();
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
         testCycleCaseDefectRelE.deleteSelf();
