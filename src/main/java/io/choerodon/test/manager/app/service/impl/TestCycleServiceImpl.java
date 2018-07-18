@@ -268,4 +268,14 @@ public class TestCycleServiceImpl implements TestCycleService {
 		testCycleE.setCycleId(cycleId);
 		return ConvertHelper.convertList(testCycleE.getChildFolder(), TestCycleDTO.class);
 	}
+
+	@Override
+	public void initOldData(Long projectId) {
+        ResponseEntity<List<Long>> entityVersionIds = productionVersionClient.listAllVersionId(projectId);
+        List<Long> versionIds = entityVersionIds.getBody();
+        for (Long versionId : versionIds) {
+            TestCycleDTO testCycleDTO = new TestCycleDTO(versionId);
+            insert(testCycleDTO);
+        }
+	}
 }

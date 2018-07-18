@@ -32,6 +32,12 @@ public class TestCycleController {
 	@Autowired
 	TestCycleMapper testCycleMapper;
 
+	@Permission(level = ResourceLevel.PROJECT)
+	@ApiOperation("数据修复")
+	@PostMapping("/init")
+	public void initData(@PathVariable(name = "project_id") Long projectId) {
+		testCycleService.initOldData(projectId);
+	}
 
 	@Permission(level = ResourceLevel.PROJECT)
 	@ApiOperation("增加测试循环")
