@@ -61,7 +61,10 @@ public class ReporterFormE {
 
 			testCycleCaseES.forEach(v -> {
 				Optional.ofNullable(defectRelService.getSubCycleStepsHaveDefect(v.getExecuteId()))
-						.ifPresent(u -> v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class)));
+						.ifPresent(u -> {
+							defectRelService.populateDefectInfo(u, projectId);
+							v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class));
+						});
 				defectCount += v.getDefects().size() + v.getSubStepDefects().size();
 			});
 		}
