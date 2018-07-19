@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -113,6 +114,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuseId);
 		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
+		if (dto == null || dto.size() == 0) {
+			return new ArrayList<>();
+		}
 		setDefects(dto, projectId);
 		IssueInfosDTO info = new IssueInfosDTO(testCaseService.queryIssue(projectId, issuseId).getBody());
 		dto.forEach(v -> v.setIssueInfosDTO(info));
@@ -126,11 +130,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		if (map == null || map.isEmpty()) {
 			return;
 		}
-		dto.forEach(v -> {
-			TestCycleE cycleE = TestCycleEFactory.create();
-			cycleE.setCycleId(v.getCycleId());
-			v.setVersionName(map.get(cycleE.queryOne().getVersionId()));
-		});
+		TestCycleE cycleE = TestCycleEFactory.create();
+
+		for (TestCycleCaseDTO cases : dto) {
+			cycleE.setCycleId(cases.getCycleId());
+			Long versionId = cycleE.queryOne().getVersionId();
+			Assert.notNull(versionId, "error.version.id.not.null");
+			cases.setVersionName(map.get(versionId));
+		}
+
 	}
 
 	@Override
