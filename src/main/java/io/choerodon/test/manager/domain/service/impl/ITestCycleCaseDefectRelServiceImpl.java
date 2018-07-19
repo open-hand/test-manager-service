@@ -64,7 +64,9 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 	@Override
 	public void populateDefectInfo(List<TestCycleCaseDefectRelE> lists, Long projectId) {
 		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-		Assert.notEmpty(issueLists, "error.defect.getInfo.issueId.not.null");
+		if (issueLists == null || lists.size() == 0) {
+			return;
+		}
 		SearchDTO searchDTO = new SearchDTO();
 		searchDTO.setOtherArgs(new HashMap() {{
 			put("issueIds", issueLists);
