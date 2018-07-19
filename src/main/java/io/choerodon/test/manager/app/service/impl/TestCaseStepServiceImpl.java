@@ -50,7 +50,8 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO, Long projectId) {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
-			runCycleCaseStep(testCaseStepE.createOneStep(), projectId);
+			testCaseStepE = testCaseStepE.createOneStep();
+			runCycleCaseStep(testCaseStepE, projectId);
 		} else {
 			testCaseStepE = testCaseStepE.changeOneStep();
 		}
