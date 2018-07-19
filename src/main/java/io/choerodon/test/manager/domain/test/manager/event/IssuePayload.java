@@ -18,8 +18,8 @@ public class IssuePayload {
         this.issueId = issueId;
     }
 
-    @Override
-    public String toString() {
-        return StringUtil.getToString(this);
-    }
+//    @Override
+//    public String toString() {
+//        return StringUtil.getToString(this);
+//    }
 }

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
@@ -30,7 +31,7 @@ public class TestAttachmentController {
     @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("增加附件")
     @PostMapping
 	public ResponseEntity<List<TestCycleCaseAttachmentRelDTO>> uploadFile(@RequestParam("bucket_name") String bucketName,
@@ -48,7 +49,7 @@ public class TestAttachmentController {
 
     }
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除附件")
 	@DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
 	public void removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,

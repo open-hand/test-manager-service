@@ -60,8 +60,11 @@ public class ReporterFormE {
 			ITestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(ITestCycleCaseDefectRelServiceImpl.class);
 
 			testCycleCaseES.forEach(v -> {
-				Optional.ofNullable(defectRelService.query(v.getExecuteId(), TestCycleCaseDefectRelE.CASE_STEP, projectId))
-						.ifPresent(u -> v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class)));
+				Optional.ofNullable(defectRelService.getSubCycleStepsHaveDefect(v.getExecuteId()))
+						.ifPresent(u -> {
+							defectRelService.populateDefectInfo(u, projectId);
+							v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class));
+						});
 				defectCount += v.getDefects().size() + v.getSubStepDefects().size();
 			});
 		}

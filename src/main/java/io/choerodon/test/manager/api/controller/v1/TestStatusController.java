@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestStatusDTO;
@@ -31,7 +32,7 @@ public class TestStatusController {
 	@Autowired
 	TestStatusMapper testStatusMapper;
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询状态")
 	@PostMapping("/query")
 	public ResponseEntity<List<TestStatusDTO>> query(@PathVariable(name = "project_id") Long projectId,
@@ -42,7 +43,7 @@ public class TestStatusController {
 
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("删除状态")
 	@DeleteMapping("/{statusId}")
 	public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -53,7 +54,7 @@ public class TestStatusController {
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("插入状态")
 	@PostMapping
 	public ResponseEntity<TestStatusDTO> insert(@PathVariable(name = "project_id") Long projectId,
@@ -63,7 +64,7 @@ public class TestStatusController {
 				.orElseThrow(() -> new CommonException("error.testStatus.insert"));
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("更新状态")
 	@PutMapping("/update")
 	public ResponseEntity<TestStatusDTO> update(@PathVariable(name = "project_id") Long projectId,

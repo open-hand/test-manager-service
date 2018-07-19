@@ -21,4 +21,6 @@ public interface ITestCycleCaseDefectRelService {
     List<TestCycleCaseDefectRelE> query(Long linkId, String defectType, Long projectId);
 
     void populateDefectInfo(List<TestCycleCaseDefectRelE> lists, Long projectId);
+
+    List<TestCycleCaseDefectRelE> getSubCycleStepsHaveDefect(Long cycleCaseId);
 }
