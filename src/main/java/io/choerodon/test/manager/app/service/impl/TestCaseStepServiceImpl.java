@@ -98,7 +98,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		testCaseStepE.setStepId(null);
 		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
 		testCaseStepE.setObjectVersionNumber(null);
-		return changeStep(testCaseStepDTO, projectId);
+		return changeStep(ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class), projectId);
 
 	}
 
