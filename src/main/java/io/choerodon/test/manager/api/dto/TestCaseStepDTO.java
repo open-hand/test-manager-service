@@ -27,7 +27,7 @@ public class TestCaseStepDTO {
 
     private String nextRank;
 
-    private List<TestCycleCaseAttachmentRelDTO> attachments;
+	private List<TestCycleCaseAttachmentRelDO> attachments;
 
     public Long getStepId() {
         return stepId;
@@ -101,11 +101,11 @@ public class TestCaseStepDTO {
         this.nextRank = nextRank;
     }
 
-    public List<TestCycleCaseAttachmentRelDTO> getAttachments() {
+	public List<TestCycleCaseAttachmentRelDO> getAttachments() {
         return attachments;
     }
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
-        this.attachments = ConvertHelper.convertList(attachments, TestCycleCaseAttachmentRelDTO.class);
+		this.attachments = attachments;
     }
 }

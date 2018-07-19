@@ -9,6 +9,7 @@ import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import org.slf4j.Logger;
@@ -54,7 +55,10 @@ public class TestManagerEventHandler {
     public void handleProjectVersionCreateEvent(EventPayload<VersionEvent> payload) {
         VersionEvent versionEvent = payload.getData();
         loggerInfo(versionEvent);
-        TestCycleDTO testCycleDTO = new TestCycleDTO(versionEvent.getVersionId());
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setVersionId(versionEvent.getVersionId());
+        testCycleDTO.setType(TestCycleE.TEMP);
+        testCycleDTO.setCycleName("临时");
         testCycleService.insert(testCycleDTO);
     }
 

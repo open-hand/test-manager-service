@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -29,7 +30,7 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation(value = "根据项目id分页查询该项目下的用户，可以进行模糊查询name和realName")
 	@GetMapping(value = "/users")
 	@CustomPageRequest

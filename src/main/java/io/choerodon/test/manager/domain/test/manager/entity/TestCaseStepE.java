@@ -37,7 +37,7 @@ public class TestCaseStepE {
 
     private String nextRank;
 
-    private List<TestCycleCaseAttachmentRelE> attachments;
+	private List<TestCycleCaseAttachmentRelDO> attachments;
 
     @Autowired
     private TestCaseStepRepository testCaseStepRepository;
@@ -159,11 +159,11 @@ public class TestCaseStepE {
         return testCaseStepRepository;
     }
 
-    public List<TestCycleCaseAttachmentRelE> getAttachments() {
+	public List<TestCycleCaseAttachmentRelDO> getAttachments() {
         return attachments;
     }
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
-        this.attachments = ConvertHelper.convertList(attachments, TestCycleCaseAttachmentRelE.class);
+		this.attachments = attachments;
     }
 }

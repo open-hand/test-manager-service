@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.agile.api.dto.*;
@@ -34,7 +35,7 @@ public class TestCaseController {
     ReporterFormService reporterFormService;
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成报表从issue到缺陷")
     @PostMapping("/get/reporter/from/issue")
 	public ResponseEntity createFormsFromIssueToDefect(@PathVariable(name = "project_id") Long projectId,
@@ -49,7 +50,7 @@ public class TestCaseController {
 				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("通过IssueId生成issue到缺陷的报表")
 	@PostMapping("/get/reporter/from/issue/by/issueId")
 	public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
@@ -60,7 +61,7 @@ public class TestCaseController {
 				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("生成报表从缺陷到issue")
 	@PostMapping("/get/reporter/from/defect")
 	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
@@ -74,7 +75,7 @@ public class TestCaseController {
 				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue"));
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
 	@PostMapping("/get/reporter/from/defect/by/issueId")
 	public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,

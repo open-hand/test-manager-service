@@ -57,24 +57,6 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 			return null;
 		}
 		populateDefectInfo(lists, projectId);
-//		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-//
-//		//List<IssueInfosDTO> list = testCaseFeignClient.listByIssueIds(projectId, issueLists).getBody();
-//		SearchDTO searchDTO = new SearchDTO();
-//		Map map = new HashMap();
-//		map.put("issueIds", issueLists);
-//		searchDTO.setOtherArgs(map);
-//		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
-//
-//		Map defectMap = new HashMap();
-//		for (IssueListDTO issueInfoDTO : issueResponse.getBody()) {
-//			defectMap.put(issueInfoDTO.getIssueId().longValue(), issueInfoDTO);
-//		}
-//		lists.forEach(v -> {
-//			v.setDefectName(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getIssueNum());
-//			v.setDefectStatus(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusName());
-//			v.setDefectColor(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusColor());
-//		});
 
 		return lists;
     }
@@ -82,7 +64,9 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 	@Override
 	public void populateDefectInfo(List<TestCycleCaseDefectRelE> lists, Long projectId) {
 		List<Long> issueLists = lists.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-		Assert.notEmpty(issueLists, "error.defect.getInfo.issueId.not.null");
+		if (issueLists == null || lists.size() == 0) {
+			return;
+		}
 		SearchDTO searchDTO = new SearchDTO();
 		searchDTO.setOtherArgs(new HashMap() {{
 			put("issueIds", issueLists);
@@ -100,7 +84,7 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		});
 	}
 
-
+	@Override
 	public List<TestCycleCaseDefectRelE> getSubCycleStepsHaveDefect(Long cycleCaseId) {
 		TestCycleCaseStepE caseStepE = TestCycleCaseStepEFactory.create();
 		caseStepE.setExecuteId(cycleCaseId);

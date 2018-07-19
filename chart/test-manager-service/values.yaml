@@ -9,12 +9,12 @@ image:
   pullPolicy: Always
 
 deployment:
-  managementPort: 8061
+  managementPort: 8094
 
 service:
   enabled: false
   type: ClusterIP
-  port: 8060
+  port: 8093
 
 preJob:
   image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.5.2
@@ -30,7 +30,7 @@ preJob:
     mysql:
       host: 192.168.12.175
       port: 3306
-      database: devops_service
+      database: test_manager_service
       username: root
       password: choerodon
 
@@ -43,9 +43,9 @@ env:
     CHOERODON_EVENT_CONSUMER_KAFKA_BOOTSTRAP_SERVERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092, kafka-1.kafka-headless.kafka.svc.cluster.local:9092, kafka-2.kafka-headless.kafka.svc.cluster.local:9092
     SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: kafka-0.kafka-headless.kafka.svc.cluster.local:9092, kafka-1.kafka-headless.kafka.svc.cluster.local:9092, kafka-2.kafka-headless.kafka.svc.cluster.local:9092
     SPRING_CLOUD_STREAM_KAFKA_BINDER_ZK_NODES: zookeeper-0.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-1.zookeeper-headless.zookeeper.svc.cluster.local:2181,zookeeper-2.zookeeper-headless.zookeeper.svc.cluster.local:2181
+    SPRING_CLOUD_CONFIG_ENABLED: true
     SPRING_CLOUD_CONFIG_URI: http://config-server.io-choerodon:8010/
     SPRING_REDIS_HOST: redis.tools.svc
-    SERVICES_ATTACHMENT_URL: example.com
 
 metrics:
   path: /prometheus

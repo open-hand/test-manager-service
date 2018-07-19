@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import com.alibaba.fastjson.JSONArray;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -59,7 +60,7 @@ public class TestCycleCaseStepController {
 	 * @param cycleCaseId
 	 * @return
 	 */
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询循环步骤")
 	@GetMapping("/query/{cycleCaseId}")
 	ResponseEntity<Page<TestCycleCaseStepDTO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
@@ -76,7 +77,7 @@ public class TestCycleCaseStepController {
 
 	}
 
-	@Permission(level = ResourceLevel.PROJECT)
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("修改一个测试循环")
 	@PostMapping("/updateWithAttach")
 	public ResponseEntity updateOneCase(HttpServletRequest request,
