@@ -58,7 +58,7 @@ public class TestCycleController {
 				@PathVariable(name = "cycleId") Long cycleId) {
 		TestCycleDTO cycleDTO = new TestCycleDTO();
 		cycleDTO.setCycleId(cycleId);
-		testCycleService.delete(cycleDTO);
+		testCycleService.delete(cycleDTO, projectId);
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface TestCycleCaseService {
 
-    void delete(Long cycleCaseId);
+	void delete(Long cycleCaseId, Long projectId);
 
 //    List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
 
@@ -30,7 +30,7 @@ public interface TestCycleCaseService {
 
 	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 
-	void batchDelete(TestCycleCaseDTO testCycleCaseDTO);
+	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
     /**
      * 启动一个测试例

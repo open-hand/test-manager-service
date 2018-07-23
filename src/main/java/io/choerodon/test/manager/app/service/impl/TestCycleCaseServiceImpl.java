@@ -58,16 +58,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void delete(Long cycleCaseId) {
+	public void delete(Long cycleCaseId, Long projectId) {
 		TestCycleCaseDTO dto = new TestCycleCaseDTO();
 		dto.setExecuteId(cycleCaseId);
-		iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class));
+		iTestCycleCaseService.delete(ConvertHelper.convert(dto, TestCycleCaseE.class), projectId);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
-	public void batchDelete(TestCycleCaseDTO testCycleCaseDTO) {
-		iTestCycleCaseService.delete(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class));
+	public void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
+		iTestCycleCaseService.delete(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId);
 	}
 
     @Override

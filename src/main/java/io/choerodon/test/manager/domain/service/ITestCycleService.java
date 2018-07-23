@@ -12,7 +12,7 @@ import java.util.List;
 public interface ITestCycleService {
     TestCycleE insert(TestCycleE testCycleE);
 
-    void delete(TestCycleE testCycleE);
+	void delete(TestCycleE testCycleE, Long projectId);
 
 	TestCycleE update(TestCycleE testCycleE);
 
@@ -23,8 +23,6 @@ public interface ITestCycleService {
 	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
 	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
-
-//	List<TestCycleE> sort(List<TestCycle	E> testCycleES);
 
 	List<TestCycleE> queryCycleWithBar(Long[] versionId);
 

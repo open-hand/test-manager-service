@@ -52,23 +52,23 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	}
 
 	@Override
-	public void delete(TestCycleE testCycleE) {
+	public void delete(TestCycleE testCycleE, Long projectId) {
 
 		List<TestCycleE> testCycleES = testCycleE.querySelf();
 		testCycleES.forEach(v -> {
 			if (v.getType().equals(TestCycleE.CYCLE)) {
 				TestCycleE testCycle = TestCycleEFactory.create();
 				testCycle.setParentCycleId(v.getCycleId());
-				delete(testCycle);
+				delete(testCycle, projectId);
 			}
-			deleteCycleWithCase(v);
+			deleteCycleWithCase(v, projectId);
 		});
 	}
 
-	private void deleteCycleWithCase(TestCycleE testCycleE) {
+	private void deleteCycleWithCase(TestCycleE testCycleE, Long projectId) {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(testCycleE.getCycleId());
-		iTestCycleCaseService.delete(testCycleCaseE);
+		iTestCycleCaseService.delete(testCycleCaseE, projectId);
 		testCycleE.deleteSelf();
 	}
 

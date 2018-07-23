@@ -20,7 +20,7 @@ public interface ITestCycleCaseService {
      */
 	TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 
-    void delete(TestCycleCaseE testCycleCaseE);
+	void delete(TestCycleCaseE testCycleCaseE, Long projectId);
 
 
     Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
