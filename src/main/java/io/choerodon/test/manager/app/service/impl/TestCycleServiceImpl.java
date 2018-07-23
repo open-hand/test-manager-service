@@ -49,8 +49,8 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleDTO testCycleDTO) {
-        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+    public void delete(TestCycleDTO testCycleDTO, Long projectId) {
+        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId);
 
     }
 

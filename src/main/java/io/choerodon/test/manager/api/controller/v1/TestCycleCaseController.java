@@ -38,7 +38,7 @@ public class TestCycleCaseController {
 	@DeleteMapping
 	public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
 								 Long cycleCaseId) {
-		testCycleCaseService.delete(cycleCaseId);
+		testCycleCaseService.delete(cycleCaseId, projectId);
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
