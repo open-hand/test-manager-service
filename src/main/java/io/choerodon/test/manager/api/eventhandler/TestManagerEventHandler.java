@@ -89,7 +89,6 @@ public class TestManagerEventHandler {
         TestCycleCaseDefectRelE defectRelE=TestCycleCaseDefectRelEFactory.create();
         defectRelE.setIssueId(issuePayload.getIssueId());
         defectRelE.deleteSelf();
-
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
         //	testCycleCaseService.delete(testCycleCaseDTO);

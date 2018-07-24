@@ -4,6 +4,8 @@ import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.domain.repository.TestStatusRepository
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO
+import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -42,17 +44,13 @@ class TestStatusRepositorySpec extends Specification{
 
     def "query"(){
         given:
-        TestStatusE statusE=TestStatusEFactory.create()
-        statusE.setProjectId(new Long(999))
-        statusE.setStatusName("name1")
-        statusE.setStatusColor("pink")
+        TestStatusMapper mapper=Mock(TestStatusMapper.class)
+        TestStatusE statusE=TestStatusEFactory.create();
+        statusE.setProjectId(new Long(1))
         when:
-        List<TestStatusE> result=repository.queryAllUnderProject(statusE)
+        repository.queryAllUnderProject(statusE)
         then:
-        result.size()==1
-        result.get(0).getProjectId().equals(new Long(999))
-        StringUtils.equals(result.get(0).getStatusName(),"name1")
-        StringUtils.equals(result.get(0).getStatusColor(),"pink")
+        1*mapper.queryAllUnderProject()
 
     }
 

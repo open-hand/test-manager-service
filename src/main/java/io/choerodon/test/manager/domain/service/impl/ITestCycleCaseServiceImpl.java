@@ -74,7 +74,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	}
 
 	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
-		if (testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
+		if (!testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
 			LocalDateTime time = LocalDateTime.ofInstant(testCycleCaseE.getLastUpdateDate().toInstant(), ZoneId.systemDefault());
 			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
 			entityIdCounter.decrementAndGet();
@@ -165,10 +165,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 			if (cycleIds != null && cycleIds.size() > 0) {
 				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
 			}
-			return new Long(0);
-		} else {
-			return new Long(0);
 		}
+		return new Long(0);
 	}
 
 	@Override

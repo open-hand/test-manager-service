@@ -1,7 +1,10 @@
 package io.choerodon.test.manager.infra.mapper
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
+import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -40,6 +43,20 @@ class TestStatusMapperSpec extends Specification{
         statusDO.setStatusName("statusName1")
         statusDO.setStatusColor("pink")
         statusDO.setProjectId(new Long(1))
+    }
+
+    def "query"(){
+        TestStatusDO status=new TestStatusDO();
+        status.setProjectId(new Long(999))
+        status.setStatusName("name1")
+        status.setStatusColor("pink")
+        when:
+        List<TestStatusDO> result=statusMapper.queryAllUnderProject(status)
+        then:
+        result.size()==1
+        result.get(0).getProjectId().equals(new Long(999))
+        StringUtils.equals(result.get(0).getStatusName(),"name1")
+        StringUtils.equals(result.get(0).getStatusColor(),"pink")
     }
 
 }
