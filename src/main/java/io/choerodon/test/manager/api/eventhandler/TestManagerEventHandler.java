@@ -9,9 +9,11 @@ import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +86,9 @@ public class TestManagerEventHandler {
     @EventListener(topic = AGILE_SERVICE, businessType = "deleteIssue")
     public void handleProjectIssueDeleteEvent(EventPayload<IssuePayload> payload) {
         IssuePayload issuePayload = payload.getData();
+        TestCycleCaseDefectRelE defectRelE=TestCycleCaseDefectRelEFactory.create();
+        defectRelE.setIssueId(issuePayload.getIssueId());
+        defectRelE.deleteSelf();
 
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());

@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import com.google.common.collect.Maps;
+import io.choerodon.agile.api.dto.IssueCommonDTO;
 import io.choerodon.agile.api.dto.IssueInfoDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
@@ -71,16 +72,16 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 		searchDTO.setOtherArgs(new HashMap() {{
 			put("issueIds", issueLists);
 		}});
-		ResponseEntity<Page<IssueListDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSub(0, 400, null, projectId, searchDTO);
+		ResponseEntity<Page<IssueCommonDTO>> issueResponse = testCaseFeignClient.listIssueWithoutSubToTestComponent( projectId, searchDTO,0, 400, null);
 		Map defectMap = new HashMap();
-		for (IssueListDTO issueInfoDTO : issueResponse.getBody()) {
+		for (IssueCommonDTO issueInfoDTO : issueResponse.getBody()) {
 			defectMap.put(issueInfoDTO.getIssueId().longValue(), issueInfoDTO);
 		}
 
 		lists.forEach(v -> {
-			v.setDefectName(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getIssueNum());
-			v.setDefectStatus(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusName());
-			v.setDefectColor(((IssueListDTO) defectMap.get(v.getIssueId().longValue())).getStatusColor());
+			v.setDefectName(((IssueCommonDTO) defectMap.get(v.getIssueId().longValue())).getIssueNum());
+			v.setDefectStatus(((IssueCommonDTO) defectMap.get(v.getIssueId().longValue())).getStatusName());
+			v.setDefectColor(((IssueCommonDTO) defectMap.get(v.getIssueId().longValue())).getStatusColor());
 		});
 	}
 
