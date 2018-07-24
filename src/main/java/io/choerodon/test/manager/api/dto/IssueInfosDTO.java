@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.IssueCommonDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 
@@ -20,6 +21,16 @@ public class IssueInfosDTO {
 
 	private Long projectId;
 
+	public IssueInfosDTO(IssueCommonDTO issueCommonDTO){
+		issueName = issueCommonDTO.getIssueNum();
+		issueStatusName = issueCommonDTO.getStatusName();
+		issueId = issueCommonDTO.getIssueId();
+		issueColor = issueCommonDTO.getStatusColor();
+		summary = issueCommonDTO.getSummary();
+		projectId = issueCommonDTO.getProjectId();
+	}
+
+
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
 		issueName = issueListDTO.getIssueNum();
 		issueStatusName = issueListDTO.getStatusName();
@@ -28,6 +39,8 @@ public class IssueInfosDTO {
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
 	}
+
+
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
 		issueName = issueDTO.getIssueNum();

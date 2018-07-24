@@ -153,7 +153,10 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-			return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
+			if (cycleIds != null && cycleIds.size() > 0) {
+				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
+			}
+			return new Long(0);
 		} else {
 			return new Long(0);
 		}

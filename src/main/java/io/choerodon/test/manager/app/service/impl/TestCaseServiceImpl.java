@@ -30,9 +30,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 
 	@Override
-	public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+	public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		Assert.notNull(projectId, "error.query.issue.projectId.not.null");
-		return testCaseFeignClient.listIssueWithoutSub(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
+		return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO,pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
     }
 
 	@Override
@@ -42,7 +42,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
 	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, v -> new IssueInfosDTO(v)));
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 		pageRequest.setSize(999999999);
 		pageRequest.setPage(0);
 		pageRequest.setSort(new Sort(Sort.Direction.ASC, new String[]{"issueId"}));
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, v -> new IssueInfosDTO(v)));
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, v -> new IssueInfosDTO(v)));
 	}
 
 	@Override
