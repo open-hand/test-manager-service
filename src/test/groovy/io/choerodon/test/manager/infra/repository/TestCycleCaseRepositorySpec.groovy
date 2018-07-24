@@ -24,7 +24,7 @@ class TestCycleCaseRepositorySpec extends Specification{
 
     def "insert"(){
         TestCycleCaseE caseE=TestCycleCaseEFactory.create();
-        caseE.set
+//        caseE.set
 
         repository.insert()
     }
