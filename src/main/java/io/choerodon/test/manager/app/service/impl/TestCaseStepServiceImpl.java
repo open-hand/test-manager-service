@@ -5,6 +5,7 @@ import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -31,7 +32,8 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	@Autowired
 	ITestCaseStepService iTestCaseStepService;
 
-
+	@Autowired
+	ITestStatusService iTestStatusService;
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -63,7 +65,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
 		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
 		TestCycleCaseStepE testCycleCaseStepE = new TestCycleCaseStepEFactory().create();
-		Long status = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE_STEP);
+		Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
 		testCaseStepES.forEach(v -> {
 			testCycleCaseStepE.setExecuteId(v.getExecuteId());
 			testCycleCaseStepE.setStepId(testCaseStepE.getStepId());

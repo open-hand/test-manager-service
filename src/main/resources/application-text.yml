@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    bus:
+      enabled: false # 关闭bus,否则kafka报错
+  sleuth:
+    stream:
+      enabled: false # 关闭zipkin，否则kafka报错
+  datasource:  # 使用内存数据库h2
+    password: sa
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=Mysql;TRACE_LEVEL_SYSTEM_OUT=2;
+    username: sa
+  autoconfigure: # 关闭LiquibaseAutoConfiguration和KafkaAutoConfiguration的自动化配置
+    exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+hystrix:
+  stream:
+    queue:
+      enabled: false # 关闭hystrix stream，否则kafka报错
+data:
+  dir: src/main/resources
+eureka:
+  client:
+    enabled: false # 关闭eureka

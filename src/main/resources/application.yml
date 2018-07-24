@@ -32,7 +32,7 @@ spring:
 choerodon:
   event:
     consumer:
-      enabled: true # 是否开启，不设置默认开启
+      enabled: false # 是否开启，不设置默认开启
       queue-type: kafka # 消息队列类型
       enable-duplicate-remove: true # 是否开启去重
       failed-strategy: nothing # 失败策略。支持nothing(什么都不做), send_back_event_store(回传到event store)两种

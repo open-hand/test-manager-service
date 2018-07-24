@@ -8,6 +8,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
+import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
@@ -45,6 +46,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 	@Autowired
 	TestCycleRepository testCycleRepository;
+
+	@Autowired
+	ITestStatusService iTestStatusService;
 
 	@Override
 	public TestCycleE insert(TestCycleE testCycleE) {
@@ -139,7 +143,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(protoTestCycleE.getCycleId());
-		Long defaultStatus = TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE);
+		Long defaultStatus = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
 		final String[] lastRank = new String[1];
 		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
 

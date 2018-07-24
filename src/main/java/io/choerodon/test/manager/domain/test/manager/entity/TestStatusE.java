@@ -1,8 +1,7 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
-import io.choerodon.core.exception.CommonException;
+
 import io.choerodon.test.manager.domain.repository.TestStatusRepository;
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -40,20 +39,12 @@ public class TestStatusE {
     @Autowired
     TestStatusRepository testStatusRepository;
 
-    public List<TestStatusE> querySelf() {
-        return testStatusRepository.query(this);
-    }
-
 	public TestStatusE queryOne() {
 		return testStatusRepository.queryOne(statusId);
 	}
 
 	public List<TestStatusE> queryAllUnderProject() {
 		return testStatusRepository.queryAllUnderProject(this);
-	}
-
-	public Long getDefaultStatusId(Long projectId, String type) {
-		return testStatusRepository.getDefaultStatus(projectId, type);
 	}
 
     public TestStatusE addSelf() {

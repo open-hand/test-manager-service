@@ -41,6 +41,9 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	ITestCycleService iTestCycleService;
 
 	@Autowired
+	ITestStatusService iTestStatusService;
+
+	@Autowired
 	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
 
 	@Autowired
@@ -71,7 +74,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	}
 
 	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
-		if (testCycleCaseE.getExecutionStatus().equals(TestStatusEFactory.create().getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE))) {
+		if (testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
 			LocalDateTime time = LocalDateTime.ofInstant(testCycleCaseE.getLastUpdateDate().toInstant(), ZoneId.systemDefault());
 			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
 			entityIdCounter.decrementAndGet();

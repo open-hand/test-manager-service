@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
@@ -28,6 +29,9 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
     @Autowired
     TestCycleCaseAttachmentRelService attachmentRelService;
+    @Autowired
+    ITestStatusService iTestStatusService;
+
 
     @Override
     public void deleteByTestCycleCase(TestCycleCaseE testCycleCaseE) {
@@ -73,9 +77,9 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
         Page<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf(pageRequest);
-        testCycleCaseEs.forEach(v -> {
-            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP, projectId));
-        });
+//        testCycleCaseEs.forEach(v -> {
+//            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP, projectId));
+//        });
         return testCycleCaseEs;
     }
 
@@ -91,8 +95,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
         List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-        TestStatusE e = TestStatusEFactory.create();
-		testCycleCaseStepE.setStepStatus(e.getDefaultStatusId(projectId, TestStatusE.STATUS_TYPE_CASE_STEP));
+		testCycleCaseStepE.setStepStatus(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP));
         testCaseStepES.forEach(v -> {
             testCycleCaseStepE.setStepId(v.getStepId());
             testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());

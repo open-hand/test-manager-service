@@ -47,6 +47,8 @@ public class TestCycleCaseE {
 
     List<TestCycleCaseAttachmentRelE> caseAttachment;
 
+    List<TestCycleCaseDefectRelE> caseDefect;
+
     private Long objectVersionNumber;
 
     private Long lastUpdatedBy;
@@ -57,7 +59,6 @@ public class TestCycleCaseE {
 
     private String folderName;
 
-    private List<TestCycleCaseDefectRelE> defects;
 
 
     @Autowired
@@ -241,11 +242,11 @@ public class TestCycleCaseE {
     }
 
     public List<TestCycleCaseDefectRelE> getDefects() {
-        return defects;
+        return caseDefect;
     }
 
-    public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-        this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
+    public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
+        this.caseDefect = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
     }
 
     public Long getLastUpdatedBy() {

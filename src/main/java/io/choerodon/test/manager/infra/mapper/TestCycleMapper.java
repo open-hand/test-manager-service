@@ -19,6 +19,4 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 	List<TestCycleDO> getCyclesByVersionId(@Param("versionId") Long versionId);
 
 	List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
-
-//    List<Map<String, Long>> queryAboutBar(@Param("cycleId") Long cycleId);
 }

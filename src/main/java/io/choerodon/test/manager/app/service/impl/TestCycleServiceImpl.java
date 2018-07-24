@@ -113,7 +113,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         dtos.forEach(v -> {
             if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
                 UserDO u = users.get(v.getCreatedBy());
-                v.setCreatedName(u.getLoginName() + " " + u.getRealName());
+                if(null!=u) {
+                    v.setCreatedName(u.getLoginName() + " " + u.getRealName());
+                }
             }
         });
     }

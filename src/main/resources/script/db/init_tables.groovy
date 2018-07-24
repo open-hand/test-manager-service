@@ -285,4 +285,12 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'create_time', type: 'DATETIME', remarks: '创建时间')
         }
     }
+
+    changeSet(id:'2018-07-23-add-attach-key',author: 'jialong.zuo'){
+        createIndex(indexName: 'uk_test_attachment', tableName: 'test_cycle_case_attachment_rel', unique: true) {
+            column(name: 'attachment_type')
+            column(name: 'attachment_link_id')
+            column(name: 'attachment_name')
+        }
+    }
 }

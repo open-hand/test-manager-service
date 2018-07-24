@@ -2,8 +2,8 @@ package io.choerodon.test.manager.infra.common.utils;
 
 import io.choerodon.core.swagger.ChoerodonRouteData;
 import io.choerodon.swagger.annotation.ChoerodonExtraData;
-import io.choerodon.swagger.custom.extra.ExtraData;
-import io.choerodon.swagger.custom.extra.ExtraDataManager;
+import io.choerodon.swagger.swagger.extra.ExtraData;
+import io.choerodon.swagger.swagger.extra.ExtraDataManager;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
