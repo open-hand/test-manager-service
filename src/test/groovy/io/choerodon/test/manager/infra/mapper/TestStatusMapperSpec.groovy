@@ -1,62 +1,60 @@
 package io.choerodon.test.manager.infra.mapper
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
-import org.apache.commons.lang.StringUtils
+import org.springframework.beans.factory.annotation.Autowire
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import spock.lang.Specification
 import spock.lang.Stepwise
+
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
- * Created by jialongZuo@hand-china.com on 7/23/18.
+ * Created by jialongZuo@hand-china.com on 7/24/18.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
 @Stepwise
-class TestStatusMapperSpec extends Specification{
+class TestStatusMapperSpec extends Specification {
 
     @Autowired
-    TestStatusMapper statusMapper;
+    TestStatusMapper mapper;
 
-    def "insert"(){
+    def "QueryAllUnderProject"() {
         given:
-        TestStatusDO statusDO=new TestStatusDO();
-        statusDO.setStatusName("statusName1")
-        statusDO.setStatusColor("pink")
+        TestStatusDO statusDO=new TestStatusDO()
         statusDO.setProjectId(new Long(1))
+        statusDO.setStatusName("name")
+        statusDO.setStatusColor("yellow")
+        statusDO.setStatusType("CYCLE_CASE")
+        TestStatusDO statusDO1=new TestStatusDO()
 
         when:
-        TestStatusDO statusResult=statusMapper.insert(statusDO)
+        def result1=mapper.queryAllUnderProject(statusDO1).size()
 
+        mapper.insert()
+        def result2=mapper.queryAllUnderProject(statusDO)
         then:
-        statusResult.getStatusId()!=null
+        result1!=0
+
+
     }
 
-    def "update"(){
-        given:
-        TestStatusDO statusDO=new TestStatusDO();
-        statusDO.setStatusName("statusName1")
-        statusDO.setStatusColor("pink")
-        statusDO.setProjectId(new Long(1))
+    def "IfDeleteCycleCaseAllow"() {
     }
 
-    def "query"(){
-        TestStatusDO status=new TestStatusDO();
-        status.setProjectId(new Long(999))
-        status.setStatusName("name1")
-        status.setStatusColor("pink")
-        when:
-        List<TestStatusDO> result=statusMapper.queryAllUnderProject(status)
-        then:
-        result.size()==1
-        result.get(0).getProjectId().equals(new Long(999))
-        StringUtils.equals(result.get(0).getStatusName(),"name1")
-        StringUtils.equals(result.get(0).getStatusColor(),"pink")
+    def "IfDeleteCaseStepAllow"() {
     }
 
+    def "GetDefaultStatus"() {
+        expect:
+        result== mapper.getDefaultStatus(statusType)
+        where:
+        statusType      |   result
+        "CYCLE_CASE"    |   1
+        "CASE_STEP"     |   4
+        "任意其他字符"    |   null
+    }
 }
