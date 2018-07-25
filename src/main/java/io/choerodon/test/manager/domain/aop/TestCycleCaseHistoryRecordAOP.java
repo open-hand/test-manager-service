@@ -85,7 +85,7 @@ public class TestCycleCaseHistoryRecordAOP {
 			historyDTO.setNewValue(newColor);
 			historyDTO.setOldValue(oldColor);
 			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), before.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecuteId());
+			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), oldColor, newColor, testCycleCaseDTO.getExecuteId());
 		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
 			historyDTO.setField(FIELD_ASSIGNED);
 			Long after_as = testCycleCaseDTO.getAssignedTo();

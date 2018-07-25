@@ -16,6 +16,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
+@Stepwise
 class TestCycleMapperSpec extends Specification {
 
     @Autowired
@@ -24,7 +25,8 @@ class TestCycleMapperSpec extends Specification {
     @Autowired
     TestCycleCaseMapper caseMapper
 
-    def setup(){
+    def "init"(){
+        given:
         TestCycleDO cycleDO1=new TestCycleDO()
         cycleDO1.setCycleName("循环1")
         cycleDO1.setVersionId(new Long(99))
@@ -64,8 +66,10 @@ class TestCycleMapperSpec extends Specification {
         caseMapper.insert(caseDO1)
         caseMapper.insert(caseDO2)
     }
+
     def "Query"() {
         given:
+
         Long[] versions=new Long[1]
         versions[0]=new Long(99)
         when:

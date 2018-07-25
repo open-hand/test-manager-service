@@ -139,7 +139,7 @@
 
     <select id="countCaseSum" resultType="java.lang.Long">
         SELECT
-        count(*)
+        count(execute_id)
         FROM
         test_cycle_case where cycle_id in
         <foreach item="item" index="index" collection="ids"
@@ -148,8 +148,8 @@
         </foreach>
     </select>
 
-    <select id="validateCycleCaseInCycle" resultMap="BaseResultMap">
-        select * from test_cycle_case case1
+    <select id="validateCycleCaseInCycle" resultType="java.lang.Long">
+        select count(case1.execute_id) from test_cycle_case case1
         left join test_cycle cycle on cycle.cycle_id=case1.cycle_id
         where cycle.type != 'temp' and case1.cycle_id=#{cycleId} and case1.issue_id=#{issueId}
     </select>

@@ -70,7 +70,7 @@ public class TestCycleCaseController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@Permission(permissionPublic = true)
 	@ApiOperation("过滤查询测试用例下循环case")
 	@PostMapping("/query/filtered/{cycleId}")
 	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,

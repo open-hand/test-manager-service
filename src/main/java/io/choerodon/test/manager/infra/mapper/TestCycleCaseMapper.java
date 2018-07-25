@@ -21,11 +21,27 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 
 	Long countCaseNotRun(@Param("ids") Long[] cycleIds);
 
+	/** 统计cycleIds下所有已经启动的Issue的数量
+	 * @param cycleIds
+	 * @return
+	 */
 	Long countCaseNotPlain(@Param("ids") Long[] cycleIds);
 
+	/** 获取cycleIds下所有的测试实例数量
+	 * @param cycleIds
+	 * @return
+	 */
 	Long countCaseSum(@Param("ids") Long[] cycleIds);
 
-	List<TestCycleCaseDO> validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
+	/**获取cycle（除了temp类型）下是否存的同issue的测试用例
+	 * @param testCycleCase
+	 * @return
+	 */
+	Long validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 
+	/**获取cycle下最后一个case的rank
+	 * @param cycleId
+	 * @return
+	 */
 	String getLastedRank(@Param("cycleId") Long cycleId);
 }
