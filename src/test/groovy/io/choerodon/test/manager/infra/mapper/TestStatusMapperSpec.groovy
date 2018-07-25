@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.infra.mapper
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import org.springframework.beans.factory.annotation.Autowire
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,16 +18,20 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-@Stepwise
 class TestStatusMapperSpec extends Specification {
 
     @Autowired
-    TestStatusMapper mapper;
+    TestStatusMapper mapper
+
+    @Autowired
+    TestCycleCaseMapper caseMapper;
+    @Autowired
+    TestCycleCaseStepMapper caseStepMapper;
 
     def "QueryAllUnderProject"() {
         given:
         TestStatusDO statusDO=new TestStatusDO()
-        statusDO.setProjectId(new Long(1))
+        statusDO.setProjectId(new Long(2))
         statusDO.setStatusName("name")
         statusDO.setStatusColor("yellow")
         statusDO.setStatusType("CYCLE_CASE")
@@ -33,19 +39,47 @@ class TestStatusMapperSpec extends Specification {
 
         when:
         def result1=mapper.queryAllUnderProject(statusDO1).size()
-
-        mapper.insert()
-        def result2=mapper.queryAllUnderProject(statusDO)
+        mapper.insert(statusDO)
+        def result2=mapper.queryAllUnderProject(statusDO).size()
         then:
-        result1!=0
-
-
+        result2==result1+1
     }
 
     def "IfDeleteCycleCaseAllow"() {
+        given:
+        TestCycleCaseDO caseDO=new TestCycleCaseDO()
+        caseDO.setCycleId(new Long(9999))
+        caseDO.setExecutionStatus(new Long(1))
+        caseDO.setIssueId(new Long(999))
+        caseDO.setRank("0|c00000:")
+        caseMapper.insert(caseDO)
+        when:
+        def result1 = mapper.ifDeleteCycleCaseAllow(new Long(1))
+        then:
+        result1==1
+        when:
+        caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
+        def result2 = mapper.ifDeleteCycleCaseAllow(new Long(1))
+        then:
+        result2==0
     }
 
     def "IfDeleteCaseStepAllow"() {
+        given:
+        TestCycleCaseStepDO stepDO=new TestCycleCaseStepDO()
+        stepDO.setExecuteId(new Long(9999))
+        stepDO.setStepStatus(new Long(4))
+        stepDO.setStepId(new Long(999))
+        caseStepMapper.insert(stepDO)
+        when:
+        def result1 = mapper.ifDeleteCaseStepAllow(new Long(4))
+        then:
+        result1==1
+        when:
+        caseStepMapper.deleteByPrimaryKey(stepDO.getExecuteStepId())
+        def result2 = mapper.ifDeleteCaseStepAllow(new Long(4))
+        then:
+        result2==0
     }
 
     def "GetDefaultStatus"() {
