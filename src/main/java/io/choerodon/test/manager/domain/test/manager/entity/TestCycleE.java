@@ -90,7 +90,7 @@ public class TestCycleE {
 	}
 
 	public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
-		return testCycleES.stream().filter(v -> v.getParentCycleId() == this.cycleId && v.getType().equals(FOLDER)).collect(Collectors.toList());
+		return testCycleES.stream().filter(v -> this.cycleId.equals(v.getParentCycleId())  && v.getType().equals(FOLDER)).collect(Collectors.toList());
 	}
 
 	public List<TestCycleE> querySelfWithBar(Long[] versionIds) {
