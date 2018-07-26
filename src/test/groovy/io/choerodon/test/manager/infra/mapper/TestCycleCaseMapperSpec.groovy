@@ -124,11 +124,11 @@ class TestCycleCaseMapperSpec extends Specification {
 
     def "deleteEnv"(){
         given:
-        cycleMapper.delete(cycleDO1)
-        cycleMapper.delete(cycleDO2)
-        mapper.delete(caseDO)
-        mapper.delete(caseDO1)
-        mapper.delete(caseDO2)
+        cycleMapper.deleteByPrimaryKey(cycleDO1.getCycleId())
+        cycleMapper.deleteByPrimaryKey(cycleDO2.getCycleId())
+        mapper.deleteByPrimaryKey(caseDO.getExecuteId())
+        mapper.deleteByPrimaryKey(caseDO1.getExecuteId())
+        mapper.deleteByPrimaryKey(caseDO2.getExecuteId())
 
     }
 }
