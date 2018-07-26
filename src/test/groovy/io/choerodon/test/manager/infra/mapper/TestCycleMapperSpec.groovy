@@ -6,6 +6,7 @@ import io.choerodon.test.manager.infra.dataobject.TestCycleDO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -24,13 +25,19 @@ class TestCycleMapperSpec extends Specification {
 
     @Autowired
     TestCycleCaseMapper caseMapper
-
+    @Shared
     TestCycleDO cycleDO1=new TestCycleDO()
+    @Shared
     TestCycleDO cycleDO2=new TestCycleDO()
+    @Shared
     TestCycleDO cycleDO3=new TestCycleDO()
+    @Shared
     TestCycleDO cycleDO4=new TestCycleDO()
+    @Shared
     TestCycleCaseDO caseDO = new TestCycleCaseDO()
+    @Shared
     TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
+    @Shared
     TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
 
     def "initEnv"(){
@@ -102,13 +109,13 @@ class TestCycleMapperSpec extends Specification {
     }
 
     def "deleteEnv"(){
-        given:
-        mapper.deleteByPrimaryKey(cycleDO1.getCycleId())
-        mapper.deleteByPrimaryKey(cycleDO2.getCycleId())
-        mapper.deleteByPrimaryKey(cycleDO3.getCycleId())
-        mapper.deleteByPrimaryKey(cycleDO4.getCycleId())
-        caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
-        caseMapper.deleteByPrimaryKey(caseDO1.getExecuteId())
-        caseMapper.deleteByPrimaryKey(caseDO2.getExecuteId())
+        expect:
+        mapper.deleteByPrimaryKey(cycleDO1.getCycleId())==1
+        mapper.deleteByPrimaryKey(cycleDO2.getCycleId())==1
+        mapper.deleteByPrimaryKey(cycleDO3.getCycleId())==1
+        mapper.deleteByPrimaryKey(cycleDO4.getCycleId())==1
+        caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())==1
+        caseMapper.deleteByPrimaryKey(caseDO1.getExecuteId())==1
+        caseMapper.deleteByPrimaryKey(caseDO2.getExecuteId())==1
     }
 }

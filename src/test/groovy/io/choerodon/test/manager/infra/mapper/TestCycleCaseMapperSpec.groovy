@@ -26,11 +26,15 @@ class TestCycleCaseMapperSpec extends Specification {
 
     @Autowired
     TestCycleMapper cycleMapper
-
+    @Shared
     TestCycleDO cycleDO1=new TestCycleDO()
+    @Shared
     TestCycleDO cycleDO2=new TestCycleDO()
+    @Shared
     TestCycleCaseDO caseDO = new TestCycleCaseDO()
+    @Shared
     TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
+    @Shared
     TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
 
     def "initEnv"() {
@@ -123,12 +127,12 @@ class TestCycleCaseMapperSpec extends Specification {
     }
 
     def "deleteEnv"(){
-        given:
-        cycleMapper.deleteByPrimaryKey(cycleDO1.getCycleId())
-        cycleMapper.deleteByPrimaryKey(cycleDO2.getCycleId())
-        mapper.deleteByPrimaryKey(caseDO.getExecuteId())
-        mapper.deleteByPrimaryKey(caseDO1.getExecuteId())
-        mapper.deleteByPrimaryKey(caseDO2.getExecuteId())
+        expect:
+        cycleMapper.deleteByPrimaryKey(cycleDO1.getCycleId())==1
+        cycleMapper.deleteByPrimaryKey(cycleDO2.getCycleId())==1
+        mapper.deleteByPrimaryKey(caseDO.getExecuteId())==1
+        mapper.deleteByPrimaryKey(caseDO1.getExecuteId())==1
+        mapper.deleteByPrimaryKey(caseDO2.getExecuteId())==1
 
     }
 }
