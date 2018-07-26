@@ -29,7 +29,7 @@ maven-test-docker:
     - cp target/app.jar /cache/${CI_PROJECT_NAME}-${CI_PROJECT_ID}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}/app.jar
 
 docker-build:
-  stage: docker-vn
+  stage: docker-build
   script:
     - docker_build
     - chart_build
