@@ -25,40 +25,46 @@ class TestCycleMapperSpec extends Specification {
     @Autowired
     TestCycleCaseMapper caseMapper
 
-    def "init"(){
+    TestCycleDO cycleDO1=new TestCycleDO()
+    TestCycleDO cycleDO2=new TestCycleDO()
+    TestCycleDO cycleDO3=new TestCycleDO()
+    TestCycleDO cycleDO4=new TestCycleDO()
+    TestCycleCaseDO caseDO = new TestCycleCaseDO()
+    TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
+    TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
+
+    def "initEnv"(){
         given:
-        TestCycleDO cycleDO1=new TestCycleDO()
         cycleDO1.setCycleName("循环1")
         cycleDO1.setVersionId(new Long(99))
         cycleDO1.setType("cycle")
         mapper.insert(cycleDO1)
-        cycleDO1.setCycleName("循环2")
-        cycleDO1.setCycleId(null)
-        mapper.insert(cycleDO1)
-        cycleDO1.setType("folder")
-        cycleDO1.setCycleName("文件夹1-1")
-        cycleDO1.setCycleId(null)
-        cycleDO1.setVersionId(new Long(99))
-        cycleDO1.setParentCycleId(new Long(1))
-        mapper.insert(cycleDO1)
-        cycleDO1.setCycleName("文件夹1-2")
-        cycleDO1.setCycleId(null)
-        mapper.insert(cycleDO1)
+        cycleDO2.setCycleName("循环2")
+        cycleDO2.setVersionId(new Long(99))
+        cycleDO2.setType("cycle")
+        mapper.insert(cycleDO2)
+        cycleDO3.setType("folder")
+        cycleDO3.setCycleName("文件夹1-1")
+        cycleDO3.setVersionId(new Long(99))
+        cycleDO3.setParentCycleId(new Long(1))
+        mapper.insert(cycleDO3)
+        cycleDO4.setCycleName("文件夹1-2")
+        cycleDO4.setType("folder")
+        cycleDO4.setVersionId(new Long(99))
+        cycleDO4.setParentCycleId(new Long(1))
+        mapper.insert(cycleDO4)
 
-        TestCycleCaseDO caseDO = new TestCycleCaseDO()
-        caseDO.setCycleId(new Long(3))
+        caseDO.setCycleId(new Long(1))
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
 
-        TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
-        caseDO1.setCycleId(new Long(3))
+        caseDO1.setCycleId(new Long(1))
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(998))
         caseDO1.setRank("0|c00004:")
 
-        TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
-        caseDO2.setCycleId(new Long(4))
+        caseDO2.setCycleId(new Long(2))
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
         caseDO2.setRank("0|c00000:")
@@ -81,10 +87,10 @@ class TestCycleMapperSpec extends Specification {
         count==result.get(id).getCycleCaseList().size()
         where:
         id  |   count
-        0   |   0
-        1   |   0
-        2   |   2
-        3   |   1
+        0   |   2
+        1   |   1
+        2   |   0
+        3   |   0
     }
 
     def "SelectCyclesInVersions"() {
@@ -93,5 +99,16 @@ class TestCycleMapperSpec extends Specification {
         where:
         param                                |     result
         [new Long(99)] as Long[]       |       4
+    }
+
+    def "deleteEnv"(){
+        given:
+        mapper.delete(cycleDO1)
+        mapper.delete(cycleDO2)
+        mapper.delete(cycleDO3)
+        mapper.delete(cycleDO4)
+        caseMapper.delete(caseDO)
+        caseMapper.delete(caseDO1)
+        caseMapper.delete(caseDO2)
     }
 }

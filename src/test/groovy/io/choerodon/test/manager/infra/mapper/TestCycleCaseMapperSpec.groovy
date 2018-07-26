@@ -27,30 +27,33 @@ class TestCycleCaseMapperSpec extends Specification {
     @Autowired
     TestCycleMapper cycleMapper
 
-    def "init"() {
+    TestCycleDO cycleDO1=new TestCycleDO()
+    TestCycleDO cycleDO2=new TestCycleDO()
+    TestCycleCaseDO caseDO = new TestCycleCaseDO()
+    TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
+    TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
+
+    def "initEnv"() {
         given:
-        TestCycleDO cycleDO1=new TestCycleDO()
         cycleDO1.setCycleName("循环1")
         cycleDO1.setVersionId(new Long(88))
         cycleDO1.setType("cycle")
+        cycleDO2.setCycleName("循环2")
+        cycleDO2.setVersionId(new Long(88))
+        cycleDO2.setType("cycle")
         cycleMapper.insert(cycleDO1)
-        cycleDO1.setCycleName("循环2")
-        cycleDO1.setCycleId(null)
-        cycleMapper.insert(cycleDO1)
+        cycleMapper.insert(cycleDO2)
 
-        TestCycleCaseDO caseDO = new TestCycleCaseDO()
         caseDO.setCycleId(new Long(1))
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
 
-        TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
         caseDO1.setCycleId(new Long(1))
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(998))
         caseDO1.setRank("0|c00004:")
 
-        TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
         caseDO2.setCycleId(new Long(2))
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
@@ -117,5 +120,15 @@ class TestCycleCaseMapperSpec extends Specification {
         cycleId ||  result
         1       ||  "0|c00004:"
         2       ||  "0|c00000:"
+    }
+
+    def "deleteEnv"(){
+        given:
+        cycleMapper.delete(cycleDO1)
+        cycleMapper.delete(cycleDO2)
+        mapper.delete(caseDO)
+        mapper.delete(caseDO1)
+        mapper.delete(caseDO2)
+
     }
 }
