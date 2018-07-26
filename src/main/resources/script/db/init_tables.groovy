@@ -136,6 +136,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     }
 
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cycle_case_history') {
+        validCheckSum("7:fac1c68f7ea54867ac5e708f1db92382")
+
         createTable(tableName: "test_cycle_case_history") {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
@@ -153,7 +155,6 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
                 constraints(nullable: false)
             }
 
-
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "creation_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
@@ -161,11 +162,6 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
 
-        createIndex(tableName: "test_cycle_case_history", indexName: "idx_case_history_execute_id") {
-            column(name: "execute_id")
-            column(name: "field")
-            column(name: "old_value(7)")
-        }
     }
 
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cycle_case_defect_rel') {
@@ -283,6 +279,14 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
                 constraints(nullable: false)
             }
             column(name: 'create_time', type: 'DATETIME', remarks: '创建时间')
+        }
+    }
+
+    changeSet(id:'2018-07-23-add-attach-key',author: 'jialong.zuo'){
+        createIndex(indexName: 'uk_test_attachment', tableName: 'test_cycle_case_attachment_rel', unique: true) {
+            column(name: 'attachment_type')
+            column(name: 'attachment_link_id')
+            column(name: 'attachment_name')
         }
     }
 }

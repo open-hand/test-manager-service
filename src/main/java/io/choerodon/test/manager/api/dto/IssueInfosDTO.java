@@ -21,6 +21,8 @@ public class IssueInfosDTO {
 
 	private Long projectId;
 
+	private String statusCode;
+
 	public IssueInfosDTO(IssueCommonDTO issueCommonDTO){
 		issueName = issueCommonDTO.getIssueNum();
 		issueStatusName = issueCommonDTO.getStatusName();
@@ -38,9 +40,8 @@ public class IssueInfosDTO {
 		issueColor = issueListDTO.getStatusColor();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
+		statusCode=issueListDTO.getStatusCode();
 	}
-
-
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
 		issueName = issueDTO.getIssueNum();
@@ -49,6 +50,7 @@ public class IssueInfosDTO {
 		issueColor = issueDTO.getStatusColor();
 		summary = issueDTO.getSummary();
 		projectId = issueDTO.getProjectId();
+		statusCode=issueDTO.getStatusCode();
 	}
 
 
@@ -98,5 +100,13 @@ public class IssueInfosDTO {
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
+	}
+
+	public String getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(String statusCode) {
+		this.statusCode = statusCode;
 	}
 }

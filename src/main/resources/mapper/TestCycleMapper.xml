@@ -2,7 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="BaseResultMap">
+    <resultMap id="hashmap" type="java.util.Map">
+        <result column="counts" property="counts"/>
+        <result column="color" property="color" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="queryAboutBarResultMap">
         <id column="cycle_id" property="cycleId"/>
         <id column="parent_cycle_id" property="parentCycleId"/>
         <id column="cycle_name" property="cycleName"/>
@@ -16,10 +22,23 @@
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="created_by" property="createdBy"/>
         <association property="cycleCaseList"
-                     javaType="java.util.List"
-                     select="queryAboutBar"
-                     column="cycle_id">
+                     resultMap="hashmap">
         </association>
+    </resultMap>
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="BaseResultMap">
+        <id column="cycle_id" property="cycleId"/>
+        <id column="parent_cycle_id" property="parentCycleId"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="version_id" property="versionId"/>
+        <id column="description" property="description"/>
+        <id column="build" property="build"/>
+        <id column="environment" property="environment"/>
+        <id column="from_date" property="fromDate"/>
+        <id column="to_date" property="toDate"/>
+        <id column="type" property="type"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="created_by" property="createdBy"/>
     </resultMap>
 
     <select id="getCyclesByVersionId" resultMap="BaseResultMap">
@@ -29,11 +48,44 @@
         where cycle1.version_id =#{versionId} and cycle1.parent_cycle_id is null
     </select>
 
-    <select id="query" resultMap="BaseResultMap">
-        SELECT cycle1.cycle_id,cycle1.parent_cycle_id,cycle1.cycle_name,cycle1.type,cycle1.version_id
-        ,cycle1.description,cycle1.build,cycle1.environment,cycle1.from_date,cycle1.to_date,cycle1.object_version_number,cycle1.created_by
-        FROM test_cycle cycle1
-        where cycle1.version_id in
+    <select id="query" resultMap="queryAboutBarResultMap">
+        SELECT
+        cycle1.cycle_id,
+        cycle1.parent_cycle_id,
+        cycle1.cycle_name,
+        cycle1.type,
+        cycle1.version_id,
+        cycle1.description,
+        cycle1.build,
+        cycle1.environment,
+        cycle1.from_date,
+        cycle1.to_date,
+        cycle1.object_version_number,
+        cycle1.created_by,
+        color1.color,
+        color1.counts
+        FROM
+        test_cycle cycle1
+        LEFT JOIN (
+        SELECT
+        color,
+        count( 1 ) counts,
+        temp1.cycle_id
+        FROM
+        (
+        SELECT
+        cycle.execute_id,
+        cycle.cycle_id,
+        cycle.issue_id,
+        status1.status_color color
+        FROM
+        test_cycle_case cycle
+        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+        ) temp1
+        GROUP BY
+        temp1.color,temp1.cycle_id
+        ) color1 ON color1.cycle_id = cycle1.cycle_id
+        AND cycle1.version_id IN
         <foreach item="item" index="index" collection="versionIds"
                  open="(" separator="," close=")">
             #{item}
@@ -76,33 +128,29 @@
     </select>
 
 
-    <resultMap id="hashmap" type="java.util.Map">
-        <result column="counts" property="counts"/>
-        <result column="color" property="color" jdbcType="VARCHAR"/>
-    </resultMap>
 
 
-    <select id="queryAboutBar" parameterType="java.lang.Long" resultMap="hashmap">
-        SELECT
-        color,
-        count(1) counts
-        FROM
-        (
-        SELECT
-        cycle.execute_id,
-        cycle.cycle_id,
-        cycle.issue_id,
-        status1.status_color color
-        FROM
-        test_cycle_case cycle
-        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
-        where
-        cycle.cycle_id =#{_parameter}
-        ) temp1
-        GROUP BY
-        temp1.color
+    <!--<select id="queryAboutBar" parameterType="java.lang.Long" resultMap="hashmap">-->
+        <!--SELECT-->
+        <!--color,-->
+        <!--count(1) counts-->
+        <!--FROM-->
+        <!--(-->
+        <!--SELECT-->
+        <!--cycle.execute_id,-->
+        <!--cycle.cycle_id,-->
+        <!--cycle.issue_id,-->
+        <!--status1.status_color color-->
+        <!--FROM-->
+        <!--test_cycle_case cycle-->
+        <!--LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id-->
+        <!--where-->
+        <!--cycle.cycle_id =#{_parameter}-->
+        <!--) temp1-->
+        <!--GROUP BY-->
+        <!--temp1.color-->
 
-    </select>
+    <!--</select>-->
 
 
     <select id="selectCyclesInVersions" resultType="java.lang.Long">

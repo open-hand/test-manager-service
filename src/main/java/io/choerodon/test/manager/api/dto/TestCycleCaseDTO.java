@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.dto;
 
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
@@ -58,7 +59,7 @@ public class TestCycleCaseDTO {
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
-    private List<TestCycleCaseDefectRelDTO> defects;
+    private List<TestCycleCaseDefectRelDTO> caseDefect;
 
 	private List<TestCycleCaseDefectRelDTO> subStepDefects;
 
@@ -234,19 +235,16 @@ public class TestCycleCaseDTO {
         return caseAttachment;
     }
 
-    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelE> caseAttachment) {
         this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
     }
 
     public List<TestCycleCaseDefectRelDTO> getDefects() {
-		if (defects == null) {
-			defects = new ArrayList<>();
-		}
-        return defects;
+        return caseDefect;
     }
 
     public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-        this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
+        this.caseDefect = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
 
 	public Long getLastUpdatedBy() {

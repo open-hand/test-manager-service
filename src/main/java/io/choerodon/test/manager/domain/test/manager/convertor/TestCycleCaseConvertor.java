@@ -17,28 +17,32 @@ public class TestCycleCaseConvertor implements ConvertorI<TestCycleCaseE, TestCy
     @Override
     public TestCycleCaseE dtoToEntity(TestCycleCaseDTO dto) {
         TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-        BeanUtils.copyProperties(dto, testCaseStepE);
+        BeanUtils.copyProperties(dto, testCaseStepE,new String[]{"caseAttachment","caseDefect"});
         return testCaseStepE;
     }
 
     @Override
     public TestCycleCaseDTO entityToDto(TestCycleCaseE entity) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        BeanUtils.copyProperties(entity, testCycleCaseDTO,new String[]{"caseAttachment","caseDefect"});
+        testCycleCaseDTO.setCaseAttachment(entity.getCaseAttachment());
+        testCycleCaseDTO.setDefects(entity.getDefects());
         return testCycleCaseDTO;
     }
 
     @Override
     public TestCycleCaseE doToEntity(TestCycleCaseDO dataObject) {
         TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-        BeanUtils.copyProperties(dataObject, testCaseStepE);
+        BeanUtils.copyProperties(dataObject, testCaseStepE,new String[]{"caseAttachment","caseDefect"});
+        testCaseStepE.setCaseAttachment(dataObject.getCaseAttachment());
+        testCaseStepE.setDefects(dataObject.getCaseDefect());
         return testCaseStepE;
     }
 
     @Override
     public TestCycleCaseDO entityToDo(TestCycleCaseE entity) {
         TestCycleCaseDO testCycleCaseDTO = new TestCycleCaseDO();
-        BeanUtils.copyProperties(entity, testCycleCaseDTO);
+        BeanUtils.copyProperties(entity, testCycleCaseDTO,new String[]{"caseAttachment","caseDefect"});
         return testCycleCaseDTO;
     }
 }

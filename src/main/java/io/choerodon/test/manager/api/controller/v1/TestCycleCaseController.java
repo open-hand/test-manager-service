@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -38,7 +39,7 @@ public class TestCycleCaseController {
 	@DeleteMapping
 	public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
 								 Long cycleCaseId) {
-		testCycleCaseService.delete(cycleCaseId);
+		testCycleCaseService.delete(cycleCaseId, projectId);
 		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
 	}
 
@@ -56,19 +57,20 @@ public class TestCycleCaseController {
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询测试用例下循环case")
-	@GetMapping("/query/{cycleId}")
+	@PostMapping("/query/cycleId")
 	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
-															   @PathVariable(name = "cycleId") Long cycleId,
 															   @ApiIgnore
 															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
-																	   PageRequest pageRequest) {
-		return Optional.ofNullable(testCycleCaseService.queryByCycle(cycleId, pageRequest, projectId))
+																	   PageRequest pageRequest,
+															   @RequestBody TestCycleCaseDTO dto) {
+		Assert.notNull(dto.getCycleId(),"error.queryByCycle.cycleId.not.null");
+		return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageRequest, projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@Permission(permissionPublic = true)
 	@ApiOperation("过滤查询测试用例下循环case")
 	@PostMapping("/query/filtered/{cycleId}")
 	public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,

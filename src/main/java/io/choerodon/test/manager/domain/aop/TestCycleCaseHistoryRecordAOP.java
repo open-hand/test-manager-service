@@ -9,13 +9,11 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseHistoryEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -64,6 +62,9 @@ public class TestCycleCaseHistoryRecordAOP {
 	@Autowired
 	UserService userService;
 
+	@Autowired
+	TestStatusService testStatusService;
+
 
 	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.changeOneCase(..)) && args(testCycleCaseDTO,projectId)")
 	public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO, Long projectId) throws Throwable {
@@ -75,11 +76,16 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setExecuteId(before.getExecuteId());
 
 		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
+			TestStatusE status=TestStatusEFactory.create();
+			status.setStatusId(testCycleCaseDTO.getExecutionStatus());
+			String newColor=status.queryOne().getStatusName();
+			status.setStatusId(before.getExecutionStatus());
+			String oldColor=status.queryOne().getStatusName();
 			historyDTO.setField(FIELD_STATUS);
-			historyDTO.setNewValue(testCycleCaseDTO.getExecutionStatusName());
-			historyDTO.setOldValue(before.getExecutionStatusName());
+			historyDTO.setNewValue(newColor);
+			historyDTO.setOldValue(oldColor);
 			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), before.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecuteId());
+			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), oldColor, newColor, testCycleCaseDTO.getExecuteId());
 		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
 			historyDTO.setField(FIELD_ASSIGNED);
 			Long after_as = testCycleCaseDTO.getAssignedTo();

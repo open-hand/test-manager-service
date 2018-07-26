@@ -4,7 +4,6 @@ import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProductionVersionClientFallback;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
-import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,7 @@ import java.util.Map;
 public interface ProductionVersionClient {
 
     @PostMapping(value = "/v1/projects/{project_id}/product_version/versions")
-    public ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(@PathVariable(name = "project_id") Long projectId,
+    ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(@PathVariable(name = "project_id") Long projectId,
                                                                      @RequestBody(required = false) Map<String, Object> searchParamMap);
 
     @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")

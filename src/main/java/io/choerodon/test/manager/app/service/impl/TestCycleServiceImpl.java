@@ -49,8 +49,8 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleDTO testCycleDTO) {
-        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+    public void delete(TestCycleDTO testCycleDTO, Long projectId) {
+        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId);
 
     }
 
@@ -113,7 +113,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         dtos.forEach(v -> {
             if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
                 UserDO u = users.get(v.getCreatedBy());
-                v.setCreatedName(u.getLoginName() + " " + u.getRealName());
+                if(null!=u) {
+                    v.setCreatedName(u.getLoginName() + " " + u.getRealName());
+                }
             }
         });
     }

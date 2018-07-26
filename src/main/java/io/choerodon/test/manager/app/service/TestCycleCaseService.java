@@ -14,13 +14,13 @@ import java.util.List;
  */
 public interface TestCycleCaseService {
 
-    void delete(Long cycleCaseId);
+	void delete(Long cycleCaseId, Long projectId);
 
 //    List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
 
 	Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId);
 
-	Page<TestCycleCaseDTO> queryByCycle(Long cycleId, PageRequest pageRequest, Long projectId);
+	Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId);
 
 	Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
 
@@ -30,7 +30,7 @@ public interface TestCycleCaseService {
 
 	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 
-	void batchDelete(TestCycleCaseDTO testCycleCaseDTO);
+	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
     /**
      * 启动一个测试例

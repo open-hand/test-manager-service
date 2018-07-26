@@ -30,7 +30,7 @@
         SELECT status_id
         from test_status
         where
-            project_id in(0,#{projectId}) and status_type=#{statusType}
+            project_id = 0 and status_type=#{statusType}
                 and status_name='未执行'
         order by status_id desc
         limit 1

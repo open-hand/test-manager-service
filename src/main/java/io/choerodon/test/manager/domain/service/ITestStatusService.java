@@ -15,4 +15,6 @@ public interface ITestStatusService {
     void delete(TestStatusE testStatusE);
 
     TestStatusE update(TestStatusE testStatusE);
+
+    Long getDefaultStatusId(String type);
 }

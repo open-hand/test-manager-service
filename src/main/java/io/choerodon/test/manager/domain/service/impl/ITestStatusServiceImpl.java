@@ -42,4 +42,9 @@ public class ITestStatusServiceImpl implements ITestStatusService {
     public TestStatusE update(TestStatusE testStatusE) {
         return testStatusE.updateSelf();
     }
+
+    @Override
+    public Long getDefaultStatusId(String type) {
+        return statusRepository.getDefaultStatus(type);
+    }
 }

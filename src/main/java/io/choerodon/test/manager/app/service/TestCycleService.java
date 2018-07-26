@@ -16,7 +16,7 @@ import java.util.Map;
 public interface TestCycleService {
     TestCycleDTO insert(TestCycleDTO testCycleDTO);
 
-    void delete(TestCycleDTO testCycleDTO);
+	void delete(TestCycleDTO testCycleDTO, Long projectId);
 
 	TestCycleDTO update(TestCycleDTO testCycleDTO);
 

@@ -10,11 +10,9 @@ public class TestCycleCaseDefectRelDTO {
     private String defectType;
     private Long defectLinkId;
     private Long issueId;
-	private String defectName;
-	private String defectStatus;
-	private String defectColor;
     private Long objectVersionNumber;
 
+    private IssueInfosDTO issueInfosDTO;
     public Long getId() {
         return id;
     }
@@ -55,27 +53,11 @@ public class TestCycleCaseDefectRelDTO {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-	public String getDefectName() {
-		return defectName;
+	public IssueInfosDTO getIssueInfosDTO() {
+		return issueInfosDTO;
 	}
 
-	public void setDefectName(String defectName) {
-		this.defectName = defectName;
-	}
-
-	public String getDefectStatus() {
-		return defectStatus;
-	}
-
-	public void setDefectStatus(String defectStatus) {
-		this.defectStatus = defectStatus;
-	}
-
-	public String getDefectColor() {
-		return defectColor;
-	}
-
-	public void setDefectColor(String defectColor) {
-		this.defectColor = defectColor;
+	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+		this.issueInfosDTO = issueInfosDTO;
 	}
 }

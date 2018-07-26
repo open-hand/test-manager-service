@@ -6,14 +6,8 @@ import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
@@ -29,6 +23,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -43,6 +39,9 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Autowired
 	ITestCycleService iTestCycleService;
+
+	@Autowired
+	ITestStatusService iTestStatusService;
 
 	@Autowired
 	ITestCycleCaseDefectRelService iTestCycleCaseDefectRelService;
@@ -61,17 +60,27 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 
 	@Override
-	public void delete(TestCycleCaseE testCycleCaseE) {
+	public void delete(TestCycleCaseE testCycleCaseE, Long projectId) {
 		List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
-		removeList.forEach(v -> deleteCaseWithSubStep(v));
+		removeList.forEach(v -> deleteCaseWithSubStep(v, projectId));
 	}
 
-	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE) {
+	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE, Long projectId) {
 		iTestCycleCaseStepService.deleteByTestCycleCase(testCycleCaseE);
 		deleteLinkedAttachment(testCycleCaseE.getExecuteId());
 		deleteLinkedDefect(testCycleCaseE.getExecuteId());
+		countCaseToRedis(testCycleCaseE, projectId);
 		testCycleCaseE.deleteSelf();
 	}
+
+	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
+		if (!testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
+			LocalDateTime time = LocalDateTime.ofInstant(testCycleCaseE.getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
+			entityIdCounter.decrementAndGet();
+		}
+	}
+
 
 	private void deleteLinkedAttachment(Long executeId) {
 		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
@@ -156,10 +165,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 			if (cycleIds != null && cycleIds.size() > 0) {
 				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
 			}
-			return new Long(0);
-		} else {
-			return new Long(0);
 		}
+		return new Long(0);
 	}
 
 	@Override

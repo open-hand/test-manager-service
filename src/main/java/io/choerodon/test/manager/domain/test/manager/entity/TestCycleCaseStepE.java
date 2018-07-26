@@ -187,8 +187,8 @@ public class TestCycleCaseStepE {
         return defects;
     }
 
-    public void setDefects(List<TestCycleCaseDefectRelE> defects) {
-        this.defects = defects;
+    public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
+        this.defects = ConvertHelper.convertList(defects,TestCycleCaseDefectRelE.class);
     }
 
 	public String getCycleName() {

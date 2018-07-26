@@ -16,6 +16,13 @@
         <id column="folder_name" property="folderName"/>
         <id column="last_update_date" property="lastUpdateDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
+        <collection property="caseDefect"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+            <id column="defect_issue_id" property="issueId"/>
+            <id column="defect_type" property="defectType"/>
+            <id column="defect_link_id" property="defectLinkId"/>
+            <id column="defece_id" property="id"/>
+        </collection>
         <collection property="caseAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
             <id column="url" property="url"/>
@@ -26,8 +33,11 @@
 
     <select id="filter" resultMap="BaseResultMap">
         SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
-        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by
+        cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by,
+        defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
         FROM test_cycle_case cycle
+        left join test_cycle_case_defect_rel defect
+        on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
         where cycle.cycle_id=#{cycleId}
         <if test="executionStatus != null">
             and
@@ -40,13 +50,15 @@
 
     </select>
 
-    <select id="query" resultMap="BaseResultMap">
-        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,status.status_name,
-        cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id,cycle.last_update_date,cycle.last_updated_by
+    <select id="queryWithAttachAndDefect" resultMap="BaseResultMap">
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        cycle.execution_status,cycle.assigned_to,cycle.comment,attach.url,attach.attachment_name,attach.id,cycle.last_update_date,cycle.last_updated_by,
+        defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
         FROM test_cycle_case cycle
         left join test_cycle_case_attachment_rel attach
         on cycle.execute_id=attach.attachment_link_id and attach.attachment_type="CYCLE_CASE"
-        left join test_status status on cycle.execution_status=status.status_id
+        left join test_cycle_case_defect_rel defect
+        on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
         <where>
             <if test="issueId != null">
                 AND cycle.issue_id = #{issueId}
@@ -57,12 +69,27 @@
             <if test="executeId != null">
                 AND cycle.execute_id = #{executeId}
             </if>
+            <if test="executionStatus != null">
+                AND cycle.execution_status = #{executionStatus}
+            </if>
+            <if test="comment != null">
+                AND cycle.comment like CONCAT(CONCAT('%', #{comment}), '%')
+            </if>
+            <if test="assignedTo != null">
+                AND cycle.assigned_to = #{assignedTo}
+            </if>
+            <if test="lastUpdatedBy != null">
+                AND cycle.last_updated_by = #{lastUpdatedBy}
+            </if>
+            <if test="lastUpdateDate != null">
+                AND cycle.last_update_date <![CDATA[>=]]> #{lastUpdateDate}
+            </if>
         </where>
-        order by rank
     </select>
 
     <select id="queryByIssue" resultMap="BaseResultMap">
                 SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id,
         cycle.execution_status,cycle.assigned_to,cycle.comment,cycle.last_update_date,cycle.last_updated_by,
         case cycle1.type
         when 'folder' then (select cycle2.cycle_name from test_cycle cycle2 where cycle1.parent_cycle_id = cycle2.cycle_id )
@@ -73,6 +100,8 @@
         end as folder_name
         FROM test_cycle_case cycle
         left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
+        left join test_cycle_case_defect_rel defect
+        on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
         where cycle.issue_id=#{issueId}
     </select>
 
@@ -110,7 +139,7 @@
 
     <select id="countCaseSum" resultType="java.lang.Long">
         SELECT
-        count(*)
+        count(execute_id)
         FROM
         test_cycle_case where cycle_id in
         <foreach item="item" index="index" collection="ids"
@@ -119,8 +148,8 @@
         </foreach>
     </select>
 
-    <select id="validateCycleCaseInCycle" resultMap="BaseResultMap">
-        select * from test_cycle_case case1
+    <select id="validateCycleCaseInCycle" resultType="java.lang.Long">
+        select count(case1.execute_id) from test_cycle_case case1
         left join test_cycle cycle on cycle.cycle_id=case1.cycle_id
         where cycle.type != 'temp' and case1.cycle_id=#{cycleId} and case1.issue_id=#{issueId}
     </select>

@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.domain.repository;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -9,9 +8,7 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/25/18.
  */
 public interface TestStatusRepository {
-    List<TestStatusE> query(TestStatusE testStatusE);
-
-    TestStatusE insert(TestStatusE testStatusE);
+	TestStatusE insert(TestStatusE testStatusE);
 
     void delete(TestStatusE testStatusE);
 
@@ -25,5 +22,5 @@ public interface TestStatusRepository {
 
 	void validateDeleteCaseStepAllow(Long statusId);
 
-	Long getDefaultStatus(Long projectId, String statusType);
+	Long getDefaultStatus(String statusType);
 }

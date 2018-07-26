@@ -18,5 +18,5 @@ public interface TestStatusMapper extends BaseMapper<TestStatusDO> {
 
 	Long ifDeleteCaseStepAllow(@Param("statusId") Long statusId);
 
-	Long getDefaultStatus(@Param("projectId") Long projectId, @Param("statusType") String statusType);
+	Long getDefaultStatus(@Param("statusType") String statusType);
 }

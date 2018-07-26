@@ -14,11 +14,15 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
 	List<TestCycleDO> query(@Param("versionIds") Long[] versionId);
 
+	@Deprecated
 	List<TestCycleDO> filter(Map maps);
 
+	@Deprecated
 	List<TestCycleDO> getCyclesByVersionId(@Param("versionId") Long versionId);
 
+	/**获取version下的所有循环Id
+	 * @param versionIds
+	 * @return
+	 */
 	List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
-
-//    List<Map<String, Long>> queryAboutBar(@Param("cycleId") Long cycleId);
 }

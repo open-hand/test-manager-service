@@ -27,12 +27,20 @@
             <id column="case_attach_name" property="attachmentName"/>
             <id column="case_attach_id" property="id"/>
         </collection>
+        <collection property="defects"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+            <id column="defect_issue_id" property="issueId"/>
+            <id column="defect_type" property="defectType"/>
+            <id column="defect_link_id" property="defectLinkId"/>
+            <id column="defece_id" property="id"/>
+        </collection>
     </resultMap>
 
     <select id="queryWithTestCaseStep" resultMap="BaseResultMap">
         SELECT cycle.execute_step_id,cycle.execute_id,cycle.step_id,cycle.comment,cycle.object_version_number,
         attach1.url,attach1.attachment_name,attach1.id,test.test_step,test.test_data,test.expected_result,
-        test.case_attach_url,test.case_attach_id,test.case_attach_name,cycle.step_status
+        test.case_attach_url,test.case_attach_id,test.case_attach_name,cycle.step_status,
+        defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
         FROM test_cycle_case_step cycle
         left join (
         SELECT step.step_id,step.rank,step.issue_id,step.test_step,step.test_data,step.expected_result,attach.url
@@ -44,6 +52,8 @@
         on cycle.step_id=test.step_id
         left join test_cycle_case_attachment_rel attach1
         on cycle.execute_step_id=attach1.attachment_link_id and attach1.attachment_type="CYCLE_STEP"
+        left join test_cycle_case_defect_rel defect
+        on cycle.execute_step_id=defect.defect_link_id and defect.defect_type="CASE_STEP"
         <where>
             <if test="dto!=null and dto.executeStepId != null">
                 AND cycle.execute_step_id = #{dto.executeStepId}

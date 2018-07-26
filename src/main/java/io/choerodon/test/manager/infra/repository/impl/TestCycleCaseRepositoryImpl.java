@@ -54,11 +54,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-//		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
-//			convert.setAssignedTo(null);
-//		}
-        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseMapper.select(convert));
+
+        Page<TestCycleCaseE> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testCycleCaseMapper.queryWithAttachAndDefect(convert));
 
         return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseE.class);
     }
@@ -66,19 +64,14 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-//		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
-//			convert.setAssignedTo(null);
-//		}
         return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
     }
 
     @Override
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-//		if (convert.getAssignedTo() != null && convert.getAssignedTo().longValue() == 0) {
-//			convert.setAssignedTo(null);
-//		}
-        List<TestCycleCaseDO> list = testCycleCaseMapper.query(convert);
+
+        List<TestCycleCaseDO> list = testCycleCaseMapper.queryWithAttachAndDefect(convert);
         if (list.size() != 1) {
 			throw new CommonException("error.cycle.case.query.not.found");
         }
@@ -122,7 +115,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	@Override
 	public void validateCycleCaseInCycle(TestCycleCaseDO testCycleCase) {
-		if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCase).size() > 0) {
+		if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCase).longValue() > 0) {
 			throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
 		}
 	}

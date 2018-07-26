@@ -6,9 +6,9 @@ import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -17,15 +17,9 @@ import java.util.List;
  */
 @Component
 public class TestStatusRepositoryImpl implements TestStatusRepository {
+
     @Autowired
     TestStatusMapper testStatusMapper;
-
-    @Override
-    public List<TestStatusE> query(TestStatusE testStatusE) {
-        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		return ConvertHelper.convertList(testStatusMapper.queryAllUnderProject(testStatusDO), TestStatusE.class);
-	}
-
 
 	@Override
 	public List<TestStatusE> queryAllUnderProject(TestStatusE testStatusE) {
@@ -51,9 +45,7 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
     @Override
     public void delete(TestStatusE testStatusE) {
         TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-        if (testStatusMapper.delete(testStatusDO) != 1) {
-            throw new CommonException("error.test.status.delete");
-        }
+		testStatusMapper.delete(testStatusDO);
     }
 
     @Override
@@ -75,13 +67,15 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 
 	@Override
 	public void validateDeleteCaseStepAllow(Long statusId) {
+		Assert.notNull(statusId,"error.validate.delete.allow.parameter.statusId.not.null");
 		if (testStatusMapper.ifDeleteCaseStepAllow(statusId) > 0) {
 			throw new CommonException("error.delete.status.have.used");
 		}
 	}
 
 	@Override
-	public Long getDefaultStatus(Long projectId, String statusType) {
-		return testStatusMapper.getDefaultStatus(projectId, statusType);
+	public Long getDefaultStatus(String statusType) {
+		Assert.notNull(statusType,"error.getDefault.parameter.type.not.null");
+		return testStatusMapper.getDefaultStatus(statusType);
 	}
 }

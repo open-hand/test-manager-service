@@ -46,6 +46,9 @@ public class TestCycleCaseDO extends AuditDomain {
     @Transient
     List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
+    @Transient
+    List<TestCycleCaseDefectRelDO>caseDefect;
+
     public Long getExecuteId() {
         return executeId;
     }
@@ -132,5 +135,13 @@ public class TestCycleCaseDO extends AuditDomain {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public List<TestCycleCaseDefectRelDO> getCaseDefect() {
+        return caseDefect;
+    }
+
+    public void setCaseDefect(List<TestCycleCaseDefectRelDO> caseDefect) {
+        this.caseDefect = caseDefect;
     }
 }

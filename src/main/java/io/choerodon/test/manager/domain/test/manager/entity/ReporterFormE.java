@@ -8,7 +8,9 @@ import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseDefectRelServiceImpl;
 import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
@@ -57,13 +59,13 @@ public class ReporterFormE {
 			this.issueName = issueName;
 			this.summary = summary;
 			testCycleCaseES = ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class).queryByIssuse(issueId, projectId);
-			ITestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(ITestCycleCaseDefectRelServiceImpl.class);
+			TestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(TestCycleCaseDefectRelServiceImpl.class);
 
 			testCycleCaseES.forEach(v -> {
 				Optional.ofNullable(defectRelService.getSubCycleStepsHaveDefect(v.getExecuteId()))
 						.ifPresent(u -> {
 							defectRelService.populateDefectInfo(u, projectId);
-							v.getSubStepDefects().addAll(ConvertHelper.convertList(u, TestCycleCaseDefectRelDTO.class));
+							v.getSubStepDefects().addAll(u);
 						});
 				defectCount += v.getDefects().size() + v.getSubStepDefects().size();
 			});
