@@ -46,19 +46,19 @@ class TestCycleMapperSpec extends Specification {
         mapper.insert(cycleDO1)
 
         TestCycleCaseDO caseDO = new TestCycleCaseDO()
-        caseDO.setCycleId(new Long(1))
+        caseDO.setCycleId(new Long(3))
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
 
         TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
-        caseDO1.setCycleId(new Long(1))
+        caseDO1.setCycleId(new Long(3))
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(998))
         caseDO1.setRank("0|c00004:")
 
         TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
-        caseDO2.setCycleId(new Long(2))
+        caseDO2.setCycleId(new Long(4))
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
         caseDO2.setRank("0|c00000:")
@@ -81,9 +81,10 @@ class TestCycleMapperSpec extends Specification {
         count==result.get(id).getCycleCaseList().size()
         where:
         id  |   count
-        0   |   2
-        1   |   1
-        3   |   0
+        0   |   0
+        1   |   0
+        2   |   2
+        3   |   1
     }
 
     def "SelectCyclesInVersions"() {
