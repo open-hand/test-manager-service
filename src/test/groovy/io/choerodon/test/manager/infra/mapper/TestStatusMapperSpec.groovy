@@ -49,7 +49,7 @@ class TestStatusMapperSpec extends Specification {
         given:
         TestCycleCaseDO caseDO=new TestCycleCaseDO()
         caseDO.setCycleId(new Long(9999))
-        caseDO.setExecutionStatus(new Long(1))
+        caseDO.setExecutionStatus(new Long(3))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
         caseMapper.insert(caseDO)

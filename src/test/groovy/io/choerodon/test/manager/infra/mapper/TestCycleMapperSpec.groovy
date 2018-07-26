@@ -59,7 +59,7 @@ class TestCycleMapperSpec extends Specification {
 
         TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
         caseDO2.setCycleId(new Long(2))
-        caseDO2.setExecutionStatus(new Long(3))
+        caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
         caseDO2.setRank("0|c00000:")
         caseMapper.insert(caseDO)
