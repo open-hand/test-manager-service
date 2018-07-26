@@ -54,12 +54,12 @@ class TestStatusMapperSpec extends Specification {
         caseDO.setRank("0|c00000:")
         caseMapper.insert(caseDO)
         when:
-        def result1 = mapper.ifDeleteCycleCaseAllow(new Long(1))
+        def result1 = mapper.ifDeleteCycleCaseAllow(new Long(3))
         then:
         result1==1
         when:
         caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
-        def result2 = mapper.ifDeleteCycleCaseAllow(new Long(1))
+        def result2 = mapper.ifDeleteCycleCaseAllow(new Long(3))
         then:
         result2==0
     }
