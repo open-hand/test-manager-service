@@ -31,7 +31,7 @@ class TestCycleCaseMapperSpec extends Specification {
         given:
         TestCycleDO cycleDO1=new TestCycleDO()
         cycleDO1.setCycleName("循环1")
-        cycleDO1.setVersionId(new Long(99))
+        cycleDO1.setVersionId(new Long(88))
         cycleDO1.setType("cycle")
         cycleMapper.insert(cycleDO1)
         cycleDO1.setCycleName("循环2")
