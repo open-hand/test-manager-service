@@ -61,17 +61,17 @@ class TestCycleMapperSpec extends Specification {
         cycleDO4.setParentCycleId(new Long(1))
         mapper.insert(cycleDO4)
 
-        caseDO.setCycleId(new Long(1))
+        caseDO.setCycleId(cycleDO1.getCycleId())
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
 
-        caseDO1.setCycleId(new Long(1))
+        caseDO1.setCycleId(cycleDO1.getCycleId())
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(998))
         caseDO1.setRank("0|c00004:")
 
-        caseDO2.setCycleId(new Long(2))
+        caseDO2.setCycleId(cycleDO2.getCycleId())
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
         caseDO2.setRank("0|c00000:")
