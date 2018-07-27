@@ -102,10 +102,6 @@ class TestCycleCaseStepRepositoryImplSpec extends Specification {
         1*mapper.selectOne(_)
     }
 
-    def "te"(){
-        expect:
-        RankUtil.between()
-    }
 
     def "QueryCycleCaseForReporter"() {
         when:
