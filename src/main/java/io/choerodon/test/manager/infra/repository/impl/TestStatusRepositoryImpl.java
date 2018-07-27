@@ -18,47 +18,58 @@ import java.util.List;
 @Component
 public class TestStatusRepositoryImpl implements TestStatusRepository {
 
-    @Autowired
-    TestStatusMapper testStatusMapper;
+	@Autowired
+	TestStatusMapper testStatusMapper;
 
 	@Override
 	public List<TestStatusE> queryAllUnderProject(TestStatusE testStatusE) {
 		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
 		return ConvertHelper.convertList(testStatusMapper.queryAllUnderProject(testStatusDO), TestStatusE.class);
-    }
+	}
 
 	@Override
 	public TestStatusE queryOne(Long statusId) {
+		Assert.notNull(statusId, "error.status.query.one.parameter.not.null");
+
 		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(statusId), TestStatusE.class);
 
 	}
 
 	@Override
-    public TestStatusE insert(TestStatusE testStatusE) {
-        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-        if (testStatusMapper.insert(testStatusDO) != 1) {
-            throw new CommonException("error.test.status.insert");
-        }
-        return ConvertHelper.convert(testStatusDO, TestStatusE.class);
-    }
+	public TestStatusE insert(TestStatusE testStatusE) {
+		if (testStatusE == null || testStatusE.getStatusId() != null) {
+			throw new CommonException("error.status.insert.statusId.should.be.null");
+		}
+		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+		if (testStatusMapper.insert(testStatusDO) != 1) {
+			throw new CommonException("error.test.status.insert");
+		}
+		return ConvertHelper.convert(testStatusDO, TestStatusE.class);
+	}
 
-    @Override
-    public void delete(TestStatusE testStatusE) {
-        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+	@Override
+	public void delete(TestStatusE testStatusE) {
+		Assert.notNull(testStatusE, "error.status.delete.parameter.not.null");
+
+		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
 		testStatusMapper.delete(testStatusDO);
-    }
+	}
 
-    @Override
-    public TestStatusE update(TestStatusE testStatusE) {
-        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-        if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
-            throw new CommonException("error.test.status.update");
-        }
+	@Override
+	public TestStatusE update(TestStatusE testStatusE) {
+		Assert.notNull(testStatusE, "error.status.update.parameter.not.null");
+
+		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+		if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
+			throw new CommonException("error.test.status.update");
+		}
 		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(testStatusDO.getStatusId()), TestStatusE.class);
-    }
+	}
 
 	@Override
 	public void validateDeleteCycleCaseAllow(Long statusId) {
+		Assert.notNull(statusId, "error.validate.delete.allow.parameter.statusId.not.null");
+
 		if (testStatusMapper.ifDeleteCycleCaseAllow(statusId) > 0) {
 			throw new CommonException("error.delete.status.have.used");
 
@@ -67,7 +78,7 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 
 	@Override
 	public void validateDeleteCaseStepAllow(Long statusId) {
-		Assert.notNull(statusId,"error.validate.delete.allow.parameter.statusId.not.null");
+		Assert.notNull(statusId, "error.validate.delete.allow.parameter.statusId.not.null");
 		if (testStatusMapper.ifDeleteCaseStepAllow(statusId) > 0) {
 			throw new CommonException("error.delete.status.have.used");
 		}
@@ -75,7 +86,7 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 
 	@Override
 	public Long getDefaultStatus(String statusType) {
-		Assert.notNull(statusType,"error.getDefault.parameter.type.not.null");
+		Assert.notNull(statusType, "error.getDefault.parameter.type.not.null");
 		return testStatusMapper.getDefaultStatus(statusType);
 	}
 }
