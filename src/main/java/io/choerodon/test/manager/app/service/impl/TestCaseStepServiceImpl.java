@@ -2,9 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
@@ -12,14 +10,12 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +46,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO, Long projectId) {
+		Assert.notNull(testCaseStepDTO,"error.case.change.step.param.not.null");
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
 			testCaseStepE = testCaseStepE.createOneStep();
@@ -61,17 +58,15 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	}
 
 	private void runCycleCaseStep(TestCaseStepE testCaseStepE, Long projectId) {
+		// param 'projectId' for status extend strategy but now use simple strategy which in projectId is 0
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
 		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
-		TestCycleCaseStepE testCycleCaseStepE = new TestCycleCaseStepEFactory().create();
+		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
 		Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
-		testCaseStepES.forEach(v -> {
-			testCycleCaseStepE.setExecuteId(v.getExecuteId());
-			testCycleCaseStepE.setStepId(testCaseStepE.getStepId());
-			testCycleCaseStepE.setStepStatus(status);
-			testCycleCaseStepE.addSelf();
-		});
+		testCaseStepES.forEach(v ->
+			testCycleCaseStepE.runOneStep(v.getExecuteId(),testCaseStepE.getStepId(),status)
+		);
 	}
 
 

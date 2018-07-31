@@ -13,4 +13,5 @@ public interface TestCycleCaseAttachmentRelService {
 
     void delete(String bucketName, Long attachId);
 
+	void delete(Long linkedId, String Type);
 }

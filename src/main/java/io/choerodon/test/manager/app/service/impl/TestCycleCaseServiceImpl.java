@@ -150,7 +150,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		testCycleCaseDTO.setExecuteId(cycleCaseId);
 		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
 		Optional.ofNullable(dto.getDefects()).ifPresent(v->testCycleCaseDefectRelService.populateDefectInfo(Lists.newArrayList(v),projectId));
-		testCycleCaseDefectRelService.populateCycleCaseDefectInfo(Lists.newArrayList(dto),projectId);
+		//testCycleCaseDefectRelService.populateCycleCaseDefectInfo(Lists.newArrayList(dto),projectId);
 		return setUser(dto);
 	}
 

@@ -1,26 +1,19 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,13 +54,13 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Override
 	public void delete(TestCycleCaseE testCycleCaseE, Long projectId) {
-		List<TestCycleCaseE> removeList = testCycleCaseE.querySelf();
-		removeList.forEach(v -> deleteCaseWithSubStep(v, projectId));
+		Optional.ofNullable(testCycleCaseE.querySelf()).ifPresent(m ->
+				m.forEach(v -> deleteCaseWithSubStep(v, projectId)));
 	}
 
 	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE, Long projectId) {
 		iTestCycleCaseStepService.deleteByTestCycleCase(testCycleCaseE);
-		deleteLinkedAttachment(testCycleCaseE.getExecuteId());
+		attachmentRelService.delete(testCycleCaseE.getExecuteId(),TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_CASE);
 		deleteLinkedDefect(testCycleCaseE.getExecuteId());
 		countCaseToRedis(testCycleCaseE, projectId);
 		testCycleCaseE.deleteSelf();
@@ -81,13 +74,6 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		}
 	}
 
-
-	private void deleteLinkedAttachment(Long executeId) {
-		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
-		attachmentRelE.setAttachmentLinkId(executeId);
-		attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_CASE);
-		attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
-	}
 
 	private void deleteLinkedDefect(Long executeId) {
 		TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();

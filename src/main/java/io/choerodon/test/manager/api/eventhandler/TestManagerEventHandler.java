@@ -75,7 +75,7 @@ public class TestManagerEventHandler {
         loggerInfo(versionEvent);
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setVersionId(versionEvent.getVersionId());
-        //  testCycleService.delete(testCycleDTO);
+          testCycleService.delete(testCycleDTO,versionEvent.getProjectId());
     }
 
     /**
@@ -91,7 +91,7 @@ public class TestManagerEventHandler {
         defectRelE.deleteSelf();
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
-        //	testCycleCaseService.delete(testCycleCaseDTO);
+		testCycleCaseService.batchDelete(testCycleCaseDTO,issuePayload.getProjectId());
 
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
