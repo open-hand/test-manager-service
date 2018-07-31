@@ -5,11 +5,8 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.core.convertor.ConvertorI;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -19,66 +16,29 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
 
     @Override
     public TestCycleE dtoToEntity(TestCycleDTO dto) {
-		return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber(), null, dto.getCreatedBy());
-    }
+        TestCycleE testCycleE = TestCycleEFactory.create();
+        BeanUtils.copyProperties(dto, testCycleE);
+        return testCycleE;
+        }
 
     @Override
     public TestCycleDTO entityToDto(TestCycleE entity) {
-        TestCycleDTO stepDO = new TestCycleDTO();
-        stepDO.setBuild(entity.getBuild());
-        stepDO.setCycleName(entity.getCycleName());
-        stepDO.setDescription(entity.getDescription());
-        stepDO.setEnvironment(entity.getEnvironment());
-        stepDO.setType(entity.getType());
-        stepDO.setVersionId(entity.getVersionId());
-        stepDO.setCycleId(entity.getCycleId());
-        stepDO.setParentCycleId(entity.getParentCycleId());
-        stepDO.setFromDate(entity.getFromDate());
-        stepDO.setToDate(entity.getToDate());
-        stepDO.setObjectVersionNumber(entity.getObjectVersionNumber());
-		stepDO.setCycleCaseList(entity.getCycleCaseList());
-		stepDO.setCreatedBy(entity.getCreatedBy());
-        return stepDO;
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        BeanUtils.copyProperties(entity, testCycleDTO);
+        return testCycleDTO;
     }
 
     @Override
     public TestCycleE doToEntity(TestCycleDO dto) {
-		return getTestCycleE(dto.getBuild(), dto.getCycleName(), dto.getDescription(), dto.getEnvironment(), dto.getType(), dto.getVersionId(), dto.getCycleId(), dto.getParentCycleId(), dto.getFromDate(), dto.getToDate(), dto.getObjectVersionNumber(), dto.getCycleCaseList(), dto.getCreatedBy());
-    }
-
-	private TestCycleE getTestCycleE(String build, String cycleName, String description, String environment, String type, Long versionId, Long cycleId, Long parentCycleId, Date fromDate, Date toDate, Long objectVersionNumber, List cycleCaseList, Long createdBy) {
-        TestCycleE testCaseStepE = TestCycleEFactory.create();
-        testCaseStepE.setBuild(build);
-        testCaseStepE.setCycleName(cycleName);
-        testCaseStepE.setDescription(description);
-        testCaseStepE.setEnvironment(environment);
-        testCaseStepE.setType(type);
-        testCaseStepE.setVersionId(versionId);
-        testCaseStepE.setCycleId(cycleId);
-        testCaseStepE.setParentCycleId(parentCycleId);
-        testCaseStepE.setFromDate(fromDate);
-        testCaseStepE.setToDate(toDate);
-        testCaseStepE.setObjectVersionNumber(objectVersionNumber);
-		testCaseStepE.setCreatedBy(createdBy);
-        Optional.ofNullable(cycleCaseList).ifPresent(v -> testCaseStepE.setCycleCaseList(v));
-        return testCaseStepE;
-    }
+        TestCycleE testCycleE = new TestCycleE();
+        BeanUtils.copyProperties(dto, testCycleE);
+        return testCycleE;
+        }
 
     @Override
     public TestCycleDO entityToDo(TestCycleE entity) {
         TestCycleDO stepDO = new TestCycleDO();
-        stepDO.setBuild(entity.getBuild());
-        stepDO.setCycleName(entity.getCycleName());
-        stepDO.setDescription(entity.getDescription());
-        stepDO.setEnvironment(entity.getEnvironment());
-        stepDO.setType(entity.getType());
-        stepDO.setVersionId(entity.getVersionId());
-        stepDO.setCycleId(entity.getCycleId());
-        stepDO.setParentCycleId(entity.getParentCycleId());
-        stepDO.setFromDate(entity.getFromDate());
-        stepDO.setToDate(entity.getToDate());
-		stepDO.setCreatedBy(entity.getCreatedBy());
-        stepDO.setObjectVersionNumber(entity.getObjectVersionNumber());
+        BeanUtils.copyProperties(entity, stepDO);
         return stepDO;
     }
 }

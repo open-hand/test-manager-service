@@ -10,6 +10,7 @@ import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.persistence.Transient;
 import java.util.List;
@@ -50,14 +51,16 @@ public class TestCycleCaseStepE {
 
 	private String cycleName;
 
+	public TestCycleCaseStepE runOneStep(Long executeId,Long stepId,Long status){
+        this.executeId=executeId;
+        this.stepId=stepId;
+        this.stepStatus=status;
 
-//	private String IssueName;
-//
-//	private String IssueStatus;
-//
-//	private String IssueSummary;
-//
-//	private String IssueColor;
+        Assert.notNull(this.executeId,"error.cant.run.step.because.executeId.is.null");
+        Assert.notNull(this.stepId,"error.cant.run.step.because.stepId.is.null");
+        Assert.notNull(this.stepStatus,"error.cant.run.step.because.stepStatus.is.null");
+        return addSelf();
+    }
 
     @Autowired
     private TestCycleCaseStepRepository testCycleCaseStepRepository;

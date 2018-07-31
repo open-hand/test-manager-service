@@ -11,10 +11,10 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -42,19 +42,21 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
     @Override
     public void deleteStep(TestCycleCaseStepE testCycleCaseStepE) {
-        testCycleCaseStepE.querySelf().forEach(v -> {
-            deleteLinkedAttachment(v.getExecuteStepId());
-            deleteLinkedDefect(v.getExecuteStepId());
-        });
+        Optional.ofNullable(testCycleCaseStepE.querySelf()).ifPresent(
+                m -> m.forEach(v -> {
+                    attachmentRelService.delete(v.getExecuteStepId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
+                    deleteLinkedDefect(v.getExecuteStepId());
+                })
+        );
         testCycleCaseStepE.deleteSelf();
     }
 
-    private void deleteLinkedAttachment(Long stepId) {
-        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
-        attachmentRelE.setAttachmentLinkId(stepId);
-        attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
-        attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
-    }
+//    private void deleteLinkedAttachment(Long stepId) {
+//        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
+//        attachmentRelE.setAttachmentLinkId(stepId);
+//        attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
+//        attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
+//    }
 
     private void deleteLinkedDefect(Long stepId) {
         TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();

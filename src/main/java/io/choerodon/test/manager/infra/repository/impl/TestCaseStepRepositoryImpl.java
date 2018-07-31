@@ -8,6 +8,7 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -23,6 +24,9 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
 
     @Override
     public TestCaseStepE insert(TestCaseStepE testCaseStepE) {
+        if(testCaseStepE  ==null || testCaseStepE.getStepId() !=null){
+            throw new CommonException("error.case.step.insert.stepId.should.be.null");
+        }
         TestCaseStepDO testStepCase = ConvertHelper.convert(testCaseStepE, TestCaseStepDO.class);
         if (testCaseStepMapper.insert(testStepCase) != 1) {
             throw new CommonException("error.testStepCase.insert");
@@ -32,12 +36,16 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
 
     @Override
     public void delete(TestCaseStepE testCaseStepE) {
+        Assert.notNull(testCaseStepE,"error.case.delete.param1.not.null");
+
         TestCaseStepDO testCaseStep = ConvertHelper.convert(testCaseStepE, TestCaseStepDO.class);
         testCaseStepMapper.delete(testCaseStep);
     }
 
     @Override
     public TestCaseStepE update(TestCaseStepE testStepCaseE) {
+        Assert.notNull(testStepCaseE,"error.case.step.update.param1.not.null");
+
         TestCaseStepDO testCaseStepDO = ConvertHelper.convert(testStepCaseE, TestCaseStepDO.class);
         if (testCaseStepMapper.updateByPrimaryKey(testCaseStepDO) != 1) {
             throw new CommonException("error.testStepCase.update");
@@ -55,6 +63,7 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
 
     @Override
     public String getLastedRank(Long issueId) {
+        Assert.notNull(issueId,"error.case.step.getLastedRank.issueid.not.null");
         return testCaseStepMapper.getLastedRank(issueId);
     }
 }
