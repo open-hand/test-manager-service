@@ -6,7 +6,6 @@ import io.choerodon.agile.api.dto.*;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
@@ -17,16 +16,13 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,20 +91,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Override
 	public void populateIssue(List<TestCycleCaseDTO> dots, Long projectId) {
-		Long[] ids = dots.stream().map(v -> v.getIssueId()).toArray(Long[]::new);
+		Long[] ids = dots.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
 		Map<Long, IssueInfosDTO> maps = testCaseService.getIssueInfoMap(projectId, ids);
 		dots.forEach(v -> v.setIssueInfosDTO(maps.get(v.getIssueId())));
 	}
 
 	@Override
 	public Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
-		searchDTO = Optional.ofNullable(searchDTO).orElseGet(() -> new TestCycleCaseDTO());
+		searchDTO = Optional.ofNullable(searchDTO).orElseGet(TestCycleCaseDTO::new);
 		searchDTO.setCycleId(cycleId);
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(searchDTO, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
 
 		populateUsers(dots);
-//		setDefects(dots, projectId);
 		return dots;
 	}
 
@@ -117,15 +112,40 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuseId);
 		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
-		if (dto == null || dto.size() == 0) {
+		if (dto == null || dto.isEmpty()) {
 			return new ArrayList<>();
 		}
-		testCycleCaseDefectRelService.populateCycleCaseDefectInfo(dto,projectId);
+		populateCycleCaseWithDefect(dto,projectId,issuseId);
 		IssueInfosDTO info = new IssueInfosDTO(testCaseService.queryIssue(projectId, issuseId).getBody());
 		dto.forEach(v -> v.setIssueInfosDTO(info));
 		populateUsers(dto);
 		populateVersionBuild(projectId, dto);
 		return dto;
+	}
+
+	/** 将实例查询的Issue信息和缺陷关联的Issue信息合并到一起，为了减少一次外部调用。
+	 * @param testCycleCaseDTOS
+	 * @param projectId
+	 * @param issueId
+	 */
+	private void populateCycleCaseWithDefect(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId, Long issueId) {
+		Assert.notNull(issueId, "error.query.cycle.case.byIssue.issueId.not.null");
+		List<TestCycleCaseDefectRelDTO> list = new ArrayList<>();
+		for (TestCycleCaseDTO v : testCycleCaseDTOS) {
+			List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
+			list.addAll(defects);
+		}
+		TestCycleCaseDefectRelDTO addIssue = new TestCycleCaseDefectRelDTO();
+		addIssue.setIssueId(issueId);
+		list.add(addIssue);
+		Long[] issueLists = list.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).toArray(Long[]::new);
+		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists);
+		IssueInfosDTO addIssueInfo = defectMap.get(issueId);
+		list.forEach(v -> {
+			v.setIssueInfosDTO(defectMap.get(v.getIssueId()));
+			v.setIssueInfosDTO(addIssueInfo);
+		});
+
 	}
 
 	private void populateVersionBuild(Long projectId, List<TestCycleCaseDTO> dto) {
@@ -150,7 +170,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		testCycleCaseDTO.setExecuteId(cycleCaseId);
 		TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
 		Optional.ofNullable(dto.getDefects()).ifPresent(v->testCycleCaseDefectRelService.populateDefectInfo(Lists.newArrayList(v),projectId));
-		//testCycleCaseDefectRelService.populateCycleCaseDefectInfo(Lists.newArrayList(dto),projectId);
 		return setUser(dto);
 	}
 
@@ -184,16 +203,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			usersId.add(v.getAssignedTo());
 			usersId.add(v.getLastUpdatedBy());
 		});
-		usersId.stream().filter(v -> !v.equals(new Long(0))).collect(Collectors.toList());
-		if (usersId.size() != 0) {
+		usersId.stream().filter(v -> !v.equals(Long.valueOf(0))).collect(Collectors.toList());
+		if (!usersId.isEmpty()) {
 			Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
 			users.forEach(v -> {
-				Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(u -> {
-					v.setAssigneeUser(u);
-				});
-				Optional.ofNullable(userMaps.get(v.getLastUpdatedBy())).ifPresent(u -> {
-					v.setLastUpdateUser(u);
-				});
+				Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(v::setAssigneeUser);
+				Optional.ofNullable(userMaps.get(v.getLastUpdatedBy())).ifPresent(v::setLastUpdateUser);
 
 			});
 		}
@@ -227,42 +242,50 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO) {
-		TestCycleCaseE testCycleCaseE = new TestCycleCaseEFactory().create();
+		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(fromCycleId);
 		Map filterMap = new HashMap();
 		Optional.ofNullable(searchDTO.getExecutionStatus()).ifPresent(v -> filterMap.put("executionStatus", v));
 
 		List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
-		List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
-//		setDefects(testCycleCase, projectId);
-		ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, 0, 400, null);
-		Set issueListDTOS = responseEntity.getBody().stream().map(v -> v.getIssueId().longValue()).collect(Collectors.toSet());
+		if (!(testCycleCaseES == null || testCycleCaseES.isEmpty())) {
+			List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
+			testCycleCaseDefectRelService.populateCycleCaseDefectInfo(testCycleCase,projectId);
 
-		Long defaultStatus = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
-		final String[] lastRank = new String[1];
-		lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
-		String[] defectStatus = searchDTO.getDefectStatus();
-		Set defectSets = Sets.newHashSet();
-		if (defectStatus != null && defectStatus.length != 0) {
-			for (String de : defectStatus) {
-				defectSets.add(de);
+			Map idMap = new HashMap();
+			Object[] ids = testCycleCase.stream().map(TestCycleCaseDTO::getIssueId).toArray();
+			idMap.put("issueIds", ids);
+			searchDTO.setOtherArgs(idMap);
+			ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, 0, 99999999, null);
+			Set issueListDTOS = responseEntity.getBody().stream().map(IssueCommonDTO::getIssueId).collect(Collectors.toSet());
+
+			Long defaultStatus = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
+			final String[] lastRank = new String[1];
+			lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
+			String[] defectStatus = searchDTO.getDefectStatus();
+			Set defectSets = Sets.newHashSet();
+			if (defectStatus != null && defectStatus.length != 0) {
+				for (String de : defectStatus) {
+					defectSets.add(de);
+				}
 			}
+			testCycleCase.stream().filter(v -> issueListDTOS.contains(v.getIssueId()) && containsDefect(defectSets, v.getDefects()))
+					.forEach(u -> {
+						u.setExecuteId(null);
+						u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
+						u.setAssignedTo(assignee);
+						u.setCycleId(toCycleId);
+						u.setExecutionStatus(defaultStatus);
+						u.setObjectVersionNumber(Long.valueOf(0));
+						lastRank[0] = iTestCycleCaseService.cloneCycleCase(ConvertHelper.convert(u, TestCycleCaseE.class), projectId).getRank();
+					});
+
 		}
-		testCycleCase.stream().filter(v -> issueListDTOS.contains(v.getIssueId().longValue()) && containsDefect(defectSets, v.getDefects(), projectId))
-				.forEach(u -> {
-					u.setExecuteId(null);
-					u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
-					u.setAssignedTo(assignee);
-					u.setCycleId(toCycleId);
-					u.setExecutionStatus(defaultStatus);
-					u.setObjectVersionNumber(new Long(0));
-					lastRank[0] = iTestCycleCaseService.cloneCycleCase(ConvertHelper.convert(u,TestCycleCaseE.class), projectId).getRank();
-				});
 
 		return true;
 	}
 
-	private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelDTO> defects, Long projectId) {
+	private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelDTO> defects) {
 		if (defectSet.isEmpty()) {
 			return true;
 		}
@@ -270,7 +293,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			return false;
 		}
 
-		testCycleCaseDefectRelService.populateDefectInfo(defects, projectId);
 		for (TestCycleCaseDefectRelDTO v : defects) {
 			if (v.getIssueInfosDTO()!=null && defectSet.contains(v.getIssueInfosDTO().getStatusCode())) {
 				return true;
