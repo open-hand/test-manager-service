@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.UserDO;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class TestCycleDTO {
 
     private String build;
 
-    private String createdName;
+    private UserDO createdUser;
 
     private Long createdBy;
 
@@ -163,11 +165,11 @@ public class TestCycleDTO {
         this.createdBy = createdBy;
     }
 
-    public String getCreatedName() {
-        return createdName;
+    public UserDO getCreatedUser() {
+        return createdUser;
     }
 
-    public void setCreatedName(String createdName) {
-        this.createdName = createdName;
+    public void setCreatedUser(UserDO createdUser) {
+        this.createdUser = createdUser;
     }
 }

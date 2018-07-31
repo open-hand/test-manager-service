@@ -8,6 +8,8 @@ import io.choerodon.core.convertor.ConvertorI;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * Created by 842767365@qq.com on 6/12/18.
  */
@@ -24,14 +26,18 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
     @Override
     public TestCycleDTO entityToDto(TestCycleE entity) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
-        BeanUtils.copyProperties(entity, testCycleDTO);
+        BeanUtils.copyProperties(entity, testCycleDTO,new String[]{"cycleCaseList"});
+        testCycleDTO.setCycleCaseList(entity.getCycleCaseList());
+
         return testCycleDTO;
     }
 
     @Override
     public TestCycleE doToEntity(TestCycleDO dto) {
         TestCycleE testCycleE = new TestCycleE();
-        BeanUtils.copyProperties(dto, testCycleE);
+        BeanUtils.copyProperties(dto, testCycleE,new String[]{"cycleCaseList"});
+        Optional.ofNullable(dto.getCycleCaseList()).ifPresent(v->testCycleE.setCycleCaseList(v));
+
         return testCycleE;
         }
 

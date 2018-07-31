@@ -87,12 +87,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     public JSONObject getTestCycle(Long projectId) {
         ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
         List<ProductVersionDTO> versions = dto.getBody();
-//		List<ProductVersionDTO> versions = new ArrayList<>();
-//		ProductVersionDTO v1 = new ProductVersionDTO();
-//		v1.setStatusName("111");
-//		v1.setName("1111");
-//		v1.setVersionId(new Long(168));
-//		versions.add(v1);
         if (versions.size() == 0) {
             return new JSONObject();
         }
@@ -114,7 +108,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
                 UserDO u = users.get(v.getCreatedBy());
                 if(null!=u) {
-                    v.setCreatedName(u.getLoginName() + " " + u.getRealName());
+                    v.setCreatedUser(u);
                 }
             }
         });
@@ -163,7 +157,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         version.put("type", testCycleDTO.getType());
         version.put("versionId", testCycleDTO.getVersionId());
         version.put("cycleId", testCycleDTO.getCycleId());
-        version.put("createdName", testCycleDTO.getCreatedName());
+        Optional.ofNullable(testCycleDTO.getCreatedUser()).ifPresent(v->
+                version.put("createdUser",JSONObject.toJSON(v))
+        );
         version.put("toDate", testCycleDTO.getToDate());
         version.put("fromDate", testCycleDTO.getFromDate());
         version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
