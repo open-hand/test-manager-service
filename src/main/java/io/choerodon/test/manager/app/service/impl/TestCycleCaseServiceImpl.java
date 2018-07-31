@@ -116,8 +116,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			return new ArrayList<>();
 		}
 		populateCycleCaseWithDefect(dto,projectId,issuseId);
-		IssueInfosDTO info = new IssueInfosDTO(testCaseService.queryIssue(projectId, issuseId).getBody());
-		dto.forEach(v -> v.setIssueInfosDTO(info));
 		populateUsers(dto);
 		populateVersionBuild(projectId, dto);
 		return dto;
