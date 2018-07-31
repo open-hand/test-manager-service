@@ -42,7 +42,7 @@ public class TestCycleDO extends AuditDomain {
     private String type;
 
     @Transient
-    private List<Map> cycleCaseList;
+    private List<Map<String, Object>> cycleCaseList;
 
     public Long getCycleId() {
         return cycleId;
@@ -124,11 +124,11 @@ public class TestCycleDO extends AuditDomain {
         this.type = type;
     }
 
-    public List<Map> getCycleCaseList() {
+    public List<Map<String, Object>> getCycleCaseList() {
         return cycleCaseList;
     }
 
-    public void setCycleCaseList(List<Map> cycleCaseList) {
+    public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
         this.cycleCaseList = cycleCaseList;
     }
 }

@@ -169,13 +169,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 		if (assigned) {
 			UserDO u = lists.get(assign);
-			dto.setReporterRealName(u.getRealName());
-			dto.setReporterJobNumber(u.getLoginName());
+			dto.setAssigneeUser(u);
 		}
 		if (lastAssigned) {
 			UserDO u = lists.get(update);
-			dto.setAssignedUserRealName(u.getRealName());
-			dto.setAssignedUserJobNumber(u.getLoginName());
+			dto.setLastUpdateUser(u);
 		}
 		return dto;
 	}
@@ -191,12 +189,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
 			users.forEach(v -> {
 				Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(u -> {
-					v.setReporterRealName(u.getRealName());
-					v.setReporterJobNumber(u.getLoginName());
+					v.setAssigneeUser(u);
 				});
 				Optional.ofNullable(userMaps.get(v.getLastUpdatedBy())).ifPresent(u -> {
-					v.setAssignedUserRealName(u.getRealName());
-					v.setAssignedUserJobNumber(u.getLoginName());
+					v.setLastUpdateUser(u);
 				});
 
 			});

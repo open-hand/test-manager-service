@@ -1,11 +1,10 @@
 package io.choerodon.test.manager.api.dto;
 
 import io.choerodon.agile.api.dto.IssueLinkDTO;
+import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,13 +36,17 @@ public class TestCycleCaseDTO {
 
     private String nextRank;
 
-	private String reporterRealName;
+//	private String reporterRealName;
+//
+//	private String reporterJobNumber;
 
-	private String reporterJobNumber;
+	private UserDO assigneeUser;
 
-	private String assignedUserRealName;
+	private UserDO lastUpdateUser;
 
-	private String assignedUserJobNumber;
+//	private String assignedUserRealName;
+//
+//	private String assignedUserJobNumber;
 
 	private Long lastUpdatedBy;
 
@@ -167,31 +170,23 @@ public class TestCycleCaseDTO {
         this.assignedTo = assignedTo;
     }
 
-	public String getReporterRealName() {
-		return reporterRealName;
+	public UserDO getAssigneeUser() {
+		return assigneeUser;
 	}
 
-	public void setReporterRealName(String reporterRealName) {
-		this.reporterRealName = reporterRealName;
+	public void setAssigneeUser(UserDO assigneeUser) {
+		this.assigneeUser = assigneeUser;
 	}
 
-	public String getReporterJobNumber() {
-		return reporterJobNumber;
-    }
-
-	public void setReporterJobNumber(String reporterJobNumber) {
-		this.reporterJobNumber = reporterJobNumber;
-    }
-
-	public String getAssignedUserJobNumber() {
-		return assignedUserJobNumber;
+	public UserDO getLastUpdateUser() {
+		return lastUpdateUser;
 	}
 
-	public void setAssignedUserJobNumber(String assignedUserJobNumber) {
-		this.assignedUserJobNumber = assignedUserJobNumber;
+	public void setLastUpdateUser(UserDO lastUpdateUser) {
+		this.lastUpdateUser = lastUpdateUser;
 	}
 
-    public String getComment() {
+	public String getComment() {
         return comment;
     }
 
@@ -263,11 +258,4 @@ public class TestCycleCaseDTO {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-	public String getAssignedUserRealName() {
-		return assignedUserRealName;
-	}
-
-	public void setAssignedUserRealName(String assignedUserRealName) {
-		this.assignedUserRealName = assignedUserRealName;
-	}
 }

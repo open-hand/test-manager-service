@@ -23,6 +23,9 @@ public class IssueInfosDTO {
 
 	private String statusCode;
 
+	public IssueInfosDTO(){
+	}
+
 	public IssueInfosDTO(IssueCommonDTO issueCommonDTO){
 		issueName = issueCommonDTO.getIssueNum();
 		issueStatusName = issueCommonDTO.getStatusName();
@@ -30,6 +33,7 @@ public class IssueInfosDTO {
 		issueColor = issueCommonDTO.getStatusColor();
 		summary = issueCommonDTO.getSummary();
 		projectId = issueCommonDTO.getProjectId();
+		statusCode=issueCommonDTO.getStatusCode();
 	}
 
 
