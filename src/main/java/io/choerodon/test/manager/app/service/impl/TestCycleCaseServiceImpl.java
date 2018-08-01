@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -83,9 +84,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId) {
 		Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(dto, TestCycleCaseE.class), pageRequest);
 		Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-		testCycleCaseDefectRelService.populateCycleCaseDefectInfo(dots,projectId);
+		populateCycleCaseWithDefect(dots,projectId);
 		populateUsers(dots);
-		populateIssue(dots, projectId);
 		return dots;
     }
 
@@ -115,7 +115,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		if (dto == null || dto.isEmpty()) {
 			return new ArrayList<>();
 		}
-		populateCycleCaseWithDefect(dto,projectId,issuseId);
+		populateCycleCaseWithDefect(dto,projectId);
 		populateUsers(dto);
 		populateVersionBuild(projectId, dto);
 		return dto;
@@ -124,27 +124,23 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	/** 将实例查询的Issue信息和缺陷关联的Issue信息合并到一起，为了减少一次外部调用。
 	 * @param testCycleCaseDTOS
 	 * @param projectId
-	 * @param issueId
 	 */
-	private void populateCycleCaseWithDefect(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId, Long issueId) {
-		Assert.notNull(issueId, "error.query.cycle.case.byIssue.issueId.not.null");
+	private void populateCycleCaseWithDefect(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId) {
 		List<TestCycleCaseDefectRelDTO> list = new ArrayList<>();
 		for (TestCycleCaseDTO v : testCycleCaseDTOS) {
 			List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
-			list.addAll(defects);
+			Optional.ofNullable(defects).ifPresent(list::addAll);
 		}
-		TestCycleCaseDefectRelDTO addIssue = new TestCycleCaseDefectRelDTO();
-		addIssue.setIssueId(issueId);
-		list.add(addIssue);
-		Long[] issueLists = list.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).toArray(Long[]::new);
-		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists);
-		IssueInfosDTO addIssueInfo = defectMap.get(issueId);
-		list.forEach(v -> {
-			v.setIssueInfosDTO(defectMap.get(v.getIssueId()));
-			v.setIssueInfosDTO(addIssueInfo);
-		});
 
+		Long[] issueLists=Stream.concat(list.stream().map(TestCycleCaseDefectRelDTO::getIssueId),
+				testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId)).filter(Objects::nonNull).distinct()
+				.toArray(Long[]::new);
+		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists);
+
+		list.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
+		testCycleCaseDTOS.forEach(v->v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
 	}
+
 
 	private void populateVersionBuild(Long projectId, List<TestCycleCaseDTO> dto) {
 		Map<Long, String> map = productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
