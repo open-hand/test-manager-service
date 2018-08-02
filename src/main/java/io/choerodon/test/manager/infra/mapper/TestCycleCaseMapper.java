@@ -11,7 +11,9 @@ import java.util.Map;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
-    List<TestCycleCaseDO> queryWithAttachAndDefect(TestCycleCaseDO testCycleCaseDO);
+    List<TestCycleCaseDO> queryWithAttachAndDefect(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
+
+    Long queryWithAttachAndDefect_count(@Param("dto")TestCycleCaseDO testCycleCaseDO);
 
 	List<TestCycleCaseDO> filter(Map map);
 
