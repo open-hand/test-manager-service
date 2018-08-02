@@ -1,23 +1,22 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.core.domain.PageInfo;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -54,11 +53,14 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-
-        Page<TestCycleCaseE> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseMapper.queryWithAttachAndDefect(convert));
-
-        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseE.class);
+		List<TestCycleCaseDO> dto=testCycleCaseMapper.queryWithAttachAndDefect(convert,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+		Long total= 0L;
+		if(dto!=null && !dto.isEmpty()){
+			total=testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
+		}
+		PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+		Page<TestCycleCaseDO> page = new Page<>(Optional.ofNullable(dto).orElseGet(ArrayList::new), info, total);
+        return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-        List<TestCycleCaseDO> list = testCycleCaseMapper.queryWithAttachAndDefect(convert);
+        List<TestCycleCaseDO> list = testCycleCaseMapper.queryWithAttachAndDefect(convert,0,0);
         if (list.size() != 1) {
 			throw new CommonException("error.cycle.case.query.not.found");
         }

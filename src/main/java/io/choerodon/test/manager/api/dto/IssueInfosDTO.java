@@ -23,17 +23,20 @@ public class IssueInfosDTO {
 
 	private String statusCode;
 
-	public IssueInfosDTO(){
+	private String typeCode;
+
+	public IssueInfosDTO() {
 	}
 
-	public IssueInfosDTO(IssueCommonDTO issueCommonDTO){
+	public IssueInfosDTO(IssueCommonDTO issueCommonDTO) {
 		issueName = issueCommonDTO.getIssueNum();
 		issueStatusName = issueCommonDTO.getStatusName();
 		issueId = issueCommonDTO.getIssueId();
 		issueColor = issueCommonDTO.getStatusColor();
 		summary = issueCommonDTO.getSummary();
 		projectId = issueCommonDTO.getProjectId();
-		statusCode=issueCommonDTO.getStatusCode();
+		statusCode = issueCommonDTO.getStatusCode();
+		typeCode = issueCommonDTO.getTypeCode();
 	}
 
 
@@ -44,7 +47,9 @@ public class IssueInfosDTO {
 		issueColor = issueListDTO.getStatusColor();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
-		statusCode=issueListDTO.getStatusCode();
+		statusCode = issueListDTO.getStatusCode();
+		typeCode = issueListDTO.getTypeCode();
+
 	}
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
@@ -54,7 +59,8 @@ public class IssueInfosDTO {
 		issueColor = issueDTO.getStatusColor();
 		summary = issueDTO.getSummary();
 		projectId = issueDTO.getProjectId();
-		statusCode=issueDTO.getStatusCode();
+		statusCode = issueDTO.getStatusCode();
+		typeCode = issueDTO.getTypeCode();
 	}
 
 
@@ -112,5 +118,13 @@ public class IssueInfosDTO {
 
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	public String getTypeCode() {
+		return typeCode;
+	}
+
+	public void setTypeCode(String typeCode) {
+		this.typeCode = typeCode;
 	}
 }
