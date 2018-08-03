@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import io.choerodon.agile.api.dto.IssueInfoDTO;
-import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -12,21 +9,14 @@ import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.DefectReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.ReporterFormE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by jialongZuo@hand-china.com on 7/13/18.
@@ -43,14 +33,18 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	TestCycleCaseService testCycleCaseService;
 
 
-	public List<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, searchDTO, pageRequest);
+	public Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+		Page page = new Page();
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page);
 		List<ReporterFormE> reporterFormES = Lists.newArrayList();
 		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
-		return reporterFormES;
+		page.setContent(reporterFormES);
+		page.setNumberOfElements(reporterFormES.size());
+		return page;
 	}
 
 	public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds) {
+		Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
 
 		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds);
 		List<ReporterFormE> reporterFormES = Lists.newArrayList();
@@ -67,11 +61,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
 	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds) {
-
+		Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
 		PageRequest pageRequest = new PageRequest();
 		pageRequest.setPage(0);
-		pageRequest.setSize(5);
-		pageRequest.setSort(new Sort(Sort.Direction.ASC, new String[]{"issueId"}));
+		pageRequest.setSize(issueIds.length);
+		pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
 		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, pageRequest);
 		List<DefectReporterFormE> reporterFormES = Lists.newArrayList();
 		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
@@ -80,21 +74,15 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	}
 
 
-	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest) {
-		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
-		Page<TestCycleCaseDefectRelE> defects = testCycleCaseDefectRelE.querySelf(pageRequest);
-		if (defects.size() == 0) {
-			return new ArrayList<>();
-		}
-
-		List<Long> issueLists = defects.stream().map(v -> v.getIssueId()).collect(Collectors.toList());
-
-		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueLists.stream().toArray(Long[]::new), pageRequest);
+	public Page<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest) {
+		Page page = new Page();
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId,new SearchDTO(), pageRequest, page);
 
 		List<DefectReporterFormE> reporterFormES = Lists.newArrayList();
 		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromDefectToIssue(v, projectId)));
-
-		return reporterFormES;
+		page.setContent(reporterFormES);
+		page.setNumberOfElements(reporterFormES.size());
+		return page;
 	}
 
 	private DefectReporterFormE doCreateFromDefectToIssue(IssueInfosDTO issueInfosDTO, Long projectId) {

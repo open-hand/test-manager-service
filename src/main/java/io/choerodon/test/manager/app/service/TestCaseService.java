@@ -13,12 +13,14 @@ import java.util.Map;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCaseService {
-//
+	//
 	ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
 	ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
 
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+
+	<T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page);
 
 	Object getIssueInfoMap(Long projectId, SearchDTO searchDTO);
 
