@@ -1,12 +1,9 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.agile.api.dto.IssueInfoDTO;
+
 import io.choerodon.agile.api.dto.IssueListDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ApplicationContextHelper;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
@@ -14,21 +11,13 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.impl.TestCaseServiceImpl;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
-import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.repository.impl.TestCycleCaseRepositoryImpl;
 import io.choerodon.test.manager.infra.repository.impl.TestCycleCaseStepRepositoryImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -12,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -25,15 +24,15 @@ import java.util.stream.Collectors;
 public class TestCaseServiceImpl implements TestCaseService {
 
 
-    @Autowired
-    TestCaseFeignClient testCaseFeignClient;
+	@Autowired
+	TestCaseFeignClient testCaseFeignClient;
 
 
 	@Override
 	public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		Assert.notNull(projectId, "error.query.issue.projectId.not.null");
-		return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO,pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
-    }
+		return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
+	}
 
 	@Override
 	public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
@@ -42,7 +41,28 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
 	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, v -> new IssueInfosDTO(v)));
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+	}
+
+	/**
+	 * 获取issue信息并且更新分页信息
+	 *
+	 * @param projectId
+	 * @param searchDTO
+	 * @param pageRequest
+	 * @return
+	 */
+	public <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page) {
+		Assert.notNull(page, "error.populatePage.page.not.be.null");
+		Page<IssueCommonDTO> returnDto = listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody();
+
+		page.setTotalElements(returnDto.getTotalElements());
+		page.setSize(returnDto.getSize());
+		page.setNumber(returnDto.getNumber());
+		page.setTotalPages((int) (returnDto.getTotalElements() - 1L) / returnDto.getSize() + 1);
+
+		return returnDto.stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+
 	}
 
 	@Override
@@ -50,8 +70,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 		PageRequest pageRequest = new PageRequest();
 		pageRequest.setSize(999999999);
 		pageRequest.setPage(0);
-		pageRequest.setSort(new Sort(Sort.Direction.ASC, new String[]{"issueId"}));
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, v -> new IssueInfosDTO(v)));
+		pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
+		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
 	}
 
 	@Override
