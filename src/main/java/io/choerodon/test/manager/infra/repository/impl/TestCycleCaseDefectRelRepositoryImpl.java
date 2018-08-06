@@ -13,6 +13,7 @@ import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -63,5 +64,11 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
         TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
 
         return ConvertHelper.convertList(testCycleCaseDefectRelMapper.select(convert), TestCycleCaseDefectRelE.class);
+    }
+
+    @Override
+    public List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues) {
+        Assert.notEmpty(issues, "error.query.issues.not.empty");
+        return ConvertHelper.convertList(testCycleCaseDefectRelMapper.queryInIssues(issues), TestCycleCaseDefectRelE.class);
     }
 }
