@@ -34,7 +34,7 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
 
     @Override
     public TestCycleE doToEntity(TestCycleDO dto) {
-        TestCycleE testCycleE = new TestCycleE();
+        TestCycleE testCycleE = TestCycleEFactory.create();
         BeanUtils.copyProperties(dto, testCycleE,new String[]{"cycleCaseList"});
         Optional.ofNullable(dto.getCycleCaseList()).ifPresent(v->testCycleE.setCycleCaseList(v));
 
