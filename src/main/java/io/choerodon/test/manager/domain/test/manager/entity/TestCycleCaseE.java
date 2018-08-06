@@ -2,7 +2,6 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Transient;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +107,15 @@ public class TestCycleCaseE {
         testCycleCaseRepository.validateCycleCaseInCycle(testCycleCase);
 
         return testCycleCaseRepository.insert(this);
+    }
+
+    public TestCycleCaseE getCloneCase(String rank,Long newCycleId,Long defaultStatus){
+        setExecuteId(null);
+        setRank(rank);
+        setCycleId(newCycleId);
+        setExecutionStatus(defaultStatus);
+        setObjectVersionNumber(null);
+        return this;
     }
 
     public TestCycleCaseE updateSelf() {

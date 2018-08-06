@@ -16,8 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -85,7 +84,7 @@ public class TestCycleController {
 	ResponseEntity getTestCycle(@PathVariable(name = "project_id") Long projectId) {
 		return Optional.ofNullable(testCycleService.getTestCycle(projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycle"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -112,7 +111,7 @@ public class TestCycleController {
 	@ApiOperation("克隆循环")
 	@PostMapping("/clone/cycle/{cycleId}")
 	ResponseEntity cloneCycle(@PathVariable(name = "cycleId") Long cycleId, @RequestBody TestCycleDTO testCycleDTO, @PathVariable(name = "project_id") Long projectId) {
-		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, testCycleDTO.getCycleName(), projectId))
+		return Optional.ofNullable(testCycleService.cloneCycle(cycleId, testCycleDTO.getVersionId(), testCycleDTO.getCycleName(), projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
 
@@ -139,7 +138,7 @@ public class TestCycleController {
 										@PathVariable(name = "versionId") Long versionId) {
 		return Optional.ofNullable(testCycleService.getCyclesByVersionId(versionId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getCyclesByVersionId"));
 
 	}
 
@@ -150,7 +149,7 @@ public class TestCycleController {
 									  @PathVariable(name = "cycleId") Long cycleId) {
 		return Optional.ofNullable(testCycleService.getFolderByCycleId(cycleId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleByVersionId"));
+				.orElseThrow(() -> new CommonException("error.testCycle.query.getFolderByCycleId"));
 
 	}
 }
