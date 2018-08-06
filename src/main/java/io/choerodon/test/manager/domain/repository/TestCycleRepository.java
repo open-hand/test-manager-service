@@ -30,4 +30,6 @@ public interface TestCycleRepository {
 	List<TestCycleE> getCyclesByVersionId(Long versionId);
 
 	List<Long> selectCyclesInVersions(Long[] versionIds);
+
+	void validateCycle(TestCycleE testCycleE);
 }

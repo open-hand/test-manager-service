@@ -152,6 +152,15 @@
 
     <!--</select>-->
 
+    <select id="validateCycle"  resultType="java.lang.Long">
+        select count(cycle_id) from test_cycle
+        <where>
+            cycle_name = #{cycleName} and version_id = #{versionId}
+            <if test="parentCycleId!=null">
+                and parent_cycle_id=#{parentCycleId}
+            </if>
+        </where>
+    </select>
 
     <select id="selectCyclesInVersions" resultType="java.lang.Long">
         SELECT DISTINCT

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.mapper
 
+import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO
@@ -106,6 +107,11 @@ class TestCycleMapperSpec extends Specification {
         where:
         param                                |     result
         [new Long(99)] as Long[]       |       4
+    }
+
+    def "validateCycle"(){
+        expect:
+        mapper.validateCycle(cycleDO1)==1
     }
 
     def "deleteEnv"(){

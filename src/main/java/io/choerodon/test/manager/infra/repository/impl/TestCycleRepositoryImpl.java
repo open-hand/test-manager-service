@@ -30,6 +30,8 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 
 	@Override
 	public TestCycleE insert(TestCycleE testCycleE) {
+		Assert.notNull(testCycleE,"error.cycle.insert.not.be.null");
+		validateCycle(testCycleE);
 		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
 		if (cycleMapper.insert(convert) != 1) {
 			throw new CommonException("error.testStepCase.insert");
@@ -45,6 +47,8 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 
 	@Override
 	public TestCycleE update(TestCycleE testCycleE) {
+		Assert.notNull(testCycleE,"error.cycle.update.not.be.null");
+		validateCycle(testCycleE);
 		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
 		if (cycleMapper.updateByPrimaryKey(convert) != 1) {
 			throw new CommonException("error.testStepCase.update");
@@ -118,4 +122,18 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 	}
 
 
+	/**
+	 * 验证version下是否有重名cycle
+	 *
+	 * @param testCycleE
+	 */
+	@Override
+	public void validateCycle(TestCycleE testCycleE) {
+		Assert.notNull(testCycleE.getVersionId(), "error.cycle.versionId.not.be.null");
+		Assert.notNull(testCycleE.getCycleName(), "error.cycle.name.not.be.null");
+		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
+		if (!cycleMapper.validateCycle(convert).equals(0L)) {
+			throw new CommonException("error.cycle.in.version.has.existed");
+		}
+	}
 }
