@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="defect_type" property="defectType"/>
+        <id column="defect_link_id" property="defectLinkId"/>
+        <id column="issue_id" property="issueId"/>
+    </resultMap>
+
+    <select id="queryInIssues" resultMap="BaseResultMap">
+        SELECT
+        id,defect_type,defect_link_id,issue_id
+        FROM test_cycle_case_defect_rel
+        where issue_id in
+        <foreach collection="issues" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+
+</mapper>

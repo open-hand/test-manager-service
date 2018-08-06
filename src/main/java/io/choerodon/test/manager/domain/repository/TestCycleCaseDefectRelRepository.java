@@ -20,4 +20,5 @@ public interface TestCycleCaseDefectRelRepository {
 
     Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
 
+    List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues);
 }
