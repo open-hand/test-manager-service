@@ -25,4 +25,10 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 	 * @return
 	 */
 	List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
+
+	/** 验证version下是否有重名cycle
+	 * @param testCycleDO
+	 * @return
+	 */
+	Long validateCycle(TestCycleDO testCycleDO);
 }

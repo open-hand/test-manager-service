@@ -29,12 +29,16 @@ class TestCycleRepositoryImplSpec extends Specification {
     }
 
     def "Insert"() {
+        given:
+        TestCycleE cycleE = new TestCycleE(cycleId: new Long(1), versionId: 12L, cycleName: "name")
         when:
-        repository.insert()
+        repository.insert(cycleE)
         then:
+        1 * mapper.validateCycle(_) >> 0L
         1*mapper.insert(_)>>1
         when:
-        repository.insert()
+        1 * mapper.validateCycle(_) >> 0L
+        repository.insert(cycleE)
         then:
         1*mapper.insert(_)>>0
         thrown(CommonException)
@@ -49,8 +53,9 @@ class TestCycleRepositoryImplSpec extends Specification {
 
     def "Update"() {
         given:
-        TestCycleE cycleE=new TestCycleE(cycleId: new Long(1))
+        TestCycleE cycleE = new TestCycleE(cycleId: new Long(1), versionId: 12L, cycleName: "name")
         when:
+        1 * mapper.validateCycle(_) >> 0L
         repository.update(cycleE)
         then:
         1 * mapper.updateByPrimaryKey(_)>>1
@@ -58,6 +63,7 @@ class TestCycleRepositoryImplSpec extends Specification {
         when:
         repository.update(cycleE)
         then:
+        1 * mapper.validateCycle(_) >> 0L
         1 * mapper.updateByPrimaryKey(_)>>0
         thrown(CommonException)
     }
