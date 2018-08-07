@@ -29,6 +29,8 @@ public interface TestCycleCaseRepository {
 
 	List<TestCycleCaseE> queryByIssue(Long issueId);
 
+    List<TestCycleCaseE> queryInIssue(Long[] issueId);
+
     List<TestCycleCaseE> queryCycleCaseForReporter(Long[] issueIds);
 
     Long countCaseNotRun(Long[] cycleIds);

@@ -28,6 +28,8 @@ public interface TestCycleCaseService {
 
 	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);
 
+	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId);
+
 	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 
 	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);

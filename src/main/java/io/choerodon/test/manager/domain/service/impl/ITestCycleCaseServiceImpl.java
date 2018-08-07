@@ -144,6 +144,11 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	}
 
 	@Override
+	public List<TestCycleCaseE> queryInIssues(Long[] issuesIds) {
+		return testCycleCaseRepository.queryInIssue(issuesIds);
+	}
+
+	@Override
 	public Long countCaseNotRun(Long projectId) {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {

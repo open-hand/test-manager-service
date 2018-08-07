@@ -109,8 +109,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 	@Override
 	public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
-		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-		testCycleCaseDTO.setIssueId(issuseId);
+
 		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
 		if (dto == null || dto.isEmpty()) {
 			return new ArrayList<>();
@@ -118,6 +117,25 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		populateCycleCaseWithDefect(dto,projectId);
 		populateUsers(dto);
 		populateVersionBuild(projectId, dto);
+		return dto;
+	}
+
+
+	/**查询issues的cycleCase 在生成报表处使用
+	 * @param issueIds
+	 * @param projectId
+	 * @return
+	 */
+	@Override
+	public List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId) {
+		if(issueIds==null || issueIds.length==0){
+			return new ArrayList<>();
+		}
+		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryInIssues(issueIds), TestCycleCaseDTO.class);
+		if (dto == null || dto.isEmpty()) {
+			return new ArrayList<>();
+		}
+		populateCycleCaseWithDefect(dto,projectId);
 		return dto;
 	}
 
@@ -130,6 +148,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		for (TestCycleCaseDTO v : testCycleCaseDTOS) {
 			List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
 			Optional.ofNullable(defects).ifPresent(list::addAll);
+			Optional.ofNullable(v.getSubStepDefects()).ifPresent(list::addAll);
 		}
 
 		Long[] issueLists=Stream.concat(list.stream().map(TestCycleCaseDefectRelDTO::getIssueId),

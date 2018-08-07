@@ -1,19 +1,8 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.api.dto.IssueLinkDTO;
-import io.choerodon.agile.api.dto.IssueListDTO;
-import io.choerodon.core.convertor.ApplicationContextHelper;
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.impl.TestCycleCaseDefectRelServiceImpl;
-import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
-import io.choerodon.test.manager.domain.service.impl.ITestCycleCaseDefectRelServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +15,46 @@ public class ReporterFormE {
 
 	private IssueInfosDTO defectInfo;
 
-	private Long defectCount = new Long(0);
+	private Long defectCount = 0L;
 
-	private List<LinkedTestIssue> linkedTestIssues;
+	private List<LinkedTestIssue> linkedTestIssues = new ArrayList<>();
 
 
-	public ReporterFormE populateIssue(IssueListDTO issueListDTO) {
-		defectInfo = new IssueInfosDTO(issueListDTO);
+	public ReporterFormE(IssueInfosDTO issueInfosDTO) {
+		defectInfo = issueInfosDTO;
+	}
+
+	public ReporterFormE populateLinkedTest(List<IssueLinkDTO> linkedTestIssues) {
+		for (IssueLinkDTO link : linkedTestIssues) {
+			if (defectInfo.getIssueId().equals(link.getLinkedIssueId())) {
+				this.linkedTestIssues.add(new LinkedTestIssue(link.getIssueId(), link.getIssueNum(), link.getSummary()));
+			}
+		}
 		return this;
 	}
 
-	public ReporterFormE populateLinkedTest(List<IssueLinkDTO> linkedTestIssues, Long projectId) {
-		List<LinkedTestIssue> list = new ArrayList<>();
-		linkedTestIssues.stream().forEach(v -> {
-			list.add(new LinkedTestIssue(v.getIssueId(), v.getIssueNum(), v.getSummary(), projectId));
-		});
-		this.linkedTestIssues = list;
+	public ReporterFormE populateLinkedIssueCycle(List<TestCycleCaseDTO> caseDTOS) {
+		if(caseDTOS.isEmpty()){
+			return this;
+		}
+		for (LinkedTestIssue issue : linkedTestIssues) {
+			for (TestCycleCaseDTO cases : caseDTOS) {
+				if (issue.getIssueId().equals(cases.getIssueId())) {
+					issue.getTestCycleCaseES().add(cases);
+				}
+			}
+		}
+		return this;
+	}
+
+	public ReporterFormE countDefect(){
+		for(LinkedTestIssue issue: linkedTestIssues){
+			List<TestCycleCaseDTO> ls=Optional.ofNullable(issue.getTestCycleCaseES()).orElseGet(ArrayList::new);
+			for(TestCycleCaseDTO dot:ls){
+				Optional.ofNullable(dot.getDefects()).ifPresent(v->defectCount+=v.size());
+				Optional.ofNullable(dot.getSubStepDefects()).ifPresent(v->defectCount+=v.size());
+			}
+		}
 		return this;
 	}
 
@@ -51,24 +64,13 @@ public class ReporterFormE {
 		private String issueName;
 		private String summary;
 
-		private List<TestCycleCaseDTO> testCycleCaseES;
+		private List<TestCycleCaseDTO> testCycleCaseES = new ArrayList<>();
 
 
-		public LinkedTestIssue(Long issueId, String issueName, String summary, Long projectId) {
+		public LinkedTestIssue(Long issueId, String issueName, String summary) {
 			this.issueId = issueId;
 			this.issueName = issueName;
 			this.summary = summary;
-			testCycleCaseES = ApplicationContextHelper.getContext().getBean(TestCycleCaseServiceImpl.class).queryByIssuse(issueId, projectId);
-			TestCycleCaseDefectRelService defectRelService = ApplicationContextHelper.getContext().getBean(TestCycleCaseDefectRelServiceImpl.class);
-
-			testCycleCaseES.forEach(v -> {
-				Optional.ofNullable(defectRelService.getSubCycleStepsHaveDefect(v.getExecuteId()))
-						.ifPresent(u -> {
-							defectRelService.populateDefectInfo(u, projectId);
-							v.getSubStepDefects().addAll(u);
-						});
-				defectCount += v.getDefects().size() + v.getSubStepDefects().size();
-			});
 		}
 
 		public List<TestCycleCaseDTO> getTestCycleCaseES() {

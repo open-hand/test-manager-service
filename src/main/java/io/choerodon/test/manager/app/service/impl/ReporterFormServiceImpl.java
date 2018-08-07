@@ -53,8 +53,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	public Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		Page page = new Page();
 		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page);
-		List<ReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
+		if (issueResponse.isEmpty()) {
+			return page;
+		}
+		List<ReporterFormE> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+
 		page.setContent(reporterFormES);
 		page.setNumberOfElements(reporterFormES.size());
 		return page;
@@ -64,15 +67,17 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 		Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
 
 		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds);
-		List<ReporterFormE> reporterFormES = Lists.newArrayList();
-		issueResponse.forEach((k, v) -> reporterFormES.add(doCreateFromIssueToDefect(v, projectId)));
-		return reporterFormES;
+		return doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+
 	}
 
-	private ReporterFormE doCreateFromIssueToDefect(IssueInfosDTO issueInfosDTO, Long projectId) {
-		ReporterFormE reporterFormE = new ReporterFormE();
-		return reporterFormE.setDefectInfo(issueInfosDTO)
-				.populateLinkedTest(testCaseService.getLinkIssueFromIssueToTest(issueInfosDTO.getProjectId(), Lists.newArrayList(issueInfosDTO.getIssueId())), projectId);
+	private List<ReporterFormE> doCreateFromIssueToDefect(List<IssueInfosDTO> issueInfosDTO, Long projectId) {
+
+		List<Long> issues = issueInfosDTO.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList());
+		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromIssueToTest(projectId, issues);
+		List<TestCycleCaseDTO> cycleCaseDTOS = testCycleCaseService.queryInIssues(linkDTOS.stream().map(IssueLinkDTO::getLinkedIssueId).toArray(Long[]::new), projectId);
+
+		return issueInfosDTO.stream().map(ReporterFormE::new).peek(v -> v.populateLinkedTest(linkDTOS).populateLinkedIssueCycle(cycleCaseDTOS).countDefect()).collect(Collectors.toList());
 
 	}
 
@@ -128,7 +133,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds);
 		formES.forEach(v -> v.populateIssueInfo(map));
 
-		List<IssueLinkDTO> linkDTOS=testCaseService.getLinkIssueFromTestToIssue(projectId,issues);
+		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromTestToIssue(projectId, issues);
 		formES.forEach(v -> v.populateIssueLink(projectId, linkDTOS));
 		return formES;
 	}

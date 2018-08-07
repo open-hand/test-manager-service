@@ -37,6 +37,8 @@ public interface ITestCycleCaseService {
 
 	List<TestCycleCaseE> queryByIssue(Long versionId);
 
+	List<TestCycleCaseE> queryInIssues(Long[] issuesIds);
+
 	Long countCaseNotRun(Long projectId);
 
 	Long countCaseNotPlain(Long projectId);
