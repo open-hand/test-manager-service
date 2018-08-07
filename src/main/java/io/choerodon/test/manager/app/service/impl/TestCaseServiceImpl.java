@@ -96,20 +96,20 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 
 	@Override
-	public List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, Long issueId) {
+	public List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId) {
 		Assert.notNull(projectId, "error.get.linkId.projectId.not.null");
-		Assert.notNull(issueId, "error.get.linkId.issueId.not.null");
-		return testCaseFeignClient.listIssueLinkByIssueId(projectId, issueId).getBody();
+		Assert.notEmpty(issueId, "error.get.linkId.issueId.not.null");
+		return testCaseFeignClient.listIssueLinkByBatch(projectId, issueId).getBody();
 	}
 
 	@Override
-	public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, Long issueId) {
+	public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
 		return listIssueLinkByIssueId(projectId, issueId).stream()
 				.filter(u -> u.getTypeCode().equals("issue_test") && u.getWard().equals("被阻塞")).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, Long issueId) {
+	public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId) {
 		return listIssueLinkByIssueId(projectId, issueId).stream()
 				.filter(u -> u.getWard().equals("阻塞")).collect(Collectors.toList());
 	}

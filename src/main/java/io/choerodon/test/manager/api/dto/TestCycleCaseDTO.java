@@ -83,6 +83,12 @@ public class TestCycleCaseDTO {
 		this.issueLinkDTOS = issueLinkDTOS;
 	}
 
+	public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO){
+		if(this.issueLinkDTOS==null){
+			this.issueLinkDTOS=new ArrayList<>();
+		}
+		this.issueLinkDTOS.add(issueLinkDTO);
+	}
 	public String getVersionName() {
 		return versionName;
 	}

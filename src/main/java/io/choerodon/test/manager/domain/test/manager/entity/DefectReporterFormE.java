@@ -1,11 +1,11 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 
+import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.app.service.TestCaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +59,21 @@ public class DefectReporterFormE {
 	}
 
 
-	public void populateIssueLink(Long projectId, TestCaseService testCaseService) {
+	public void populateIssueLink(Long projectId, List<IssueLinkDTO> issueLinkDTOS) {
 		for (TestCycleCaseDTO caseE : testCycleCaseES) {
-			caseE.setIssueLinkDTOS(testCaseService.getLinkIssueFromTestToIssue(projectId, caseE.getIssueId()));
+			for (IssueLinkDTO link : issueLinkDTOS) {
+				if (caseE.getIssueId().equals(link.getIssueId())) {
+					caseE.addIssueLinkDTOS(link);
+				}
+			}
 		}
 
 		for (TestCycleCaseStepDTO stepE : testCycleCaseStepES) {
-			stepE.setIssueLinkDTOS(testCaseService.getLinkIssueFromTestToIssue(projectId, stepE.getIssueId()));
+			for (IssueLinkDTO link : issueLinkDTOS) {
+				if (stepE.getIssueId().equals(link.getIssueId())) {
+					stepE.addIssueLinkDTOS(link);
+				}
+			}
 		}
 	}
 

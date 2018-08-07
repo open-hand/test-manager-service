@@ -66,4 +66,9 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     public ResponseEntity<List<IssueInfoDTO>> listByIssueIds(Long projectId, List<Long> issueIds) {
         throw new CommonException(QUERY_ERROR);
     }
+
+    @Override
+    public ResponseEntity<List<IssueLinkDTO>> listIssueLinkByBatch(Long projectId, List<Long> issueIds) {
+        throw new CommonException(QUERY_ERROR);
+    }
 }

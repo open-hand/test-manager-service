@@ -28,9 +28,9 @@ public interface TestCaseService {
 
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest);
 
-	List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, Long issueId);
+	List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 
-	List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, Long issueId);
+	List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId);
 
-	List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, Long issueId);
+	List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
 }

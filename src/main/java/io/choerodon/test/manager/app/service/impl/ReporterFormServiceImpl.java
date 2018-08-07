@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Lists;
+import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
@@ -71,7 +72,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	private ReporterFormE doCreateFromIssueToDefect(IssueInfosDTO issueInfosDTO, Long projectId) {
 		ReporterFormE reporterFormE = new ReporterFormE();
 		return reporterFormE.setDefectInfo(issueInfosDTO)
-				.populateLinkedTest(testCaseService.getLinkIssueFromIssueToTest(issueInfosDTO.getProjectId(), issueInfosDTO.getIssueId()), projectId);
+				.populateLinkedTest(testCaseService.getLinkIssueFromIssueToTest(issueInfosDTO.getProjectId(), Lists.newArrayList(issueInfosDTO.getIssueId())), projectId);
 
 	}
 
@@ -126,7 +127,9 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds);
 		formES.forEach(v -> v.populateIssueInfo(map));
-		formES.forEach(v -> v.populateIssueLink(projectId, testCaseService));
+
+		List<IssueLinkDTO> linkDTOS=testCaseService.getLinkIssueFromTestToIssue(projectId,issues);
+		formES.forEach(v -> v.populateIssueLink(projectId, linkDTOS));
 		return formES;
 	}
 
