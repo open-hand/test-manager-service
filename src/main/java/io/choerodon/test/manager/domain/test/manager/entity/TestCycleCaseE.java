@@ -47,6 +47,8 @@ public class TestCycleCaseE {
 
     List<TestCycleCaseDefectRelE> caseDefect;
 
+    List<TestCycleCaseDefectRelE>subStepDefects;
+
     private Long objectVersionNumber;
 
     private Long lastUpdatedBy;
@@ -215,6 +217,13 @@ public class TestCycleCaseE {
         this.testCycleCaseRepository = testCycleCaseRepository;
     }
 
+    public List<TestCycleCaseDefectRelE> getSubStepDefects() {
+        return subStepDefects;
+    }
+
+    public void setSubStepDefects(List<TestCycleCaseDefectRelDO> subStepDefects) {
+        this.subStepDefects = ConvertHelper.convertList(subStepDefects, TestCycleCaseDefectRelE.class);
+    }
 
     public String getExecutionStatusName() {
         return executionStatusName;

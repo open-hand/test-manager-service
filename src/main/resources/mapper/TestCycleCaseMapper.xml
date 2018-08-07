@@ -155,6 +155,83 @@
         where cycle.issue_id=#{issueId}
     </select>
 
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO" id="BaseResultMapForReporter">
+        <id column="execute_id" property="executeId"/>
+        <id column="cycle_id" property="cycleId"/>
+        <id column="issue_id" property="issueId"/>
+        <id column="rank" property="rank"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="execution_status" property="executionStatus"/>
+        <id column="status_name" property="executionStatusName"/>
+        <id column="assigned_to" property="assignedTo"/>
+        <id column="comment" property="comment"/>
+        <id column="cycle_name" property="cycleName"/>
+        <id column="folder_name" property="folderName"/>
+        <id column="last_update_date" property="lastUpdateDate"/>
+        <id column="last_updated_by" property="lastUpdatedBy"/>
+        <collection property="caseDefect"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+            <id column="defect_issue_id" property="issueId"/>
+            <id column="defect_type" property="defectType"/>
+            <id column="defect_link_id" property="defectLinkId"/>
+            <id column="defecet_id" property="id"/>
+        </collection>
+
+        <collection property="subStepDefects"
+                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+            <id column="sub_defect_issue_id" property="issueId"/>
+            <id column="sub_defect_type" property="defectType"/>
+            <id column="sub_defect_link_id" property="defectLinkId"/>
+            <id column="sub_defece_id" property="id"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="queryInIssues" resultMap="BaseResultMapForReporter">
+        SELECT
+        cycle.execute_id,
+        cycle.cycle_id,
+        cycle.issue_id,
+        cycle.rank,
+        cycle.object_version_number,
+        defect.defect_type,
+        defect.id defece_id,
+        defect.defect_link_id,
+        defect.issue_id defect_issue_id,
+        cycle.execution_status,
+        cycle.assigned_to,
+        cycle.COMMENT,
+        cycle.last_update_date,
+        cycle.last_updated_by,
+        step.issue_id sub_defect_issue_id,
+        step.id sub_defece_id,
+        step.defect_type sub_defect_type,
+        step.defect_link_id sub_defect_link_id,
+        CASE
+        cycle1.type
+        WHEN 'folder' THEN
+        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE cycle1.cycle_name
+        END AS cycle_name,
+        CASE
+        cycle1.type
+        WHEN 'folder' THEN
+        cycle1.cycle_name
+        END AS folder_name
+        FROM
+        test_cycle_case cycle
+        LEFT JOIN test_cycle cycle1 ON cycle1.cycle_id = cycle.cycle_id
+        LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
+        AND defect.defect_type = "CYCLE_CASE"
+        LEFT JOIN ( SELECT execute_id, id, defect_type, defect_link_id, issue_id FROM test_cycle_case_step INNER JOIN test_cycle_case_defect_rel ON execute_step_id = defect_link_id AND defect_type = "CASE_STEP" ) step ON step.execute_id = cycle.execute_id
+        WHERE
+        cycle.issue_id IN
+        <foreach item="item" index="index" collection="ids"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
     <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
         SELECT cycle.execute_id,cycle.cycle_id,cycle.execution_status,cycle1.cycle_name,cycle.issue_id
         FROM test_cycle_case cycle

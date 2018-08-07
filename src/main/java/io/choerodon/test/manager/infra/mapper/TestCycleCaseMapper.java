@@ -19,6 +19,13 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 
 	List<TestCycleCaseDO> queryByIssue(@Param("issueId") Long issueId);
 
+
+	/**查询issues下的cycleCase
+	 * @param issueId
+	 * @return
+	 */
+	List<TestCycleCaseDO> queryInIssues(@Param("ids") Long[] issueId);
+
 	List<TestCycleCaseDO> queryCycleCaseForReporter(@Param("ids") Long[] issueIds);
 
 	Long countCaseNotRun(@Param("ids") Long[] cycleIds);

@@ -62,16 +62,13 @@ public class TestCycleCaseDTO {
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
-    private List<TestCycleCaseDefectRelDTO> caseDefect;
+    private List<TestCycleCaseDefectRelDTO> caseDefect=new ArrayList<>();
 
-	private List<TestCycleCaseDefectRelDTO> subStepDefects;
+	private List<TestCycleCaseDefectRelDTO> subStepDefects=new ArrayList<>();
 
 	private List<IssueLinkDTO> issueLinkDTOS;
 
 	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
-		if (subStepDefects == null) {
-			subStepDefects = new ArrayList<>();
-		}
 		return subStepDefects;
 	}
 
@@ -97,8 +94,8 @@ public class TestCycleCaseDTO {
 		this.versionName = versionName;
 	}
 
-	public void setSubStepDefects(List<TestCycleCaseDefectRelDTO> subStepDefects) {
-		this.subStepDefects = subStepDefects;
+	public void setSubStepDefects(List<TestCycleCaseDefectRelE> subStepDefects) {
+		this.subStepDefects = ConvertHelper.convertList(subStepDefects, TestCycleCaseDefectRelDTO.class);
 	}
 
 	public String getExecutionStatusName() {
@@ -142,9 +139,6 @@ public class TestCycleCaseDTO {
 	}
 
 	public Long getAssignedTo() {
-//		if (assignedTo == null) {
-//			return new Long(0);
-//		}
         return assignedTo;
     }
 
@@ -247,6 +241,7 @@ public class TestCycleCaseDTO {
     public void setDefects(List<TestCycleCaseDefectRelE> defects) {
         this.caseDefect = ConvertHelper.convertList(defects, TestCycleCaseDefectRelDTO.class);
     }
+
 
 	public Long getLastUpdatedBy() {
 		return lastUpdatedBy;

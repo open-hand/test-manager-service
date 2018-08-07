@@ -12,6 +12,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,13 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	public List<TestCycleCaseE> queryByIssue(Long issueId) {
 
 		return ConvertHelper.convertList(testCycleCaseMapper.queryByIssue(issueId), TestCycleCaseE.class);
+
+	}
+
+	@Override
+	public List<TestCycleCaseE> queryInIssue(Long[] issueId) {
+		Assert.notEmpty(issueId,"erorr.query.cycle.in.issues.issueIds.not.null");
+		return ConvertHelper.convertList(testCycleCaseMapper.queryInIssues(issueId), TestCycleCaseE.class);
 
 	}
 

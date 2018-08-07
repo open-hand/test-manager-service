@@ -49,6 +49,9 @@ public class TestCycleCaseDO extends AuditDomain {
     @Transient
     List<TestCycleCaseDefectRelDO>caseDefect;
 
+    @Transient
+    List<TestCycleCaseDefectRelDO>subStepDefects;
+
     public Long getExecuteId() {
         return executeId;
     }
@@ -143,5 +146,13 @@ public class TestCycleCaseDO extends AuditDomain {
 
     public void setCaseDefect(List<TestCycleCaseDefectRelDO> caseDefect) {
         this.caseDefect = caseDefect;
+    }
+
+    public List<TestCycleCaseDefectRelDO> getSubStepDefects() {
+        return subStepDefects;
+    }
+
+    public void setSubStepDefects(List<TestCycleCaseDefectRelDO> subStepDefects) {
+        this.subStepDefects = subStepDefects;
     }
 }
