@@ -7,6 +7,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -90,6 +91,12 @@ public class TestCycleCaseStepDTO {
 
     public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
         this.issueLinkDTOS = issueLinkDTOS;
+    }
+    public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO){
+        if(this.issueLinkDTOS==null){
+            this.issueLinkDTOS=new ArrayList<>();
+            }
+        this.issueLinkDTOS.add(issueLinkDTO);
     }
 
     public void setExecuteId(Long executeId) {

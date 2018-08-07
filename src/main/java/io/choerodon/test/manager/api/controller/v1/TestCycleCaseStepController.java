@@ -37,21 +37,21 @@ public class TestCycleCaseStepController {
 	@Autowired
 	TestCycleCaseStepService testCycleCaseStepService;
 
-//	/**
-//	 * 更新循环步骤
-//	 *
-//	 * @param testCycleCaseStepDTO
-//	 * @return
-//	 */
-//	@Permission(level = ResourceLevel.PROJECT)
-//	@ApiOperation("更新循环步骤")
-//	@PutMapping
-//	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
-//		return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
-//				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-//				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
-//
-//	}
+	/**
+	 * 更新循环步骤
+	 *
+	 * @param testCycleCaseStepDTO
+	 * @return
+	 */
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("更新一个循环步骤")
+	@PutMapping
+	ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+		return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+
+	}
 
 
 	/**
