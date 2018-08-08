@@ -39,34 +39,11 @@ public class TestCycleCaseStepDO extends AuditDomain {
     private Long issueId;
 
     @Transient
-    private List<TestCycleCaseAttachmentRelDO> caseAttachment;
-
-    @Transient
     private List<TestCycleCaseAttachmentRelDO> stepAttachment;
 
     @Transient
     private List<TestCycleCaseDefectRelDO> defects;
 
-//    @Transient
-//    private String caseAttachUrl;
-//    @Transient
-//    private String caseAttachName;
-//    @Transient
-//    private Long caseAttachId;
-//
-//    @Transient
-//    private String stepAttachUrl;
-//    @Transient
-//    private String stepAttachName;
-//    @Transient
-//    private Long stepAttachId;
-//
-//    @Transient
-//    private Long defectId;
-//    @Transient
-//    private Long defectIssueId;
-//    @Transient
-//    private String defectName;
 
     public Long getExecuteStepId() {
         return executeStepId;
@@ -123,14 +100,6 @@ public class TestCycleCaseStepDO extends AuditDomain {
 
     public void setExpectedResult(String expectedResult) {
         this.expectedResult = expectedResult;
-    }
-
-    public List<TestCycleCaseAttachmentRelDO> getCaseAttachment() {
-        return caseAttachment;
-    }
-
-    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
-        this.caseAttachment = caseAttachment;
     }
 
     public List<TestCycleCaseAttachmentRelDO> getStepAttachment() {
