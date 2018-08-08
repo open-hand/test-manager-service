@@ -41,9 +41,6 @@ public class TestCycleCaseStepE {
 
 	private Long issueId;
 
-    private List<TestCycleCaseAttachmentRelE> caseAttachment;
-
-
     private List<TestCycleCaseAttachmentRelE> stepAttachment;
 
 
@@ -169,14 +166,6 @@ public class TestCycleCaseStepE {
         return testCycleCaseStepRepository;
     }
 
-    public List<TestCycleCaseAttachmentRelE> getCaseAttachment() {
-        return caseAttachment;
-    }
-
-
-    public void setCaseAttachment(List<TestCycleCaseAttachmentRelDO> caseAttachment) {
-        this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelE.class);
-    }
 
     public List<TestCycleCaseAttachmentRelE> getStepAttachment() {
         return stepAttachment;

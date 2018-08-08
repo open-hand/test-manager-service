@@ -15,17 +15,13 @@
         <id column="cycle_name" property="cycleName"/>
         <id column="issue_id" property="issueId"/>
         <id column="expected_result" property="expectedResult"/>
-        <collection property="caseAttachment"
+
+        <collection property="stepAttachment"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
             <id column="url" property="url"/>
             <id column="attachment_name" property="attachmentName"/>
+            <id column="attachment_type" property="attachmentType"/>
             <id column="id" property="id"/>
-        </collection>
-        <collection property="stepAttachment"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
-            <id column="case_attach_url" property="url"/>
-            <id column="case_attach_name" property="attachmentName"/>
-            <id column="case_attach_id" property="id"/>
         </collection>
         <collection property="defects"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
@@ -37,32 +33,59 @@
     </resultMap>
 
     <select id="queryWithTestCaseStep" resultMap="BaseResultMap">
-        SELECT cycle.execute_step_id,cycle.execute_id,cycle.step_id,cycle.comment,cycle.object_version_number,
-        attach1.url,attach1.attachment_name,attach1.id,test.test_step,test.test_data,test.expected_result,
-        test.case_attach_url,test.case_attach_id,test.case_attach_name,cycle.step_status,
-        defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
-        FROM test_cycle_case_step cycle
-        left join (
-        SELECT step.step_id,step.rank,step.issue_id,step.test_step,step.test_data,step.expected_result,attach.url
-        case_attach_url,attach.attachment_name case_attach_name,attach.id case_attach_id
-        FROM test_case_step step
-        left join test_cycle_case_attachment_rel attach
-        on step.step_id=attach.attachment_link_id and attach.attachment_type="CASE_STEP"
-        ) test
-        on cycle.step_id=test.step_id
-        left join test_cycle_case_attachment_rel attach1
-        on cycle.execute_step_id=attach1.attachment_link_id and attach1.attachment_type="CYCLE_STEP"
-        left join test_cycle_case_defect_rel defect
-        on cycle.execute_step_id=defect.defect_link_id and defect.defect_type="CASE_STEP"
+        SELECT
+        test.execute_step_id,
+        test.execute_id,
+        test.step_id,
+        test.COMMENT,
+        test.step_status,
+        test.object_version_number,
+        test.test_step,
+        test.test_data,
+        test.expected_result,
+        defect.defect_type,
+        defect.id defece_id,
+        defect.defect_link_id,
+        defect.issue_id defect_issue_id,
+        attach.url,
+        attach.attachment_name,
+        attach.attachment_type,
+        attach.id
+        FROM
+        (
+        SELECT
+        cycle.execute_step_id,
+        cycle.execute_id,
+        cycle.step_id,
+        cycle.COMMENT,
+        cycle.step_status,
+        cycle.object_version_number,
+        step.test_step,
+        step.test_data,
+        step.expected_result,
+        step.rank
+        FROM
+        ( select * from test_cycle_case_step
         <where>
             <if test="dto!=null and dto.executeStepId != null">
-                AND cycle.execute_step_id = #{dto.executeStepId}
+                AND execute_step_id = #{dto.executeStepId}
             </if>
             <if test="dto!=null and dto.executeId != null">
-                AND cycle.execute_id = #{dto.executeId}
+                AND execute_id = #{dto.executeId}
             </if>
         </where>
-        order by test.rank limit #{page} , #{pageSize}
+        ) cycle
+        LEFT JOIN test_case_step step ON cycle.step_id = step.step_id
+        ORDER BY
+        step.rank
+        <if test="pageSize !=0">
+            limit #{page} , #{pageSize}
+        </if>
+        ) test
+        LEFT JOIN test_cycle_case_attachment_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = "CYCLE_STEP"  )
+        OR ( test.step_id = attach.attachment_link_id AND attach.attachment_type = "CASE_STEP" )
+        LEFT JOIN test_cycle_case_defect_rel defect ON test.execute_step_id = defect.defect_link_id
+        AND defect.defect_type = "CASE_STEP"
     </select>
 
     <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">

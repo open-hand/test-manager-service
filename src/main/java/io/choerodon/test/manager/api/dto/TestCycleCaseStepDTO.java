@@ -29,8 +29,6 @@ public class TestCycleCaseStepDTO {
 
     private String expectedResult;
 
-    private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
-
     private List<IssueLinkDTO> issueLinkDTOS;
 
     private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
@@ -127,13 +125,6 @@ public class TestCycleCaseStepDTO {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-    public List<TestCycleCaseAttachmentRelDTO> getCaseAttachment() {
-        return caseAttachment;
-    }
-
-    public void setCaseAttachment(List<TestCycleCaseAttachmentRelE> caseAttachment) {
-        this.caseAttachment = ConvertHelper.convertList(caseAttachment, TestCycleCaseAttachmentRelDTO.class);
-    }
 
     public List<TestCycleCaseAttachmentRelDTO> getStepAttachment() {
         return stepAttachment;
