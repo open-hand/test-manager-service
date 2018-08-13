@@ -291,7 +291,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     }
 
     changeSet(id: '2018-8-10-update-init-status-color',author: 'WangZhe'){
-        sql(stripComments: true, splitStatements: false, endDelimiter: ';') {
+        sql(stripComments: true, splitStatements: true, endDelimiter: ';') {
             "UPDATE test_status SET status_color = 'rgba(0,0,0,0.18)' WHERE status_name = '未执行' AND project_id = '0';" +
             "UPDATE test_status SET status_color = 'rgba(0,191,165,1)' WHERE status_name = '通过' AND project_id = '0';" +
             "UPDATE test_status SET status_color = 'rgba(244,67,54,1)' WHERE status_name = '失败' AND project_id = '0';"
