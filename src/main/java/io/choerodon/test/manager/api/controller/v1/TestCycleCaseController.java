@@ -6,6 +6,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
@@ -20,6 +21,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -196,5 +199,17 @@ public class TestCycleCaseController {
 				testCycleCaseService.countCaseSum(projectId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseSum"));
+	}
+
+	@Autowired
+	ExcelService excelService;
+
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("excel")
+	@GetMapping("download/excel/{cycleId}")
+	public void downLoad(@PathVariable(name = "project_id") Long projectId, @PathVariable(name = "cycleId") Long cycleId,
+						 HttpServletRequest request,
+						 HttpServletResponse response) {
+		excelService.exportCycleCaseInOneCycle(cycleId, projectId, request, response);
 	}
 }

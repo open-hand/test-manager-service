@@ -4,8 +4,6 @@ import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,8 +13,6 @@ import java.util.List;
 public interface TestCycleCaseService {
 
 	void delete(Long cycleCaseId, Long projectId);
-
-//    List<TestCycleCaseDTO> update(List<TestCycleCaseDTO> testCycleCaseDTO);
 
 	Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId);
 
@@ -29,6 +25,8 @@ public interface TestCycleCaseService {
 	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);
 
 	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId);
+
+	List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId);
 
 	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 

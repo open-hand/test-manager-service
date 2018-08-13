@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/13/18.
+ * Created by 842767365@qq.com on 7/13/18.
  */
 
 @Component
@@ -66,7 +66,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds) {
 		Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
 
-		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds);
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, false);
 		return doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId);
 
 	}
@@ -130,7 +130,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 			formES.stream().forEach(v -> v.populateCycleCaseStep(cycleCaseSteps));
 		}
 
-		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds);
+		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, false);
 		formES.forEach(v -> v.populateIssueInfo(map));
 
 		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromTestToIssue(projectId, issues);

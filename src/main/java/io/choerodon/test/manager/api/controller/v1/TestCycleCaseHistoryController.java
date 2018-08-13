@@ -24,7 +24,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Optional;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/28/18.
+ * Created by 842767365@qq.com on 6/28/18.
  */
 
 @RestController

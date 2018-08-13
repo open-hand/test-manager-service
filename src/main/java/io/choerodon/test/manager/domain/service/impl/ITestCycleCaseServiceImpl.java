@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
@@ -130,7 +131,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		List<Long> caseCountList = new ArrayList<>();
 		LocalDate date = LocalDate.parse(day);
 		for (int i = range.intValue() - 1; i >= 0; i--) {
-			date.minusDays(i);
+			//date.minusDays(i);
 			caseCountList.add(new RedisAtomicLong("summary:" + projectId + ":" + date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 					, redisTemplate.getConnectionFactory()).get());
 		}
@@ -148,32 +149,38 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		return testCycleCaseRepository.queryInIssue(issuesIds);
 	}
 
+
+	@Override
+	public List<TestCycleCaseE> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds) {
+		return testCycleCaseRepository.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds);
+	}
+
 	@Override
 	public Long countCaseNotRun(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			if (cycleIds != null && cycleIds.size() > 0) {
 				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
 			}
 		}
-		return new Long(0);
+		return 0L;
 	}
 
 	@Override
 	public Long countCaseNotPlain(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
 		} else {
-			return new Long(0);
+			return 0L;
 		}
 	}
 
 	@Override
 	public Long countCaseSum(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(v -> v.getVersionId()).toArray(Long[]::new);
+		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));

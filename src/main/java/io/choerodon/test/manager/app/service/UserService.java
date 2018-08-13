@@ -6,11 +6,10 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/2/18.
+ * Created by 842767365@qq.com on 7/2/18.
  */
 public interface UserService {
 	UserDO query(Long userId);

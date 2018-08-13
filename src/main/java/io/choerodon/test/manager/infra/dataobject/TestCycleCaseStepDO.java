@@ -38,6 +38,9 @@ public class TestCycleCaseStepDO extends AuditDomain {
     @Transient
     private Long issueId;
 
+	@Transient
+	private String statusName;
+
     @Transient
     private List<TestCycleCaseAttachmentRelDO> stepAttachment;
 
@@ -140,5 +143,13 @@ public class TestCycleCaseStepDO extends AuditDomain {
 
 	public void setIssueId(Long issueId) {
 		this.issueId = issueId;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
 	}
 }

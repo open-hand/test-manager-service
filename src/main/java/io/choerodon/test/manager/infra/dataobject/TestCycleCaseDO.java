@@ -29,6 +29,10 @@ public class TestCycleCaseDO extends AuditDomain {
 
 	private Long executionStatus;
 
+	private Long assignedTo;
+
+	private String comment;
+
 	@Transient
 	private String executionStatusName;
 
@@ -38,10 +42,8 @@ public class TestCycleCaseDO extends AuditDomain {
     @Transient
     private String folderName;
 
-
-    private Long assignedTo;
-
-    private String comment;
+	@Transient
+	private Long versionId;
 
     @Transient
     List<TestCycleCaseAttachmentRelDO> caseAttachment;
@@ -51,6 +53,9 @@ public class TestCycleCaseDO extends AuditDomain {
 
     @Transient
     List<TestCycleCaseDefectRelDO>subStepDefects;
+
+	@Transient
+	List<TestCycleCaseStepDO> cycleCaseStep;
 
     public Long getExecuteId() {
         return executeId;
@@ -155,4 +160,20 @@ public class TestCycleCaseDO extends AuditDomain {
     public void setSubStepDefects(List<TestCycleCaseDefectRelDO> subStepDefects) {
         this.subStepDefects = subStepDefects;
     }
+
+	public List<TestCycleCaseStepDO> getCycleCaseStep() {
+		return cycleCaseStep;
+	}
+
+	public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
+		this.cycleCaseStep = cycleCaseStep;
+	}
+
+	public Long getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(Long versionId) {
+		this.versionId = versionId;
+	}
 }
