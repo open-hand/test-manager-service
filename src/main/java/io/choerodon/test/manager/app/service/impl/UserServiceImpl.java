@@ -12,13 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/2/18.
+ * Created by 842767365@qq.com on 7/2/18.
  */
 @Component
 public class UserServiceImpl implements UserService {
@@ -28,8 +27,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDO query(Long userId) {
 		CustomUserDetails customUserDetails = DetailsHelper.getUserDetails();
-		UserDO userDO = userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
-		return userDO;
+		return userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
 	}
 
 	public Map<Long, UserDO> query(Long[] ids) {

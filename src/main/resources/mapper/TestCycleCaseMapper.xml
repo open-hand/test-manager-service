@@ -14,6 +14,7 @@
         <id column="comment" property="comment"/>
         <id column="cycle_name" property="cycleName"/>
         <id column="folder_name" property="folderName"/>
+        <id column="version_id" property="versionId"/>
         <id column="last_update_date" property="lastUpdateDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
         <collection property="caseDefect"
@@ -27,7 +28,17 @@
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
             <id column="url" property="url"/>
             <id column="attachment_name" property="attachmentName"/>
+            <id column="attachment_link_id" property="attachmentLinkId"/>
+            <id column="attachment_type" property="attachmentType"/>
             <id column="id" property="id"/>
+        </collection>
+        <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO">
+            <id column="step_id" property="stepId"/>
+            <id column="comment" property="comment"/>
+            <id column="step_status_name" property="statusName"/>
+            <id column="test_step" property="testStep"/>
+            <id column="test_data" property="testData"/>
+            <id column="expected_result" property="expectedResult"/>
         </collection>
     </resultMap>
 
@@ -153,6 +164,94 @@
         left join test_cycle_case_defect_rel defect
         on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
         where cycle.issue_id=#{issueId}
+    </select>
+
+    <select id="queryCaseAllInfoInCyclesOrVersions" resultMap="BaseResultMap">
+        SELECT
+        cycle.execute_id,
+        cycle.cycle_id,
+        cycle.issue_id,
+        cycle.rank,
+        cycle.object_version_number,
+        cycle.execution_status,
+        cycle.assigned_to,
+        cycle.COMMENT,
+        cycle.last_update_date,
+        cycle.last_updated_by,
+        cycle1.version_id,
+        status1.status_name,
+        step.test_step,
+        step.test_data,
+        step.expected_result,
+        step.step_coment,
+        step.step_status_name,
+        defect.defect_type,
+        defect.id defece_id,
+        defect.defect_link_id,
+        defect.issue_id defect_issue_id,
+        attach.url,
+        attach.attachment_name,
+        attach.id,
+        attach.attachment_type,
+        attach.attachment_link_id,
+        CASE
+        cycle1.type
+        WHEN 'folder' THEN
+        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE
+        cycle1.cycle_name
+        END AS cycle_name,
+        CASE
+        cycle1.type
+        WHEN 'folder' THEN
+        cycle1.cycle_name
+        END AS folder_name
+        FROM
+        test_cycle_case cycle
+        LEFT JOIN test_cycle cycle1 ON cycle1.cycle_id = cycle.cycle_id
+        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+        AND status1.status_type = "CYCLE_CASE"
+        LEFT JOIN (
+        SELECT
+        step1.execute_step_id,
+        step1.execute_id,
+        step1.step_id,
+        step1.COMMENT step_coment,
+        status_name step_status_name,
+        step2.test_step,
+        step2.test_data,
+        step2.expected_result
+        FROM
+        test_cycle_case_step step1
+        LEFT JOIN test_case_step step2 ON step1.step_id = step2.step_id
+        LEFT JOIN test_status ON step1.step_status = status_id
+        AND status_type = "CASE_STEP"
+        ORDER BY
+        rank
+        ) step ON step.execute_id = cycle.execute_id
+        LEFT JOIN test_cycle_case_defect_rel defect ON ( cycle.execute_id = defect.defect_link_id AND defect.defect_type
+        = "CYCLE_CASE" )
+        OR ( step.execute_step_id = defect.defect_link_id AND defect.defect_type = "CASE_STEP" )
+        LEFT JOIN test_cycle_case_attachment_rel attach ON ( cycle.execute_id = attach.attachment_link_id AND
+        attach.attachment_type = "CYCLE_CASE" )
+        OR ( step.execute_step_id = attach.attachment_link_id AND attach.attachment_type = "CYCLE_STEP" )
+        OR ( step.step_id = attach.attachment_link_id AND attach.attachment_type = "CASE_STEP" )
+        <where>
+            <if test="cycleIds !=null">
+                cycle1.cycle_id in
+                <foreach item="item" index="index" collection="cycleIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="versionIds !=null">
+                cycle1.version_id in
+                <foreach item="item" index="index" collection="versionIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY cycle.rank
     </select>
 
 

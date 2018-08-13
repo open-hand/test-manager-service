@@ -12,7 +12,7 @@ import spock.lang.Specification
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
- * Created by jialongZuo@hand-china.com on 7/27/18.
+ * Created by 842767365@qq.com on 7/27/18.
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)

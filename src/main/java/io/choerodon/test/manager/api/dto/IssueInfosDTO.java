@@ -1,11 +1,11 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.agile.api.dto.IssueCommonDTO;
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.agile.api.dto.IssueListDTO;
+import io.choerodon.agile.api.dto.*;
+
+import java.util.List;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/17/18.
+ * Created by 842767365@qq.com on 7/17/18.
  */
 public class IssueInfosDTO {
 
@@ -25,6 +25,10 @@ public class IssueInfosDTO {
 
 	private String typeCode;
 
+	private List<LabelIssueRelDTO> labelIssueRelDTOList;
+
+	private List<ComponentIssueRelDTO> componentIssueRelDTOList;
+
 	public IssueInfosDTO() {
 	}
 
@@ -39,6 +43,18 @@ public class IssueInfosDTO {
 		typeCode = issueCommonDTO.getTypeCode();
 	}
 
+	public IssueInfosDTO(IssueComponentDetailDTO issueCommonDTO) {
+		issueName = issueCommonDTO.getIssueNum();
+		issueStatusName = issueCommonDTO.getStatusName();
+		issueId = issueCommonDTO.getIssueId();
+		issueColor = issueCommonDTO.getStatusColor();
+		summary = issueCommonDTO.getSummary();
+		projectId = issueCommonDTO.getProjectId();
+		statusCode = issueCommonDTO.getStatusCode();
+		typeCode = issueCommonDTO.getTypeCode();
+		labelIssueRelDTOList = issueCommonDTO.getLabelIssueRelDTOList();
+		componentIssueRelDTOList = issueCommonDTO.getComponentIssueRelDTOList();
+	}
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
 		issueName = issueListDTO.getIssueNum();
@@ -126,5 +142,21 @@ public class IssueInfosDTO {
 
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
+	}
+
+	public List<LabelIssueRelDTO> getLabelIssueRelDTOList() {
+		return labelIssueRelDTOList;
+	}
+
+	public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelDTOList) {
+		this.labelIssueRelDTOList = labelIssueRelDTOList;
+	}
+
+	public List<ComponentIssueRelDTO> getComponentIssueRelDTOList() {
+		return componentIssueRelDTOList;
+	}
+
+	public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
+		this.componentIssueRelDTOList = componentIssueRelDTOList;
 	}
 }

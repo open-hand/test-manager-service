@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.agile.api.dto.IssueListDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
-import io.choerodon.core.domain.Page;
+
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
@@ -16,12 +14,10 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -59,15 +55,13 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 		if(!(lists !=null && !lists.isEmpty())){
 			return;
 		}
-		Long[] issueLists = lists.stream().map(v -> v.getIssueId()).filter(u->u!=null).toArray(Long[]::new);
+		Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).toArray(Long[]::new);
 		if (issueLists.length==0) {
 			return;
 		}
 
-		Map<Long, IssueInfosDTO> defectMap =testCaseService.getIssueInfoMap(projectId,issueLists);
-		lists.forEach(v -> {
-			v.setIssueInfosDTO(defectMap.get(v.getIssueId()));
-		});
+		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
+		lists.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
 	}
 
 	@Override
@@ -96,9 +90,9 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 		caseStepE.setExecuteId(cycleCaseId);
 		List<TestCycleCaseStepE> caseStepES = caseStepE.querySelf();
 		List<TestCycleCaseDefectRelE> defectRelES = new ArrayList<>();
-		caseStepES.stream().forEach(v -> {
-			Optional.ofNullable(cycleStepHaveDefect(v.getExecuteStepId())).ifPresent(u -> defectRelES.addAll(u));
-		});
+		caseStepES.stream().forEach(v ->
+				Optional.ofNullable(cycleStepHaveDefect(v.getExecuteStepId())).ifPresent(defectRelES::addAll)
+		);
 		return ConvertHelper.convertList(defectRelES,TestCycleCaseDefectRelDTO.class);
 	}
 

@@ -92,7 +92,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	@Override
 	public void populateIssue(List<TestCycleCaseDTO> dots, Long projectId) {
 		Long[] ids = dots.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
-		Map<Long, IssueInfosDTO> maps = testCaseService.getIssueInfoMap(projectId, ids);
+		Map<Long, IssueInfosDTO> maps = testCaseService.getIssueInfoMap(projectId, ids, true);
 		dots.forEach(v -> v.setIssueInfosDTO(maps.get(v.getIssueId())));
 	}
 
@@ -139,6 +139,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		return dto;
 	}
 
+	@Override
+	public List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId) {
+		Assert.notNull(cycleIds, "error.query.case.in.versions.project.not.be.null");
+
+		List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds), TestCycleCaseDTO.class);
+		populateCycleCaseWithDefect(dto, projectId);
+		populateUsers(dto);
+		return dto;
+	}
+
 	/** 将实例查询的Issue信息和缺陷关联的Issue信息合并到一起，为了减少一次外部调用。
 	 * @param testCycleCaseDTOS
 	 * @param projectId
@@ -154,7 +164,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Long[] issueLists=Stream.concat(list.stream().map(TestCycleCaseDefectRelDTO::getIssueId),
 				testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId)).filter(Objects::nonNull).distinct()
 				.toArray(Long[]::new);
-		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists);
+		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true);
 
 		list.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
 		testCycleCaseDTOS.forEach(v->v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
@@ -216,7 +226,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			usersId.add(v.getAssignedTo());
 			usersId.add(v.getLastUpdatedBy());
 		});
-		usersId.stream().filter(v -> !v.equals(Long.valueOf(0))).collect(Collectors.toList());
+		usersId.stream().filter(v -> !v.equals(Long.valueOf(0))).distinct().collect(Collectors.toList());
 		if (!usersId.isEmpty()) {
 			Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
 			users.forEach(v -> {

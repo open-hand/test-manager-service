@@ -7,6 +7,7 @@ import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.UserDO;
 
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
@@ -36,6 +37,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 	@Autowired
 	ProductionVersionClient productionVersionClient;
+
+	@Autowired
+	TestCaseService testCaseService;
 
 	@Autowired
 	UserService userService;
@@ -97,15 +101,16 @@ public class TestCycleServiceImpl implements TestCycleService {
 		root.put("versions", versionStatus);
 
 		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new)), TestCycleDTO.class);
-		Long[] usersId = cycles.stream().map(TestCycleDTO::getCreatedBy).toArray(Long[]::new);
-		Map users = userService.query(usersId);
-		setUsers(users, cycles);
+
+		populateUsers(cycles);
 		initVersionTree(versionStatus, versions, cycles);
 
 		return root;
 	}
 
-	private void setUsers(Map<Long, UserDO> users, List<TestCycleDTO> dtos) {
+	public void populateUsers(List<TestCycleDTO> dtos) {
+		Long[] usersId = dtos.stream().map(TestCycleDTO::getCreatedBy).toArray(Long[]::new);
+		Map<Long, UserDO> users = userService.query(usersId);
 		dtos.forEach(v -> {
 			if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
 				UserDO u = users.get(v.getCreatedBy());
@@ -281,5 +286,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 				cycleE.addSelf();
 			}
 		}
+	}
+
+	@Override
+	public void populateVersion(TestCycleDTO cycle, Long projectId) {
+		Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
+		cycle.setVersionName(map.get(cycle.getVersionId()).getName());
+		cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
 	}
 }

@@ -16,15 +16,17 @@ public interface TestCaseService {
 	//
 	ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
+	ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+
 	ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
 
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
 	<T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page);
 
-	Object getIssueInfoMap(Long projectId, SearchDTO searchDTO);
+	Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail);
 
-	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds);
+	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail);
 
 	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest);
 
@@ -33,4 +35,8 @@ public interface TestCaseService {
 	List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId);
 
 	List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
+
+	Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
+
+	ProjectDTO getProjectInfo(Long projectId);
 }

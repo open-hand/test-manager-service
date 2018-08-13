@@ -14,12 +14,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/2/18.
+ * Created by 842767365@qq.com on 7/2/18.
  */
 
 @RestController

@@ -75,4 +75,12 @@ public interface TestCaseFeignClient {
 																   @PathVariable(name = "project_id") Long projectId,
 																   @ApiParam(value = "issueIds", required = true)
 																   @RequestBody List<Long> issueIds);
+
+	@PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub_detail")
+	ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+																			@RequestParam(name = "orders") String orders,
+																			@ApiParam(value = "项目id", required = true)
+																			@PathVariable(name = "project_id") Long projectId,
+																			@ApiParam(value = "查询参数", required = true)
+																			@RequestBody(required = false) SearchDTO searchDTO);
 }

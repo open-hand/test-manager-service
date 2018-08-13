@@ -37,4 +37,8 @@ public interface TestCycleService {
 	List<TestCycleDTO> getFolderByCycleId(Long cycleId);
 
 	void initOldData(Long projectId);
+
+	void populateVersion(TestCycleDTO cycle, Long projectId);
+
+	void populateUsers(List<TestCycleDTO> dtos);
 }

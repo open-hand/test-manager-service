@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.domain.aop;
 
-import com.google.common.collect.Lists;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -34,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jialongZuo@hand-china.com on 6/28/18.
+ * Created by 842767365@qq.com on 6/28/18.
  */
 @Aspect
 @Component

@@ -4,8 +4,6 @@ import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,8 @@ public class TestCycleCaseStepDTO {
     private List<TestCycleCaseDefectRelDTO> defects;
 
     private IssueInfosDTO issueInfosDTO;
+
+    private String statusName;
 
     public IssueInfosDTO getIssueInfosDTO() {
         return issueInfosDTO;
@@ -157,4 +157,12 @@ public class TestCycleCaseStepDTO {
 	public void setStepStatus(Long stepStatus) {
 		this.stepStatus = stepStatus;
 	}
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 }

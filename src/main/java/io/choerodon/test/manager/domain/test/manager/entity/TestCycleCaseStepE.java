@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.persistence.Transient;
 import java.util.List;
 
 /**
@@ -43,6 +41,7 @@ public class TestCycleCaseStepE {
 
     private List<TestCycleCaseAttachmentRelE> stepAttachment;
 
+	private String statusName;
 
     private List<TestCycleCaseDefectRelE> defects;
 
@@ -191,7 +190,13 @@ public class TestCycleCaseStepE {
 		this.cycleName = cycleName;
 	}
 
+	public String getStatusName() {
+		return statusName;
+	}
 
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
 
 	public Long getIssueId() {
 		return issueId;

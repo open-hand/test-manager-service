@@ -13,6 +13,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +98,21 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	public List<TestCycleCaseE> queryInIssue(Long[] issueId) {
 		Assert.notEmpty(issueId,"erorr.query.cycle.in.issues.issueIds.not.null");
 		return ConvertHelper.convertList(testCycleCaseMapper.queryInIssues(issueId), TestCycleCaseE.class);
+
+	}
+
+	/**
+	 * 查询versions下所有的Case
+	 *
+	 * @param
+	 * @return
+	 */
+	@Override
+	public List<TestCycleCaseE> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds) {
+		if (!(ObjectUtils.isEmpty(cycleIds) ^ ObjectUtils.isEmpty(versionIds))) {
+			Assert.notEmpty(cycleIds, "erorr.query.cycle.in.issues.issueIds.not.null");
+		}
+		return ConvertHelper.convertList(testCycleCaseMapper.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds), TestCycleCaseE.class);
 
 	}
 

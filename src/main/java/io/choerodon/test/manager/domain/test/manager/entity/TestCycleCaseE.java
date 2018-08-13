@@ -8,6 +8,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -59,7 +60,9 @@ public class TestCycleCaseE {
 
     private String folderName;
 
+	private Long versionId;
 
+	List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
     private TestCycleCaseRepository testCycleCaseRepository;
@@ -281,5 +284,19 @@ public class TestCycleCaseE {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+	public Long getVersionId() {
+		return versionId;
+	}
 
+	public void setVersionId(Long versionId) {
+		this.versionId = versionId;
+	}
+
+	public List<TestCycleCaseStepE> getCycleCaseStep() {
+		return cycleCaseStep;
+	}
+
+	public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
+		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepE.class);
+	}
 }

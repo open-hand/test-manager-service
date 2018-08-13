@@ -3,7 +3,6 @@ package io.choerodon.test.manager.domain.service;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 
 import java.util.List;
 
@@ -38,6 +37,8 @@ public interface ITestCycleCaseService {
 	List<TestCycleCaseE> queryByIssue(Long versionId);
 
 	List<TestCycleCaseE> queryInIssues(Long[] issuesIds);
+
+	List<TestCycleCaseE> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds);
 
 	Long countCaseNotRun(Long projectId);
 

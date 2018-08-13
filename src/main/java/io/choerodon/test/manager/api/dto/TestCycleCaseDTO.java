@@ -5,6 +5,7 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,17 +37,11 @@ public class TestCycleCaseDTO {
 
     private String nextRank;
 
-//	private String reporterRealName;
-//
-//	private String reporterJobNumber;
-
 	private UserDO assigneeUser;
 
 	private UserDO lastUpdateUser;
 
-//	private String assignedUserRealName;
-//
-//	private String assignedUserJobNumber;
+	private Long versionId;
 
 	private Long lastUpdatedBy;
 
@@ -65,6 +60,8 @@ public class TestCycleCaseDTO {
     private List<TestCycleCaseDefectRelDTO> caseDefect=new ArrayList<>();
 
 	private List<TestCycleCaseDefectRelDTO> subStepDefects=new ArrayList<>();
+
+	List<TestCycleCaseStepDTO> cycleCaseStep;
 
 	private List<IssueLinkDTO> issueLinkDTOS;
 
@@ -259,4 +256,19 @@ public class TestCycleCaseDTO {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+	public Long getVersionId() {
+		return versionId;
+	}
+
+	public void setVersionId(Long versionId) {
+		this.versionId = versionId;
+	}
+
+	public List<TestCycleCaseStepDTO> getCycleCaseStep() {
+		return cycleCaseStep;
+	}
+
+	public void setCycleCaseStep(List<TestCycleCaseStepE> cycleCaseStep) {
+		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepDTO.class);
+	}
 }

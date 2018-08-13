@@ -4,6 +4,8 @@ package io.choerodon.test.manager.app.service.impl;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -27,11 +30,22 @@ public class TestCaseServiceImpl implements TestCaseService {
 	@Autowired
 	TestCaseFeignClient testCaseFeignClient;
 
+	@Autowired
+	ProductionVersionClient productionVersionClient;
+
+	@Autowired
+	ProjectFeignClient projectFeignClient;
 
 	@Override
 	public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
 		Assert.notNull(projectId, "error.query.issue.projectId.not.null");
 		return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
+	}
+
+	@Override
+	public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+		Assert.notNull(projectId, "error.query.issue.projectId.not.null");
+		return testCaseFeignClient.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
 	}
 
 	@Override
@@ -66,18 +80,22 @@ public class TestCaseServiceImpl implements TestCaseService {
 	}
 
 	@Override
-	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO) {
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail) {
 		PageRequest pageRequest = new PageRequest();
 		pageRequest.setSize(999999999);
 		pageRequest.setPage(0);
 		pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
-		return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+		if (needDetail) {
+			return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
+		} else {
+			return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+		}
 	}
 
 	@Override
-	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds) {
+	public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail) {
 		Assert.notNull(issueIds, "error.getIssueWithIssueIds.issueId.not.null");
-		return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds));
+		return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), needDetail);
 	}
 
 	@Override
@@ -114,5 +132,15 @@ public class TestCaseServiceImpl implements TestCaseService {
 				.filter(u -> u.getWard().equals("阻塞")).collect(Collectors.toList());
 	}
 
+	@Override
+	public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
+		Assert.notNull(projectId, "error.projectId.not.be.null");
+		return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
+	}
 
+	@Override
+	public ProjectDTO getProjectInfo(Long projectId) {
+		Assert.notNull(projectId, "error.projectId.not.be.null");
+		return projectFeignClient.query(projectId).getBody();
+	}
 }

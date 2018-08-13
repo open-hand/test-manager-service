@@ -9,7 +9,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.ReporterFormE;
 import java.util.List;
 
 /**
- * Created by jialongZuo@hand-china.com on 7/13/18.
+ * Created by 842767365@qq.com on 7/13/18.
  */
 public interface ReporterFormService {
 
