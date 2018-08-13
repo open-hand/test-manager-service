@@ -297,4 +297,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             "UPDATE test_status SET status_color = 'rgba(244,67,54,1)' WHERE status_name = '失败' AND project_id = '0';"
         }
     }
+
+    changeSet(id: '2018-08-13-add-table-saga_task_instance_record', author: 'jialong.zuo') {
+        createTable(tableName: "saga_task_instance_record") {
+            column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: false, remarks: '消息id') {
+                constraints(primaryKey: true)
+            }
+            column(name: 'create_time', type: 'BIGINT UNSIGNED', remarks: '创建时间戳')
+        }
+    }
 }
