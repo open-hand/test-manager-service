@@ -38,9 +38,7 @@ public class TestManagerEventHandler {
     @Autowired
     private TestCaseStepService testCaseStepService;
 
-	@Qualifier("objectMapper")
-	@Autowired
-	private ObjectMapper objectMapper;
+	private ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
