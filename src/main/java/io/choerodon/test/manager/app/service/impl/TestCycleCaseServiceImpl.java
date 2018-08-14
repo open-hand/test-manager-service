@@ -160,7 +160,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			Optional.ofNullable(defects).ifPresent(list::addAll);
 			Optional.ofNullable(v.getSubStepDefects()).ifPresent(list::addAll);
 		}
-
+		if (list.isEmpty()) {
+			return;
+		}
 		Long[] issueLists=Stream.concat(list.stream().map(TestCycleCaseDefectRelDTO::getIssueId),
 				testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId)).filter(Objects::nonNull).distinct()
 				.toArray(Long[]::new);
