@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 //@EnableAsync
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients("io.choerodon")
 @EnableEurekaClient
 @EnableChoerodonResourceServer
 @Configuration
