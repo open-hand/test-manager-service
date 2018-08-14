@@ -58,7 +58,7 @@ public class TestManagerEventHandler {
 	@SagaTask(code = "test-create-version",
 			description = "创建临时循环事件",
 			sagaCode = "agile-create-version",
-			enabledDbRecord = true,
+			//enabledDbRecord = true,
 			seq = 1)
 	public void handleProjectVersionCreateEvent(String message) throws IOException {
 		EventPayload<VersionEvent> payload = objectMapper.readValue(message, EventPayload.class);
@@ -79,7 +79,7 @@ public class TestManagerEventHandler {
 	@SagaTask(code = "test-delete-version",
 			description = "删除version事件，删除相关测试数据",
 			sagaCode = "agile-delete-version",
-			enabledDbRecord = true,
+			//enabledDbRecord = true,
 			seq = 1)
     public void handleProjectVersionDeleteEvent(String message) throws IOException {
 		EventPayload<VersionEvent> payload = objectMapper.readValue(message, EventPayload.class);
@@ -99,7 +99,7 @@ public class TestManagerEventHandler {
     @SagaTask(code = "test-delete-issue",
             description = "删除issue事件，删除相关测试数据",
             sagaCode = "agile-delete-issue",
-            enabledDbRecord = true,
+           // enabledDbRecord = true,
             seq = 1)
     public void handleProjectIssueDeleteEvent(String message) throws IOException {
 		EventPayload<IssuePayload> payload = objectMapper.readValue(message, EventPayload.class);
