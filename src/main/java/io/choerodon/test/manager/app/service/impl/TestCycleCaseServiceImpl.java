@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -164,6 +165,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 		Long[] issueLists=Stream.concat(list.stream().map(TestCycleCaseDefectRelDTO::getIssueId),
 				testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId)).filter(Objects::nonNull).distinct()
 				.toArray(Long[]::new);
+		if(ObjectUtils.isEmpty(issueLists)){
+			return;
+		}
 		Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true);
 
 		list.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));

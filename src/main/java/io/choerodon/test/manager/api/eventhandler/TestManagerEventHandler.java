@@ -1,12 +1,12 @@
 package io.choerodon.test.manager.api.eventhandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.core.event.EventPayload;
-import io.choerodon.event.consumer.annotation.EventListener;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
@@ -17,7 +17,10 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefect
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
@@ -26,75 +29,87 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestManagerEventHandler {
 
-    private static final String AGILE_SERVICE = "agile-service";
+	@Autowired
+	private TestCycleService testCycleService;
 
-    @Autowired
-    private TestCycleService testCycleService;
+	@Autowired
+	private TestCycleCaseService testCycleCaseService;
 
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
+	@Autowired
+	private TestCaseStepService testCaseStepService;
 
-    @Autowired
-    private TestCaseStepService testCaseStepService;
+	private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
+	private void loggerInfo(Object o) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.info("data: {}", o);
+		}
+	}
 
-    private void loggerInfo(Object o) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("data: {}", o);
-        }
-    }
+	/**
+	 * 创建临时循环事件
+	 *
+	 * @param message
+	 */
+	@SagaTask(code = "test-create-version",
+			description = "创建临时循环事件",
+			sagaCode = "agile-create-version",
+			//enabledDbRecord = true,
+			seq = 1)
+	public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
+		VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+		loggerInfo(versionEvent);
+		TestCycleDTO testCycleDTO = new TestCycleDTO();
+		testCycleDTO.setVersionId(versionEvent.getVersionId());
+		testCycleDTO.setType(TestCycleE.TEMP);
+		testCycleDTO.setCycleName("临时");
+		testCycleService.insert(testCycleDTO);
+		return versionEvent;
+	}
 
-    /**
-     * 创建临时循环事件
-     *
-     * @param payload payload
-     */
-    @EventListener(topic = AGILE_SERVICE, businessType = "versionCreate")
-    public void handleProjectVersionCreateEvent(EventPayload<VersionEvent> payload) {
-        VersionEvent versionEvent = payload.getData();
-        loggerInfo(versionEvent);
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setVersionId(versionEvent.getVersionId());
-        testCycleDTO.setType(TestCycleE.TEMP);
-        testCycleDTO.setCycleName("临时");
-        testCycleService.insert(testCycleDTO);
-    }
+	/**
+	 * 版本删除事件
+	 *
+	 * @param message
+	 */
+	@SagaTask(code = "test-delete-version",
+			description = "删除version事件，删除相关测试数据",
+			sagaCode = "agile-delete-version",
+			//enabledDbRecord = true,
+			seq = 1)
+	public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
+		VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+		loggerInfo(versionEvent);
+		TestCycleDTO testCycleDTO = new TestCycleDTO();
+		testCycleDTO.setVersionId(versionEvent.getVersionId());
+		testCycleService.delete(testCycleDTO, versionEvent.getProjectId());
+		return versionEvent;
+	}
 
-    /**
-     * 版本删除事件
-     *
-     * @param payload payload
-     */
-    @EventListener(topic = AGILE_SERVICE, businessType = "versionDelete")
-    public void handleProjectVersionDeleteEvent(EventPayload<VersionEvent> payload) {
-        VersionEvent versionEvent = payload.getData();
-        loggerInfo(versionEvent);
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setVersionId(versionEvent.getVersionId());
-          testCycleService.delete(testCycleDTO,versionEvent.getProjectId());
-    }
-
-    /**
-     * 问题删除事件
-     *
-     * @param payload payload
-     */
-    @EventListener(topic = AGILE_SERVICE, businessType = "deleteIssue")
-    public void handleProjectIssueDeleteEvent(EventPayload<IssuePayload> payload) {
-        IssuePayload issuePayload = payload.getData();
-        TestCycleCaseDefectRelE defectRelE=TestCycleCaseDefectRelEFactory.create();
-        defectRelE.setIssueId(issuePayload.getIssueId());
-        defectRelE.deleteSelf();
+	/**
+	 * 问题删除事件
+	 *
+	 * @param message
+	 */
+	@SagaTask(code = "test-delete-issue",
+			description = "删除issue事件，删除相关测试数据",
+			sagaCode = "agile-delete-issue",
+			// enabledDbRecord = true,
+			seq = 1)
+	public IssuePayload handleProjectIssueDeleteEvent(String message) throws IOException {
+		IssuePayload issuePayload = objectMapper.readValue(message, IssuePayload.class);
+		TestCycleCaseDefectRelE defectRelE = TestCycleCaseDefectRelEFactory.create();
+		defectRelE.setIssueId(issuePayload.getIssueId());
+		defectRelE.deleteSelf();
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
-		testCycleCaseService.batchDelete(testCycleCaseDTO,issuePayload.getProjectId());
+		testCycleCaseService.batchDelete(testCycleCaseDTO, issuePayload.getProjectId());
 
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
 		testCaseStepService.removeStep(testCaseStepDTO);
-    }
+		return issuePayload;
+	}
 }
