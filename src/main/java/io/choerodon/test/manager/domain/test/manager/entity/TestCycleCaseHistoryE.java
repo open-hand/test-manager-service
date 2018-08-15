@@ -16,6 +16,8 @@ import java.util.Date;
 @Scope("prototype")
 public class TestCycleCaseHistoryE {
 
+	public static final String FIELD_STATUS = "执行状态";
+
     private Long executeId;
     private String oldValue;
     private String newValue;
