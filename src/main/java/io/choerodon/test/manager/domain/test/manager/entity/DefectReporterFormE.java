@@ -32,18 +32,26 @@ public class DefectReporterFormE {
 	}
 
 
-	public void populateCycleCase(List<TestCycleCaseDTO> list) {
+	public void populateCycleCase(List<TestCycleCaseDTO> list, Map<Long, List<TestCycleCaseDefectRelE>> caseDefectLinkMap) {
 		for (TestCycleCaseDTO cases : list) {
-			if (cases.getIssueId().equals(issueInfosDTO.getIssueId())) {
-				testCycleCaseES.add(cases);
+			if (caseDefectLinkMap.containsKey(cases.getExecuteId())) {
+				for (TestCycleCaseDefectRelE defect : caseDefectLinkMap.get(cases.getExecuteId())) {
+					if (defect.getIssueId().equals(issueInfosDTO.getIssueId())) {
+						testCycleCaseES.add(cases);
+					}
+				}
 			}
 		}
 	}
 
-	public void populateCycleCaseStep(List<TestCycleCaseStepDTO> list) {
+	public void populateCycleCaseStep(List<TestCycleCaseStepDTO> list, Map<Long, List<TestCycleCaseDefectRelE>> caseDefectLinkMap) {
 		for (TestCycleCaseStepDTO cases : list) {
-			if (cases.getIssueId().equals(issueInfosDTO.getIssueId())) {
-				testCycleCaseStepES.add(cases);
+			if (caseDefectLinkMap.containsKey(cases.getExecuteStepId())) {
+				for (TestCycleCaseDefectRelE defect : caseDefectLinkMap.get(cases.getExecuteStepId())) {
+					if (defect.getIssueId().equals(issueInfosDTO.getIssueId())) {
+						testCycleCaseStepES.add(cases);
+					}
+				}
 			}
 		}
 	}
