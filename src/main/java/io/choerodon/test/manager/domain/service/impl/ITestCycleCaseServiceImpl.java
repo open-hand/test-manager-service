@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service.impl;
 
 
 import io.choerodon.agile.api.dto.ProductVersionDTO;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -69,7 +71,15 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
 		if (!testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
-			LocalDateTime time = LocalDateTime.ofInstant(testCycleCaseE.getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+			TestCycleCaseHistoryE e = TestCycleCaseHistoryEFactory.create();
+			e.setExecuteId(testCycleCaseE.getExecuteId());
+			e.setOldValue(TestStatusE.STATUS_UN_EXECUTED);
+			e.setField(TestCycleCaseHistoryE.FIELD_STATUS);
+			PageRequest pageRequest = new PageRequest();
+			pageRequest.setPage(0);
+			pageRequest.setSize(1);
+			pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
+			LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
 			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
 			entityIdCounter.decrementAndGet();
 		}
@@ -131,7 +141,6 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		List<Long> caseCountList = new ArrayList<>();
 		LocalDate date = LocalDate.parse(day);
 		for (int i = range.intValue() - 1; i >= 0; i--) {
-			//date.minusDays(i);
 			caseCountList.add(new RedisAtomicLong("summary:" + projectId + ":" + date.minusDays(i).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 					, redisTemplate.getConnectionFactory()).get());
 		}
@@ -160,7 +169,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
 		if (versionIds != null && versionIds.length > 0) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-			if (cycleIds != null && cycleIds.size() > 0) {
+			if (!ObjectUtils.isEmpty(cycleIds)) {
 				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
 			}
 		}
@@ -185,7 +194,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
 		} else {
-			return new Long(0);
+			return 0L;
 		}
 	}
 
