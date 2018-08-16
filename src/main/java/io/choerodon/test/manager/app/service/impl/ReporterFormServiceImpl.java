@@ -121,8 +121,12 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 				.filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CYCLE_CASE)).collect(Collectors.groupingBy(TestCycleCaseDefectRelE::getDefectLinkId));
 		Long[] caseIds = defectLists.stream()
 				.filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CYCLE_CASE)).map(TestCycleCaseDefectRelE::getDefectLinkId).distinct().toArray(Long[]::new);
+
+		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromTestToIssue(projectId, issues);
+
 		if (caseIds.length > 0) {
 			List<TestCycleCaseDTO> cycleCases = ConvertHelper.convertList(testCycleCaseRepository.queryCycleCaseForReporter(caseIds), TestCycleCaseDTO.class);
+			DefectReporterFormE.populateCaseIssueLink(linkDTOS, cycleCases);
 			formES.stream().forEach(v -> v.populateCycleCase(cycleCases, caseDefectLinkMap));
 		}
 
@@ -132,14 +136,13 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 				.filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CASE_STEP)).map(TestCycleCaseDefectRelE::getDefectLinkId).toArray(Long[]::new);
 		if (stepIds.length > 0) {
 			List<TestCycleCaseStepDTO> cycleCaseSteps = ConvertHelper.convertList(testCycleCaseStepRepository.queryCycleCaseForReporter(stepIds), TestCycleCaseStepDTO.class);
+			DefectReporterFormE.populateStepIssueLink(linkDTOS, cycleCaseSteps);
 			formES.stream().forEach(v -> v.populateCycleCaseStep(cycleCaseSteps, stepDefectLinkMap));
 		}
 
 		Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, false);
 		formES.forEach(v -> v.populateIssueInfo(map));
 
-		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromTestToIssue(projectId, issues);
-		formES.forEach(v -> v.populateIssueLink(projectId, linkDTOS));
 		return formES;
 	}
 
