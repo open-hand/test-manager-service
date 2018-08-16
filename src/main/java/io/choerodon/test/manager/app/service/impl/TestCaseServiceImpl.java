@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -128,6 +129,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 	@Override
 	public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId) {
+		if (ObjectUtils.isEmpty(issueId)) {
+			return new ArrayList<>();
+		}
 		return listIssueLinkByIssueId(projectId, issueId).stream()
 				.filter(u -> u.getWard().equals("阻塞")).collect(Collectors.toList());
 	}
