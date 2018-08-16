@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
@@ -48,6 +47,6 @@ public class TestCycleCaseDefectRelController {
 		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
 		testCycleCaseDefectRelDTO.setId(defectId);
 		testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO, projectId);
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

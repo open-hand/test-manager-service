@@ -70,8 +70,8 @@ public class TestCaseStepController {
 	public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
 											  @RequestBody TestCaseStepDTO testCaseStepDTO) {
         iTestCaseStepService.removeStep(testCaseStepDTO);
-        return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
-    }
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("克隆")
