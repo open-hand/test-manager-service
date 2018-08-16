@@ -39,6 +39,8 @@ public class TestCycleCaseStepDTO {
 
     private String statusName;
 
+	private String cycleName;
+
     public IssueInfosDTO getIssueInfosDTO() {
         return issueInfosDTO;
     }
@@ -165,4 +167,12 @@ public class TestCycleCaseStepDTO {
     public void setStatusName(String statusName) {
         this.statusName = statusName;
     }
+
+	public String getCycleName() {
+		return cycleName;
+	}
+
+	public void setCycleName(String cycleName) {
+		this.cycleName = cycleName;
+	}
 }
