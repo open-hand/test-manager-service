@@ -103,20 +103,4 @@ public class TestCycleCaseStepController {
 	}
 
 
-//    /**
-//     * 启动循环测试下所有步骤
-//     *
-//     * @param testCycleCaseDTO
-//     */
-//    void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO) {
-//        testCycleCaseStepService.createTestCycleCaseStep(testCycleCaseDTO);
-//    }
-//
-//    /**
-//     * 删除CycleCase下所有Step
-//     *
-//     * @param testCycleCaseDTO
-//     */
-//    void deleteByTestCycleCase(TestCycleCaseDTO testCycleCaseDTO);
-
 }

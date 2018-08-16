@@ -53,11 +53,12 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("删除测试循环")
 	@DeleteMapping("/delete/{cycleId}")
-	void delete(@PathVariable(name = "project_id") Long projectId,
-				@PathVariable(name = "cycleId") Long cycleId) {
+	ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+						  @PathVariable(name = "cycleId") Long cycleId) {
 		TestCycleDTO cycleDTO = new TestCycleDTO();
 		cycleDTO.setCycleId(cycleId);
 		testCycleService.delete(cycleDTO, projectId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
