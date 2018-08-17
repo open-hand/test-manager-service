@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,9 @@ public class ReporterFormE {
 	}
 
 	public ReporterFormE populateLinkedTest(List<IssueLinkDTO> linkedTestIssues) {
+		if (ObjectUtils.isEmpty(linkedTestIssues)) {
+			return this;
+		}
 		for (IssueLinkDTO link : linkedTestIssues) {
 			if (defectInfo.getIssueId().equals(link.getLinkedIssueId())) {
 				this.linkedTestIssues.add(new LinkedTestIssue(link.getIssueId(), link.getIssueNum(), link.getSummary()));

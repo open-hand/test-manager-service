@@ -22,6 +22,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,10 +73,13 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 	}
 
 	private List<ReporterFormE> doCreateFromIssueToDefect(List<IssueInfosDTO> issueInfosDTO, Long projectId) {
-
+		if (ObjectUtils.isEmpty(issueInfosDTO)) {
+			return new ArrayList<>();
+		}
 		List<Long> issues = issueInfosDTO.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList());
 		List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromIssueToTest(projectId, issues);
-		List<TestCycleCaseDTO> cycleCaseDTOS = testCycleCaseService.queryInIssues(issues.stream().toArray(Long[]::new), projectId);
+		Long[] linkedIssues = linkDTOS.stream().map(IssueLinkDTO::getIssueId).toArray(Long[]::new);
+		List<TestCycleCaseDTO> cycleCaseDTOS = testCycleCaseService.queryInIssues(linkedIssues, projectId);
 
 		return issueInfosDTO.stream().map(ReporterFormE::new).peek(v -> v.populateLinkedTest(linkDTOS).populateLinkedIssueCycle(cycleCaseDTOS).countDefect()).collect(Collectors.toList());
 
@@ -106,6 +110,9 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 	private List<DefectReporterFormE> doCreateFromDefectToIssue(List<IssueInfosDTO> issueInfosDTO, Long projectId) {
 		List<DefectReporterFormE> formES = Lists.newArrayList();
+		if (ObjectUtils.isEmpty(issueInfosDTO)) {
+			return formES;
+		}
 		List<Long> issues = new ArrayList<>();
 		for (IssueInfosDTO infos : issueInfosDTO) {
 			DefectReporterFormE form = new DefectReporterFormE(infos);
