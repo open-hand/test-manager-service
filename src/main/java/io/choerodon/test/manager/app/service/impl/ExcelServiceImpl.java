@@ -16,6 +16,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -119,12 +120,12 @@ public class ExcelServiceImpl implements ExcelService {
 		headerRowStyle.setFillForegroundColor((short) 22);
 		CellStyle caseStyle1 = workbook.createCellStyle();
 		caseStyle1.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		caseStyle1.setFillForegroundColor((short) 41);
+		caseStyle1.setFillForegroundColor((short) 26);
 		caseStyle1.setBorderLeft(XSSFCellStyle.BORDER_THIN);//左边框
 		caseStyle1.setBorderRight(XSSFCellStyle.BORDER_THIN);//右边框
 		CellStyle caseStyle2 = workbook.createCellStyle();
 		caseStyle2.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		caseStyle2.setFillForegroundColor((short) 43);
+		caseStyle2.setFillForegroundColor((short) 9);
 		caseStyle2.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 		caseStyle2.setBorderRight(XSSFCellStyle.BORDER_THIN);
 
