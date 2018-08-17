@@ -84,7 +84,7 @@ public class IExcelServiceImpl implements IExcelService {
 		Optional.ofNullable(getLabelCell(cycleCase.getIssueInfosDTO().getLabelIssueRelDTOList())).ifPresent(v -> WorkBookFactory.createCell(row, 6, WorkBookFactory.CellType.TEXT, v));
 		Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> WorkBookFactory.createCell(row, 7, WorkBookFactory.CellType.TEXT, v));
 
-		Optional.ofNullable(cycleCase.getAssigneeUser().getRealName()).ifPresent(v -> WorkBookFactory.createCell(row, 8, WorkBookFactory.CellType.TEXT, v));
+		Optional.ofNullable(cycleCase.getAssigneeUser()).ifPresent(v -> WorkBookFactory.createCell(row, 8, WorkBookFactory.CellType.TEXT, v.getRealName()));
 		Optional.ofNullable(cycleCase.getLastUpdateDate()).ifPresent(v -> WorkBookFactory.createCell(row, 9, WorkBookFactory.CellType.DATE, dateFormat.format(v)));
 
 		return columnNum + populateCycleCaseStep(sheet, columnNum, cycleCase.getCycleCaseStep(), cycleCase.getDefects(), rowStyles) + 1;
