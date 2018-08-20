@@ -7,6 +7,7 @@ import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
@@ -35,6 +36,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 	@Autowired
 	ProductionVersionClient productionVersionClient;
+
+	@Autowired
+	TestCycleCaseService testCycleCaseService;
 
 	@Autowired
 	ITestCycleCaseService iTestCycleCaseService;
@@ -67,7 +71,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	private void deleteCycleWithCase(TestCycleE testCycleE, Long projectId) {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setCycleId(testCycleE.getCycleId());
-		iTestCycleCaseService.delete(testCycleCaseE, projectId);
+		testCycleCaseE.querySelf().forEach(v -> testCycleCaseService.delete(v.getExecuteId(), projectId));
 		testCycleE.deleteSelf();
 	}
 

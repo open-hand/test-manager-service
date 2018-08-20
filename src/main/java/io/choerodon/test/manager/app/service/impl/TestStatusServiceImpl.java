@@ -1,13 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestStatusDTO;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -45,5 +48,18 @@ public class TestStatusServiceImpl implements TestStatusService {
 	public TestStatusDTO update(TestStatusDTO testStatusDTO) {
 		return ConvertHelper.convert(iTestStatusService.update(ConvertHelper
 				.convert(testStatusDTO, TestStatusE.class)), TestStatusDTO.class);
+	}
+
+	public void populateStatus(TestCycleCaseDTO testCycleCaseDTO) {
+		Assert.notNull(testCycleCaseDTO, "error.populateCycleCase.param.not.null");
+		TestStatusE statusE = TestStatusEFactory.create();
+		statusE.setStatusId(testCycleCaseDTO.getExecutionStatus());
+		testCycleCaseDTO.setExecutionStatusName(statusE.queryOne().getStatusName());
+	}
+
+	@Override
+	public Long getDefaultStatusId(String type) {
+		Assert.notNull(type, "error.get.default.id.param.not.");
+		return iTestStatusService.getDefaultStatusId(type);
 	}
 }
