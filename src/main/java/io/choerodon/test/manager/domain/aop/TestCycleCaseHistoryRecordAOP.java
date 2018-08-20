@@ -1,9 +1,8 @@
 package io.choerodon.test.manager.domain.aop;
 
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
@@ -21,13 +20,8 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +43,6 @@ public class TestCycleCaseHistoryRecordAOP {
 	@Autowired
 	TestCycleCaseHistoryService testCycleCaseHistoryService;
 
-	@Autowired
-	RedisTemplate redisTemplate;
 
 	@Autowired
 	ITestCycleCaseService testCycleCaseService;
@@ -70,21 +62,18 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseE case1 = TestCycleCaseEFactory.create();
 		case1.setExecuteId(testCycleCaseDTO.getExecuteId());
 		TestCycleCaseE before = testCycleCaseService.queryOne(case1);
+		TestCycleCaseDTO beforeCeaseDTO = ConvertHelper.convert(before, TestCycleCaseDTO.class);
+		testStatusService.populateStatus(beforeCeaseDTO);
 		Object o = pjp.proceed();
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(before.getExecuteId());
 
 		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
-			TestStatusE status=TestStatusEFactory.create();
-			status.setStatusId(testCycleCaseDTO.getExecutionStatus());
-			String newColor=status.queryOne().getStatusName();
-			status.setStatusId(before.getExecutionStatus());
-			String oldColor=status.queryOne().getStatusName();
+			String newColor = testCycleCaseDTO.getExecutionStatusName();
+			String oldColor = beforeCeaseDTO.getExecutionStatusName();
 			historyDTO.setField(FIELD_STATUS);
 			historyDTO.setNewValue(newColor);
 			historyDTO.setOldValue(oldColor);
-			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), oldColor, newColor, testCycleCaseDTO.getExecuteId());
 		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
 			historyDTO.setField(FIELD_ASSIGNED);
 			Long after_as = testCycleCaseDTO.getAssignedTo();
@@ -122,25 +111,6 @@ public class TestCycleCaseHistoryRecordAOP {
 		}
 		testCycleCaseHistoryService.insert(historyDTO);
 		return o;
-	}
-
-	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId) {
-		if (StringUtils.equals(oldStatus, TestStatusE.STATUS_UN_EXECUTED)) {
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + date, redisTemplate.getConnectionFactory());
-			entityIdCounter.incrementAndGet();
-		} else if (StringUtils.equals(newStatus, TestStatusE.STATUS_UN_EXECUTED)) {
-			TestCycleCaseHistoryE e = TestCycleCaseHistoryEFactory.create();
-			e.setExecuteId(executeId);
-			e.setOldValue(TestStatusE.STATUS_UN_EXECUTED);
-			e.setField(FIELD_STATUS);
-			PageRequest pageRequest = new PageRequest();
-			pageRequest.setPage(0);
-			pageRequest.setSize(1);
-			pageRequest.setSort(new Sort(Sort.Direction.DESC, new String[]{"id"}));
-			LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
-			entityIdCounter.decrementAndGet();
-		}
 	}
 
 

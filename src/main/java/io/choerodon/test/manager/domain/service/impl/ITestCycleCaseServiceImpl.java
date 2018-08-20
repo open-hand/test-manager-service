@@ -2,7 +2,6 @@ package io.choerodon.test.manager.domain.service.impl;
 
 
 import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -56,33 +53,16 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 
 	@Override
-	public void delete(TestCycleCaseE testCycleCaseE, Long projectId) {
+	public void delete(TestCycleCaseE testCycleCaseE) {
 		Optional.ofNullable(testCycleCaseE.querySelf()).ifPresent(m ->
-				m.forEach(v -> deleteCaseWithSubStep(v, projectId)));
+				m.forEach(this::deleteCaseWithSubStep));
 	}
 
-	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE, Long projectId) {
+	private void deleteCaseWithSubStep(TestCycleCaseE testCycleCaseE) {
 		iTestCycleCaseStepService.deleteByTestCycleCase(testCycleCaseE);
-		attachmentRelService.delete(testCycleCaseE.getExecuteId(),TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_CASE);
+		attachmentRelService.delete(testCycleCaseE.getExecuteId(), TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_CASE);
 		deleteLinkedDefect(testCycleCaseE.getExecuteId());
-		countCaseToRedis(testCycleCaseE, projectId);
 		testCycleCaseE.deleteSelf();
-	}
-
-	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
-		if (!testCycleCaseE.getExecutionStatus().equals(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
-			TestCycleCaseHistoryE e = TestCycleCaseHistoryEFactory.create();
-			e.setExecuteId(testCycleCaseE.getExecuteId());
-			e.setOldValue(TestStatusE.STATUS_UN_EXECUTED);
-			e.setField(TestCycleCaseHistoryE.FIELD_STATUS);
-			PageRequest pageRequest = new PageRequest();
-			pageRequest.setPage(0);
-			pageRequest.setSize(1);
-			pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
-			LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), redisTemplate.getConnectionFactory());
-			entityIdCounter.decrementAndGet();
-		}
 	}
 
 
