@@ -159,6 +159,9 @@
             <if test="parentCycleId!=null">
                 and parent_cycle_id=#{parentCycleId}
             </if>
+            <if test="cycleId!=null">
+                and cycle_id !=#{cycleId}
+            </if>
         </where>
     </select>
 
