@@ -67,14 +67,18 @@ public class DefectReporterFormE {
 	}
 
 
-	public void populateIssueLink(Long projectId, List<IssueLinkDTO> issueLinkDTOS) {
-		for (TestCycleCaseDTO caseE : testCycleCaseES) {
+	public static void populateCaseIssueLink(List<IssueLinkDTO> issueLinkDTOS, List<TestCycleCaseDTO> TestCycleCaseDTO) {
+		for (TestCycleCaseDTO caseE : TestCycleCaseDTO) {
 			for (IssueLinkDTO link : issueLinkDTOS) {
 				if (caseE.getIssueId().equals(link.getIssueId())) {
 					caseE.addIssueLinkDTOS(link);
 				}
 			}
 		}
+
+	}
+
+	public static void populateStepIssueLink(List<IssueLinkDTO> issueLinkDTOS, List<TestCycleCaseStepDTO> testCycleCaseStepES) {
 
 		for (TestCycleCaseStepDTO stepE : testCycleCaseStepES) {
 			for (IssueLinkDTO link : issueLinkDTOS) {

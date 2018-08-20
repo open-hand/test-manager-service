@@ -1,14 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestStatusDTO;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
-import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +48,7 @@ public class TestStatusController {
 		TestStatusDTO dto = new TestStatusDTO();
 		dto.setStatusId(statusId);
 		testStatusService.delete(dto);
-		return new ResponseEntity<>(true, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
