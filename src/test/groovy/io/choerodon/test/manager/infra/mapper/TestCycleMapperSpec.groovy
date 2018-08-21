@@ -4,6 +4,7 @@ import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO
+import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -110,8 +111,12 @@ class TestCycleMapperSpec extends Specification {
     }
 
     def "validateCycle"(){
+        given:
+        TestCycleDO cycleDO2 = new TestCycleDO()
+        BeanUtils.copyProperties(cycleDO1, cycleDO2, "cycleId")
+
         expect:
-        mapper.validateCycle(cycleDO1)==1
+        mapper.validateCycle(cycleDO2) == 1
     }
 
     def "deleteEnv"(){
