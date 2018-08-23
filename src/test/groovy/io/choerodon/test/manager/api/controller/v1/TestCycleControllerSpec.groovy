@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 import java.lang.reflect.Field
 
@@ -34,6 +35,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
+@Stepwise
 class TestCycleControllerSpec extends Specification {
     @Autowired
     TestCycleService testCycleService;
@@ -61,7 +63,7 @@ class TestCycleControllerSpec extends Specification {
         given:
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布1")
-        cycle.setVersionId(226L)
+        cycle.setVersionId(224L)
         cycle.setType("cycle")
         TestCycleDTO cycle1 = testCycleService.insert(cycle);
         TestCycleDTO cycle2 = new TestCycleDTO(cycleId: cycle1.getCycleId());
