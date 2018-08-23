@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.infra.mapper
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.domain.repository.TestCycleRepository
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,11 +27,11 @@ class TestCycleCaseMapperSpec extends Specification {
     TestCycleCaseMapper mapper
 
     @Autowired
-    TestCycleMapper cycleMapper
+    TestCycleRepository cycleMapper
     @Shared
-    TestCycleDO cycleDO1=new TestCycleDO()
+    TestCycleE cycleDO1 = new TestCycleE()
     @Shared
-    TestCycleDO cycleDO2=new TestCycleDO()
+    TestCycleE cycleDO2 = new TestCycleE()
     @Shared
     TestCycleCaseDO caseDO = new TestCycleCaseDO()
     @Shared
@@ -45,20 +47,20 @@ class TestCycleCaseMapperSpec extends Specification {
         cycleDO2.setCycleName("循环2")
         cycleDO2.setVersionId(new Long(88))
         cycleDO2.setType("cycle")
-        cycleMapper.insert(cycleDO1)
-        cycleMapper.insert(cycleDO2)
+        cycleDO1 = cycleMapper.insert(cycleDO1)
+        cycleDO2 = cycleMapper.insert(cycleDO2)
 
-        caseDO.setCycleId(new Long(1))
+        caseDO.setCycleId(cycleDO1.getCycleId())
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(9999))
         caseDO.setRank("0|c00000:")
 
-        caseDO1.setCycleId(new Long(1))
+        caseDO1.setCycleId(cycleDO1.getCycleId())
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(9989))
         caseDO1.setRank("0|c00004:")
 
-        caseDO2.setCycleId(new Long(2))
+        caseDO2.setCycleId(cycleDO2.getCycleId())
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(9999))
         caseDO2.setRank("0|c00000:")
@@ -86,10 +88,10 @@ class TestCycleCaseMapperSpec extends Specification {
         expect:
         mapper.countCaseNotPlain(param)==result
         where:
-        param                                             ||          result
-        [new Long(1)] as Long[]                     ||          2
-        [new Long(2)] as Long[]                     ||          1
-        [new Long(1),new Long(2)] as Long[]   ||          2
+        param                                                    ||          result
+        [cycleDO1.getCycleId()] as Long[]                        || 2
+        [cycleDO2.getCycleId()] as Long[]                        || 1
+        [cycleDO1.getCycleId(), cycleDO2.getCycleId()] as Long[] || 2
 
     }
 
@@ -97,15 +99,15 @@ class TestCycleCaseMapperSpec extends Specification {
         expect:
         mapper.countCaseSum(param).longValue()==result
         where:
-        param                            ||          result
-        [new Long(1)] as Long[]    ||          2
-        [new Long(2)] as Long[]    ||          1
+        param                             ||          result
+        [cycleDO1.getCycleId()] as Long[] || 2
+        [cycleDO2.getCycleId()] as Long[] || 1
     }
 
     def "ValidateCycleCaseInCycle"() {
         given:
         TestCycleCaseDO dao=new TestCycleCaseDO(
-                cycleId:new Long(1),
+                cycleId: cycleDO1.getCycleId(),
                 issueId: params
         )
 
@@ -121,15 +123,15 @@ class TestCycleCaseMapperSpec extends Specification {
         expect:
         mapper.getLastedRank(cycleId)==result
         where:
-        cycleId ||  result
-        1       ||  "0|c00004:"
-        2       ||  "0|c00000:"
+        cycleId               ||  result
+        cycleDO1.getCycleId() || "0|c00004:"
+        cycleDO2.getCycleId() || "0|c00000:"
     }
 
     def "deleteEnv"(){
         expect:
-        cycleMapper.deleteByPrimaryKey(cycleDO1.getCycleId())==1
-        cycleMapper.deleteByPrimaryKey(cycleDO2.getCycleId())==1
+        cycleMapper.delete(cycleDO1)
+        cycleMapper.delete(cycleDO1)
         mapper.deleteByPrimaryKey(caseDO.getExecuteId())==1
         mapper.deleteByPrimaryKey(caseDO1.getExecuteId())==1
         mapper.deleteByPrimaryKey(caseDO2.getExecuteId())==1
