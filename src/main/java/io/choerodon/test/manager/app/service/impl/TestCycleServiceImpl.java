@@ -203,6 +203,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 
 	@Override
+	@Deprecated
 	public List<TestCycleDTO> filterCycleWithBar(String filter) {
 
 		JSONObject object = JSON.parseObject(filter);
@@ -231,6 +232,13 @@ public class TestCycleServiceImpl implements TestCycleService {
 		return productionVersionClient.listByOptions(projectId, searchParamMap);
 	}
 
+	/** 将一个cycle克隆到指定version下
+	 * @param cycleId 指定被克隆的cycle
+	 * @param versionId 克隆到指定的versionID下
+	 * @param cycleName 克隆的新cycle的name
+	 * @param projectId projectId
+	 * @return
+	 */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCycleDTO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId) {

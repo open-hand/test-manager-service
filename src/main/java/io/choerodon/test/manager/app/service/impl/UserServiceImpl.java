@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
 	private UserFeignClient userFeignClient;
 
 	@Override
+	@Deprecated
 	public UserDO query(Long userId) {
 		CustomUserDetails customUserDetails = DetailsHelper.getUserDetails();
 		return userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
