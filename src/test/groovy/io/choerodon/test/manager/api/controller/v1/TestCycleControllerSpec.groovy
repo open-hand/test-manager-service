@@ -44,11 +44,12 @@ class TestCycleControllerSpec extends Specification {
     TestCycleCaseService cycleCaseService
 
     def "Insert"() {
-        when:
+        given:
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布")
         cycle.setVersionId(226L)
         cycle.setType("cycle")
+        when:
         TestCycleDTO cycle1 = testCycleService.insert(cycle);
         then:
         cycle1 != null
