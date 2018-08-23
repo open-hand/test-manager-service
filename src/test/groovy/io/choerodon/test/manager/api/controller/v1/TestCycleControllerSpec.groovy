@@ -38,13 +38,14 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @Stepwise
 class TestCycleControllerSpec extends Specification {
     @Autowired
-    TestCycleService testCycleService;
+    TestCycleService testCycleService
 
     @Autowired
     TestCycleCaseService cycleCaseService
 
     def "Insert"() {
         given:
+        testCycleService = AopTestUtils.getTargetObject(testCycleService)
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布")
         cycle.setVersionId(226L)
@@ -52,7 +53,7 @@ class TestCycleControllerSpec extends Specification {
         when:
         TestCycleDTO cycle1 = testCycleService.insert(cycle);
         then:
-        cycle1 != null
+        cycle1.getCycleId() != null
         StringUtils.equals(cycle1.getCycleName(),"发布")
         when:
         testCycleService.insert(cycle);
