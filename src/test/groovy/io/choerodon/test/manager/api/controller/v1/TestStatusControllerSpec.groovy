@@ -74,15 +74,13 @@ class TestStatusControllerSpec extends Specification {
     }
 
     def "Delete"() {
-        TestStatusDTO statusNew=new TestStatusDTO(statusId: 7L);
-        TestStatusDTO statusNew1=new TestStatusDTO();
+        TestStatusDTO statusNew = new TestStatusDTO()
         statusNew.setStatusType(TestStatusE.STATUS_TYPE_CASE_STEP)
         statusNew.setDescription("未通过2")
         statusNew.setStatusName("未通过2")
         statusNew.setStatusColor("rgba(0,191,165,36)")
 
         expect:
-        testStatusService.delete(statusNew)
-        testStatusService.delete(testStatusService.insert(statusNew1))
+        testStatusService.delete(testStatusService.insert(statusNew))
     }
 }

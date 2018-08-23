@@ -50,17 +50,17 @@ class TestCycleCaseMapperSpec extends Specification {
 
         caseDO.setCycleId(new Long(1))
         caseDO.setExecutionStatus(new Long(1))
-        caseDO.setIssueId(new Long(999))
+        caseDO.setIssueId(new Long(9999))
         caseDO.setRank("0|c00000:")
 
         caseDO1.setCycleId(new Long(1))
         caseDO1.setExecutionStatus(new Long(2))
-        caseDO1.setIssueId(new Long(998))
+        caseDO1.setIssueId(new Long(9989))
         caseDO1.setRank("0|c00004:")
 
         caseDO2.setCycleId(new Long(2))
         caseDO2.setExecutionStatus(new Long(2))
-        caseDO2.setIssueId(new Long(999))
+        caseDO2.setIssueId(new Long(9999))
         caseDO2.setRank("0|c00000:")
         mapper.insert(caseDO)
         mapper.insert(caseDO1)
@@ -112,9 +112,9 @@ class TestCycleCaseMapperSpec extends Specification {
         expect:
         mapper.validateCycleCaseInCycle(dao)==result
         where:
-        params  ||  result
-        999     ||  1
-        989     ||  0
+        params ||  result
+        9999   || 1
+        9899   || 0
     }
 
     def "GetLastedRank"() {
