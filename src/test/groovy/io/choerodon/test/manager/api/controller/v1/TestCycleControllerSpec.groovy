@@ -46,6 +46,7 @@ class TestCycleControllerSpec extends Specification {
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布")
         cycle.setVersionId(226L)
+        cycle.setType("cycle")
         TestCycleDTO cycle1 = testCycleService.insert(cycle);
         then:
         cycle1 != null
