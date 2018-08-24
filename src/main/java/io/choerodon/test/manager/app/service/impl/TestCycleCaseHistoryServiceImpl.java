@@ -13,10 +13,10 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -36,35 +36,25 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 
     }
 
-//    @Transactional(rollbackFor = Exception.class)
-//    @Override
-//    public void delete(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-//        iTestCycleCaseHistoryService.delete(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class));
-//    }
-//
-//    @Transactional(rollbackFor = Exception.class)
-//    @Override
-//    public List<TestCycleCaseHistoryDTO> update(List<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTO) {
-//        return ConvertHelper.convertList(iTestCycleCaseHistoryService.update(ConvertHelper.convertList(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
-//    }
-
     @Override
     public Page<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest) {
         TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
         historyDTO.setExecuteId(cycleCaseId);
         Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
 		Page<TestCycleCaseHistoryDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
-		Long[] users = dto.stream().map(v -> v.getLastUpdatedBy()).toArray(Long[]::new);
+		Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(u->u!=null && !u.equals(0L)).distinct().toArray(Long[]::new);
 		Map user = userFeignClient.query(users);
 		setUser(dto, user);
-//		dto.forEach(v -> setUser(v));
 		return dto;
 	}
 
 
 	private void setUser(List<TestCycleCaseHistoryDTO> dto, Map<Long, UserDO> users) {
+    	if(ObjectUtils.isEmpty(users)){
+    		return;
+		}
 		dto.forEach(v -> {
-			if (v.getLastUpdatedBy() != null && v.getLastUpdatedBy().longValue() != 0) {
+			if (v.getLastUpdatedBy() != null && !v.getLastUpdatedBy().equals(0L)) {
 				v.setUser(users.get(v.getLastUpdatedBy()));
 			}
 		});
