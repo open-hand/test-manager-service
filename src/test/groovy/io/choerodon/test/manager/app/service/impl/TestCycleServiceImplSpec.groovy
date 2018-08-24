@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package io.choerodon.test.manager.app.service.impl
 
 import com.alibaba.fastjson.JSONObject
