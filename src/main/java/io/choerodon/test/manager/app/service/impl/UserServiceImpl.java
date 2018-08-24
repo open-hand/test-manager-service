@@ -11,7 +11,9 @@ import io.choerodon.test.manager.infra.feign.UserFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,6 +33,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public Map<Long, UserDO> query(Long[] ids) {
+		if(ObjectUtils.isEmpty(ids)){
+			return new HashMap<>();
+		}
 		return userFeignClient.listUsersByIds(ids).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
 	}
 
