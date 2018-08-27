@@ -16,6 +16,8 @@ public interface ITestCycleCaseDefectRelService {
 
 //    List<TestCycleCaseDefectRelE> update(List<TestCycleCaseDefectRelE> testCycleCaseDefectRelE);
 
+    Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+
     List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
 //    List<TestCycleCaseDefectRelE> query(Long linkId, String defectType, Long projectId);

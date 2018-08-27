@@ -298,4 +298,12 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'create_time', type: 'BIGINT UNSIGNED', remarks: '创建时间戳')
         }
     }
+
+    changeSet(id:'2018-08-27-defect-add-column-projectId',author: 'zongwei.li'){
+        addColumn(tableName:'test_cycle_case_defect_rel'){
+            column(name:'project_id',type:'BIGINT UNSIGNED', defaultValue: '0'){
+                constraints(nullable: false)
+            }
+        }
+    }
 }

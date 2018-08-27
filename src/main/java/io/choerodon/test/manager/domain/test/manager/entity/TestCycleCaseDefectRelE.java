@@ -28,6 +28,7 @@ public class TestCycleCaseDefectRelE {
     private String defectStatus;
     private String defectColor;
     private Long objectVersionNumber;
+    private Long projectId;
 
     @Autowired
     private TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository;
@@ -48,8 +49,16 @@ public class TestCycleCaseDefectRelE {
         return testCycleCaseDefectRelRepository.update(this);
     }
 
+    public Boolean updateProjectIdByIssueId(){
+        return testCycleCaseDefectRelRepository.updateProjectIdByIssueId(this);
+    }
+
     public void deleteSelf() {
         testCycleCaseDefectRelRepository.delete(this);
+    }
+
+    public List<Long> queryAllIssueIds() {
+        return testCycleCaseDefectRelRepository.queryAllIssueIds();
     }
 
     public String getDefectType() {
@@ -94,6 +103,14 @@ public class TestCycleCaseDefectRelE {
 
     public String getDefectStatus() {
         return defectStatus;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     public void setDefectStatus(String defectStatus) {
