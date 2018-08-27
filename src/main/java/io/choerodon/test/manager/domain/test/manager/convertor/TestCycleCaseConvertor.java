@@ -14,17 +14,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestCycleCaseConvertor implements ConvertorI<TestCycleCaseE, TestCycleCaseDO, TestCycleCaseDTO> {
 
+    private static final String[] exclude=new String[]{"caseAttachment", "caseDefect", "subStepDefects", "cycleCaseStep"};
     @Override
     public TestCycleCaseE dtoToEntity(TestCycleCaseDTO dto) {
         TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-		BeanUtils.copyProperties(dto, testCaseStepE, new String[]{"caseAttachment", "caseDefect", "subStepDefects", "cycleCaseStep"});
+		BeanUtils.copyProperties(dto, testCaseStepE, exclude);
         return testCaseStepE;
     }
 
     @Override
     public TestCycleCaseDTO entityToDto(TestCycleCaseE entity) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO, new String[]{"caseAttachment", "caseDefect", "subStepDefects", "cycleCaseStep"});
+		BeanUtils.copyProperties(entity, testCycleCaseDTO, exclude);
         testCycleCaseDTO.setCaseAttachment(entity.getCaseAttachment());
         testCycleCaseDTO.setDefects(entity.getDefects());
         testCycleCaseDTO.setSubStepDefects(entity.getSubStepDefects());
@@ -35,7 +36,7 @@ public class TestCycleCaseConvertor implements ConvertorI<TestCycleCaseE, TestCy
     @Override
     public TestCycleCaseE doToEntity(TestCycleCaseDO dataObject) {
         TestCycleCaseE testCaseStepE = TestCycleCaseEFactory.create();
-		BeanUtils.copyProperties(dataObject, testCaseStepE, new String[]{"caseAttachment", "caseDefect", "subStepDefects", "cycleCaseStep"});
+		BeanUtils.copyProperties(dataObject, testCaseStepE, exclude);
         testCaseStepE.setCaseAttachment(dataObject.getCaseAttachment());
         testCaseStepE.setDefects(dataObject.getCaseDefect());
         testCaseStepE.setSubStepDefects(dataObject.getSubStepDefects());
@@ -46,7 +47,7 @@ public class TestCycleCaseConvertor implements ConvertorI<TestCycleCaseE, TestCy
     @Override
     public TestCycleCaseDO entityToDo(TestCycleCaseE entity) {
         TestCycleCaseDO testCycleCaseDTO = new TestCycleCaseDO();
-		BeanUtils.copyProperties(entity, testCycleCaseDTO, new String[]{"caseAttachment", "caseDefect", "subStepDefects", "cycleCaseStep"});
+		BeanUtils.copyProperties(entity, testCycleCaseDTO, exclude);
         return testCycleCaseDTO;
     }
 }
