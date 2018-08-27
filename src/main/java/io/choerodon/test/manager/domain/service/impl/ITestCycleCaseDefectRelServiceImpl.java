@@ -42,10 +42,15 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
         testCycleCaseDefectRelE.deleteSelf();
     }
 
+    @Override
+    public Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        Boolean flag = testCycleCaseDefectRelE.updateProjectIdByIssueId();
+        return flag;
+    }
+
 
     @Override
     public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
         return testCycleCaseDefectRelE.querySelf();
     }
-
 }

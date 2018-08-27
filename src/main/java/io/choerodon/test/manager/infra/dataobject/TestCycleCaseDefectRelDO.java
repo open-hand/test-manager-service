@@ -21,6 +21,7 @@ public class TestCycleCaseDefectRelDO extends AuditDomain {
     private String defectType;
     private Long defectLinkId;
     private Long issueId;
+    private Long projectId;
 
     public Long getId() {
         return id;
@@ -52,5 +53,13 @@ public class TestCycleCaseDefectRelDO extends AuditDomain {
 
     public void setIssueId(Long issueId) {
         this.issueId = issueId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

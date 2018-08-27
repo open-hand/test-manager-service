@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.repository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 
 import java.util.List;
 
@@ -21,4 +22,8 @@ public interface TestCycleCaseDefectRelRepository {
     Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
 
     List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues);
+
+    List<Long> queryAllIssueIds();
+
+    Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 }

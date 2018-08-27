@@ -7,11 +7,12 @@
         <id column="defect_type" property="defectType"/>
         <id column="defect_link_id" property="defectLinkId"/>
         <id column="issue_id" property="issueId"/>
+        <id column="project_id" property="projectId"/>
     </resultMap>
 
     <select id="queryInIssues" resultMap="BaseResultMap">
         SELECT
-        id,defect_type,defect_link_id,issue_id
+        id,defect_type,defect_link_id,issue_id,project_id
         FROM test_cycle_case_defect_rel
         where issue_id in
         <foreach collection="issues" item="item" index="index" open="(" separator="," close=")">
@@ -19,6 +20,20 @@
         </foreach>
     </select>
 
+    <select id="queryAllIssueIds" resultType="java.lang.Long">
+        SELECT DISTINCT
+        issue_id
+        FROM test_cycle_case_defect_rel
+    </select>
 
+    <update id="updateProjectIdByIssueId"
+            parameterType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+        UPDATE
+        test_cycle_case_defect_rel
+        SET
+        project_id = #{projectId}
+        WHERE
+        issue_id = #{issueId}
+    </update>
 
 </mapper>

@@ -30,4 +30,6 @@ public interface TestCycleCaseDefectRelService {
 	 * @return
 	 */
 	List<TestCycleCaseDefectRelDTO> getSubCycleStepsHaveDefect(Long cycleCaseId);
+
+	Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
 }

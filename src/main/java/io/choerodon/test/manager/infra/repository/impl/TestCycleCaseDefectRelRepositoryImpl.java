@@ -11,6 +11,8 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -24,6 +26,9 @@ import java.util.List;
 public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefectRelRepository {
     @Autowired
     TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+
+
+    Logger log= LoggerFactory.getLogger(this.getClass());
 
     @Override
     public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
@@ -70,5 +75,20 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     public List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues) {
         Assert.notEmpty(issues, "error.query.issues.not.empty");
         return ConvertHelper.convertList(testCycleCaseDefectRelMapper.queryInIssues(issues), TestCycleCaseDefectRelE.class);
+    }
+
+    @Override
+    public Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
+        TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
+        int count=testCycleCaseDefectRelMapper.updateProjectIdByIssueId(convert) ;
+        if(log.isDebugEnabled()){
+            log.debug("fix defect data issueID {0} updates num {1}",convert.getIssueId(),count);
+        }
+        return true;
+    }
+
+    @Override
+    public List<Long> queryAllIssueIds() {
+        return testCycleCaseDefectRelMapper.queryAllIssueIds();
     }
 }

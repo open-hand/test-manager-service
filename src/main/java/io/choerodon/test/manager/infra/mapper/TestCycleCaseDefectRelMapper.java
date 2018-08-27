@@ -11,4 +11,8 @@ import java.util.List;
  */
 public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDefectRelDO> {
 	List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues);
+
+	List<Long> queryAllIssueIds();
+
+	int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
 }
