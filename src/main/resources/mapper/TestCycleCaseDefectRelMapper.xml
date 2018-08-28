@@ -10,6 +10,11 @@
         <id column="project_id" property="projectId"/>
     </resultMap>
 
+    <resultMap id="issueIdAndDefectIdMap" type="java.util.Map">
+        <result column="issue_id" property="key"/>
+        <result column="defect_link_id" property="value"/>
+    </resultMap>
+
     <select id="queryInIssues" resultMap="BaseResultMap">
         SELECT
         id,defect_type,defect_link_id,issue_id,project_id
@@ -36,4 +41,14 @@
         issue_id = #{issueId}
     </update>
 
+    <select id="queryIssueIdAndDefectId" parameterType="java.lang.Long" resultMap="issueIdAndDefectIdMap">
+        SELECT
+        issue_id,defect_link_id
+        FROM
+        test_cycle_case_defect_rel
+        GROUP BY
+        issue_id,defect_link_id
+        HAVING
+        project_id = #{projectId}
+    </select>
 </mapper>
