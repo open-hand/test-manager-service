@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.domain.aop;
 
-import io.choerodon.agile.api.dto.UserDO;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/28/18.
@@ -33,13 +32,7 @@ import java.util.Map;
 @Component
 public class TestCycleCaseHistoryRecordAOP {
 
-	private final String FIELD_STATUS = "执行状态";
-	private final String FIELD_ASSIGNED = "已指定至";
-	private final String FIELD_ATTACHMENT = "附件";
-	private final String FIELD_DEFECT = "缺陷";
-	private final String FIELD_COMMENT = "注释";
 
-	private final String FIELD_NULL = " ";
 	@Autowired
 	TestCycleCaseHistoryService testCycleCaseHistoryService;
 
@@ -65,47 +58,15 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseDTO beforeCeaseDTO = ConvertHelper.convert(before, TestCycleCaseDTO.class);
 		testStatusService.populateStatus(beforeCeaseDTO);
 		Object o = pjp.proceed();
-		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
-		historyDTO.setExecuteId(before.getExecuteId());
+		TestCycleCaseHistoryDTO historyDTO;
 
 		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
-			String newColor = testCycleCaseDTO.getExecutionStatusName();
-			String oldColor = beforeCeaseDTO.getExecutionStatusName();
-			historyDTO.setField(FIELD_STATUS);
-			historyDTO.setNewValue(newColor);
-			historyDTO.setOldValue(oldColor);
+			historyDTO=testCycleCaseHistoryService.createStatusHistory(testCycleCaseDTO,beforeCeaseDTO);
 		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
-			historyDTO.setField(FIELD_ASSIGNED);
-			Long after_as = testCycleCaseDTO.getAssignedTo();
-			Long before_as = before.getAssignedTo();
-			Long[] para = new Long[]{before_as, after_as};
-			Map<Long, UserDO> users = userService.query(para);
-
-			if (before_as != null && before_as.longValue() != 0) {
-				UserDO u = users.get(before_as);
-				historyDTO.setOldValue(u.getLoginName() + u.getRealName());
-			} else {
-				historyDTO.setOldValue(FIELD_NULL);
-			}
-			if (before_as != null && after_as.longValue() != 0) {
-				UserDO u = users.get(after_as);
-				historyDTO.setNewValue(u.getLoginName() + u.getRealName());
-			} else {
-				historyDTO.setNewValue(FIELD_NULL);
-			}
+			historyDTO=testCycleCaseHistoryService.createAssignedHistory(testCycleCaseDTO,beforeCeaseDTO);
 
 		} else if (!StringUtils.equals(testCycleCaseDTO.getComment(), before.getComment())) {
-			historyDTO.setField(FIELD_COMMENT);
-			if (StringUtils.isEmpty(testCycleCaseDTO.getComment())) {
-				historyDTO.setNewValue(FIELD_NULL);
-			} else {
-				historyDTO.setNewValue(testCycleCaseDTO.getComment());
-			}
-			if (StringUtils.isEmpty(before.getComment())) {
-				historyDTO.setOldValue(FIELD_NULL);
-			} else {
-				historyDTO.setOldValue(before.getComment());
-			}
+			historyDTO=testCycleCaseHistoryService.createCommentHistory(testCycleCaseDTO,beforeCeaseDTO);
 		} else {
 			return o;
 		}
@@ -118,9 +79,9 @@ public class TestCycleCaseHistoryRecordAOP {
 	public void recordAttachUpload(JoinPoint jp) {
 
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
-		historyDTO.setField(FIELD_ATTACHMENT);
+		historyDTO.setField(TestCycleCaseHistoryE.FIELD_ATTACHMENT);
 		historyDTO.setExecuteId((Long) jp.getArgs()[3]);
-		historyDTO.setOldValue(FIELD_NULL);
+		historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
 		historyDTO.setNewValue(jp.getArgs()[1].toString());
 		testCycleCaseHistoryService.insert(historyDTO);
 
@@ -137,9 +98,9 @@ public class TestCycleCaseHistoryRecordAOP {
 		attachmentRelE = lists.get(0);
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());
-		historyDTO.setField(FIELD_ATTACHMENT);
+		historyDTO.setField(TestCycleCaseHistoryE.FIELD_ATTACHMENT);
 		historyDTO.setOldValue(attachmentRelE.getAttachmentName());
-		historyDTO.setNewValue(FIELD_NULL);
+		historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		Object o = pjp.proceed();
 		testCycleCaseHistoryService.insert(historyDTO);
 		return o;
@@ -149,9 +110,9 @@ public class TestCycleCaseHistoryRecordAOP {
 	public void recordDefectAdd(JoinPoint jp) {
 		TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = (TestCycleCaseDefectRelDTO) jp.getArgs()[0];
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
-		historyDTO.setField(FIELD_DEFECT);
+		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
-		historyDTO.setOldValue(FIELD_NULL);
+		historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
 		List<Long> defectIds = new ArrayList<>();
 		defectIds.add(testCycleCaseDefectRelDTO.getIssueId());
 		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
@@ -167,14 +128,14 @@ public class TestCycleCaseHistoryRecordAOP {
 		testCycleCaseDefectRelE.setId(testCycleCaseDefectRelDTO.getId());
 		testCycleCaseDefectRelE = testCycleCaseDefectRelE.querySelf().get(0);
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
-		historyDTO.setField(FIELD_DEFECT);
+		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
 		List<Long> defectIds = new ArrayList<>();
 		defectIds.add(testCycleCaseDefectRelE.getIssueId());
 		String defectName = testCaseFeignClient.listByIssueIds(projectId, defectIds).getBody().get(0).getIssueNum();
 
 		historyDTO.setOldValue(defectName);
-		historyDTO.setNewValue(FIELD_NULL);
+		historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		Object o = pjp.proceed();
 		testCycleCaseHistoryService.insert(historyDTO);
 		return o;
