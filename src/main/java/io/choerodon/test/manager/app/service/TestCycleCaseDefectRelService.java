@@ -1,11 +1,11 @@
 package io.choerodon.test.manager.app.service;
 
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 
 import java.util.List;
 
@@ -32,4 +32,6 @@ public interface TestCycleCaseDefectRelService {
 	List<TestCycleCaseDefectRelDTO> getSubCycleStepsHaveDefect(Long cycleCaseId);
 
 	Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
+
+	Page createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 }

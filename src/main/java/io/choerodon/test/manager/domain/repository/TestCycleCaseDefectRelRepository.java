@@ -4,8 +4,10 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -26,4 +28,6 @@ public interface TestCycleCaseDefectRelRepository {
     List<Long> queryAllIssueIds();
 
     Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+
+    Map<Long,List<Long>> queryIssueIdAndDefectId(Long projectId);
 }

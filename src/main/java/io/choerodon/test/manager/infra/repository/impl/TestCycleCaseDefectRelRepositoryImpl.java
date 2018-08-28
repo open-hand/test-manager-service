@@ -1,23 +1,24 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.repository.TestCycleCaseDefectRelRepository;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
+import java.util.List;
+import java.util.Map;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.repository.TestCycleCaseDefectRelRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -28,7 +29,7 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
 
-    Logger log= LoggerFactory.getLogger(this.getClass());
+    Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
@@ -51,7 +52,7 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
         if (testCycleCaseDefectRelMapper.updateByPrimaryKeySelective(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-		return ConvertHelper.convert(testCycleCaseDefectRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseDefectRelE.class);
+        return ConvertHelper.convert(testCycleCaseDefectRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseDefectRelE.class);
     }
 
     @Override
@@ -80,11 +81,16 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     @Override
     public Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
         TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
-        int count=testCycleCaseDefectRelMapper.updateProjectIdByIssueId(convert) ;
-        if(log.isDebugEnabled()){
-            log.debug("fix defect data issueID {0} updates num {1}",convert.getIssueId(),count);
+        int count = testCycleCaseDefectRelMapper.updateProjectIdByIssueId(convert);
+        if (log.isDebugEnabled()) {
+            log.debug("fix defect data issueID {} updates num {}", convert.getIssueId(), count);
         }
         return true;
+    }
+
+    @Override
+    public Map<Long, List<Long>> queryIssueIdAndDefectId(Long projectId) {
+        return testCycleCaseDefectRelMapper.queryIssueIdAndDefectId(projectId);
     }
 
     @Override
