@@ -47,4 +47,8 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         expect:
         serviceAOP.delete(removeDto, 11L)
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 报表修复
 }

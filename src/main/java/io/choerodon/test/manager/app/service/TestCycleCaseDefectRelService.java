@@ -32,4 +32,8 @@ public interface TestCycleCaseDefectRelService {
 	List<TestCycleCaseDefectRelDTO> getSubCycleStepsHaveDefect(Long cycleCaseId);
 
 	Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 报表修复
 }

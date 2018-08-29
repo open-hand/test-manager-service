@@ -64,12 +64,15 @@ public class TestCaseController {
 													@ApiParam(value = "分页信息", required = true)
 													@SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
 
+<<<<<<< HEAD
 
 		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, pageRequest))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue"));
 	}
 
+=======
+>>>>>>> 报表修复
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
 	@PostMapping("/get/reporter/from/defect/by/issueId")
@@ -81,4 +84,16 @@ public class TestCaseController {
 				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
 	}
 
+<<<<<<< HEAD
+=======
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+    @PostMapping("/get/reporter/from/defect")
+    public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO, @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO,pageRequest))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
+    }
+>>>>>>> 报表修复
 }

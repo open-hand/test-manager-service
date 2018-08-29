@@ -10,9 +10,14 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDefectRelDO> {
-	List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues);
+	List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues,@Param("projectId") Long projectId);
 
 	List<Long> queryAllIssueIds();
 
 	int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
+<<<<<<< HEAD
+=======
+
+	List<Long> queryIssueIdAndDefectId(Long projectId);
+>>>>>>> 报表修复
 }

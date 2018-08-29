@@ -6,7 +6,11 @@ import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+<<<<<<< HEAD
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+=======
+import io.choerodon.test.manager.api.dto.CustomPage;
+>>>>>>> 报表修复
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
@@ -19,14 +23,14 @@ import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.DefectReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.ReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,17 +41,10 @@ import java.util.stream.Collectors;
 public class ReporterFormServiceImpl implements ReporterFormService {
 
 
-	@Autowired
-	TestCaseService testCaseService;
+    @Autowired
+    TestCaseService testCaseService;
 
-	@Autowired
-	TestCycleCaseService testCycleCaseService;
-
-	@Autowired
-	private TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository;
-	@Autowired
-	TestCycleCaseRepository testCycleCaseRepository;
-
+<<<<<<< HEAD
 	@Autowired
 	TestCycleCaseStepRepository testCycleCaseStepRepository;
 
@@ -170,5 +167,169 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 		}
 		return formES;
 	}
+=======
+    @Autowired
+    TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private TestCycleCaseDefectRelRepository testCycleCaseDefectRelRepository;
+    @Autowired
+    TestCycleCaseRepository testCycleCaseRepository;
+
+    @Autowired
+    TestCycleCaseStepRepository testCycleCaseStepRepository;
+
+    public Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+        Page page = new Page();
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page);
+        if (issueResponse.isEmpty()) {
+            return page;
+        }
+        List<ReporterFormE> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+
+        page.setContent(reporterFormES);
+        page.setNumberOfElements(reporterFormES.size());
+        return page;
+    }
+
+    public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds) {
+        Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
+
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, false);
+        return doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+
+    }
+
+    private List<ReporterFormE> doCreateFromIssueToDefect(List<IssueInfosDTO> issueInfosDTO, Long projectId) {
+        if (ObjectUtils.isEmpty(issueInfosDTO)) {
+            return new ArrayList<>();
+        }
+        List<Long> issues = issueInfosDTO.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList());
+        List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromIssueToTest(projectId, issues);
+        Long[] linkedIssues = linkDTOS.stream().map(IssueLinkDTO::getIssueId).toArray(Long[]::new);
+        List<TestCycleCaseDTO> cycleCaseDTOS = testCycleCaseService.queryInIssues(linkedIssues, projectId);
+
+        return issueInfosDTO.stream().map(ReporterFormE::new).peek(v -> v.populateLinkedTest(linkDTOS).populateLinkedIssueCycle(cycleCaseDTOS).countDefect()).collect(Collectors.toList());
+
+    }
+
+
+    public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds) {
+        Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
+
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, false);
+        return doCreateFromDefectToIssue(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+    }
+
+
+    public Page<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest) {
+        Page page = new Page();
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, new SearchDTO(), pageRequest, page);
+
+        List<DefectReporterFormE> reporterFormES = doCreateFromDefectToIssue(issueResponse.values().stream().collect(Collectors.toList()), projectId);
+
+        page.setContent(reporterFormES);
+        page.setNumberOfElements(reporterFormES.size());
+        return page;
+    }
+
+    @Override
+    public Page<ReporterFormE> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+        TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
+        List<Long> issueIdsList = testCycleCaseDefectRelE.queryIssueIdAndDefectId(projectId);
+        if (ObjectUtils.isEmpty(issueIdsList)) {
+            return new Page();
+        }
+        Long[] issueIds = issueIdsList.stream().toArray(Long[]::new);
+        Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
+
+        args.put("issueIds", issueIds);
+        if (searchDTO.getOtherArgs() == null) {
+            searchDTO.setOtherArgs(args);
+        }
+        // 此处假设返回的是 long数组所有值
+        Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().toArray(Long[]::new);
+        if (ObjectUtils.isEmpty(allFilteredIssues)) {
+            return new Page<>();
+        }
+        int pageNum = pageRequest.getPage();
+        int pageSize = pageRequest.getSize();
+        int highPage = (pageNum + 1) * pageSize - 1;
+        int lowPage = pageNum * pageSize;
+        //创建一个Long数组，将对应分页的issuesId传给它
+        int size = highPage - allFilteredIssues.length > 0 ? allFilteredIssues.length - lowPage : pageSize;
+
+        Long[] pagedIssues = new Long[size];
+        System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
+        // 得到包装好的报表List
+        List<DefectReporterFormE> reporterFormES = createFormDefectFromIssue(projectId, pagedIssues);
+
+        return new CustomPage(reporterFormES, allFilteredIssues);
+    }
+
+
+    private List<DefectReporterFormE> doCreateFromDefectToIssue(List<IssueInfosDTO> issueInfosDTO, Long projectId) {
+        List<DefectReporterFormE> formES = Lists.newArrayList();
+        if (ObjectUtils.isEmpty(issueInfosDTO)) {
+            return formES;
+        }
+        List<Long> issues = new ArrayList<>();
+        for (IssueInfosDTO infos : issueInfosDTO) {
+            DefectReporterFormE form = new DefectReporterFormE(infos);
+            formES.add(form);
+            issues.add(infos.getIssueId());
+        }
+        Long[] issueIds = issues.toArray(new Long[issues.size()]);
+        List<TestCycleCaseDefectRelE> defectLists = testCycleCaseDefectRelRepository.queryInIssues(issueIds, projectId);
+        if (defectLists == null || defectLists.isEmpty()) {
+            return formES;
+        }
+
+        Map<Long, List<TestCycleCaseDefectRelE>> caseDefectLinkMap = defectLists.stream()
+                .filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CYCLE_CASE)).collect(Collectors.groupingBy(TestCycleCaseDefectRelE::getDefectLinkId));
+        Long[] caseIds = defectLists.stream()
+                .filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CYCLE_CASE)).map(TestCycleCaseDefectRelE::getDefectLinkId).distinct().toArray(Long[]::new);
+
+        Map<Long, List<TestCycleCaseDefectRelE>> stepDefectLinkMap = defectLists.stream()
+                .filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CASE_STEP)).collect(Collectors.groupingBy(TestCycleCaseDefectRelE::getDefectLinkId));
+        Long[] stepIds = defectLists.stream()
+                .filter(u -> u.getDefectType().equals(TestCycleCaseDefectRelE.CASE_STEP)).map(TestCycleCaseDefectRelE::getDefectLinkId).toArray(Long[]::new);
+
+        List<Long> issueIdLists = new ArrayList<>();
+        List<TestCycleCaseDTO> cycleCases = null;
+        List<TestCycleCaseStepDTO> cycleCaseSteps = null;
+        if (caseIds.length > 0) {
+            cycleCases = ConvertHelper.convertList(testCycleCaseRepository.queryCycleCaseForReporter(caseIds), TestCycleCaseDTO.class);
+            issueIdLists.addAll(cycleCases.stream().map(TestCycleCaseDTO::getIssueId).collect(Collectors.toList()));
+
+        }
+        if (stepIds.length > 0) {
+            cycleCaseSteps = ConvertHelper.convertList(testCycleCaseStepRepository.queryCycleCaseForReporter(stepIds), TestCycleCaseStepDTO.class);
+            issueIdLists.addAll(cycleCaseSteps.stream().map(TestCycleCaseStepDTO::getIssueId).collect(Collectors.toList()));
+
+        }
+
+        List<IssueLinkDTO> linkDTOS = testCaseService.getLinkIssueFromTestToIssue(projectId, issueIdLists);
+
+        if (cycleCases != null) {
+            DefectReporterFormE.populateCaseIssueLink(linkDTOS, cycleCases);
+            for (DefectReporterFormE form : formES) {
+                form.populateCycleCase(cycleCases, caseDefectLinkMap);
+            }
+        }
+        if (cycleCaseSteps != null) {
+            DefectReporterFormE.populateStepIssueLink(linkDTOS, cycleCaseSteps);
+            for (DefectReporterFormE form : formES) {
+                form.populateCycleCaseStep(cycleCaseSteps, stepDefectLinkMap);
+            }
+        }
+
+        if (!issueIdLists.isEmpty()) {
+            Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIdLists.toArray(new Long[issueIdLists.size()]), false);
+            formES.forEach(v -> v.populateIssueInfo(map));
+        }
+        return formES;
+    }
+>>>>>>> 报表修复
 
 }

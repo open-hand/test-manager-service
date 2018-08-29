@@ -83,4 +83,15 @@ public interface TestCaseFeignClient {
 																			@PathVariable(name = "project_id") Long projectId,
 																			@ApiParam(value = "查询参数", required = true)
 																			@RequestBody(required = false) SearchDTO searchDTO);
+
+	/**
+	 * @param projectId 缺陷到issue报表过滤接口
+	 * @param searchDTO
+	 * @return
+	 */
+	@PostMapping(value = "/v1/projects/{project_id}/issues/issue_ids")
+	ResponseEntity<List<Long>> queryIssueIdsByOptions(@ApiParam(value = "项目id", required = true)
+													  @PathVariable(name = "project_id") Long projectId,
+													  @ApiParam(value = "查询参数", required = true)
+													  @RequestBody SearchDTO searchDTO);
 }

@@ -76,4 +76,9 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 	public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO) {
 		throw new CommonException(QUERY_ERROR);
 	}
+
+    @Override
+    public ResponseEntity<List<Long>> queryIssueIdsByOptions(Long projectId, SearchDTO searchDTO) {
+        throw new CommonException(QUERY_ERROR);
+    }
 }

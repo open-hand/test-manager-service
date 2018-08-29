@@ -154,4 +154,10 @@ public class TestCaseServiceImpl implements TestCaseService {
 		Assert.notNull(projectId, "error.TestCaseService.getProjectInfo.param.projectId.not.be.null");
 		return projectFeignClient.query(projectId).getBody();
 	}
+
+	@Override
+	public List<Long> queryIssueIdsByOptions(SearchDTO searchDTO,Long projectId){
+		Assert.notNull(projectId, "error.TestCaseService.queryIssueIdsByOptions.param.projectId.not.be.null");
+		return testCaseFeignClient.queryIssueIdsByOptions(projectId,searchDTO).getBody();
+	}
 }

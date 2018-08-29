@@ -21,9 +21,14 @@ public interface TestCycleCaseDefectRelRepository {
 
     Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
 
-    List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues);
+    List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues,Long projectId);
 
     List<Long> queryAllIssueIds();
 
     Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
+<<<<<<< HEAD
+=======
+
+    List<Long> queryIssueIdAndDefectId(Long projectId);
+>>>>>>> 报表修复
 }
