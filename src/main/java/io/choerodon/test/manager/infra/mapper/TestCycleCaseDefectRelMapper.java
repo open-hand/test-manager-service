@@ -15,9 +15,6 @@ public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDe
 	List<Long> queryAllIssueIds();
 
 	int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
-<<<<<<< HEAD
-=======
 
 	List<Long> queryIssueIdAndDefectId(Long projectId);
->>>>>>> 报表修复
 }

@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.api.eventhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.core.event.EventPayload;
+import io.choerodon.core.saga.SagaTask;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;

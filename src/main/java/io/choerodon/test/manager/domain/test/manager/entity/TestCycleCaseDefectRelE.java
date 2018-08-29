@@ -61,13 +61,10 @@ public class TestCycleCaseDefectRelE {
         return testCycleCaseDefectRelRepository.queryAllIssueIds();
     }
 
-<<<<<<< HEAD
-=======
     public List<Long>  queryIssueIdAndDefectId(Long projectId){
         return testCycleCaseDefectRelRepository.queryIssueIdAndDefectId(projectId);
     }
 
->>>>>>> 报表修复
     public String getDefectType() {
         return defectType;
     }

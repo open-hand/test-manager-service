@@ -26,9 +26,6 @@ public interface TestCycleCaseDefectRelRepository {
     List<Long> queryAllIssueIds();
 
     Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
-<<<<<<< HEAD
-=======
 
     List<Long> queryIssueIdAndDefectId(Long projectId);
->>>>>>> 报表修复
 }

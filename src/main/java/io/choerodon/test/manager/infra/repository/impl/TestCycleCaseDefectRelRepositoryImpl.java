@@ -88,14 +88,11 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     }
 
     @Override
-<<<<<<< HEAD
-=======
     public List<Long> queryIssueIdAndDefectId(Long projectId) {
         return testCycleCaseDefectRelMapper.queryIssueIdAndDefectId(projectId);
     }
 
     @Override
->>>>>>> 报表修复
     public List<Long> queryAllIssueIds() {
         return testCycleCaseDefectRelMapper.queryAllIssueIds();
     }

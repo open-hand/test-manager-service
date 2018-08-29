@@ -36,8 +36,6 @@
         issue_id = #{issueId}
     </update>
 
-<<<<<<< HEAD
-=======
     <select id="queryIssueIdAndDefectId" parameterType="java.lang.Long" resultType="java.lang.Long">
         SELECT distinct
         issue_id
@@ -46,5 +44,4 @@
         where
         project_id = #{projectId}
     </select>
->>>>>>> 报表修复
 </mapper>

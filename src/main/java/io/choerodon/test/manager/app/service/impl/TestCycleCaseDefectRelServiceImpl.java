@@ -121,10 +121,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         return flag;
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 报表修复
     private List<TestCycleCaseDefectRelE> cycleStepHaveDefect(Long cycleStepId) {
         TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();
         caseDefectRelE.setDefectLinkId(cycleStepId);
