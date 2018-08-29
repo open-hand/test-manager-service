@@ -6,6 +6,7 @@ import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
@@ -87,8 +88,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 	public List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds) {
 		Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
-
-		Map<Long,IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, true);
+		PageRequest pageRequest = new PageRequest();
+		pageRequest.setPage(0);
+		pageRequest.setSize(issueIds.length);
+		pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
+		Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, pageRequest);
 		return doCreateFromDefectToIssue(issueResponse.values().stream().collect(Collectors.toList()), projectId);
 	}
 

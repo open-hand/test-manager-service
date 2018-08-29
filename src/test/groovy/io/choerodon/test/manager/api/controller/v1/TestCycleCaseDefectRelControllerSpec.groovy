@@ -1,17 +1,17 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import io.choerodon.agile.api.dto.SearchDTO
-import io.choerodon.mybatis.pagehelper.domain.PageRequest
-import io.choerodon.mybatis.pagehelper.domain.Sort
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.util.AopTestUtils
+import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -47,21 +47,4 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         expect:
         serviceAOP.delete(removeDto, 11L)
     }
-
-    def "createFormDefectFromIssue"() {
-        given:
-        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
-
-        SearchDTO searchDTO = new SearchDTO()
-
-        PageRequest pageRequest = new PageRequest(sort: new Sort("id"))
-        pageRequest.setPage(1)
-        pageRequest.setSize(2)
-
-        def result = serviceAOP.createFormDefectFromIssue(144L, searchDTO, pageRequest)
-        expect:
-        result.getContent() != null
-    }
-
-
 }

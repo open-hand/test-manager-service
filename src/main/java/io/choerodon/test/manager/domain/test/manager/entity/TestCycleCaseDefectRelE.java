@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Table;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -17,8 +17,8 @@ import java.util.Map;
 @Scope("prototype")
 public class TestCycleCaseDefectRelE {
 
-    public static final String CASE_STEP = "CASE_STEP";
-    public static final String CYCLE_CASE = "CYCLE_CASE";
+    public static String CASE_STEP = "CASE_STEP";
+    public static String CYCLE_CASE = "CYCLE_CASE";
 
     private Long id;
     private String defectType;
@@ -59,10 +59,6 @@ public class TestCycleCaseDefectRelE {
 
     public List<Long> queryAllIssueIds() {
         return testCycleCaseDefectRelRepository.queryAllIssueIds();
-    }
-
-    public Map<Long,List<Long>> queryIssueIdAndDefectId(Long projectId){
-        return testCycleCaseDefectRelRepository.queryIssueIdAndDefectId(projectId);
     }
 
     public String getDefectType() {
