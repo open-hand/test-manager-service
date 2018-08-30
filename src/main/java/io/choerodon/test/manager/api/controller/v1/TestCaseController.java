@@ -69,7 +69,7 @@ public class TestCaseController {
 
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+    @ApiOperation("生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect")
     public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO, @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
 
