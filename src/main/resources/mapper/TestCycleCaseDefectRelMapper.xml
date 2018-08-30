@@ -14,7 +14,7 @@
         SELECT
         id,defect_type,defect_link_id,issue_id,project_id
         FROM test_cycle_case_defect_rel
-        where issue_id in
+        where project_id=#{ projectId} and issue_id in
         <foreach collection="issues" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -36,4 +36,12 @@
         issue_id = #{issueId}
     </update>
 
+    <select id="queryIssueIdAndDefectId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT distinct
+        issue_id
+        FROM
+        test_cycle_case_defect_rel
+        where
+        project_id = #{projectId}
+    </select>
 </mapper>

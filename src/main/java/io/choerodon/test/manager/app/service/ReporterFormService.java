@@ -20,4 +20,7 @@ public interface ReporterFormService {
 	Page<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest);
 
 	List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds);
+
+
+	Page createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 }

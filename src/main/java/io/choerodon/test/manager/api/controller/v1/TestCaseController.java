@@ -33,52 +33,36 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成报表从issue到缺陷")
     @PostMapping("/get/reporter/from/issue")
-	public ResponseEntity createFormsFromIssueToDefect(@PathVariable(name = "project_id") Long projectId,
-													   @RequestBody
-															   SearchDTO searchDTO,
-													   @ApiIgnore
-													   @ApiParam(value = "分页信息", required = true)
-													   @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+    public ResponseEntity createFormsFromIssueToDefect(@PathVariable(name = "project_id") Long projectId,
+                                                       @RequestBody
+                                                               SearchDTO searchDTO,
+                                                       @ApiIgnore
+                                                       @ApiParam(value = "分页信息", required = true)
+                                                       @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
 
         return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
+                .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("通过IssueId生成issue到缺陷的报表")
-	@PostMapping("/get/reporter/from/issue/by/issueId")
-	public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
-																@RequestBody Long[] issueIds) {
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("通过IssueId生成issue到缺陷的报表")
+    @PostMapping("/get/reporter/from/issue/by/issueId")
+    public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
+                                                                @RequestBody Long[] issueIds) {
 
-		return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
-	}
+        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
+    }
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("生成报表从缺陷到issue")
-	@PostMapping("/get/reporter/from/defect")
-	public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId,
-													@ApiIgnore
-													@ApiParam(value = "分页信息", required = true)
-													@SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+    @PostMapping("/get/reporter/from/defect")
+    public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO, @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
 
-
-		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, pageRequest))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue"));
-	}
-
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
-	@PostMapping("/get/reporter/from/defect/by/issueId")
-	public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
-														@RequestBody Long[] issueIds) {
-
-		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
-	}
-
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
+    }
 }

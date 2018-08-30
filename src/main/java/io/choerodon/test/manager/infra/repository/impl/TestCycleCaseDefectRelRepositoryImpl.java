@@ -72,9 +72,9 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     }
 
     @Override
-    public List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues) {
+    public List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues,Long projectId) {
         Assert.notEmpty(issues, "error.query.issues.not.empty");
-        return ConvertHelper.convertList(testCycleCaseDefectRelMapper.queryInIssues(issues), TestCycleCaseDefectRelE.class);
+        return ConvertHelper.convertList(testCycleCaseDefectRelMapper.queryInIssues(issues,projectId), TestCycleCaseDefectRelE.class);
     }
 
     @Override
@@ -85,6 +85,11 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
             log.debug("fix defect data issueID {0} updates num {1}",convert.getIssueId(),count);
         }
         return true;
+    }
+
+    @Override
+    public List<Long> queryIssueIdAndDefectId(Long projectId) {
+        return testCycleCaseDefectRelMapper.queryIssueIdAndDefectId(projectId);
     }
 
     @Override
