@@ -56,6 +56,18 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
     }
 
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+	@PostMapping("/get/reporter/from/defect/by/issueId")
+	public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
+														@RequestBody Long[] issueIds) {
+
+		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds))
+				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
+	}
+
+
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect")
