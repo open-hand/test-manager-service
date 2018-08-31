@@ -121,13 +121,14 @@ public class TestCycleServiceImpl implements TestCycleService {
 		});
 	}
 
-	private void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
+	@Override
+	public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
 		Map<String, JSONObject> versionsMap = new HashMap<>();
 
 		for (ProductVersionDTO versionDTO : versionDTOList) {
 			JSONObject version;
 			if (!versionsMap.containsKey(versionDTO.getStatusName())) {
-				version = createVersionNode(versionDTO.getStatusName(), "0-" + versionsMap.size());
+				version = createVersionNode(versionDTO.getStatusName(), "0-" + versionsMap.size(),null);
 				versionStatus.add(version);
 				versionsMap.put(versionDTO.getStatusName(), version);
 			} else {
@@ -138,7 +139,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 			String nowStatusHeight = version.get("key").toString();
 			String nowNamesHeight = String.valueOf(versionNames.size());
-			JSONObject versionName = createVersionNode(versionDTO.getName(), nowStatusHeight + "-" + nowNamesHeight);
+			JSONObject versionName = createVersionNode(versionDTO.getName(), nowStatusHeight + "-" + nowNamesHeight,versionDTO.getVersionId());
 			versionNames.add(versionName);
 
 			initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versionDTO.getVersionId(), cycleDTOList);
@@ -146,10 +147,11 @@ public class TestCycleServiceImpl implements TestCycleService {
 	}
 
 
-	private JSONObject createVersionNode(String title, String height) {
+	private JSONObject createVersionNode(String title, String height,Long versionId) {
 		JSONObject version = new JSONObject();
 		version.put("title", title);
 		version.put("key", height);
+		Optional.ofNullable(versionId).ifPresent(v->version.put("versionId",v));
 		JSONArray versionNames = new JSONArray();
 		version.put(NODE_CHILDREN, versionNames);
 		return version;
