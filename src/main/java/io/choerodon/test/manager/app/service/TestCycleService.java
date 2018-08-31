@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.app.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
@@ -41,4 +43,6 @@ public interface TestCycleService {
 	void populateVersion(TestCycleDTO cycle, Long projectId);
 
 	void populateUsers(List<TestCycleDTO> dtos);
+
+	public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
 }
