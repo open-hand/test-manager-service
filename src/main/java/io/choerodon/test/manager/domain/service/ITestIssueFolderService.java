@@ -16,4 +16,5 @@ public interface ITestIssueFolderService {
 
     TestIssueFolderE update(TestIssueFolderE testIssueFolderE);
 
+    TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE);
 }

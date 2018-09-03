@@ -34,6 +34,10 @@ public class TestIssueFolderE {
     @Autowired
     private TestIssueFolderRepository testIssueFolderRepository;
 
+    public TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE) {
+        return testIssueFolderRepository.queryOne(testIssueFolderE);
+    }
+
     public List<TestIssueFolderE> queryAllUnderProject() {
         return testIssueFolderRepository.queryAllUnderProject(this);
     }

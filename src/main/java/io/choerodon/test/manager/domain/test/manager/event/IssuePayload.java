@@ -28,8 +28,4 @@ public class IssuePayload {
         this.projectId = projectId;
     }
 
-    //    @Override
-//    public String toString() {
-//        return StringUtil.getToString(this);
-//    }
 }
