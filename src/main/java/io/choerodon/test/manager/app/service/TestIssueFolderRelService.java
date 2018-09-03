@@ -2,8 +2,7 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 
 /**
@@ -12,7 +11,7 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 public interface TestIssueFolderRelService {
     List<TestIssueFolderRelDTO> query(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    TestIssueFolderRelDTO insert(TestIssueFolderRelDTO testIssueFolderRelDTO);
+    TestIssueFolderRelDTO insert(IssueCreateDTO issueCreateDTO,Long projectId,Long folderId,Long versionId);
 
     void delete(TestIssueFolderRelDTO testIssueFolderRelDTO);
 

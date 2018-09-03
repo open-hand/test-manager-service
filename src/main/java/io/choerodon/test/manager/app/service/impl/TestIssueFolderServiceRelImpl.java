@@ -2,8 +2,11 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
+import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
@@ -20,6 +23,9 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     @Autowired
     ITestIssueFolderRelService iTestIssueFolderRelService;
 
+    @Autowired
+    TestCaseService testCaseService;
+
 
     @Override
     public List<TestIssueFolderRelDTO> query(TestIssueFolderRelDTO testIssueFolderRelDTO) {
@@ -29,7 +35,14 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO insert(TestIssueFolderRelDTO testIssueFolderRelDTO) {
+    public TestIssueFolderRelDTO insert(IssueCreateDTO issueCreateDTO, Long projectId,Long folderId,Long versionId) {
+
+        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO,projectId);
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setVersionId(versionId);
+        testIssueFolderRelDTO.setFolderId(folderId);
+        testIssueFolderRelDTO.setProjectId(projectId);
+        testIssueFolderRelDTO.setIssueId(issueDTO.getIssueId());
         return ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }

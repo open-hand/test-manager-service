@@ -16,7 +16,6 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

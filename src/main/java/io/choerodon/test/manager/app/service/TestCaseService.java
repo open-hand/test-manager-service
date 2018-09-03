@@ -41,4 +41,6 @@ public interface TestCaseService {
 	ProjectDTO getProjectInfo(Long projectId);
 
 	List<Long> queryIssueIdsByOptions(SearchDTO searchDTO,Long projectId);
+
+	IssueDTO createTest(IssueCreateDTO issueCreateDTO,Long projectId);
 }

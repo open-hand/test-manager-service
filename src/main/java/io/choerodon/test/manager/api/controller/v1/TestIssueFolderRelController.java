@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.Optional;
 
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
@@ -49,8 +50,10 @@ public class TestIssueFolderRelController {
     @ApiOperation("插入状态")
     @PostMapping
     public ResponseEntity<TestIssueFolderRelDTO> insert(@PathVariable(name = "project_id") Long projectId,
-                                                     @RequestBody TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return Optional.ofNullable(testIssueFolderRelService.insert(testIssueFolderRelDTO))
+                                                        @RequestParam(name = "folder_id")Long folderId,
+                                                        @RequestParam(name = "version_id")Long versionId,
+                                                        @RequestBody IssueCreateDTO issueCreateDTO) {
+        return Optional.ofNullable(testIssueFolderRelService.insert(issueCreateDTO,projectId,folderId,versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
