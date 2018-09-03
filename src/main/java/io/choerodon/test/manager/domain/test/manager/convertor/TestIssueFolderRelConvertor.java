@@ -1,13 +1,9 @@
 package io.choerodon.test.manager.domain.test.manager.convertor;
 
 import io.choerodon.core.convertor.ConvertorI;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
-import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO;
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;

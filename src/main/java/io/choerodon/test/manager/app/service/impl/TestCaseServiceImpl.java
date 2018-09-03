@@ -160,4 +160,10 @@ public class TestCaseServiceImpl implements TestCaseService {
 		Assert.notNull(projectId, "error.TestCaseService.queryIssueIdsByOptions.param.projectId.not.be.null");
 		return testCaseFeignClient.queryIssueIdsByOptions(projectId,searchDTO).getBody();
 	}
+
+	@Override
+	public IssueDTO createTest(IssueCreateDTO issueCreateDTO,Long projectId) {
+		Assert.notNull(projectId,"error.TestCaseService.createTest.param.projectId.not.be.null");
+		return testCaseFeignClient.createIssue(projectId,issueCreateDTO).getBody();
+	}
 }

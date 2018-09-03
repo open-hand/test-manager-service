@@ -50,6 +50,7 @@ public class TestIssueFolderRelRepositoryImpl implements TestIssueFolderRelRepos
         Assert.notNull(testIssueFolderRelE, "error.issueFolderRel.update.parameter.not.null");
 
         TestIssueFolderRelDO testIssueFolderRelDO = ConvertHelper.convert(testIssueFolderRelE, TestIssueFolderRelDO.class);
+        testIssueFolderRelDO.setIssueId(null);
         testIssueFolderRelDO.setProjectId(null);
         testIssueFolderRelDO.setVersionId(null);
         if (testIssueFolderRelMapper.updateByPrimaryKeySelective(testIssueFolderRelDO) != 1) {
