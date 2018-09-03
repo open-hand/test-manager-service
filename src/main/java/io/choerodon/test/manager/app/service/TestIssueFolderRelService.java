@@ -11,7 +11,9 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 public interface TestIssueFolderRelService {
     List<TestIssueFolderRelDTO> query(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    TestIssueFolderRelDTO insert(IssueCreateDTO issueCreateDTO,Long projectId,Long folderId,Long versionId);
+    TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO,Long projectId,Long folderId,Long versionId);
+
+    TestIssueFolderRelDTO insertRelationship(Long projectId,Long folderId,Long versionId,Long issueId);
 
     void delete(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
