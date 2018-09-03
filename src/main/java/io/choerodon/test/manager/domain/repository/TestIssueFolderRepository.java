@@ -15,4 +15,6 @@ public interface TestIssueFolderRepository {
 	TestIssueFolderE update(TestIssueFolderE testIssueFolderE);
 
 	List<TestIssueFolderE> queryAllUnderProject(TestIssueFolderE testIssueFolderE);
+
+	TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE);
 }

@@ -11,12 +11,9 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleCaseStepService {
-//    TestCycleCaseStepE insert(TestCycleCaseStepE testCycleCaseStepE);
 
 
     List<TestCycleCaseStepE> update(List<TestCycleCaseStepE> testCycleCaseStepE);
-
-//    Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest);
 
     /**
      * 查询循环测试下所有步骤

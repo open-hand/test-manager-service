@@ -2,12 +2,8 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import java.util.List;
 
-import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
-import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**

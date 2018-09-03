@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.agile.api.dto.IssueCreateDTO;
@@ -7,6 +8,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +28,17 @@ public class TestIssueFolderRelController {
     TestIssueFolderRelService testIssueFolderRelService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询状态")
+    @GetMapping("/query")
+    public ResponseEntity<List<IssueInfosDTO>> queryAllIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
+                                                                         @RequestParam(name = "folder_id", required = false) Long folderId,
+                                                                         @RequestParam(name = "version_id", required = false) Long versionId) {
+        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, versionId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除状态")
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -38,26 +51,24 @@ public class TestIssueFolderRelController {
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试并建立测试和文件夹的关系")
-    @PostMapping
+    @PostMapping("/testAndRelationship")
     public ResponseEntity<TestIssueFolderRelDTO> insertTestAndRelationship(@PathVariable(name = "project_id") Long projectId,
-                                                        @RequestParam(name = "folder_id",required = false) Long folderId,
-                                                        @RequestParam(name = "version_id") Long versionId,
-                                                        @RequestBody IssueCreateDTO issueCreateDTO) {
+                                                                           @RequestParam(name = "folder_id", required = false) Long folderId,
+                                                                           @RequestParam(name = "version_id") Long versionId,
+                                                                           @RequestBody IssueCreateDTO issueCreateDTO) {
         return Optional.ofNullable(testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试和文件夹的关系")
-    @PostMapping("/{issue_id}")
-    public ResponseEntity<TestIssueFolderRelDTO> insertRelationship(@PathVariable(name = "project_id") Long projectId,
-                                                        @PathVariable(name = "issue_id") Long issueId,
-                                                        @RequestParam(name = "folder_id",required = false) Long folderId,
-                                                        @RequestParam(name = "version_id") Long versionId) {
-        return Optional.ofNullable(testIssueFolderRelService.insertRelationship(projectId, folderId, versionId, issueId))
+    @PostMapping
+    public ResponseEntity<List<TestIssueFolderRelDTO>> insertRelationship(@PathVariable(name = "project_id") Long projectId,
+                                                                          @RequestBody List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
+        return Optional.ofNullable(testIssueFolderRelService.insertRelationship(projectId, testIssueFolderRelDTOS))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -67,6 +78,6 @@ public class TestIssueFolderRelController {
                                                         @RequestBody TestIssueFolderRelDTO testIssueFolderRelDTO) {
         return Optional.ofNullable(testIssueFolderRelService.update(testIssueFolderRelDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.update"));
     }
 }

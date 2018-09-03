@@ -28,6 +28,12 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
     }
 
     @Override
+    public TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE) {
+        TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
+        return ConvertHelper.convert(testIssueFolderMapper.selectOne(testIssueFolderDO), TestIssueFolderE.class);
+    }
+
+    @Override
     public TestIssueFolderE insert(TestIssueFolderE testIssueFolderE) {
         Assert.notNull(testIssueFolderE, "error.issueFolder.insert.parameter.not.null");
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);

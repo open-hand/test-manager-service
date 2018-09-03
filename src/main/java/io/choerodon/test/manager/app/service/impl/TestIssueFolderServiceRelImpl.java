@@ -1,10 +1,13 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
@@ -32,9 +35,16 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
 
     @Override
-    public List<TestIssueFolderRelDTO> query(TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+    public List<IssueInfosDTO> query(Long projectId, Long folderId, Long versionId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setProjectId(projectId);
+        testIssueFolderRelDTO.setFolderId(folderId);
+        testIssueFolderRelDTO.setVersionId(versionId);
+        List<TestIssueFolderRelDTO> resultRelDTOS = ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+        //list中issuedId转换为Long数组
+        Long[] issueIds = resultRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).toArray(Long[]::new);
+        return testCaseService.getIssueInfoMap(projectId,issueIds,false).values().stream().collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -49,11 +59,17 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO insertRelationship(Long projectId, Long folderId, Long versionId,Long issueId) {
-        Long newFolderId = getDefaultFolderId(projectId,folderId,versionId);
-        TestIssueFolderRelDTO testIssueFolderRelDTO = loadTestIssueFolderRelDTOInfo(projectId,newFolderId,versionId,issueId);
-        return ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
-                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+    public List<TestIssueFolderRelDTO> insertRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
+        List<TestIssueFolderRelDTO> resultTestIssueFolderRelDTOS = new ArrayList<>();
+        Long newFolderId = getDefaultFolderId(projectId,testIssueFolderRelDTOS.get(0).getFolderId(),testIssueFolderRelDTOS.get(0).getVersionId());
+        for (TestIssueFolderRelDTO testIssueFolderRelDTO:testIssueFolderRelDTOS){
+            testIssueFolderRelDTO.setFolderId(newFolderId);
+            testIssueFolderRelDTO.setProjectId(projectId);
+            TestIssueFolderRelDTO resultTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+            resultTestIssueFolderRelDTOS.add(resultTestIssueFolderRelDTO);
+        }
+        return resultTestIssueFolderRelDTOS;
     }
 
     private Long getDefaultFolderId(Long projectId, Long folderId, Long versionId){

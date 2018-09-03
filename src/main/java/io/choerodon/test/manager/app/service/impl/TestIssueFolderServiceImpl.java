@@ -92,14 +92,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         testIssueFolderDTO.setProjectId(projectId);
         testIssueFolderDTO.setVersionId(versionId);
         testIssueFolderDTO.setType("temp");
-        testIssueFolderDTO.setName("临时");
-        List<TestIssueFolderDTO> testIssueFolderDTOS = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
+        TestIssueFolderDTO resultTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.queryOne(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        if(testIssueFolderDTOS.isEmpty()){
+        testIssueFolderDTO.setName("临时");
+        if(resultTestIssueFolderDTO == null){
             return ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
                     .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class).getFolderId();
         }else {
-            return testIssueFolderDTOS.get(0).getFolderId();
+            return resultTestIssueFolderDTO.getFolderId();
         }
     }
 

@@ -37,4 +37,9 @@ public class ITestIssueFolderServiceImpl implements ITestIssueFolderService {
         return testIssueFolderE.validateType().updateSelf();
     }
 
+    @Override
+    public TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE) {
+        return testIssueFolderE.queryOne(testIssueFolderE);
+    }
+
 }
