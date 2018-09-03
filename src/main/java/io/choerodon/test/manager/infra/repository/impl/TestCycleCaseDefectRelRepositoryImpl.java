@@ -82,7 +82,7 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
         TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
         int count=testCycleCaseDefectRelMapper.updateProjectIdByIssueId(convert) ;
         if(log.isDebugEnabled()){
-            log.debug("fix defect data issueID {0} updates num {1}",convert.getIssueId(),count);
+            log.debug("fix defect data issueID {} updates num {}",convert.getIssueId(),count);
         }
         return true;
     }

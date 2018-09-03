@@ -18,4 +18,6 @@ public interface TestIssueFolderService {
     TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO);
 
     JSONObject getTestIssueFolder(Long projectId);
+
+    Long getDefaultFolderId(Long projectId,Long versionId);
 }
