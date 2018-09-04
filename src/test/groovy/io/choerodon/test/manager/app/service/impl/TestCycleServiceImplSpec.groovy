@@ -45,6 +45,12 @@ class TestCycleServiceImplSpec extends Specification {
     @Autowired
     TestCycleService testCycleService
 
+
+
+//    @Autowired
+//    TestCycleCaseService cycleCaseService
+
+
     def "Insert"() {
         given:
         PageHelper.clearPage()
