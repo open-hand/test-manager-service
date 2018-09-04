@@ -1,4 +1,3 @@
-
 package io.choerodon.test.manager.app.service.impl
 
 import com.alibaba.fastjson.JSONObject
@@ -46,15 +45,10 @@ class TestCycleServiceImplSpec extends Specification {
     TestCycleService testCycleService
 
 
-
-//    @Autowired
-//    TestCycleCaseService cycleCaseService
-
-
     def "Insert"() {
         given:
-        PageHelper.clearPage()
         PageHelper.clearSort()
+        PageHelper.clearPage()
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布")
         cycle.setVersionId(226L)
