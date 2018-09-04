@@ -91,6 +91,7 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("过滤version下的测试循环")
 	@PostMapping("/filter")
+	@Deprecated
 	ResponseEntity filterTestCycle(@PathVariable(name = "project_id") Long projectId,
 								   @RequestBody String parameters) {
 

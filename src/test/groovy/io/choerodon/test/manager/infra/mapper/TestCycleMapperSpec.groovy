@@ -45,21 +45,21 @@ class TestCycleMapperSpec extends Specification {
     def "initEnv"(){
         given:
         cycleDO1.setCycleName("循环1")
-        cycleDO1.setVersionId(new Long(99))
+        cycleDO1.setVersionId(new Long(929))
         cycleDO1.setType("cycle")
         mapper.insert(cycleDO1)
         cycleDO2.setCycleName("循环2")
-        cycleDO2.setVersionId(new Long(99))
+        cycleDO2.setVersionId(new Long(929))
         cycleDO2.setType("cycle")
         mapper.insert(cycleDO2)
         cycleDO3.setType("folder")
         cycleDO3.setCycleName("文件夹1-1")
-        cycleDO3.setVersionId(new Long(99))
+        cycleDO3.setVersionId(new Long(929))
         cycleDO3.setParentCycleId(new Long(1))
         mapper.insert(cycleDO3)
         cycleDO4.setCycleName("文件夹1-2")
         cycleDO4.setType("folder")
-        cycleDO4.setVersionId(new Long(99))
+        cycleDO4.setVersionId(new Long(929))
         cycleDO4.setParentCycleId(new Long(1))
         mapper.insert(cycleDO4)
 
@@ -86,7 +86,7 @@ class TestCycleMapperSpec extends Specification {
         given:
 
         Long[] versions=new Long[1]
-        versions[0]=new Long(99)
+        versions[0] = new Long(929)
         when:
         List<TestCycleDO> result=mapper.query(versions)
         then:
@@ -106,8 +106,8 @@ class TestCycleMapperSpec extends Specification {
         expect:
         result==mapper.selectCyclesInVersions(param).size()
         where:
-        param                                |     result
-        [new Long(99)] as Long[]       |       4
+        param                     |     result
+        [new Long(929)] as Long[] | 4
     }
 
     def "validateCycle"(){
