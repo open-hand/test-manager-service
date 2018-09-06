@@ -3,7 +3,6 @@ package io.choerodon.test.manager.api.dto;
 import io.choerodon.agile.api.dto.UserDO;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**

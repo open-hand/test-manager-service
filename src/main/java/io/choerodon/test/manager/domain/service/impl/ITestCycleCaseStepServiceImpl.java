@@ -51,13 +51,6 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
         testCycleCaseStepE.deleteSelf();
     }
 
-//    private void deleteLinkedAttachment(Long stepId) {
-//        TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
-//        attachmentRelE.setAttachmentLinkId(stepId);
-//        attachmentRelE.setAttachmentType(TestCycleCaseAttachmentRelE.ATTACHMENT_CYCLE_STEP);
-//        attachmentRelE.querySelf().forEach(v -> attachmentRelService.delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
-//    }
-
     private void deleteLinkedDefect(Long stepId) {
         TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();
         caseDefectRelE.setDefectLinkId(stepId);
@@ -78,11 +71,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
     public Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-        Page<TestCycleCaseStepE> testCycleCaseEs = testCycleCaseStepE.querySelf(pageRequest);
-//        testCycleCaseEs.forEach(v -> {
-//            v.setDefects(iTestCycleCaseDefectRelServicel.query(v.getExecuteStepId(), TestCycleCaseDefectRelE.CASE_STEP, projectId));
-//        });
-        return testCycleCaseEs;
+        return testCycleCaseStepE.querySelf(pageRequest);
     }
 
 

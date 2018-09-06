@@ -55,8 +55,8 @@ public class ReporterFormE {
 		for(LinkedTestIssue issue: linkedTestIssues){
 			List<TestCycleCaseDTO> ls=Optional.ofNullable(issue.getTestCycleCaseES()).orElseGet(ArrayList::new);
 			for(TestCycleCaseDTO dot:ls){
-				Optional.ofNullable(dot.getDefects()).ifPresent(v->defectCount+=v.size());
-				Optional.ofNullable(dot.getSubStepDefects()).ifPresent(v->defectCount+=v.size());
+				Optional.ofNullable(dot.getDefects()).ifPresent(v->defectCount=defectCount+v.size());
+				Optional.ofNullable(dot.getSubStepDefects()).ifPresent(v->defectCount=defectCount+v.size());
 			}
 		}
 		return this;

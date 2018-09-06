@@ -10,4 +10,7 @@ public class TestCycleCaseHistoryEFactory {
     public static TestCycleCaseHistoryE create() {
         return ApplicationContextHelper.getSpringFactory().getBean(TestCycleCaseHistoryE.class);
     }
+
+    private TestCycleCaseHistoryEFactory() {
+    }
 }

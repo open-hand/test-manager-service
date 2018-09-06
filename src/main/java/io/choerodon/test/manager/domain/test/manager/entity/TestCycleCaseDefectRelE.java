@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.Table;
 import java.util.List;
 
 /**
@@ -17,8 +16,8 @@ import java.util.List;
 @Scope("prototype")
 public class TestCycleCaseDefectRelE {
 
-    public static String CASE_STEP = "CASE_STEP";
-    public static String CYCLE_CASE = "CYCLE_CASE";
+    public static final String CASE_STEP = "CASE_STEP";
+    public static final String CYCLE_CASE = "CYCLE_CASE";
 
     private Long id;
     private String defectType;

@@ -10,4 +10,7 @@ public class TestCycleCaseEFactory {
     public static TestCycleCaseE create() {
         return ApplicationContextHelper.getSpringFactory().getBean(TestCycleCaseE.class);
     }
+
+    private TestCycleCaseEFactory() {
+    }
 }

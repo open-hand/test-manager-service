@@ -20,7 +20,6 @@ import io.choerodon.test.manager.domain.test.manager.entity.DefectReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.ReporterFormE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;

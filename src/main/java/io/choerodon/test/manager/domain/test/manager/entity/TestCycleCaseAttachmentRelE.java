@@ -14,10 +14,10 @@ import java.util.List;
 @Scope("prototype")
 public class TestCycleCaseAttachmentRelE {
 
-    public final static String ATTACHMENT_CYCLE_CASE = "CYCLE_CASE";
-    public final static String ATTACHMENT_CASE_STEP = "CASE_STEP";
-	public final static String ATTACHMENT_CYCLE_STEP = "CYCLE_STEP";
-    public final static String ATTACHMENT_BUCKET = "TEST";
+    public static final String ATTACHMENT_CYCLE_CASE = "CYCLE_CASE";
+    public static final String ATTACHMENT_CASE_STEP = "CASE_STEP";
+	public static final String ATTACHMENT_CYCLE_STEP = "CYCLE_STEP";
+    public static final String ATTACHMENT_BUCKET = "TEST";
 
     private Long id;
     private String attachmentType;

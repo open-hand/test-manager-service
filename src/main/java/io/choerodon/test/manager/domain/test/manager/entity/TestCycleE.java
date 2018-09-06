@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -175,9 +174,9 @@ public class TestCycleE {
 
 	public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
 		CountMap map = new CountMap();
-		cycleCaseList.forEach(v -> {
-			map.put((String) v.get("color"), (Long) v.get("counts"));
-		});
+		cycleCaseList.forEach(v ->
+			map.put((String) v.get("color"), (Long) v.get("counts"))
+		);
 		this.cycleCaseList = map;
 	}
 
@@ -223,9 +222,9 @@ public class TestCycleE {
     }
 
 	public void countChildStatus(List<TestCycleE> cycleCaseList) {
-		cycleCaseList.forEach(v -> {
-			this.cycleCaseList.merge(v.getCycleCaseList());
-		});
+		cycleCaseList.forEach(v ->
+			this.cycleCaseList.merge(v.getCycleCaseList())
+		);
 
 	}
 

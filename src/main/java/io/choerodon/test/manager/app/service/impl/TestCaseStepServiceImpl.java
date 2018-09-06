@@ -50,15 +50,14 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
 			testCaseStepE = testCaseStepE.createOneStep();
-			runCycleCaseStep(testCaseStepE, projectId);
+			runCycleCaseStep(testCaseStepE);
 		} else {
 			testCaseStepE = testCaseStepE.changeOneStep();
 		}
 		return ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class);
 	}
 
-	private void runCycleCaseStep(TestCaseStepE testCaseStepE, Long projectId) {
-		// param 'projectId' for status extend strategy but now use simple strategy which in projectId is 0
+	private void runCycleCaseStep(TestCaseStepE testCaseStepE) {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
 		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
