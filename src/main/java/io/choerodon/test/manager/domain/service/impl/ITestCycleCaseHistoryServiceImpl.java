@@ -5,7 +5,6 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class ITestCycleCaseHistoryServiceImpl implements ITestCycleCaseHistorySe
 
     @Override
     public void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
-        testCycleCaseHistoryE.forEach(v -> v.deleteSelf());
+        testCycleCaseHistoryE.forEach(TestCycleCaseHistoryE::deleteSelf);
     }
 
     @Override

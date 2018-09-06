@@ -67,8 +67,8 @@ public class DefectReporterFormE {
 	}
 
 
-	public static void populateCaseIssueLink(List<IssueLinkDTO> issueLinkDTOS, List<TestCycleCaseDTO> TestCycleCaseDTO) {
-		for (TestCycleCaseDTO caseE : TestCycleCaseDTO) {
+	public static void populateCaseIssueLink(List<IssueLinkDTO> issueLinkDTOS, List<TestCycleCaseDTO> testCycleCaseDTO) {
+		for (TestCycleCaseDTO caseE : testCycleCaseDTO) {
 			for (IssueLinkDTO link : issueLinkDTOS) {
 				if (caseE.getIssueId().equals(link.getIssueId())) {
 					caseE.addIssueLinkDTOS(link);

@@ -26,7 +26,7 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
     @Override
     public TestCycleDTO entityToDto(TestCycleE entity) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
-        BeanUtils.copyProperties(entity, testCycleDTO,new String[]{"cycleCaseList"});
+        BeanUtils.copyProperties(entity, testCycleDTO, "cycleCaseList");
         testCycleDTO.setCycleCaseList(entity.getCycleCaseList());
 
         return testCycleDTO;
@@ -35,8 +35,8 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
     @Override
     public TestCycleE doToEntity(TestCycleDO dto) {
         TestCycleE testCycleE = TestCycleEFactory.create();
-        BeanUtils.copyProperties(dto, testCycleE,new String[]{"cycleCaseList"});
-        Optional.ofNullable(dto.getCycleCaseList()).ifPresent(v->testCycleE.setCycleCaseList(v));
+        BeanUtils.copyProperties(dto, testCycleE, "cycleCaseList");
+        Optional.ofNullable(dto.getCycleCaseList()).ifPresent(testCycleE::setCycleCaseList);
 
         return testCycleE;
         }

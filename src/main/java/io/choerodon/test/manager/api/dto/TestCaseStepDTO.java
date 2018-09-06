@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
 import java.util.List;

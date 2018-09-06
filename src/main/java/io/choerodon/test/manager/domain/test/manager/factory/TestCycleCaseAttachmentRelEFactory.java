@@ -10,4 +10,7 @@ public class TestCycleCaseAttachmentRelEFactory {
     public static TestCycleCaseAttachmentRelE create() {
         return ApplicationContextHelper.getSpringFactory().getBean(TestCycleCaseAttachmentRelE.class);
     }
+
+    private TestCycleCaseAttachmentRelEFactory() {
+    }
 }

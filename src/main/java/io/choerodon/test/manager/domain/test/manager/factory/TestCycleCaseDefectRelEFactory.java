@@ -10,4 +10,7 @@ public class TestCycleCaseDefectRelEFactory {
     public static TestCycleCaseDefectRelE create() {
         return ApplicationContextHelper.getSpringFactory().getBean(TestCycleCaseDefectRelE.class);
     }
+
+    private TestCycleCaseDefectRelEFactory() {
+    }
 }

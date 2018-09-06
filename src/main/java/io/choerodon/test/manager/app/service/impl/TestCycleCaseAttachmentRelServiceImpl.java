@@ -37,15 +37,15 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(Long linkedId, String Type) {
+    public void delete(Long linkedId, String type) {
         Assert.notNull(linkedId, "error.delete.linkedId.not.null");
-        Assert.notNull(Type, "error.delete.type,not.null");
+        Assert.notNull(type, "error.delete.type,not.null");
         TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
         attachmentRelE.setAttachmentLinkId(linkedId);
-        attachmentRelE.setAttachmentType(Type);
-        Optional.ofNullable(attachmentRelE.querySelf()).ifPresent(m -> {
+        attachmentRelE.setAttachmentType(type);
+        Optional.ofNullable(attachmentRelE.querySelf()).ifPresent(m ->
             m.forEach(v -> iTestCycleCaseAttachmentRelService
-                    .delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()));
-        });
+                    .delete(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, v.getId()))
+        );
     }
 }

@@ -11,4 +11,6 @@ public class TestStatusEFactory {
         return ApplicationContextHelper.getSpringFactory().getBean(TestStatusE.class);
     }
 
+    private TestStatusEFactory() {
+    }
 }

@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

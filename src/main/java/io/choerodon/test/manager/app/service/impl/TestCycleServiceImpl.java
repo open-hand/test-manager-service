@@ -202,6 +202,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 	}
 
 
+
 	@Override
 	@Deprecated
 	public List<TestCycleDTO> filterCycleWithBar(String filter) {

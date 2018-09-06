@@ -10,4 +10,7 @@ public class TestCycleEFactory {
     public static TestCycleE create() {
         return ApplicationContextHelper.getSpringFactory().getBean(TestCycleE.class);
     }
+
+    private TestCycleEFactory() {
+    }
 }
