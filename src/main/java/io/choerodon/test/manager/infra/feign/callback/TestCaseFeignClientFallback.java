@@ -81,4 +81,14 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     public ResponseEntity<List<Long>> queryIssueIdsByOptions(Long projectId, SearchDTO searchDTO) {
         throw new CommonException(QUERY_ERROR);
     }
+
+    @Override
+    public ResponseEntity<IssueDTO> cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueSearchDTO>> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
+        throw new CommonException(CREATE_ERROR);
+    }
 }

@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
@@ -30,6 +32,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Autowired
     ITestIssueFolderService iTestIssueFolderService;
+
+    @Autowired
+    TestIssueFolderRelService testIssueFolderRelService;
 
     @Autowired
     ProductionVersionClient productionVersionClient;
@@ -57,6 +62,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO) {
+//        testIssueFolderRelService.changeIssue(testIssueFolderDTO.getProjectId(),testIssueFolderDTO.getVersionId(),);
         return ConvertHelper.convert(iTestIssueFolderService.update(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }

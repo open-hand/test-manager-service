@@ -18,6 +18,11 @@ public class ITestIssueFolderServiceRelImpl implements ITestIssueFolderRelServic
     }
 
     @Override
+    public TestIssueFolderRelE queryOne(TestIssueFolderRelE testIssueFolderRelE) {
+        return testIssueFolderRelE.queryOneIssueUnderProjectVersionFolder();
+    }
+
+    @Override
     public TestIssueFolderRelE insert(TestIssueFolderRelE testIssueFolderRelE) {
         return testIssueFolderRelE.addSelf();
     }

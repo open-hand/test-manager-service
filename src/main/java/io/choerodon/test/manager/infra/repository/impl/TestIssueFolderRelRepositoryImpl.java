@@ -28,6 +28,12 @@ public class TestIssueFolderRelRepositoryImpl implements TestIssueFolderRelRepos
     }
 
     @Override
+    public TestIssueFolderRelE queryOneIssueUnderProjectVersionFolder(TestIssueFolderRelE testIssueFolderRelE) {
+        TestIssueFolderRelDO testIssueFolderRelDO = ConvertHelper.convert(testIssueFolderRelE, TestIssueFolderRelDO.class);
+        return ConvertHelper.convert(testIssueFolderRelMapper.selectOne(testIssueFolderRelDO), TestIssueFolderRelE.class);
+    }
+
+    @Override
     public TestIssueFolderRelE insert(TestIssueFolderRelE testIssueFolderRelE) {
         Assert.notNull(testIssueFolderRelE, "error.issueFolderRel.insert.parameter.not.null");
         TestIssueFolderRelDO testIssueFolderRelDO = ConvertHelper.convert(testIssueFolderRelE, TestIssueFolderRelDO.class);
@@ -50,11 +56,8 @@ public class TestIssueFolderRelRepositoryImpl implements TestIssueFolderRelRepos
         Assert.notNull(testIssueFolderRelE, "error.issueFolderRel.update.parameter.not.null");
 
         TestIssueFolderRelDO testIssueFolderRelDO = ConvertHelper.convert(testIssueFolderRelE, TestIssueFolderRelDO.class);
-        testIssueFolderRelDO.setIssueId(null);
-        testIssueFolderRelDO.setProjectId(null);
-        testIssueFolderRelDO.setVersionId(null);
-        if (testIssueFolderRelMapper.updateByPrimaryKeySelective(testIssueFolderRelDO) != 1) {
-            throw new IssueFolderException(IssueFolderException.ERROR_INSERT,testIssueFolderRelDO.toString());
+        if (testIssueFolderRelMapper.updateFolderByIssue(testIssueFolderRelDO) != 1) {
+            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE,testIssueFolderRelDO.toString());
         }
         return ConvertHelper.convert(testIssueFolderRelMapper.selectByPrimaryKey(testIssueFolderRelDO.getId()), TestIssueFolderRelE.class);
     }

@@ -25,7 +25,7 @@ public class TestIssueFolderController {
     TestIssueFolderService testIssueFolderService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询状态")
+    @ApiOperation("查询文件夹")
     @GetMapping("/query")
     public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testIssueFolderService.getTestIssueFolder(projectId))
@@ -35,7 +35,7 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除状态")
+    @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId") Long folderId) {
@@ -46,7 +46,7 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("插入状态")
+    @ApiOperation("插入文件夹")
     @PostMapping
     public ResponseEntity<TestIssueFolderDTO> insert(@PathVariable(name = "project_id") Long projectId,
                                                      @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
@@ -57,7 +57,7 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("更新状态")
+    @ApiOperation("更新文件夹")
     @PutMapping("/update")
     public ResponseEntity<TestIssueFolderDTO> update(@PathVariable(name = "project_id") Long projectId,
                                                      @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
@@ -65,4 +65,17 @@ public class TestIssueFolderController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
     }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("移动或复制文件夹")
+    @PutMapping("/change")
+    public ResponseEntity changeFolder(@PathVariable(name = "project_id") Long projectId,
+                                       @RequestParam(name = "folder_id") Long folderId,
+                                       @RequestParam(name = "version_id") Long versionId,
+                                       @RequestParam(name = "type") String type,
+                                       @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

@@ -25,6 +25,8 @@ public class IssueInfosDTO {
 
 	private String typeCode;
 
+	private Long objectVersionNumber;
+
 	private List<LabelIssueRelDTO> labelIssueRelDTOList;
 
 	private List<ComponentIssueRelDTO> componentIssueRelDTOList;
@@ -77,6 +79,14 @@ public class IssueInfosDTO {
 		projectId = issueDTO.getProjectId();
 		statusCode = issueDTO.getStatusCode();
 		typeCode = issueDTO.getTypeCode();
+	}
+
+	public Long getObjectVersionNumber() {
+		return objectVersionNumber;
+	}
+
+	public void setObjectVersionNumber(Long objectVersionNumber) {
+		this.objectVersionNumber = objectVersionNumber;
 	}
 
 

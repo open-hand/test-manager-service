@@ -10,14 +10,15 @@ public class CustomPage<E> extends Page<E> {
     public CustomPage(List<E> content,Long[] allNumber){
         this.setContent(content);
         this.setNumberOfElements(allNumber.length);
+        this.setTotalElements(allNumber.length);
         allIdValues=allNumber;
     }
-    public Long[] getIds() {
+    public Long[] getAllIdValues() {
         return allIdValues;
     }
 
-    public void setIds(Long[] ids) {
-        this.allIdValues = ids;
+    public void setAllIdValues(Long[] allIdValues) {
+        this.allIdValues = allIdValues;
     }
 
     @Override

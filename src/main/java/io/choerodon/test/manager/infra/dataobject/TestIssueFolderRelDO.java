@@ -28,8 +28,6 @@ public class TestIssueFolderRelDO extends AuditDomain {
 
     private Long issueId;
 
-    private Long objectVersionNumber;
-
     public Long getId() {
         return id;
     }
@@ -70,13 +68,4 @@ public class TestIssueFolderRelDO extends AuditDomain {
         this.issueId = issueId;
     }
 
-    @Override
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
-    }
-
-    @Override
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
-    }
 }

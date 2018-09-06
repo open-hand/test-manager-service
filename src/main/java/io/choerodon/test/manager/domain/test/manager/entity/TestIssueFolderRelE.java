@@ -33,6 +33,10 @@ public class TestIssueFolderRelE {
         return testIssueFolderRelRepository.queryAllUnderProject(this);
     }
 
+    public TestIssueFolderRelE queryOneIssueUnderProjectVersionFolder() {
+        return testIssueFolderRelRepository.queryOneIssueUnderProjectVersionFolder(this);
+    }
+
     public TestIssueFolderRelE addSelf() {
         return testIssueFolderRelRepository.insert(this);
     }

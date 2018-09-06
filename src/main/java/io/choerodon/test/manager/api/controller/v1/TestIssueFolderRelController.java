@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
@@ -28,18 +32,33 @@ public class TestIssueFolderRelController {
     TestIssueFolderRelService testIssueFolderRelService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询状态")
-    @GetMapping("/query")
-    public ResponseEntity<List<IssueInfosDTO>> queryAllIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
-                                                                         @RequestParam(name = "folder_id", required = false) Long folderId,
-                                                                         @RequestParam(name = "version_id", required = false) Long versionId) {
-        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, versionId))
+    @ApiOperation("查询issues")
+    @PostMapping("/query")
+    public ResponseEntity queryIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
+                                                 @RequestParam(name = "folder_id", required = false) Long folderId,
+                                                 @RequestParam(name = "version_id", required = false) Long versionId,
+                                                 @RequestBody
+                                                         SearchDTO searchDTO,
+                                                 @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
+        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, versionId, searchDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除状态")
+    @ApiOperation("通过issueIds查询issues")
+    @PostMapping("/query/by/issueId")
+    public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
+                                          @RequestParam(name = "folder_id") Long folderId,
+                                          @RequestParam(name = "version_id") Long versionId,
+                                          @RequestBody Long[] issueIds) {
+        return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("删除关联")
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "id") Long id) {
@@ -72,12 +91,14 @@ public class TestIssueFolderRelController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("更新状态")
-    @PutMapping("/update")
-    public ResponseEntity<TestIssueFolderRelDTO> update(@PathVariable(name = "project_id") Long projectId,
-                                                        @RequestBody TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return Optional.ofNullable(testIssueFolderRelService.update(testIssueFolderRelDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.update"));
+    @ApiOperation("移动或复制文件夹下issue")
+    @PutMapping("/change")
+    public ResponseEntity changeIssue(@PathVariable(name = "project_id") Long projectId,
+                                      @RequestParam(name = "folder_id") Long folderId,
+                                      @RequestParam(name = "version_id") Long versionId,
+                                      @RequestParam(name = "type") String type,
+                                      @RequestBody List<IssueInfosDTO> issues) {
+        testIssueFolderRelService.changeIssue(projectId, versionId, folderId, type, issues);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

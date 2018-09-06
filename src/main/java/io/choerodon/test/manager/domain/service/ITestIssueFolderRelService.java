@@ -10,6 +10,8 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 public interface ITestIssueFolderRelService {
     List<TestIssueFolderRelE> query(TestIssueFolderRelE testIssueFolderRelE);
 
+    TestIssueFolderRelE queryOne(TestIssueFolderRelE testIssueFolderRelE);
+
     TestIssueFolderRelE insert(TestIssueFolderRelE testIssueFolderRelE);
 
     void delete(TestIssueFolderRelE testIssueFolderRelE);
