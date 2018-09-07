@@ -124,4 +124,20 @@ public interface TestCaseFeignClient {
                                                              @PathVariable(name = "versionId") Long versionId,
                                                              @ApiParam(value = "issue id", required = true)
                                                              @RequestBody List<Long> issueIds);
+
+    /**
+     * 克隆issue并将他们的version改为目标version
+     * @param projectId
+     * @param versionId
+     * @param issueIds
+     * @return
+     */
+    @PostMapping(value = "/v1/projects/{project_id}/issues/batch_clone_issue/{versionId}")
+    ResponseEntity<List<IssueSearchDTO>> batchCloneIssue(@ApiParam(value = "项目id", required = true)
+                                                           @PathVariable(name = "project_id") Long projectId,
+                                                           @ApiParam(value = "versionId", required = true)
+                                                           @PathVariable(name = "versionId") Long versionId,
+                                                           @ApiParam(value = "issueIds", required = true)
+                                                           @RequestBody Long[] issueIds);
+
 }

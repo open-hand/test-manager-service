@@ -3,10 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import io.choerodon.agile.api.dto.CopyConditionDTO;
-import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -170,9 +167,11 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO updateVersionByFolderWithNoLock(TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
+    public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO,List<Long> issues) {
+        TestIssueFolderRelDTO resTestIssueFolderRelDTO =ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+        testCaseService.batchIssueToVersion(testIssueFolderRelDTO.getProjectId(), testIssueFolderRelDTO.getVersionId(), issues);
+        return resTestIssueFolderRelDTO;
     }
 
     @Override
@@ -189,7 +188,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void moveIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
+    public void moveFolderIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         for (IssueInfosDTO issueInfosDTO : issueInfosDTOS) {
             testIssueFolderRelDTO.setObjectVersionNumber(issueInfosDTO.getObjectVersionNumber());
@@ -204,13 +203,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     @Override
     public void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
-        CopyConditionDTO copyConditionDTO = new CopyConditionDTO();
-        for (IssueInfosDTO issueInfosDTO : issueInfosDTOS) {
-            copyConditionDTO.setSummary(issueInfosDTO.getSummary());
-            //远程服务复制issue，得到远程issue的id
-            IssueDTO afterCloneIssueDTO = testCaseService.cloneIssueByIssueId(projectId, issueInfosDTO.getIssueId(), copyConditionDTO);
+        //远程服务复制issue，得到远程issue的ids
+        List<IssueSearchDTO> resIssueSearchDTOS = testCaseService.batchCloneIssue(projectId,versionId,
+                issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
+        for (IssueSearchDTO issueInfosDTO : resIssueSearchDTOS) {
             //插入issue与folder的关联
-            testIssueFolderRelDTO.setIssueId(afterCloneIssueDTO.getIssueId());
+            testIssueFolderRelDTO.setIssueId(issueInfosDTO.getIssueId());
             iTestIssueFolderRelService.insert(ConvertHelper
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }

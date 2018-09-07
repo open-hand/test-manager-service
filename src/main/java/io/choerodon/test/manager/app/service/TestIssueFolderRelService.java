@@ -29,11 +29,11 @@ public interface TestIssueFolderRelService {
 
     TestIssueFolderRelDTO updateFolderByIssue(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    void moveIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
+    void moveFolderIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
 
     void copyIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
 
-    TestIssueFolderRelDTO updateVersionByFolderWithNoLock(TestIssueFolderRelDTO testIssueFolderRelDTO);
+    TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO,List<Long> issues);
 
     List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 }

@@ -71,9 +71,8 @@ public class TestIssueFolderController {
     @PutMapping("/copy")
     public ResponseEntity<TestIssueFolderDTO> copyFolder(@PathVariable(name = "project_id") Long projectId,
                                      @RequestParam(name = "folder_id") Long folderId,
-                                     @RequestParam(name = "version_id") Long versionId,
-                                     @RequestBody List<IssueInfosDTO> issues) {
-        return Optional.ofNullable(testIssueFolderService.copyFolder(projectId,versionId,folderId,issues))
+                                     @RequestParam(name = "version_id") Long versionId) {
+        return Optional.ofNullable(testIssueFolderService.copyFolder(projectId,versionId,folderId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.copy"));
     }

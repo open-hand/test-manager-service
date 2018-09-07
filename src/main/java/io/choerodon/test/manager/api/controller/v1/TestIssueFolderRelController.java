@@ -97,7 +97,7 @@ public class TestIssueFolderRelController {
                                     @RequestParam(name = "folder_id") Long folderId,
                                     @RequestParam(name = "version_id") Long versionId,
                                     @RequestBody List<IssueInfosDTO> issues) {
-        testIssueFolderRelService.moveIssue(projectId, versionId, folderId, issues);
+        testIssueFolderRelService.moveFolderIssue(projectId, versionId, folderId, issues);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

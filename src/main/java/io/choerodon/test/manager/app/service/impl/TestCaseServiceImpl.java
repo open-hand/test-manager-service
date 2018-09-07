@@ -181,4 +181,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.cloneIssueByIssueId.param.projectId.not.be.null");
         return testCaseFeignClient.cloneIssueByIssueId(projectId,issueId,copyConditionDTO).getBody();
     }
+
+    @Override
+    public List<IssueSearchDTO> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {
+        Assert.notNull(projectId, "error.TestCaseService.batchCloneIssue.param.projectId.not.be.null");
+        return testCaseFeignClient.batchCloneIssue(projectId,versionId,issueIds).getBody();
+    }
 }

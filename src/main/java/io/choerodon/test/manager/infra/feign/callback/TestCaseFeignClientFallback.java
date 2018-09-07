@@ -89,6 +89,11 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<List<IssueSearchDTO>> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
+        throw new CommonException(UPDATE_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueSearchDTO>> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {
         throw new CommonException(CREATE_ERROR);
     }
 }

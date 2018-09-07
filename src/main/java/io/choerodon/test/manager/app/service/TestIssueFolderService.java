@@ -22,7 +22,7 @@ public interface TestIssueFolderService {
 
     Long getDefaultFolderId(Long projectId, Long versionId);
 
-    TestIssueFolderDTO copyFolder(Long projectId, Long folderId, Long versionId, List<IssueInfosDTO> issues);
+    TestIssueFolderDTO copyFolder(Long projectId, Long folderId, Long versionId);
 
     TestIssueFolderDTO moveFolder(Long projectId, TestIssueFolderDTO testIssueFolderDTO);
 }
