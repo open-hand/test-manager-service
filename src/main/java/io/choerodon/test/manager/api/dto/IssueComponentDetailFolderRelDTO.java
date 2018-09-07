@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.api.dto;
 
-import java.lang.reflect.Field;
-
 import io.choerodon.agile.api.dto.IssueComponentDetailDTO;
 import org.springframework.beans.BeanUtils;
 

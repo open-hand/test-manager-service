@@ -54,27 +54,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
             return new Page<>();
         }
-        //构造一些必要的数据传给listIssueWithoutSubDetail方法
-        //构造SearchDTO
-//        SearchDTO needSearchDTO = new SearchDTO();
-//        Map needArgs = new HashMap();
-//        needArgs.put("issueIds", issueIds);
-//        needSearchDTO.setOtherArgs(needArgs);
-//        //构造分页参数
-//        PageRequest needPageRequest = new PageRequest();
-//        needPageRequest.setPage(0);
-//        needPageRequest.setSize(9999999);
-//        needPageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
         List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
-//        List<IssueComponentDetailDTO> issueComponentDetailDTOS = testCaseService.listIssueWithoutSubDetail(projectId, needSearchDTO, needPageRequest).getBody().stream().collect(Collectors.toList());
         Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true);
-//        for (IssueComponentDetailDTO issueComponentDetailDTO : issueComponentDetailDTOS) {
         for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null) {
                 //构造方法中设置不了ObjectVersionNumber的值--待解决
                 IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(resultRelDTO.getObjectVersionNumber(), map.get(resultRelDTO.getIssueId()));
-                //                if (resultRelDTO.getIssueId().equals(issueComponentDetailDTO.getIssueId())) {
-                //                    IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(resultRelDTO.getObjectVersionNumber(), issueComponentDetailDTO);
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
