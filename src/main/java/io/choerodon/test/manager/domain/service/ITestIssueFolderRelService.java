@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service;
 
 import java.util.List;
 
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 
 /**
@@ -18,4 +19,7 @@ public interface ITestIssueFolderRelService {
 
     TestIssueFolderRelE update(TestIssueFolderRelE testIssueFolderRelE);
 
+    TestIssueFolderRelE updateFolderByIssue(TestIssueFolderRelE testIssueFolderRelE);
+
+    TestIssueFolderRelE updateVersionByFolderWithNoLock(TestIssueFolderRelE testIssueFolderRelE);
 }

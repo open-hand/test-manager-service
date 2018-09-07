@@ -34,4 +34,11 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             }
         }
     }
+
+    changeSet(author: 'zongwei.li@hang-china.com', id: '2018-08-30-add-idx_project_id_issue_id') {
+        createIndex(indexName: 'idx_project_id_issue_id', tableName: 'test_cycle_case_defect_rel', unique: false) {
+            column(name: 'project_id')
+            column(name: 'issue_id')
+        }
+    }
 }

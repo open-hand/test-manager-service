@@ -17,4 +17,8 @@ public interface ITestIssueFolderService {
     TestIssueFolderE update(TestIssueFolderE testIssueFolderE);
 
     TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE);
+
+    TestIssueFolderE queryByPrimaryKey(TestIssueFolderE testIssueFolderE);
+
+    TestIssueFolderE updateWithNoType(TestIssueFolderE testIssueFolderE);
 }

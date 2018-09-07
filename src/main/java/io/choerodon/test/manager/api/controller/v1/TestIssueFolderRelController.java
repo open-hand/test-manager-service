@@ -49,7 +49,7 @@ public class TestIssueFolderRelController {
     @ApiOperation("通过issueIds查询issues")
     @PostMapping("/query/by/issueId")
     public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
-                                          @RequestParam(name = "folder_id") Long folderId,
+                                          @RequestParam(name = "folder_id",required = false) Long folderId,
                                           @RequestParam(name = "version_id") Long versionId,
                                           @RequestBody Long[] issueIds) {
         return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds))
@@ -91,14 +91,24 @@ public class TestIssueFolderRelController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("移动或复制文件夹下issue")
-    @PutMapping("/change")
-    public ResponseEntity changeIssue(@PathVariable(name = "project_id") Long projectId,
-                                      @RequestParam(name = "folder_id") Long folderId,
-                                      @RequestParam(name = "version_id") Long versionId,
-                                      @RequestParam(name = "type") String type,
-                                      @RequestBody List<IssueInfosDTO> issues) {
-        testIssueFolderRelService.changeIssue(projectId, versionId, folderId, type, issues);
+    @ApiOperation("移动文件夹下issue")
+    @PutMapping("/move")
+    public ResponseEntity moveIssue(@PathVariable(name = "project_id") Long projectId,
+                                    @RequestParam(name = "folder_id") Long folderId,
+                                    @RequestParam(name = "version_id") Long versionId,
+                                    @RequestBody List<IssueInfosDTO> issues) {
+        testIssueFolderRelService.moveIssue(projectId, versionId, folderId, issues);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("复制文件夹下issue")
+    @PutMapping("/copy")
+    public ResponseEntity copyIssue(@PathVariable(name = "project_id") Long projectId,
+                                    @RequestParam(name = "folder_id") Long folderId,
+                                    @RequestParam(name = "version_id") Long versionId,
+                                    @RequestBody List<IssueInfosDTO> issues) {
+        testIssueFolderRelService.copyIssue(projectId, versionId, folderId, issues);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

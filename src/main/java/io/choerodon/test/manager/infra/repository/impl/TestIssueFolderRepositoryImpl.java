@@ -34,6 +34,12 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
     }
 
     @Override
+    public TestIssueFolderE queryByPrimaryKey(Long folderId) {
+        return ConvertHelper.convert(testIssueFolderMapper.selectByPrimaryKey(folderId), TestIssueFolderE.class);
+    }
+
+
+    @Override
     public TestIssueFolderE insert(TestIssueFolderE testIssueFolderE) {
         Assert.notNull(testIssueFolderE, "error.issueFolder.insert.parameter.not.null");
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
@@ -56,10 +62,8 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
         Assert.notNull(testIssueFolderE, "error.issueFolder.update.parameter.not.null");
 
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
-        testIssueFolderDO.setProjectId(null);
-        testIssueFolderDO.setVersionId(null);
         if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDO) != 1) {
-            throw new IssueFolderException(IssueFolderException.ERROR_INSERT,testIssueFolderDO.toString());
+            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE,testIssueFolderDO.toString());
         }
         return ConvertHelper.convert(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDO.getFolderId()), TestIssueFolderE.class);
     }

@@ -27,5 +27,13 @@ public interface TestIssueFolderRelService {
 
     TestIssueFolderRelDTO update(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    void changeIssue(Long projectId, Long versionId, Long folderId, String type, List<IssueInfosDTO> issueInfosDTOS);
+    TestIssueFolderRelDTO updateFolderByIssue(TestIssueFolderRelDTO testIssueFolderRelDTO);
+
+    void moveIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
+
+    void copyIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
+
+    TestIssueFolderRelDTO updateVersionByFolderWithNoLock(TestIssueFolderRelDTO testIssueFolderRelDTO);
+
+    List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 }

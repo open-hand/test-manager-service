@@ -17,4 +17,8 @@ public interface TestIssueFolderRelRepository {
 	List<TestIssueFolderRelE> queryAllUnderProject(TestIssueFolderRelE testIssueFolderRelE);
 
 	TestIssueFolderRelE queryOneIssueUnderProjectVersionFolder(TestIssueFolderRelE testIssueFolderRelE);
+
+	TestIssueFolderRelE updateFolderByIssue(TestIssueFolderRelE testIssueFolderRelE);
+
+	TestIssueFolderRelE updateVersionByFolderWithNoLock(TestIssueFolderRelE testIssueFolderRelE);
 }

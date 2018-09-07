@@ -36,10 +36,19 @@ public class ITestIssueFolderServiceImpl implements ITestIssueFolderService {
     public TestIssueFolderE update(TestIssueFolderE testIssueFolderE) {
         return testIssueFolderE.validateType().updateSelf();
     }
+    @Override
+    public TestIssueFolderE updateWithNoType(TestIssueFolderE testIssueFolderE) {
+        return testIssueFolderE.updateSelf();
+    }
 
     @Override
     public TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE) {
         return testIssueFolderE.queryOne(testIssueFolderE);
+    }
+
+    @Override
+    public TestIssueFolderE queryByPrimaryKey(TestIssueFolderE testIssueFolderE) {
+        return testIssueFolderE.queryByPrimaryKey(testIssueFolderE.getFolderId());
     }
 
 }

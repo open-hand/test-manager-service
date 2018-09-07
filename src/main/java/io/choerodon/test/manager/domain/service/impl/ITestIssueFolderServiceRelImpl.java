@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import java.util.List;
 
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,16 @@ public class ITestIssueFolderServiceRelImpl implements ITestIssueFolderRelServic
     @Override
     public TestIssueFolderRelE update(TestIssueFolderRelE testIssueFolderRelE) {
         return testIssueFolderRelE.updateSelf();
+    }
+
+    @Override
+    public TestIssueFolderRelE updateFolderByIssue(TestIssueFolderRelE testIssueFolderRelE) {
+        return testIssueFolderRelE.updateFolderByIssue();
+    }
+
+    @Override
+    public TestIssueFolderRelE updateVersionByFolderWithNoLock(TestIssueFolderRelE testIssueFolderRelE) {
+        return testIssueFolderRelE.updateVersionByFolderWithNoLock();
     }
 
 }

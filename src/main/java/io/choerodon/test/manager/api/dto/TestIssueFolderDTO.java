@@ -16,6 +16,18 @@ public class TestIssueFolderDTO {
 
     private Long objectVersionNumber;
 
+    public TestIssueFolderDTO() {
+    }
+
+    public TestIssueFolderDTO(Long folderId, String name, Long versionId, Long projectId, String type, Long objectVersionNumber) {
+        this.folderId = folderId;
+        this.name = name;
+        this.versionId = versionId;
+        this.projectId = projectId;
+        this.type = type;
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
     public TestCycleDTO transferToCycle() {
 
         TestCycleDTO testCycleDTO = new TestCycleDTO();

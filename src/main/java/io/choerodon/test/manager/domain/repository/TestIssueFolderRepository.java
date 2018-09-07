@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.repository;
 
 import java.util.List;
 
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
 /**
@@ -17,4 +18,6 @@ public interface TestIssueFolderRepository {
 	List<TestIssueFolderE> queryAllUnderProject(TestIssueFolderE testIssueFolderE);
 
 	TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE);
+
+	TestIssueFolderE queryByPrimaryKey(Long folderId);
 }

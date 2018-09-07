@@ -8,4 +8,6 @@ import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
  */
 public interface TestIssueFolderRelMapper extends BaseMapper<TestIssueFolderRelDO> {
     int updateFolderByIssue(TestIssueFolderRelDO testIssueFolderRelDO);
+
+    int updateVersionByFolderWithNoLock(TestIssueFolderRelDO testIssueFolderRelDO);
 }

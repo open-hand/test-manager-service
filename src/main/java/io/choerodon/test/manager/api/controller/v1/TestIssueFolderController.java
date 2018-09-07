@@ -1,11 +1,13 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.swagger.annotations.ApiOperation;
@@ -39,9 +41,7 @@ public class TestIssueFolderController {
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId") Long folderId) {
-        TestIssueFolderDTO dto = new TestIssueFolderDTO();
-        dto.setFolderId(folderId);
-        testIssueFolderService.delete(dto);
+        testIssueFolderService.delete(folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -67,15 +67,24 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("移动或复制文件夹")
-    @PutMapping("/change")
-    public ResponseEntity changeFolder(@PathVariable(name = "project_id") Long projectId,
-                                       @RequestParam(name = "folder_id") Long folderId,
-                                       @RequestParam(name = "version_id") Long versionId,
-                                       @RequestParam(name = "type") String type,
-                                       @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @ApiOperation("复制文件夹")
+    @PutMapping("/copy")
+    public ResponseEntity<TestIssueFolderDTO> copyFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestParam(name = "folder_id") Long folderId,
+                                     @RequestParam(name = "version_id") Long versionId,
+                                     @RequestBody List<IssueInfosDTO> issues) {
+        return Optional.ofNullable(testIssueFolderService.copyFolder(projectId,versionId,folderId,issues))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testIssueFolder.copy"));
     }
 
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("移动文件夹")
+    @PutMapping("/move")
+    public ResponseEntity<TestIssueFolderDTO> moveFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestBody TestIssueFolderDTO testIssueFolderDTO){
+        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId,testIssueFolderDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
+    }
 }

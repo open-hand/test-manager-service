@@ -23,4 +23,13 @@
         AND
         object_version_number = #{objectVersionNumber}
     </update>
+
+    <update id="updateVersionByFolderWithNoLock" parameterType="io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO">
+        UPDATE
+        test_issue_folder_rel
+        SET
+        version_id = #{versionId}
+        WHERE
+        folder_id = #{folderId}
+    </update>
 </mapper>

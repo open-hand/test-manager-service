@@ -38,6 +38,10 @@ public class TestIssueFolderE {
         return testIssueFolderRepository.queryOne(testIssueFolderE);
     }
 
+    public TestIssueFolderE queryByPrimaryKey(Long folderId){
+        return testIssueFolderRepository.queryByPrimaryKey(folderId);
+    }
+
     public List<TestIssueFolderE> queryAllUnderProject() {
         return testIssueFolderRepository.queryAllUnderProject(this);
     }

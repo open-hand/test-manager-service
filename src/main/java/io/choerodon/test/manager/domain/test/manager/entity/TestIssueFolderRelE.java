@@ -45,6 +45,14 @@ public class TestIssueFolderRelE {
         return testIssueFolderRelRepository.update(this);
     }
 
+    public TestIssueFolderRelE updateFolderByIssue(){
+        return testIssueFolderRelRepository.updateFolderByIssue(this);
+    }
+
+    public TestIssueFolderRelE updateVersionByFolderWithNoLock(){
+        return testIssueFolderRelRepository.updateVersionByFolderWithNoLock(this);
+    }
+
     public void deleteSelf() {
         testIssueFolderRelRepository.delete(this);
     }

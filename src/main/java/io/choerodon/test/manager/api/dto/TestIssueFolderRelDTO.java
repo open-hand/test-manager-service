@@ -16,6 +16,17 @@ public class TestIssueFolderRelDTO {
 
     private Long objectVersionNumber;
 
+    public TestIssueFolderRelDTO() {
+    }
+
+    public TestIssueFolderRelDTO(Long folderId, Long versionId, Long projectId, Long issueId, Long objectVersionNumber) {
+        this.folderId = folderId;
+        this.versionId = versionId;
+        this.projectId = projectId;
+        this.issueId = issueId;
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
     public Long getId() {
         return id;
     }
