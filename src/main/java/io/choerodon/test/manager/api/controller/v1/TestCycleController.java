@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -80,7 +81,7 @@ public class TestCycleController {
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("查询version下的测试循环")
+	@ApiOperation("查询project下的测试循环")
 	@GetMapping("/query")
 	ResponseEntity getTestCycle(@PathVariable(name = "project_id") Long projectId) {
 		return Optional.ofNullable(testCycleService.getTestCycle(projectId))
@@ -133,16 +134,16 @@ public class TestCycleController {
 
 	}
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("通过versionId获取目录下所有的循环")
-	@PostMapping("/query/cycle/versionId/{versionId}")
-	ResponseEntity getCyclesByVersionId(@PathVariable(name = "project_id") Long projectId,
-										@PathVariable(name = "versionId") Long versionId) {
-		return Optional.ofNullable(testCycleService.getCyclesByVersionId(versionId))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.testCycle.query.getCyclesByVersionId"));
-
-	}
+//	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//	@ApiOperation("通过versionId获取目录下所有的循环")
+//	@PostMapping("/query/cycle/versionId/{versionId}")
+//	ResponseEntity getCyclesByVersionId(@PathVariable(name = "project_id") Long projectId,
+//										@PathVariable(name = "versionId") Long versionId) {
+//		return Optional.ofNullable(testCycleService.getCyclesByVersionId(versionId))
+//				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//				.orElseThrow(() -> new CommonException("error.testCycle.query.getCyclesByVersionId"));
+//
+//	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("通过cycleId获取目录下所有的文件夹")
@@ -154,4 +155,49 @@ public class TestCycleController {
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getFolderByCycleId"));
 
 	}
+
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("同步文件夹")
+	@PostMapping("/synchro/folder/{folderId}/in/{cycleId}")
+	ResponseEntity synchroFolder(@PathVariable(name = "project_id") Long projectId,
+									  @PathVariable(name = "cycleId") Long cycleId,
+								 @PathVariable(name = "folderId") Long folderId
+	) {
+		Assert.notNull(folderId,"error.folderId.not.be.null");
+		Assert.notNull(cycleId,"error.cycleId.not.be.null");
+		testCycleService.synchroFolder(cycleId,folderId,projectId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("同步cycleId下文件夹")
+	@PostMapping("/synchro/folder/all/in/cycle/{cycleId}")
+	ResponseEntity synchroFolder(@PathVariable(name = "project_id") Long projectId,
+								 @PathVariable(name = "cycleId") Long cycleId
+	) {
+		Assert.notNull(cycleId,"error.cycleId.not.be.null");
+		testCycleService.synchroFolderInCycle(cycleId,projectId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("同步versionId下文件夹")
+	@PostMapping("/synchro/folder/all/in/version/{versionId}")
+	ResponseEntity synchroFolderInVersion(@PathVariable(name = "project_id") Long projectId,
+								 @PathVariable(name = "versionId") Long versionId
+	) {
+		Assert.notNull(versionId,"error.versionId.not.be.null");
+		testCycleService.synchroFolderInVersion(versionId,projectId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+//	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//	@ApiOperation("修复文件夹接口")
+//	@PostMapping("/fix")
+//	ResponseEntity synchroFolder(@PathVariable(name = "project_id") Long projectId) {
+//
+//		return Optional.ofNullable(testCycleService.fixFolder(projectId))
+//				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//				.orElseThrow(() -> new CommonException("error.testCycle.synchro"));
+//
+//	}
 }

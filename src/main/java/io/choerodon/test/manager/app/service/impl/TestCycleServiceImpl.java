@@ -6,13 +6,16 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.UserDO;
 
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -23,9 +26,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -44,20 +49,95 @@ public class TestCycleServiceImpl implements TestCycleService {
 	@Autowired
 	UserService userService;
 
+	@Autowired
+	TestIssueFolderRelService testIssueFolderRelService;
+
+	@Autowired
+	TestCycleCaseService testCycleCaseService;
+
 	private static final String NODE_CHILDREN = "children";
 
+	/**新建cycle，folder 并同步folder下的执行
+	 * @param testCycleDTO
+	 * @return
+	 */
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
-		return ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+		TestCycleDTO cycleDTO=ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+		if(testCycleDTO.getFolderId()!=null){
+			TestIssueFolderRelE folder= TestIssueFolderRelEFactory.create();
+			folder.setFolderId(testCycleDTO.getFolderId());
+			List<TestIssueFolderRelE> list=folder.queryAllUnderProject();
+			TestCycleCaseDTO dto=new TestCycleCaseDTO();
+			dto.setCycleId(cycleDTO.getCycleId());
+			list.forEach(v->{
+				dto.setIssueId(v.getIssueId());
+				testCycleCaseService.create(dto,v.getProjectId());
+			});
+		}
+		return cycleDTO;
+	}
 
+	/** 同步文件夹下的所有执行
+	 * @param cycleId
+	 * @param folderId
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean synchroFolder(Long cycleId,Long folderId,Long projectId){
+		//获取folder下所有issue
+		TestIssueFolderRelE folder= TestIssueFolderRelEFactory.create();
+		folder.setFolderId(folderId);
+		List<TestIssueFolderRelE> list=Optional.ofNullable(folder.queryAllUnderProject()).orElseGet(ArrayList::new);
+		Set<Long> folderIssues=list.stream().map(TestIssueFolderRelE::getIssueId).collect(Collectors.toSet());
+		//获取cycle下所有issue执行
+		TestCycleCaseE cycleCaseE= TestCycleCaseEFactory.create();
+		cycleCaseE.setCycleId(cycleId);
+		List<TestCycleCaseE> caseList=Optional.ofNullable(cycleCaseE.querySelf()).orElseGet(ArrayList::new);
+		Set<Long> caseIssues=caseList.stream().map(TestCycleCaseE::getIssueId).collect(Collectors.toSet());
+		//对比执行和folder中的issue添加未添加的执行
+		TestCycleCaseDTO dto=new TestCycleCaseDTO();
+		dto.setCycleId(cycleId);
+		folderIssues.forEach(v->{
+			if(!caseIssues.contains(v)){
+				dto.setIssueId(v);
+				testCycleCaseService.create(dto,projectId);
+			}
+		});
+		return true;
+	}
+
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean synchroFolderInCycle(Long cycleId,Long projectId){
+		//查询cycle下所有关联folder
+		TestCycleE cycleE= TestCycleEFactory.create();
+		cycleE.setParentCycleId(cycleId);
+		List<TestCycleE> list=cycleE.querySelf();
+		if(!ObjectUtils.isEmpty(list)){
+			list.forEach(v->synchroFolder(v.getCycleId(),v.getFolderId(),projectId));
+		}
+		return true;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public boolean synchroFolderInVersion(Long versionId, Long projectId) {
+		TestCycleE cycleE= TestCycleEFactory.create();
+		cycleE.setVersionId(versionId);
+		List<TestCycleE> list=cycleE.querySelf();
+		if(!ObjectUtils.isEmpty(list)){
+			list.forEach(v->synchroFolderInCycle(v.getCycleId(),projectId));
+		}
+		return true;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public void delete(TestCycleDTO testCycleDTO, Long projectId) {
 		iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId);
-
 	}
 
 	@Transactional(rollbackFor = Exception.class)
@@ -169,6 +249,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		Optional.ofNullable(testCycleDTO.getCreatedUser()).ifPresent(v ->
 				version.put("createdUser", JSONObject.toJSON(v))
 		);
+		version.put("folderId",testCycleDTO.getFolderId());
 		version.put("toDate", testCycleDTO.getToDate());
 		version.put("fromDate", testCycleDTO.getFromDate());
 		version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
@@ -305,4 +386,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 		cycle.setVersionName(map.get(cycle.getVersionId()).getName());
 		cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
 	}
+
+	/** 修复cycle的folder类型和issusefolder的关联关系
+	 * @param projectId
+	 */
+//	@Override
+//	public void fixFolder(Long projectId){
+//
+//	}
 }

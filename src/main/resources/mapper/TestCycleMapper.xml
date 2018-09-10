@@ -15,6 +15,7 @@
         <id column="version_id" property="versionId"/>
         <id column="description" property="description"/>
         <id column="build" property="build"/>
+        <id column="folder_id" property="folderId"></id>
         <id column="environment" property="environment"/>
         <id column="from_date" property="fromDate"/>
         <id column="to_date" property="toDate"/>
@@ -52,6 +53,7 @@
         SELECT
         cycle1.cycle_id,
         cycle1.parent_cycle_id,
+        cycle1.folder_id,
         cycle1.cycle_name,
         cycle1.type,
         cycle1.version_id,

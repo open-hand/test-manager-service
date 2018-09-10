@@ -41,6 +41,8 @@ public class TestCycleDO extends AuditDomain {
 
     private String type;
 
+    private Long folderId;
+
     @Transient
     private List<Map<String, Object>> cycleCaseList;
 
@@ -130,5 +132,13 @@ public class TestCycleDO extends AuditDomain {
 
     public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
         this.cycleCaseList = cycleCaseList;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 }

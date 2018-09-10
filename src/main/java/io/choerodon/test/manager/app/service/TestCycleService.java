@@ -18,6 +18,12 @@ import java.util.Map;
 public interface TestCycleService {
 	TestCycleDTO insert(TestCycleDTO testCycleDTO);
 
+	boolean synchroFolder(Long cycleId,Long folderId,Long projectId);
+
+	boolean synchroFolderInCycle(Long cycleId,Long projectId);
+
+	boolean synchroFolderInVersion(Long versionId,Long projectId);
+
 	void delete(TestCycleDTO testCycleDTO, Long projectId);
 
 	TestCycleDTO update(TestCycleDTO testCycleDTO);

@@ -230,11 +230,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 	private void populateUsers(List<TestCycleCaseDTO> users) {
 		List<Long> usersId = new ArrayList<>();
 		users.stream().forEach(v -> {
-			usersId.add(v.getAssignedTo());
-			usersId.add(v.getLastUpdatedBy());
+			Optional.ofNullable(v.getAssignedTo()).ifPresent(usersId::add);
+			Optional.ofNullable(v.getLastUpdatedBy()).ifPresent(usersId::add);
 		});
-		usersId.stream().filter(v -> !v.equals(Long.valueOf(0))).distinct().collect(Collectors.toList());
-		if (!usersId.isEmpty()) {
+		List<Long> ids=usersId.stream().distinct().filter(v -> !v.equals(Long.valueOf(0))).collect(Collectors.toList());
+		if (!ObjectUtils.isEmpty(ids)) {
 			Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
 			users.forEach(v -> {
 				Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(v::setAssigneeUser);

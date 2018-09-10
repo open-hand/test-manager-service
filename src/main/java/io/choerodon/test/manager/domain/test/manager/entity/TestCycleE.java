@@ -49,6 +49,8 @@ public class TestCycleE {
 
 	private CountMap cycleCaseList;
 
+    private Long folderId;
+
     @Autowired
     TestCycleRepository testCycleRepository;
 
@@ -78,6 +80,7 @@ public class TestCycleE {
 		fromDate = Optional.ofNullable(fromDate).orElse(proto.getFromDate());
 		toDate = Optional.ofNullable(toDate).orElse(proto.getToDate());
 		type = Optional.ofNullable(type).orElse(proto.getType());
+		folderId = Optional.ofNullable(folderId).orElse(proto.getFolderId());
 		return addSelf();
 	}
 
@@ -240,4 +243,11 @@ public class TestCycleE {
 		}
 	}
 
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
 }
