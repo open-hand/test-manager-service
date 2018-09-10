@@ -3,7 +3,9 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import io.choerodon.agile.api.dto.*;
+import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.IssueDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -152,8 +154,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO,List<Long> issues) {
-        TestIssueFolderRelDTO resTestIssueFolderRelDTO =ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
+    public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO, List<Long> issues) {
+        TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
         testCaseService.batchIssueToVersion(testIssueFolderRelDTO.getProjectId(), testIssueFolderRelDTO.getVersionId(), issues);
         return resTestIssueFolderRelDTO;
@@ -187,9 +189,10 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+        TestIssueFolderRelDTO testIssueFolderRelDTO;
+        testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
-        List<Long> issuesId = testCaseService.batchCloneIssue(projectId,versionId,
+        List<Long> issuesId = testCaseService.batchCloneIssue(projectId, versionId,
                 issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
         for (Long id : issuesId) {
             //插入issue与folder的关联

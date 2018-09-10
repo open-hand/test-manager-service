@@ -19,6 +19,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -40,14 +41,25 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     TestIssueFolderRelService testIssueFolderRelService;
 
     @Autowired
-    ProductionVersionClient productionVersionClient;
+    TestCaseService testCaseService;
+
+    private final ProductionVersionClient productionVersionClient;
 
     @Autowired
-    TestCaseService testCaseService;
+    public TestIssueFolderServiceImpl(ProductionVersionClient productionVersionClient) {
+        this.productionVersionClient = productionVersionClient;
+    }
 
 
     @Override
     public List<TestIssueFolderDTO> query(TestIssueFolderDTO testIssueFolderDTO) {
+        return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
+                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    }
+
+    @Override
+    public List<TestIssueFolderDTO> queryByVersion(Long projectId,Long versionId){
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,versionId,projectId,null,null);
         return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }
@@ -137,7 +149,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             issueInfosDTO.setIssueId(resTestIssueFolderRelDTO.getIssueId());
             issueInfosDTOS.add(issueInfosDTO);
         }
-        testIssueFolderRelService.copyIssue(projectId, versionId, folderId, issueInfosDTOS);
+        testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderDTO.getFolderId(), issueInfosDTOS);
         return returnTestIssueFolderDTO;
     }
 

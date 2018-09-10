@@ -37,6 +37,17 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询文件夹")
+    @GetMapping("/query/{versionId}")
+    public ResponseEntity<List<TestIssueFolderDTO>> queryByVersion(@PathVariable(name = "project_id") Long projectId,
+                                         @PathVariable(name = "versionId") Long versionId) {
+        return Optional.ofNullable(testIssueFolderService.queryByVersion(projectId,versionId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
+
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,

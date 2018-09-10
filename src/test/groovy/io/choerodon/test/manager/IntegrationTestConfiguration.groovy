@@ -1,16 +1,21 @@
 package io.choerodon.test.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
-
+import io.choerodon.asgard.saga.feign.SagaClient
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
+import io.choerodon.test.manager.app.service.impl.TestIssueFolderServiceImpl
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -24,10 +29,13 @@ import spock.mock.DetachedMockFactory
 
 import javax.annotation.PostConstruct
 
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+
 /**
  * Created by hailuoliu@choerodon.io on 2018/7/13.
  */
 @TestConfiguration
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(LiquibaseConfig)
 class IntegrationTestConfiguration {
 
@@ -47,6 +55,12 @@ class IntegrationTestConfiguration {
     @Bean
     KafkaTemplate kafkaTemplate() {
         detachedMockFactory.Mock(KafkaTemplate)
+    }
+
+    @Bean("testIssueFolderServiceImpl")
+    @Primary
+    TestIssueFolderServiceImpl issueAttachmentService() {
+        new TestIssueFolderServiceImpl(detachedMockFactory.Mock(productionVersionClient))
     }
 
     @PostConstruct
