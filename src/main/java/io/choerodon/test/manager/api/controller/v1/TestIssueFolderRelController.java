@@ -50,7 +50,7 @@ public class TestIssueFolderRelController {
     @PostMapping("/query/by/issueId")
     public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
                                           @RequestParam(name = "folder_id",required = false) Long folderId,
-                                          @RequestParam(name = "version_id") Long versionId,
+                                          @RequestParam(name = "version_id",required = false) Long versionId,
                                           @RequestBody Long[] issueIds) {
         return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -58,13 +58,11 @@ public class TestIssueFolderRelController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除关联")
-    @DeleteMapping("/{id}")
+    @ApiOperation("删除文件夹下的issue")
+    @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "id") Long id) {
-        TestIssueFolderRelDTO dto = new TestIssueFolderRelDTO();
-        dto.setId(id);
-        testIssueFolderRelService.delete(dto);
+                                 @RequestParam(name = "issuesId") List<Long> issuesId) {
+        testIssueFolderRelService.delete(projectId,issuesId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

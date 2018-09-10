@@ -5,6 +5,7 @@ import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestStatusDTO
 import io.choerodon.test.manager.app.service.TestStatusService
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,10 +47,10 @@ class TestStatusControllerSpec extends Specification {
         status.setStatusType(TestStatusE.STATUS_TYPE_CASE)
         status.setProjectId(projectId)
         TestStatusDTO status1 = new TestStatusDTO()
-        status1.setStatusId(1l)
+        def info = null
 
         when: '向插入issues的接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/status', status, TestStatusDTO)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/status', status, TestStatusDTO, projectId)
         then:
         entity.statusCode.is2xxSuccessful()
 
@@ -59,11 +60,19 @@ class TestStatusControllerSpec extends Specification {
 
         and: '设置值'
         statusId.add(entity.body.statusId)
+        status1.setStatusId(statusId[0])
 
         when: '向插入issues的接口发请求'
-        restTemplate.postForEntity('/v1/projects/{project_id}/status', status1, TestStatusDTO)
-        then:
-        thrown(CommonException)
+        try {
+            restTemplate.postForEntity('/v1/projects/{project_id}/status', status1, TestStatusDTO, projectId)
+        } catch (Exception e) {
+            info = e
+        }
+
+        then: '返回值'
+        if (info != null) {
+            StringUtils.equals(info.toString(),"error.status.insert.statusId.should.be.null")
+        }
     }
 
     def "Query"() {
@@ -74,7 +83,7 @@ class TestStatusControllerSpec extends Specification {
         status.setStatusType(TestStatusE.STATUS_TYPE_CASE)
 
         when: '向查询issues的接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/status', status, List)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/status/query', status, List, projectId)
 
         then:
         entity.statusCode.is2xxSuccessful()
@@ -101,24 +110,24 @@ class TestStatusControllerSpec extends Specification {
         exceptionStatus.setStatusName("修改名字异常")
 
         when: '向修改issues的接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, statusNew)
+        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, statusNew, projectId)
 
         then: '返回值'
-        TestStatusDTO testStatusDTO = testStatusMapper.selectByPrimaryKey(statusId[0])
+        TestStatusDO testStatusDO = testStatusMapper.selectByPrimaryKey(statusId[0])
 
         expect: '验证更新是否成功'
-        testStatusDTO.statusType == TestStatusE.STATUS_TYPE_CASE
-        testStatusDTO.description == "修改描述"
-        testStatusDTO.statusName == "修改名字"
-        testStatusDTO.statusColor == "rgba(0,191,165,31)"
-        testStatusDTO.objectVersionNumber == 2L
+        testStatusDO.statusType == TestStatusE.STATUS_TYPE_CASE
+        testStatusDO.description == "修改描述"
+        testStatusDO.statusName == "修改名字"
+        testStatusDO.statusColor == "rgba(0,191,165,31)"
+        testStatusDO.objectVersionNumber == 2L
 
 //        when:
 //        TestStatusDTO status2 = testStatusService.update(statusNew)
 //        then:
 //        StringUtils.equals(status2.getStatusName(), "修改名字")
         when: '向修改issues的接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, exceptionStatus)
+        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, exceptionStatus, projectId)
         then:
         thrown(CommonException)
     }
@@ -134,6 +143,6 @@ class TestStatusControllerSpec extends Specification {
         statusDelete.setProjectId(projectId)
 
         expect:
-        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', TestStatusDTO, statusDelete)
+        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', TestStatusDTO, statusDelete, projectId)
     }
 }

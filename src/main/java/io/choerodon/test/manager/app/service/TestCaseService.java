@@ -13,41 +13,44 @@ import org.springframework.http.ResponseEntity;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCaseService {
-	//
-	ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    //
+    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
-	ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
-	ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
+    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
 
-	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
 
-	<T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page);
+    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page);
 
-	Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail);
+    Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail);
 
-	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail);
 
-	Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest);
 
-	List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
+    List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 
-	List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId);
+    List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId);
 
-	List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
+    List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
 
-	Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
+    Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
-	ProjectDTO getProjectInfo(Long projectId);
+    ProjectDTO getProjectInfo(Long projectId);
 
-	List<Long> queryIssueIdsByOptions(SearchDTO searchDTO,Long projectId);
+    List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId);
 
-	IssueDTO createTest(IssueCreateDTO issueCreateDTO,Long projectId);
+    IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId);
 
-	List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
+    List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
 
-	IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO);
+    IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO);
 
-	List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
+    List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
 
+    ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds);
+
+    ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds);
 }
