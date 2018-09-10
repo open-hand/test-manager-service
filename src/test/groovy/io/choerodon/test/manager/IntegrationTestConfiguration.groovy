@@ -4,16 +4,25 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
+import io.choerodon.test.manager.app.service.TestCaseService
+import io.choerodon.test.manager.app.service.UserService
+import io.choerodon.test.manager.app.service.impl.TestCaseServiceImpl
 import io.choerodon.test.manager.app.service.impl.TestIssueFolderServiceImpl
+import io.choerodon.test.manager.app.service.impl.UserServiceImpl
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
+import io.choerodon.test.manager.infra.feign.ProjectFeignClient
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
+import io.choerodon.test.manager.infra.feign.UserFeignClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
+import org.springframework.core.annotation.Order
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -55,10 +64,38 @@ class IntegrationTestConfiguration {
         detachedMockFactory.Mock(KafkaTemplate)
     }
 
-    @Bean("testIssueFolderServiceImpl")
+//    TestCaseFeignClient testCaseFeignClient=detachedMockFactory.Mock(TestCaseFeignClient)
+//    ProductionVersionClient productionVersionClient=detachedMockFactory.Mock(ProductionVersionClient)
+//    ProjectFeignClient projectFeignClient=detachedMockFactory.Mock(ProjectFeignClient)
+//    UserFeignClient userFeignClient=detachedMockFactory.Mock(UserFeignClient)
+//
+//    @Bean(name = "mockTestCaseFeignClient")
+//    TestCaseFeignClient createMock1(){
+//        return testCaseFeignClient
+//    }
+//    @Bean(name = "mockProductionVersionClient")
+//    ProductionVersionClient createMock2(){
+//        return productionVersionClient
+//    }
+//
+//    @Bean(name = "mockProjectFeignClient")
+//    ProjectFeignClient createMock3(){
+//        return projectFeignClient
+//    }
+//    @Bean(name = "mockUserFeignClient")
+//    UserFeignClient createMock4(){
+//        return userFeignClient
+//    }
+    @Bean
     @Primary
-    TestIssueFolderServiceImpl testIssueFolderServiceImpl() {
-        new TestIssueFolderServiceImpl(detachedMockFactory.Mock(ProductionVersionClient))
+    TestCaseService createMock5() {
+        return detachedMockFactory.Mock(TestCaseService)
+       //return new TestCaseServiceImpl(testCaseFeignClient,productionVersionClient,projectFeignClient)
+    }
+    @Bean
+    @Primary
+    UserService createMock6() {
+        return detachedMockFactory.Mock(UserService)
     }
 
     @PostConstruct
