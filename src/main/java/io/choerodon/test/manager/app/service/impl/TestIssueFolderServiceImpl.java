@@ -72,12 +72,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(Long folderId) {
+    public void delete(Long projectId,Long folderId) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setFolderId(folderId);
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
         testIssueFolderRelDTO.setFolderId(folderId);
-        testIssueFolderRelService.delete(testIssueFolderRelDTO);
+        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO).stream()
+                .map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
+        testIssueFolderRelService.delete(projectId,issuesId);
         iTestIssueFolderService.delete(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class));
     }
@@ -167,7 +169,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         //批量改变issue的version
         List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-        testCaseService.batchIssueToVersion(projectId, testIssueFolderDTO.getVersionId(), issuesId);
+        testCaseService.batchIssueToVersionTest(projectId, testIssueFolderDTO.getVersionId(), issuesId);
         //修改对应关联中的version
         TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
         testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelDTO, issuesId);

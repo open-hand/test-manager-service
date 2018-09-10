@@ -5,7 +5,11 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -140,4 +144,30 @@ public interface TestCaseFeignClient {
                                                            @ApiParam(value = "issueIds", required = true)
                                                            @RequestBody Long[] issueIds);
 
+    /**
+     *  批量删除issue
+     * @param projectId
+     * @param issueIds
+     * @return
+     */
+    @DeleteMapping(value = "/v1/projects/{project_id}/issues/to_version_test")
+    ResponseEntity batchDeleteIssues(@ApiParam(value = "项目id", required = true)
+                                            @PathVariable(name = "project_id") Long projectId,
+                                            @ApiParam(value = "issue id", required = true)
+                                            @RequestBody List<Long> issueIds);
+
+    /**
+     *  批量替换issue的version
+     * @param projectId
+     * @param versionId
+     * @param issueIds
+     * @return
+     */
+    @PostMapping(value = "/v1/projects/{project_id}/issues/to_version_test/{versionId}")
+    ResponseEntity batchIssueToVersionTest(@ApiParam(value = "项目id", required = true)
+                                                  @PathVariable(name = "project_id") Long projectId,
+                                                  @ApiParam(value = "versionId", required = true)
+                                                  @PathVariable(name = "versionId") Long versionId,
+                                                  @ApiParam(value = "issue id", required = true)
+                                                  @RequestBody List<Long> issueIds);
 }

@@ -13,7 +13,7 @@ public interface TestIssueFolderService {
 
     TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO);
 
-    void delete(Long folderId);
+    void delete(Long projectId,Long folderId);
 
     TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO);
 

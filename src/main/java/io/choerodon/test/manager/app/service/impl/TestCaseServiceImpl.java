@@ -187,4 +187,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.batchCloneIssue.param.projectId.not.be.null");
         return testCaseFeignClient.batchCloneIssue(projectId,versionId,issueIds).getBody();
     }
+
+    @Override
+    public ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds) {
+        Assert.notNull(projectId, "error.TestCaseService.batchIssueToVersionTest.param.projectId.not.be.null");
+        return testCaseFeignClient.batchIssueToVersionTest(projectId,versionId,issueIds);
+    }
+
+    @Override
+    public ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds) {
+        Assert.notNull(projectId, "error.TestCaseService.batchDeleteIssues.param.projectId.not.be.null");
+        return testCaseFeignClient.batchDeleteIssues(projectId,issueIds);
+    }
 }

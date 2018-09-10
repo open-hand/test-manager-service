@@ -140,9 +140,14 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        iTestIssueFolderRelService.delete(ConvertHelper
-                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
+    public void delete(Long projectId,List<Long> issuesId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        for (Long issueId:issuesId){
+            testIssueFolderRelDTO.setIssueId(issueId);
+            iTestIssueFolderRelService.delete(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
+        }
+        testCaseService.batchDeleteIssues(projectId,issuesId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -183,7 +188,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             iTestIssueFolderRelService.updateFolderByIssue(ConvertHelper
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
-        testCaseService.batchIssueToVersion(projectId, versionId, issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList()));
+        testCaseService.batchIssueToVersionTest(projectId, versionId, issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList()));
     }
 
     @Transactional(rollbackFor = Exception.class)

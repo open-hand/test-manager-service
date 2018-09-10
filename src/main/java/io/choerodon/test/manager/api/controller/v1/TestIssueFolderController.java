@@ -51,7 +51,7 @@ public class TestIssueFolderController {
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId") Long folderId) {
-        testIssueFolderService.delete(folderId);
+        testIssueFolderService.delete(projectId,folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

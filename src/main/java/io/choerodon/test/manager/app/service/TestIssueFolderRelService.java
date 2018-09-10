@@ -23,7 +23,7 @@ public interface TestIssueFolderRelService {
 
     List<TestIssueFolderRelDTO> insertRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS);
 
-    void delete(TestIssueFolderRelDTO testIssueFolderRelDTO);
+    void delete(Long projectId,List<Long> issuesId);
 
     TestIssueFolderRelDTO update(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
