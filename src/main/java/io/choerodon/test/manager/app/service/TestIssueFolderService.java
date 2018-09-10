@@ -3,7 +3,6 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 
 /**

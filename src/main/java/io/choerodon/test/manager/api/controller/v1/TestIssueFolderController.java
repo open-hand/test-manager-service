@@ -7,7 +7,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +36,7 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询文件夹")
+    @ApiOperation("查询version下文件夹")
     @GetMapping("/query/{versionId}")
     public ResponseEntity<List<TestIssueFolderDTO>> queryByVersion(@PathVariable(name = "project_id") Long projectId,
                                          @PathVariable(name = "versionId") Long versionId) {
