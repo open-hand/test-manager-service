@@ -48,6 +48,6 @@ public interface TestCaseService {
 
 	IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO);
 
-	List<IssueSearchDTO> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
+	List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
 
 }

@@ -189,11 +189,11 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     public void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
-        List<IssueSearchDTO> resIssueSearchDTOS = testCaseService.batchCloneIssue(projectId,versionId,
+        List<Long> issuesId = testCaseService.batchCloneIssue(projectId,versionId,
                 issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
-        for (IssueSearchDTO issueInfosDTO : resIssueSearchDTOS) {
+        for (Long id : issuesId) {
             //插入issue与folder的关联
-            testIssueFolderRelDTO.setIssueId(issueInfosDTO.getIssueId());
+            testIssueFolderRelDTO.setIssueId(id);
             iTestIssueFolderRelService.insert(ConvertHelper
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }

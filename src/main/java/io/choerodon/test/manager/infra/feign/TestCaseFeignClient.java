@@ -133,7 +133,7 @@ public interface TestCaseFeignClient {
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/batch_clone_issue/{versionId}")
-    ResponseEntity<List<IssueSearchDTO>> batchCloneIssue(@ApiParam(value = "项目id", required = true)
+    ResponseEntity<List<Long>> batchCloneIssue(@ApiParam(value = "项目id", required = true)
                                                            @PathVariable(name = "project_id") Long projectId,
                                                            @ApiParam(value = "versionId", required = true)
                                                            @PathVariable(name = "versionId") Long versionId,
