@@ -1,7 +1,6 @@
 package io.choerodon.test.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.choerodon.asgard.saga.feign.SagaClient
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
@@ -59,8 +57,8 @@ class IntegrationTestConfiguration {
 
     @Bean("testIssueFolderServiceImpl")
     @Primary
-    TestIssueFolderServiceImpl issueAttachmentService() {
-        new TestIssueFolderServiceImpl(detachedMockFactory.Mock(productionVersionClient))
+    TestIssueFolderServiceImpl testIssueFolderServiceImpl() {
+        new TestIssueFolderServiceImpl(detachedMockFactory.Mock(ProductionVersionClient))
     }
 
     @PostConstruct
