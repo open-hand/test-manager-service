@@ -45,7 +45,7 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         then:
         1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
         result.getBody().get(0).getAt("id") != null
-
+        result.statusCode.is2xxSuccessful()
     }
 
     def "RemoveAttachment"() {

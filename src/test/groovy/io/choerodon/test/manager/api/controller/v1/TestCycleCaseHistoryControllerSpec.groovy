@@ -1,6 +1,8 @@
-package io.choerodon.test.manager.app.service.impl
+package io.choerodon.test.manager.api.controller.v1
 
+import com.netflix.discovery.converters.Auto
 import io.choerodon.agile.api.dto.UserDO
+import io.choerodon.core.domain.Page
 import io.choerodon.mybatis.pagehelper.domain.PageRequest
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
@@ -11,6 +13,7 @@ import org.apache.commons.collections.MapUtils
 import org.assertj.core.util.Maps
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Specification
@@ -26,9 +29,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
 @Stepwise
-class TestCycleCaseHistoryServiceImplSpec extends Specification {
+class TestCycleCaseHistoryControllerSpec extends Specification {
     @Autowired
     TestCycleCaseHistoryService service
+
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    @Autowired
+    UserService userService;
 
     def "Insert"() {
         given:
@@ -38,21 +47,10 @@ class TestCycleCaseHistoryServiceImplSpec extends Specification {
     }
 
     def "Query"() {
-        given:
-        UserService client = Mock(UserService)
-        TestCycleCaseHistoryService service=AopTestUtils.getTargetObject(service)
-        Field userClient = service.getClass().getDeclaredFields()[1]
-        userClient.setAccessible(true)
-        userClient.set(service, client)
         when:
-        def result = service.query(1L, new PageRequest(0,1))
+        def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}?page={page}&size={size}", Page,144,1,0,5)
         then:
-        1 * client.query(_) >> Maps.newHashMap(1L, new UserDO(id:1L))
-        result.size()==1
-        when:
-        def result1 = service.query(1L, new PageRequest(0,1))
-        then:
-        1 * client.query(_)>>new HashMap<>()
-        result1.get(0).getUser()==null
+        1 * userService.query(_) >> Maps.newHashMap(1L, new UserDO(id:1L))
+        result.statusCode.is2xxSuccessful()
     }
 }
