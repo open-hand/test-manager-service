@@ -45,7 +45,6 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Override
     public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds) {
-        Assert.notEmpty(issueIds, "error.query.issue.folder.issueId.not.empty");
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
         for (Long issueId : issueIds) {
@@ -58,6 +57,9 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         }
         List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
         Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true);
+        if(ObjectUtils.isEmpty(map)){
+            return new Page<>();
+        }
         for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null) {
                 //构造方法中设置不了ObjectVersionNumber的值--待解决
@@ -73,7 +75,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Override
     public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, Long versionId, SearchDTO searchDTO, PageRequest pageRequest) {
-        //查询出所有属于该folder的issue
+        //查询出所属的issue
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         List<TestIssueFolderRelDTO> resultRelDTOS = ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);

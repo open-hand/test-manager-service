@@ -59,9 +59,9 @@ public class TestIssueFolderRelController {
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除文件夹下的issue")
-    @DeleteMapping
+    @PutMapping("/delete")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @RequestParam(name = "issuesId") List<Long> issuesId) {
+                                 @RequestBody List<Long> issuesId) {
         testIssueFolderRelService.delete(projectId,issuesId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -28,6 +28,18 @@ public class TestIssueFolderDO extends AuditDomain {
 
     private String type;
 
+    private Long objectVersionNumber;
+
+    @Override
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    @Override
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
     public Long getFolderId() {
         return folderId;
     }

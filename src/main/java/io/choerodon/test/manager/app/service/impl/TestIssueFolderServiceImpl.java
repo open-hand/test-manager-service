@@ -19,6 +19,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import org.codehaus.jackson.map.type.CollectionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -41,13 +42,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Autowired
     TestCaseService testCaseService;
-
-    private final ProductionVersionClient productionVersionClient;
-
-    @Autowired
-    public TestIssueFolderServiceImpl(ProductionVersionClient productionVersionClient) {
-        this.productionVersionClient = productionVersionClient;
-    }
 
 
     @Override
@@ -95,8 +89,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public JSONObject getTestIssueFolder(Long projectId) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
-        List<ProductVersionDTO> versions = dto.getBody();
+        List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values().stream().collect(Collectors.toList());
         if (versions.isEmpty()) {
             return new JSONObject();
         }
@@ -167,10 +160,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             issueInfosDTO.setIssueId(relTestIssueFolderRelDTO.getIssueId());
             issueInfosDTOS.add(issueInfosDTO);
         }
-        //批量改变issue的version
+        //批量改变issue的version并修改对应关联中的version
         List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-        testCaseService.batchIssueToVersionTest(projectId, testIssueFolderDTO.getVersionId(), issuesId);
-        //修改对应关联中的version
         TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
         testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelDTO, issuesId);
         //更新folder信息

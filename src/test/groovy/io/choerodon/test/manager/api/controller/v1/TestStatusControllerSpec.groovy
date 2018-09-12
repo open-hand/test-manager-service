@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestStatusDTO
 import io.choerodon.test.manager.app.service.TestStatusService
@@ -71,7 +70,7 @@ class TestStatusControllerSpec extends Specification {
 
         then: '返回值'
         if (info != null) {
-            StringUtils.equals(info.toString(),"error.status.insert.statusId.should.be.null")
+            StringUtils.equals(info.toString(), "error.status.insert.statusId.should.be.null")
         }
     }
 
@@ -105,12 +104,14 @@ class TestStatusControllerSpec extends Specification {
         statusNew.setStatusName("修改名字")
         statusNew.setStatusColor("rgba(0,191,165,31)")
         statusNew.setObjectVersionNumber(1L)
+        statusNew.setProjectId(projectId)
         TestStatusDTO exceptionStatus = new TestStatusDTO()
         exceptionStatus.setStatusId(999L)
         exceptionStatus.setStatusName("修改名字异常")
+        def info = null
 
         when: '向修改issues的接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, statusNew, projectId)
+        restTemplate.put('/v1/projects/{project_id}/status/update', statusNew,projectId)
 
         then: '返回值'
         TestStatusDO testStatusDO = testStatusMapper.selectByPrimaryKey(statusId[0])
@@ -122,27 +123,30 @@ class TestStatusControllerSpec extends Specification {
         testStatusDO.statusColor == "rgba(0,191,165,31)"
         testStatusDO.objectVersionNumber == 2L
 
-//        when:
-//        TestStatusDTO status2 = testStatusService.update(statusNew)
-//        then:
-//        StringUtils.equals(status2.getStatusName(), "修改名字")
         when: '向修改issues的接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, exceptionStatus, projectId)
-        then:
-        thrown(CommonException)
+        try {
+            restTemplate.put('/v1/projects/{project_id}/status/update', TestStatusDTO, exceptionStatus, projectId)
+        } catch (Exception e) {
+            info = e
+        }
+
+        then: '返回值'
+        if (info != null) {
+            StringUtils.equals(info.toString(), "error.status.update.statusId.should.not.be.null")
+        }
     }
 
     def "Delete"() {
-        given:
-        TestStatusDTO statusDelete = new TestStatusDTO()
-        statusDelete.setStatusType(TestStatusE.STATUS_TYPE_CASE)
-        statusDelete.setDescription("修改描述")
-        statusDelete.setStatusName("修改名字")
-        statusDelete.setStatusColor("rgba(0,191,165,31)")
-        statusDelete.setStatusId(statusId[0])
-        statusDelete.setProjectId(projectId)
+        when:'向刪除issues的接口发请求'
+        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', projectId,issueId)
 
-        expect:
-        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', TestStatusDTO, statusDelete, projectId)
+        then: '返回值'
+        def result = testStatusMapper.selectByPrimaryKey(issueId as Long)
+
+        expect: '期望值'
+        result == null
+
+        where: '判断issue是否删除'
+        issueId << statusId[0]
     }
 }

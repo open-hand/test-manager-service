@@ -9,9 +9,9 @@ public class IssueFolderException extends CommonException {
 
     public static final String ERROR_FOLDER_TYPE="illegal.folder.type";
 
-    public static final String ERROR_INSERT="error.insert.param:{}";
+    public static final String ERROR_INSERT="error.insert.param";
 
-    public static final String ERROR_UPDATE="error.update.param:{}";
+    public static final String ERROR_UPDATE="error.update.param";
 
     public IssueFolderException(String code, Object... parameters) {
         super(code, parameters);
