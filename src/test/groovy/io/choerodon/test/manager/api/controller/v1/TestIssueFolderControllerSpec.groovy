@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONObject
-import com.google.gson.JsonObject
 import io.choerodon.agile.api.dto.IssueSearchDTO
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
@@ -19,7 +18,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
-import org.springframework.test.context.ActiveProfiles
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -28,7 +26,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-@ActiveProfiles("test")
 @Stepwise
 class TestIssueFolderControllerSpec extends Specification {
     @Autowired

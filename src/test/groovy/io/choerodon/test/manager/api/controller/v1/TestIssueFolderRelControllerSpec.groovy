@@ -11,16 +11,12 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
-import io.choerodon.test.manager.infra.exception.IssueFolderException
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
-import org.springframework.test.context.ActiveProfiles
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -29,7 +25,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-@ActiveProfiles("test")
 @Stepwise
 class TestIssueFolderRelControllerSpec extends Specification {
     @Autowired
@@ -64,19 +59,25 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issueCreateDTO.setTypeCode("issue_test")
         issueCreateDTO.setSummary("测试创建")
         IssueDTO issueDTO = new IssueDTO()
-        issueDTO.setIssueId(1L)
+        issueDTO.setIssueId(11L)
         issueDTO.setObjectVersionNumber(1L)
         issueDTO.setProjectId(projectId)
 
+        List list = testIssueFolderRelMapper.selectAll()
+        println("list.size:"+list.size())
+        for (TestIssueFolderRelDO testIssueFolderRelDO:list){
+            println("issueId:"+testIssueFolderRelDO.issueId)
+        }
+
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, null, versionId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, 11L, versionId)
         then:
         1 * testCaseService.createTest(_, _) >> issueDTO
         entity.statusCode.is2xxSuccessful()
 
         and:
         entity.body != null
-        entity.body.issueId == 1L
+        entity.body.issueId == 11L
 
         and: '设置值'
         objectVersionNumbers.add(entity.body.objectVersionNumber)
@@ -97,7 +98,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         given:
         TestIssueFolderRelDTO testIssueFolderRelDTO1 = new TestIssueFolderRelDTO()
         testIssueFolderRelDTO1.setProjectId(projectId)
-        testIssueFolderRelDTO1.setIssueId(2L)
+        testIssueFolderRelDTO1.setIssueId(22L)
         testIssueFolderRelDTO1.setFolderId(foldersId[0])
         testIssueFolderRelDTO1.setVersionId(versionId)
 
@@ -106,7 +107,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
         TestIssueFolderRelDTO testIssueFolderRelDTO2 = new TestIssueFolderRelDTO()
         testIssueFolderRelDTO2.setProjectId(projectId)
-        testIssueFolderRelDTO2.setIssueId(3L)
+        testIssueFolderRelDTO2.setIssueId(33L)
         testIssueFolderRelDTO2.setFolderId(1L)
         testIssueFolderRelDTO2.setVersionId(versionId)
         testIssueFolderRelDTOS.add(testIssueFolderRelDTO2)
@@ -120,21 +121,19 @@ class TestIssueFolderRelControllerSpec extends Specification {
     def "QueryIssuesById"() {
         given:
         IssueInfosDTO issueInfosDTO = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(1L)
+        issueInfosDTO.setIssueId(11L)
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(2L)
+        issueInfosDTO.setIssueId(22L)
         Long[] issues = new Long[2]
-        issues[0] = 1L
-        issues[1] = 2L
+        issues[0] = 11L
+        issues[1] = 22L
         Map map = new HashMap()
-        map.put(1L, issueInfosDTO)
-        map.put(2L, issueInfosDTO1)
+        map.put(11L, issueInfosDTO)
+        map.put(22L, issueInfosDTO1)
 
         Long[] exceptionIssues = new Long[2]
         exceptionIssues[0] = 11111L
         exceptionIssues[1] = 22222L
-
-        Long[] nullIssues = new Long[2]
 
         when: '向查询testIssueFolderRel的接口发请求'
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folder_id={folderId}&version_id={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
@@ -166,15 +165,15 @@ class TestIssueFolderRelControllerSpec extends Specification {
         given:
         SearchDTO searchDTO = new SearchDTO()
         IssueInfosDTO issueInfosDTO = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(1L)
+        issueInfosDTO.setIssueId(11L)
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(2L)
+        issueInfosDTO.setIssueId(22L)
         Long[] issues = new Long[2]
-        issues[0] = 1L
-        issues[1] = 2L
+        issues[0] = 11L
+        issues[1] = 22L
         Map map = new HashMap()
-        map.put(1L, issueInfosDTO)
-        map.put(2L, issueInfosDTO1)
+        map.put(11L, issueInfosDTO)
+        map.put(22L, issueInfosDTO1)
 
         when: '向查询issueFolderRel的接口发请求'
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folder_id={folderId}&version_id={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, foldersId[0], versionId, 1, 1)
@@ -191,8 +190,8 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向testIssueFolderRel的查询接口发请求'
         def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folder_id={folderId}&version_id={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, null, null,null,null)
         then: '返回值'
-        1 * testCaseService.queryIssueIdsByOptions(_, _) >> new HashMap<>()
-        1 * testCaseService.getIssueInfoMap(_, _, _) >> map
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >>  new ArrayList<>()
+        0 * testCaseService.getIssueInfoMap(_, _, _) >> map
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
     }
@@ -202,10 +201,10 @@ class TestIssueFolderRelControllerSpec extends Specification {
         //新文件夹2L
         foldersId.add(2L)
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO1.setIssueId(1L)
+        issueInfosDTO1.setIssueId(11L)
         issueInfosDTO1.setObjectVersionNumber(1L)
         IssueInfosDTO issueInfosDTO2 = new IssueInfosDTO()
-        issueInfosDTO2.setIssueId(2L)
+        issueInfosDTO2.setIssueId(22L)
         issueInfosDTO2.setObjectVersionNumber(1L)
         List issueInfos = new ArrayList()
         issueInfos.add(issueInfosDTO1)
@@ -216,7 +215,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         target.setFolderId(foldersId[1])
 
         IssueInfosDTO issueInfosDTO3 = new IssueInfosDTO()
-        issueInfosDTO3.setIssueId(1L)
+        issueInfosDTO3.setIssueId(11L)
         issueInfosDTO3.setObjectVersionNumber(1L)
         List exceptionIssueInfos = new ArrayList()
         exceptionIssueInfos.add(issueInfosDTO3)
@@ -241,9 +240,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
     def "CopyIssue"() {
         given:
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO1.setIssueId(1L)
+        issueInfosDTO1.setIssueId(11L)
         IssueInfosDTO issueInfosDTO2 = new IssueInfosDTO()
-        issueInfosDTO2.setIssueId(2L)
+        issueInfosDTO2.setIssueId(22L)
         List issueInfos = new ArrayList()
         issueInfos.add(issueInfosDTO1)
         issueInfos.add(issueInfosDTO2)
@@ -252,8 +251,8 @@ class TestIssueFolderRelControllerSpec extends Specification {
         TestIssueFolderRelDO target = new TestIssueFolderRelDO()
         target.setFolderId(foldersId[0])
         List issues = new ArrayList()
-        issues.add(4L)
-        issues.add(5L)
+        issues.add(44L)
+        issues.add(55L)
 
         when: '向查询issues的接口发请求,将folder[1]的值复制到folder[0]中'
         restTemplate.put('/v1/projects/{project_id}/issueFolderRel/copy?folder_id={folderId}&version_id={versionId}', issueInfos, projectId, foldersId[0], versionId)
@@ -271,21 +270,21 @@ class TestIssueFolderRelControllerSpec extends Specification {
     def "Delete"() {
         given:
         TestIssueFolderRelDO testIssueFolderRelDO1 = new TestIssueFolderRelDO()
-        testIssueFolderRelDO1.setIssueId(1L)
+        testIssueFolderRelDO1.setIssueId(11L)
         TestIssueFolderRelDO testIssueFolderRelDO2 = new TestIssueFolderRelDO()
-        testIssueFolderRelDO2.setIssueId(2L)
+        testIssueFolderRelDO2.setIssueId(22L)
         TestIssueFolderRelDO testIssueFolderRelDO3 = new TestIssueFolderRelDO()
-        testIssueFolderRelDO3.setIssueId(3L)
+        testIssueFolderRelDO3.setIssueId(33L)
         TestIssueFolderRelDO testIssueFolderRelDO4 = new TestIssueFolderRelDO()
-        testIssueFolderRelDO4.setIssueId(4L)
+        testIssueFolderRelDO4.setIssueId(44L)
         TestIssueFolderRelDO testIssueFolderRelDO5 = new TestIssueFolderRelDO()
-        testIssueFolderRelDO5.setIssueId(5L)
+        testIssueFolderRelDO5.setIssueId(55L)
         List issues = new ArrayList()
-        issues.add(1L)
-        issues.add(2L)
-        issues.add(3L)
-        issues.add(4L)
-        issues.add(5L)
+        issues.add(11L)
+        issues.add(22L)
+        issues.add(33L)
+        issues.add(44L)
+        issues.add(55L)
         when: '执行方法'
         restTemplate.put('/v1/projects/{project_id}/issueFolderRel/delete', issues, projectId)
 
