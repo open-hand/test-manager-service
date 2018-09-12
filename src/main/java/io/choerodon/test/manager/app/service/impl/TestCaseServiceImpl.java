@@ -152,6 +152,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
     }
 
+    public Long[] getVersionIds(Long projectId){
+        Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
+        return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
+
+    }
+
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getProjectInfo.param.projectId.not.be.null");

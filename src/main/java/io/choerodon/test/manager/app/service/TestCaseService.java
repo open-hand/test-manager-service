@@ -38,6 +38,8 @@ public interface TestCaseService {
 
     Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
+    Long[] getVersionIds(Long projectId);
+
     ProjectDTO getProjectInfo(Long projectId);
 
     List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId);

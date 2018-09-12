@@ -179,7 +179,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 
 	private void populateVersionBuild(Long projectId, List<TestCycleCaseDTO> dto) {
-		Map<Long, String> map = productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
+		Map<Long, ProductVersionDTO> map=testCaseService.getVersionInfo(projectId);
 		if (map == null || map.isEmpty()) {
 			return;
 		}
@@ -189,7 +189,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			cycleE.setCycleId(cases.getCycleId());
 			Long versionId = cycleE.queryOne().getVersionId();
 			Assert.notNull(versionId, "error.version.id.not.null");
-			cases.setVersionName(map.get(versionId));
+			Optional.ofNullable(map.get(versionId)).ifPresent(v->cases.setVersionName(v.getName()));
 		}
 
 	}
@@ -287,7 +287,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 			Object[] ids = testCycleCase.stream().map(TestCycleCaseDTO::getIssueId).toArray();
 			idMap.put("issueIds", ids);
 			searchDTO.setOtherArgs(idMap);
-			ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, 0, 99999999, null);
+			ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0,9999999));
 			Set issueListDTOS = responseEntity.getBody().stream().map(IssueCommonDTO::getIssueId).collect(Collectors.toSet());
 
 			Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);

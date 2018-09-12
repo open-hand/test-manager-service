@@ -1,12 +1,16 @@
 package io.choerodon.test.manager.infra.mapper
 
+import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.app.service.TestCaseService
+import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.domain.repository.TestCycleRepository
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import spock.lang.Shared
 import spock.lang.Specification
@@ -22,6 +26,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @Import(IntegrationTestConfiguration)
 @Stepwise
 class TestCycleCaseMapperSpec extends Specification {
+
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    @Autowired
+    TestCaseService testCaseService
+
+    @Autowired
+    UserService userService
 
     @Autowired
     TestCycleCaseMapper mapper
@@ -69,72 +82,24 @@ class TestCycleCaseMapperSpec extends Specification {
         mapper.insert(caseDO2)
     }
 
-    def "QueryWithAttachAndDefect"() {
-    }
-
-    def "Filter"() {
-    }
-
-    def "QueryByIssue"() {
-    }
-
-    def "QueryCycleCaseForReporter"() {
-    }
-
-    def "CountCaseNotRun"() {
-    }
 
     def "CountCaseNotPlain"() {
-        expect:
-        mapper.countCaseNotPlain(param)==result
-        where:
-        param                                                    ||          result
-        [cycleDO1.getCycleId()] as Long[]                        || 2
-        [cycleDO2.getCycleId()] as Long[]                        || 1
-        [cycleDO1.getCycleId(), cycleDO2.getCycleId()] as Long[] || 2
-
+        when:
+        def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/countCaseNotPlain",Long.class,143)
+        then:
+        1*testCaseService.getVersionIds(_)>>[88L,78L]
+        result.body==2L
     }
 
     def "CountCaseSum"() {
-        expect:
-        mapper.countCaseSum(param).longValue()==result
-        where:
-        param                             ||          result
-        [cycleDO1.getCycleId()] as Long[] || 2
-        [cycleDO2.getCycleId()] as Long[] || 1
+        when:
+        def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/countCaseSum",Long.class,143)
+        then:
+        1*testCaseService.getVersionIds(_)>>[88L,78L]
+        result.body==3L
     }
 
-    def "ValidateCycleCaseInCycle"() {
-        given:
-        TestCycleCaseDO dao=new TestCycleCaseDO(
-                cycleId: cycleDO1.getCycleId(),
-                issueId: params
-        )
 
-        expect:
-        mapper.validateCycleCaseInCycle(dao)==result
-        where:
-        params ||  result
-        9999   || 1
-        9899   || 0
-    }
 
-    def "GetLastedRank"() {
-        expect:
-        mapper.getLastedRank(cycleId)==result
-        where:
-        cycleId               ||  result
-        cycleDO1.getCycleId() || "0|c00004:"
-        cycleDO2.getCycleId() || "0|c00000:"
-    }
 
-    def "deleteEnv"(){
-        expect:
-        cycleMapper.delete(cycleDO1)
-        cycleMapper.delete(cycleDO1)
-        mapper.deleteByPrimaryKey(caseDO.getExecuteId())==1
-        mapper.deleteByPrimaryKey(caseDO1.getExecuteId())==1
-        mapper.deleteByPrimaryKey(caseDO2.getExecuteId())==1
-
-    }
 }

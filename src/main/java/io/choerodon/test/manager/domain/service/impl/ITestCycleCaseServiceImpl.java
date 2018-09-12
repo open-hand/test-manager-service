@@ -1,14 +1,13 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 
-import io.choerodon.agile.api.dto.ProductVersionDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 	TestCycleCaseRepository testCycleCaseRepository;
 
 	@Autowired
-	ProductionVersionClient productionVersionClient;
+	TestCaseService productionVersionClient;
 
 	@Autowired
 	TestCycleCaseAttachmentRelService attachmentRelService;
@@ -146,8 +145,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Override
 	public Long countCaseNotRun(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
-		if (versionIds != null && versionIds.length > 0) {
+		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
+		if (!ObjectUtils.isEmpty(versionIds)) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			if (!ObjectUtils.isEmpty(cycleIds)) {
 				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
@@ -158,8 +157,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Override
 	public Long countCaseNotPlain(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
-		if (versionIds != null && versionIds.length > 0) {
+		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
+		if (!ObjectUtils.isEmpty(versionIds)) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
 		} else {
@@ -169,8 +168,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Override
 	public Long countCaseSum(Long projectId) {
-		Long[] versionIds = productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new);
-		if (versionIds != null && versionIds.length > 0) {
+		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
+		if (!ObjectUtils.isEmpty(versionIds)) {
 			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
 			return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
 		} else {
