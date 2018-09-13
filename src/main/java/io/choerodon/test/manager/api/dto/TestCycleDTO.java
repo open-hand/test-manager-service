@@ -44,6 +44,8 @@ public class TestCycleDTO {
 
     private Long objectVersionNumber;
 
+    private Long folderId;
+
     public Long getCycleId() {
         return cycleId;
     }
@@ -170,5 +172,13 @@ public class TestCycleDTO {
 
     public void setCreatedUser(UserDO createdUser) {
         this.createdUser = createdUser;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 }

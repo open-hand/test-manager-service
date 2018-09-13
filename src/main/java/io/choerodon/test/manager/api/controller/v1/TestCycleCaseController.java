@@ -112,6 +112,7 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("批量添加循环用例")
 	@PostMapping("/insert/batch")
+	@Deprecated
 	public ResponseEntity batchInsertCase(@RequestBody List<TestCycleCaseDTO> testCycleCaseDTOS, @PathVariable(name = "project_id") Long projectId) {
 		List<TestCycleCaseDTO> testCycleCaseList = new ArrayList<>();
 		String rank = null;
@@ -149,7 +150,7 @@ public class TestCycleCaseController {
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("根据循环过滤创建心的cycle")
+	@ApiOperation("根据循环过滤创建新的cycle")
 	@PostMapping("/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}")
 	public ResponseEntity createFilteredCycleCaseInCycle(@ApiIgnore
 														 @ApiParam(value = "分页信息", required = true)

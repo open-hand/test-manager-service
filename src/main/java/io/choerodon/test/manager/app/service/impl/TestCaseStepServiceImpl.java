@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,9 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
 		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
+		if(ObjectUtils.isEmpty(testCaseStepES)){
+			return;
+		}
 		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
 		Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
 		testCaseStepES.forEach(v ->

@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.domain.repository;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import java.util.List;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-
-import java.util.List;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

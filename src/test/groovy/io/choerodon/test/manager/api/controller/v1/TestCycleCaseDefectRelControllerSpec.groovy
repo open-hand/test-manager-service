@@ -1,13 +1,19 @@
 package io.choerodon.test.manager.api.controller.v1
 
+import io.choerodon.agile.api.dto.IssueDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO
+import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
+import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.test.util.AopTestUtils
 import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Specification
@@ -21,30 +27,34 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
+@Stepwise
 class TestCycleCaseDefectRelControllerSpec extends Specification {
 
     @Autowired
-    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+    TestRestTemplate restTemplate;
 
+    @Autowired
+    TestCaseService caseService;
 
     def "Insert"() {
         given:
-        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
+        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
         TestCycleCaseDefectRelDTO defect = new TestCycleCaseDefectRelDTO(issueId: 99L, defectType: TestCycleCaseDefectRelE.CASE_STEP, defectLinkId: 999L)
         when:
-        def result = serviceAOP.insert(defect, 99L)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect", Lists.newArrayList(defect),List,144)
         then:
-        result.getId() != null
+        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+        result.getBody().get(0).getAt("id") != null
+        result.statusCode.is2xxSuccessful()
     }
 
     def "RemoveAttachment"() {
         given:
-        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
-
-        TestCycleCaseDefectRelDTO defect = new TestCycleCaseDefectRelDTO(issueId: 99L, defectType: TestCycleCaseDefectRelE.CASE_STEP, defectLinkId: 299L)
-        def result = serviceAOP.insert(defect, 99L)
-        TestCycleCaseDefectRelDTO removeDto = new TestCycleCaseDefectRelDTO(id: result.getId())
-        expect:
-        serviceAOP.delete(removeDto, 11L)
+        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
+//        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
+        when:
+        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,1L)
+        then:
+        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
     }
 }

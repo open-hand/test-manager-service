@@ -27,6 +27,10 @@ class UserServiceImplSpec extends Specification {
         userService.query([1,2,3] as Long[])
         then:
         1*client.listUsersByIds(_)>>new ResponseEntity<>(Lists.newArrayList(user),HttpStatus.OK)
+        when:
+        userService.query([] as Long[])
+        then:
+        0*client.listUsersByIds(_)
     }
 
     def "List"() {

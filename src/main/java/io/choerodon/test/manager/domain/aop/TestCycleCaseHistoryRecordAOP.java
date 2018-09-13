@@ -6,6 +6,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -42,6 +43,9 @@ public class TestCycleCaseHistoryRecordAOP {
 
 	@Autowired
 	TestCaseFeignClient testCaseFeignClient;
+
+	@Autowired
+	TestCaseService testCaseService;
 
 	@Autowired
 	UserService userService;
@@ -113,10 +117,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
 		historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
-		List<Long> defectIds = new ArrayList<>();
-		defectIds.add(testCycleCaseDefectRelDTO.getIssueId());
-		String defectName = testCaseFeignClient.listByIssueIds((Long) jp.getArgs()[1], defectIds).getBody().get(0).getIssueNum();
-
+		String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelDTO.getIssueId()).getBody().getIssueNum();
 		historyDTO.setNewValue(defectName);
 		testCycleCaseHistoryService.insert(historyDTO);
 
@@ -132,8 +133,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
 		List<Long> defectIds = new ArrayList<>();
 		defectIds.add(testCycleCaseDefectRelE.getIssueId());
-		String defectName = testCaseFeignClient.listByIssueIds(projectId, defectIds).getBody().get(0).getIssueNum();
-
+		String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelDTO.getIssueId()).getBody().getIssueNum();
 		historyDTO.setOldValue(defectName);
 		historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		Object o = pjp.proceed();

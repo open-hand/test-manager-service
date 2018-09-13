@@ -48,7 +48,7 @@
         defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
         FROM test_cycle_case cycle
         left join test_cycle_case_defect_rel defect
-        on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
+        on cycle.execute_id=defect.defect_link_id and defect.defect_type='CYCLE_CASE'
         where cycle.cycle_id=#{cycleId}
         <if test="executionStatus != null">
             and
@@ -114,9 +114,9 @@
         </if>
         ) cycle
         LEFT JOIN test_cycle_case_attachment_rel attach ON cycle.execute_id = attach.attachment_link_id
-        AND attach.attachment_type = "CYCLE_CASE"
+        AND attach.attachment_type = 'CYCLE_CASE'
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
-        AND defect.defect_type = "CYCLE_CASE"
+        AND defect.defect_type = 'CYCLE_CASE'
     </select>
 
     <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">
@@ -162,7 +162,7 @@
         FROM test_cycle_case cycle
         left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
         left join test_cycle_case_defect_rel defect
-        on cycle.execute_id=defect.defect_link_id and defect.defect_type="CYCLE_CASE"
+        on cycle.execute_id=defect.defect_link_id and defect.defect_type='CYCLE_CASE'
         where cycle.issue_id=#{issueId}
     </select>
 

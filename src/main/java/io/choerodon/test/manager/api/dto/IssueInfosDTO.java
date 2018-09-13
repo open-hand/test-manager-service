@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.dto;
 
 import io.choerodon.agile.api.dto.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +26,42 @@ public class IssueInfosDTO {
 
 	private String typeCode;
 
+	private Long objectVersionNumber;
+
+	private Long statusId;
+
+	private String priorityCode;
+
+	private Long assigneeId;
+
+	private String assigneeName;
+
+	private String assigneeImageUrl;
+
+	private String priorityName;
+
+	private String statusName;
+
+	private String issueNum;
+
+	private Long reporterId;
+
+	private String reporterName;
+
+	private String reporterImageUrl;
+
+	private Date lastUpdateDate;
+
+	private Date creationDate;
+
+	private String epicName;
+
+	private String epicColor;
+
+	private String statusColor;
+
+	private List<VersionIssueRelDTO> versionIssueRelDTOList;
+
 	private List<LabelIssueRelDTO> labelIssueRelDTOList;
 
 	private List<ComponentIssueRelDTO> componentIssueRelDTOList;
@@ -43,17 +80,33 @@ public class IssueInfosDTO {
 		typeCode = issueCommonDTO.getTypeCode();
 	}
 
-	public IssueInfosDTO(IssueComponentDetailDTO issueCommonDTO) {
-		issueName = issueCommonDTO.getIssueNum();
-		issueStatusName = issueCommonDTO.getStatusName();
-		issueId = issueCommonDTO.getIssueId();
-		issueColor = issueCommonDTO.getStatusColor();
-		summary = issueCommonDTO.getSummary();
-		projectId = issueCommonDTO.getProjectId();
-		statusCode = issueCommonDTO.getStatusCode();
-		typeCode = issueCommonDTO.getTypeCode();
-		labelIssueRelDTOList = issueCommonDTO.getLabelIssueRelDTOList();
-		componentIssueRelDTOList = issueCommonDTO.getComponentIssueRelDTOList();
+	public IssueInfosDTO(IssueComponentDetailDTO issueComponentDetailDTO) {
+		this.issueStatusName = issueComponentDetailDTO.getStatusName();
+		this.issueId = issueComponentDetailDTO.getIssueId();
+		this.issueColor = issueComponentDetailDTO.getStatusColor();
+		this.summary = issueComponentDetailDTO.getSummary();
+		this.projectId = issueComponentDetailDTO.getProjectId();
+		this.statusCode = issueComponentDetailDTO.getStatusCode();
+		this.typeCode = issueComponentDetailDTO.getTypeCode();
+		this.statusId = issueComponentDetailDTO.getStatusId();
+		this.priorityCode = issueComponentDetailDTO.getPriorityCode();
+		this.assigneeId = issueComponentDetailDTO.getAssigneeId();
+		this.assigneeName = issueComponentDetailDTO.getAssigneeName();
+		this.assigneeImageUrl = issueComponentDetailDTO.getAssigneeImageUrl();
+		this.priorityName = issueComponentDetailDTO.getPriorityName();
+		this.statusName = issueComponentDetailDTO.getStatusName();
+		this.issueNum = issueComponentDetailDTO.getIssueNum();
+		this.reporterId = issueComponentDetailDTO.getReporterId();
+		this.reporterName = issueComponentDetailDTO.getReporterName();
+		this.reporterImageUrl = issueComponentDetailDTO.getReporterImageUrl();
+		this.lastUpdateDate = issueComponentDetailDTO.getLastUpdateDate();
+		this.creationDate = issueComponentDetailDTO.getCreationDate();
+		this.epicName = issueComponentDetailDTO.getEpicName();
+		this.epicColor = issueComponentDetailDTO.getEpicColor();
+		this.statusColor = issueComponentDetailDTO.getStatusColor();
+		this.versionIssueRelDTOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
+		this.labelIssueRelDTOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
+		this.componentIssueRelDTOList = issueComponentDetailDTO.getComponentIssueRelDTOList();
 	}
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
@@ -79,6 +132,13 @@ public class IssueInfosDTO {
 		typeCode = issueDTO.getTypeCode();
 	}
 
+	public Long getObjectVersionNumber() {
+		return objectVersionNumber;
+	}
+
+	public void setObjectVersionNumber(Long objectVersionNumber) {
+		this.objectVersionNumber = objectVersionNumber;
+	}
 
 	public String getIssueName() {
 		return issueName;
@@ -158,5 +218,141 @@ public class IssueInfosDTO {
 
 	public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
 		this.componentIssueRelDTOList = componentIssueRelDTOList;
+	}
+
+	public Long getStatusId() {
+		return statusId;
+	}
+
+	public void setStatusId(Long statusId) {
+		this.statusId = statusId;
+	}
+
+	public String getPriorityCode() {
+		return priorityCode;
+	}
+
+	public void setPriorityCode(String priorityCode) {
+		this.priorityCode = priorityCode;
+	}
+
+	public Long getAssigneeId() {
+		return assigneeId;
+	}
+
+	public void setAssigneeId(Long assigneeId) {
+		this.assigneeId = assigneeId;
+	}
+
+	public String getAssigneeName() {
+		return assigneeName;
+	}
+
+	public void setAssigneeName(String assigneeName) {
+		this.assigneeName = assigneeName;
+	}
+
+	public String getAssigneeImageUrl() {
+		return assigneeImageUrl;
+	}
+
+	public void setAssigneeImageUrl(String assigneeImageUrl) {
+		this.assigneeImageUrl = assigneeImageUrl;
+	}
+
+	public String getPriorityName() {
+		return priorityName;
+	}
+
+	public void setPriorityName(String priorityName) {
+		this.priorityName = priorityName;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+
+	public String getIssueNum() {
+		return issueNum;
+	}
+
+	public void setIssueNum(String issueNum) {
+		this.issueNum = issueNum;
+	}
+
+	public Long getReporterId() {
+		return reporterId;
+	}
+
+	public void setReporterId(Long reporterId) {
+		this.reporterId = reporterId;
+	}
+
+	public String getReporterName() {
+		return reporterName;
+	}
+
+	public void setReporterName(String reporterName) {
+		this.reporterName = reporterName;
+	}
+
+	public String getReporterImageUrl() {
+		return reporterImageUrl;
+	}
+
+	public void setReporterImageUrl(String reporterImageUrl) {
+		this.reporterImageUrl = reporterImageUrl;
+	}
+
+	public Date getLastUpdateDate() {
+		return lastUpdateDate;
+	}
+
+	public void setLastUpdateDate(Date lastUpdateDate) {
+		this.lastUpdateDate = lastUpdateDate;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public String getEpicName() {
+		return epicName;
+	}
+
+	public void setEpicName(String epicName) {
+		this.epicName = epicName;
+	}
+
+	public String getEpicColor() {
+		return epicColor;
+	}
+
+	public void setEpicColor(String epicColor) {
+		this.epicColor = epicColor;
+	}
+
+	public String getStatusColor() {
+		return statusColor;
+	}
+
+	public void setStatusColor(String statusColor) {
+		this.statusColor = statusColor;
+	}
+
+	public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
+		return versionIssueRelDTOList;
+	}
+
+	public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelDTOList) {
+		this.versionIssueRelDTOList = versionIssueRelDTOList;
 	}
 }

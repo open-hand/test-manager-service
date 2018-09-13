@@ -1,9 +1,10 @@
-package io.choerodon.test.manager.app.service.impl
+package io.choerodon.test.manager.api.controller.v1
 
 import com.google.common.collect.Lists
 import io.choerodon.core.convertor.ConvertHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseAttachmentRelServiceImpl
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE
@@ -24,7 +25,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @PrepareForTest(TestCycleCaseAttachmentRelEFactory.class)
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(Sputnik.class)
-class TestCycleCaseAttachmentRelServiceImplSpec extends Specification {
+class TestCycleCaseAttachmentRelControllerSpec extends Specification {
 
     ITestCycleCaseAttachmentRelService iservice
 

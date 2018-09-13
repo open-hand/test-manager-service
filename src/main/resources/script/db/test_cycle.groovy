@@ -36,4 +36,10 @@ changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cy
         column(name: 'cycle_name')
     }
 }
+
+    changeSet(id:'2018-08-27-defect-add-column-folderId',author: 'zongwei.li'){
+        addColumn(tableName:'test_cycle'){
+            column(name:'folder_id',type:'BIGINT UNSIGNED', defaultValue: '0')
+        }
+    }
 }

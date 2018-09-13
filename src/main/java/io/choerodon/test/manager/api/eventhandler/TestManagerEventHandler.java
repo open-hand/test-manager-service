@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.eventhandler;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
@@ -17,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
