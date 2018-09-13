@@ -131,9 +131,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
-		List<Long> defectIds = new ArrayList<>();
-		defectIds.add(testCycleCaseDefectRelE.getIssueId());
-		String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelDTO.getIssueId()).getBody().getIssueNum();
+		String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId()).getBody().getIssueNum();
 		historyDTO.setOldValue(defectName);
 		historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		Object o = pjp.proceed();
