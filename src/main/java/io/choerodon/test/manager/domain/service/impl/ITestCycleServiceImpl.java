@@ -92,9 +92,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 
 	@Override
-	public List<TestCycleE> queryCycleWithBar(Long[] versionId) {
+	public List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo) {
 		TestCycleE testCycleE = TestCycleEFactory.create();
-		return countStatus(testCycleE.querySelfWithBar(versionId));
+		return countStatus(testCycleE.querySelfWithBar(versionId,assignedTo));
 	}
 
 	@Override

@@ -145,13 +145,13 @@ class TestCycleServiceImplSpec extends Specification {
 
         ProductVersionDTO v1 = new ProductVersionDTO(versionId: 226l)
         when:
-        JSONObject jsob = service.getTestCycle(226l)
+        JSONObject jsob = service.getTestCycle(226l,null)
         then:
         1 * client.listByProjectId(_) >> new ResponseEntity<Page<ProductVersionDTO>>(Lists.newArrayList(v1), HttpStatus.OK)
         1 * client1.query(_) >> users
         jsob != null
         when:
-        service.getTestCycle(226l)
+        service.getTestCycle(226l,null)
         then:
         1 * client.listByProjectId(_) >> new ResponseEntity<Page<ProductVersionDTO>>(Lists.newArrayList(), HttpStatus.OK)
         0 * client1.query(_)

@@ -32,7 +32,7 @@ public interface TestCycleService {
 
 	TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId);
 
-	JSONObject getTestCycle(Long versionId);
+	JSONObject getTestCycle(Long versionId,Long assignedTo);
 
 	TestCycleDTO getOneCycle(Long cycleId);
 

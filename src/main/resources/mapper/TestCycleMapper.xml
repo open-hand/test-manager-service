@@ -83,6 +83,10 @@
         FROM
         test_cycle_case cycle
         LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+        <if test="assignedTo!=null">
+            where
+            cycle.assigned_to=#{assignedTo}
+        </if>
         ) temp1
         GROUP BY
         temp1.color,temp1.cycle_id

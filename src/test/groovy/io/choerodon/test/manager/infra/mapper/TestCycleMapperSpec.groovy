@@ -88,7 +88,7 @@ class TestCycleMapperSpec extends Specification {
         Long[] versions=new Long[1]
         versions[0] = new Long(929)
         when:
-        List<TestCycleDO> result=mapper.query(versions)
+        List<TestCycleDO> result=mapper.query(versions,null)
         then:
         result.size()==4
 

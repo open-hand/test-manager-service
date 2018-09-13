@@ -83,8 +83,9 @@ public class TestCycleController {
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询project下的测试循环")
 	@GetMapping("/query")
-	ResponseEntity getTestCycle(@PathVariable(name = "project_id") Long projectId) {
-		return Optional.ofNullable(testCycleService.getTestCycle(projectId))
+	ResponseEntity getTestCycle(@PathVariable(name = "project_id") Long projectId,
+								@RequestParam(required = false,name = "assignedTo")Long assignedTo) {
+		return Optional.ofNullable(testCycleService.getTestCycle(projectId,assignedTo))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycle"));
 	}

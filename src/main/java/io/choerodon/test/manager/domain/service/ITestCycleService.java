@@ -24,7 +24,7 @@ public interface ITestCycleService {
 
 	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
-	List<TestCycleE> queryCycleWithBar(Long[] versionId);
+	List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo);
 
 	List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds);
 

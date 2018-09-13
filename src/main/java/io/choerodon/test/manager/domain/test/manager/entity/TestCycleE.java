@@ -95,8 +95,8 @@ public class TestCycleE {
 		return testCycleES.stream().filter(v -> this.cycleId.equals(v.getParentCycleId())  && v.getType().equals(FOLDER)).collect(Collectors.toList());
 	}
 
-	public List<TestCycleE> querySelfWithBar(Long[] versionIds) {
-		return testCycleRepository.queryBar(versionIds);
+	public List<TestCycleE> querySelfWithBar(Long[] versionIds,Long assignedTo) {
+		return testCycleRepository.queryBar(versionIds,assignedTo);
     }
 
 	public List<TestCycleE> filterWithBar(Map map) {
