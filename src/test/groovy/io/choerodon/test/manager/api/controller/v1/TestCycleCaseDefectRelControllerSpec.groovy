@@ -51,7 +51,7 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
     def "RemoveAttachment"() {
         given:
         IssueDTO mockResult=new IssueDTO(issueNum: "name1")
-        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
+//        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
         when:
         restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,1L)
         then:

@@ -27,9 +27,9 @@ class TestCaseStepMapperSpec extends Specification {
 
     def "initEnv"(){
         given:
-        TestCaseStepDO stepDO=new TestCaseStepDO(issueId: 1,testStep: "T1",rank:"0|c00000:")
-        TestCaseStepDO stepDO1=new TestCaseStepDO(issueId: 1,testStep: "T2",rank:"0|c00004:")
-        TestCaseStepDO stepDO2=new TestCaseStepDO(issueId: 1,testStep: "T3",rank:"0|c00008:")
+        TestCaseStepDO stepDO=new TestCaseStepDO(issueId: 111,testStep: "T1",rank:"0|c00000:")
+        TestCaseStepDO stepDO1=new TestCaseStepDO(issueId: 111,testStep: "T2",rank:"0|c00004:")
+        TestCaseStepDO stepDO2=new TestCaseStepDO(issueId: 111,testStep: "T3",rank:"0|c00008:")
         mapper.insert(stepDO)
         mapper.insert(stepDO2)
         mapper.insert(stepDO1)
@@ -42,12 +42,9 @@ class TestCaseStepMapperSpec extends Specification {
     }
     def "Query"() {
         when:
-        List<TestCaseStepDO> result=mapper.query(new TestCaseStepDO(issueId: 1))
+        List<TestCaseStepDO> result=mapper.query(new TestCaseStepDO(issueId: 111))
         then:
         result.size()==3
-        and:
-        result.get(0).getAttachments().size()==1
-        result.get(0).getAttachments().get(0).getUrl()=="URL"
     }
 
     def "GetLastedRank"() {
@@ -55,7 +52,7 @@ class TestCaseStepMapperSpec extends Specification {
         mapper.getLastedRank(param)==result
         where:
         param   ||  result
-        1       ||  "0|c00008:"
+        111       ||  "0|c00008:"
         99999   ||  null
     }
 
