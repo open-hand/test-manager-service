@@ -66,7 +66,7 @@ public class TestCycleCaseHistoryRecordAOP {
 
 		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
 			historyDTO=testCycleCaseHistoryService.createStatusHistory(testCycleCaseDTO,beforeCeaseDTO);
-		} else if (testCycleCaseDTO.getAssignedTo().longValue() != before.getAssignedTo().longValue()) {
+		} else if (!testCycleCaseDTO.getAssignedTo().equals( before.getAssignedTo())) {
 			historyDTO=testCycleCaseHistoryService.createAssignedHistory(testCycleCaseDTO,beforeCeaseDTO);
 
 		} else if (!StringUtils.equals(testCycleCaseDTO.getComment(), before.getComment())) {
