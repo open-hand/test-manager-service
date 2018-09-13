@@ -170,7 +170,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 	}
 
 	@Override
-	public JSONObject getTestCycle(Long projectId) {
+	public JSONObject getTestCycle(Long projectId,Long assignedTo) {
 		ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(projectId);
 		List<ProductVersionDTO> versions = dto.getBody();
 		if (versions.isEmpty()) {
@@ -180,7 +180,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 		JSONArray versionStatus = new JSONArray();
 		root.put("versions", versionStatus);
 
-		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new)), TestCycleDTO.class);
+		List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new),assignedTo), TestCycleDTO.class);
 
 		populateUsers(cycles);
 		initVersionTree(versionStatus, versions, cycles);
