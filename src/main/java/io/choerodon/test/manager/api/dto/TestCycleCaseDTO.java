@@ -65,6 +65,10 @@ public class TestCycleCaseDTO {
 
 	private List<IssueLinkDTO> issueLinkDTOS;
 
+	public TestIssueFolderRelDTO transferToIssueFolderRelDTO(Long projectId,Long versionId,Long folderId){
+		return new TestIssueFolderRelDTO(folderId,versionId,projectId,issueId,objectVersionNumber);
+	}
+
 	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
 		return subStepDefects;
 	}

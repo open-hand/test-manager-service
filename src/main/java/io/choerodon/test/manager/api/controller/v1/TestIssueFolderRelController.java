@@ -83,7 +83,7 @@ public class TestIssueFolderRelController {
     @PostMapping
     public ResponseEntity<List<TestIssueFolderRelDTO>> insertRelationship(@PathVariable(name = "project_id") Long projectId,
                                                                           @RequestBody List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
-        return Optional.ofNullable(testIssueFolderRelService.insertRelationship(projectId, testIssueFolderRelDTOS))
+        return Optional.ofNullable(testIssueFolderRelService.insertBatchRelationship(projectId, testIssueFolderRelDTOS))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }

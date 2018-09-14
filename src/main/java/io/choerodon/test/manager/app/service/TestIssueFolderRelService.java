@@ -21,7 +21,7 @@ public interface TestIssueFolderRelService {
 
     TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId);
 
-    List<TestIssueFolderRelDTO> insertRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS);
+    List<TestIssueFolderRelDTO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS);
 
     void delete(Long projectId,List<Long> issuesId);
 

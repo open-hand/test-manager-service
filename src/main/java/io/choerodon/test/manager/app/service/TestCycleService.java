@@ -50,5 +50,7 @@ public interface TestCycleService {
 
 	void populateUsers(List<TestCycleDTO> dtos);
 
-	public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
+	void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
+
+	void fixCycleData();
 }
