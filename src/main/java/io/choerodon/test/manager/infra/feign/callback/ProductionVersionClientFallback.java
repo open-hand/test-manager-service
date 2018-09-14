@@ -33,4 +33,9 @@ public class ProductionVersionClientFallback implements ProductionVersionClient 
     public ResponseEntity<List<Long>> listAllVersionId(Long projectId) {
         throw new CommonException(QUERY_ERROR);
     }
+
+    @Override
+    public ResponseEntity<Long> queryProjectIdByVersionId(Long projectId,Long versionId) {
+        throw new CommonException(QUERY_ERROR);
+    }
 }

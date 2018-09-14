@@ -58,6 +58,10 @@ public class TestCycleE {
         return testCycleRepository.query(this, pageRequest);
     }
 
+    public List<TestCycleE> queryAll(){
+        return testCycleRepository.queryAll();
+    }
+
     public List<TestCycleE> querySelf() {
         return testCycleRepository.query(this);
     }

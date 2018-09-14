@@ -201,4 +201,12 @@ public class TestCycleController {
 //				.orElseThrow(() -> new CommonException("error.testCycle.synchro"));
 //
 //	}
+
+	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+	@ApiOperation("修复cycle及其关联的数据")
+	@GetMapping("/fix")
+	public ResponseEntity fixCycleData() {
+		testCycleService.fixCycleData();
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 }

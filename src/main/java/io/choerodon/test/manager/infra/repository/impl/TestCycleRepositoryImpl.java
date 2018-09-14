@@ -136,4 +136,9 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 			throw new CommonException("error.cycle.in.version.has.existed");
 		}
 	}
+
+	@Override
+	public List<TestCycleE> queryAll() {
+		return ConvertHelper.convertList(cycleMapper.selectAll(), TestCycleE.class);
+	}
 }

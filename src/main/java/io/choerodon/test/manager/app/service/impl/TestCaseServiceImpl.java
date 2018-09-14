@@ -205,4 +205,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.batchDeleteIssues.param.projectId.not.be.null");
         return testCaseFeignClient.batchDeleteIssues(projectId,issueIds);
     }
+
+    @Override
+    public Long queryProjectIdByVersionId(Long versionId) {
+        Assert.notNull(versionId, "error.TestCaseService.queryProjectIdByVersionId.param.versionId.not.be.null");
+        return productionVersionClient.queryProjectIdByVersionId(99999L,versionId).getBody();
+    }
 }

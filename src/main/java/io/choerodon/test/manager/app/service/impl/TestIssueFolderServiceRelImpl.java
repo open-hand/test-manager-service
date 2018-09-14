@@ -119,9 +119,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestIssueFolderRelDTO> insertRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
+    public List<TestIssueFolderRelDTO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
         List<TestIssueFolderRelDTO> resultTestIssueFolderRelDTOS = new ArrayList<>();
-        Long newFolderId = getDefaultFolderId(projectId, testIssueFolderRelDTOS.get(0).getFolderId(), testIssueFolderRelDTOS.get(0).getVersionId());
+        Long newFolderId = null;
+        if(!ObjectUtils.isEmpty(testIssueFolderRelDTOS)) {
+            newFolderId = getDefaultFolderId(projectId, testIssueFolderRelDTOS.get(0).getFolderId(), testIssueFolderRelDTOS.get(0).getVersionId());
+        }
         for (TestIssueFolderRelDTO testIssueFolderRelDTO : testIssueFolderRelDTOS) {
             testIssueFolderRelDTO.setFolderId(newFolderId);
             testIssueFolderRelDTO.setProjectId(projectId);
