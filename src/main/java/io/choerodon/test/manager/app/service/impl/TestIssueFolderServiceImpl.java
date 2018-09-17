@@ -69,13 +69,19 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public void delete(Long projectId,Long folderId) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setFolderId(folderId);
+
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
         testIssueFolderRelDTO.setFolderId(folderId);
+
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setFolderId(folderId);
+
         List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO).stream()
                 .map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
         testIssueFolderRelService.delete(projectId,issuesId);
         iTestIssueFolderService.delete(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class));
+        testCycleService.delete(testCycleDTO,projectId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -98,9 +104,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         root.put("versions", versionStatus);
         List<TestIssueFolderDTO> testIssueFolderDTOS = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        if (testIssueFolderDTOS.isEmpty()) {
-            return new JSONObject();
-        }
         List<TestCycleDTO> cycles = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::transferToCycle).collect(Collectors.toList());
         testCycleService.initVersionTree(versionStatus, versions, cycles);
         return root;

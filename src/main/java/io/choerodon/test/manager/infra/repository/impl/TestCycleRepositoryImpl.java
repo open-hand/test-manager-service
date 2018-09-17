@@ -51,7 +51,7 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 		validateCycle(testCycleE);
 		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
 		if (cycleMapper.updateByPrimaryKey(convert) != 1) {
-			throw new CommonException("error.testStepCase.update");
+			throw new CommonException("error.testCycle.update");
 		}
 		return ConvertHelper.convert(cycleMapper.selectByPrimaryKey(convert.getCycleId()), TestCycleE.class);
 	}
