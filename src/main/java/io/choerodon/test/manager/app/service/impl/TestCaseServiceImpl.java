@@ -76,14 +76,14 @@ public class TestCaseServiceImpl implements TestCaseService {
      */
     public <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page) {
         Assert.notNull(page, "error.TestCaseService.getIssueInfoMapAndPopulatePageInfo.param.page.not.be.null");
-        Page<IssueCommonDTO> returnDto = listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody();
+        Page<IssueListDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest).getBody();
 
         page.setTotalElements(returnDto.getTotalElements());
         page.setSize(returnDto.getSize());
         page.setNumber(returnDto.getNumber());
         page.setTotalPages((int) (returnDto.getTotalElements() - 1L) / returnDto.getSize() + 1);
 
-        return returnDto.stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+        return returnDto.stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
 
     }
 
@@ -137,13 +137,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
-                .filter(u -> u.getTypeCode().equals("issue_test")).collect(Collectors.toList());
+                .filter(u -> u.getTypeCode().equals("issue_test") && u.getWard().equals("被阻塞")).collect(Collectors.toList());
     }
 
     @Override
     public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
-                .collect(Collectors.toList());
+                .filter(u -> u.getWard().equals("阻塞")).collect(Collectors.toList());
     }
 
     @Override
@@ -210,5 +210,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     public Long queryProjectIdByVersionId(Long versionId) {
         Assert.notNull(versionId, "error.TestCaseService.queryProjectIdByVersionId.param.versionId.not.be.null");
         return productionVersionClient.queryProjectIdByVersionId(99999L,versionId).getBody();
+    }
+
+    public  ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest){
+        Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
+        Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
+        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(),projectId, searchDTO);
+
     }
 }

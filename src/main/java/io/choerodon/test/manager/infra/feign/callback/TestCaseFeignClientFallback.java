@@ -106,4 +106,9 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     public ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds) {
         throw new CommonException(UPDATE_ERROR);
     }
+
+    @Override
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO) {
+        throw new CommonException(QUERY_ERROR);
+    }
 }

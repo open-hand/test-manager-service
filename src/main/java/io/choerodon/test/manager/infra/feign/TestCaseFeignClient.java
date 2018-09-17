@@ -170,4 +170,22 @@ public interface TestCaseFeignClient {
                                                   @PathVariable(name = "versionId") Long versionId,
                                                   @ApiParam(value = "issue id", required = true)
                                                   @RequestBody List<Long> issueIds);
+
+
+    /** 报表从issue到缺陷获取初始issue
+     * @param page
+     * @param size
+     * @param orders
+     * @param projectId
+     * @param searchDTO
+     * @return
+     */
+    @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/filter_linked")
+    ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+                                                                        @RequestParam(name = "orders") String orders,
+                                                                        @ApiParam(value = "项目id", required = true)
+                                                                        @PathVariable(name = "project_id") Long projectId,
+                                                                        @ApiParam(value = "查询参数", required = true)
+                                                                        @RequestBody(required = false) SearchDTO searchDTO) ;
+
 }
