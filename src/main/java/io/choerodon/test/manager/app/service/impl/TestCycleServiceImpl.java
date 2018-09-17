@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -242,40 +243,52 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleE> testCycleES = testCycleE.queryAll();
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         for (TestCycleE resTestCycleE : testCycleES) {
+            Long tempCycleId = resTestCycleE.getCycleId();
             //设置修正数据
-            if (resTestCycleE.getType().equals("temp")) {
+            TestCycleE needTestCycleE;
+            if (resTestCycleE.getType().equals("cycle")) {
+                resTestCycleE.setType("folder");
+                resTestCycleE.setParentCycleId(resTestCycleE.getCycleId());
+                resTestCycleE.setCycleId(null);
+                needTestCycleE = resTestCycleE.addSelf();
+                needTestCycleE.setObjectVersionNumber(1L);
+                testIssueFolderDTO.setType("cycle");
+            } else if (resTestCycleE.getType().equals("temp")) {
+                needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType(resTestCycleE.getType());
             } else {
+                //TestCycleE的type为folder的情况
+                needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType("cycle");
             }
-            //等待接口
-            Long projectId = testCaseService.queryProjectIdByVersionId(resTestCycleE.getVersionId());
+
+            Long projectId = testCaseService.queryProjectIdByVersionId(needTestCycleE.getVersionId());
             testIssueFolderDTO.setProjectId(projectId);
-            testIssueFolderDTO.setVersionId(resTestCycleE.getVersionId());
-            testIssueFolderDTO.setObjectVersionNumber(resTestCycleE.getObjectVersionNumber());
+            testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
+            testIssueFolderDTO.setObjectVersionNumber(needTestCycleE.getObjectVersionNumber());
             //如果有父节点的话，将folder的名字设置为如：父名称_子名称
-            testCycleE.setCycleId(resTestCycleE.getParentCycleId());
-            if (resTestCycleE.getParentCycleId() != null) {
-                TestCycleE fatherCycleE = testCycleE.queryOne();
-                testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + resTestCycleE.getCycleName());
+            testCycleE.setCycleId(needTestCycleE.getParentCycleId());
+            TestCycleE fatherCycleE = testCycleE.queryOne();
+            if (needTestCycleE.getParentCycleId() != null && !fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
+                testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + needTestCycleE.getCycleName());
             } else {
-                testIssueFolderDTO.setName(resTestCycleE.getCycleName());
+                testIssueFolderDTO.setName(needTestCycleE.getCycleName());
             }
 
             //插入folder表，更新cycle表
-            resTestCycleE.setFolderId(testIssueFolderService.insert(testIssueFolderDTO).getFolderId());
-            resTestCycleE.updateSelf();
+            Long folderId = testIssueFolderService.insert(testIssueFolderDTO).getFolderId();
+            needTestCycleE.setFolderId(folderId);
+            needTestCycleE.updateSelf();
 
-            //查询cycleCase表
-            testCycleCaseE.setCycleId(resTestCycleE.getCycleId());
+            //查询原来的cycle在cycleCase表中的数据
+            testCycleCaseE.setCycleId(tempCycleId);
             List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.querySelf();
 
             //设置folderRel数据
-            List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
-            for (TestCycleCaseDTO testCycleCaseDTO : ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class)) {
-                testIssueFolderRelDTOS.add(testCycleCaseDTO.transferToIssueFolderRelDTO(projectId,resTestCycleE.getVersionId(),resTestCycleE.getFolderId()));
+            for (TestCycleCaseE testCycleCaseE1 : testCycleCaseES) {
+                IssueCreateDTO issueCreateDTO = testCycleCaseE1.transferToIssueCreateDTO(projectId, needTestCycleE.getVersionId());
+                testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, needTestCycleE.getVersionId());
             }
-            testIssueFolderRelService.insertBatchRelationship(projectId, testIssueFolderRelDTOS);
         }
 
     }

@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
@@ -64,10 +66,6 @@ public class TestCycleCaseDTO {
 	List<TestCycleCaseStepDTO> cycleCaseStep;
 
 	private List<IssueLinkDTO> issueLinkDTOS;
-
-	public TestIssueFolderRelDTO transferToIssueFolderRelDTO(Long projectId,Long versionId,Long folderId){
-		return new TestIssueFolderRelDTO(folderId,versionId,projectId,issueId,objectVersionNumber);
-	}
 
 	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
 		return subStepDefects;

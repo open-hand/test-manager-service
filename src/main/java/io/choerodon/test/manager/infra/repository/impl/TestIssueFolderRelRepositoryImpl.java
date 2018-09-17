@@ -36,6 +36,7 @@ public class TestIssueFolderRelRepositoryImpl implements TestIssueFolderRelRepos
     @Override
     public TestIssueFolderRelE insert(TestIssueFolderRelE testIssueFolderRelE) {
         TestIssueFolderRelDO testIssueFolderRelDO = ConvertHelper.convert(testIssueFolderRelE, TestIssueFolderRelDO.class);
+        testIssueFolderRelMapper.selectAll();
         testIssueFolderRelMapper.insert(testIssueFolderRelDO);
         return ConvertHelper.convert(testIssueFolderRelDO, TestIssueFolderRelE.class);
     }

@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +69,23 @@ public class TestCycleCaseE {
 
     @Autowired
     private TestCycleCaseRepository testCycleCaseRepository;
+
+    public IssueCreateDTO transferToIssueCreateDTO(Long projectId, Long versionId){
+        IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
+        issueCreateDTO.setEpicId(0L);
+        issueCreateDTO.setPriorityCode("medium");
+        issueCreateDTO.setProjectId(projectId);
+        issueCreateDTO.setSprintId(0L);
+        issueCreateDTO.setSummary(""+comment);
+        issueCreateDTO.setTypeCode("issue_test");
+        List<VersionIssueRelDTO> versionIssueRelDTOList = new ArrayList<>();
+        VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
+        versionIssueRelDTO.setRelationType("fix");
+        versionIssueRelDTO.setVersionId(versionId);
+        versionIssueRelDTOList.add(versionIssueRelDTO);
+        issueCreateDTO.setVersionIssueRelDTOList(versionIssueRelDTOList);
+        return issueCreateDTO;
+    }
 
     public Page<TestCycleCaseE> querySelf(PageRequest pageRequest) {
         return testCycleCaseRepository.query(this, pageRequest);
