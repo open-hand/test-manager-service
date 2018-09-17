@@ -137,13 +137,13 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
-                .filter(u -> u.getTypeCode().equals("issue_test") && u.getWard().equals("被阻塞")).collect(Collectors.toList());
+                .filter(u -> u.getTypeCode().equals("issue_test")).collect(Collectors.toList());
     }
 
     @Override
     public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
-                .filter(u -> u.getWard().equals("阻塞")).collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
