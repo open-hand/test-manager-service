@@ -78,7 +78,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 		} else {
 			historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
 		}
-		if (before != null && after.longValue() != 0) {
+		if (after != null && after.longValue() != 0) {
 			UserDO u = users.get(after);
 			historyDTO.setNewValue(u.getLoginName() + u.getRealName());
 		} else {

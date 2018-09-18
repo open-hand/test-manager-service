@@ -34,11 +34,6 @@ public class ITestIssueFolderServiceRelImpl implements ITestIssueFolderRelServic
     }
 
     @Override
-    public TestIssueFolderRelE update(TestIssueFolderRelE testIssueFolderRelE) {
-        return testIssueFolderRelE.updateSelf();
-    }
-
-    @Override
     public TestIssueFolderRelE updateFolderByIssue(TestIssueFolderRelE testIssueFolderRelE) {
         return testIssueFolderRelE.updateFolderByIssue();
     }

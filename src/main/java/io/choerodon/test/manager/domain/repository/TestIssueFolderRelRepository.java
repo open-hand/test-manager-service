@@ -12,8 +12,6 @@ public interface TestIssueFolderRelRepository {
 
     void delete(TestIssueFolderRelE testIssueFolderRelE);
 
-	TestIssueFolderRelE update(TestIssueFolderRelE testIssueFolderRelE);
-
 	List<TestIssueFolderRelE> queryAllUnderProject(TestIssueFolderRelE testIssueFolderRelE);
 
 	TestIssueFolderRelE queryOneIssueUnderProjectVersionFolder(TestIssueFolderRelE testIssueFolderRelE);

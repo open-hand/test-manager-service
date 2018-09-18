@@ -63,6 +63,15 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issueDTO.setObjectVersionNumber(1L)
         issueDTO.setProjectId(projectId)
 
+        IssueCreateDTO issueCreateDTO2 = new IssueCreateDTO()
+        issueCreateDTO2.setProjectId(projectId)
+        issueCreateDTO2.setTypeCode("issue_test2")
+        issueCreateDTO2.setSummary("测试创建2")
+        IssueDTO issueDTO2 = new IssueDTO()
+        issueDTO2.setIssueId(999999L)
+        issueDTO2.setObjectVersionNumber(1L)
+        issueDTO2.setProjectId(projectId)
+
         List list = testIssueFolderRelMapper.selectAll()
         println("list.size:"+list.size())
         for (TestIssueFolderRelDO testIssueFolderRelDO:list){
@@ -82,6 +91,16 @@ class TestIssueFolderRelControllerSpec extends Specification {
         and: '设置值'
         objectVersionNumbers.add(entity.body.objectVersionNumber)
         foldersId.add(entity.body.folderId)
+
+        when: '向issueFolderRel的插入创建接口发请求'
+        def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
+        then:
+        1 * testCaseService.createTest(_, _) >> issueDTO2
+        entity2.statusCode.is2xxSuccessful()
+
+        and:
+        entity2.body != null
+        entity2.body.issueId == 999999L
 
         when: '向testIssueFolderRel的插入接口发请求'
         def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO, String.class, projectId, foldersId[0], versionId)

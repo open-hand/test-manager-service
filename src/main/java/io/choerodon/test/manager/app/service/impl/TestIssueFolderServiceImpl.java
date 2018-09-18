@@ -1,9 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
@@ -18,12 +14,13 @@ import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import org.codehaus.jackson.map.type.CollectionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -42,13 +39,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Autowired
     TestCaseService testCaseService;
-
-
-    @Override
-    public List<TestIssueFolderDTO> query(TestIssueFolderDTO testIssueFolderDTO) {
-        return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-    }
 
     @Override
     public List<TestIssueFolderDTO> queryByVersion(Long projectId,Long versionId){

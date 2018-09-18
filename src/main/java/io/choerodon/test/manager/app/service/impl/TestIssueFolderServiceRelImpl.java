@@ -1,8 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
@@ -22,8 +19,10 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
@@ -157,13 +156,6 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO update(TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return ConvertHelper.convert(iTestIssueFolderRelService.update(ConvertHelper
-                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
     public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO, List<Long> issues) {
         TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
@@ -174,12 +166,6 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     @Override
     public List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO) {
         return ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
-                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
-    }
-
-    @Override
-    public TestIssueFolderRelDTO updateFolderByIssue(TestIssueFolderRelDTO testIssueFolderRelDTO) {
-        return ConvertHelper.convert(iTestIssueFolderRelService.updateFolderByIssue(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }
 
