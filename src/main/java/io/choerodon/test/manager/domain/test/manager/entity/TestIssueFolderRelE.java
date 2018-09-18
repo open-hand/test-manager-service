@@ -41,10 +41,6 @@ public class TestIssueFolderRelE {
         return testIssueFolderRelRepository.insert(this);
     }
 
-    public TestIssueFolderRelE updateSelf() {
-        return testIssueFolderRelRepository.update(this);
-    }
-
     public TestIssueFolderRelE updateFolderByIssue(){
         return testIssueFolderRelRepository.updateFolderByIssue(this);
     }

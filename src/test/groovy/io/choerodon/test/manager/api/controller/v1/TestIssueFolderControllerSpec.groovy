@@ -5,12 +5,15 @@ import io.choerodon.agile.api.dto.IssueSearchDTO
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
+import io.choerodon.test.manager.app.service.TestIssueFolderRelService
 import io.choerodon.test.manager.app.service.TestIssueFolderService
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.exception.IssueFolderException
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,6 +36,9 @@ class TestIssueFolderControllerSpec extends Specification {
 
     @Autowired
     TestIssueFolderService testIssueFolderService
+
+    @Autowired
+    TestIssueFolderRelMapper testIssueFolderRelMapper
 
     @Autowired
     TestIssueFolderMapper testIssueFolderMapper
@@ -125,16 +131,12 @@ class TestIssueFolderControllerSpec extends Specification {
         expect: "设置期望值"
         !jsonObject.isEmpty()
 
-//        when: '向testIssueFolder的查询接口发请求'
-//        def resultNull = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query', JSONObject.class, 99999L)
-//        then: '返回值'
-//        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
-//        resultNull.statusCode.is2xxSuccessful()
-//        JSONObject nullInfo = entity.body
-//        println("nullInfo"+nullInfo)
-//
-//        expect: "设置期望值"
-//        nullInfo.isEmpty()
+        when: '向testIssueFolder的查询接口发请求'
+        def resultNull = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query', JSONObject.class, 99999L)
+        then: '返回值'
+        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
+        resultNull.statusCode.is2xxSuccessful()
+        assert resultNull.body.isEmpty()
     }
 
     def "QueryByVersion"() {
@@ -212,6 +214,9 @@ class TestIssueFolderControllerSpec extends Specification {
 
     def "MoveFolder"() {
         given:
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(foldersId[0],99999L,99999L,99999L,1L)
+        testIssueFolderRelMapper.insert(testIssueFolderRelDTO)
+
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO()
         testIssueFolderDTO.setName("修改名字")
         testIssueFolderDTO.setFolderId(foldersId[0])

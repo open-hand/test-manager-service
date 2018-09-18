@@ -9,7 +9,6 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
  * Created by zongw.lee@gmail.com on 08/30/2018
  */
 public interface TestIssueFolderService {
-    List<TestIssueFolderDTO> query(TestIssueFolderDTO testIssueFolderDTO);
 
     TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO);
 

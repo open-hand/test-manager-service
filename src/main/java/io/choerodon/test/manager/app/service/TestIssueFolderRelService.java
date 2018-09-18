@@ -25,10 +25,6 @@ public interface TestIssueFolderRelService {
 
     void delete(Long projectId,List<Long> issuesId);
 
-    TestIssueFolderRelDTO update(TestIssueFolderRelDTO testIssueFolderRelDTO);
-
-    TestIssueFolderRelDTO updateFolderByIssue(TestIssueFolderRelDTO testIssueFolderRelDTO);
-
     void moveFolderIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
 
     void copyIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);

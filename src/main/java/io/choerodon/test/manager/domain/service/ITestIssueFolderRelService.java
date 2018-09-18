@@ -17,8 +17,6 @@ public interface ITestIssueFolderRelService {
 
     void delete(TestIssueFolderRelE testIssueFolderRelE);
 
-    TestIssueFolderRelE update(TestIssueFolderRelE testIssueFolderRelE);
-
     TestIssueFolderRelE updateFolderByIssue(TestIssueFolderRelE testIssueFolderRelE);
 
     TestIssueFolderRelE updateVersionByFolderWithNoLock(TestIssueFolderRelE testIssueFolderRelE);
