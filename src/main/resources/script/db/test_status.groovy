@@ -38,4 +38,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'status_color')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_status') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_status_s', startValue: "1")
+        }
+    }
 }

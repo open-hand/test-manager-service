@@ -28,4 +28,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'folder_id')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_issue_folder_rel') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_issue_folder_rel_s', startValue: "1")
+        }
+    }
 }

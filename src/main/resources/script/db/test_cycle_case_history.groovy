@@ -28,4 +28,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
 
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle_case_history') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_case_history_s', startValue: "1")
+        }
+    }
 }

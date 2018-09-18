@@ -25,4 +25,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "execute_id")
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle_case_step') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_case_step_s', startValue: "1")
+        }
+    }
 }

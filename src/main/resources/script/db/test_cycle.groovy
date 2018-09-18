@@ -42,4 +42,10 @@ changeSet(author: 'jialongzuo@hang-china.com', id: '2018-06-8-init_table_test_cy
             column(name:'folder_id',type:'BIGINT UNSIGNED', defaultValue: '0')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_s', startValue: "1")
+        }
+    }
 }

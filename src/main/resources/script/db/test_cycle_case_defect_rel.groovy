@@ -41,4 +41,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'issue_id')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle_case_defect_rel') {
+
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_case_defect_rel_s', startValue: "1")
+        }
+    }
 }
