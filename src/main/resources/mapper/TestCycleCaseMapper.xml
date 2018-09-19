@@ -274,7 +274,6 @@
             </if>
         </where>
     </select>
-
     <select id="queryByIssue" resultMap="BaseResultMap">
                 SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
         defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id,
@@ -437,8 +436,7 @@
         CASE
         cycle1.type
         WHEN 'folder' THEN
-        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE
-        cycle1.cycle_name
+        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE cycle1.cycle_name
         END AS cycle_name,
         CASE
         cycle1.type
