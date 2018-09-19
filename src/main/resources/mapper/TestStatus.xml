@@ -32,8 +32,6 @@
         where
             project_id = 0 and status_type=#{statusType}
                 and status_name='未执行'
-        order by status_id desc
-        limit 1
     </select>
 
 

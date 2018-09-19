@@ -4,10 +4,7 @@ import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -22,6 +19,8 @@ public class TestCycleCaseStepDO extends AuditDomain {
     private Long executeStepId;
     private Long executeId;
     private Long stepId;
+
+    @Column(name = "description")
     private String comment;
 	private Long stepStatus;
 

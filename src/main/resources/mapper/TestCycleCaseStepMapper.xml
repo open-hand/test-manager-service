@@ -6,7 +6,7 @@
         <id column="execute_step_id" property="executeStepId"/>
         <id column="execute_id" property="executeId"/>
         <id column="step_id" property="stepId"/>
-        <id column="comment" property="comment"/>
+        <id column="description" property="comment"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="parent_step_id" property="parentStepId"/>
         <id column="test_step" property="testStep"/>
@@ -37,7 +37,7 @@
         test.execute_step_id,
         test.execute_id,
         test.step_id,
-        test.COMMENT,
+        test.description,
         test.step_status,
         test.object_version_number,
         test.test_step,
@@ -57,7 +57,7 @@
         cycle.execute_step_id,
         cycle.execute_id,
         cycle.step_id,
-        cycle.COMMENT,
+        cycle.description,
         cycle.step_status,
         cycle.object_version_number,
         step.test_step,
@@ -82,7 +82,7 @@
             limit #{page} , #{pageSize}
         </if>
         ) test
-        LEFT JOIN test_cycle_case_attachment_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = "CYCLE_STEP"  )
+        LEFT JOIN test_cycle_case_attach_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = "CYCLE_STEP"  )
         OR ( test.step_id = attach.attachment_link_id AND attach.attachment_type = "CASE_STEP" )
         LEFT JOIN test_cycle_case_defect_rel defect ON test.execute_step_id = defect.defect_link_id
         AND defect.defect_type = "CASE_STEP"

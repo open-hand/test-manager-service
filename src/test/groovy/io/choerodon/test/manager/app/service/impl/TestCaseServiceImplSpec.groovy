@@ -77,8 +77,13 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMapAndPopulatePageInfo(1L,new SearchDTO(),new PageRequest(sort: new Sort("id")),new Page())
         then:
+<<<<<<< HEAD
         1*testCaseFeignClient.listIssueWithLinkedIssues(_,_,_,_,_)>>
                 new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+=======
+        1*testCaseFeignClient.listIssueWithLinkedIssues(_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+
+>>>>>>> oracle 支持
     }
 
     def "GetIssueInfoMap1"() {

@@ -13,7 +13,7 @@ import javax.persistence.Table;
  */
 @ModifyAudit
 @VersionAudit
-@Table(name = "test_cycle_case_attachment_rel")
+@Table(name = "test_cycle_case_attach_rel")
 public class TestCycleCaseAttachmentRelDO extends AuditDomain {
     @Id
     @GeneratedValue
