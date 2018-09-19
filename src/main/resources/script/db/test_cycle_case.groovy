@@ -46,9 +46,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
     }
 
-
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-column-comment') {
         renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case")
     }
-
 }

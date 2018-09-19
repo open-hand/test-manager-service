@@ -47,10 +47,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
     }
 
-
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-update-table-name') {
         renameTable(newTableName:'test_cycle_case_attach_rel',oldTableName:'test_cycle_case_attachment_rel')
 
     }
-
 }
