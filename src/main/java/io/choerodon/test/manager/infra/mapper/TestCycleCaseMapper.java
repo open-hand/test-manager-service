@@ -19,6 +19,8 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
     List<TestCycleCaseDO> queryWithAttachAndDefect_oracle(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
 >>>>>>> oracle 支持
 
+    List<TestCycleCaseDO> queryWithAttachAndDefect_oracle(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
+
     Long queryWithAttachAndDefect_count(@Param("dto")TestCycleCaseDO testCycleCaseDO);
 
 	List<TestCycleCaseDO> filter(Map map);
