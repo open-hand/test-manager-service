@@ -60,6 +60,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     TestCycleCaseService testCycleCaseService;
 
     private static final String NODE_CHILDREN = "children";
+    private static final String CYCLE = "cycle";
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -245,20 +246,20 @@ public class TestCycleServiceImpl implements TestCycleService {
             Long tempCycleId = resTestCycleE.getCycleId();
             //设置修正数据
             TestCycleE needTestCycleE;
-            if (resTestCycleE.getType().equals("cycle")) {
+            if (resTestCycleE.getType().equals(CYCLE)) {
                 resTestCycleE.setType("folder");
                 resTestCycleE.setParentCycleId(resTestCycleE.getCycleId());
                 resTestCycleE.setCycleId(null);
                 needTestCycleE = resTestCycleE.addSelf();
                 needTestCycleE.setObjectVersionNumber(1L);
-                testIssueFolderDTO.setType("cycle");
+                testIssueFolderDTO.setType(CYCLE);
             } else if (resTestCycleE.getType().equals("temp")) {
                 needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType(resTestCycleE.getType());
             } else {
                 //TestCycleE的type为folder的情况
                 needTestCycleE = resTestCycleE;
-                testIssueFolderDTO.setType("cycle");
+                testIssueFolderDTO.setType(CYCLE);
             }
 
             Long projectId = testCaseService.queryProjectIdByVersionId(needTestCycleE.getVersionId());
