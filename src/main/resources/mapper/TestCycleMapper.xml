@@ -3,7 +3,7 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleMapper">
 
     <resultMap id="hashmap" type="java.util.Map">
-        <result column="counts" property="counts"/>
+        <result column="counts" property="counts" javaType="java.lang.Long"/>
         <result column="color" property="color" jdbcType="VARCHAR"/>
     </resultMap>
 

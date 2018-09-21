@@ -17,20 +17,16 @@ service:
   port: 8093
 
 preJob:
-  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.5.2
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.5.6
   preConfig:
     configFile: application.yml
-    mysql:
-      host: 192.168.12.175
-      port: 3306
-      database: manager_service
+    datasource:
+      url: jdbc:mysql://192.168.12.175:3306/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: root
       password: choerodon
   preInitDB:
-    mysql:
-      host: 192.168.12.175
-      port: 3306
-      database: test_manager_service
+    datasource:
+      url: jdbc:mysql://192.168.12.175:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: root
       password: choerodon
 

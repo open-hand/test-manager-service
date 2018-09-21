@@ -14,4 +14,5 @@ public interface TestCaseStepMapper extends BaseMapper<TestCaseStepDO> {
     List<TestCaseStepDO> query(TestCaseStepDO testCaseStepDO);
 
     String getLastedRank(@Param("issueId") Long issueId);
+    String getLastedRank_oracle(@Param("issueId") Long issueId);
 }

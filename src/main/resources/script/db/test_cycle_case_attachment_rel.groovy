@@ -40,5 +40,19 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'attachment_name')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle_case_attachment_rel') {
 
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_case_attach_rel_s', startValue: "1")
+        }
+    }
+
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-update-table-name') {
+        renameTable(newTableName:'test_cycle_case_attach_rel',oldTableName:'test_cycle_case_attachment_rel')
+
+    }
+
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-attach-column-comment') {
+        renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case_attach_rel")
+    }
 }

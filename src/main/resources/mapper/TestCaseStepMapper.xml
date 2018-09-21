@@ -23,7 +23,7 @@
         step.step_id,step.rank,step.issue_id,step.test_step,step.object_version_number,step.test_data,step.expected_result
         ,attach.url,attach.attachment_name,attach.id
         FROM test_case_step step
-        left join test_cycle_case_attachment_rel attach
+        left join test_cycle_case_attach_rel attach
         on step.step_id=attach.attachment_link_id and attach.attachment_type='CASE_STEP'
         <where>
             <if test="issueId != null">
@@ -48,5 +48,15 @@ ORDER BY
 	LIMIT 1
     </select>
 
+    <select id="getLastedRank_oracle" resultType="java.lang.String">
+SELECT
+	rank
+FROM
+	test_case_step
+WHERE
+	issue_id = #{issueId} and rownum=1
+ORDER BY
+	rank DESC
 
+    </select>
 </mapper>

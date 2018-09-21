@@ -3,7 +3,9 @@ package io.choerodon.test.manager.infra.repository.impl;
 import io.choerodon.core.domain.PageInfo;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
+import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
+import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
@@ -11,6 +13,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -27,6 +30,9 @@ import java.util.Optional;
 public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Autowired
     TestCycleCaseMapper testCycleCaseMapper;
+
+	@Value("${spring.datasource.url}")
+	private String dsUrl;
 
     @Override
     public TestCycleCaseE insert(TestCycleCaseE testCycleCaseE) {
@@ -55,7 +61,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-		List<TestCycleCaseDO> dto=testCycleCaseMapper.queryWithAttachAndDefect(convert,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+		List<TestCycleCaseDO> dto=queryWithAttachAndDefect(convert,pageRequest);
 		Long total= 0L;
 		if(dto!=null && !dto.isEmpty()){
 			total=testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
@@ -85,6 +91,18 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
         return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
     }
+
+    private List<TestCycleCaseDO> queryWithAttachAndDefect(TestCycleCaseDO convert , PageRequest pageRequest){
+		switch (LiquibaseHelper.dbType(dsUrl)){
+			case MYSQL:
+			case H2:
+				return testCycleCaseMapper.queryWithAttachAndDefect(convert,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+			case ORACLE:
+				return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+			default:
+				throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE+",need mysql or oracle but now is:"+dsUrl);
+		}
+	}
 
     @Override
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
@@ -163,7 +181,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	@Override
 	public String getLastedRank(Long cycleId) {
-		return testCycleCaseMapper.getLastedRank(cycleId);
+		return LiquibaseHelper.executeFunctionByMysqlOrOracle(testCycleCaseMapper::getLastedRank,testCycleCaseMapper::getLastedRank_oracle,dsUrl,cycleId);
+
 	}
 
 }

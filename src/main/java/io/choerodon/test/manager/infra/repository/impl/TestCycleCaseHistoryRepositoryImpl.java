@@ -45,7 +45,7 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
         if (testCycleCaseHistoryMapper.updateByPrimaryKeySelective(convert) != 1) {
             throw new CommonException("error.testStepCase.update");
         }
-		return ConvertHelper.convert(testCycleCaseHistoryMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseHistoryE.class);
+		return ConvertHelper.convert(testCycleCaseHistoryMapper.queryByPrimaryKey(convert.getId()), TestCycleCaseHistoryE.class);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
         TestCycleCaseHistoryDO convert = ConvertHelper.convert(testCycleCaseHistoryE, TestCycleCaseHistoryDO.class);
 
         Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseHistoryMapper.select(convert));
+                () -> testCycleCaseHistoryMapper.query(convert));
 
         return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseHistoryE.class);
     }
@@ -62,6 +62,6 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
     public List<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE) {
         TestCycleCaseHistoryDO convert = ConvertHelper.convert(testCycleCaseHistoryE, TestCycleCaseHistoryDO.class);
 
-        return ConvertHelper.convertList(testCycleCaseHistoryMapper.select(convert), TestCycleCaseHistoryE.class);
+        return ConvertHelper.convertList(testCycleCaseHistoryMapper.query(convert), TestCycleCaseHistoryE.class);
     }
 }

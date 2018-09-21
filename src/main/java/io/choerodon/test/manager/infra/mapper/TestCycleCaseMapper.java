@@ -15,6 +15,8 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 
 	List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect(@Param("dtos")List<TestCycleCaseDO> testCycleCaseDOS,@Param("page")int page,@Param("pageSize")int pageSize);
 
+    List<TestCycleCaseDO> queryWithAttachAndDefect_oracle(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
+
     Long queryWithAttachAndDefect_count(@Param("dto")TestCycleCaseDO testCycleCaseDO);
 
 	List<TestCycleCaseDO> filter(Map map);
@@ -57,4 +59,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 	 * @return
 	 */
 	String getLastedRank(@Param("cycleId") Long cycleId);
+
+	String getLastedRank_oracle(@Param("cycleId") Long cycleId);
 }

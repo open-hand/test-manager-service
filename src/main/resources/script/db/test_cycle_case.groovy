@@ -40,4 +40,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'rank')
         }
     }
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_cycle_case') {
+        if (helper.dbType().isSupportSequence()) {
+            createSequence(sequenceName: 'test_cycle_case_s', startValue: "1")
+        }
+    }
+
+    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-column-comment') {
+        renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case")
+    }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseHistoryDO" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="execute_id" property="executeId"/>
+        <id column="old_value" property="oldValue" javaType="java.lang.String"/>
+        <id column="new_value" property="newValue" javaType="java.lang.String"/>
+        <id column="field" property="field"/>
+    </resultMap>
+
+    <select id="query" resultMap="BaseResultMap">
+        select * from test_cycle_case_history
+        <where>
+            <if test="dto.executeId != null">
+                and execute_id=#{dto.executeId}
+            </if>
+            <if test="dto.oldValue != null">
+                and old_value LIKE CONCAT(CONCAT('%', #{dto.oldValue}), '%')
+            </if>
+            <if test="dto.newValue != null">
+                and new_value LIKE CONCAT(CONCAT('%', #{dto.newValue}), '%')
+            </if>
+            <if test="dto.field != null">
+                and field = #{dto.field}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryByPrimaryKey" resultMap="BaseResultMap">
+      select * from test_cycle_case_history where id=#{id}
+    </select>
+
+</mapper>

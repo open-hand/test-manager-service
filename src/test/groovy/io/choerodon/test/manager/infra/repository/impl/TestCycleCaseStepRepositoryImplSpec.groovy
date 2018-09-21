@@ -77,18 +77,6 @@ class TestCycleCaseStepRepositoryImplSpec extends Specification {
 
     }
 
-    def "Query"() {
-        when:
-        repository.query(new TestCycleCaseStepE(executeId: 1),new PageRequest(1,5))
-        then:
-        1*mapper.queryWithTestCaseStep(_,_,_)>> Lists.newArrayList(new TestCycleCaseStepDO())
-        1*mapper.queryWithTestCaseStep_count(_)>>3L
-        when:
-        repository.query(new TestCycleCaseStepE(executeId: 1),new PageRequest(1,5))
-        then:
-        1*mapper.queryWithTestCaseStep(_,_,_)>> Lists.newArrayList()
-        0*mapper.queryWithTestCaseStep_count(_)
-    }
 
 
     def "QueryOne"() {

@@ -48,13 +48,13 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         result.statusCode.is2xxSuccessful()
     }
 
-    def "RemoveAttachment"() {
-        given:
-        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
-//        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
-        when:
-        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,1L)
-        then:
-        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
-    }
+//    def "RemoveDefect"() {
+//        given:
+//        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
+////        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
+//        when:
+//        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,1L)
+//        then:
+//        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+//    }
 }

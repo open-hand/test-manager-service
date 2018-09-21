@@ -96,7 +96,7 @@ class TestCycleMapperSpec extends Specification {
         count==result.get(id).getCycleCaseList().size()
         where:
         id  |   count
-        0   |   1
+        0   |   2
         1   |   1
         2   |   0
         3   |   0

@@ -2,11 +2,14 @@ package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
+import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
+import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -21,6 +24,8 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
     @Autowired
     TestCaseStepMapper testCaseStepMapper;
 
+    @Value("${spring.datasource.url}")
+    private String dsUrl;
 
     @Override
     public TestCaseStepE insert(TestCaseStepE testCaseStepE) {
@@ -64,6 +69,6 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
     @Override
     public String getLastedRank(Long issueId) {
         Assert.notNull(issueId,"error.case.step.getLastedRank.issueid.not.null");
-        return testCaseStepMapper.getLastedRank(issueId);
+       return LiquibaseHelper.executeFunctionByMysqlOrOracle(testCaseStepMapper::getLastedRank,testCaseStepMapper::getLastedRank_oracle,dsUrl,issueId);
     }
 }
