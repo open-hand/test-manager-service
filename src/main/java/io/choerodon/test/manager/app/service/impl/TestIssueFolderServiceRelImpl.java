@@ -76,7 +76,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
-        if(testFolderRelQueryDTO.getVersionIds() == null){
+        if(testFolderRelQueryDTO.getVersionIds() == null || testFolderRelQueryDTO.getVersionIds().length==0 ){
             TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
             resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));

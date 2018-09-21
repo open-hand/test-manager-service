@@ -82,14 +82,4 @@ class TestCaseStepRepositoryImplSpec extends Specification {
         1 * mapper.query(_)
     }
 
-    def "GetLastedRank"() {
-        when:
-        repository.getLastedRank(null)
-        then:
-        thrown(IllegalArgumentException)
-        when:
-        repository.getLastedRank(1)
-        then:
-        1*mapper.getLastedRank(_)
-    }
 }

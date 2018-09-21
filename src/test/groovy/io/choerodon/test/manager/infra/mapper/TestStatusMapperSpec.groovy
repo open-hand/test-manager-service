@@ -87,14 +87,4 @@ class TestStatusMapperSpec extends Specification {
         result2==0
     }
 
-    def "GetDefaultStatus"() {
-        expect:
-        def res = mapper.selectAll()
-        result== mapper.getDefaultStatus(statusType)
-        where:
-        statusType      |   result
-        "CYCLE_CASE"    |   11
-        "CASE_STEP"     |   12
-        "任意其他字符"    |   null
-    }
 }
