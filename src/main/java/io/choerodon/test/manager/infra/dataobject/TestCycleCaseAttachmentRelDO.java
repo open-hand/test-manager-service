@@ -4,6 +4,7 @@ import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,6 +23,8 @@ public class TestCycleCaseAttachmentRelDO extends AuditDomain {
     private Long attachmentLinkId;
     private String attachmentName;
     private String url;
+
+    @Column(name = "description")
     private String comment;
 
     public Long getId() {

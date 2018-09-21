@@ -12,6 +12,7 @@ import java.util.List;
 public interface TestCycleCaseStepMapper extends BaseMapper<TestCycleCaseStepDO> {
 
     List<TestCycleCaseStepDO> queryWithTestCaseStep(@Param("dto") TestCycleCaseStepDO testCycleCaseStepDO, @Param("page") int page, @Param("pageSize") int pageSize);
+    List<TestCycleCaseStepDO> queryWithTestCaseStep_oracle(@Param("dto") TestCycleCaseStepDO testCycleCaseStepDO, @Param("page") int page, @Param("pageSize") int pageSize);
 
     Long queryWithTestCaseStep_count(@Param("executeId") Long executeId);
 

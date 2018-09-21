@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.repository.impl;
 import io.choerodon.core.domain.PageInfo;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
+import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -11,6 +12,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -27,7 +29,8 @@ import java.util.stream.Stream;
 public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepRepository {
 	@Autowired
 	TestCycleCaseStepMapper testCycleCaseStepMapper;
-
+	@Value("${spring.datasource.url}")
+	private String dsUrl;
 	@Override
 	public TestCycleCaseStepE insert(TestCycleCaseStepE testCycleCaseStepE) {
 		Assert.notNull(testCycleCaseStepE,"error.test.cycle.step.insert.param.not.null");
@@ -64,7 +67,7 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
 		}
 		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
 
-		List<TestCycleCaseStepDO> dto = testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+		List<TestCycleCaseStepDO> dto = LiquibaseHelper.executeBiFunctionByMysqlOrOracle(this::queryWithTestCaseStep_mysql,this::queryWithTestCaseStep_oracle,dsUrl,convert,pageRequest);
 		Long total= 0L;
 		if(dto!=null && !dto.isEmpty()){
 			total=testCycleCaseStepMapper.queryWithTestCaseStep_count(testCycleCaseStepE.getExecuteId());
@@ -73,6 +76,13 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
 		Page<TestCycleCaseStepDO> page = new Page<>(Optional.ofNullable(dto).orElseGet(ArrayList::new), info, total);
 
 		return ConvertPageHelper.convertPage(page, TestCycleCaseStepE.class);
+	}
+
+	private List<TestCycleCaseStepDO>  queryWithTestCaseStep_mysql(TestCycleCaseStepDO convert, PageRequest pageRequest){
+		return testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+	}
+	private List<TestCycleCaseStepDO>  queryWithTestCaseStep_oracle(TestCycleCaseStepDO convert, PageRequest pageRequest){
+		return testCycleCaseStepMapper.queryWithTestCaseStep_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
 	}
 
 	public List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE) {

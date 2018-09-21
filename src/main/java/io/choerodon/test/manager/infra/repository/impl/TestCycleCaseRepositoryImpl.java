@@ -181,15 +181,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
 	@Override
 	public String getLastedRank(Long cycleId) {
-		switch (LiquibaseHelper.dbType(dsUrl)){
-			case MYSQL:
-			case H2:
-				return testCycleCaseMapper.getLastedRank(cycleId);
-			case ORACLE:
-				return testCycleCaseMapper.getLastedRank_oracle(cycleId);
-			default:
-				throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE+",need mysql or oracle but now is:"+dsUrl);
-		}
+		return LiquibaseHelper.executeFunctionByMysqlOrOracle(testCycleCaseMapper::getLastedRank,testCycleCaseMapper::getLastedRank_oracle,dsUrl,cycleId);
+
 	}
 
 }

@@ -1,5 +1,11 @@
 package io.choerodon.test.manager.infra.common.utils;
 
+import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
+import org.apache.poi.ss.formula.functions.T;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 /**
  * Created by hailuoliu@choerodon.io on 2018/7/11.
  */
@@ -64,5 +70,28 @@ public class LiquibaseHelper {
         }
     }
 
+    public static<U,R> R executeFunctionByMysqlOrOracle(Function<U,R> mysqlFunction,Function<U,R> oracleFunction,String dsUrl,U param){
+        switch (dbType(dsUrl)){
+            case MYSQL:
+            case H2:
+                return mysqlFunction.apply(param);
+            case ORACLE:
+                return oracleFunction.apply(param);
+            default:
+                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE+",need mysql or oracle but now is:"+dsUrl);
+        }
+    }
+
+    public static<T,U,R> R executeBiFunctionByMysqlOrOracle(BiFunction<T,U,R> mysqlFunction, BiFunction<T,U,R> oracleFunction, String dsUrl,T param1, U param2){
+        switch (dbType(dsUrl)){
+            case MYSQL:
+            case H2:
+                return mysqlFunction.apply(param1,param2);
+            case ORACLE:
+                return oracleFunction.apply(param1,param2);
+            default:
+                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE+",need mysql or oracle but now is:"+dsUrl);
+        }
+    }
 
 }

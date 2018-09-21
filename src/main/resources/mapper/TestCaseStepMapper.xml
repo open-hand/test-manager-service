@@ -48,5 +48,15 @@ ORDER BY
 	LIMIT 1
     </select>
 
+    <select id="getLastedRank_oracle" resultType="java.lang.String">
+SELECT
+	rank
+FROM
+	test_case_step
+WHERE
+	issue_id = #{issueId} and rownum=1
+ORDER BY
+	rank DESC
 
+    </select>
 </mapper>

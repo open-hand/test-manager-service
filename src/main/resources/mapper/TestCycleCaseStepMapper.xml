@@ -82,14 +82,80 @@
             limit #{page} , #{pageSize}
         </if>
         ) test
-        LEFT JOIN test_cycle_case_attach_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = "CYCLE_STEP"  )
-        OR ( test.step_id = attach.attachment_link_id AND attach.attachment_type = "CASE_STEP" )
+        LEFT JOIN test_cycle_case_attach_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = 'CYCLE_STEP'  )
+        OR ( test.step_id = attach.attachment_link_id AND attach.attachment_type = 'CASE_STEP' )
         LEFT JOIN test_cycle_case_defect_rel defect ON test.execute_step_id = defect.defect_link_id
-        AND defect.defect_type = "CASE_STEP"
+        AND defect.defect_type = 'CASE_STEP'
     </select>
 
+    <select id="queryWithTestCaseStep_oracle" resultMap="BaseResultMap">
+        SELECT
+        test.execute_step_id,
+        test.execute_id,
+        test.step_id,
+        test.description,
+        test.step_status,
+        test.object_version_number,
+        test.test_step,
+        test.test_data,
+        test.expected_result,
+        defect.defect_type,
+        defect.id defece_id,
+        defect.defect_link_id,
+        defect.issue_id defect_issue_id,
+        attach.url,
+        attach.attachment_name,
+        attach.attachment_type,
+        attach.id
+        FROM
+        (
+        select * from(
+        select tt.*,ROWNUM AS rowno from(
+        SELECT
+        cycle.execute_step_id,
+        cycle.execute_id,
+        cycle.step_id,
+        cycle.description,
+        cycle.step_status,
+        cycle.object_version_number,
+        step.test_step,
+        step.test_data,
+        step.expected_result,
+        step.rank
+        FROM
+        ( select * from test_cycle_case_step
+        <where>
+            <if test="dto!=null and dto.executeStepId != null">
+                AND execute_step_id = #{dto.executeStepId}
+            </if>
+            <if test="dto!=null and dto.executeId != null">
+                AND execute_id = #{dto.executeId}
+            </if>
+        </where>
+        ) cycle
+        LEFT JOIN test_case_step step ON cycle.step_id = step.step_id
+        ORDER BY
+        step.rank
+        ) tt
+        <if test="pageSize !=0">
+            WHERE
+            <![CDATA[ROWNUM <= #{pageSize}]]>
+        </if>
+        ) table_alias
+        <if test="pageSize !=0">
+            WHERE
+            <![CDATA[ table_alias.rowno >= #{page}]]>
+        </if>
+				)	test
+        LEFT JOIN test_cycle_case_attach_rel attach ON ( test.execute_step_id = attach.attachment_link_id AND attach.attachment_type = 'CYCLE_STEP'  )
+        OR ( test.step_id = attach.attachment_link_id AND attach.attachment_type = 'CASE_STEP' )
+        LEFT JOIN test_cycle_case_defect_rel defect ON test.execute_step_id = defect.defect_link_id
+        AND defect.defect_type = 'CASE_STEP'
+    </select>
+
+
     <select id="queryWithTestCaseStep_count" resultType="java.lang.Long">
-        SELECT count(1) from test_cycle_case_step where execute_id=#{executeId};
+        SELECT count(1) from test_cycle_case_step where execute_id=#{executeId}
     </select>
 
     <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
