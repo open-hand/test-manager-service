@@ -208,7 +208,7 @@
         cycle.object_version_number,
         cycle.execution_status,
         cycle.assigned_to,
-        cycle.COMMENT,
+        cycle.description,
         attach.url,
         attach.attachment_name,
         attach.id,
@@ -238,7 +238,7 @@
             limit #{page} , #{pageSize}
         </if>
         ) cycle
-        LEFT JOIN test_cycle_case_attachment_rel attach ON cycle.execute_id = attach.attachment_link_id
+        LEFT JOIN test_cycle_case_attach_rel attach ON cycle.execute_id = attach.attachment_link_id
         AND attach.attachment_type = 'CYCLE_CASE'
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
         AND defect.defect_type = 'CYCLE_CASE'

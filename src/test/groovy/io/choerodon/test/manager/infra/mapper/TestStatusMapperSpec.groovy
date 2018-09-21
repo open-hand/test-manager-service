@@ -30,13 +30,13 @@ class TestStatusMapperSpec extends Specification {
     def "QueryAllUnderProject"() {
         given:
         TestStatusDO statusDO=new TestStatusDO()
-        statusDO.setProjectId(new Long(0))
+        statusDO.setProjectId(new Long(1))
         statusDO.setStatusName("未执行")
         statusDO.setStatusColor("yellow")
         statusDO.setStatusType("CYCLE_CASE")
 
         TestStatusDO statusDO1=new TestStatusDO()
-        statusDO1.setProjectId(new Long(0))
+        statusDO1.setProjectId(new Long(1))
         statusDO1.setStatusName("未执行")
         statusDO1.setStatusColor("yellow")
         statusDO1.setStatusType("CASE_STEP")
