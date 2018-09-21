@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.agile.api.dto.IssueCommonDTO
 import io.choerodon.agile.api.dto.IssueComponentDetailDTO
+import io.choerodon.agile.api.dto.IssueListDTO
 import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.core.domain.Page
@@ -36,10 +37,10 @@ class TestCaseServiceImplSpec extends Specification {
     ProductionVersionClient productionVersionClient
 
     def setup(){
-         testCaseFeignClient=Mock(TestCaseFeignClient)
-         productionVersionClient=Mock(ProductionVersionClient)
-         projectFeignClient=Mock(ProjectFeignClient)
-         service=new TestCaseServiceImpl(testCaseFeignClient:testCaseFeignClient,productionVersionClient:productionVersionClient,projectFeignClient:projectFeignClient)
+        testCaseFeignClient=Mock(TestCaseFeignClient)
+        productionVersionClient=Mock(ProductionVersionClient)
+        projectFeignClient=Mock(ProjectFeignClient)
+        service=new TestCaseServiceImpl(testCaseFeignClient:testCaseFeignClient,productionVersionClient:productionVersionClient,projectFeignClient:projectFeignClient)
 
     }
 
@@ -76,8 +77,8 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMapAndPopulatePageInfo(1L,new SearchDTO(),new PageRequest(sort: new Sort("id")),new Page())
         then:
-        1*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueCommonDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
-
+        1*testCaseFeignClient.listIssueWithLinkedIssues(_,_,_,_,_)>>
+                new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
     }
 
     def "GetIssueInfoMap1"() {

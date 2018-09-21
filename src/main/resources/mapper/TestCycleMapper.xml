@@ -183,4 +183,16 @@
             #{item}
         </foreach>
     </select>
+
+    <select id="queryChildCycle" resultMap="BaseResultMap">
+        SELECT
+        cycle_id,cycle_name
+        FROM
+        test_cycle
+        <where>
+            <if test="dto!=null and dto.cycleId != null">
+               parent_cycle_id=#{dto.cycleId}
+            </if>
+        </where>
+    </select>
 </mapper>

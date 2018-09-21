@@ -9,8 +9,7 @@ import org.springframework.beans.BeanUtils;
 public class IssueComponentDetailFolderRelDTO extends IssueComponentDetailDTO {
     private Long objectVersionNumber;
 
-    public IssueComponentDetailFolderRelDTO(Long objectVersionNumber, IssueInfosDTO issueComponentDetailDTO) {
-        this.objectVersionNumber = objectVersionNumber;
+    public IssueComponentDetailFolderRelDTO(IssueInfosDTO issueComponentDetailDTO) {
         BeanUtils.copyProperties(issueComponentDetailDTO,this);
     }
 

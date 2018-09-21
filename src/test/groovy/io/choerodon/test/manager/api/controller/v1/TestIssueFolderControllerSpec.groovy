@@ -35,9 +35,6 @@ class TestIssueFolderControllerSpec extends Specification {
     TestCaseService testCaseService
 
     @Autowired
-    TestIssueFolderService testIssueFolderService
-
-    @Autowired
     TestIssueFolderRelMapper testIssueFolderRelMapper
 
     @Autowired
@@ -223,7 +220,6 @@ class TestIssueFolderControllerSpec extends Specification {
         testIssueFolderDTO.setVersionId(2L)
         testIssueFolderDTO.setProjectId(projectId)
         testIssueFolderDTO.setObjectVersionNumber(objectVersionNumbers[1])
-        List<IssueSearchDTO> issueSearchDTOS = new ArrayList<>()
 
         TestIssueFolderDTO testIssueFolderException = new TestIssueFolderDTO()
         testIssueFolderException.setFolderId(999L)
@@ -234,7 +230,7 @@ class TestIssueFolderControllerSpec extends Specification {
         restTemplate.put('/v1/projects/{project_id}/issueFolder/move', testIssueFolderDTO, projectId)
 
         then: '返回值'
-        1 * testCaseService.batchIssueToVersion(_, _, _) >> issueSearchDTOS
+        1 * testCaseService.batchIssueToVersionTest(_, _, _)
         TestIssueFolderDO changedIssueFolder = testIssueFolderMapper.selectByPrimaryKey(foldersId[0])
 
         and:

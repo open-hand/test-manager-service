@@ -1,15 +1,18 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONObject
+import io.choerodon.agile.api.dto.CopyConditionDTO
 import io.choerodon.agile.api.dto.IssueCreateDTO
 import io.choerodon.agile.api.dto.IssueDTO
 import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
+import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
@@ -17,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -137,6 +142,25 @@ class TestIssueFolderRelControllerSpec extends Specification {
         entities.body.size() > 1
     }
 
+    def "cloneOneIssue"() {
+        given:
+        IssueDTO issueDTO = new IssueDTO()
+        issueDTO.setIssueId(11111L)
+
+        when:
+        HttpEntity<CopyConditionDTO> requestEntity = new HttpEntity<CopyConditionDTO>(new CopyConditionDTO(), null)
+        def entity = restTemplate.exchange('/v1/projects/{project_id}/issueFolderRel/copy/issue/{issue_id}',
+                HttpMethod.PUT, requestEntity, TestIssueFolderRelDTO, projectId,11L)
+
+        then: '返回值'
+        1*testCaseService.cloneIssueByIssueId(_,_,_)>>issueDTO
+
+        and:
+        entity.statusCode.is2xxSuccessful()
+        entity.body.issueId == 11111L
+
+    }
+
     def "QueryIssuesById"() {
         given:
         IssueInfosDTO issueInfosDTO = new IssueInfosDTO()
@@ -248,11 +272,14 @@ class TestIssueFolderRelControllerSpec extends Specification {
         List targetIFR = testIssueFolderRelMapper.select(target)
 
         and:
-        println("ori" + originIFR.get(0).getIssueId())
-        println("tar" + targetIFR.get(0).getIssueId() + "|||" + targetIFR.get(1).getIssueId())
+        println("ori.Size " + originIFR.size())
+        println("ori:" + originIFR.get(0).getIssueId() +"|||"+ originIFR.get(1).getIssueId())
+        println("tar.Size " + targetIFR.size())
+        println("tar:" + targetIFR.get(0).getIssueId() + "|||" + targetIFR.get(1).getIssueId())
 
         expect: '期望值'
-        originIFR.size() < 2
+        !originIFR.contains(issueInfosDTO1)
+        !originIFR.contains(issueInfosDTO2)
         targetIFR.size() > 1
     }
 

@@ -9,8 +9,10 @@ import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
 import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
+import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCycleCaseService
 import io.choerodon.test.manager.app.service.TestCycleService
 import io.choerodon.test.manager.app.service.UserService
@@ -19,6 +21,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
+import junit.framework.TestCase
 import org.apache.commons.lang.StringUtils
 import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,6 +47,8 @@ class TestCycleServiceImplSpec extends Specification {
     @Autowired
     TestCycleService testCycleService
 
+    @Autowired
+    TestCaseService testCaseService
 
     def "Insert"() {
         given:
@@ -139,6 +144,9 @@ class TestCycleServiceImplSpec extends Specification {
         Map<Long, UserDO> users = new HashMap()
         users.put(4L, userDO)
 
+        Map map = new HashMap()
+        map.put(1L,new ProductVersionDTO(versionId: 226l))
+
         TestCycleCaseDTO case1 = new TestCycleCaseDTO(cycleId: cycle1.getCycleId(), issueId: 1L, versionId: 226l, executionStatus: status.getStatusId(), assignedTo: 4L)
         TestCycleCaseE caseE = ConvertHelper.convert(case1, TestCycleCaseE.class);
         caseE.addSelf()
@@ -147,13 +155,13 @@ class TestCycleServiceImplSpec extends Specification {
         when:
         JSONObject jsob = service.getTestCycle(226l,null)
         then:
-        1 * client.listByProjectId(_) >> new ResponseEntity<Page<ProductVersionDTO>>(Lists.newArrayList(v1), HttpStatus.OK)
+        1 * testCaseService.getVersionInfo(_) >> map
         1 * client1.query(_) >> users
         jsob != null
         when:
         service.getTestCycle(226l,null)
         then:
-        1 * client.listByProjectId(_) >> new ResponseEntity<Page<ProductVersionDTO>>(Lists.newArrayList(), HttpStatus.OK)
+        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
         0 * client1.query(_)
     }
 

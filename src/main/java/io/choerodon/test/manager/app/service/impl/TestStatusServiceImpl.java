@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -54,7 +55,10 @@ public class TestStatusServiceImpl implements TestStatusService {
 		Assert.notNull(testCycleCaseDTO, "error.populateCycleCase.param.not.null");
 		TestStatusE statusE = TestStatusEFactory.create();
 		statusE.setStatusId(testCycleCaseDTO.getExecutionStatus());
-		testCycleCaseDTO.setExecutionStatusName(statusE.queryOne().getStatusName());
+		TestStatusE testStatusE = statusE.queryOne();
+		if (!ObjectUtils.isEmpty(testStatusE)){
+			testCycleCaseDTO.setExecutionStatusName(testStatusE.getStatusName());
+		}
 	}
 
 	@Override

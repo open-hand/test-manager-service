@@ -87,9 +87,9 @@ public class TestCycleCaseE {
         return issueCreateDTO;
     }
 
-    public Page<TestCycleCaseE> querySelf(PageRequest pageRequest) {
-        return testCycleCaseRepository.query(this, pageRequest);
-    }
+//    public Page<TestCycleCaseE> querySelf(PageRequest pageRequest) {
+//        return testCycleCaseRepository.query(this, pageRequest);
+//    }
 
     public List<TestCycleCaseE> queryByIssue(Long versionId) {
         return testCycleCaseRepository.queryByIssue(versionId);

@@ -4,12 +4,11 @@ import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
-import org.springframework.beans.factory.annotation.Autowire
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -31,18 +30,24 @@ class TestStatusMapperSpec extends Specification {
     def "QueryAllUnderProject"() {
         given:
         TestStatusDO statusDO=new TestStatusDO()
-        statusDO.setProjectId(new Long(2))
-        statusDO.setStatusName("name")
+        statusDO.setProjectId(new Long(0))
+        statusDO.setStatusName("未执行")
         statusDO.setStatusColor("yellow")
         statusDO.setStatusType("CYCLE_CASE")
+
         TestStatusDO statusDO1=new TestStatusDO()
+        statusDO1.setProjectId(new Long(0))
+        statusDO1.setStatusName("未执行")
+        statusDO1.setStatusColor("yellow")
+        statusDO1.setStatusType("CASE_STEP")
 
         when:
-        def result1=mapper.queryAllUnderProject(statusDO1).size()
+        def beforeSize = mapper.selectAll().size()
         mapper.insert(statusDO)
-        def result2=mapper.queryAllUnderProject(statusDO).size()
+        mapper.insert(statusDO1)
+        def afterSize = mapper.selectAll().size()
         then:
-        result2==result1+1
+        afterSize == beforeSize + 2
     }
 
     def "IfDeleteCycleCaseAllow"() {
@@ -84,11 +89,12 @@ class TestStatusMapperSpec extends Specification {
 
     def "GetDefaultStatus"() {
         expect:
+        def res = mapper.selectAll()
         result== mapper.getDefaultStatus(statusType)
         where:
         statusType      |   result
-        "CYCLE_CASE"    |   1
-        "CASE_STEP"     |   4
+        "CYCLE_CASE"    |   11
+        "CASE_STEP"     |   12
         "任意其他字符"    |   null
     }
 }

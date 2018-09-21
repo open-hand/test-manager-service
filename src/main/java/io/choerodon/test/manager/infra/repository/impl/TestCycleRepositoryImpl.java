@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -140,5 +142,11 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 	@Override
 	public List<TestCycleE> queryAll() {
 		return ConvertHelper.convertList(cycleMapper.selectAll(), TestCycleE.class);
+	}
+
+	@Override
+	public List<TestCycleE> queryChildCycle(TestCycleE testCycleE) {
+		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
+		return ConvertHelper.convertList(cycleMapper.queryChildCycle(convert), TestCycleE.class);
 	}
 }

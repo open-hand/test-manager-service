@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.agile.api.dto.CopyConditionDTO;
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.exception.CommonException;
@@ -13,6 +14,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
+import io.choerodon.test.manager.api.dto.TestFolderRelQueryDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.swagger.annotations.ApiOperation;
@@ -36,11 +38,10 @@ public class TestIssueFolderRelController {
     @PostMapping("/query")
     public ResponseEntity queryIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
                                                  @RequestParam(name = "folder_id", required = false) Long folderId,
-                                                 @RequestParam(name = "version_id", required = false) Long versionId,
                                                  @RequestBody
-                                                         SearchDTO searchDTO,
+                                                         TestFolderRelQueryDTO testFolderRelQueryDTO,
                                                  @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, versionId, searchDTO, pageRequest))
+        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, testFolderRelQueryDTO, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
     }
@@ -108,5 +109,16 @@ public class TestIssueFolderRelController {
                                     @RequestBody List<IssueInfosDTO> issues) {
         testIssueFolderRelService.copyIssue(projectId, versionId, folderId, issues);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("克隆文件夹下的一个issue")
+    @PutMapping("/copy/issue/{issue_id}")
+    public ResponseEntity<TestIssueFolderRelDTO> cloneOneIssue(@PathVariable(name = "project_id") Long projectId,
+                                    @PathVariable(name = "issue_id") Long issueId,
+                                    @RequestBody CopyConditionDTO copyConditionDTO) {
+        return Optional.ofNullable(testIssueFolderRelService.cloneOneIssue(projectId,issueId,copyConditionDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.copy.oneIssue"));
     }
 }

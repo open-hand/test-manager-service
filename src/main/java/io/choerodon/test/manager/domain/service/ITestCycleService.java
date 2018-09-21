@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service;
 
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -19,6 +20,8 @@ public interface ITestCycleService {
     Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
 
     List<TestCycleE> querySubCycle(TestCycleE testCycleE);
+
+	List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
 
 	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 

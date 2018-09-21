@@ -66,6 +66,10 @@ public class TestCycleE {
         return testCycleRepository.query(this);
     }
 
+    public List<TestCycleE> queryChildCycle() {
+        return testCycleRepository.queryChildCycle(this);
+    }
+
 	public TestCycleE queryOne() {
 		return testCycleRepository.queryOne(this);
 	}
