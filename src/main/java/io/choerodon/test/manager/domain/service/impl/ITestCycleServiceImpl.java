@@ -90,6 +90,11 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		return testCycleE.querySelf();
 	}
 
+	@Override
+	public List<TestCycleE> queryChildCycle(TestCycleE testCycleE) {
+		return testCycleE.queryChildCycle();
+	}
+
 
 	@Override
 	public List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo) {

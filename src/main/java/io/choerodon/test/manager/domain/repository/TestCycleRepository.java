@@ -34,4 +34,6 @@ public interface TestCycleRepository {
 	void validateCycle(TestCycleE testCycleE);
 
 	List<TestCycleE> queryAll();
+
+	List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
 }

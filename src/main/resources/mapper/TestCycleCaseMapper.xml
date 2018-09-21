@@ -119,6 +119,53 @@
         AND defect.defect_type = 'CYCLE_CASE'
     </select>
 
+    <select id="queryByFatherCycleWithAttachAndDefect" resultMap="BaseResultMap">
+        SELECT
+        rCycle.cycle_name,
+        cycle.execute_id,
+        cycle.cycle_id,
+        cycle.issue_id,
+        cycle.rank,
+        cycle.object_version_number,
+        cycle.execution_status,
+        cycle.assigned_to,
+        cycle.COMMENT,
+        attach.url,
+        attach.attachment_name,
+        attach.id,
+        cycle.last_update_date,
+        cycle.last_updated_by,
+        defect.defect_type,
+        defect.id defece_id,
+        defect.defect_link_id,
+        defect.issue_id defect_issue_id
+        FROM
+        ( SELECT * FROM test_cycle_case
+        <where>
+           cycle_id in
+            <foreach item="dto" index="index" collection="dtos"
+                     open="(" separator="," close=")">
+                #{dto.cycleId}
+            </foreach>
+            <if test="!dtos.isEmpty and dtos.get(0).assignedTo != null">
+                AND assigned_to = #{dto.assignedTo}
+            </if>
+            <if test="!dtos.isEmpty and dtos.get(0).lastUpdatedBy != null">
+                AND last_updated_by = #{dto.lastUpdatedBy}
+            </if>
+        </where>
+        order by rank
+        <if test="pageSize !=0">
+            limit #{page} , #{pageSize}
+        </if>
+        ) cycle
+        LEFT JOIN test_cycle_case_attachment_rel attach ON cycle.execute_id = attach.attachment_link_id
+        AND attach.attachment_type = 'CYCLE_CASE'
+        LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
+        AND defect.defect_type = 'CYCLE_CASE'
+        LEFT JOIN test_cycle rCycle ON cycle.cycle_id = rCycle.cycle_id
+    </select>
+
     <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">
         SELECT count(execute_id) FROM test_cycle_case
         <where>
@@ -148,6 +195,7 @@
             </if>
         </where>
     </select>
+
     <select id="queryByIssue" resultMap="BaseResultMap">
                 SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
         defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id,
@@ -310,7 +358,8 @@
         CASE
         cycle1.type
         WHEN 'folder' THEN
-        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE cycle1.cycle_name
+        ( SELECT cycle2.cycle_name FROM test_cycle cycle2 WHERE cycle1.parent_cycle_id = cycle2.cycle_id ) ELSE
+        cycle1.cycle_name
         END AS cycle_name,
         CASE
         cycle1.type
@@ -322,7 +371,9 @@
         LEFT JOIN test_cycle cycle1 ON cycle1.cycle_id = cycle.cycle_id
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
         AND defect.defect_type = "CYCLE_CASE"
-        LEFT JOIN ( SELECT execute_id, id, defect_type, defect_link_id, issue_id FROM test_cycle_case_step INNER JOIN test_cycle_case_defect_rel ON execute_step_id = defect_link_id AND defect_type = "CASE_STEP" ) step ON step.execute_id = cycle.execute_id
+        LEFT JOIN ( SELECT execute_id, id, defect_type, defect_link_id, issue_id FROM test_cycle_case_step INNER JOIN
+        test_cycle_case_defect_rel ON execute_step_id = defect_link_id AND defect_type = "CASE_STEP" ) step ON
+        step.execute_id = cycle.execute_id
         WHERE
         cycle.issue_id IN
         <foreach item="item" index="index" collection="ids"

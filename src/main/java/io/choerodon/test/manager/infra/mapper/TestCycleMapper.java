@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.mapper;
 
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.mybatis.common.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,6 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 	 * @return
 	 */
 	Long validateCycle(TestCycleDO testCycleDO);
+
+	List<TestCycleDO> queryChildCycle(@Param("dto")TestCycleDO testCycleDO);
 }

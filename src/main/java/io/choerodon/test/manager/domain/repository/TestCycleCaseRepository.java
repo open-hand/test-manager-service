@@ -20,6 +20,8 @@ public interface TestCycleCaseRepository {
 
     Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
+    Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
+
     List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 
     TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);

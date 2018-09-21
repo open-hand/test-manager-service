@@ -22,7 +22,9 @@ public interface ITestCycleCaseService {
 	void delete(TestCycleCaseE testCycleCaseE);
 
 
-    Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
+    Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseES, PageRequest pageRequest);
+
+	Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
 
 	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 

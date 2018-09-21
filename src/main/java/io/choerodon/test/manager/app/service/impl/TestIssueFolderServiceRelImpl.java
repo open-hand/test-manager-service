@@ -1,25 +1,25 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.CopyConditionDTO;
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.test.manager.api.dto.CustomPage;
-import io.choerodon.test.manager.api.dto.IssueComponentDetailFolderRelDTO;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Override
     public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds) {
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
         for (Long issueId : issueIds) {
             testIssueFolderRelDTO.setIssueId(issueId);
@@ -60,9 +60,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             return new Page<>();
         }
         for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
-            if (resultRelDTO != null) {
-                //构造方法中设置不了ObjectVersionNumber的值--待解决
-                IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(resultRelDTO.getObjectVersionNumber(), map.get(resultRelDTO.getIssueId()));
+            if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
+                IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
@@ -73,11 +72,22 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     }
 
     @Override
-    public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, Long versionId, SearchDTO searchDTO, PageRequest pageRequest) {
+    public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest) {
+        SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
-        List<TestIssueFolderRelDTO> resultRelDTOS = ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
-                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+        List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
+        if(testFolderRelQueryDTO.getVersionIds() == null){
+            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
+            resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+        }else {
+            for (Long versionId : testFolderRelQueryDTO.getVersionIds()) {
+                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+                resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+            }
+        }
+
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
             return new Page<>();
         }
@@ -103,7 +113,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         int size = highPage >= allFilteredIssues.length ? allFilteredIssues.length - lowPage : pageSize;
         Long[] pagedIssues = new Long[size];
         System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
-        return new CustomPage(queryIssuesById(projectId, versionId, folderId, pagedIssues).stream().collect(Collectors.toList()), allFilteredIssues);
+        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues).stream().collect(Collectors.toList()), allFilteredIssues);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -159,7 +169,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO, List<Long> issues) {
         TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
-        testCaseService.batchIssueToVersion(testIssueFolderRelDTO.getProjectId(), testIssueFolderRelDTO.getVersionId(), issues);
+        testCaseService.batchIssueToVersionTest(testIssueFolderRelDTO.getProjectId(), testIssueFolderRelDTO.getVersionId(), issues);
         return resTestIssueFolderRelDTO;
     }
 
@@ -167,6 +177,24 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     public List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO) {
         return ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+    }
+
+    @Override
+    public TestIssueFolderRelDTO cloneOneIssue(Long projectId,Long issueId,CopyConditionDTO copyConditionDTO) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setIssueId(issueId);
+
+        TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.queryOne(
+                ConvertHelper.convert(testIssueFolderRelDTO,TestIssueFolderRelE.class)),TestIssueFolderRelDTO.class);
+
+        IssueDTO issueDTO = testCaseService.cloneIssueByIssueId(projectId,issueId,copyConditionDTO);
+        if(ObjectUtils.isEmpty(issueDTO)) {
+            return new TestIssueFolderRelDTO();
+        }
+        resTestIssueFolderRelDTO.setIssueId(issueDTO.getIssueId());
+        resTestIssueFolderRelDTO.setId(null);
+        return ConvertHelper.convert(iTestIssueFolderRelService.insert(
+                ConvertHelper.convert(resTestIssueFolderRelDTO,TestIssueFolderRelE.class)),TestIssueFolderRelDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)

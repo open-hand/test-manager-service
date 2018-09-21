@@ -65,6 +65,21 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
     }
 
+	@Override
+	public Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
+		List<TestCycleCaseDO> converts = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDO.class);
+		List<TestCycleCaseDO> dtos=testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+		Long total= 0L;
+		if(dtos!=null && !dtos.isEmpty()){
+			for (TestCycleCaseDO convert:converts) {
+				total += testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
+			}
+		}
+		PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+		Page<TestCycleCaseDO> page = new Page<>(Optional.ofNullable(dtos).orElseGet(ArrayList::new), info, total);
+		return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
+	}
+
     @Override
     public List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);

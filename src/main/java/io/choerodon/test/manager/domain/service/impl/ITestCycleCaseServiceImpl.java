@@ -75,7 +75,12 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 	@Override
 	public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
-		return testCycleCaseE.querySelf(pageRequest);
+		return testCycleCaseRepository.query(testCycleCaseE,pageRequest);
+	}
+
+	@Override
+	public Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
+		return testCycleCaseRepository.queryByFatherCycle(testCycleCaseES,pageRequest);
 	}
 
 	@Override
