@@ -37,7 +37,7 @@ public class TestIssueFolderRelController {
     @ApiOperation("查询issues")
     @PostMapping("/query")
     public ResponseEntity queryIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
-                                                 @RequestParam(name = "folder_id", required = false) Long folderId,
+                                                 @RequestParam(name = "folderId", required = false) Long folderId,
                                                  @RequestBody
                                                          TestFolderRelQueryDTO testFolderRelQueryDTO,
                                                  @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
@@ -50,8 +50,8 @@ public class TestIssueFolderRelController {
     @ApiOperation("通过issueIds查询issues")
     @PostMapping("/query/by/issueId")
     public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
-                                          @RequestParam(name = "folder_id",required = false) Long folderId,
-                                          @RequestParam(name = "version_id",required = false) Long versionId,
+                                          @RequestParam(name = "folderId",required = false) Long folderId,
+                                          @RequestParam(name = "versionId",required = false) Long versionId,
                                           @RequestBody Long[] issueIds) {
         return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -71,8 +71,8 @@ public class TestIssueFolderRelController {
     @ApiOperation("创建测试并建立测试和文件夹的关系")
     @PostMapping("/testAndRelationship")
     public ResponseEntity<TestIssueFolderRelDTO> insertTestAndRelationship(@PathVariable(name = "project_id") Long projectId,
-                                                                           @RequestParam(name = "folder_id", required = false) Long folderId,
-                                                                           @RequestParam(name = "version_id") Long versionId,
+                                                                           @RequestParam(name = "folderId", required = false) Long folderId,
+                                                                           @RequestParam(name = "versionId") Long versionId,
                                                                            @RequestBody IssueCreateDTO issueCreateDTO) {
         return Optional.ofNullable(testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -93,8 +93,8 @@ public class TestIssueFolderRelController {
     @ApiOperation("移动文件夹下issue")
     @PutMapping("/move")
     public ResponseEntity moveIssue(@PathVariable(name = "project_id") Long projectId,
-                                    @RequestParam(name = "folder_id") Long folderId,
-                                    @RequestParam(name = "version_id") Long versionId,
+                                    @RequestParam(name = "folderId") Long folderId,
+                                    @RequestParam(name = "versionId") Long versionId,
                                     @RequestBody List<IssueInfosDTO> issues) {
         testIssueFolderRelService.moveFolderIssue(projectId, versionId, folderId, issues);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -104,8 +104,8 @@ public class TestIssueFolderRelController {
     @ApiOperation("复制文件夹下issue")
     @PutMapping("/copy")
     public ResponseEntity copyIssue(@PathVariable(name = "project_id") Long projectId,
-                                    @RequestParam(name = "folder_id") Long folderId,
-                                    @RequestParam(name = "version_id") Long versionId,
+                                    @RequestParam(name = "folderId") Long folderId,
+                                    @RequestParam(name = "versionId") Long versionId,
                                     @RequestBody List<IssueInfosDTO> issues) {
         testIssueFolderRelService.copyIssue(projectId, versionId, folderId, issues);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -113,9 +113,9 @@ public class TestIssueFolderRelController {
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("克隆文件夹下的一个issue")
-    @PutMapping("/copy/issue/{issue_id}")
+    @PutMapping("/copy/issue/{issueId}")
     public ResponseEntity<TestIssueFolderRelDTO> cloneOneIssue(@PathVariable(name = "project_id") Long projectId,
-                                    @PathVariable(name = "issue_id") Long issueId,
+                                    @PathVariable(name = "issueId") Long issueId,
                                     @RequestBody CopyConditionDTO copyConditionDTO) {
         return Optional.ofNullable(testIssueFolderRelService.cloneOneIssue(projectId,issueId,copyConditionDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))

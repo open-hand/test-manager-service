@@ -74,7 +74,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 	@Override
 	public Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
 		List<TestCycleCaseDO> converts = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDO.class);
-		List<TestCycleCaseDO> dtos=testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+		List<TestCycleCaseDO> dtos = queryByFatherCycleWithDataBase(converts,pageRequest);
 		Long total= 0L;
 		if(dtos!=null && !dtos.isEmpty()){
 			for (TestCycleCaseDO convert:converts) {
@@ -84,6 +84,18 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 		PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
 		Page<TestCycleCaseDO> page = new Page<>(Optional.ofNullable(dtos).orElseGet(ArrayList::new), info, total);
 		return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
+	}
+
+	private List<TestCycleCaseDO> queryByFatherCycleWithDataBase(List<TestCycleCaseDO> converts , PageRequest pageRequest){
+		switch (LiquibaseHelper.dbType(dsUrl)){
+			case MYSQL:
+			case H2:
+				return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+			case ORACLE:
+				return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts,pageRequest.getPage() * pageRequest.getSize(),pageRequest.getSize());
+			default:
+				throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE+",need mysql or oracle but now is:"+dsUrl);
+		}
 	}
 
     @Override

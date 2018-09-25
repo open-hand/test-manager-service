@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.api.eventhandler;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
@@ -10,6 +8,7 @@ import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
@@ -20,12 +19,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
  * Email: ettwz@hotmail.com
  */
 @Component
 public class TestManagerEventHandler {
+
+	@Autowired
+	TestIssueFolderRelService testIssueFolderRelService;
 
 	@Autowired
 	private TestCycleService testCycleService;
@@ -104,6 +112,8 @@ public class TestManagerEventHandler {
 		TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
 		testCycleCaseService.batchDelete(testCycleCaseDTO, issuePayload.getProjectId());
+
+		testIssueFolderRelService.delete(issuePayload.getProjectId(), Collections.singletonList(issuePayload.getIssueId()));
 
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
