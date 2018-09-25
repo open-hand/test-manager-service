@@ -255,7 +255,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         });
         List<Long> ids = usersId.stream().distinct().filter(v -> !v.equals(Long.valueOf(0))).collect(Collectors.toList());
         if (!ObjectUtils.isEmpty(ids)) {
-            Map<Long, UserDO> userMaps = userService.query(usersId.toArray(new Long[usersId.size()]));
+            Map<Long, UserDO> userMaps = userService.query(ids.toArray(new Long[ids.size()]));
             users.forEach(v -> {
                 Optional.ofNullable(userMaps.get(v.getAssignedTo())).ifPresent(v::setAssigneeUser);
                 Optional.ofNullable(userMaps.get(v.getLastUpdatedBy())).ifPresent(v::setLastUpdateUser);
