@@ -13,7 +13,16 @@ import java.util.Map;
 public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
     List<TestCycleCaseDO> queryWithAttachAndDefect(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
 
+	/**
+	 *	查询为父cycle的所有子阶段的信息
+	 * @param testCycleCaseDOS
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
 	List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect(@Param("dtos")List<TestCycleCaseDO> testCycleCaseDOS,@Param("page")int page,@Param("pageSize")int pageSize);
+
+	List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect_oracle(@Param("dtos")List<TestCycleCaseDO> testCycleCaseDOS,@Param("page")int page,@Param("pageSize")int pageSize);
 
     List<TestCycleCaseDO> queryWithAttachAndDefect_oracle(@Param("dto")TestCycleCaseDO testCycleCaseDO,@Param("page")int page,@Param("pageSize")int pageSize);
 

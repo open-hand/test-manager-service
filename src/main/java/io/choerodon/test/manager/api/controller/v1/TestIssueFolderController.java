@@ -26,7 +26,7 @@ public class TestIssueFolderController {
     TestIssueFolderService testIssueFolderService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询文件夹")
+    @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
     public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testIssueFolderService.getTestIssueFolder(projectId))
@@ -35,11 +35,11 @@ public class TestIssueFolderController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询version下文件夹")
-    @GetMapping("/query/{versionId}")
-    public ResponseEntity<List<TestIssueFolderDTO>> queryByVersion(@PathVariable(name = "project_id") Long projectId,
-                                         @PathVariable(name = "versionId") Long versionId) {
-        return Optional.ofNullable(testIssueFolderService.queryByVersion(projectId,versionId))
+    @ApiOperation("查询version或所有的下文件夹，返回纯数据")
+    @GetMapping("/query/all")
+    public ResponseEntity<List<TestIssueFolderDTO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
+                                         @RequestParam(name = "versionId",required = false) Long versionId) {
+        return Optional.ofNullable(testIssueFolderService.queryByParameter(projectId,versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
 
@@ -79,8 +79,8 @@ public class TestIssueFolderController {
     @ApiOperation("复制文件夹")
     @PutMapping("/copy")
     public ResponseEntity<TestIssueFolderDTO> copyFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestParam(name = "folder_id") Long folderId,
-                                     @RequestParam(name = "version_id") Long versionId) {
+                                     @RequestParam(name = "folderId") Long folderId,
+                                     @RequestParam(name = "versionId") Long versionId) {
         return Optional.ofNullable(testIssueFolderService.copyFolder(projectId,versionId,folderId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.copy"));

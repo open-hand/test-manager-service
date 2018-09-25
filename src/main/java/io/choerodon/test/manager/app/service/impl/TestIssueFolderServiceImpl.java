@@ -41,7 +41,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     TestCaseService testCaseService;
 
     @Override
-    public List<TestIssueFolderDTO> queryByVersion(Long projectId,Long versionId){
+    public List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId){
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,versionId,projectId,null,null);
         return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
@@ -114,6 +114,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
     }
 
+    /**
+     *
+     * @param projectId
+     * @param versionId 要复制到的目标version
+     * @param folderId  要被复制的源folder
+     * @return 被复制成功的目标folder
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderDTO copyFolder(Long projectId, Long versionId, Long folderId) {
