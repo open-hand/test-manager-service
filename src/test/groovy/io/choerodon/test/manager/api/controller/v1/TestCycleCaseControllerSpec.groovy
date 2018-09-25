@@ -1,7 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.agile.api.dto.IssueCommonDTO
+import io.choerodon.agile.api.dto.ProductVersionDTO
+import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.agile.api.dto.SearchDTO
+import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
@@ -21,10 +24,12 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
 import org.assertj.core.util.Lists
+import org.assertj.core.util.Maps
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
@@ -203,6 +208,26 @@ class TestCycleCaseControllerSpec extends Specification {
        1*testCaseService.getIssueInfoMap(_,_,_)>>map
         and:
         caseE.queryOne().assignedTo==56
+    }
+
+
+    def "exportExcle"(){
+        given:
+        Map issueMaps=Maps.newHashMap(98L,new IssueInfosDTO(issueName: "issueName",issueNum: 98L));
+        issueMaps.put(97L,new IssueInfosDTO(issueName: "issueName1",issueNum: 97L))
+        when:
+//        restTemplate.exchange("/v1/projects/{project_id}/cycle/case/download/excel/{cycleId}",
+//                HttpMethod.GET,
+//                null,
+//                void,
+//                144,caseDTO.get(0).getCycleId())
+
+        restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/download/excel/{cycleId}",null,143,caseDTO.get(0).getCycleId())
+        then:
+        1*testCaseService.getVersionInfo(_)>> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
+        2*userService.query(_)>>Maps.newHashMap(10L,new UserDO(realName: "real",loginName: "login"))
+        1*testCaseService.getIssueInfoMap(_,_,_)>>issueMaps
+        1*testCaseService.getProjectInfo(_)>>new ProjectDTO(name: "project1")
     }
 
     def "delete"(){

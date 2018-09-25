@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.test.util.AopTestUtils
 import org.springframework.test.util.ReflectionTestUtils
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -36,25 +37,29 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
     @Autowired
     TestCaseService caseService;
 
+    @Shared
+    Long defectId
+
     def "Insert"() {
         given:
         IssueDTO mockResult=new IssueDTO(issueNum: "name1")
         TestCycleCaseDefectRelDTO defect = new TestCycleCaseDefectRelDTO(issueId: 99L, defectType: TestCycleCaseDefectRelE.CASE_STEP, defectLinkId: 999L)
         when:
         def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect", Lists.newArrayList(defect),List,144)
+        defectId = result.getBody().get(0).getAt("id")
         then:
         1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
         result.getBody().get(0).getAt("id") != null
         result.statusCode.is2xxSuccessful()
     }
 
-//    def "RemoveDefect"() {
-//        given:
-//        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
-////        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
-//        when:
-//        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,1L)
-//        then:
-//        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
-//    }
+    def "RemoveDefect"() {
+        given:
+        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
+//        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
+        when:
+        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,defectId)
+        then:
+        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+    }
 }
