@@ -1,6 +1,20 @@
 # Test-Manager Service
+`Test-Manager Service` is the core service of Choerodon.  
 
+## Features
+- **Test Case Management**
+- **Test Plan**
+- **Test Execute Management**
+- **Test Result Management**
+- **Test Status Management**
 This service is the management center of the Choerodon Microservices Framework. It`s main functions include configuration management, route management, and swagger management.
+
+## Requirements
+- Java8
+- [File Service](https://github.com/choerodon/file-service.git)
+- [Iam Service](https://github.com/choerodon/iam-service.git)
+- [MySQL](https://www.mysql.com)
+- [Kafka](https://kafka.apache.org)
 
 ## Installation and Getting Started
 
@@ -18,7 +32,7 @@ New file of `init-local-database.sh` in the root directory of the `test_manager_
 mkdir -p target
 if [ ! -f target/choerodon-tool-liquibase.jar ]
 then
-    curl http://nexus.choerodon.com.cn/repository/choerodon-release/io/choerodon/choerodon-tool-liquibase/0.5.0.RELEASE/choerodon-tool-liquibase-0.5.0.RELEASE.jar -o target/choerodon-tool-liquibase.jar
+    curl http://nexus.choerodon.com.cn/repository/choerodon-release/io/choerodon/choerodon-tool-liquibase/0.6.3.RELEASE/choerodon-tool-liquibase-0.6.3.RELEASE.jar -o target/choerodon-tool-liquibase.jar
 fi
 java -Dspring.datasource.url="jdbc:mysql://localhost/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false" \
  -Dspring.datasource.username=choerodon \
@@ -39,13 +53,19 @@ Then run the project in the root directory of the project：
 mvn spring-boot:run
 ```
 
-## Usage
-1. Configuration management：
-    * Manager provides configuration of new, update, and delete operations.
-    * You can use the `json`, `yaml`, or `properties` text formats.
-    * You can create or modify a configuration item for a version of a configuration.
-    * After updating a configuration, the manager informs the `config-server` service and the corresponding service pulls the new configuration.
-1. Route Management：
-    * The initial route can be obtained by initializing the configuration of the `api-gateway` service.
-    * You can create, edit, and edit routes.
-    * After modifying the route, the manager will notify the `config-server` service and 
+## Dependencies
+- `go-register-server`: Register server
+- `iam-service`：iam service
+- `kafka`
+- `mysql`: test_manager_service database
+- `api-gateway`: api gateway server
+- `gateway-helper`: gateway helper server
+- `oauth-server`: oauth server
+- `manager-service`: manager service
+- `agile-service`: agile service
+
+## Reporting Issues
+If you find any shortcomings or bugs, please describe them in the  [issue](https://github.com/choerodon/choerodon/issues/new?template=issue_template.md).
+
+## How to Contribute
+Pull requests are welcome! [Follow](https://github.com/choerodon/choerodon/blob/master/CONTRIBUTING.md) to know for more information on how to contribute.

@@ -59,3 +59,28 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix the problem that the page after execution is not automatically refreshed globally
 - Fix execution details interface width compatibility error causes the editor button not to be seen
 - Fixed a problem with pagination data error in `report`
+
+## [0.10.0] - 2018-09-30
+
+### Add
+
+#### 0.10.0 Significantly added features
+
+- Support oracle database
+- Added unit test
+- Added `test plan` function
+- Added `folder` function in test case management 
+
+### Modify
+
+#### 0.10.0 Significantly modify the feature
+
+- Modify the report data source selection operation, currently only display the data that have test association
+- Modify how to add test exection through test case
+- Test loop added user filtering function
+
+### Fix
+
+#### 0.10.0 Significant repair features
+
+- The defect association table supplements the `project_id` field
