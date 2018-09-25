@@ -180,7 +180,7 @@ class TestCycleServiceImplSpec extends Specification {
         when:
         service.getTestCycleVersion(12L, searchParamMap)
         then:
-        1 * client.listByOptions(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(new ArrayList<>(), HttpStatus.OK)
+        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(new ArrayList<>(), HttpStatus.OK)
     }
 
     def "CloneCycle"() {

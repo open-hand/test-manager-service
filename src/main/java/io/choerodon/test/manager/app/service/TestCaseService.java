@@ -40,6 +40,8 @@ public interface TestCaseService {
 
     Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
+    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId,Map<String, Object> searchParamMap);
+
     Long[] getVersionIds(Long projectId);
 
     ProjectDTO getProjectInfo(Long projectId);
