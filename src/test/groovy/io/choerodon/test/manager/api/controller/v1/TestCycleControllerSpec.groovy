@@ -2,6 +2,8 @@ package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONObject
 import io.choerodon.agile.api.dto.ProductVersionDTO
+import io.choerodon.agile.api.dto.ProductVersionPageDTO
+import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
@@ -13,6 +15,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -154,11 +158,17 @@ class TestCycleControllerSpec extends Specification {
         jsonObject2.isEmpty()
     }
 
-//    def "FilterTestCycle"() {
-//    }
-//
-//    def "GetTestCycleVersion"() {
-//    }
+
+    def "GetTestCycleVersion"() {
+        given:
+        Map<String, Object> searchParamMap = new HashMap<>()
+        searchParamMap.put("cycleName", "发布11")
+
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/version', searchParamMap,Page.class, 12L)
+        then: '返回值'
+        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(HttpStatus.OK)
+    }
 //
 //    def "CloneCycle"() {
 //    }

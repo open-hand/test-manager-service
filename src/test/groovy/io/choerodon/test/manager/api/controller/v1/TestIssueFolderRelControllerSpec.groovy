@@ -84,7 +84,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         }
 
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, 11L, versionId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, 11L, versionId)
         then:
         1 * testCaseService.createTest(_, _) >> issueDTO
         entity.statusCode.is2xxSuccessful()
@@ -98,7 +98,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         foldersId.add(entity.body.folderId)
 
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
+        def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
         then:
         1 * testCaseService.createTest(_, _) >> issueDTO2
         entity2.statusCode.is2xxSuccessful()
@@ -108,7 +108,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         entity2.body.issueId == 999999L
 
         when: '向testIssueFolderRel的插入接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folder_id={folderId}&version_id={versionId}', issueCreateDTO, String.class, projectId, foldersId[0], versionId)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, String.class, projectId, foldersId[0], versionId)
         then: '返回值'
         1 * testCaseService.createTest(_, _) >> issueDTO
         resultFailure.statusCode.is2xxSuccessful()
@@ -149,7 +149,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
         when:
         HttpEntity<CopyConditionDTO> requestEntity = new HttpEntity<CopyConditionDTO>(new CopyConditionDTO(), null)
-        def entity = restTemplate.exchange('/v1/projects/{project_id}/issueFolderRel/copy/issue/{issue_id}',
+        def entity = restTemplate.exchange('/v1/projects/{project_id}/issueFolderRel/copy/issue/{issueId}',
                 HttpMethod.PUT, requestEntity, TestIssueFolderRelDTO, projectId,11L)
 
         then: '返回值'
@@ -179,7 +179,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         exceptionIssues[1] = 22222L
 
         when: '向查询testIssueFolderRel的接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folder_id={folderId}&version_id={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
 
         then: '返回值'
         1 * testCaseService.getIssueInfoMap(_, _, _) >> map
@@ -190,14 +190,14 @@ class TestIssueFolderRelControllerSpec extends Specification {
         detailFolderRelDTOS.size() == 2
 
         when: '向testIssueFolderRel的查询接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folder_id={folderId}&version_id={versionId}', exceptionIssues, Page.class, projectId, foldersId[0], versionId)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', exceptionIssues, Page.class, projectId, foldersId[0], versionId)
         then: '返回值'
         1 * testCaseService.getIssueInfoMap(_, _, _) >> map
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
 
         when: '向testIssueFolderRel的查询接口发请求'
-        resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folder_id={folderId}&version_id={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
+        resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
         then: '返回值'
         1 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap<>()
         resultFailure.statusCode.is2xxSuccessful()
@@ -219,7 +219,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         map.put(22L, issueInfosDTO1)
 
         when: '向查询issueFolderRel的接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folder_id={folderId}&version_id={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, foldersId[0], versionId, 1, 1)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&versionId={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, foldersId[0], versionId, 1, 1)
 
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> issues
@@ -231,7 +231,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         detailFolderRelDTOS.size() == 1
 
         when: '向testIssueFolderRel的查询接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folder_id={folderId}&version_id={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, null, null,null,null)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&versionId={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, null, null,null,null)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >>  new ArrayList<>()
         0 * testCaseService.getIssueInfoMap(_, _, _) >> map
@@ -264,7 +264,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         exceptionIssueInfos.add(issueInfosDTO3)
 
         when: '向查询testIssueFolderRel的接口发请求，将folder[0]的值移动到folder[1]中'
-        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/move?folder_id={folderId}&version_id={versionId}', issueInfos, projectId, foldersId[1], versionId)
+        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/move?folderId={folderId}&versionId={versionId}', issueInfos, projectId, foldersId[1], versionId)
 
         then: '返回值'
         1 * testCaseService.batchIssueToVersionTest(_, _, _)
@@ -301,7 +301,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issues.add(55L)
 
         when: '向查询issues的接口发请求,将folder[1]的值复制到folder[0]中'
-        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/copy?folder_id={folderId}&version_id={versionId}', issueInfos, projectId, foldersId[0], versionId)
+        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/copy?folderId={folderId}&versionId={versionId}', issueInfos, projectId, foldersId[0], versionId)
 
         then: '返回值'
         testCaseService.batchCloneIssue(_, _, _) >> issues

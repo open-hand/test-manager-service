@@ -138,7 +138,7 @@ class TestIssueFolderControllerSpec extends Specification {
 
     def "QueryByVersion"() {
         when: '向查询issues的接口发请求'
-        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query/{versionId}', List, projectId, versionId)
+        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query/all', List, projectId, versionId)
 
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
@@ -267,7 +267,7 @@ class TestIssueFolderControllerSpec extends Specification {
         issuesId.add(2L)
 
         when: '向查询issueFolder的复制接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/issueFolder/copy?folder_id={folderId}&version_id={version_id}', null, projectId, foldersId[0], 3L)
+        restTemplate.put('/v1/projects/{project_id}/issueFolder/copy?folderId={folderId}&versionId={versionId}', null, projectId, foldersId[0], 3L)
 
         then: '返回值'
         1 * testCaseService.batchCloneIssue(_, _, _) >> issuesId

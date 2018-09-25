@@ -356,8 +356,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     public List<TestCycleDTO> filterCycleWithBar(String filter) {
 
         JSONObject object = JSON.parseObject(filter);
-        ResponseEntity<List<ProductVersionDTO>> dto = productionVersionClient.listByProjectId(object.getLong("projectId"));
-        List<ProductVersionDTO> versions = dto.getBody();
+        List<ProductVersionDTO> versions = new ArrayList<>(testCaseService.getVersionInfo(object.getLong("projectId")).values());
 
         if (versions.isEmpty()) {
             return new ArrayList<>();
@@ -378,7 +377,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
-        return productionVersionClient.listByOptions(projectId, searchParamMap);
+        return testCaseService.getTestCycleVersionInfo(projectId, searchParamMap);
     }
 
     /**
