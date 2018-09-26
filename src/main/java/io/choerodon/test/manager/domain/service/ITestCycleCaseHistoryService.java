@@ -12,9 +12,5 @@ import java.util.List;
 public interface ITestCycleCaseHistoryService {
     TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 
-    void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
-
-    List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE);
-
     Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
 }

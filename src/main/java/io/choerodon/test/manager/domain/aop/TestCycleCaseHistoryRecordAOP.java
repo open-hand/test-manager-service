@@ -23,7 +23,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,19 +61,16 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseDTO beforeCeaseDTO = ConvertHelper.convert(before, TestCycleCaseDTO.class);
 		testStatusService.populateStatus(beforeCeaseDTO);
 		Object o = pjp.proceed();
-		TestCycleCaseHistoryDTO historyDTO;
 
 		if (testCycleCaseDTO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
-			historyDTO=testCycleCaseHistoryService.createStatusHistory(testCycleCaseDTO,beforeCeaseDTO);
-		} else if (!testCycleCaseDTO.getAssignedTo().equals( before.getAssignedTo())) {
-			historyDTO=testCycleCaseHistoryService.createAssignedHistory(testCycleCaseDTO,beforeCeaseDTO);
-
-		} else if (!StringUtils.equals(testCycleCaseDTO.getComment(), before.getComment())) {
-			historyDTO=testCycleCaseHistoryService.createCommentHistory(testCycleCaseDTO,beforeCeaseDTO);
-		} else {
-			return o;
+			testCycleCaseHistoryService.createStatusHistory(testCycleCaseDTO,beforeCeaseDTO);
 		}
-		testCycleCaseHistoryService.insert(historyDTO);
+		if (!testCycleCaseDTO.getAssignedTo().equals( before.getAssignedTo())) {
+			testCycleCaseHistoryService.createAssignedHistory(testCycleCaseDTO,beforeCeaseDTO);
+		}
+		if (!StringUtils.equals(testCycleCaseDTO.getComment(), before.getComment())) {
+			testCycleCaseHistoryService.createCommentHistory(testCycleCaseDTO,beforeCeaseDTO);
+		}
 		return o;
 	}
 

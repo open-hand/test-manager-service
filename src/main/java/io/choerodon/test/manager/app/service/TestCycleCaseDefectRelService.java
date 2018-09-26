@@ -18,15 +18,8 @@ public interface TestCycleCaseDefectRelService {
 
 	void populateCycleCaseDefectInfo(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId);
 
-    List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
-
 	void populateCaseStepDefectInfo(List<TestCycleCaseStepDTO> testCycleCaseDTOS, Long projectId);
 
-	/** 查询一个测试用例下所包含的拥有缺陷的步骤
-	 * @param cycleCaseId
-	 * @return
-	 */
-	List<TestCycleCaseDefectRelDTO> getSubCycleStepsHaveDefect(Long cycleCaseId);
 
 	Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
 }

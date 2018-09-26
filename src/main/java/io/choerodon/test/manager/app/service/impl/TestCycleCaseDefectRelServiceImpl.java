@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 
-import java.util.*;
-
 import com.google.common.collect.Lists;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
@@ -13,12 +11,15 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -43,13 +44,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
     }
-
-    @Override
-    public List<TestCycleCaseDefectRelDTO> query(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
-        List<TestCycleCaseDefectRelE> serviceEPage = iTestCycleCaseDefectRelService.query(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
-        return ConvertHelper.convertList(serviceEPage, TestCycleCaseDefectRelDTO.class);
-    }
-
 
     @Override
     public void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId) {
@@ -85,18 +79,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         populateDefectInfo(list, projectId);
     }
 
-    @Override
-    public List<TestCycleCaseDefectRelDTO> getSubCycleStepsHaveDefect(Long cycleCaseId) {
-        TestCycleCaseStepE caseStepE = TestCycleCaseStepEFactory.create();
-        caseStepE.setExecuteId(cycleCaseId);
-        List<TestCycleCaseStepE> caseStepES = caseStepE.querySelf();
-        List<TestCycleCaseDefectRelE> defectRelES = new ArrayList<>();
-        caseStepES.stream().forEach(v ->
-                Optional.ofNullable(cycleStepHaveDefect(v.getExecuteStepId())).ifPresent(defectRelES::addAll)
-        );
-        return ConvertHelper.convertList(defectRelES, TestCycleCaseDefectRelDTO.class);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
@@ -118,14 +100,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
             }
         }
         return flag;
-    }
-
-    private List<TestCycleCaseDefectRelE> cycleStepHaveDefect(Long cycleStepId) {
-        TestCycleCaseDefectRelE caseDefectRelE = TestCycleCaseDefectRelEFactory.create();
-        caseDefectRelE.setDefectLinkId(cycleStepId);
-        caseDefectRelE.setDefectType(TestCycleCaseDefectRelE.CASE_STEP);
-        return caseDefectRelE.querySelf();
-
     }
 
 }

@@ -1,16 +1,14 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import java.util.List;
-
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRelRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
-import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018

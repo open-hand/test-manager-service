@@ -1,16 +1,11 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseDefectRelRepository;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
-import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,24 +40,6 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
         testCycleCaseDefectRelMapper.delete(convert);
     }
 
-    @Override
-    public TestCycleCaseDefectRelE update(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-        TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
-        if (testCycleCaseDefectRelMapper.updateByPrimaryKeySelective(convert) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
-		return ConvertHelper.convert(testCycleCaseDefectRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseDefectRelE.class);
-    }
-
-    @Override
-    public Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest) {
-        TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
-
-        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseDefectRelMapper.select(convert));
-
-        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseDefectRelE.class);
-    }
 
     @Override
     public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {

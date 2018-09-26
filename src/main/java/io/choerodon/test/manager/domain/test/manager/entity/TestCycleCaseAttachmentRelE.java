@@ -39,9 +39,6 @@ public class TestCycleCaseAttachmentRelE {
         return testCycleCaseAttachmentRelRepository.insert(this);
     }
 
-    public TestCycleCaseAttachmentRelE updateSelf() {
-        return testCycleCaseAttachmentRelRepository.update(this);
-    }
 
     public void deleteSelf() {
         testCycleCaseAttachmentRelRepository.delete(this);

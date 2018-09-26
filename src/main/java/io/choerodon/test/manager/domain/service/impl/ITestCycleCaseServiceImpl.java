@@ -1,15 +1,17 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.*;
-import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.*;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -18,7 +20,9 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -182,11 +186,4 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		}
 	}
 
-	@Override
-	public void validateCycleCaseInCycle(Long cycleId, Long issueId) {
-		TestCycleCaseDO testCycleCase = new TestCycleCaseDO();
-		testCycleCase.setCycleId(cycleId);
-		testCycleCase.setIssueId(issueId);
-		testCycleCaseRepository.validateCycleCaseInCycle(testCycleCase);
-	}
 }

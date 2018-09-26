@@ -84,10 +84,6 @@ class TestCycleCaseStepRepositoryImplSpec extends Specification {
         repository.query(null)
         then:
         1*mapper.select(_)
-        when:
-        repository.queryOne(null)
-        then:
-        1*mapper.selectOne(_)
     }
 
 

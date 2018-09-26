@@ -73,20 +73,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	}
 
 
-	@Transactional(rollbackFor = Exception.class)
-	@Override
-	public List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO, Long projectId) {
-		List<TestCaseStepDTO> result = new ArrayList<>();
-		String[] rank = new String[1];
-		testCaseStepDTO.forEach(v -> {
-			v.setLastRank(rank[0]);
-			TestCaseStepDTO temp = changeStep(v, projectId);
-			rank[0] = temp.getRank();
-			result.add(temp);
-		});
-		return result;
-	}
-
 	@Transactional
 	@Override
 	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId) {

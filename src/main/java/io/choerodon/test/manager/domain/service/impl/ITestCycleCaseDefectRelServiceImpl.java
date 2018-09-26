@@ -34,9 +34,4 @@ public class ITestCycleCaseDefectRelServiceImpl implements ITestCycleCaseDefectR
 
     }
 
-
-    @Override
-    public List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
-        return testCycleCaseDefectRelE.querySelf();
-    }
 }

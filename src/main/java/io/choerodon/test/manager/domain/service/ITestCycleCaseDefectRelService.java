@@ -13,6 +13,4 @@ public interface ITestCycleCaseDefectRelService {
     void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
     Boolean updateProjectIdByIssueId(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
-
-    List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 }

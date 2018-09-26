@@ -73,16 +73,16 @@ class TestStatusMapperSpec extends Specification {
         given:
         TestCycleCaseStepDO stepDO=new TestCycleCaseStepDO()
         stepDO.setExecuteId(new Long(9999))
-        stepDO.setStepStatus(new Long(4))
+        stepDO.setStepStatus(new Long(9))
         stepDO.setStepId(new Long(999))
         caseStepMapper.insert(stepDO)
         when:
-        def result1 = mapper.ifDeleteCaseStepAllow(new Long(4))
+        def result1 = mapper.ifDeleteCaseStepAllow(new Long(9))
         then:
         result1==1
         when:
         caseStepMapper.deleteByPrimaryKey(stepDO.getExecuteStepId())
-        def result2 = mapper.ifDeleteCaseStepAllow(new Long(4))
+        def result2 = mapper.ifDeleteCaseStepAllow(new Long(9))
         then:
         result2==0
     }

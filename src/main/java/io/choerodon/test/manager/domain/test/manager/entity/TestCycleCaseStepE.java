@@ -65,9 +65,6 @@ public class TestCycleCaseStepE {
         return testCycleCaseStepRepository.query(this, pageRequest);
     }
 
-	public TestCycleCaseStepE queryOne() {
-		return testCycleCaseStepRepository.queryOne(this);
-	}
 
 	public List<TestCycleCaseStepE> querySelf() {
 		return testCycleCaseStepRepository.query(this);

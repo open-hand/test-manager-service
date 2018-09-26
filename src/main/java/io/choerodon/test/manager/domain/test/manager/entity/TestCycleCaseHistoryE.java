@@ -51,13 +51,6 @@ public class TestCycleCaseHistoryE {
         return testCycleCaseHistoryRepository.insert(this);
     }
 
-    public TestCycleCaseHistoryE updateSelf() {
-        return testCycleCaseHistoryRepository.update(this);
-    }
-
-    public void deleteSelf() {
-        testCycleCaseHistoryRepository.delete(this);
-    }
 
     public Long getExecuteId() {
         return executeId;

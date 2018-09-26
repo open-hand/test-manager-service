@@ -1,24 +1,21 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.repository.TestCycleRepository;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
-import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.repository.TestCycleRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
+import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -91,25 +88,6 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 			return ConvertHelper.convertList(cycleMapper.query(versionId,assignedTo), TestCycleE.class);
 		}
 		return new ArrayList<>();
-	}
-
-	/**
-	 * @deprecated not be used
-	 */
-	@Override
-	@Deprecated
-	public List<TestCycleE> filter(Map parameters) {
-		return ConvertHelper.convertList(cycleMapper.filter(parameters), TestCycleE.class);
-
-	}
-
-	/**
-	 * @deprecated (not be used)
-	 */
-	@Override
-	@Deprecated
-	public List<TestCycleE> getCyclesByVersionId(Long versionId) {
-		return ConvertHelper.convertList(cycleMapper.getCyclesByVersionId(versionId), TestCycleE.class);
 	}
 
 	@Override
