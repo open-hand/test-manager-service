@@ -11,9 +11,12 @@ import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,10 +67,18 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         if (ObjectUtils.isEmpty(map)) {
             return new Page<>();
         }
+
+        TestIssueFolderE testIssueFolderE = TestIssueFolderEFactory.create();
+
         for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
                 IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
+                TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey(resultRelDTO.getFolderId());
+                if(!ObjectUtils.isEmpty(resE)) {
+                    issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
+                    issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
+                }
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }
