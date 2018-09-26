@@ -1,16 +1,16 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.core.domain.PageInfo;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
-import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
-import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.domain.PageInfo;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -89,19 +89,6 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
 		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
 		List<TestCycleCaseStepDO> dto = testCycleCaseStepMapper.select(convert);
 		return ConvertHelper.convertList(dto, TestCycleCaseStepE.class);
-	}
-
-	/**
-	 * @deprecated not be used
-	 */
-	@Override
-	@Deprecated
-	public TestCycleCaseStepE queryOne(TestCycleCaseStepE testCycleCaseStepE) {
-		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-
-		TestCycleCaseStepDO dto = testCycleCaseStepMapper.selectOne(convert);
-
-		return ConvertHelper.convert(dto, TestCycleCaseStepE.class);
 	}
 
 	@Override

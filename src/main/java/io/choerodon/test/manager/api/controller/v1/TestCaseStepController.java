@@ -39,18 +39,6 @@ public class TestCaseStepController {
 	}
 
 
-
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("批量变动测试步骤(添加|修改)")
-	@PutMapping("/batchInsert")
-	public ResponseEntity<List<TestCaseStepDTO>> changeStep(@PathVariable(name = "project_id") Long projectId,
-															@RequestBody List<TestCaseStepDTO> testCaseStepDTO) {
-
-		return Optional.ofNullable(iTestCaseStepService.batchInsertStep(testCaseStepDTO, projectId))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
-	}
-
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")

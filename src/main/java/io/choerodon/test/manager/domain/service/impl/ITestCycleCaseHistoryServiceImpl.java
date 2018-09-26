@@ -1,13 +1,10 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -18,18 +15,6 @@ public class ITestCycleCaseHistoryServiceImpl implements ITestCycleCaseHistorySe
     @Override
     public TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE) {
         return testCycleCaseHistoryE.addSelf();
-    }
-
-    @Override
-    public void delete(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
-        testCycleCaseHistoryE.forEach(TestCycleCaseHistoryE::deleteSelf);
-    }
-
-    @Override
-    public List<TestCycleCaseHistoryE> update(List<TestCycleCaseHistoryE> testCycleCaseHistoryE) {
-        List<TestCycleCaseHistoryE> list = new ArrayList<>();
-        testCycleCaseHistoryE.forEach(v -> list.add(v.updateSelf()));
-        return list;
     }
 
 

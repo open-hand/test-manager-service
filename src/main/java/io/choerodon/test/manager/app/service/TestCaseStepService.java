@@ -13,8 +13,6 @@ public interface TestCaseStepService {
 
     void removeStep(TestCaseStepDTO testCaseStepDTO);
 
-    List<TestCaseStepDTO> batchInsertStep(List<TestCaseStepDTO> testCaseStepDTO, Long projectId);
-
     TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO, Long projectId);
 
     TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId);

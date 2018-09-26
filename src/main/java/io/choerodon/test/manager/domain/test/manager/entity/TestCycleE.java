@@ -74,9 +74,6 @@ public class TestCycleE {
 		return testCycleRepository.queryOne(this);
 	}
 
-	public List<TestCycleE> getCyclesByVersionId() {
-		return testCycleRepository.getCyclesByVersionId(this.versionId);
-	}
 
 	public TestCycleE cloneCycle(TestCycleE proto) {
 		parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
@@ -107,9 +104,6 @@ public class TestCycleE {
 		return testCycleRepository.queryBar(versionIds,assignedTo);
     }
 
-	public List<TestCycleE> filterWithBar(Map map) {
-		return testCycleRepository.filter(map);
-	}
 
     public TestCycleE addSelf() {
         return testCycleRepository.insert(this);

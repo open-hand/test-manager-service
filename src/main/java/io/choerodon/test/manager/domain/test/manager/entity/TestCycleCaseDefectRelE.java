@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleCaseDefectRelRepository;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,16 +34,9 @@ public class TestCycleCaseDefectRelE {
         return testCycleCaseDefectRelRepository.query(this);
     }
 
-	public Page<TestCycleCaseDefectRelE> querySelf(PageRequest pageRequest) {
-		return testCycleCaseDefectRelRepository.query(this, pageRequest);
-	}
 
     public TestCycleCaseDefectRelE addSelf() {
         return testCycleCaseDefectRelRepository.insert(this);
-    }
-
-    public TestCycleCaseDefectRelE updateSelf() {
-        return testCycleCaseDefectRelRepository.update(this);
     }
 
     public Boolean updateProjectIdByIssueId(){

@@ -227,20 +227,20 @@ class TestCycleServiceImplSpec extends Specification {
         folder2.getCycleId() != folder.getCycleId()
     }
 
-    def "GetCyclesByVersionId"() {
-        given:
-        TestCycleDTO cycle = new TestCycleDTO()
-        cycle.setCycleName("发布8")
-        cycle.setVersionId(226L)
-        cycle.setType(TestCycleE.CYCLE)
-        TestCycleDTO cycle1 = testCycleService.insert(cycle);
-
-        when:
-        List<TestCycleDTO> cycles = testCycleService.getCyclesByVersionId(226l)
-        then:
-        cycles != null
-        cycles.size() != 0
-    }
+//    def "GetCyclesByVersionId"() {
+//        given:
+//        TestCycleDTO cycle = new TestCycleDTO()
+//        cycle.setCycleName("发布8")
+//        cycle.setVersionId(226L)
+//        cycle.setType(TestCycleE.CYCLE)
+//        TestCycleDTO cycle1 = testCycleService.insert(cycle);
+//
+//        when:
+//        List<TestCycleDTO> cycles = testCycleService.getCyclesByVersionId(226l)
+//        then:
+//        cycles != null
+//        cycles.size() != 0
+//    }
 
     def "GetFolderByCycleId"() {
         given:

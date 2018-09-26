@@ -1,13 +1,12 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
-import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
-import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
-import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
-import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
-import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
+import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
+import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

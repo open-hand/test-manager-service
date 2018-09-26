@@ -1,9 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.IssueCreateDTO;
@@ -15,7 +11,6 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
@@ -32,6 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -351,29 +349,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
 
-    @Override
-    @Deprecated
-    public List<TestCycleDTO> filterCycleWithBar(String filter) {
-
-        JSONObject object = JSON.parseObject(filter);
-        List<ProductVersionDTO> versions = new ArrayList<>(testCaseService.getVersionInfo(object.getLong("projectId")).values());
-
-        if (versions.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.filterCycleWithBar(object.getString("parameter"),
-                versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new)), TestCycleDTO.class);
-        cycles.forEach(v -> {
-            for (ProductVersionDTO u : versions) {
-                if (v.getVersionId().equals(u.getVersionId())) {
-                    v.setVersionName(u.getName());
-                    v.setVersionStatusName(u.getStatusName());
-                    break;
-                }
-            }
-        });
-        return cycles;
-    }
 
     @Override
     public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
@@ -415,12 +390,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         return ConvertHelper.convert(iTestCycleService.cloneFolder(protoTestCycleE, ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId), TestCycleDTO.class);
     }
 
-    @Override
-    public List<TestCycleDTO> getCyclesByVersionId(Long versionId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setVersionId(versionId);
-        return ConvertHelper.convertList(testCycleE.getCyclesByVersionId(), TestCycleDTO.class);
-    }
 
     @Override
     public List<TestCycleDTO> getFolderByCycleId(Long cycleId) {
@@ -453,11 +422,4 @@ public class TestCycleServiceImpl implements TestCycleService {
         cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
     }
 
-    /** 修复cycle的folder类型和issusefolder的关联关系
-     * @param projectId
-     */
-//	@Override
-//	public void fixFolder(Long projectId){
-//
-//	}
 }

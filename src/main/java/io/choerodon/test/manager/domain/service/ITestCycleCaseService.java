@@ -47,6 +47,4 @@ public interface ITestCycleCaseService {
 	Long countCaseNotPlain(Long projectId);
 
 	Long countCaseSum(Long projectId);
-
-	void validateCycleCaseInCycle(Long cycleId, Long issueId);
 }

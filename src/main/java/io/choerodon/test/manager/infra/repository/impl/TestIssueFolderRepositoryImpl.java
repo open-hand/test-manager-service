@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import java.util.List;
-
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
@@ -11,6 +9,8 @@ import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018

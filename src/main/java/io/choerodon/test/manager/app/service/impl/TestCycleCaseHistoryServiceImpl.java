@@ -63,7 +63,8 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    public TestCycleCaseHistoryDTO createAssignedHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
+	@Transactional
+    public void createAssignedHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_ASSIGNED);
@@ -84,11 +85,12 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 		} else {
 			historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		}
-		return historyDTO;
+		insert(historyDTO);
 	}
 
 	@Override
-	public TestCycleCaseHistoryDTO createStatusHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
+	@Transactional
+	public void createStatusHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
 		String newColor = afterCycleCase.getExecutionStatusName();
@@ -96,11 +98,12 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_STATUS);
 		historyDTO.setNewValue(newColor);
 		historyDTO.setOldValue(oldColor);
-		return historyDTO;
+		insert(historyDTO);
 	}
 
 	@Override
-	public TestCycleCaseHistoryDTO createCommentHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
+	@Transactional
+	public void createCommentHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase){
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_COMMENT);
@@ -114,7 +117,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 		} else {
 			historyDTO.setOldValue(beforeCycleCase.getComment());
 		}
-		return historyDTO;
+		insert(historyDTO);
 	}
 
 }

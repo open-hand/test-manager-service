@@ -17,10 +17,6 @@ public interface ITestCycleService {
 
 	TestCycleE update(TestCycleE testCycleE);
 
-    Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
-
-    List<TestCycleE> querySubCycle(TestCycleE testCycleE);
-
 	List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
 
 	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
@@ -28,8 +24,6 @@ public interface ITestCycleService {
 	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
 	List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo);
-
-	List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds);
 
 	List<Long> selectCyclesInVersions(Long[] versionIds);
 	/**

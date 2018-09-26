@@ -1,15 +1,11 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseAttachmentRelRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
-import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,24 +33,6 @@ public class TestCycleCaseAttachmentRelRepositoryImpl implements TestCycleCaseAt
     public void delete(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
         TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
         testCycleCaseAttachmentRelMapper.delete(convert);
-    }
-
-    @Override
-    public TestCycleCaseAttachmentRelE update(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
-        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-        if (testCycleCaseAttachmentRelMapper.updateByPrimaryKeySelective(convert) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
-		return ConvertHelper.convert(testCycleCaseAttachmentRelMapper.selectByPrimaryKey(convert.getId()), TestCycleCaseAttachmentRelE.class);
-    }
-
-    @Override
-    public Page<TestCycleCaseAttachmentRelE> query(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE, PageRequest pageRequest) {
-        TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-
-        Page<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testCycleCaseAttachmentRelMapper.select(convert));
-        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleCaseAttachmentRelE.class);
     }
 
     @Override

@@ -12,11 +12,6 @@ import java.util.List;
 public interface TestCycleCaseHistoryRepository {
     TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 
-    void delete(TestCycleCaseHistoryE testCycleCaseHistoryE);
-
-    TestCycleCaseHistoryE update(TestCycleCaseHistoryE testCycleCaseHistoryE);
-
     Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
 
-    List<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE);
 }

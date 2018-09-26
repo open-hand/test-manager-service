@@ -3,8 +3,6 @@ package io.choerodon.test.manager.app.service.impl;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
@@ -25,13 +23,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserFeignClient userFeignClient;
-
-	@Override
-	@Deprecated
-	public UserDO query(Long userId) {
-		CustomUserDetails customUserDetails = DetailsHelper.getUserDetails();
-		return userFeignClient.query(customUserDetails.getOrganizationId(), userId).getBody();
-	}
 
 	public Map<Long, UserDO> query(Long[] ids) {
 		if(ObjectUtils.isEmpty(ids)){

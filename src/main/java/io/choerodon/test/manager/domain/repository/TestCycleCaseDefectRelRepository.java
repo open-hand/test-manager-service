@@ -1,10 +1,8 @@
 package io.choerodon.test.manager.domain.repository;
 
-import java.util.List;
-
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -14,11 +12,7 @@ public interface TestCycleCaseDefectRelRepository {
 
     void delete(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
 
-    TestCycleCaseDefectRelE update(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
-
     List<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE);
-
-    Page<TestCycleCaseDefectRelE> query(TestCycleCaseDefectRelE testCycleCaseDefectRelE, PageRequest pageRequest);
 
     List<TestCycleCaseDefectRelE> queryInIssues(Long[] issues,Long projectId);
 

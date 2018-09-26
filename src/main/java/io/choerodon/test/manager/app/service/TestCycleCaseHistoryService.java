@@ -15,9 +15,9 @@ public interface TestCycleCaseHistoryService {
 
     Page<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest);
 
-    TestCycleCaseHistoryDTO createAssignedHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase);
+    void createAssignedHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase);
 
-    TestCycleCaseHistoryDTO createStatusHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase);
+    void createStatusHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase);
 
-    TestCycleCaseHistoryDTO createCommentHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase);
+    void createCommentHistory(TestCycleCaseDTO afterCycleCase,TestCycleCaseDTO beforeCycleCase);
 }

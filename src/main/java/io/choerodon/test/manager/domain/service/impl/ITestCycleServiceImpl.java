@@ -6,17 +6,16 @@ import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
+import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
-import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -81,16 +78,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	}
 
 	@Override
-	public Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
-		return testCycleE.querySelf(pageRequest);
-	}
-
-	@Override
-	public List<TestCycleE> querySubCycle(TestCycleE testCycleE) {
-		return testCycleE.querySelf();
-	}
-
-	@Override
 	public List<TestCycleE> queryChildCycle(TestCycleE testCycleE) {
 		return testCycleE.queryChildCycle();
 	}
@@ -100,15 +87,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	public List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo) {
 		TestCycleE testCycleE = TestCycleEFactory.create();
 		return countStatus(testCycleE.querySelfWithBar(versionId,assignedTo));
-	}
-
-	@Override
-	public List<TestCycleE> filterCycleWithBar(String filter, Long[] versionIds) {
-		Map<String, Object> filterMap = new HashMap<>();
-		filterMap.put("parameter", filter);
-		filterMap.put("versionIds", versionIds);
-		TestCycleE testCycleE = TestCycleEFactory.create();
-		return countStatus(testCycleE.filterWithBar(filterMap));
 	}
 
 	private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {

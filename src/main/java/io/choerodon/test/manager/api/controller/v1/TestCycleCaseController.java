@@ -109,26 +109,6 @@ public class TestCycleCaseController {
 
 	}
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("批量添加循环用例")
-	@PostMapping("/insert/batch")
-	@Deprecated
-	public ResponseEntity batchInsertCase(@RequestBody List<TestCycleCaseDTO> testCycleCaseDTOS, @PathVariable(name = "project_id") Long projectId) {
-		List<TestCycleCaseDTO> testCycleCaseList = new ArrayList<>();
-		String rank = null;
-		for (TestCycleCaseDTO testCycleCaseDTO : testCycleCaseDTOS) {
-			if (testCycleCaseDTO.getLastRank() == null) {
-				testCycleCaseDTO.setLastRank(rank);
-			}
-			TestCycleCaseDTO dto = testCycleCaseService.create(testCycleCaseDTO, projectId);
-			rank = dto.getRank();
-			testCycleCaseList.add(dto);
-		}
-		return Optional.ofNullable(testCycleCaseList)
-				.map(result -> new ResponseEntity<>(testCycleCaseList, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.batch.insert"));
-
-	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("修改一个测试组下循环用例")
