@@ -90,7 +90,17 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
 
         //如果传入的参数包含issueIds,就只去查找这些issueIds
-        if (!searchDTO.getOtherArgs().containsKey("issueIds")) {
+        if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey("issueIds")) {
+            //明天替换
+            List issueIds = (ArrayList) searchDTO.getOtherArgs().get("issueIds");
+            for(Object id:issueIds) {
+                Long issueId =  ((Integer)id).longValue();
+                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
+                resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
+                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+            }
+        } else {
+            //如果传入了version就去筛选这些version下的rel
             if (testFolderRelQueryDTO.getVersionIds() == null || testFolderRelQueryDTO.getVersionIds().length == 0) {
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
                 resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
@@ -101,15 +111,6 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                     resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                             .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
                 }
-            }
-        } else {
-            //明天替换
-            List issueIds = (ArrayList) searchDTO.getOtherArgs().get("issueIds");
-            for(Object id:issueIds) {
-                Long issueId =  ((Integer)id).longValue();
-                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
-                resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
-                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
             }
         }
 
