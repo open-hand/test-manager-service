@@ -10,16 +10,15 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,10 +63,18 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         if (ObjectUtils.isEmpty(map)) {
             return new Page<>();
         }
+
+        TestIssueFolderE testIssueFolderE = TestIssueFolderEFactory.create();
+
         for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
                 IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
+                TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey(resultRelDTO.getFolderId());
+                if (!ObjectUtils.isEmpty(resE)) {
+                    issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
+                    issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
+                }
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }
@@ -81,15 +88,29 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
-        if (testFolderRelQueryDTO.getVersionIds() == null || testFolderRelQueryDTO.getVersionIds().length == 0) {
-            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
-            resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
-                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+
+        //如果传入的参数包含issueIds,就只去查找这些issueIds
+        if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey("issueIds")) {
+            //明天替换
+            List issueIds = (ArrayList) searchDTO.getOtherArgs().get("issueIds");
+            for(Object id:issueIds) {
+                Long issueId =  ((Integer)id).longValue();
+                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
+                resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
+                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+            }
         } else {
-            for (Long versionId : testFolderRelQueryDTO.getVersionIds()) {
-                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+            //如果传入了version就去筛选这些version下的rel
+            if (testFolderRelQueryDTO.getVersionIds() == null || testFolderRelQueryDTO.getVersionIds().length == 0) {
+                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
                 resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                         .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+            } else {
+                for (Long versionId : testFolderRelQueryDTO.getVersionIds()) {
+                    TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+                    resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                            .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+                }
             }
         }
 

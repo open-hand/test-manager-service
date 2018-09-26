@@ -9,6 +9,26 @@ import org.springframework.beans.BeanUtils;
 public class IssueComponentDetailFolderRelDTO extends IssueComponentDetailDTO {
     private Long objectVersionNumber;
 
+    private String folderName;
+
+    private Long folderId;
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
+
     public IssueComponentDetailFolderRelDTO(IssueInfosDTO issueComponentDetailDTO) {
         BeanUtils.copyProperties(issueComponentDetailDTO,this);
     }

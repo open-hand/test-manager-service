@@ -48,22 +48,21 @@ class TestCycleControllerSpec extends Specification {
     def "Insert"() {
         given:
         def res = testCycleMapper.selectAll()
+
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
-        testCycleDTO1.setCycleName("testFolderInsert")
-        testCycleDTO1.setFolderId(11L)
+        testCycleDTO1.setCycleName("testCycleInsert")
         testCycleDTO1.setVersionId(versionId)
-        testCycleDTO1.setType(TestCycleE.FOLDER)
+        testCycleDTO1.setType(TestCycleE.CYCLE)
         testCycleDTO1.setObjectVersionNumber(1L)
 
         testCycleDTOS.add(testCycleDTO1)
 
         TestCycleDTO testCycleDTO2 = new TestCycleDTO()
-        testCycleDTO2.setCycleName("testCycleInsert")
+        testCycleDTO2.setCycleName("testFolderInsert")
+        testCycleDTO2.setFolderId(11L)
         testCycleDTO2.setVersionId(versionId)
-        testCycleDTO2.setType(TestCycleE.CYCLE)
+        testCycleDTO2.setType(TestCycleE.FOLDER)
         testCycleDTO2.setObjectVersionNumber(1L)
-
-        testCycleDTOS.add(testCycleDTO2)
 
         when:
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(0),TestCycleDTO, projectId)
@@ -71,10 +70,13 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         and:
         entity.body != null
-        entity.body.folderId == 11L
-        entity.body.type == TestCycleE.FOLDER
+        entity.body.folderId == null
+        entity.body.type == TestCycleE.CYCLE
         and:
         testCycleDTOS.get(0).setCycleId(entity.getBody().getCycleId())
+        and:
+        testCycleDTO2.setParentCycleId(testCycleDTOS.get(0).getCycleId())
+        testCycleDTOS.add(testCycleDTO2)
 
         when:
         entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(1),TestCycleDTO, projectId)
@@ -82,16 +84,16 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         and:
         entity.body != null
-        entity.body.folderId == null
-        entity.body.type == TestCycleE.CYCLE
+        entity.body.folderId == 11L
+        entity.body.type == TestCycleE.FOLDER
         and:
         testCycleDTOS.get(1).setCycleId(entity.getBody().getCycleId())
     }
 
     def "Update"() {
         given:
-        testCycleDTOS.get(0).setCycleName("testFolderUpdate")
-        testCycleDTOS.get(1).setCycleName("testCycleUpdate")
+        testCycleDTOS.get(0).setCycleName("testCycleUpdate")
+        testCycleDTOS.get(1).setCycleName("testFolderUpdate")
 
         when:
         HttpEntity<TestCycleDTO> requestEntity = new HttpEntity<TestCycleDTO>(testCycleDTOS.get(0), null)
@@ -99,8 +101,8 @@ class TestCycleControllerSpec extends Specification {
                 HttpMethod.PUT, requestEntity, TestCycleDTO, projectId)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
-        entity.body.getCycleName() == "testFolderUpdate"
-        entity.body.type == TestCycleE.FOLDER
+        entity.body.getCycleName() == "testCycleUpdate"
+        entity.body.type == TestCycleE.CYCLE
 
         when:
         requestEntity = new HttpEntity<TestCycleDTO>(testCycleDTOS.get(1), null)
@@ -108,8 +110,8 @@ class TestCycleControllerSpec extends Specification {
                 HttpMethod.PUT, requestEntity, TestCycleDTO, projectId)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
-        entity.body.getCycleName() == "testCycleUpdate"
-        entity.body.type == TestCycleE.CYCLE
+        entity.body.getCycleName() == "testFolderUpdate"
+        entity.body.type == TestCycleE.FOLDER
     }
 
     def "QueryOne"() {
@@ -117,7 +119,7 @@ class TestCycleControllerSpec extends Specification {
         def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/query/one/{cycleId}',TestCycleDTO,projectId, testCycleDTOS.get(0).getCycleId())
         then:
         entity.statusCode.is2xxSuccessful()
-        entity.body.cycleName == "testFolderUpdate"
+        entity.body.cycleName == "testCycleUpdate"
     }
 
     def "GetTestCycle"() {
@@ -136,7 +138,7 @@ class TestCycleControllerSpec extends Specification {
         map.put(2L,productVersionDTO2)
 
         when:
-        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,1L)
+        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,testCycleDTOS.get(0).getCycleId())
         then:
         1*testCaseService.getVersionInfo(_)>>map
         then:
@@ -147,7 +149,7 @@ class TestCycleControllerSpec extends Specification {
         !jsonObject.isEmpty()
 
         when:
-        entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,1L)
+        entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,testCycleDTOS.get(0).getCycleId())
         then:
         1*testCaseService.getVersionInfo(_)>>new HashMap<>()
         then:
@@ -157,7 +159,6 @@ class TestCycleControllerSpec extends Specification {
         expect:
         jsonObject2.isEmpty()
     }
-
 
     def "GetTestCycleVersion"() {
         given:
@@ -169,18 +170,57 @@ class TestCycleControllerSpec extends Specification {
         then: '返回值'
         1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(HttpStatus.OK)
     }
-//
-//    def "CloneCycle"() {
-//    }
-//
-//    def "CloneFolder"() {
-//    }
-//
-//    def "GetFolderByCycleId"() {
-//    }
-//
-//    def "SynchroFolder"() {
-//    }
+
+    def "CloneCycle"() {
+        given:
+        TestCycleDTO testCycleDTO = new TestCycleDTO()
+        testCycleDTO.setVersionId(99L)
+        testCycleDTO.setCycleName("cloneCycleTest")
+
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO,TestCycleDTO, testCycleDTOS.get(0).getCycleId(),projectId)
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+        entity.body.versionId == 99L
+        entity.body.cycleName == "cloneCycleTest"
+    }
+
+    def "CloneFolder"() {
+        given:
+        TestCycleDTO testCycleDTO = new TestCycleDTO()
+        testCycleDTO.setCycleName("cloneCycleFolderTest")
+
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO,TestCycleDTO, testCycleDTOS.get(1).getCycleId(),projectId)
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+        entity.body.cycleName == "cloneCycleFolderTest"
+    }
+
+    def "GetFolderByCycleId"() {
+        given:
+        TestCycleDTO testCycleDTO = new TestCycleDTO()
+        testCycleDTO.setCycleName("cloneCycleFolderTest")
+
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/folder/cycleId/{cycleId}', null,List, projectId,testCycleDTOS.get(0).getCycleId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+        entity.body.size() == 1
+        List<TestCycleDTO> list = entity.body
+        list.get(0).cycleName == "testFolderUpdate"
+    }
+
+    def "SynchroFolder"() {
+        given:
+        TestCycleDTO testCycleDTO = new TestCycleDTO()
+        testCycleDTO.setCycleName("cloneCycleFolderTest")
+
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,boolean, projectId,testCycleDTOS.get(1).getCycleId(),testCycleDTOS.get(1).getFolderId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+    }
 //
 //    def "SynchroFolder1"() {
 //    }
