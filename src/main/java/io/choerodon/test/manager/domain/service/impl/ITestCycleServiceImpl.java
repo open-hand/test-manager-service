@@ -138,6 +138,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		protoTestCycleE.getChildFolder().forEach(v -> {
 			TestCycleE testCycleE = TestCycleEFactory.create();
 			testCycleE.setParentCycleId(parentCycle.getCycleId());
+			testCycleE.setVersionId(parentCycle.getVersionId());
 			cloneFolder(v, testCycleE, projectId);
 		});
 		return parentCycle;

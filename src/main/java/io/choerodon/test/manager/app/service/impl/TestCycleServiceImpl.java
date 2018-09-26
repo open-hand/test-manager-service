@@ -2,15 +2,13 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
@@ -273,6 +271,10 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testIssueFolderDTO.setName(needTestCycleE.getCycleName());
             }
 
+            if (needTestCycleE.getParentCycleId() != null) {
+                needTestCycleE.setVersionId(fatherCycleE.getVersionId());
+            }
+
             //插入folder表，更新cycle表
             Long folderId = testIssueFolderService.insert(testIssueFolderDTO).getFolderId();
             needTestCycleE.setFolderId(folderId);
@@ -283,12 +285,29 @@ public class TestCycleServiceImpl implements TestCycleService {
             List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.querySelf();
 
             //设置folderRel数据
-            for (TestCycleCaseE testCycleCaseE1 : testCycleCaseES) {
-                IssueCreateDTO issueCreateDTO = testCycleCaseE1.transferToIssueCreateDTO(projectId, needTestCycleE.getVersionId());
-                testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, needTestCycleE.getVersionId());
+            List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+            //没有case存在的话就不进行对cyclecase和folderRel表的操作
+            if (ObjectUtils.isEmpty(testCycleCaseES)) {
+                continue;
             }
-        }
+            List<Long> issueIds = testCaseService.batchCloneIssue(projectId, needTestCycleE.getVersionId(), testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).toArray(Long[]::new));
+            //将原来的case关联的issue改成新克隆出来的issue
+            int i = 0;
+            testCycleCaseES.forEach(v -> {
+                v.setIssueId(issueIds.get(i));
+                v.updateSelf();
+            });
 
+            issueIds.forEach(v -> {
+                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+                testIssueFolderRelDTO.setFolderId(folderId);
+                testIssueFolderRelDTO.setProjectId(projectId);
+                testIssueFolderRelDTO.setVersionId(needTestCycleE.getVersionId());
+                testIssueFolderRelDTO.setIssueId(v);
+                testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+            });
+            testIssueFolderRelService.insertBatchRelationship(projectId, testIssueFolderRelDTOS);
+        }
     }
 
     private JSONObject createVersionNode(String title, String height, Long versionId) {
@@ -421,5 +440,4 @@ public class TestCycleServiceImpl implements TestCycleService {
         cycle.setVersionName(map.get(cycle.getVersionId()).getName());
         cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
     }
-
 }
