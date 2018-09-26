@@ -71,7 +71,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-        delete(testCycleCaseDTO.getExecuteId(), projectId);
+        List<TestCycleCaseE> list=ConvertHelper.convert(testCycleCaseDTO,TestCycleCaseE.class).querySelf();
+        if(!ObjectUtils.isEmpty(list)) {
+            list.forEach(v->delete(v.getExecuteId(),projectId));
+        }
     }
 
     @Override

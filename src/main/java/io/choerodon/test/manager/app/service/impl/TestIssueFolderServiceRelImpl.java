@@ -8,17 +8,18 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.*;
-import io.choerodon.test.manager.app.service.ReporterFormService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
+import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Autowired
     ReporterFormService reporterFormService;
+
+    @Autowired
+    TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    TestCaseStepService testCaseStepService;
 
     @Override
     public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds) {
@@ -164,6 +171,14 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    public void deleteJustOneRel(Long projectId, Long issueId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setIssueId(issueId);
+        iTestIssueFolderRelService.delete(ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO, List<Long> issues) {
         TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
@@ -220,7 +235,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         TestIssueFolderRelDTO testIssueFolderRelDTO;
         testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
-        if(!ObjectUtils.isEmpty(issueInfosDTOS)) {
+        if (!ObjectUtils.isEmpty(issueInfosDTOS)) {
             List<Long> issuesId = testCaseService.batchCloneIssue(projectId, versionId,
                     issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
             for (Long id : issuesId) {

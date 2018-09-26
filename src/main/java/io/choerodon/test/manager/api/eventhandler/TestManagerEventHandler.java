@@ -2,15 +2,18 @@ package io.choerodon.test.manager.api.eventhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
@@ -113,7 +116,9 @@ public class TestManagerEventHandler {
 		testCycleCaseDTO.setIssueId(issuePayload.getIssueId());
 		testCycleCaseService.batchDelete(testCycleCaseDTO, issuePayload.getProjectId());
 
-		testIssueFolderRelService.delete(issuePayload.getProjectId(), Collections.singletonList(issuePayload.getIssueId()));
+		TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+		testIssueFolderRelDTO.setIssueId(issuePayload.getIssueId());
+		testIssueFolderRelService.deleteJustOneRel(issuePayload.getProjectId(),issuePayload.getIssueId());
 
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
