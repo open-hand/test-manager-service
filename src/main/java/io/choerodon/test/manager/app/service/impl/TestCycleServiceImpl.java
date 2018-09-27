@@ -242,37 +242,35 @@ public class TestCycleServiceImpl implements TestCycleService {
             Long tempCycleId = resTestCycleE.getCycleId();
             //设置修正数据
             TestCycleE needTestCycleE;
-            if (resTestCycleE.getType().equals(CYCLE)) {
+            if (resTestCycleE.getType().equals("folder")) {
+                //TestCycleE的type为folder的情况
+                needTestCycleE = resTestCycleE;
+                testIssueFolderDTO.setType(CYCLE);
+            } else {
                 resTestCycleE.setType("folder");
                 resTestCycleE.setParentCycleId(resTestCycleE.getCycleId());
                 resTestCycleE.setCycleId(null);
                 needTestCycleE = resTestCycleE.addSelf();
                 needTestCycleE.setObjectVersionNumber(1L);
                 testIssueFolderDTO.setType(CYCLE);
-            } else if (resTestCycleE.getType().equals("temp")) {
-                needTestCycleE = resTestCycleE;
-                testIssueFolderDTO.setType(resTestCycleE.getType());
-            } else {
-                //TestCycleE的type为folder的情况
-                needTestCycleE = resTestCycleE;
-                testIssueFolderDTO.setType(CYCLE);
             }
 
             Long projectId = testCaseService.queryProjectIdByVersionId(needTestCycleE.getVersionId());
             testIssueFolderDTO.setProjectId(projectId);
             testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
-            testIssueFolderDTO.setObjectVersionNumber(needTestCycleE.getObjectVersionNumber());
-            //如果有父节点的话，将folder的名字设置为如：父名称_子名称
-            testCycleE.setCycleId(needTestCycleE.getParentCycleId());
-            TestCycleE fatherCycleE = testCycleE.queryOne();
-            if (needTestCycleE.getParentCycleId() != null && !fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
-                testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + needTestCycleE.getCycleName());
-            } else {
-                testIssueFolderDTO.setName(needTestCycleE.getCycleName());
-            }
 
             if (needTestCycleE.getParentCycleId() != null) {
+                //如果有父节点的话，将folder的名字设置为如：父名称_子名称
+                testCycleE.setCycleId(needTestCycleE.getParentCycleId());
+                TestCycleE fatherCycleE = testCycleE.queryOne();
+                //如果父名字和子名字是相同的就说明这个名字是唯一的只需要给folder设置此名即可，不需要加 _
+                if (!fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
+                    testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + needTestCycleE.getCycleName());
+                } else {
+                    testIssueFolderDTO.setName(needTestCycleE.getCycleName());
+                }
                 needTestCycleE.setVersionId(fatherCycleE.getVersionId());
+                testIssueFolderDTO.setVersionId(fatherCycleE.getVersionId());
             }
 
             //插入folder表，更新cycle表
@@ -286,7 +284,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
             //设置folderRel数据
             List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
-            //没有case存在的话就不进行对cyclecase和folderRel表的操作
+            //没有case存在的话就不进行cyclecase和folderRel表的操作
             if (ObjectUtils.isEmpty(testCycleCaseES)) {
                 continue;
             }
@@ -366,7 +364,6 @@ public class TestCycleServiceImpl implements TestCycleService {
                 folders.add(createCycle(u, height + "-" + folders.size()))
         );
     }
-
 
 
     @Override

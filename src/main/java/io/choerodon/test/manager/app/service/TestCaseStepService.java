@@ -17,4 +17,6 @@ public interface TestCaseStepService {
 
     TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId);
 
+    void batchClone(TestCaseStepDTO testCaseStepDTO,Long issueId,Long projectId);
+
 }

@@ -20,4 +20,6 @@ public interface TestCaseStepRepository {
 
     String getLastedRank(@Param("issueId") Long issueId);
 
+    List<TestCaseStepE> queryByParameter(TestCaseStepE testStepCaseE);
+
 }

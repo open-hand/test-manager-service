@@ -264,7 +264,6 @@ class TestIssueFolderControllerSpec extends Specification {
 
         List<Long> issuesId = new ArrayList<>()
         issuesId.add(1L)
-        issuesId.add(2L)
 
         when: '向查询issueFolder的复制接口发请求'
         restTemplate.put('/v1/projects/{project_id}/issueFolder/copy?folderId={folderId}&versionId={versionId}', null, projectId, foldersId[0], 3L)

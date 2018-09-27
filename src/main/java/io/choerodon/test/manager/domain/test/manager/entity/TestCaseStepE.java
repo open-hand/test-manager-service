@@ -64,6 +64,10 @@ public class TestCaseStepE {
         return testCaseStepRepository.query(this);
     }
 
+    public List<TestCaseStepE> queryByParameter() {
+        return testCaseStepRepository.queryByParameter(this);
+    }
+
     public TestCaseStepE addSelf() {
         return testCaseStepRepository.insert(this);
     }

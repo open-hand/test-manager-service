@@ -89,12 +89,14 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         //查询出所属的issue
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
 
+        String sIssueIds = "issueIds";
+
         //如果传入的参数包含issueIds,就只去查找这些issueIds
-        if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey("issueIds")) {
+        if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey(sIssueIds)) {
             //明天替换
-            List issueIds = (ArrayList) searchDTO.getOtherArgs().get("issueIds");
-            for(Object id:issueIds) {
-                Long issueId =  ((Integer)id).longValue();
+            List<Integer> issueIds = (ArrayList<Integer>) searchDTO.getOtherArgs().get(sIssueIds);
+            for(Integer id:issueIds) {
+                Long issueId =  id.longValue();
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
                 resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
                         .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
@@ -122,7 +124,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         Long[] issueIds = resultRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).toArray(Long[]::new);
         //将issueId放入searchDTO中
         Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
-        args.put("issueIds", issueIds);
+        args.put(sIssueIds, issueIds);
         if (searchDTO.getOtherArgs() == null) {
             searchDTO.setOtherArgs(args);
         }
@@ -227,6 +229,11 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         }
         resTestIssueFolderRelDTO.setIssueId(issueDTO.getIssueId());
         resTestIssueFolderRelDTO.setId(null);
+        //克隆issue步骤
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+        testCaseStepDTO.setIssueId(issueId);
+        testCaseStepService.batchClone(testCaseStepDTO,issueDTO.getIssueId(),projectId);
+
         return ConvertHelper.convert(iTestIssueFolderRelService.insert(
                 ConvertHelper.convert(resTestIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }
@@ -257,9 +264,15 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
         if (!ObjectUtils.isEmpty(issueInfosDTOS)) {
+            //克隆接口，传给它的顺序是怎么样的返回的就是怎么样的
             List<Long> issuesId = testCaseService.batchCloneIssue(projectId, versionId,
                     issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
+            int i = 0;
             for (Long id : issuesId) {
+                //克隆issue步骤
+                TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+                testCaseStepDTO.setIssueId(issueInfosDTOS.get(i++).getIssueId());
+                testCaseStepService.batchClone(testCaseStepDTO,id,projectId);
                 //插入issue与folder的关联
                 testIssueFolderRelDTO.setIssueId(id);
                 iTestIssueFolderRelService.insert(ConvertHelper
