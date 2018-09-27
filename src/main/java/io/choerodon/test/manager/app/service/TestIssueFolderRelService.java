@@ -35,7 +35,7 @@ public interface TestIssueFolderRelService {
 
     List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    TestIssueFolderRelDTO cloneOneIssue(Long projectId,Long issueId,CopyConditionDTO copyConditionDTO);
+    void cloneOneIssue(Long projectId, Long issueId);
 
     void deleteJustOneRel(Long projectId, Long issueId);
 }

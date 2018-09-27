@@ -115,10 +115,8 @@ public class TestIssueFolderRelController {
     @ApiOperation("克隆文件夹下的一个issue")
     @PutMapping("/copy/issue/{issueId}")
     public ResponseEntity<TestIssueFolderRelDTO> cloneOneIssue(@PathVariable(name = "project_id") Long projectId,
-                                    @PathVariable(name = "issueId") Long issueId,
-                                    @RequestBody CopyConditionDTO copyConditionDTO) {
-        return Optional.ofNullable(testIssueFolderRelService.cloneOneIssue(projectId,issueId,copyConditionDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.copy.oneIssue"));
+                                    @PathVariable(name = "issueId") Long issueId) {
+        testIssueFolderRelService.cloneOneIssue(projectId, issueId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

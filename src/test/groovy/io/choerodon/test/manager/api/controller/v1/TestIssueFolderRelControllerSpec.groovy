@@ -144,21 +144,26 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
     def "cloneOneIssue"() {
         given:
-        IssueDTO issueDTO = new IssueDTO()
-        issueDTO.setIssueId(11111L)
+        List<Long> issuesId = new ArrayList<>()
+        issuesId.add(11111L)
+
+        TestIssueFolderRelDO testIssueFolderRelDO = new TestIssueFolderRelDO()
+        testIssueFolderRelDO.setIssueId(11111L)
+
 
         when:
-        HttpEntity<CopyConditionDTO> requestEntity = new HttpEntity<CopyConditionDTO>(new CopyConditionDTO(), null)
+        HttpEntity requestEntity = new HttpEntity<>()
         def entity = restTemplate.exchange('/v1/projects/{project_id}/issueFolderRel/copy/issue/{issueId}',
                 HttpMethod.PUT, requestEntity, TestIssueFolderRelDTO, projectId,11L)
 
         then: '返回值'
-        1*testCaseService.cloneIssueByIssueId(_,_,_)>>issueDTO
+        testCaseService.batchCloneIssue(_, _, _) >> issuesId
+        List res = testIssueFolderRelMapper.select(testIssueFolderRelDO)
 
         and:
         entity.statusCode.is2xxSuccessful()
-        entity.body.issueId == 11111L
-
+        res.size() == 1
+        res.get(0).issueId == 11111L
     }
 
     def "QueryIssuesById"() {

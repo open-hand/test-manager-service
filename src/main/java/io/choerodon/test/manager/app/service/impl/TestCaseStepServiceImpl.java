@@ -80,15 +80,18 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 	 */
 	@Transactional
 	@Override
-	public void batchClone(TestCaseStepDTO testCaseStepDTO,Long issueId,Long projectId) {
+	public List<TestCaseStepDTO> batchClone(TestCaseStepDTO testCaseStepDTO,Long issueId,Long projectId) {
 		final TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		List<TestCaseStepE> steps = testCaseStepE.queryByParameter();
+		List<TestCaseStepDTO> testCaseStepDTOS = new ArrayList<>();
 		steps.forEach(v->{
 			v.setStepId(null);
 			v.setIssueId(issueId);
 			v.setObjectVersionNumber(null);
-			changeStep(ConvertHelper.convert(v, TestCaseStepDTO.class), projectId);
+			TestCaseStepDTO resCaseStepDTO = changeStep(ConvertHelper.convert(v, TestCaseStepDTO.class), projectId);
+			testCaseStepDTOS.add(resCaseStepDTO);
 		});
+		return testCaseStepDTOS;
 	}
 
 }
