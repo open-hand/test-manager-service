@@ -51,27 +51,11 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
 		if (testCaseStepE.getStepId() == null) {
 			testCaseStepE = testCaseStepE.createOneStep();
-			runCycleCaseStep(testCaseStepE);
 		} else {
 			testCaseStepE = testCaseStepE.changeOneStep();
 		}
 		return ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class);
 	}
-
-	private void runCycleCaseStep(TestCaseStepE testCaseStepE) {
-		TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
-		testCycleCaseE.setIssueId(testCaseStepE.getIssueId());
-		List<TestCycleCaseE> testCaseStepES = testCycleCaseE.querySelf();
-		if(ObjectUtils.isEmpty(testCaseStepES)){
-			return;
-		}
-		TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
-		testCaseStepES.forEach(v ->
-			testCycleCaseStepE.runOneStep(v.getExecuteId(),testCaseStepE.getStepId(),status)
-		);
-	}
-
 
 	@Transactional
 	@Override

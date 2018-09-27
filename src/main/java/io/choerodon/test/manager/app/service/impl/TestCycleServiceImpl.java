@@ -11,12 +11,9 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
+import io.choerodon.test.manager.domain.service.ITestStatusService;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +51,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Autowired
     TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    ITestStatusService iTestStatusService;
 
     private static final String NODE_CHILDREN = "children";
     private static final String CYCLE = "cycle";
@@ -100,17 +100,68 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseE> caseList = Optional.ofNullable(cycleCaseE.querySelf()).orElseGet(ArrayList::new);
-        Set<Long> caseIssues = caseList.stream().map(TestCycleCaseE::getIssueId).collect(Collectors.toSet());
+        Map<Long,Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseE::getIssueId,TestCycleCaseE::getExecuteId));
         //对比执行和folder中的issue添加未添加的执行
         TestCycleCaseDTO dto = new TestCycleCaseDTO();
         dto.setCycleId(cycleId);
         folderIssues.forEach(v -> {
-            if (!caseIssues.contains(v)) {
+            if (!caseIssues.containsKey(v)) {
                 dto.setIssueId(v);
                 testCycleCaseService.create(dto, projectId);
+            }else{
+                //对比issue是否更新step
+                syncCycleCaseStep(caseIssues.get(v),v);
             }
         });
         return true;
+    }
+
+    /** 同步执行步骤
+     * @param executeId
+     * @param issueId
+     */
+    private void syncCycleCaseStep(Long executeId,Long issueId){
+        //获取issue下所有步骤
+        TestCaseStepE caseStepE= TestCaseStepEFactory.create();
+        caseStepE.setIssueId(issueId);
+        List<TestCaseStepE>caseSteps = caseStepE.querySelf();
+        if(ObjectUtils.isEmpty(caseSteps)){
+            return;
+        }
+        //获取执行下的所有步骤
+        TestCycleCaseStepE stepE= TestCycleCaseStepEFactory.create();
+        stepE.setExecuteId(executeId);
+        List<TestCycleCaseStepE> cycleSteps=Optional.ofNullable(stepE.querySelf()).orElseGet(ArrayList::new);
+        //当issue下步骤有修改时启动新的步骤
+
+        if(caseSteps.size()!=cycleSteps.size()){
+            TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+            Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
+
+            Set<Long> newStepSet=compareStep(caseSteps,cycleSteps);
+            newStepSet.forEach(v->{
+                testCycleCaseStepE.runOneStep(executeId,v,status);
+            });
+        }
+    }
+
+    /** 对比issue下步骤和case步骤找出不同的需要启动的步骤
+     * @param caseSteps
+     * @param cycleSteps
+     * @return
+     */
+    private Set<Long> compareStep(List<TestCaseStepE>caseSteps , List<TestCycleCaseStepE> cycleSteps){
+        Set<Long> newStep=new HashSet<>();
+        Set caseStepSet=caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
+        Set cycleStepSet=cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
+       Iterator<Long> iterator= caseStepSet.iterator();
+       if(iterator.hasNext()){
+           Long stepId=iterator.next();
+           if(!cycleStepSet.contains(stepId)){
+               newStep.add(stepId);
+           }
+       }
+       return newStep;
     }
 
 
