@@ -157,18 +157,18 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param cycleSteps
      * @return
      */
-    private Set<Long> compareStep(List<TestCaseStepE>caseSteps , List<TestCycleCaseStepE> cycleSteps){
-        Set<Long> newStep=new HashSet<>();
-        Set caseStepSet=caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
-        Set cycleStepSet=cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
-       Iterator<Long> iterator= caseStepSet.iterator();
-       while(iterator.hasNext()){
-           Long stepId=iterator.next();
-           if(!cycleStepSet.contains(stepId)){
-               newStep.add(stepId);
-           }
-       }
-       return newStep;
+    private Set<Long> compareStep(List<TestCaseStepE> caseSteps, List<TestCycleCaseStepE> cycleSteps) {
+        Set<Long> newStep = new HashSet<>();
+        Set caseStepSet = caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
+        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
+        Iterator<Long> iterator = caseStepSet.iterator();
+        while (iterator.hasNext()) {
+            Long stepId = iterator.next();
+            if (!cycleStepSet.contains(stepId)) {
+                newStep.add(stepId);
+            }
+        }
+        return newStep;
     }
 
 
@@ -312,7 +312,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType(CYCLE);
             } else {
-                if(resTestCycleE.getType().equals("temp")){
+                if (resTestCycleE.getType().equals("temp")) {
                     resTestCycleE.setType("cycle");
                     resTestCycleE.updateSelf();
                 }
@@ -379,17 +379,20 @@ public class TestCycleServiceImpl implements TestCycleService {
                 List<TestCycleCaseStepE> cycleCaseStepES = new ArrayList<>();
                 TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
                 int j = 0;
-                oldCaseSteps.forEach(v -> {
+                for (TestCaseStepE v : oldCaseSteps) {
                     //根据以前的case_step去将cycle_case_step更新为前面克隆得到的step
                     //查找以前stepId对应的CycleCaseStep
                     testCycleCaseStepE.setStepId(v.getStepId());
                     List<TestCycleCaseStepE> testCycleCaseStepES = testCycleCaseStepE.querySelf();
-                    //修改CycleCaseStep对应的stepId为新克隆出来的step
-                    testCycleCaseStepES.forEach(cs -> {
-                        cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
-                        cycleCaseStepES.add(cs);
-                    });
-                });
+                    //将CycleCaseStep对应的stepId修改为新克隆出来的stepId
+                    for (TestCycleCaseStepE cs : testCycleCaseStepES) {
+                        if(!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
+                            cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
+                            cycleCaseStepES.add(cs);
+                        }
+                    }
+                    j++;
+                }
                 testCycleCaseStepService.update(ConvertHelper.convertList(cycleCaseStepES, TestCycleCaseStepDTO.class));
             }
 
