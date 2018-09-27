@@ -95,8 +95,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey(sIssueIds)) {
             //明天替换
             List<Integer> issueIds = (ArrayList<Integer>) searchDTO.getOtherArgs().get(sIssueIds);
-            for(Integer id:issueIds) {
-                Long issueId =  id.longValue();
+            for (Integer id : issueIds) {
+                Long issueId = id.longValue();
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
                 resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
                         .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
@@ -216,26 +216,26 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     }
 
     @Override
-    public TestIssueFolderRelDTO cloneOneIssue(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO) {
+    public void cloneOneIssue(Long projectId, Long issueId) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
         testIssueFolderRelDTO.setIssueId(issueId);
 
         TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.queryOne(
                 ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
 
-        IssueDTO issueDTO = testCaseService.cloneIssueByIssueId(projectId, issueId, copyConditionDTO);
-        if (ObjectUtils.isEmpty(issueDTO)) {
-            return new TestIssueFolderRelDTO();
+        Long[] issueIds = {issueId};
+        List<Long> issuesId = testCaseService.batchCloneIssue(projectId, resTestIssueFolderRelDTO.getVersionId(), issueIds);
+        for (Long id : issuesId) {
+            //克隆issue步骤
+            TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+            testCaseStepDTO.setIssueId(issueId);
+            testCaseStepService.batchClone(testCaseStepDTO, id, projectId);
+            //插入issue与folder的关联
+            resTestIssueFolderRelDTO.setId(null);
+            resTestIssueFolderRelDTO.setIssueId(id);
+            iTestIssueFolderRelService.insert(ConvertHelper
+                    .convert(resTestIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
-        resTestIssueFolderRelDTO.setIssueId(issueDTO.getIssueId());
-        resTestIssueFolderRelDTO.setId(null);
-        //克隆issue步骤
-        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
-        testCaseStepDTO.setIssueId(issueId);
-        testCaseStepService.batchClone(testCaseStepDTO,issueDTO.getIssueId(),projectId);
-
-        return ConvertHelper.convert(iTestIssueFolderRelService.insert(
-                ConvertHelper.convert(resTestIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -272,7 +272,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                 //克隆issue步骤
                 TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
                 testCaseStepDTO.setIssueId(issueInfosDTOS.get(i++).getIssueId());
-                testCaseStepService.batchClone(testCaseStepDTO,id,projectId);
+                testCaseStepService.batchClone(testCaseStepDTO, id, projectId);
                 //插入issue与folder的关联
                 testIssueFolderRelDTO.setIssueId(id);
                 iTestIssueFolderRelService.insert(ConvertHelper

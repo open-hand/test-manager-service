@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
@@ -55,6 +52,12 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Autowired
     ITestStatusService iTestStatusService;
 
+    @Autowired
+    TestCycleCaseStepService testCycleCaseStepService;
+
+    @Autowired
+    TestCaseStepService testCaseStepService;
+
     private static final String NODE_CHILDREN = "children";
     private static final String CYCLE = "cycle";
 
@@ -100,7 +103,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseE> caseList = Optional.ofNullable(cycleCaseE.querySelf()).orElseGet(ArrayList::new);
-        Map<Long,Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseE::getIssueId,TestCycleCaseE::getExecuteId));
+        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseE::getIssueId, TestCycleCaseE::getExecuteId));
         //对比执行和folder中的issue添加未添加的执行
         TestCycleCaseDTO dto = new TestCycleCaseDTO();
         dto.setCycleId(cycleId);
@@ -108,60 +111,64 @@ public class TestCycleServiceImpl implements TestCycleService {
             if (!caseIssues.containsKey(v)) {
                 dto.setIssueId(v);
                 testCycleCaseService.create(dto, projectId);
-            }else{
+            } else {
                 //对比issue是否更新step
-                syncCycleCaseStep(caseIssues.get(v),v);
+                syncCycleCaseStep(caseIssues.get(v), v);
             }
         });
         return true;
     }
 
-    /** 同步执行步骤
+    /**
+     * 同步执行步骤
+     *
      * @param executeId
      * @param issueId
      */
-    private void syncCycleCaseStep(Long executeId,Long issueId){
+    private void syncCycleCaseStep(Long executeId, Long issueId) {
         //获取issue下所有步骤
-        TestCaseStepE caseStepE= TestCaseStepEFactory.create();
+        TestCaseStepE caseStepE = TestCaseStepEFactory.create();
         caseStepE.setIssueId(issueId);
-        List<TestCaseStepE>caseSteps = caseStepE.querySelf();
-        if(ObjectUtils.isEmpty(caseSteps)){
+        List<TestCaseStepE> caseSteps = caseStepE.querySelf();
+        if (ObjectUtils.isEmpty(caseSteps)) {
             return;
         }
         //获取执行下的所有步骤
-        TestCycleCaseStepE stepE= TestCycleCaseStepEFactory.create();
+        TestCycleCaseStepE stepE = TestCycleCaseStepEFactory.create();
         stepE.setExecuteId(executeId);
-        List<TestCycleCaseStepE> cycleSteps=Optional.ofNullable(stepE.querySelf()).orElseGet(ArrayList::new);
+        List<TestCycleCaseStepE> cycleSteps = Optional.ofNullable(stepE.querySelf()).orElseGet(ArrayList::new);
         //当issue下步骤有修改时启动新的步骤
 
-        if(caseSteps.size()!=cycleSteps.size()){
+        if (caseSteps.size() != cycleSteps.size()) {
             TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
             Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
 
-            Set<Long> newStepSet=compareStep(caseSteps,cycleSteps);
-            newStepSet.forEach(v->{
-                testCycleCaseStepE.runOneStep(executeId,v,status);
+            Set<Long> newStepSet = compareStep(caseSteps, cycleSteps);
+            newStepSet.forEach(v -> {
+                testCycleCaseStepE.runOneStep(executeId, v, status);
             });
         }
     }
 
-    /** 对比issue下步骤和case步骤找出不同的需要启动的步骤
+    /**
+     * 对比issue下步骤和case步骤找出不同的需要启动的步骤
+     *
      * @param caseSteps
      * @param cycleSteps
      * @return
      */
-    private Set<Long> compareStep(List<TestCaseStepE>caseSteps , List<TestCycleCaseStepE> cycleSteps){
-        Set<Long> newStep=new HashSet<>();
-        Set caseStepSet=caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
-        Set cycleStepSet=cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
-       Iterator<Long> iterator= caseStepSet.iterator();
-       while(iterator.hasNext()){
-           Long stepId=iterator.next();
-           if(!cycleStepSet.contains(stepId)){
-               newStep.add(stepId);
-           }
-       }
-       return newStep;
+    private Set<Long> compareStep(List<TestCaseStepE> caseSteps, List<TestCycleCaseStepE> cycleSteps) {
+        Set<Long> newStep = new HashSet<>();
+        Set caseStepSet = caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
+        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
+        Iterator<Long> iterator = caseStepSet.iterator();
+        while (iterator.hasNext()) {
+            Long stepId = iterator.next();
+            if (!cycleStepSet.contains(stepId)) {
+                newStep.add(stepId);
+            }
+        }
+        return newStep;
     }
 
 
@@ -287,8 +294,15 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleE testCycleE = TestCycleEFactory.create();
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 
+        //从敏捷查询所有type是issue_test的issue
+        //将issueId放入searchDTO中
+        //无version的全删除掉
+        //有version的将他们放到（min version）最小版本的一个叫做旧数据的文件夹下
+
         List<TestCycleE> testCycleES = testCycleE.queryAll();
+        //用于设置IssueFolder
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+        //修正所有的cycle数据
         for (TestCycleE resTestCycleE : testCycleES) {
             Long tempCycleId = resTestCycleE.getCycleId();
             //设置修正数据
@@ -298,9 +312,14 @@ public class TestCycleServiceImpl implements TestCycleService {
                 needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType(CYCLE);
             } else {
+                if (resTestCycleE.getType().equals("temp")) {
+                    resTestCycleE.setType("cycle");
+                    resTestCycleE.updateSelf();
+                }
                 resTestCycleE.setType("folder");
                 resTestCycleE.setParentCycleId(resTestCycleE.getCycleId());
                 resTestCycleE.setCycleId(null);
+                //如果是cycle或者temp类型就新增一个cycle为其子folder
                 needTestCycleE = resTestCycleE.addSelf();
                 needTestCycleE.setObjectVersionNumber(1L);
                 testIssueFolderDTO.setType(CYCLE);
@@ -310,8 +329,8 @@ public class TestCycleServiceImpl implements TestCycleService {
             testIssueFolderDTO.setProjectId(projectId);
             testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
 
+            //如果有父节点的话，将folder的名字设置为如：父名称_子名称
             if (needTestCycleE.getParentCycleId() != null) {
-                //如果有父节点的话，将folder的名字设置为如：父名称_子名称
                 testCycleE.setCycleId(needTestCycleE.getParentCycleId());
                 TestCycleE fatherCycleE = testCycleE.queryOne();
                 //如果父名字和子名字是相同的就说明这个名字是唯一的只需要给folder设置此名即可，不需要加 _
@@ -333,19 +352,49 @@ public class TestCycleServiceImpl implements TestCycleService {
             testCycleCaseE.setCycleId(tempCycleId);
             List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.querySelf();
 
-            //设置folderRel数据
+            //用于设置folderRel数据
             List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
-            //没有case存在的话就不进行cyclecase和folderRel表的操作
+            //没有case存在的话就不进行cyclecase，各个step和folderRel表的操作
             if (ObjectUtils.isEmpty(testCycleCaseES)) {
                 continue;
             }
             List<Long> issueIds = testCaseService.batchCloneIssue(projectId, needTestCycleE.getVersionId(), testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).toArray(Long[]::new));
-            //将原来的case关联的issue改成新克隆出来的issue
+
+            //将原来的case关联的issue改成新克隆出来的issue，并修改各个step关系
             int i = 0;
-            testCycleCaseES.forEach(v -> {
-                v.setIssueId(issueIds.get(i));
-                v.updateSelf();
-            });
+            for (TestCycleCaseE cycleCaseE : testCycleCaseES) {
+                //根据以前的issueId找到case_step
+                TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
+                testCaseStepE.setIssueId(cycleCaseE.getIssueId());
+                List<TestCaseStepE> oldCaseSteps = testCaseStepE.queryByParameter();
+
+                cycleCaseE.setIssueId(issueIds.get(i));
+                cycleCaseE.updateSelf();
+
+                //根据issueId克隆caseStep
+                TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+                testCaseStepDTO.setIssueId(cycleCaseE.getIssueId());
+                List<TestCaseStepDTO> clonedCaseStepDTO = testCaseStepService.batchClone(testCaseStepDTO, issueIds.get(i++), projectId);
+
+                List<TestCycleCaseStepE> cycleCaseStepES = new ArrayList<>();
+                TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+                int j = 0;
+                for (TestCaseStepE v : oldCaseSteps) {
+                    //根据以前的case_step去将cycle_case_step更新为前面克隆得到的step
+                    //查找以前stepId对应的CycleCaseStep
+                    testCycleCaseStepE.setStepId(v.getStepId());
+                    List<TestCycleCaseStepE> testCycleCaseStepES = testCycleCaseStepE.querySelf();
+                    //将CycleCaseStep对应的stepId修改为新克隆出来的stepId
+                    for (TestCycleCaseStepE cs : testCycleCaseStepES) {
+                        if(!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
+                            cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
+                            cycleCaseStepES.add(cs);
+                        }
+                    }
+                    j++;
+                }
+                testCycleCaseStepService.update(ConvertHelper.convertList(cycleCaseStepES, TestCycleCaseStepDTO.class));
+            }
 
             issueIds.forEach(v -> {
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
