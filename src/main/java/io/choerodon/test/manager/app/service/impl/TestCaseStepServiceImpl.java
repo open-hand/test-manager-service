@@ -86,7 +86,25 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
 		testCaseStepE.setObjectVersionNumber(null);
 		return changeStep(ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class), projectId);
+	}
 
+	/**
+	 *
+	 * @param testCaseStepDTO 要查找的casstep
+	 * @param issueId 要被插入数据的issueid
+	 * @param projectId
+	 */
+	@Transactional
+	@Override
+	public void batchClone(TestCaseStepDTO testCaseStepDTO,Long issueId,Long projectId) {
+		final TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
+		List<TestCaseStepE> steps = testCaseStepE.queryByParameter();
+		steps.forEach(v->{
+			v.setStepId(null);
+			v.setIssueId(issueId);
+			v.setObjectVersionNumber(null);
+			changeStep(ConvertHelper.convert(v, TestCaseStepDTO.class), projectId);
+		});
 	}
 
 }

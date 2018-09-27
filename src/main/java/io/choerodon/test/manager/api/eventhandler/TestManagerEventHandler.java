@@ -3,16 +3,11 @@ package io.choerodon.test.manager.api.eventhandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
+import io.choerodon.test.manager.api.dto.*;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
@@ -47,6 +42,9 @@ public class TestManagerEventHandler {
 	@Autowired
 	private TestCaseStepService testCaseStepService;
 
+	@Autowired
+	private TestIssueFolderService testIssueFolderService;
+
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
@@ -70,11 +68,12 @@ public class TestManagerEventHandler {
 	public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
 		VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
 		loggerInfo(versionEvent);
-		TestCycleDTO testCycleDTO = new TestCycleDTO();
-		testCycleDTO.setVersionId(versionEvent.getVersionId());
-		testCycleDTO.setType(TestCycleE.TEMP);
-		testCycleDTO.setCycleName("临时");
-		testCycleService.insert(testCycleDTO);
+		TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+		testIssueFolderDTO.setType(TestIssueFolderE.TYPE_TEMP);
+		testIssueFolderDTO.setProjectId(versionEvent.getProjectId());
+		testIssueFolderDTO.setVersionId(versionEvent.getVersionId());
+		testIssueFolderDTO.setName("临时");
+		testIssueFolderService.insert(testIssueFolderDTO);
 		return versionEvent;
 	}
 
@@ -91,9 +90,10 @@ public class TestManagerEventHandler {
 	public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
 		VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
 		loggerInfo(versionEvent);
-		TestCycleDTO testCycleDTO = new TestCycleDTO();
-		testCycleDTO.setVersionId(versionEvent.getVersionId());
-		testCycleService.delete(testCycleDTO, versionEvent.getProjectId());
+		List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(),versionEvent.getVersionId());
+		testIssueFolderDTOS.forEach(v->{
+			testIssueFolderService.delete(versionEvent.getProjectId(),v.getFolderId());
+		});
 		return versionEvent;
 	}
 

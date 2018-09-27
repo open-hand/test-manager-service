@@ -66,6 +66,13 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
     }
 
     @Override
+    public List<TestCaseStepE> queryByParameter(TestCaseStepE testStepCaseE) {
+        TestCaseStepDO testCaseStepDO = ConvertHelper.convert(testStepCaseE, TestCaseStepDO.class);
+        return ConvertHelper.convertList(testCaseStepMapper
+                .select(testCaseStepDO), TestCaseStepE.class);
+    }
+
+    @Override
     public String getLastedRank(Long issueId) {
         Assert.notNull(issueId,"error.case.step.getLastedRank.issueid.not.null");
        return LiquibaseHelper.executeFunctionByMysqlOrOracle(testCaseStepMapper::getLastedRank,testCaseStepMapper::getLastedRank_oracle,dsUrl,issueId);
