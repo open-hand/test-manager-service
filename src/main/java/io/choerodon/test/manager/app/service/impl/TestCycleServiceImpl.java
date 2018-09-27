@@ -155,7 +155,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Set caseStepSet=caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
         Set cycleStepSet=cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
        Iterator<Long> iterator= caseStepSet.iterator();
-       if(iterator.hasNext()){
+       while(iterator.hasNext()){
            Long stepId=iterator.next();
            if(!cycleStepSet.contains(stepId)){
                newStep.add(stepId);
