@@ -264,6 +264,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
         if (!ObjectUtils.isEmpty(issueInfosDTOS)) {
+            //克隆接口，传给它的顺序是怎么样的返回的就是怎么样的
             List<Long> issuesId = testCaseService.batchCloneIssue(projectId, versionId,
                     issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
             int i = 0;
