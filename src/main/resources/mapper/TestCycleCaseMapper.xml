@@ -227,10 +227,16 @@
                 #{dto.cycleId}
             </foreach>
             <if test="!dtos.isEmpty and dtos.get(0).assignedTo != null">
-                AND assigned_to = #{dto.assignedTo}
+                AND assigned_to = #{dtos[0].assignedTo}
             </if>
             <if test="!dtos.isEmpty and dtos.get(0).lastUpdatedBy != null">
-                AND last_updated_by = #{dto.lastUpdatedBy}
+                AND last_updated_by = #{dtos[0].lastUpdatedBy}
+            </if>
+            <if test="!dtos.isEmpty and dtos.get(0).executionStatus != null">
+                AND execution_status = #{dtos[0].executionStatus}
+            </if>
+            <if test="!dtos.isEmpty and dtos.get(0).comment != null">
+                AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
             </if>
         </where>
         order by rank
@@ -283,10 +289,16 @@
                 #{dto.cycleId}
             </foreach>
             <if test="!dtos.isEmpty and dtos.get(0).assignedTo != null">
-                AND assigned_to = #{dto.assignedTo}
+                AND assigned_to = #{dtos[0].assignedTo}
             </if>
             <if test="!dtos.isEmpty and dtos.get(0).lastUpdatedBy != null">
-                AND last_updated_by = #{dto.lastUpdatedBy}
+                AND last_updated_by = #{dtos[0].lastUpdatedBy}
+            </if>
+            <if test="!dtos.isEmpty and dtos.get(0).executionStatus != null">
+                AND execution_status = #{dtos[0].executionStatus}
+            </if>
+            <if test="!dtos.isEmpty and dtos.get(0).comment != null">
+                AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
             </if>
         </where>
         order by rank

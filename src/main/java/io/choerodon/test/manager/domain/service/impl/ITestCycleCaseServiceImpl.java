@@ -152,38 +152,35 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 		return testCycleCaseRepository.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds);
 	}
 
+
+	/** 获取项目下所有cycleId
+	 * @param projectId
+	 * @return
+	 */
+	private List<Long> getCycleIdByProjectId(Long projectId){
+		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
+		if(ObjectUtils.isEmpty(versionIds)){
+			return new ArrayList<>();
+		}
+		return iTestCycleService.selectCyclesInVersions(versionIds);
+	}
+
 	@Override
 	public Long countCaseNotRun(Long projectId) {
-		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
-		if (!ObjectUtils.isEmpty(versionIds)) {
-			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-			if (!ObjectUtils.isEmpty(cycleIds)) {
-				return testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
-			}
-		}
-		return 0L;
+		List<Long> cycleIds=getCycleIdByProjectId(projectId);
+		return ObjectUtils.isEmpty(cycleIds)?0L:testCycleCaseRepository.countCaseNotRun(cycleIds.stream().toArray(Long[]::new));
 	}
 
 	@Override
 	public Long countCaseNotPlain(Long projectId) {
-		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
-		if (!ObjectUtils.isEmpty(versionIds)) {
-			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-			return testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
-		} else {
-			return 0L;
-		}
+		List<Long> cycleIds=getCycleIdByProjectId(projectId);
+		return ObjectUtils.isEmpty(cycleIds)?0L:testCycleCaseRepository.countCaseNotPlain(cycleIds.stream().toArray(Long[]::new));
 	}
 
 	@Override
 	public Long countCaseSum(Long projectId) {
-		Long[] versionIds = productionVersionClient.getVersionIds(projectId);
-		if (!ObjectUtils.isEmpty(versionIds)) {
-			List<Long> cycleIds = iTestCycleService.selectCyclesInVersions(versionIds);
-			return testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
-		} else {
-			return 0L;
-		}
+		List<Long> cycleIds=getCycleIdByProjectId(projectId);
+		return ObjectUtils.isEmpty(cycleIds)?0L:testCycleCaseRepository.countCaseSum(cycleIds.stream().toArray(Long[]::new));
 	}
 
 }
