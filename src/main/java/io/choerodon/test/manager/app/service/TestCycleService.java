@@ -49,5 +49,5 @@ public interface TestCycleService {
 
 	void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
 
-	void fixCycleData();
+	void fixCycleData(Long projectId);
 }

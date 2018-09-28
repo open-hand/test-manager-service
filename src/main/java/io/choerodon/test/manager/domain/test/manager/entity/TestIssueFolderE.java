@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import java.util.List;
 
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import org.apache.commons.lang.StringUtils;

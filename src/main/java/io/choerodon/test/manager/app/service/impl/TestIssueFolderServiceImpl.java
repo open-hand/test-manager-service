@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
@@ -43,6 +44,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Override
     public List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId){
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,versionId,projectId,null,null);
+        return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
+                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    }
+
+    @Override
+    public List<TestIssueFolderDTO> queryByParameterWithPageUnderProject(Long projectId, PageRequest pageRequest){
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,null,projectId,null,null);
         return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }
