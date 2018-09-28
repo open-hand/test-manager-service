@@ -19,12 +19,14 @@ service:
 preJob:
   image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.5.6
   preConfig:
+    enable: true
     configFile: application.yml
     datasource:
       url: jdbc:mysql://192.168.12.175:3306/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: root
       password: choerodon
   preInitDB:
+    enable: true
     datasource:
       url: jdbc:mysql://192.168.12.175:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
       username: root
