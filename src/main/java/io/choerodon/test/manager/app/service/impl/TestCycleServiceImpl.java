@@ -298,29 +298,27 @@ public class TestCycleServiceImpl implements TestCycleService {
 
         //从敏捷查询所有type是issue_test的issue
         List<IssueProjectDTO> issueProjectDTOS = testCaseService.queryIssueTestGroupByProject(projectId);
-        //旧数据放到当前项目（min version）最小版本的一个叫做旧数据的文件夹下
-        Long[] versionIdsUnderProject = testCaseService.getVersionIds(projectId);
-        TestIssueFolderDTO needFolder = null;
-        if(!ObjectUtils.isEmpty(versionIdsUnderProject)) {
-            TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIdsUnderProject[0], projectId, CYCLE, null);
-            needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
-        }
         //根据projectId查找version
         for (IssueProjectDTO issueProjectDTO : issueProjectDTOS) {
+            //旧数据放到当前项目（min version）最小版本的一个叫做旧数据的文件夹下
             Long[] versionIds = testCaseService.getVersionIds(issueProjectDTO.getProjectId());
-            if (ObjectUtils.isEmpty(versionIds) || ObjectUtils.isEmpty(versionIdsUnderProject)) {
+
+            if (ObjectUtils.isEmpty(versionIds)) {
                 //无version的全删除掉
                 testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
             } else {
+                //创建文件夹
+                TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
+                TestIssueFolderDTO needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
                 //有version的将他们放到目标文件夹
                 List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
                 for (Long issueId : issueProjectDTO.getIssueIdList()) {
                     if(needFolder!=null) {
-                        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), projectId, issueId, null);
+                        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
                         testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
                     }
                 }
-                testIssueFolderRelService.insertBatchRelationship(projectId,testIssueFolderRelDTOS);
+                testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(),testIssueFolderRelDTOS);
             }
         }
 
