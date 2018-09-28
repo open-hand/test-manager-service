@@ -103,7 +103,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             }
         } else {
             //如果传入了version就去筛选这些version下的rel
-            if (testFolderRelQueryDTO.getVersionIds() == null || testFolderRelQueryDTO.getVersionIds().length == 0) {
+            if (ObjectUtils.isEmpty(testFolderRelQueryDTO.getVersionIds())) {
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
                 resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
                         .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
