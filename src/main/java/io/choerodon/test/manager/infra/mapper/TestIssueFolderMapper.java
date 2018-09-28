@@ -12,6 +12,4 @@ import java.util.List;
  * Created by zongw.lee@gmail.com on 08/30/2018
  */
 public interface TestIssueFolderMapper extends BaseMapper<TestIssueFolderDO> {
-    List<TestIssueFolderE> queryByParameterWithPageUnderProject(@Param("do") TestIssueFolderDO testIssueFolderDO,@Param("pageRequest") PageRequest pageRequest);
-
 }

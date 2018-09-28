@@ -24,12 +24,6 @@ public class ITestIssueFolderServiceImpl implements ITestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest) {
-        return testIssueFolderE.queryByParameterWithPageUnderProject(pageRequest);
-    }
-
-
-    @Override
     public TestIssueFolderE insert(TestIssueFolderE testIssueFolderE) {
         return testIssueFolderE.validateType().addSelf();
     }

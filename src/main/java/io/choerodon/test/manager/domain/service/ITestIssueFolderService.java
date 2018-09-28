@@ -11,8 +11,6 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 public interface ITestIssueFolderService {
     List<TestIssueFolderE> query(TestIssueFolderE testIssueFolderE);
 
-    List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest);
-
     TestIssueFolderE insert(TestIssueFolderE testIssueFolderE);
 
     void delete(TestIssueFolderE testIssueFolderE);

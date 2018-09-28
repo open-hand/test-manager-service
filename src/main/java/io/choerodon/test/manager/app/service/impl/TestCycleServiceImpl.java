@@ -2,11 +2,11 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import io.choerodon.agile.api.dto.*;
+import io.choerodon.agile.api.dto.ProductVersionDTO;
+import io.choerodon.agile.api.dto.ProductVersionPageDTO;
+import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
@@ -302,7 +302,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Long[] versionIdsUnderProject = testCaseService.getVersionIds(projectId);
         TestIssueFolderDTO needFolder = null;
         if(!ObjectUtils.isEmpty(versionIdsUnderProject)) {
-            TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIdsUnderProject[0], projectId, "cycle", null);
+            TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIdsUnderProject[0], projectId, CYCLE, null);
             needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
         }
         //根据projectId查找version
@@ -339,7 +339,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testIssueFolderDTO.setType(CYCLE);
             } else {
                 if (resTestCycleE.getType().equals("temp")) {
-                    resTestCycleE.setType("cycle");
+                    resTestCycleE.setType(CYCLE);
                     resTestCycleE.updateSelf();
                 }
                 resTestCycleE.setType("folder");

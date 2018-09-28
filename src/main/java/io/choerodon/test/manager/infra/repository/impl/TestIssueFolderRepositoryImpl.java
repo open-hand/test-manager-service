@@ -34,14 +34,6 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
     }
 
     @Override
-    public List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest) {
-        TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
-        Page<TestIssueFolderDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> testIssueFolderMapper.select(testIssueFolderDO));
-        return ConvertPageHelper.convertPage(serviceDOPage, TestIssueFolderE.class);
-    }
-
-    @Override
     public TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE) {
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
         return ConvertHelper.convert(testIssueFolderMapper.selectOne(testIssueFolderDO), TestIssueFolderE.class);

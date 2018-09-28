@@ -21,6 +21,4 @@ public interface TestIssueFolderRepository {
 	TestIssueFolderE queryOne(TestIssueFolderE testIssueFolderE);
 
 	TestIssueFolderE queryByPrimaryKey(Long folderId);
-
-	List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest);
 }

@@ -47,10 +47,6 @@ public class TestIssueFolderE {
         return testIssueFolderRepository.queryAllUnderProject(this);
     }
 
-    public List<TestIssueFolderE> queryByParameterWithPageUnderProject(PageRequest pageRequest) {
-        return testIssueFolderRepository.queryByParameterWithPageUnderProject(this,pageRequest);
-    }
-
     public TestIssueFolderE addSelf() {
         return testIssueFolderRepository.insert(this);
     }
