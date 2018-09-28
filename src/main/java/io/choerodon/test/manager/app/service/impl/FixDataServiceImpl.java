@@ -46,12 +46,12 @@ public class FixDataServiceImpl implements FixDataService {
 
     private static final String CYCLE = "cycle";
 
-    Log log=LogFactory.getLog(this.getClass());
+    Log log = LogFactory.getLog(this.getClass());
 
 
     @Override
     public void fixCycleData(Long projectId) {
-        log.info("start fix data...now thread :"+ Thread.currentThread().getName());
+        log.info("start fix data...now thread :" + Thread.currentThread().getName());
         TestCycleE testCycleE = TestCycleEFactory.create();
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 
@@ -79,13 +79,13 @@ public class FixDataServiceImpl implements FixDataService {
                 //有version的将他们放到目标文件夹
                 List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
                 for (Long issueId : issueProjectDTO.getIssueIdList()) {
-                    if(needFolder!=null) {
+                    if (needFolder != null) {
                         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
                         testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
                     }
                 }
                 log.info("establish relationship of issue and folder under project...");
-                testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(),testIssueFolderRelDTOS);
+                testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(), testIssueFolderRelDTOS);
             }
         }
 
@@ -97,10 +97,9 @@ public class FixDataServiceImpl implements FixDataService {
         for (TestCycleE resTestCycleE : testCycleES) {
             Long tempCycleId = resTestCycleE.getCycleId();
             //设置修正数据
-            TestCycleE needTestCycleE;
+            TestCycleE needTestCycleE = resTestCycleE;
             if (resTestCycleE.getType().equals("folder")) {
                 //TestCycleE的type为folder的情况
-                needTestCycleE = resTestCycleE;
                 testIssueFolderDTO.setType(CYCLE);
             } else {
                 if (resTestCycleE.getType().equals("temp")) {
@@ -111,6 +110,7 @@ public class FixDataServiceImpl implements FixDataService {
                 resTestCycleE.setParentCycleId(resTestCycleE.getCycleId());
                 resTestCycleE.setCycleId(null);
                 //如果是cycle或者temp类型就新增一个cycle为其子folder
+                needTestCycleE.setCycleName(needTestCycleE.getCycleName() + "阶段");
                 needTestCycleE = resTestCycleE.addSelf();
                 needTestCycleE.setObjectVersionNumber(1L);
                 testIssueFolderDTO.setType(CYCLE);
@@ -127,10 +127,12 @@ public class FixDataServiceImpl implements FixDataService {
                 log.info("query father cycle...");
                 TestCycleE fatherCycleE = testCycleE.queryOne();
                 //如果父名字和子名字是相同的就说明这个名字是唯一的只需要给folder设置此名即可，中间不需要加 _
-                if (!fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
-                    testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + needTestCycleE.getCycleName()+"_"+"修复");
+                log.info("father:" + fatherCycleE.getCycleName());
+                log.info("son:" + needTestCycleE.getCycleName());
+                if (fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
+                    testIssueFolderDTO.setName(needTestCycleE.getCycleName() + "阶段");
                 } else {
-                    testIssueFolderDTO.setName(needTestCycleE.getCycleName()+"_"+"修复");
+                    testIssueFolderDTO.setName(fatherCycleE.getCycleName() + "_" + needTestCycleE.getCycleName());
                 }
                 needTestCycleE.setVersionId(fatherCycleE.getVersionId());
                 testIssueFolderDTO.setVersionId(fatherCycleE.getVersionId());
@@ -190,14 +192,14 @@ public class FixDataServiceImpl implements FixDataService {
                 testCycleCaseStepService.update(ConvertHelper.convertList(cycleCaseStepES, TestCycleCaseStepDTO.class));
             }
 
-            issueIds.forEach(v -> {
+            for (Long v : issueIds) {
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
                 testIssueFolderRelDTO.setFolderId(folderId);
                 testIssueFolderRelDTO.setProjectId(needProjectId);
                 testIssueFolderRelDTO.setVersionId(needTestCycleE.getVersionId());
                 testIssueFolderRelDTO.setIssueId(v);
                 testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
-            });
+            }
             testIssueFolderRelService.insertBatchRelationship(needProjectId, testIssueFolderRelDTOS);
         }
     }
