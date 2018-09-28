@@ -8,6 +8,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -187,5 +188,12 @@ public interface TestCaseFeignClient {
                                                                         @PathVariable(name = "project_id") Long projectId,
                                                                         @ApiParam(value = "查询参数", required = true)
                                                                         @RequestBody(required = false) SearchDTO searchDTO) ;
-
+    /**
+     * 得到所有projectId各自的issueIds
+     * @param projectId
+     * @return
+     */
+    @GetMapping("/v1/projects/{project_id}/issues/list_issues_by_project")
+    public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(@ApiParam(value = "项目id", required = true)
+                                                                              @PathVariable(name = "project_id") Long projectId);
 }

@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
@@ -290,14 +292,38 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void fixCycleData() {
+    public void fixCycleData(Long projectId) {
         TestCycleE testCycleE = TestCycleEFactory.create();
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
 
         //从敏捷查询所有type是issue_test的issue
-        //将issueId放入searchDTO中
-        //无version的全删除掉
-        //有version的将他们放到（min version）最小版本的一个叫做旧数据的文件夹下
+        List<IssueProjectDTO> issueProjectDTOS = testCaseService.queryIssueTestGroupByProject(projectId);
+        //旧数据放到当前项目（min version）最小版本的一个叫做旧数据的文件夹下
+        Long[] versionIdsUnderProject = testCaseService.getVersionIds(projectId);
+        TestIssueFolderDTO needFolder = null;
+        if(!ObjectUtils.isEmpty(versionIdsUnderProject)) {
+            TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIdsUnderProject[0], projectId, "cycle", null);
+            needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
+        }
+        //根据projectId查找version
+        for (IssueProjectDTO issueProjectDTO : issueProjectDTOS) {
+            Long[] versionIds = testCaseService.getVersionIds(issueProjectDTO.getProjectId());
+            if (ObjectUtils.isEmpty(versionIds) || ObjectUtils.isEmpty(versionIdsUnderProject)) {
+                //无version的全删除掉
+                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
+            } else {
+                //有version的将他们放到目标文件夹
+                List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+                for (Long issueId : issueProjectDTO.getIssueIdList()) {
+                    if(needFolder!=null) {
+                        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), projectId, issueId, null);
+                        testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+                    }
+                }
+                testIssueFolderRelService.insertBatchRelationship(projectId,testIssueFolderRelDTOS);
+            }
+        }
+
 
         List<TestCycleE> testCycleES = testCycleE.queryAll();
         //用于设置IssueFolder
@@ -325,8 +351,8 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testIssueFolderDTO.setType(CYCLE);
             }
 
-            Long projectId = testCaseService.queryProjectIdByVersionId(needTestCycleE.getVersionId());
-            testIssueFolderDTO.setProjectId(projectId);
+            Long needProjectId = testCaseService.queryProjectIdByVersionId(needTestCycleE.getVersionId());
+            testIssueFolderDTO.setProjectId(needProjectId);
             testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
 
             //如果有父节点的话，将folder的名字设置为如：父名称_子名称
@@ -358,7 +384,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             if (ObjectUtils.isEmpty(testCycleCaseES)) {
                 continue;
             }
-            List<Long> issueIds = testCaseService.batchCloneIssue(projectId, needTestCycleE.getVersionId(), testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).toArray(Long[]::new));
+            List<Long> issueIds = testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).toArray(Long[]::new));
 
             //将原来的case关联的issue改成新克隆出来的issue，并修改各个step关系
             int i = 0;
@@ -374,7 +400,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 //根据issueId克隆caseStep
                 TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
                 testCaseStepDTO.setIssueId(cycleCaseE.getIssueId());
-                List<TestCaseStepDTO> clonedCaseStepDTO = testCaseStepService.batchClone(testCaseStepDTO, issueIds.get(i++), projectId);
+                List<TestCaseStepDTO> clonedCaseStepDTO = testCaseStepService.batchClone(testCaseStepDTO, issueIds.get(i++), needProjectId);
 
                 List<TestCycleCaseStepE> cycleCaseStepES = new ArrayList<>();
                 TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
@@ -386,7 +412,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                     List<TestCycleCaseStepE> testCycleCaseStepES = testCycleCaseStepE.querySelf();
                     //将CycleCaseStep对应的stepId修改为新克隆出来的stepId
                     for (TestCycleCaseStepE cs : testCycleCaseStepES) {
-                        if(!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
+                        if (!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
                             cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
                             cycleCaseStepES.add(cs);
                         }
@@ -399,12 +425,12 @@ public class TestCycleServiceImpl implements TestCycleService {
             issueIds.forEach(v -> {
                 TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
                 testIssueFolderRelDTO.setFolderId(folderId);
-                testIssueFolderRelDTO.setProjectId(projectId);
+                testIssueFolderRelDTO.setProjectId(needProjectId);
                 testIssueFolderRelDTO.setVersionId(needTestCycleE.getVersionId());
                 testIssueFolderRelDTO.setIssueId(v);
                 testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
             });
-            testIssueFolderRelService.insertBatchRelationship(projectId, testIssueFolderRelDTOS);
+            testIssueFolderRelService.insertBatchRelationship(needProjectId, testIssueFolderRelDTOS);
         }
     }
 

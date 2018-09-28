@@ -13,6 +13,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
+import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
@@ -153,11 +154,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId,Map<String, Object> searchParamMap) {
-        return productionVersionClient.listByOptions(projectId,searchParamMap);
+    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap) {
+        return productionVersionClient.listByOptions(projectId, searchParamMap);
     }
 
-    public Long[] getVersionIds(Long projectId){
+    public Long[] getVersionIds(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
         return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
 
@@ -190,37 +191,43 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO) {
         Assert.notNull(projectId, "error.TestCaseService.cloneIssueByIssueId.param.projectId.not.be.null");
-        return testCaseFeignClient.cloneIssueByIssueId(projectId,issueId,copyConditionDTO).getBody();
+        return testCaseFeignClient.cloneIssueByIssueId(projectId, issueId, copyConditionDTO).getBody();
     }
 
     @Override
     public List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {
         Assert.notNull(projectId, "error.TestCaseService.batchCloneIssue.param.projectId.not.be.null");
-        return testCaseFeignClient.batchCloneIssue(projectId,versionId,issueIds).getBody();
+        return testCaseFeignClient.batchCloneIssue(projectId, versionId, issueIds).getBody();
     }
 
     @Override
     public ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds) {
         Assert.notNull(projectId, "error.TestCaseService.batchIssueToVersionTest.param.projectId.not.be.null");
-        return testCaseFeignClient.batchIssueToVersionTest(projectId,versionId,issueIds);
+        return testCaseFeignClient.batchIssueToVersionTest(projectId, versionId, issueIds);
     }
 
     @Override
     public ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds) {
         Assert.notNull(projectId, "error.TestCaseService.batchDeleteIssues.param.projectId.not.be.null");
-        return testCaseFeignClient.batchDeleteIssues(projectId,issueIds);
+        return testCaseFeignClient.batchDeleteIssues(projectId, issueIds);
     }
 
     @Override
     public Long queryProjectIdByVersionId(Long versionId) {
         Assert.notNull(versionId, "error.TestCaseService.queryProjectIdByVersionId.param.versionId.not.be.null");
-        return productionVersionClient.queryProjectIdByVersionId(99999L,versionId).getBody();
+        return productionVersionClient.queryProjectIdByVersionId(99999L, versionId).getBody();
     }
 
-    public  ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest){
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(),projectId, searchDTO);
+        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
 
+    }
+
+    @Override
+    public List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId) {
+        Assert.notNull(projectId, "error.TestCaseService.queryIssueTestGroupByProject.param.projectId.not.be.null");
+        return testCaseFeignClient.queryIssueTestGroupByProject(projectId).getBody();
     }
 }

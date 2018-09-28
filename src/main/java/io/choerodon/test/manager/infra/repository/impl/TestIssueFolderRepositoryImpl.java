@@ -1,9 +1,15 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
@@ -25,6 +31,14 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
     public List<TestIssueFolderE> queryAllUnderProject(TestIssueFolderE testIssueFolderE) {
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
         return ConvertHelper.convertList(testIssueFolderMapper.select(testIssueFolderDO), TestIssueFolderE.class);
+    }
+
+    @Override
+    public List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest) {
+        TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
+        Page<TestIssueFolderDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testIssueFolderMapper.select(testIssueFolderDO));
+        return ConvertPageHelper.convertPage(serviceDOPage, TestIssueFolderE.class);
     }
 
     @Override

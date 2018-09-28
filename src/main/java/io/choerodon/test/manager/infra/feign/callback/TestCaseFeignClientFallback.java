@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
+import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
@@ -109,6 +110,11 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(Long projectId) {
         throw new CommonException(QUERY_ERROR);
     }
 }

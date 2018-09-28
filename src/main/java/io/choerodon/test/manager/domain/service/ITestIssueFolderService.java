@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service;
 
 import java.util.List;
 
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
 /**
@@ -9,6 +10,8 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
  */
 public interface ITestIssueFolderService {
     List<TestIssueFolderE> query(TestIssueFolderE testIssueFolderE);
+
+    List<TestIssueFolderE> queryByParameterWithPageUnderProject(TestIssueFolderE testIssueFolderE, PageRequest pageRequest);
 
     TestIssueFolderE insert(TestIssueFolderE testIssueFolderE);
 

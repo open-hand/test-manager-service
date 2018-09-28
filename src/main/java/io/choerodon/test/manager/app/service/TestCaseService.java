@@ -7,6 +7,7 @@ import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
+import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,4 +62,6 @@ public interface TestCaseService {
     ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds);
 
     Long queryProjectIdByVersionId(Long versionId);
+
+    List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId);
 }
