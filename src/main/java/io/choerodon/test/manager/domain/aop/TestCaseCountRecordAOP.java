@@ -64,10 +64,11 @@ public class TestCaseCountRecordAOP {
 
 	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.delete(..)) && args(cycleCaseId,projectId)")
 	public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
+		Object o = pjp.proceed();
 		TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
 		cycleCaseE.setExecuteId(cycleCaseId);
 		countCaseToRedis(cycleCaseE.queryOne(), projectId);
-		return pjp.proceed();
+		return o;
 
 	}
 
