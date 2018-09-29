@@ -41,6 +41,8 @@ import java.util.stream.Stream;
 public class ExcelServiceImpl implements ExcelService {
 
 	private static final String EXPORT_ERROR = "error.issue.export";
+	private static final String EXPORT_ERROR_WORKBOOK_CLOSE = "error.issue.close.workbook";
+	private static final String EXPORT_ERROR_SET_HEADER = "error.issue.set.header";
 
 	Log log = LogFactory.getLog(this.getClass());
 	@Autowired
@@ -77,7 +79,7 @@ public class ExcelServiceImpl implements ExcelService {
 					+ new String((fileName + ".xls").getBytes(charsetName),
 					"ISO-8859-1"));
 		} catch (UnsupportedEncodingException e1) {
-			throw new CommonException(EXPORT_ERROR);
+			throw new CommonException(EXPORT_ERROR_SET_HEADER,e1);
 		}
 		response.setCharacterEncoding("utf-8");
 
@@ -152,13 +154,12 @@ public class ExcelServiceImpl implements ExcelService {
 		try {
 			workbook.write(response.getOutputStream());
 		} catch (IOException e) {
-			log.error("导出失败，workbook写入response失败");
-			throw new CommonException(EXPORT_ERROR);
+			throw new CommonException(EXPORT_ERROR,e);
 		} finally {
 			try {
 				workbook.close();
 			} catch (IOException e) {
-				log.error("导出失败，workbook关闭失败。");
+				throw new CommonException(EXPORT_ERROR_WORKBOOK_CLOSE,e);
 			}
 		}
 	}
