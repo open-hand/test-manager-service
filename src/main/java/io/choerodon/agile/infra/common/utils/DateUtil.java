@@ -36,7 +36,7 @@ public class DateUtil {
             start = new SimpleDateFormat(format).parse(startDate);
             stop = new SimpleDateFormat(format).parse(endDate);
         } catch (ParseException e) {
-            throw new CommonException(e.getMessage());
+            throw new CommonException(e);
         }
         if (start.after(stop)) {
             Date tmp = start;
@@ -69,7 +69,7 @@ public class DateUtil {
         try {
             calendarTemp.setTime(new SimpleDateFormat(format).parse(date));
         } catch (ParseException e) {
-            throw new CommonException(e.getMessage());
+            throw new CommonException(e);
         }
         return calendarTemp.get(Calendar.DAY_OF_WEEK) - 1;
     }

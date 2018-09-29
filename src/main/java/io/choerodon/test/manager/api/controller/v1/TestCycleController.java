@@ -152,7 +152,7 @@ public class TestCycleController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("同步cycleId下文件夹")
     @PostMapping("/synchro/folder/all/in/cycle/{cycleId}")
-    ResponseEntity synchroFolder(@PathVariable(name = "project_id") Long projectId,
+    ResponseEntity synchroFolderInCycle(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "cycleId") Long cycleId
     ) {
         Assert.notNull(cycleId, "error.cycleId.not.be.null");

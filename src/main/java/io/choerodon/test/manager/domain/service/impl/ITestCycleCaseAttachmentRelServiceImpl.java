@@ -34,7 +34,7 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
         try {
             url = URLDecoder.decode(attachmentRelE.querySelf().get(0).getUrl(), "UTF-8");
         } catch (IOException i) {
-            throw new CommonException(i.getMessage());
+            throw new CommonException(i);
         }
 
         ResponseEntity<String> response = fileFeignClient.deleteFile(bucketName, url);

@@ -66,8 +66,10 @@ public class TestCaseCountRecordAOP {
 	public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
 		TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
 		cycleCaseE.setExecuteId(cycleCaseId);
-		countCaseToRedis(cycleCaseE.queryOne(), projectId);
-		return pjp.proceed();
+		TestCycleCaseE oldCase=cycleCaseE.queryOne();
+		Object o = pjp.proceed();
+		countCaseToRedis(oldCase, projectId);
+		return o;
 
 	}
 
