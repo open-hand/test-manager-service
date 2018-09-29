@@ -54,15 +54,10 @@ public class FixDataServiceImpl implements FixDataService {
         log.info("query all cycles...");
         List<TestCycleE> testCycleES = testCycleE.queryAll();
 
-        //用于设置每个version下的临时文件夹
-        TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", null, null, TestIssueFolderE.TYPE_TEMP, null);
-
         //修正所有的cycle数据
         for (TestCycleE resTestCycleE : testCycleES) {
-            step2(resTestCycleE,tempTestIssueFolderDTO,testCycleE);
+            step2(resTestCycleE,testCycleE);
         }
-        //插入folder表，为每个version加一个叫做临时的文件夹
-        testIssueFolderService.insert(tempTestIssueFolderDTO);
     }
 
 
@@ -79,6 +74,10 @@ public class FixDataServiceImpl implements FixDataService {
                 log.info("delete issue without version...");
                 testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
             } else {
+                for (Long versionId : versionIds) {
+                    TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
+                    testIssueFolderService.insert(tempTestIssueFolderDTO);
+                }
                 //创建文件夹
                 log.info("create folder named \"旧数据\" to store old data...");
                 TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
@@ -99,7 +98,7 @@ public class FixDataServiceImpl implements FixDataService {
         }
     }
 
-    private void step2(TestCycleE resTestCycleE , TestIssueFolderDTO tempTestIssueFolderDTO,TestCycleE testCycleE ){
+    private void step2(TestCycleE resTestCycleE ,TestCycleE testCycleE ){
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
         Long tempCycleId = resTestCycleE.getCycleId();
         log.info("execute cycle Id:" + tempCycleId);
@@ -113,7 +112,7 @@ public class FixDataServiceImpl implements FixDataService {
             return;
         }
 
-        TestCycleE needTestCycleE = step3(resTestCycleE,tempTestIssueFolderDTO,testCycleE,needProjectId);
+        TestCycleE needTestCycleE = step3(resTestCycleE,testCycleE,needProjectId);
 
         //查询原来的cycle在cycleCase表中的数据
         testCycleCaseE.setCycleId(tempCycleId);
@@ -182,7 +181,7 @@ public class FixDataServiceImpl implements FixDataService {
 
 
     //插入folder表，更新cycle表
-    public TestCycleE step3(TestCycleE resTestCycleE , TestIssueFolderDTO tempTestIssueFolderDTO,TestCycleE testCycleE,Long needProjectId){
+    public TestCycleE step3(TestCycleE resTestCycleE ,TestCycleE testCycleE,Long needProjectId){
         //设置修正数据
         //用于设置IssueFolder
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
@@ -209,9 +208,6 @@ public class FixDataServiceImpl implements FixDataService {
         testIssueFolderDTO.setProjectId(needProjectId);
         testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
 
-        tempTestIssueFolderDTO.setProjectId(needProjectId);
-        tempTestIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
-
         //如果有父节点的话，将folder的名字设置为如：父名称_子名称
         if (needTestCycleE.getParentCycleId() != null) {
             testCycleE.setCycleId(needTestCycleE.getParentCycleId());
@@ -227,7 +223,6 @@ public class FixDataServiceImpl implements FixDataService {
             }
             needTestCycleE.setVersionId(fatherCycleE.getVersionId());
             testIssueFolderDTO.setVersionId(fatherCycleE.getVersionId());
-            tempTestIssueFolderDTO.setVersionId(fatherCycleE.getVersionId());
         }
 
         //插入folder表，更新cycle表
