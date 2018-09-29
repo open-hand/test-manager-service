@@ -73,7 +73,7 @@ public class FixDataServiceImpl implements FixDataService {
             if (ObjectUtils.isEmpty(versionIds)) {
                 //无version的全删除掉
                 log.info("delete issue without version...");
-//                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
+                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
             } else {
                 for (Long versionId : versionIds) {
                     TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
