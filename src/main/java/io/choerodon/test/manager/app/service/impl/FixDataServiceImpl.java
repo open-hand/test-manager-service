@@ -54,15 +54,16 @@ public class FixDataServiceImpl implements FixDataService {
         log.info("query all cycles...");
         List<TestCycleE> testCycleES = testCycleE.queryAll();
 
+        log.info("start fix all cycles data...");
         //修正所有的cycle数据
         for (TestCycleE resTestCycleE : testCycleES) {
-            step2(resTestCycleE,testCycleE);
+            step2(resTestCycleE, testCycleE);
         }
     }
 
 
     //整理旧数据
-    private void step1(List<IssueProjectDTO> issueProjectDTOS){
+    private void step1(List<IssueProjectDTO> issueProjectDTOS) {
         //旧数据放到当前项目（min version）最小版本的一个叫做旧数据的文件夹下---做旧数据的归档操作
         log.info("do archiving opration of old issue data...");
         for (IssueProjectDTO issueProjectDTO : issueProjectDTOS) {
@@ -72,7 +73,7 @@ public class FixDataServiceImpl implements FixDataService {
             if (ObjectUtils.isEmpty(versionIds)) {
                 //无version的全删除掉
                 log.info("delete issue without version...");
-                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
+//                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
             } else {
                 for (Long versionId : versionIds) {
                     TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
@@ -98,10 +99,10 @@ public class FixDataServiceImpl implements FixDataService {
         }
     }
 
-    private void step2(TestCycleE resTestCycleE ,TestCycleE testCycleE ){
+    private void step2(TestCycleE resTestCycleE, TestCycleE testCycleE) {
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
         Long tempCycleId = resTestCycleE.getCycleId();
-        log.info("execute cycle Id:" + tempCycleId);
+        log.info("start fix cycle,cycleId:" + tempCycleId);
 
         log.info("query project by version...");
         Long needProjectId = null;
@@ -112,16 +113,19 @@ public class FixDataServiceImpl implements FixDataService {
             return;
         }
 
-        TestCycleE needTestCycleE = step3(resTestCycleE,testCycleE,needProjectId);
+        TestCycleE needTestCycleE = step3(resTestCycleE, testCycleE, needProjectId);
 
         //查询原来的cycle在cycleCase表中的数据
+        log.info("query all old cycle...");
         testCycleCaseE.setCycleId(tempCycleId);
         List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.querySelf();
 
         //用于设置folderRel数据
         List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+
         //没有case存在的话就不进行cyclecase，各个step和folderRel表的操作
         if (ObjectUtils.isEmpty(testCycleCaseES)) {
+            log.info("no cycleCase exist...");
             return;
         }
 
@@ -129,19 +133,25 @@ public class FixDataServiceImpl implements FixDataService {
         List<Long> acceptIssues = new ArrayList<>();
         List<Long> allIssues = testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).collect(Collectors.toList());
 
-        cloneIssue(issueIds,acceptIssues,allIssues,needProjectId,needTestCycleE);
+        log.info("clone issues associated with cycleCase...");
+        cloneIssue(issueIds, acceptIssues, allIssues, needProjectId, needTestCycleE);
+
         //将原来的case关联的issue改成新克隆出来的issue，并修改各个step关系
+        log.info("fix cycleCase - cycleCaseStep - caseStep data...");
         int i = 0;
         for (TestCycleCaseE cycleCaseE : testCycleCaseES) {
             //根据以前的issueId找到case_step
+            log.info("query caseStep by issue...");
             TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
             testCaseStepE.setIssueId(cycleCaseE.getIssueId());
             List<TestCaseStepE> oldCaseSteps = testCaseStepE.queryByParameter();
             cycleCaseE.setCycleId(needTestCycleE.getCycleId());
             cycleCaseE.setIssueId(issueIds.get(i));
+            log.info("fix cycleCase data...");
             cycleCaseE.updateSelf();
 
             //根据issueId克隆caseStep
+            log.info("clone caseStep by issue...");
             TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
             testCaseStepDTO.setIssueId(testCaseStepE.getIssueId());
             List<TestCaseStepDTO> clonedCaseStepDTO = testCaseStepService.batchClone(testCaseStepDTO, issueIds.get(i), needProjectId);
@@ -149,9 +159,11 @@ public class FixDataServiceImpl implements FixDataService {
             List<TestCycleCaseStepE> cycleCaseStepES = new ArrayList<>();
             TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
             int j = 0;
+            //根据以前的case_step去将cycle_case_step更新为前面克隆得到的step
+            log.info("start add cloned caseStep...");
             for (TestCaseStepE v : oldCaseSteps) {
-                //根据以前的case_step去将cycle_case_step更新为前面克隆得到的step
                 //查找以前stepId对应的CycleCaseStep
+                log.info("query cycleCaseStep by old stepId...");
                 testCycleCaseStepE.setStepId(v.getStepId());
                 List<TestCycleCaseStepE> testCycleCaseStepES = testCycleCaseStepE.querySelf();
                 //将CycleCaseStep对应的stepId修改为新克隆出来的stepId
@@ -159,11 +171,13 @@ public class FixDataServiceImpl implements FixDataService {
                     if (!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
                         cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
                         cycleCaseStepES.add(cs);
+                        log.info("executeStepId: "+cs.getExecuteStepId()+"waiting to be added");
                     }
                 }
                 j++;
             }
             i++;
+            log.info("add batch cloned caseStep...");
             testCycleCaseStepService.update(ConvertHelper.convertList(cycleCaseStepES, TestCycleCaseStepDTO.class));
         }
 
@@ -174,25 +188,29 @@ public class FixDataServiceImpl implements FixDataService {
             testIssueFolderRelDTO.setVersionId(needTestCycleE.getVersionId());
             testIssueFolderRelDTO.setIssueId(v);
             testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+            log.info("issueId: "+v+"waiting to be added");
         }
+        log.info("add batch Relationship between issueFolder and issue...");
         testIssueFolderRelService.insertBatchRelationship(needProjectId, testIssueFolderRelDTOS);
     }
 
 
-
     //插入folder表，更新cycle表
-    public TestCycleE step3(TestCycleE resTestCycleE ,TestCycleE testCycleE,Long needProjectId){
-        //设置修正数据
+    public TestCycleE step3(TestCycleE resTestCycleE, TestCycleE testCycleE, Long needProjectId) {
         //用于设置IssueFolder
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+
+        //设置修正数据
+        log.info("correct cycle and folder data...");
         TestCycleE needTestCycleE;
         if (resTestCycleE.getType().equals("folder")) {
-            needTestCycleE = resTestCycleE;
             //TestCycleE的type为folder的情况
+            needTestCycleE = resTestCycleE;
             testIssueFolderDTO.setType(CYCLE);
         } else {
             if (resTestCycleE.getType().equals("temp")) {
                 resTestCycleE.setType(CYCLE);
+                log.info("change cycle which type is temp to cycle...");
                 resTestCycleE.updateSelf();
             }
             resTestCycleE.setType("folder");
@@ -200,6 +218,7 @@ public class FixDataServiceImpl implements FixDataService {
             resTestCycleE.setCycleId(null);
             resTestCycleE.setCycleName(resTestCycleE.getCycleName() + "阶段");
             //如果是cycle或者temp类型就新增一个cycle为其子folder
+            log.info("add a child cycle for cycle...");
             needTestCycleE = resTestCycleE.addSelf();
             needTestCycleE.setObjectVersionNumber(1L);
             testIssueFolderDTO.setType(CYCLE);
@@ -209,13 +228,14 @@ public class FixDataServiceImpl implements FixDataService {
         testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
 
         //如果有父节点的话，将folder的名字设置为如：父名称_子名称
+        log.info("change cycle name which type is folder...");
         if (needTestCycleE.getParentCycleId() != null) {
             testCycleE.setCycleId(needTestCycleE.getParentCycleId());
             log.info("query father cycle...");
             TestCycleE fatherCycleE = testCycleE.queryOne();
             //如果父名字和子名字是相同的就说明这个名字是唯一的只需要给folder设置此名即可，中间不需要加 _
-            log.info("father:" + fatherCycleE.getCycleName());
-            log.info("son:" + needTestCycleE.getCycleName());
+            log.info("father name:" + fatherCycleE.getCycleName());
+            log.info("son name:" + needTestCycleE.getCycleName());
             if (fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
                 testIssueFolderDTO.setName(needTestCycleE.getCycleName() + "阶段");
             } else {
@@ -226,28 +246,35 @@ public class FixDataServiceImpl implements FixDataService {
         }
 
         //插入folder表，更新cycle表
-        log.info("insert folder ...");
+        log.info("insert issueFolder which is associated cycle...");
         Long folderId = testIssueFolderService.insert(testIssueFolderDTO).getFolderId();
         needTestCycleE.setFolderId(folderId);
-       return  needTestCycleE.updateSelf();
+        log.info("update relationship of cycle and issueFolder...");
+        return needTestCycleE.updateSelf();
     }
 
 
-    public void cloneIssue(List<Long> issueIds,List<Long>acceptIssues,List<Long> allIssues,Long needProjectId, TestCycleE needTestCycleE){
+    public void cloneIssue(List<Long> issueIds, List<Long> acceptIssues, List<Long> allIssues, Long needProjectId, TestCycleE needTestCycleE) {
         //取第一个issue
+        log.info("get frist issue");
         acceptIssues.add(allIssues.get(0));
         for (int i = 1; i < allIssues.size(); i++) {
             for (int j = 0; j < acceptIssues.size(); j++) {
                 if (acceptIssues.get(j).equals(allIssues.get(i))) {
+                    log.info("send issues to clone");
                     issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
                     acceptIssues.clear();
+                    log.info("issueId:"+allIssues.get(i)+" waiting to be sent to clone");
                     acceptIssues.add(allIssues.get(i));
                     break;
                 } else if (j == acceptIssues.size() - 1) {
+                    log.info("issueId:"+allIssues.get(i)+" waiting to be sent to clone");
                     acceptIssues.add(allIssues.get(i));
+                    break;
                 }
             }
         }
+        log.info("send issues to clone");
         issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
     }
 }
