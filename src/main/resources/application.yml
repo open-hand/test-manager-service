@@ -74,7 +74,7 @@ feign:
               timeoutInMilliseconds: 30000
 ribbon:
   ConnectTimeout: 5000
-  ReadTimeout: 5000
+  ReadTimeout: 500000
 logging:
   level:
     root: info
