@@ -1,14 +1,19 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.asgard.saga.annotation.Saga;
+import io.choerodon.asgard.saga.dto.StartInstanceDTO;
+import io.choerodon.asgard.saga.feign.SagaClient;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
@@ -20,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -55,6 +61,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     FixDataService fixDataService;
 
     private static final String NODE_CHILDREN = "children";
+
+    @Autowired
+    private SagaClient sagaClient;
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -287,8 +296,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
+    @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
     public void fixCycleData(Long projectId) {
-        fixDataService.fixCycleData(projectId);
+        sagaClient.startSaga("test-fix-data", new StartInstanceDTO(JSON.toJSONString(
+                new TestIssueFolderDTO(null,null,null,projectId,null,null)),
+                "", ""));
     }
 
 
