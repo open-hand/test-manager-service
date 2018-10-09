@@ -83,7 +83,10 @@ class TestCaseStepControllerSpec extends Specification {
         def result = restTemplate.getForEntity("/v1/projects/{project_id}/case/step/query/{caseId}",List,144,99)
         expect:
         result.body.size()==2
-
+        when:
+        def result1 = restTemplate.postForEntity("/v1/projects/{project_id}/case/step/clone",new TestCaseStepDTO(stepId: 0),TestCaseStepDTO,144)
+        then:
+        result1.statusCode.value()==200
     }
 
     def "RemoveStep"() {

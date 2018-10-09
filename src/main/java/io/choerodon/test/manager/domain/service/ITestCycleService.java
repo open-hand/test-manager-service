@@ -26,10 +26,5 @@ public interface ITestCycleService {
 	List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo);
 
 	List<Long> selectCyclesInVersions(Long[] versionIds);
-	/**
-	 * 查找Cycle存放默认路径
-	 *
-	 * @return
-	 */
-	Long findDefaultCycle(Long projectId);
+
 }

@@ -52,13 +52,11 @@ public class TestStatusServiceImpl implements TestStatusService {
 	}
 
 	public void populateStatus(TestCycleCaseDTO testCycleCaseDTO) {
-		Assert.notNull(testCycleCaseDTO, "error.populateCycleCase.param.not.null");
+		Assert.notNull(testCycleCaseDTO.getExecutionStatus(), "error.populateStatus.statusId.not.null");
 		TestStatusE statusE = TestStatusEFactory.create();
 		statusE.setStatusId(testCycleCaseDTO.getExecutionStatus());
 		TestStatusE testStatusE = statusE.queryOne();
-		if (!ObjectUtils.isEmpty(testStatusE)){
-			testCycleCaseDTO.setExecutionStatusName(testStatusE.getStatusName());
-		}
+		testCycleCaseDTO.setExecutionStatusName(testStatusE.getStatusName());
 	}
 
 	@Override

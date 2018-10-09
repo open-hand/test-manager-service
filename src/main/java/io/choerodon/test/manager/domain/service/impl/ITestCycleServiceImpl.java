@@ -96,21 +96,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	}
 
 
-	@Override
-	public Long findDefaultCycle(Long projectId) {
-		ResponseEntity<Page<ProductVersionPageDTO>> rs = productionVersionClient.listByOptions(projectId, Maps.asMap(Sets.newHashSet("statusCode"), v -> "version_planning"));
-		List<ProductVersionPageDTO> lists = rs.getBody().getContent();
-		int i = lists.size();
-		if (i == 1) {
-			TestCycleE cycle = TestCycleEFactory.create();
-			cycle.setVersionId(lists.get(0).getVersionId());
-			cycle.setCycleName(TestCycleE.TEMP_CYCLE_NAME);
-			return cycle.querySelf().stream().findFirst()
-					.orElseThrow(() -> new CommonException("error.folder.version_planning.notFound")).getCycleId();
-		} else {
-			throw new CommonException("error.folder.version_planning.notFound");
-		}
-	}
 
 	/**克隆一个cycle和其拥有的cycleCase
 	 * @param protoTestCycleE

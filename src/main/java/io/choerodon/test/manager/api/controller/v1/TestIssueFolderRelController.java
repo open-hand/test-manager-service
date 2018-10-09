@@ -1,11 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.util.List;
-import java.util.Optional;
-
-import io.choerodon.agile.api.dto.CopyConditionDTO;
 import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
@@ -22,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018

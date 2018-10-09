@@ -15,6 +15,7 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefect
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +48,10 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     @Override
     public void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId) {
-        if (!(lists != null && !lists.isEmpty())) {
+        if (ObjectUtils.isEmpty(lists)) {
             return;
         }
-        Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).toArray(Long[]::new);
-        if (issueLists.length == 0) {
-            return;
-        }
-
+        Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).distinct().toArray(Long[]::new);
         Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
         lists.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
     }
