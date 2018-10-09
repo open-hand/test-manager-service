@@ -159,7 +159,7 @@ public class ExcelServiceImpl implements ExcelService {
 			try {
 				workbook.close();
 			} catch (IOException e) {
-				throw new CommonException(EXPORT_ERROR_WORKBOOK_CLOSE,e);
+				log.warn(EXPORT_ERROR_WORKBOOK_CLOSE,e);
 			}
 		}
 	}
