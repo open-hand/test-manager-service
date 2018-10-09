@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto){
-		Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(u->LongUtils.isUserId(u)).distinct().toArray(Long[]::new);
+		Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
 		if(ObjectUtils.isEmpty(users)){
 			return;
 		}
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public void populateTestCycleCaseDTO(TestCycleCaseDTO dto){
-		Long[] users=Stream.of(dto.getAssignedTo(),dto.getLastUpdatedBy()).filter(v->LongUtils.isUserId(v)).distinct().toArray(Long[]::new);
+		Long[] users=Stream.of(dto.getAssignedTo(),dto.getLastUpdatedBy()).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
 		if(ObjectUtils.isEmpty(users)){
 			return;
 		}

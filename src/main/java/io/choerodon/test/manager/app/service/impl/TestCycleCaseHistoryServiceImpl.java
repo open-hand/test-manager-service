@@ -1,24 +1,22 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
-import io.choerodon.test.manager.app.service.UserService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import io.choerodon.test.manager.infra.common.utils.LongUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
-import java.util.List;
 import java.util.Map;
 
 /**
