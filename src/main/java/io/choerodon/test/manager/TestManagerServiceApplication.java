@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//@EnableTransactionManagement
 @EnableAsync
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -27,10 +26,5 @@ public class TestManagerServiceApplication {
         SpringApplication.run(TestManagerServiceApplication.class, args);
     }
 
-//
-//    @Bean
-//    public ExecutorService fixDataThreadPool(){
-//        return Executors.newCachedThreadPool();
-//    }
 }
 
