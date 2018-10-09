@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.common.utils;
 
+import io.choerodon.test.manager.infra.exception.DBTypeException;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import org.apache.poi.ss.formula.functions.T;
 
@@ -13,7 +14,7 @@ public class LiquibaseHelper {
 
 
     public static DbType dbType(String url) {
-        DbType currentDbType = null;
+        DbType currentDbType;
         if (url.startsWith("jdbc:h2")) {
             currentDbType = DbType.H2;
         } else if (url.startsWith("jdbc:oracle")) {
@@ -24,6 +25,8 @@ public class LiquibaseHelper {
             currentDbType = DbType.SQLSERVER;
         } else if (url.startsWith("jdbc:sap")) {
             currentDbType = DbType.HANA;
+        }else {
+            throw new DBTypeException(DBTypeException.UNKNOWN_DB_TYPE);
         }
         return currentDbType;
     }
