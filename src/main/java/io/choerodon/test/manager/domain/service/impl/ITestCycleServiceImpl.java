@@ -1,11 +1,6 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
@@ -19,7 +14,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -96,21 +90,6 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 	}
 
 
-	@Override
-	public Long findDefaultCycle(Long projectId) {
-		ResponseEntity<Page<ProductVersionPageDTO>> rs = productionVersionClient.listByOptions(projectId, Maps.asMap(Sets.newHashSet("statusCode"), v -> "version_planning"));
-		List<ProductVersionPageDTO> lists = rs.getBody().getContent();
-		int i = lists.size();
-		if (i == 1) {
-			TestCycleE cycle = TestCycleEFactory.create();
-			cycle.setVersionId(lists.get(0).getVersionId());
-			cycle.setCycleName(TestCycleE.TEMP_CYCLE_NAME);
-			return cycle.querySelf().stream().findFirst()
-					.orElseThrow(() -> new CommonException("error.folder.version_planning.notFound")).getCycleId();
-		} else {
-			throw new CommonException("error.folder.version_planning.notFound");
-		}
-	}
 
 	/**克隆一个cycle和其拥有的cycleCase
 	 * @param protoTestCycleE

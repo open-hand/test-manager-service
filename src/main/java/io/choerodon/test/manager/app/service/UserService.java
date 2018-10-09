@@ -4,8 +4,11 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,4 +18,9 @@ public interface UserService {
 	Map<Long, UserDO> query(Long[] ids);
 
 	ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId);
+
+	void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto);
+
+	void populateTestCycleCaseDTO(TestCycleCaseDTO dto);
+
 }

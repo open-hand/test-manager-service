@@ -50,7 +50,7 @@ class TestCycleCaseHistoryControllerSpec extends Specification {
         when:
         def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}?page={page}&size={size}", Page,144,1,0,5)
         then:
-        1 * userService.query(_) >> Maps.newHashMap(1L, new UserDO(id:1L))
+        1 * userService.populateUsersInHistory(_)
         result.statusCode.is2xxSuccessful()
     }
 }

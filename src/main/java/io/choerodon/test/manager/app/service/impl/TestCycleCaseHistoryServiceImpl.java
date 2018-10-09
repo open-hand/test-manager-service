@@ -1,23 +1,22 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
-import io.choerodon.test.manager.app.service.UserService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
+import io.choerodon.test.manager.infra.common.utils.LongUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,23 +43,12 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         historyDTO.setExecuteId(cycleCaseId);
         Page<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
 		Page<TestCycleCaseHistoryDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseHistoryDTO.class);
-		Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(u->u!=null && !u.equals(0L)).distinct().toArray(Long[]::new);
-		Map user = userFeignClient.query(users);
-		setUser(dto, user);
+		userFeignClient.populateUsersInHistory(dto);
 		return dto;
 	}
 
 
-	private void setUser(List<TestCycleCaseHistoryDTO> dto, Map<Long, UserDO> users) {
-    	if(ObjectUtils.isEmpty(users)){
-    		return;
-		}
-		dto.forEach(v -> {
-			if (v.getLastUpdatedBy() != null && !v.getLastUpdatedBy().equals(0L)) {
-				v.setUser(users.get(v.getLastUpdatedBy()));
-			}
-		});
-    }
+
 
     @Override
 	@Transactional
@@ -73,13 +61,13 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 		Long[] para = new Long[]{before, after};
 		Map<Long, UserDO> users = userFeignClient.query(para);
 
-		if (before != null && before.longValue() != 0) {
+		if (LongUtils.isUserId(before)) {
 			UserDO u = users.get(before);
 			historyDTO.setOldValue(u.getLoginName() + u.getRealName());
 		} else {
 			historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
 		}
-		if (after != null && after.longValue() != 0) {
+		if (LongUtils.isUserId(after)) {
 			UserDO u = users.get(after);
 			historyDTO.setNewValue(u.getLoginName() + u.getRealName());
 		} else {

@@ -84,14 +84,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId) {
-        Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest);
-        Page<TestCycleCaseDTO> dto = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-        testCycleCaseDefectRelService.populateCycleCaseDefectInfo(dto, projectId);
-        return dto;
-    }
-
-    @Override
     public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId) {
         TestCycleDTO queryTestCycleDTO = new TestCycleDTO();
         queryTestCycleDTO.setCycleId(dto.getCycleId());
@@ -119,13 +111,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void populateIssue(List<TestCycleCaseDTO> dots, Long projectId) {
-        Long[] ids = dots.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
-        Map<Long, IssueInfosDTO> maps = testCaseService.getIssueInfoMap(projectId, ids, true);
-        dots.forEach(v -> v.setIssueInfosDTO(maps.get(v.getIssueId())));
-    }
-
-    @Override
     public Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
         searchDTO = Optional.ofNullable(searchDTO).orElseGet(TestCycleCaseDTO::new);
         searchDTO.setCycleId(cycleId);
@@ -140,7 +125,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
 
         List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
-        if (dto == null || dto.isEmpty()) {
+        if (ObjectUtils.isEmpty(dto)) {
             return new ArrayList<>();
         }
         populateCycleCaseWithDefect(dto, projectId);
@@ -209,7 +194,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private void populateVersionBuild(Long projectId, List<TestCycleCaseDTO> dto) {
         Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
-        if (map == null || map.isEmpty()) {
+        if (ObjectUtils.isEmpty(map)) {
             return;
         }
         TestCycleE cycleE = TestCycleEFactory.create();
@@ -229,30 +214,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseDTO.setExecuteId(cycleCaseId);
         TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
         Optional.ofNullable(dto.getDefects()).ifPresent(v -> testCycleCaseDefectRelService.populateDefectInfo(Lists.newArrayList(v), projectId));
-        return setUser(dto);
-    }
-
-    private TestCycleCaseDTO setUser(TestCycleCaseDTO dto) {
-        boolean assigned = false;
-        boolean lastAssigned = false;
-        if (!(dto.getAssignedTo() == null || dto.getAssignedTo().longValue() == 0)) {
-            assigned = true;
-        }
-        if (!(dto.getLastUpdatedBy() == null || dto.getLastUpdatedBy().longValue() == 0)) {
-            lastAssigned = true;
-        }
-        Long assign = dto.getAssignedTo();
-        Long update = dto.getLastUpdatedBy();
-        Map<Long, UserDO> lists = userService.query(new Long[]{assign, update});
-
-        if (assigned) {
-            UserDO u = lists.get(assign);
-            dto.setAssigneeUser(u);
-        }
-        if (lastAssigned) {
-            UserDO u = lists.get(update);
-            dto.setLastUpdateUser(u);
-        }
+        userService.populateTestCycleCaseDTO(dto);
         return dto;
     }
 
@@ -276,10 +238,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-        if (testCycleCaseDTO.getCycleId() == null) {
-            testCycleCaseDTO.setCycleId(iTestCycleService.findDefaultCycle(projectId));
-        }
-
         testCycleCaseDTO.setExecutionStatus(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE));
         testCycleCaseDTO.setLastRank(TestCycleCaseEFactory.create().getLastedRank(testCycleCaseDTO.getCycleId()));
         return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
@@ -290,7 +248,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
         testStatusService.populateStatus(testCycleCaseDTO);
-        return setUser(ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class));
+        TestCycleCaseDTO dto=ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+        userService.populateTestCycleCaseDTO(dto);
+        return dto;
     }
 
 
@@ -308,7 +268,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Optional.ofNullable(searchDTO.getExecutionStatus()).ifPresent(v -> filterMap.put("executionStatus", v));
 
         List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
-        if (!(testCycleCaseES == null || testCycleCaseES.isEmpty())) {
+        if (!(ObjectUtils.isEmpty(testCycleCaseES))) {
             List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
             testCycleCaseDefectRelService.populateCycleCaseDefectInfo(testCycleCase, projectId);
 
@@ -323,8 +283,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             final String[] lastRank = new String[1];
             lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
             String[] defectStatus = searchDTO.getDefectStatus();
-            Set defectSets = Sets.newHashSet();
-            if (defectStatus != null && defectStatus.length != 0) {
+            Set<String> defectSets = Sets.newHashSet();
+            if (!ObjectUtils.isEmpty(defectStatus)) {
                 for (String de : defectStatus) {
                     defectSets.add(de);
                 }
@@ -345,11 +305,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return true;
     }
 
-    private boolean containsDefect(Set defectSet, List<TestCycleCaseDefectRelDTO> defects) {
+    private boolean containsDefect(Set<String> defectSet, List<TestCycleCaseDefectRelDTO> defects) {
         if (defectSet.isEmpty()) {
             return true;
         }
-        if (defects == null || defects.isEmpty()) {
+        if (ObjectUtils.isEmpty(defects)) {
             return false;
         }
 

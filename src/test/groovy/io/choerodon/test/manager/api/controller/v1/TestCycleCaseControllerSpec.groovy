@@ -11,12 +11,17 @@ import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
+import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.api.dto.TestStatusDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCaseStepService
+import io.choerodon.test.manager.app.service.TestCycleCaseService
 import io.choerodon.test.manager.app.service.UserService
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl
+import io.choerodon.test.manager.domain.service.ITestCycleService
+import io.choerodon.test.manager.domain.service.impl.ITestCycleServiceImpl
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE
@@ -30,6 +35,7 @@ import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
+import org.assertj.core.util.Sets
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -117,7 +123,8 @@ class TestCycleCaseControllerSpec extends Specification {
     def "InsertOneCase"() {
         given:
         TestCycleCaseDTO dto=new TestCycleCaseDTO(cycleId:cycleIds.get(0),issueId: 98L,assignedTo:10L)
-        TestCycleCaseDTO dto2=new TestCycleCaseDTO(cycleId:cycleIds.get(0),issueId: 97L,assignedTo:10L)
+        TestCycleCaseDTO dto2=new TestCycleCaseDTO(cycleId:cycleIds.get(0),issueId: 97L,assignedTo:10L,comment: "comment1")
+        TestCycleCaseDTO dto3=new TestCycleCaseDTO(issueId: 96L)
 
         when:
         def result=restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert",dto,TestCycleCaseDTO,142)
@@ -132,6 +139,13 @@ class TestCycleCaseControllerSpec extends Specification {
         result.body.executeId!=null
         and:
         caseDTO.add(result.body)
+
+        when:
+        result=restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert",dto3,TestCycleCaseDTO,142)
+        then:
+        result.body.executeId!=null
+        and:
+        caseDTO.add(result.body)
     }
 
     def "QueryOne"() {
@@ -139,7 +153,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}",TestCycleCaseDTO,142,caseDTO.get(0).executeId)
         then:
-        1*userService.query(_)>>new HashMap();
+        1*userService.populateTestCycleCaseDTO(_)
         and:
         result.body.cycleId==cycleIds.get(0)
     }
@@ -150,9 +164,15 @@ class TestCycleCaseControllerSpec extends Specification {
         then:
         1*testCaseService.getIssueInfoMap(_,_,_)>>new HashMap<>()
         1*userService.query(_)>>new HashMap<>()
-        1*testCaseService.getVersionInfo(_)>>new HashMap<>()
+        1*testCaseService.getVersionInfo(_)>>Maps.newHashMap(11111L,new ProductVersionDTO())
         and:
         result.body.size()==1
+        when:
+        restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/issue/{issueId}",List,142,-1)
+        then:
+        0*testCaseService.getIssueInfoMap(_,_,_)
+        0*userService.query(_)
+        0*testCaseService.getVersionInfo(_)
     }
     def "QueryByCycle"() {
         given:
@@ -174,6 +194,20 @@ class TestCycleCaseControllerSpec extends Specification {
         result.body.size() == 1
     }
 
+    def"validateReturn"(){
+        given:
+        TestCaseService client=Mock(TestCaseService)
+        TestCycleCaseService service=new TestCycleCaseServiceImpl(testCaseService:client )
+        when:
+        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(),144L)
+        then:
+        0*client.getIssueInfoMap(_,_,_)
+        when:
+        service.populateVersionBuild(144,null)
+        then:
+        1*client.getVersionInfo(_)>>new HashMap<>()
+    }
+
     def "UpdateOneCase"() {
         given:
         TestCycleCaseDTO searchDto=caseDTO.get(1);
@@ -187,9 +221,58 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result1= restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update",searchDto, TestCycleCaseDTO,142)
         then:
-        2*userService.query(_)>>userMap
-        and:
+        1*userService.query(_)>>userMap
+        1*userService.populateTestCycleCaseDTO(_)
         result1.body.rank!=caseDTO.get(0).rank
+    }
+
+    def "UpdateOneCase1"() {
+        given:
+        TestCycleCaseDTO searchDto = caseDTO.get(1);
+        searchDto.setLastRank(searchDto.rank)
+        searchDto.setExecutionStatus(1L)
+        searchDto.setObjectVersionNumber(1L)
+        searchDto.setComment("comment1")
+        searchDto.setAssignedTo(10L)
+        when:
+        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update",searchDto, TestCycleCaseDTO,142)
+        then:
+        0*userService.query(_)
+        1*userService.populateTestCycleCaseDTO(_)
+    }
+
+    def "UpdateOneCase2"() {
+        given:
+        TestCycleCaseDTO searchDto = caseDTO.get(1);
+        searchDto.setLastRank(searchDto.rank)
+        searchDto.setExecutionStatus(1L)
+        searchDto.setObjectVersionNumber(2L)
+        searchDto.setComment(null)
+        searchDto.setAssignedTo(0L)
+        Map userMap=Maps.newHashMap(4L,new UserDO(loginName: "login",realName: "real"))
+        userMap.put(10L,new UserDO(loginName: "login",realName: "real"))
+        when:
+        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update",searchDto, TestCycleCaseDTO,142)
+        then:
+        1*userService.query(_)>>userMap
+        1*userService.populateTestCycleCaseDTO(_)
+    }
+
+    def "UpdateOneCase3"() {
+        given:
+        TestCycleCaseDTO searchDto = caseDTO.get(2);
+        searchDto.setLastRank(searchDto.rank)
+        searchDto.setExecutionStatus(1L)
+        searchDto.setObjectVersionNumber(1L)
+        searchDto.setComment("comment1")
+        searchDto.setAssignedTo(10L)
+        Map userMap=Maps.newHashMap(4L,new UserDO(loginName: "login",realName: "real"))
+        userMap.put(10L,new UserDO(loginName: "login",realName: "real"))
+        when:
+        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update",searchDto, TestCycleCaseDTO,142)
+        then:
+        1*userService.query(_)>>userMap
+        1*userService.populateTestCycleCaseDTO(_)
     }
 
     def "QueryByCycleWithFilterArgs"() {
@@ -227,6 +310,20 @@ class TestCycleCaseControllerSpec extends Specification {
         caseE.queryOne().assignedTo==56
     }
 
+    def "containsDefect"(){
+        given:
+        TestCycleCaseServiceImpl service=new TestCycleCaseServiceImpl()
+        expect:
+        service.containsDefect(param1,param2)==result
+        where:
+        param1  |   param2  |   result
+        new HashSet<>()    |   null    |   true
+        "111L" as Set   |  null    |   false
+        "111L" as Set    |       Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L)))     |true
+        "112L" as Set     |       Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L)))     |false
+        "112L" as Set     |       Lists.newArrayList(new TestCycleCaseDefectRelDTO())     |false
+    }
+
 
     def "exportExcle"(){
         given:
@@ -257,9 +354,9 @@ class TestCycleCaseControllerSpec extends Specification {
 
 
     def "delete"(){
-
         expect:
         restTemplate.delete("/v1/projects/{project_id}/cycle/case?cycleCaseId={cycleCaseId}",142,caseDTO.get(0).getExecuteId())
     }
+
 
 }

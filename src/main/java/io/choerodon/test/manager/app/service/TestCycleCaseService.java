@@ -14,8 +14,6 @@ public interface TestCycleCaseService {
 
 	void delete(Long cycleCaseId, Long projectId);
 
-	Page<TestCycleCaseDTO> query(TestCycleCaseDTO testCycleCaseDTO, PageRequest pageRequest, Long projectId);
-
 	Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId);
 
 	Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
@@ -27,8 +25,6 @@ public interface TestCycleCaseService {
 	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId);
 
 	List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId);
-
-	void populateIssue(List<TestCycleCaseDTO> dots, Long projectId);
 
 	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
