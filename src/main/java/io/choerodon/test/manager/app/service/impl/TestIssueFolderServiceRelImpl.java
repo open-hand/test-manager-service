@@ -71,10 +71,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                 IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
                 TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey(resultRelDTO.getFolderId());
-                if (!ObjectUtils.isEmpty(resE)) {
-                    issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
-                    issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
-                }
+                issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
+                issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }

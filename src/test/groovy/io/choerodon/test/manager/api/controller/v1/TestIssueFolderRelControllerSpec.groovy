@@ -13,6 +13,8 @@ import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
@@ -56,6 +58,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
     @Shared
     def versionId = 1L
 
+    @Shared
+    TestIssueFolderDO resInsertDO
+
     def "InsertTestAndRelationship"() {
         given:
         //等等IssueCreateDTO测试数据
@@ -77,6 +82,14 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issueDTO2.setObjectVersionNumber(1L)
         issueDTO2.setProjectId(projectId)
 
+        TestIssueFolderDO testIssueFolderDO = new TestIssueFolderDO()
+        testIssueFolderDO.setName("testFolderForQueryIssuesById")
+        testIssueFolderDO.setProjectId(projectId)
+        testIssueFolderDO.setType(TestIssueFolderE.TYPE_CYCLE)
+        testIssueFolderDO.setVersionId(versionId)
+        testIssueFolderMapper.insert(testIssueFolderDO)
+        resInsertDO = testIssueFolderMapper.selectOne(testIssueFolderDO)
+
         List list = testIssueFolderRelMapper.selectAll()
         println("list.size:"+list.size())
         for (TestIssueFolderRelDO testIssueFolderRelDO:list){
@@ -84,7 +97,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         }
 
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, 11L, versionId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, resInsertDO.getFolderId(), versionId)
         then:
         1 * testCaseService.createTest(_, _) >> issueDTO
         entity.statusCode.is2xxSuccessful()
@@ -171,7 +184,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         IssueInfosDTO issueInfosDTO = new IssueInfosDTO()
         issueInfosDTO.setIssueId(11L)
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(22L)
+        issueInfosDTO1.setIssueId(22L)
         Long[] issues = new Long[2]
         issues[0] = 11L
         issues[1] = 22L
@@ -182,6 +195,8 @@ class TestIssueFolderRelControllerSpec extends Specification {
         Long[] exceptionIssues = new Long[2]
         exceptionIssues[0] = 11111L
         exceptionIssues[1] = 22222L
+
+        def res = testIssueFolderMapper.selectAll()
 
         when: '向查询testIssueFolderRel的接口发请求'
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
@@ -205,6 +220,12 @@ class TestIssueFolderRelControllerSpec extends Specification {
         resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', issues, Page.class, projectId, foldersId[0], versionId)
         then: '返回值'
         1 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap<>()
+        resultFailure.statusCode.is2xxSuccessful()
+        assert resultFailure.body.isEmpty()
+
+        when: '测试resultRelDTOS为空的情况'
+        resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}', new ArrayList(), Page.class, projectId, foldersId[0], versionId)
+        then: '返回值'
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
     }

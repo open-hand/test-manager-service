@@ -8,7 +8,11 @@ import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -36,6 +40,12 @@ class TestCycleControllerSpec extends Specification {
     @Autowired
     TestCycleMapper testCycleMapper
 
+    @Autowired
+    TestIssueFolderRelMapper testIssueFolderRelMapper
+
+    @Autowired
+    TestCycleCaseMapper testCycleCaseMapper
+
     @Shared
     def projectId = 1L
     @Shared
@@ -43,6 +53,15 @@ class TestCycleControllerSpec extends Specification {
     @Shared
     List<TestCycleDTO> testCycleDTOS = new  ArrayList<>()
 
+    @Shared
+    List cycleIds = new ArrayList()
+
+    @Shared
+    TestIssueFolderRelDO testIssueFolderRelDO = new TestIssueFolderRelDO()
+    @Shared
+    TestIssueFolderRelDO testIssueFolderRelDO2 = new TestIssueFolderRelDO()
+    @Shared
+    TestCycleCaseDO testCycleCaseDO = new TestCycleCaseDO()
 
 
     def "Insert"() {
@@ -94,6 +113,7 @@ class TestCycleControllerSpec extends Specification {
         given:
         testCycleDTOS.get(0).setCycleName("testCycleUpdate")
         testCycleDTOS.get(1).setCycleName("testFolderUpdate")
+        testCycleDTOS.get(1).setParentCycleId(testCycleDTOS.get(0).getCycleId())
 
         when:
         HttpEntity<TestCycleDTO> requestEntity = new HttpEntity<TestCycleDTO>(testCycleDTOS.get(0), null)
@@ -183,6 +203,9 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         entity.body.versionId == 99L
         entity.body.cycleName == "cloneCycleTest"
+
+        and: '设置值'
+        testCycleDTOS.add(entity.body)
     }
 
     def "CloneFolder"() {
@@ -195,6 +218,9 @@ class TestCycleControllerSpec extends Specification {
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
         entity.body.cycleName == "cloneCycleFolderTest"
+
+        and: '设置值'
+        testCycleDTOS.add(entity.body)
     }
 
     def "GetFolderByCycleId"() {
@@ -213,21 +239,83 @@ class TestCycleControllerSpec extends Specification {
 
     def "SynchroFolder"() {
         given:
-        TestCycleDTO testCycleDTO = new TestCycleDTO()
-        testCycleDTO.setCycleName("cloneCycleFolderTest")
+        testIssueFolderRelDO.setIssueId(888L)
+        testIssueFolderRelDO.setProjectId(1L)
+        testIssueFolderRelDO.setVersionId(1L)
+        testIssueFolderRelDO.setFolderId(testCycleDTOS.get(1).getFolderId())
+
+        testIssueFolderRelDO2.setIssueId(889L)
+        testIssueFolderRelDO2.setProjectId(1L)
+        testIssueFolderRelDO2.setVersionId(1L)
+        testIssueFolderRelDO2.setFolderId(testCycleDTOS.get(1).getFolderId())
+
+        testIssueFolderRelMapper.insert(testIssueFolderRelDO)
+        testIssueFolderRelMapper.insert(testIssueFolderRelDO2)
+
+        testCycleCaseDO.setIssueId(888L)
+        testCycleCaseDO.setCycleId(testCycleDTOS.get(1).getCycleId())
+        testCycleCaseDO.setRank("0|c00000:")
+        testCycleCaseDO.setExecutionStatus(1L)
+        testCycleCaseMapper.insert(testCycleCaseDO)
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,boolean, projectId,testCycleDTOS.get(1).getCycleId(),testCycleDTOS.get(1).getFolderId())
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getFolderId(),testCycleDTOS.get(1).getCycleId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+
+        when:
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getFolderId(),1111111L)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
     }
-//
-//    def "SynchroFolder1"() {
-//    }
-//
-//    def "SynchroFolderInVersion"() {
-//    }
-//
-//    def "Delete"() {
-//    }
+
+    def "synchroFolderInCycle"() {
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null,null, projectId,testCycleDTOS.get(0).getCycleId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+
+        when:
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getCycleId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+    }
+
+    def "SynchroFolderInVersion"() {
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null,null, projectId,testCycleDTOS.get(1).getVersionId())
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+
+        when:
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null,null, projectId,1111111111L)
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+
+        and:
+        cycleIds.add(testCycleDTOS.get(0).getCycleId())
+        cycleIds.add(testCycleDTOS.get(1).getCycleId())
+        cycleIds.add(testCycleDTOS.get(2).getCycleId())
+        cycleIds.add(testCycleDTOS.get(3).getCycleId())
+    }
+
+    def "Delete"() {
+        given:'清理数据'
+        testCycleCaseMapper.delete(testCycleCaseDO)
+        testIssueFolderRelMapper.delete(testIssueFolderRelDO)
+        testIssueFolderRelMapper.delete(testIssueFolderRelDO2)
+
+        when: '执行方法'
+        restTemplate.delete('/v1/projects/{project_id}/cycle/delete/{cycleId}', projectId,cycleId)
+
+        then: '返回值'
+        def result = testCycleMapper.selectByPrimaryKey(cycleId as Long)
+
+        expect: '期望值'
+        result == null
+
+        where: '判断cycle是否删除'
+        cycleId << cycleIds
+
+    }
 }
