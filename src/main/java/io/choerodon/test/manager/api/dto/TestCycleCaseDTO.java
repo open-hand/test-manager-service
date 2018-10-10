@@ -7,7 +7,6 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachm
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
