@@ -17,10 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -54,6 +52,18 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).distinct().toArray(Long[]::new);
         Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
         lists.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
+    }
+
+    @Override
+    public void populateDefectAndIssue(TestCycleCaseDTO dto ,Long projectId){
+        Stream<Long> stream=Stream.of(dto.getIssueId());
+        if(!ObjectUtils.isEmpty(dto.getDefects())){
+            stream=Stream.concat(stream,dto.getDefects().stream().map(TestCycleCaseDefectRelDTO::getIssueId));
+        }
+        Long[] issueLists = stream.filter(Objects::nonNull).distinct().toArray(Long[]::new);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
+        dto.setIssueInfosDTO(defectMap.get(dto.getIssueId()));
+        Optional.ofNullable(dto.getDefects()).ifPresent(v->v.forEach(u -> u.setIssueInfosDTO(defectMap.get(u.getIssueId()))));
     }
 
     @Override

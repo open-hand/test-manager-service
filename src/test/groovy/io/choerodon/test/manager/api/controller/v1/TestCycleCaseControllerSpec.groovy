@@ -153,6 +153,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}",TestCycleCaseDTO,142,caseDTO.get(0).executeId)
         then:
+        1*testCaseService.getIssueInfoMap(_,_,_)>>Maps.newHashMap(98L,new IssueInfosDTO())
         1*userService.populateTestCycleCaseDTO(_)
         and:
         result.body.cycleId==cycleIds.get(0)

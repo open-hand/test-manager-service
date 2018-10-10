@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.app.service.impl
 
+
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO
@@ -9,6 +11,7 @@ import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory
 import org.assertj.core.util.Lists
+import org.assertj.core.util.Maps
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import spock.lang.Specification
@@ -80,4 +83,18 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         1 * client.getIssueInfoMap(_, _, false) >> new HashMap<>()
     }
 
+    def "populateDefectAndIssue"(){
+        given:
+        TestCycleCaseDTO dto=new TestCycleCaseDTO(issueId: 1)
+        when:
+        service.populateDefectAndIssue(dto,144L)
+        then:
+        1*client.getIssueInfoMap(_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO())
+        when:
+        dto.setDefects(Lists.newArrayList(new TestCycleCaseDefectRelE(issueId: 1L)))
+        service.populateDefectAndIssue(dto,144L)
+        then:
+        1*client.getIssueInfoMap(_,_,_)>> Maps.newHashMap(1L,new IssueInfosDTO())
+
+    }
 }
