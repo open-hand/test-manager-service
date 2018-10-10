@@ -16,6 +16,8 @@ public interface TestCycleCaseDefectRelService {
 
 	void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId);
 
+	void populateDefectAndIssue(TestCycleCaseDTO dto ,Long projectId);
+
 	void populateCycleCaseDefectInfo(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId);
 
 	void populateCaseStepDefectInfo(List<TestCycleCaseStepDTO> testCycleCaseDTOS, Long projectId);
