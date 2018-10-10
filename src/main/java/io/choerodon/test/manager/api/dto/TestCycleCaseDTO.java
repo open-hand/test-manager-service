@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
