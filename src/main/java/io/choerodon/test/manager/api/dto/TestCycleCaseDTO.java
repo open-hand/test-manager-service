@@ -7,6 +7,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachm
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +55,10 @@ public class TestCycleCaseDTO {
 	private String folderName;
 
 	private String versionName;
+
+	private Long lastExecuteId;
+
+	private Long nextExecuteId;
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
@@ -270,5 +275,21 @@ public class TestCycleCaseDTO {
 
 	public void setCycleCaseStep(List<TestCycleCaseStepE> cycleCaseStep) {
 		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepDTO.class);
+	}
+
+	public Long getLastExecuteId() {
+		return lastExecuteId;
+	}
+
+	public void setLastExecuteId(Long lastExecuteId) {
+		this.lastExecuteId = lastExecuteId;
+	}
+
+	public Long getNextExecuteId() {
+		return nextExecuteId;
+	}
+
+	public void setNextExecuteId(Long nextExecuteId) {
+		this.nextExecuteId = nextExecuteId;
 	}
 }

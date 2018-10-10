@@ -59,6 +59,10 @@ public class TestCycleCaseE {
 
 	private Long versionId;
 
+    private Long lastExecuteId;
+
+    private Long nextExecuteId;
+
 	List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
@@ -292,4 +296,20 @@ public class TestCycleCaseE {
 	public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
 		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepE.class);
 	}
+
+    public Long getLastExecuteId() {
+        return lastExecuteId;
+    }
+
+    public void setLastExecuteId(Long lastExecuteId) {
+        this.lastExecuteId = lastExecuteId;
+    }
+
+    public Long getNextExecuteId() {
+        return nextExecuteId;
+    }
+
+    public void setNextExecuteId(Long nextExecuteId) {
+        this.nextExecuteId = nextExecuteId;
+    }
 }

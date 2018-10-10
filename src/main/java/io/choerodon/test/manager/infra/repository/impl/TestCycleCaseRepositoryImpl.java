@@ -120,7 +120,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-        List<TestCycleCaseDO> list = testCycleCaseMapper.queryWithAttachAndDefect(convert,0,0);
+        List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert,new PageRequest(0,1));
         if (list.size() != 1) {
 			throw new CommonException("error.cycle.case.query.not.found");
         }

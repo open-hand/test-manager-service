@@ -17,6 +17,8 @@
         <id column="version_id" property="versionId"/>
         <id column="last_update_date" property="lastUpdateDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
+        <id column="last_execute_id" property="lastExecuteId"/>
+        <id column="next_execute_id" property="nextExecuteId"/>
         <collection property="caseDefect"
                     ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
             <id column="defect_issue_id" property="issueId"/>
@@ -79,6 +81,10 @@
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
+        (select
+        lag(EXECUTE_ID,0,null) over(PARTITION by cycle_id ORDER BY rank desc) from TEST_CYCLE_CASE where cycle.rank>rank and ROWNUM=1 ) last_execute_id,
+        (select
+        lead(EXECUTE_ID,0,null) over(PARTITION by cycle_id ORDER BY rank asc) from TEST_CYCLE_CASE where rank> cycle.rank and ROWNUM=1 ) next_execute_id,
         defect.issue_id defect_issue_id
         FROM
         (
@@ -158,6 +164,8 @@
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
+        <![CDATA[(select execute_id from test_cycle_case where cycle_id=cycle.cycle_id and cycle.rank > rank order by rank  limit 1) last_execute_id,
+        (select execute_id from test_cycle_case where cycle_id=cycle.cycle_id and cycle.rank < rank order by rank  limit 1) next_execute_id, ]]>
         defect.issue_id defect_issue_id
         FROM
         ( SELECT * FROM test_cycle_case
@@ -317,7 +325,7 @@
         AND attach.attachment_type = 'CYCLE_CASE'
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
         AND defect.defect_type = 'CYCLE_CASE'
-        LEFT JOIN test_cycle rCycle ON cycle.cycle_id = rCycle.cycle_id
+        LEFT JOIN test_cycle rCycle ON cycle.cycle_id = rCycle.cycle_id ORDER BY rank
     </select>
 
     <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">
