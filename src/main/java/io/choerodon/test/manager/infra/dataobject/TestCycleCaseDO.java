@@ -43,6 +43,12 @@ public class TestCycleCaseDO extends AuditDomain {
 	@Transient
 	private Long versionId;
 
+	@Transient
+    private Long lastExecuteId;
+
+	@Transient
+    private Long nextExecuteId;
+
     @Transient
     List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
@@ -174,4 +180,20 @@ public class TestCycleCaseDO extends AuditDomain {
 	public void setVersionId(Long versionId) {
 		this.versionId = versionId;
 	}
+
+    public Long getLastExecuteId() {
+        return lastExecuteId;
+    }
+
+    public void setLastExecuteId(Long lastExecuteId) {
+        this.lastExecuteId = lastExecuteId;
+    }
+
+    public Long getNextExecuteId() {
+        return nextExecuteId;
+    }
+
+    public void setNextExecuteId(Long nextExecuteId) {
+        this.nextExecuteId = nextExecuteId;
+    }
 }

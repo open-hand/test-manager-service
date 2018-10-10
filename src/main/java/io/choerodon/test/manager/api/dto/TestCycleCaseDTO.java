@@ -55,6 +55,10 @@ public class TestCycleCaseDTO {
 
 	private String versionName;
 
+	private Long lastExecuteId;
+
+	private Long nextExecuteId;
+
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
     private List<TestCycleCaseDefectRelDTO> caseDefect=new ArrayList<>();
@@ -270,5 +274,21 @@ public class TestCycleCaseDTO {
 
 	public void setCycleCaseStep(List<TestCycleCaseStepE> cycleCaseStep) {
 		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepDTO.class);
+	}
+
+	public Long getLastExecuteId() {
+		return lastExecuteId;
+	}
+
+	public void setLastExecuteId(Long lastExecuteId) {
+		this.lastExecuteId = lastExecuteId;
+	}
+
+	public Long getNextExecuteId() {
+		return nextExecuteId;
+	}
+
+	public void setNextExecuteId(Long nextExecuteId) {
+		this.nextExecuteId = nextExecuteId;
 	}
 }
