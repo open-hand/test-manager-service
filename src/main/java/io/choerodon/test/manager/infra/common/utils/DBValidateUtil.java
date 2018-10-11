@@ -19,4 +19,7 @@ public class DBValidateUtil {
             throw new CommonException(errorMessage);
         }
     }
+
+    private DBValidateUtil() {
+    }
 }
