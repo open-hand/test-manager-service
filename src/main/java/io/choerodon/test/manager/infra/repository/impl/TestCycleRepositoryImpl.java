@@ -8,6 +8,7 @@ import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,7 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 		Assert.notNull(testCycleE,"error.cycle.insert.not.be.null");
 		validateCycle(testCycleE);
 		TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
-		if (cycleMapper.insert(convert) != 1) {
-			throw new CommonException("error.testStepCase.insert");
-		}
+		DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insert,convert,1,"error.testStepCase.insert");
 		return ConvertHelper.convert(convert, TestCycleE.class);
 	}
 

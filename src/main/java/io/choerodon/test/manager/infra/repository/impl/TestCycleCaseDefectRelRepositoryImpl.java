@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseDefectRelRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 import org.slf4j.Logger;
@@ -28,9 +28,8 @@ public class TestCycleCaseDefectRelRepositoryImpl implements TestCycleCaseDefect
     @Override
     public TestCycleCaseDefectRelE insert(TestCycleCaseDefectRelE testCycleCaseDefectRelE) {
         TestCycleCaseDefectRelDO convert = ConvertHelper.convert(testCycleCaseDefectRelE, TestCycleCaseDefectRelDO.class);
-        if (testCycleCaseDefectRelMapper.insert(convert) != 1) {
-            throw new CommonException("error.testStepCase.insert");
-        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseDefectRelMapper::insert,convert,1,"error.defect.insert");
+
         return ConvertHelper.convert(convert, TestCycleCaseDefectRelE.class);
     }
 

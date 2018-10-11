@@ -11,6 +11,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistory
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseHistoryEFactory;
+import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +42,8 @@ public class TestCaseCountRecordAOP {
 
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	RedisTemplateUtil redisTemplateUtil=new RedisTemplateUtil();
 
 	private static final String FIELD_STATUS = "执行状态";
 
@@ -84,7 +87,7 @@ public class TestCaseCountRecordAOP {
 	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId) {
 		if (StringUtils.equals(oldStatus, TestStatusE.STATUS_UN_EXECUTED)) {
 			String key = "summary:" + projectId + ":" + date;
-			RedisAtomicLong entityIdCounter = new RedisAtomicLong(key, redisTemplate.getConnectionFactory());
+			RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
 			entityIdCounter.incrementAndGet();
 			if (log.isDebugEnabled()) {
 				log.debug("测试执行记录统计状态切面：执行Id:" + executeId + "计数+1, key:" + key);
@@ -104,8 +107,8 @@ public class TestCaseCountRecordAOP {
 		pageRequest.setSize(1);
 		pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
 		LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-		String key = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		RedisAtomicLong entityIdCounter = new RedisAtomicLong("summary:" + projectId + ":" + key, redisTemplate.getConnectionFactory());
+		String key = "summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		RedisAtomicLong entityIdCounter =redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
 		entityIdCounter.decrementAndGet();
 
 

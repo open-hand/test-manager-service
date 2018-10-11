@@ -4,6 +4,7 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
@@ -32,9 +33,7 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
             throw new CommonException("error.case.step.insert.stepId.should.be.null");
         }
         TestCaseStepDO testStepCase = ConvertHelper.convert(testCaseStepE, TestCaseStepDO.class);
-        if (testCaseStepMapper.insert(testStepCase) != 1) {
-            throw new CommonException("error.testStepCase.insert");
-        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::insert,testStepCase,1,"error.testStepCase.insert");
         return ConvertHelper.convert(testStepCase, TestCaseStepE.class);
     }
 
@@ -51,10 +50,9 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
         Assert.notNull(testStepCaseE,"error.case.step.update.param1.not.null");
 
         TestCaseStepDO testCaseStepDO = ConvertHelper.convert(testStepCaseE, TestCaseStepDO.class);
-        if (testCaseStepMapper.updateByPrimaryKey(testCaseStepDO) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
-		return ConvertHelper.convert(testCaseStepMapper.query(testCaseStepDO).get(0), TestCaseStepE.class);
+
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::updateByPrimaryKey,testCaseStepDO,1,"error.testStepCase.update");
+        return ConvertHelper.convert(testCaseStepMapper.query(testCaseStepDO).get(0), TestCaseStepE.class);
 
     }
 

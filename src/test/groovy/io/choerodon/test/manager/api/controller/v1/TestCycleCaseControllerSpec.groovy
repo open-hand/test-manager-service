@@ -85,10 +85,12 @@ class TestCycleCaseControllerSpec extends Specification {
     def "initEnv"() {
         given:
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
+        testCycleDTO1.setFromDate(new Date())
+        testCycleDTO1.setToDate(new Date())
         testCycleDTO1.setCycleName("testCycleCaseInsert")
         testCycleDTO1.setFolderId(11111L)
         testCycleDTO1.setVersionId(11111L)
-        testCycleDTO1.setType(TestCycleE.FOLDER)
+        testCycleDTO1.setType(TestCycleE.CYCLE)
         testCycleDTO1.setObjectVersionNumber(1L)
 
 
@@ -118,13 +120,25 @@ class TestCycleCaseControllerSpec extends Specification {
         and:
         entity.body != null
         StringUtils.equals(entity.getBody().statusName, "未执行")
+
+        when:
+        TestCycleDTO testCycleDTO2 = new TestCycleDTO()
+        testCycleDTO2.setCycleName("childCycle")
+        testCycleDTO2.setFolderId(11111L)
+        testCycleDTO2.setVersionId(11111L)
+        testCycleDTO2.setType(TestCycleE.FOLDER)
+        testCycleDTO2.setParentCycleId(cycleIds.get(0))
+        testCycleDTO2.setObjectVersionNumber(1L)
+        def entity1 = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTO2,TestCycleDTO, 142L)
+        then:
+        entity1.statusCode.is2xxSuccessful()
     }
 
     def "InsertOneCase"() {
         given:
         TestCycleCaseDTO dto=new TestCycleCaseDTO(cycleId:cycleIds.get(0),issueId: 98L,assignedTo:10L)
         TestCycleCaseDTO dto2=new TestCycleCaseDTO(cycleId:cycleIds.get(0),issueId: 97L,assignedTo:10L,comment: "comment1")
-        TestCycleCaseDTO dto3=new TestCycleCaseDTO(issueId: 96L)
+        TestCycleCaseDTO dto3=new TestCycleCaseDTO(issueId: 96L,cycleId:cycleIds.get(0))
 
         when:
         def result=restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert",dto,TestCycleCaseDTO,142)
@@ -174,6 +188,12 @@ class TestCycleCaseControllerSpec extends Specification {
         0*testCaseService.getIssueInfoMap(_,_,_)
         0*userService.query(_)
         0*testCaseService.getVersionInfo(_)
+        when:
+        restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/issue/{issueId}",List,142,96L)
+        then:
+        1*testCaseService.getIssueInfoMap(_,_,_)>>new HashMap<>()
+        0*userService.query(_)
+        1*testCaseService.getVersionInfo(_)>>Maps.newHashMap(11111L,new ProductVersionDTO())
     }
     def "QueryByCycle"() {
         given:
@@ -184,7 +204,7 @@ class TestCycleCaseControllerSpec extends Specification {
         1*testCaseService.getIssueInfoMap(_,_,_)>>new HashMap<>()
         1*userService.query(_)>>new HashMap<>()
         and:
-        result.body.size() == 2
+        result.body.size() == 3
 
         when:
         result=restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}",searchDto, Page.class,142,0,1)
@@ -212,7 +232,7 @@ class TestCycleCaseControllerSpec extends Specification {
     def "UpdateOneCase"() {
         given:
         TestCycleCaseDTO searchDto=caseDTO.get(1);
-        searchDto.setLastRank(searchDto.rank)
+        searchDto.setRank(searchDto.rank)
         searchDto.setAssignedTo(4L)
         searchDto.setComment("111")
         searchDto.setExecutionStatus(3L)
@@ -230,7 +250,7 @@ class TestCycleCaseControllerSpec extends Specification {
     def "UpdateOneCase1"() {
         given:
         TestCycleCaseDTO searchDto = caseDTO.get(1);
-        searchDto.setLastRank(searchDto.rank)
+        searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
         searchDto.setObjectVersionNumber(1L)
         searchDto.setComment("comment1")
@@ -245,7 +265,7 @@ class TestCycleCaseControllerSpec extends Specification {
     def "UpdateOneCase2"() {
         given:
         TestCycleCaseDTO searchDto = caseDTO.get(1);
-        searchDto.setLastRank(searchDto.rank)
+        searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
         searchDto.setObjectVersionNumber(2L)
         searchDto.setComment(null)
@@ -262,7 +282,7 @@ class TestCycleCaseControllerSpec extends Specification {
     def "UpdateOneCase3"() {
         given:
         TestCycleCaseDTO searchDto = caseDTO.get(2);
-        searchDto.setLastRank(searchDto.rank)
+        searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
         searchDto.setObjectVersionNumber(1L)
         searchDto.setComment("comment1")
@@ -285,7 +305,7 @@ class TestCycleCaseControllerSpec extends Specification {
         then:
         1*userService.query(_)>>new HashMap<>()
         and:
-        result.body.size()==2
+        result.body.size()==3
     }
 
     def "CreateFilteredCycleCaseInCycle"() {
@@ -303,7 +323,7 @@ class TestCycleCaseControllerSpec extends Specification {
         Map map = new HashMap()
         map.put(98L,new IssueInfosDTO(issueId: 98L,issueNum: "issueNum1"))
         when:
-        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}",new SearchDTO(), Boolean,142,fromCycle,990,56)
+        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}",new SearchDTO(executionStatus: [1,2,3] as Long[]), Boolean,142,fromCycle,990,56)
         then:
        1*testCaseService.listIssueWithoutSub(_,_,_)>>new ResponseEntity<Page>(page,HttpStatus.OK)
        1*testCaseService.getIssueInfoMap(_,_,_)>>map
@@ -337,6 +357,13 @@ class TestCycleCaseControllerSpec extends Specification {
         2*userService.query(_)>>Maps.newHashMap(10L,new UserDO(realName: "real",loginName: "login"))
         1*testCaseService.getIssueInfoMap(_,_,_)>>issueMaps
         1*testCaseService.getProjectInfo(_)>>new ProjectDTO(name: "project1")
+        when:
+        restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/download/excel/{cycleId}",null,142,caseDTO.get(2).getCycleId())
+        then:
+        1*testCaseService.getVersionInfo(_)>> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
+        2*userService.query(_)>>Maps.newHashMap(10L,new UserDO(realName: "real",loginName: "login"))
+        1*testCaseService.getIssueInfoMap(_,_,_)>>issueMaps
+        1*testCaseService.getProjectInfo(_)>>new ProjectDTO(name: "project1")
     }
 
 
@@ -352,6 +379,7 @@ class TestCycleCaseControllerSpec extends Specification {
 
 
     }
+
 
 
     def "delete"(){

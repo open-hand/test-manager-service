@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseAttachmentRelRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,7 @@ public class TestCycleCaseAttachmentRelRepositoryImpl implements TestCycleCaseAt
     @Override
     public TestCycleCaseAttachmentRelE insert(TestCycleCaseAttachmentRelE testCycleCaseAttachmentRelE) {
         TestCycleCaseAttachmentRelDO convert = ConvertHelper.convert(testCycleCaseAttachmentRelE, TestCycleCaseAttachmentRelDO.class);
-        if (testCycleCaseAttachmentRelMapper.insert(convert) != 1) {
-            throw new CommonException("error.testStepCase.insert");
-        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert,convert,1,"error.attachment.insert");
         return ConvertHelper.convert(convert, TestCycleCaseAttachmentRelE.class);
     }
 

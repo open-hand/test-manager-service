@@ -3,11 +3,11 @@ package io.choerodon.test.manager.infra.repository.impl;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseHistoryRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseHistoryDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
@@ -25,9 +25,7 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
     @Override
     public TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE) {
         TestCycleCaseHistoryDO convert = ConvertHelper.convert(testCycleCaseHistoryE, TestCycleCaseHistoryDO.class);
-        if (testCycleCaseHistoryMapper.insert(convert) != 1) {
-            throw new CommonException("error.testStepCase.insert");
-        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseHistoryMapper::insert,convert,1,"error.history.insert");
         return ConvertHelper.convert(convert, TestCycleCaseHistoryE.class);
     }
 
