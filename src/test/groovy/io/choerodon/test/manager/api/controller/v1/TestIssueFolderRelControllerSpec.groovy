@@ -9,6 +9,7 @@ import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
+import io.choerodon.test.manager.api.dto.TestFolderRelQueryDTO
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
@@ -96,6 +97,19 @@ class TestIssueFolderRelControllerSpec extends Specification {
             println("issueId:"+testIssueFolderRelDO.issueId)
         }
 
+        TestIssueFolderDO folderDO = new TestIssueFolderDO()
+        folderDO.setProjectId(444444444L)
+        folderDO.setVersionId(444444444L)
+        folderDO.setType("temp")
+        folderDO.setName("testForGetDefaultFolder")
+        testIssueFolderMapper.insert(folderDO)
+        TestIssueFolderDO insertFolderDo = testIssueFolderMapper.selectOne(folderDO)
+
+        IssueDTO issueDTO3 = new IssueDTO()
+        issueDTO3.setIssueId(444444444L)
+        issueDTO3.setObjectVersionNumber(1L)
+        issueDTO3.setProjectId(444444444L)
+
         when: '向issueFolderRel的插入创建接口发请求'
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, resInsertDO.getFolderId(), versionId)
         then:
@@ -129,6 +143,16 @@ class TestIssueFolderRelControllerSpec extends Specification {
         assert exceptionInfo.get("failed").toString() == "true"
         assert exceptionInfo.get("code").toString() == "error.db.duplicateKey"
 
+        when: '覆盖testIssueFolder的getDefaultFolderId方法中resultTestIssueFolderDTO不为空的情况'
+        def entity3 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, 444444444L, null, 444444444L)
+        then:
+        1 * testCaseService.createTest(_, _) >> issueDTO3
+        entity3.statusCode.is2xxSuccessful()
+
+        and:
+        entity3.body != null
+        entity3.body.issueId == 444444444L
+
     }
 
     def "InsertRelationship"() {
@@ -152,7 +176,14 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向issueFolderRel的插入创建接口发请求'
         def entities = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel', testIssueFolderRelDTOS, List, projectId)
         then:
+        entities.statusCode.is2xxSuccessful()
         entities.body.size() > 1
+
+        when: '覆盖testIssueFolderRelDTOS为空的情况'
+        entities = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel', new ArrayList<>(), List, projectId)
+        then:
+        entities.statusCode.is2xxSuccessful()
+        entities.body.size() == 0
     }
 
     def "cloneOneIssue"() {
@@ -232,32 +263,101 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
     def "QueryIssuesByParameter"() {
         given:
-        SearchDTO searchDTO = new SearchDTO()
         IssueInfosDTO issueInfosDTO = new IssueInfosDTO()
         issueInfosDTO.setIssueId(11L)
         IssueInfosDTO issueInfosDTO1 = new IssueInfosDTO()
-        issueInfosDTO.setIssueId(22L)
-        Long[] issues = new Long[2]
-        issues[0] = 11L
-        issues[1] = 22L
+        issueInfosDTO1.setIssueId(22L)
+        Integer[] issues = new Integer[2]
+        issues[0] = 11
+        issues[1] = 22
+        Integer[] wrongIssues = new Integer[1]
+        wrongIssues[0] = 1231231231
+        Long[] longIssues = new Long[2]
+        longIssues[0] = 11L
+        longIssues[1] = 22L
         Map map = new HashMap()
         map.put(11L, issueInfosDTO)
         map.put(22L, issueInfosDTO1)
 
-        when: '向查询issueFolderRel的接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&versionId={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, foldersId[0], versionId, 1, 1)
+        SearchDTO searchDTO = new SearchDTO()
+        Map searchMap = new HashMap()
+        searchMap.put("issueIds",issues)
+        searchDTO.setOtherArgs(searchMap)
 
+        SearchDTO wrongSearchDTO = new SearchDTO()
+        Map searchMap2 = new HashMap()
+        searchMap2.put("issueIds",wrongIssues)
+        wrongSearchDTO.setOtherArgs(searchMap2)
+
+        TestFolderRelQueryDTO relQueryDTO = new TestFolderRelQueryDTO()
+        relQueryDTO.setSearchDTO(searchDTO)
+
+        TestFolderRelQueryDTO wrongRelQueryDTO = new TestFolderRelQueryDTO()
+        wrongRelQueryDTO.setSearchDTO(wrongSearchDTO)
+
+        TestFolderRelQueryDTO relQueryDTOWithNoIssueIds = new TestFolderRelQueryDTO()
+        SearchDTO searchDTOWithNoIssueIds = new SearchDTO()
+        searchDTOWithNoIssueIds.setOtherArgs(new HashMap())
+        relQueryDTOWithNoIssueIds.setSearchDTO(searchDTOWithNoIssueIds)
+
+        TestFolderRelQueryDTO relQueryDTOWithNoVersions = new TestFolderRelQueryDTO()
+
+        TestFolderRelQueryDTO relQueryDTOWithVersions = new TestFolderRelQueryDTO()
+        Long[] versionIds = new Long[1]
+        versionIds[0] = versionId
+        relQueryDTOWithVersions.setVersionIds(versionIds)
+
+        when: '分支覆盖到searchDTO.getOtherArgs()不为空的情况'
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTO, Page.class, projectId, foldersId[0], 0, 1)
         then: '返回值'
-        1 * testCaseService.queryIssueIdsByOptions(_, _) >> issues
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
         1 * testCaseService.getIssueInfoMap(_, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS = entity.body
-
         expect: "设置期望值"
-        detailFolderRelDTOS.size() == 1
+        detailFolderRelDTOS.size() ==1
+
+        when: '分支覆盖到searchDTO.getOtherArgs()不为空的情况，但searchDTO.getOtherArgs().containsKey(sIssueIds)为假的情况'
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithNoIssueIds, Page.class, projectId, foldersId[0], 1, 1)
+        then: '返回值'
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
+        1 * testCaseService.getIssueInfoMap(_, _, _) >> map
+        entity.statusCode.is2xxSuccessful()
+        List detailFolderRelDTOS2 = entity.body
+        expect: "设置期望值"
+        detailFolderRelDTOS2.size() == 1
+
+
+        when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds为空的情况'
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithNoVersions, Page.class, projectId, foldersId[0], 1, 1)
+        then: '返回值'
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
+        1 * testCaseService.getIssueInfoMap(_, _, _) >> map
+        entity.statusCode.is2xxSuccessful()
+        List detailFolderRelDTOS3 = entity.body
+        expect: "设置期望值"
+        detailFolderRelDTOS3.size() == 1
+
+        when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds不为空的情况'
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithVersions, Page.class, projectId, foldersId[0], 1, 1)
+        then: '返回值'
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
+        1 * testCaseService.getIssueInfoMap(_, _, _) >> map
+        entity.statusCode.is2xxSuccessful()
+        List detailFolderRelDTOS4 = entity.body
+        expect: "设置期望值"
+        detailFolderRelDTOS4.size() == 1
+
+        when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds不为空的情况'
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', wrongRelQueryDTO, Page.class, projectId, foldersId[0], 1, 1)
+        then: '返回值'
+        0 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
+        0 * testCaseService.getIssueInfoMap(_, _, _) >> map
+        entity.statusCode.is2xxSuccessful()
+        assert entity.body.isEmpty()
 
         when: '向testIssueFolderRel的查询接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&versionId={versionId}&page={page}&size={size}', searchDTO, Page.class, projectId, null, null,null,null)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTO, Page.class, projectId, null, null,null,null)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >>  new ArrayList<>()
         0 * testCaseService.getIssueInfoMap(_, _, _) >> map
@@ -337,6 +437,15 @@ class TestIssueFolderRelControllerSpec extends Specification {
         expect: '期望值'
         originIFR.size() < 4
         targetIFR.size() > 1
+
+        when: '覆盖issueInfosDTOS为空的情况'
+        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/copy?folderId={folderId}&versionId={versionId}', new ArrayList(), projectId, foldersId[0], versionId)
+        then: '返回值'
+        List originIFR2 = testIssueFolderRelMapper.select(origin)
+        List targetIFR2 = testIssueFolderRelMapper.select(target)
+        expect: '期望值'
+        originIFR2.size() < 4
+        targetIFR2.size() > 1
     }
 
     def "Delete"() {

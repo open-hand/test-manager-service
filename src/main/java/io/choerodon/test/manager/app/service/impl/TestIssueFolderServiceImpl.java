@@ -48,13 +48,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }
 
-    @Override
-    public List<TestIssueFolderDTO> queryByParameterWithPageUnderProject(Long projectId, PageRequest pageRequest){
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,null,projectId,null,null);
-        return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO) {

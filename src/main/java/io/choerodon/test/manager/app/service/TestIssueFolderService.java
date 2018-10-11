@@ -26,6 +26,4 @@ public interface TestIssueFolderService {
     TestIssueFolderDTO moveFolder(Long projectId, TestIssueFolderDTO testIssueFolderDTO);
 
     List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId);
-
-    List<TestIssueFolderDTO> queryByParameterWithPageUnderProject(Long projectId, PageRequest pageRequest);
 }
