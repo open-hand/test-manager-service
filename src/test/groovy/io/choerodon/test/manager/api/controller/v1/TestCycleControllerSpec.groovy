@@ -3,14 +3,22 @@ package io.choerodon.test.manager.api.controller.v1
 import com.alibaba.fastjson.JSONObject
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.agile.api.dto.ProductVersionPageDTO
+import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
+import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
+import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
+import io.choerodon.test.manager.infra.feign.UserFeignClient
+import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +46,9 @@ class TestCycleControllerSpec extends Specification {
     TestCaseService testCaseService
 
     @Autowired
+    UserService userService
+
+    @Autowired
     TestCycleMapper testCycleMapper
 
     @Autowired
@@ -46,12 +57,15 @@ class TestCycleControllerSpec extends Specification {
     @Autowired
     TestCycleCaseMapper testCycleCaseMapper
 
+    @Autowired
+    TestCaseStepMapper testCaseStepMapper
+
     @Shared
     def projectId = 1L
     @Shared
     def versionId = 1L
     @Shared
-    List<TestCycleDTO> testCycleDTOS = new  ArrayList<>()
+    List<TestCycleDTO> testCycleDTOS = new ArrayList<>()
 
     @Shared
     List cycleIds = new ArrayList()
@@ -62,12 +76,16 @@ class TestCycleControllerSpec extends Specification {
     TestIssueFolderRelDO testIssueFolderRelDO2 = new TestIssueFolderRelDO()
     @Shared
     TestCycleCaseDO testCycleCaseDO = new TestCycleCaseDO()
+    @Shared
+    TestIssueFolderRelDO insertFolderRel = new TestIssueFolderRelDO()
+    @Shared
+    TestCaseStepDO testCaseStepDO1 = new TestCaseStepDO()
+    @Shared
+    TestCaseStepDO testCaseStepDO2 = new TestCaseStepDO()
 
 
     def "Insert"() {
         given:
-        def res = testCycleMapper.selectAll()
-
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
         testCycleDTO1.setCycleName("testCycleInsert")
         testCycleDTO1.setVersionId(versionId)
@@ -83,8 +101,14 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO2.setType(TestCycleE.FOLDER)
         testCycleDTO2.setObjectVersionNumber(1L)
 
+        insertFolderRel.setProjectId(projectId)
+        insertFolderRel.setVersionId(versionId)
+        insertFolderRel.setFolderId(11L)
+        insertFolderRel.setIssueId(44444444L)
+        testIssueFolderRelMapper.insert(insertFolderRel)
+
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(0),TestCycleDTO, projectId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(0), TestCycleDTO, projectId)
         then:
         entity.statusCode.is2xxSuccessful()
         and:
@@ -98,7 +122,7 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTOS.add(testCycleDTO2)
 
         when:
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(1),TestCycleDTO, projectId)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle', testCycleDTOS.get(1), TestCycleDTO, projectId)
         then:
         entity.statusCode.is2xxSuccessful()
         and:
@@ -107,6 +131,7 @@ class TestCycleControllerSpec extends Specification {
         entity.body.type == TestCycleE.FOLDER
         and:
         testCycleDTOS.get(1).setCycleId(entity.getBody().getCycleId())
+
     }
 
     def "Update"() {
@@ -114,6 +139,13 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTOS.get(0).setCycleName("testCycleUpdate")
         testCycleDTOS.get(1).setCycleName("testFolderUpdate")
         testCycleDTOS.get(1).setParentCycleId(testCycleDTOS.get(0).getCycleId())
+
+        TestCycleDO cycleDO = new TestCycleDO()
+        cycleDO.setCycleName("testTemp")
+        cycleDO.setType("temp")
+        cycleDO.setVersionId(versionId)
+        testCycleMapper.insert(cycleDO)
+        TestCycleDO resCycleDO = testCycleMapper.selectOne(cycleDO)
 
         when:
         HttpEntity<TestCycleDTO> requestEntity = new HttpEntity<TestCycleDTO>(testCycleDTOS.get(0), null)
@@ -132,11 +164,22 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         entity.body.getCycleName() == "testFolderUpdate"
         entity.body.type == TestCycleE.FOLDER
+
+        when:'覆盖temp1.getType().equals(TestCycleE.TEMP)的情况'
+        requestEntity = new HttpEntity<TestCycleDTO>(resCycleDO, null)
+        entity = restTemplate.exchange('/v1/projects/{project_id}/cycle',
+                HttpMethod.PUT, requestEntity, TestCycleDTO, projectId)
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+        entity.body.getCycleName() == "testTemp"
+        entity.body.type == "temp"
+        and:'清理值'
+        testCycleMapper.delete(cycleDO)
     }
 
     def "QueryOne"() {
         when:
-        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/query/one/{cycleId}',TestCycleDTO,projectId, testCycleDTOS.get(0).getCycleId())
+        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/query/one/{cycleId}', TestCycleDTO, projectId, testCycleDTOS.get(0).getCycleId())
         then:
         entity.statusCode.is2xxSuccessful()
         entity.body.cycleName == "testCycleUpdate"
@@ -145,22 +188,28 @@ class TestCycleControllerSpec extends Specification {
     def "GetTestCycle"() {
         given:
         ProductVersionDTO productVersionDTO = new ProductVersionDTO()
-        productVersionDTO.setVersionId(1L)
+        productVersionDTO.setVersionId(versionId)
         productVersionDTO.setStatusName("testCycle")
         productVersionDTO.setName("testCycle")
 
         ProductVersionDTO productVersionDTO2 = new ProductVersionDTO()
-        productVersionDTO2.setVersionId(2L)
-        productVersionDTO2.setName("testCycle")
+        productVersionDTO2.setVersionId(22222222L)
+        productVersionDTO2.setName("testCycle2")
+        productVersionDTO2.setStatusName("testCycle2")
 
         Map map = new HashMap()
-        map.put(1L,productVersionDTO)
-        map.put(2L,productVersionDTO2)
+        map.put(1L, productVersionDTO)
+        map.put(2L, productVersionDTO2)
+
+        Map userMap = new HashMap()
+        userMap.put(20645L, new UserDO())
+        userMap.put(20645L, new UserDO())
 
         when:
-        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,testCycleDTOS.get(0).getCycleId())
+        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
-        1*testCaseService.getVersionInfo(_)>>map
+        1 * testCaseService.getVersionInfo(_) >> map
+        1 * userService.query(_) >> userMap
         then:
         entity.statusCode.is2xxSuccessful()
         JSONObject jsonObject = entity.body
@@ -169,9 +218,9 @@ class TestCycleControllerSpec extends Specification {
         !jsonObject.isEmpty()
 
         when:
-        entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query",JSONObject.class,projectId,testCycleDTOS.get(0).getCycleId())
+        entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
-        1*testCaseService.getVersionInfo(_)>>new HashMap<>()
+        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
         then:
         entity.statusCode.is2xxSuccessful()
         JSONObject jsonObject2 = entity.body
@@ -186,7 +235,7 @@ class TestCycleControllerSpec extends Specification {
         searchParamMap.put("cycleName", "发布11")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/version', searchParamMap,Page.class, 12L)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/version', searchParamMap, Page.class, 12L)
         then: '返回值'
         1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(HttpStatus.OK)
     }
@@ -198,7 +247,7 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO.setCycleName("cloneCycleTest")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO,TestCycleDTO, testCycleDTOS.get(0).getCycleId(),projectId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO, TestCycleDTO, testCycleDTOS.get(0).getCycleId(), projectId)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
         entity.body.versionId == 99L
@@ -214,7 +263,7 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO.setCycleName("cloneCycleFolderTest")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO,TestCycleDTO, testCycleDTOS.get(1).getCycleId(),projectId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/clone/folder/{cycleId}', testCycleDTO, TestCycleDTO, testCycleDTOS.get(1).getCycleId(), projectId)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
         entity.body.cycleName == "cloneCycleFolderTest"
@@ -229,7 +278,7 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO.setCycleName("cloneCycleFolderTest")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/folder/cycleId/{cycleId}', null,List, projectId,testCycleDTOS.get(0).getCycleId())
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/folder/cycleId/{cycleId}', null, List, projectId, testCycleDTOS.get(0).getCycleId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
         entity.body.size() == 1
@@ -254,41 +303,55 @@ class TestCycleControllerSpec extends Specification {
 
         testCycleCaseDO.setIssueId(888L)
         testCycleCaseDO.setCycleId(testCycleDTOS.get(1).getCycleId())
-        testCycleCaseDO.setRank("0|c00000:")
+        testCycleCaseDO.setRank("0|c04564:")
         testCycleCaseDO.setExecutionStatus(1L)
         testCycleCaseMapper.insert(testCycleCaseDO)
+        TestCycleCaseDO resCycleCase = testCycleCaseMapper.selectOne(testCycleCaseDO)
+
+        testCaseStepDO1.setIssueId(889L)
+        testCaseStepDO1.setRank("0|c04564:")
+        testCaseStepMapper.insert(testCaseStepDO1)
+        testCaseStepDO2.setIssueId(888L)
+        testCaseStepDO1.setRank("0|c04564:")
+        testCaseStepMapper.insert(testCaseStepDO2)
+
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getFolderId(),testCycleDTOS.get(1).getCycleId())
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null, null, projectId, testCycleDTOS.get(1).getFolderId(), testCycleDTOS.get(1).getCycleId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
 
         when:
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getFolderId(),1111111L)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null, null, projectId, testCycleDTOS.get(1).getFolderId(), 1111111L)
+        then: '返回值'
+        entity.statusCode.is2xxSuccessful()
+
+        when: '覆盖syncCycleCaseStep的caseSteps为空的情况'
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/{folderId}/in/{cycleId}', null, null, projectId, 1111111L, 1111111L)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
     }
 
     def "synchroFolderInCycle"() {
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null,null, projectId,testCycleDTOS.get(0).getCycleId())
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null, null, projectId, testCycleDTOS.get(0).getCycleId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
 
         when:
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null,null, projectId,testCycleDTOS.get(1).getCycleId())
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/cycle/{cycleId}', null, null, projectId, testCycleDTOS.get(1).getCycleId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
     }
 
     def "SynchroFolderInVersion"() {
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null,null, projectId,testCycleDTOS.get(1).getVersionId())
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null, null, projectId, testCycleDTOS.get(1).getVersionId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
 
         when:
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null,null, projectId,1111111111L)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/synchro/folder/all/in/version/{versionId}', null, null, projectId, 1111111111L)
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
 
@@ -300,13 +363,16 @@ class TestCycleControllerSpec extends Specification {
     }
 
     def "Delete"() {
-        given:'清理数据'
+        given: '清理数据'
         testCycleCaseMapper.delete(testCycleCaseDO)
         testIssueFolderRelMapper.delete(testIssueFolderRelDO)
         testIssueFolderRelMapper.delete(testIssueFolderRelDO2)
+        testIssueFolderRelMapper.delete(insertFolderRel)
+        testCaseStepMapper.delete(testCaseStepDO1)
+        testCaseStepMapper.delete(testCaseStepDO2)
 
         when: '执行方法'
-        restTemplate.delete('/v1/projects/{project_id}/cycle/delete/{cycleId}', projectId,cycleId)
+        restTemplate.delete('/v1/projects/{project_id}/cycle/delete/{cycleId}', projectId, cycleId)
 
         then: '返回值'
         def result = testCycleMapper.selectByPrimaryKey(cycleId as Long)

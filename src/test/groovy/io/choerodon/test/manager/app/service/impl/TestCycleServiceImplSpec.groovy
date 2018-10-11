@@ -48,6 +48,9 @@ class TestCycleServiceImplSpec extends Specification {
     TestCycleService testCycleService
 
     @Autowired
+    UserService userService
+
+    @Autowired
     TestCaseService testCaseService
 
     def "Insert"() {
@@ -116,54 +119,55 @@ class TestCycleServiceImplSpec extends Specification {
     }
 
 
-    def "GetTestCycle"() {
-        given:
-        TestCycleDTO cycle = new TestCycleDTO()
-        cycle.setCycleName("发布4")
-        cycle.setVersionId(226L)
-        cycle.setType(TestCycleE.CYCLE)
-        cycle.setCreatedBy(4L)
-        TestCycleDTO cycle1 = testCycleService.insert(cycle)
-        TestStatusE status = TestStatusEFactory.create()
-        status.setProjectId(99L)
-        status.setStatusName("color1")
-        status.setStatusColor("red")
-        status.setStatusType(TestStatusE.STATUS_TYPE_CASE)
-        status = status.addSelf()
-
-        ProductionVersionClient client = Mock(ProductionVersionClient)
-        UserService client1 = Mock(UserService)
-        TestCycleService service = AopTestUtils.getTargetObject(testCycleService);
-        Field field = service.getClass().getDeclaredFields()[1]
-        field.setAccessible(true)
-        field.set(service, client)
-        Field field1 = service.getClass().getDeclaredFields()[3]
-        field1.setAccessible(true)
-        field1.set(service, client1)
-        UserDO userDO = new UserDO(id: 4L, loginName: "loginName", realName: "realName1")
-        Map<Long, UserDO> users = new HashMap()
-        users.put(4L, userDO)
-
-        Map map = new HashMap()
-        map.put(1L,new ProductVersionDTO(versionId: 226l))
-
-        TestCycleCaseDTO case1 = new TestCycleCaseDTO(cycleId: cycle1.getCycleId(), issueId: 1L, versionId: 226l, executionStatus: status.getStatusId(), assignedTo: 4L)
-        TestCycleCaseE caseE = ConvertHelper.convert(case1, TestCycleCaseE.class);
-        caseE.addSelf()
-
-        ProductVersionDTO v1 = new ProductVersionDTO(versionId: 226l)
-        when:
-        JSONObject jsob = service.getTestCycle(226l,null)
-        then:
-        1 * testCaseService.getVersionInfo(_) >> map
-        1 * client1.query(_) >> users
-        jsob != null
-        when:
-        service.getTestCycle(226l,null)
-        then:
-        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
-        0 * client1.query(_)
-    }
+//    def "GetTestCycle"() {
+//        given:
+//        TestCycleDTO cycle = new TestCycleDTO()
+//        cycle.setCycleName("发布4")
+//        cycle.setVersionId(226L)
+//        cycle.setType(TestCycleE.CYCLE)
+//        cycle.setCreatedBy(4L)
+//        TestCycleDTO cycle1 = testCycleService.insert(cycle)
+//        TestStatusE status = TestStatusEFactory.create()
+//        status.setProjectId(99L)
+//        status.setStatusName("color1")
+//        status.setStatusColor("red")
+//        status.setStatusType(TestStatusE.STATUS_TYPE_CASE)
+//        status = status.addSelf()
+//
+//        ProductionVersionClient client = Mock(ProductionVersionClient)
+//        UserService client1 = Mock(UserService)
+//        TestCycleService service = AopTestUtils.getTargetObject(testCycleService);
+//        Field field = service.getClass().getDeclaredFields()[1]
+//        field.setAccessible(true)
+//        field.set(service, client)
+//        Field field1 = service.getClass().getDeclaredFields()[3]
+//        field1.setAccessible(true)
+//        field1.set(service, client1)
+//        UserDO userDO = new UserDO(id: 4L, loginName: "loginName", realName: "realName1")
+//        Map<Long, UserDO> users = new HashMap()
+//        users.put(4L, userDO)
+//
+//        Map map = new HashMap()
+//        map.put(1L, new ProductVersionDTO(versionId: 226l))
+//
+//        TestCycleCaseDTO case1 = new TestCycleCaseDTO(cycleId: cycle1.getCycleId(), issueId: 1L, versionId: 226l, executionStatus: status.getStatusId(), assignedTo: 4L)
+//        TestCycleCaseE caseE = ConvertHelper.convert(case1, TestCycleCaseE.class);
+//        caseE.addSelf()
+//
+//        ProductVersionDTO v1 = new ProductVersionDTO(versionId: 226l)
+//        when:
+//        JSONObject jsob = service.getTestCycle(226l, null)
+//        then:
+//        1 * testCaseService.getVersionInfo(_) >> map
+//        1 * client1.query(_) >> users
+//        jsob != null
+//
+//        when:
+//        service.getTestCycle(226l, null)
+//        then:
+//        1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
+//        0 * client1.query(_)
+//    }
 
 
     def "GetTestCycleVersion"() {
@@ -254,5 +258,37 @@ class TestCycleServiceImplSpec extends Specification {
         List<TestCycleDTO> cycles = testCycleService.getFolderByCycleId(1l)
         then:
         cycles != null
+    }
+
+    //此条勿删，测试方法
+    def "populateUsers"() {
+        given:
+        Map userMap = new HashMap()
+        userMap.put(20645L, new UserDO())
+        userMap.put(20645L, new UserDO())
+
+        List<TestCycleDTO> dtos = new ArrayList<>()
+        TestCycleDTO testCycleDTO = new TestCycleDTO()
+        testCycleDTO.setCreatedBy(20645L)
+        TestCycleDTO testCycleDTO2 = new TestCycleDTO()
+        testCycleDTO2.setCreatedBy(0L)
+        dtos.add(testCycleDTO)
+
+
+        UserDO userDO = new UserDO(id: 20645L, loginName: "loginName", realName: "realName")
+        Map<Long, UserDO> users = new HashMap()
+        users.put(20645L, userDO)
+
+        when:
+        testCycleService.populateUsers(dtos)
+        then:
+        1 * userService.query(_)>> users
+        and:
+        dtos.add(testCycleDTO2)
+
+        when:
+        testCycleService.populateUsers(dtos)
+        then:
+        1 * userService.query(_)>> users
     }
 }

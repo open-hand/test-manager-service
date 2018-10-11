@@ -34,13 +34,6 @@ public class TestCycleController {
     TestCycleMapper testCycleMapper;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("数据修复")
-    @PostMapping("/init")
-    public void initData(@PathVariable(name = "project_id") Long projectId) {
-        testCycleService.initOldData(projectId);
-    }
-
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加测试循环")
     @PostMapping
     public ResponseEntity<TestCycleDTO> insert(@PathVariable(name = "project_id") Long projectId,

@@ -399,23 +399,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public void initOldData(Long projectId) {
-        ResponseEntity<List<Long>> entityVersionIds = productionVersionClient.listAllVersionId(projectId);
-        List<Long> versionIds = entityVersionIds.getBody();
-        for (Long versionId : versionIds) {
-            TestCycleDTO testCycleDTO = new TestCycleDTO();
-            testCycleDTO.setVersionId(versionId);
-            testCycleDTO.setType(TestCycleE.TEMP);
-            testCycleDTO.setCycleName("临时");
-            TestCycleE cycleE = ConvertHelper.convert(testCycleDTO, TestCycleE.class);
-            if (cycleE.queryOne() == null) {
-                cycleE.setCycleName(TestCycleE.TEMP_CYCLE_NAME);
-                cycleE.addSelf();
-            }
-        }
-    }
-
-    @Override
     public void populateVersion(TestCycleDTO cycle, Long projectId) {
         Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
         cycle.setVersionName(map.get(cycle.getVersionId()).getName());
