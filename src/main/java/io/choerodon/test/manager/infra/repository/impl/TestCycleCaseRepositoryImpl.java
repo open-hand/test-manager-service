@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.repository.impl;
 import io.choerodon.core.domain.PageInfo;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
@@ -37,10 +38,8 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public TestCycleCaseE insert(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-        if (testCycleCaseMapper.insert(convert) != 1) {
-            throw new CommonException("error.testStepCase.insert");
-        }
-        return ConvertHelper.convert(convert, TestCycleCaseE.class);
+		DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::insert,convert,1,"error.testCycleCase.insert");
+		return ConvertHelper.convert(convert, TestCycleCaseE.class);
     }
 
     @Override
@@ -52,9 +51,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     @Override
     public TestCycleCaseE update(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
-        if (testCycleCaseMapper.updateByPrimaryKey(convert) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
+		DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::updateByPrimaryKey,convert,1,"error.testCycleCase.update");
 		return ConvertHelper.convert(testCycleCaseMapper.selectByPrimaryKey(convert.getExecuteId()), TestCycleCaseE.class);
     }
 
@@ -121,9 +118,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
         List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert,new PageRequest(0,1));
-        if (list.size() != 1) {
-			throw new CommonException("error.cycle.case.query.not.found");
-        }
+		DBValidateUtil.executeAndvalidateUpdateNum(list::size,1,"error.cycle.case.query.not.found");
         return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
     }
 

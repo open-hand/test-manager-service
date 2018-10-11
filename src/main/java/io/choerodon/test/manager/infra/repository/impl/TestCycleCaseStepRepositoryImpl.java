@@ -8,6 +8,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
@@ -36,9 +37,7 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
 		Assert.notNull(testCycleCaseStepE,"error.test.cycle.step.insert.param.not.null");
 
 		TestCycleCaseStepDO convert = ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class);
-		if (testCycleCaseStepMapper.insert(convert) != 1) {
-			throw new CommonException("error.testStepCase.insert");
-		}
+		DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseStepMapper::insert,convert,1,"error.testStepCase.insert");
 		return ConvertHelper.convert(convert, TestCycleCaseStepE.class);
 	}
 

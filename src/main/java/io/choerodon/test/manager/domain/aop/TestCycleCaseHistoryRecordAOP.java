@@ -13,6 +13,7 @@ import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -92,9 +93,7 @@ public class TestCycleCaseHistoryRecordAOP {
 		TestCycleCaseAttachmentRelE attachmentRelE = TestCycleCaseAttachmentRelEFactory.create();
 		attachmentRelE.setId(attachId);
 		List<TestCycleCaseAttachmentRelE> lists = attachmentRelE.querySelf();
-		if (lists.size() != 1) {
-			throw new CommonException("error.attach.notFound");
-		}
+		DBValidateUtil.executeAndvalidateUpdateNum(lists::size,1,"error.attach.notFound");
 		attachmentRelE = lists.get(0);
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());

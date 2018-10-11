@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.repository.TestStatusRepository;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.core.convertor.ConvertHelper;
@@ -60,9 +61,7 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
 		Assert.notNull(testStatusE, "error.status.update.parameter.not.null");
 
 		TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-		if (testStatusMapper.updateByPrimaryKey(testStatusDO) != 1) {
-			throw new CommonException("error.test.status.update");
-		}
+		DBValidateUtil.executeAndvalidateUpdateNum(testStatusMapper::updateByPrimaryKey,testStatusDO,1,"error.test.status.update");
 		return ConvertHelper.convert(testStatusMapper.selectByPrimaryKey(testStatusDO.getStatusId()), TestStatusE.class);
 	}
 
