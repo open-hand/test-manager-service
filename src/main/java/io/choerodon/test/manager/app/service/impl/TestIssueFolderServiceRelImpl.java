@@ -81,6 +81,15 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         return page;
     }
 
+    private void loadResultRelDTOS(Long projectId, Long versionId,Long folderId, Long issueId,List<TestIssueFolderRelDTO> resultRelDTOS){
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, issueId, null);
+        List res = ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+        if(!res.isEmpty()) {
+            resultRelDTOS.addAll(res);
+        }
+    }
+
     @Override
     public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest) {
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
@@ -91,25 +100,18 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
         //如果传入的参数包含issueIds,就只去查找这些issueIds
         if (searchDTO.getOtherArgs() != null && searchDTO.getOtherArgs().containsKey(sIssueIds)) {
-            //明天替换
             List<Integer> issueIds = (ArrayList<Integer>) searchDTO.getOtherArgs().get(sIssueIds);
             for (Integer id : issueIds) {
                 Long issueId = id.longValue();
-                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, issueId, null);
-                resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
-                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+                loadResultRelDTOS(projectId,null,folderId,issueId,resultRelDTOS);
             }
         } else {
             //如果传入了version就去筛选这些version下的rel
             if (ObjectUtils.isEmpty(testFolderRelQueryDTO.getVersionIds())) {
-                TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
-                resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
-                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+                loadResultRelDTOS(projectId,null,folderId,null,resultRelDTOS);
             } else {
                 for (Long versionId : testFolderRelQueryDTO.getVersionIds()) {
-                    TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
-                    resultRelDTOS.addAll(ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
-                            .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
+                    loadResultRelDTOS(projectId,versionId,folderId,null,resultRelDTOS);
                 }
             }
         }
