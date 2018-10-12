@@ -6,12 +6,14 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.*;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.exception.FeignReceiveException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -93,33 +95,37 @@ public class FixDataServiceImpl implements FixDataService {
                     throw new FeignReceiveException("delete issues under project error, projectId:{}", issueProjectDTO.getProjectId(), e);
                 }
             } else {
-                for (Long versionId : versionIds) {
-                    TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
-                    TestIssueFolderDTO resFolderDTO = testIssueFolderService.insert(tempTestIssueFolderDTO);
-                    log.info("create folder named \"临时\" for version... versionId:" + versionId + " folderId:" + resFolderDTO.getFolderId());
-                }
-                //创建文件夹
-                TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
-                TestIssueFolderDTO needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
-                log.info("create folder named \"旧数据\" to store old data... folderId:" + needFolder.getFolderId());
-                //有version的将他们放到目标文件夹
-                List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
-                for (Long issueId : issueProjectDTO.getIssueIdList()) {
-                    TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
-                    testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
-                }
-                //批量修改issue的version
-                log.info("change old data into this folder...");
-                try {
-                    testCaseService.batchIssueToVersionTest(needFolder.getProjectId(), needFolder.getVersionId(), issueProjectDTO.getIssueIdList());
-                } catch (FeignException e) {
-                    throw new FeignReceiveException("change issues under project's version error, projectId:{},version:{}", needFolder.getProjectId(), needFolder.getVersionId(), e);
-                }
-                log.info("put old issue data into this folder...");
-                log.info("establish relationship of old issue data and this folder... folderId:" + needFolder.getFolderId());
-                testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(), testIssueFolderRelDTOS);
+                storeOldData(versionIds,issueProjectDTO);
             }
         }
+    }
+
+    private void storeOldData(Long[] versionIds,IssueProjectDTO issueProjectDTO){
+        for (Long versionId : versionIds) {
+            TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
+            TestIssueFolderDTO resFolderDTO = testIssueFolderService.insert(tempTestIssueFolderDTO);
+            log.info("create folder named \"临时\" for version... versionId:" + versionId + " folderId:" + resFolderDTO.getFolderId());
+        }
+        //创建文件夹
+        TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
+        TestIssueFolderDTO needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
+        log.info("create folder named \"旧数据\" to store old data... folderId:" + needFolder.getFolderId());
+        //有version的将他们放到目标文件夹
+        List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+        for (Long issueId : issueProjectDTO.getIssueIdList()) {
+            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
+            testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+        }
+        //批量修改issue的version
+        log.info("change old data into this folder...");
+        try {
+            testCaseService.batchIssueToVersionTest(needFolder.getProjectId(), needFolder.getVersionId(), issueProjectDTO.getIssueIdList());
+        } catch (FeignException e) {
+            throw new FeignReceiveException("change issues under project's version error, projectId:{},version:{}", needFolder.getProjectId(), needFolder.getVersionId(), e);
+        }
+        log.info("put old issue data into this folder...");
+        log.info("establish relationship of old issue data and this folder... folderId:" + needFolder.getFolderId());
+        testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(), testIssueFolderRelDTOS);
     }
 
     private void step2(TestCycleE resTestCycleE, TestCycleE testCycleE) {
