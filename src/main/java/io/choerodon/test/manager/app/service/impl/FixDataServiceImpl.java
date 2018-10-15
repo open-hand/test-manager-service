@@ -1,11 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import feign.FeignException;
 import feign.codec.DecodeException;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.*;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.infra.exception.FeignReceiveException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +53,12 @@ public class FixDataServiceImpl implements FixDataService {
 
         //从敏捷查询所有type是issue_test的issue
         log.info("query all issue data under project...: ");
-        List<IssueProjectDTO> issueProjectDTOS = testCaseService.queryIssueTestGroupByProject(projectId);
+        List<IssueProjectDTO> issueProjectDTOS;
+        try {
+            issueProjectDTOS = testCaseService.queryIssueTestGroupByProject(projectId);
+        } catch (FeignException e) {
+            throw new FeignReceiveException("query all issues group by project error", e);
+        }
         step1(issueProjectDTOS);
 
         log.info("query all cycles...");
@@ -59,6 +69,7 @@ public class FixDataServiceImpl implements FixDataService {
         for (TestCycleE resTestCycleE : testCycleES) {
             step2(resTestCycleE, testCycleE);
         }
+        log.info("fix data successful");
     }
 
 
@@ -68,35 +79,53 @@ public class FixDataServiceImpl implements FixDataService {
         log.info("do archiving opration of old issue data...");
         for (IssueProjectDTO issueProjectDTO : issueProjectDTOS) {
             //根据projectId查找version
-            log.info("query versions under project...");
-            Long[] versionIds = testCaseService.getVersionIds(issueProjectDTO.getProjectId());
+            log.info("query versions under project... projectId:" + issueProjectDTO.getProjectId());
+            Long[] versionIds;
+            try {
+                versionIds = testCaseService.getVersionIds(issueProjectDTO.getProjectId());
+            } catch (FeignException e) {
+                throw new FeignReceiveException("query versions under project error, projectId:{}", issueProjectDTO.getProjectId(), e);
+            }
             if (ObjectUtils.isEmpty(versionIds)) {
                 //无version的全删除掉
-                log.info("delete issue without version...");
-                testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
+                log.info("delete issues without version...");
+                try {
+                    testCaseService.batchDeleteIssues(issueProjectDTO.getProjectId(), issueProjectDTO.getIssueIdList());
+                } catch (FeignException e) {
+                    throw new FeignReceiveException("delete issues under project error, projectId:{}", issueProjectDTO.getProjectId(), e);
+                }
             } else {
-                for (Long versionId : versionIds) {
-                    TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
-                    testIssueFolderService.insert(tempTestIssueFolderDTO);
-                }
-                //创建文件夹
-                log.info("create folder named \"旧数据\" to store old data...");
-                TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
-                TestIssueFolderDTO needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
-                //有version的将他们放到目标文件夹
-                List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
-                for (Long issueId : issueProjectDTO.getIssueIdList()) {
-                    TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
-                    testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
-                }
-                //批量修改issue的version
-                log.info("change  old data into this folder...");
-                testCaseService.batchIssueToVersionTest(needFolder.getProjectId(), needFolder.getVersionId(), issueProjectDTO.getIssueIdList());
-                log.info("put old issue data into this folder...");
-                log.info("establish relationship of old issue data and this folder...");
-                testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(), testIssueFolderRelDTOS);
+                storeOldData(versionIds,issueProjectDTO);
             }
         }
+    }
+
+    private void storeOldData(Long[] versionIds,IssueProjectDTO issueProjectDTO){
+        for (Long versionId : versionIds) {
+            TestIssueFolderDTO tempTestIssueFolderDTO = new TestIssueFolderDTO(null, "临时", versionId, issueProjectDTO.getProjectId(), TestIssueFolderE.TYPE_TEMP, null);
+            TestIssueFolderDTO resFolderDTO = testIssueFolderService.insert(tempTestIssueFolderDTO);
+            log.info("create folder named \"临时\" for version... versionId:" + versionId + " folderId:" + resFolderDTO.getFolderId());
+        }
+        //创建文件夹
+        TestIssueFolderDTO needTestIssueFolderDTO = new TestIssueFolderDTO(null, "旧数据", versionIds[0], issueProjectDTO.getProjectId(), CYCLE, null);
+        TestIssueFolderDTO needFolder = testIssueFolderService.insert(needTestIssueFolderDTO);
+        log.info("create folder named \"旧数据\" to store old data... folderId:" + needFolder.getFolderId());
+        //有version的将他们放到目标文件夹
+        List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+        for (Long issueId : issueProjectDTO.getIssueIdList()) {
+            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(needFolder.getFolderId(), needFolder.getVersionId(), issueProjectDTO.getProjectId(), issueId, null);
+            testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+        }
+        //批量修改issue的version
+        log.info("change old data into this folder...");
+        try {
+            testCaseService.batchIssueToVersionTest(needFolder.getProjectId(), needFolder.getVersionId(), issueProjectDTO.getIssueIdList());
+        } catch (FeignException e) {
+            throw new FeignReceiveException("change issues under project's version error, projectId:{},version:{}", needFolder.getProjectId(), needFolder.getVersionId(), e);
+        }
+        log.info("put old issue data into this folder...");
+        log.info("establish relationship of old issue data and this folder... folderId:" + needFolder.getFolderId());
+        testIssueFolderRelService.insertBatchRelationship(issueProjectDTO.getProjectId(), testIssueFolderRelDTOS);
     }
 
     private void step2(TestCycleE resTestCycleE, TestCycleE testCycleE) {
@@ -104,19 +133,18 @@ public class FixDataServiceImpl implements FixDataService {
         Long tempCycleId = resTestCycleE.getCycleId();
         log.info("start fix cycle,cycleId:" + tempCycleId);
 
-        log.info("query project by version...");
+        log.info("query project by version... versionId:" + resTestCycleE.getVersionId());
         Long needProjectId = null;
         try {
             needProjectId = testCaseService.queryProjectIdByVersionId(resTestCycleE.getVersionId());
         } catch (DecodeException e) {
-            log.info("当前Id为" + resTestCycleE.getVersionId() + "的版本已经找不到项目！请手动删除脏数据");
-            return;
+            throw new FeignReceiveException("versionId：{}，this version can not find project! please delete dirty data manually", resTestCycleE.getVersionId(), e);
         }
 
         TestCycleE needTestCycleE = step3(resTestCycleE, testCycleE, needProjectId);
 
         //查询原来的cycle在cycleCase表中的数据
-        log.info("query all old cycle...");
+        log.info("query all old cycleCase of cycle... cyclyId:" + tempCycleId);
         testCycleCaseE.setCycleId(tempCycleId);
         List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.querySelf();
 
@@ -125,7 +153,7 @@ public class FixDataServiceImpl implements FixDataService {
 
         //没有case存在的话就不进行cyclecase，各个step和folderRel表的操作
         if (ObjectUtils.isEmpty(testCycleCaseES)) {
-            log.info("no cycleCase exist...");
+            log.info("no cycleCase exist in cycle... cycleId:" + tempCycleId);
             return;
         }
 
@@ -133,7 +161,7 @@ public class FixDataServiceImpl implements FixDataService {
         List<Long> acceptIssues = new ArrayList<>();
         List<Long> allIssues = testCycleCaseES.stream().map(TestCycleCaseE::getIssueId).collect(Collectors.toList());
 
-        log.info("clone issues associated with cycleCase...");
+        log.info("clone issues associated with cycleCases of cycle... cycleId:" + tempCycleId);
         cloneIssue(issueIds, acceptIssues, allIssues, needProjectId, needTestCycleE);
 
         //将原来的case关联的issue改成新克隆出来的issue，并修改各个step关系
@@ -141,17 +169,17 @@ public class FixDataServiceImpl implements FixDataService {
         int i = 0;
         for (TestCycleCaseE cycleCaseE : testCycleCaseES) {
             //根据以前的issueId找到case_step
-            log.info("query caseStep by issue...");
+            log.info("query caseStep by issue... issueId:" + cycleCaseE.getIssueId());
             TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
             testCaseStepE.setIssueId(cycleCaseE.getIssueId());
             List<TestCaseStepE> oldCaseSteps = testCaseStepE.queryByParameter();
             cycleCaseE.setCycleId(needTestCycleE.getCycleId());
             cycleCaseE.setIssueId(issueIds.get(i));
-            log.info("fix cycleCase data...");
+            log.info("fix cycleCase data... executeId:" + cycleCaseE.getExecuteId());
             cycleCaseE.updateSelf();
 
             //根据issueId克隆caseStep
-            log.info("clone caseStep by issue...");
+            log.info("clone caseStep by issue... issueId:" + testCaseStepE.getIssueId());
             TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
             testCaseStepDTO.setIssueId(testCaseStepE.getIssueId());
             List<TestCaseStepDTO> clonedCaseStepDTO = testCaseStepService.batchClone(testCaseStepDTO, issueIds.get(i), needProjectId);
@@ -163,7 +191,7 @@ public class FixDataServiceImpl implements FixDataService {
             log.info("start add cloned caseStep...");
             for (TestCaseStepE v : oldCaseSteps) {
                 //查找以前stepId对应的CycleCaseStep
-                log.info("query cycleCaseStep by old stepId...");
+                log.info("query cycleCaseStep by old caseStep... caseStepId:" + v.getStepId());
                 testCycleCaseStepE.setStepId(v.getStepId());
                 List<TestCycleCaseStepE> testCycleCaseStepES = testCycleCaseStepE.querySelf();
                 //将CycleCaseStep对应的stepId修改为新克隆出来的stepId
@@ -171,7 +199,7 @@ public class FixDataServiceImpl implements FixDataService {
                     if (!ObjectUtils.isEmpty(clonedCaseStepDTO)) {
                         cs.setStepId(clonedCaseStepDTO.get(j).getStepId());
                         cycleCaseStepES.add(cs);
-                        log.info("executeStepId: "+cs.getExecuteStepId()+"waiting to be added");
+                        log.info("executeStepId: " + cs.getExecuteStepId() + "waiting to be added");
                     }
                 }
                 j++;
@@ -188,7 +216,7 @@ public class FixDataServiceImpl implements FixDataService {
             testIssueFolderRelDTO.setVersionId(needTestCycleE.getVersionId());
             testIssueFolderRelDTO.setIssueId(v);
             testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
-            log.info("issueId: "+v+"waiting to be added");
+            log.info("issueId: " + v + "waiting to be added");
         }
         log.info("add batch Relationship between issueFolder and issue...");
         testIssueFolderRelService.insertBatchRelationship(needProjectId, testIssueFolderRelDTOS);
@@ -201,7 +229,7 @@ public class FixDataServiceImpl implements FixDataService {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
 
         //设置修正数据
-        log.info("correct cycle and folder data...");
+        log.info("start to correct cycle and folder data...");
         TestCycleE needTestCycleE;
         if (resTestCycleE.getType().equals("folder")) {
             //TestCycleE的type为folder的情况
@@ -210,7 +238,7 @@ public class FixDataServiceImpl implements FixDataService {
         } else {
             if (resTestCycleE.getType().equals("temp")) {
                 resTestCycleE.setType(CYCLE);
-                log.info("change cycle which type is temp to cycle...");
+                log.info("change cycle's type to cycle... cycleId:" + resTestCycleE.getCycleId());
                 resTestCycleE.updateSelf();
             }
             resTestCycleE.setType("folder");
@@ -218,8 +246,9 @@ public class FixDataServiceImpl implements FixDataService {
             resTestCycleE.setCycleId(null);
             resTestCycleE.setCycleName(resTestCycleE.getCycleName() + "阶段");
             //如果是cycle或者temp类型就新增一个cycle为其子folder
-            log.info("add a child cycle for cycle...");
+            Long parentCycleId = resTestCycleE.getCycleId();
             needTestCycleE = resTestCycleE.addSelf();
+            log.info("add a child cycle for cycle... parentCycleId:" + parentCycleId + " , childCycleId:" + needTestCycleE.getCycleId());
             needTestCycleE.setObjectVersionNumber(1L);
             testIssueFolderDTO.setType(CYCLE);
         }
@@ -228,14 +257,14 @@ public class FixDataServiceImpl implements FixDataService {
         testIssueFolderDTO.setVersionId(needTestCycleE.getVersionId());
 
         //如果有父节点的话，将folder的名字设置为如：父名称_子名称
-        log.info("change cycle name which type is folder...");
         if (needTestCycleE.getParentCycleId() != null) {
+            log.info("change cycle's name which's type is folder... cycleId:" + needTestCycleE.getCycleId());
             testCycleE.setCycleId(needTestCycleE.getParentCycleId());
             log.info("query father cycle...");
             TestCycleE fatherCycleE = testCycleE.queryOne();
             //如果父名字和子名字是相同的就说明这个名字是唯一的只需要给folder设置此名即可，中间不需要加 _
-            log.info("father name:" + fatherCycleE.getCycleName());
-            log.info("son name:" + needTestCycleE.getCycleName());
+            log.info("father name:" + fatherCycleE.getCycleName() + "father Id" + fatherCycleE.getCycleId());
+            log.info("son name:" + needTestCycleE.getCycleName() + "son Id" + needTestCycleE.getCycleId());
             if (fatherCycleE.getCycleName().equals(needTestCycleE.getCycleName())) {
                 testIssueFolderDTO.setName(needTestCycleE.getCycleName() + "阶段");
             } else {
@@ -246,35 +275,43 @@ public class FixDataServiceImpl implements FixDataService {
         }
 
         //插入folder表，更新cycle表
-        log.info("insert issueFolder which is associated cycle...");
         Long folderId = testIssueFolderService.insert(testIssueFolderDTO).getFolderId();
+        log.info("insert issueFolder which is associated cycle... cycleId:" + needTestCycleE.getCycleId() + " , folderId:" + folderId);
         needTestCycleE.setFolderId(folderId);
-        log.info("update relationship of cycle and issueFolder...");
+        log.info("update relationship of cycle and issueFolder... cycleId:" + needTestCycleE.getCycleId());
         return needTestCycleE.updateSelf();
     }
 
 
     public void cloneIssue(List<Long> issueIds, List<Long> acceptIssues, List<Long> allIssues, Long needProjectId, TestCycleE needTestCycleE) {
         //取第一个issue
-        log.info("get frist issue");
+        log.info("get frist issue... issueId:" + allIssues.get(0));
         acceptIssues.add(allIssues.get(0));
         for (int i = 1; i < allIssues.size(); i++) {
             for (int j = 0; j < acceptIssues.size(); j++) {
                 if (acceptIssues.get(j).equals(allIssues.get(i))) {
                     log.info("send issues to clone");
-                    issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
+                    try {
+                        issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
+                    } catch (FeignException e) {
+                        throw new FeignReceiveException("clone issues under project's version error, projectId:{},versionId:{}", needProjectId, needTestCycleE.getVersionId(), e);
+                    }
                     acceptIssues.clear();
-                    log.info("issueId:"+allIssues.get(i)+" waiting to be sent to clone");
+                    log.info("issueId:" + allIssues.get(i) + " waiting to be sent to clone");
                     acceptIssues.add(allIssues.get(i));
                     break;
                 } else if (j == acceptIssues.size() - 1) {
-                    log.info("issueId:"+allIssues.get(i)+" waiting to be sent to clone");
+                    log.info("issueId:" + allIssues.get(i) + " waiting to be sent to clone");
                     acceptIssues.add(allIssues.get(i));
                     break;
                 }
             }
         }
         log.info("send issues to clone");
-        issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
+        try {
+            issueIds.addAll(testCaseService.batchCloneIssue(needProjectId, needTestCycleE.getVersionId(), acceptIssues.stream().toArray(Long[]::new)));
+        } catch (FeignException e) {
+            throw new FeignReceiveException("clone issues under project's version error, projectId:{},versionId:{}", needProjectId, needTestCycleE.getVersionId(), e);
+        }
     }
 }
