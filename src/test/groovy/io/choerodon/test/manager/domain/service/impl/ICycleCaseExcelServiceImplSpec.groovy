@@ -1,11 +1,9 @@
 package io.choerodon.test.manager.domain.service.impl
 
-import io.choerodon.test.manager.api.dto.TestCycleDTO
-import io.choerodon.test.manager.app.service.ExcelService
+
 import io.choerodon.test.manager.app.service.impl.ExcelServiceImpl
-import org.apache.poi.hssf.usermodel.HSSFCell
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import spock.lang.Shared
@@ -15,13 +13,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import java.lang.reflect.Method
 
-class IExcelServiceImplSpec extends Specification {
+class ICycleCaseExcelServiceImplSpec extends Specification {
 
     @Shared
     ExcelServiceImpl service=new ExcelServiceImpl()
 
     @Shared
-    IExcelServiceImpl serviceImpl=new IExcelServiceImpl()
+    ICycleCaseExcelServiceImpl serviceImpl=new ICycleCaseExcelServiceImpl()
 
     def "setHeader"(){
         given:
@@ -48,11 +46,11 @@ class IExcelServiceImplSpec extends Specification {
 
     def "getWorkBook"() {
         when:
-        Workbook workbook=serviceImpl.getWorkBook(IExcelServiceImpl.WorkBookFactory.Mode.SXSSF)
+        Workbook workbook=serviceImpl.getWorkBook(ExcelUtil.Mode.SXSSF)
         then:
         workbook instanceof SXSSFWorkbook
         when:
-        Workbook workbook1=serviceImpl.getWorkBook(IExcelServiceImpl.WorkBookFactory.Mode.HSSF)
+        Workbook workbook1=serviceImpl.getWorkBook(ExcelUtil.Mode.HSSF)
         then:
         workbook1 instanceof HSSFWorkbook
     }
