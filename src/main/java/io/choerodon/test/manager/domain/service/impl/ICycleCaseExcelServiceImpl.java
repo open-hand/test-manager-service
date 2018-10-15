@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class ICycleCaseExcelServiceImpl implements IExcelService<TestCycleDTO,TestCycleCaseDTO> {
-	Log log = LogFactory.getLog(this.getClass());
+public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCycleDTO,TestCycleCaseDTO> {
 
 	private enum CycleCaseHeader {
 		COLUMN1("文件夹"), COLUMN2("用例编号"), COLUMN3("用例概要"), COLUMN4("执行状态"), COLUMN5("说明"), COLUMN6("缺陷编号概要"), COLUMN7("模块"), COLUMN8("标签"), COLUMN9("执行方"),
@@ -178,11 +177,11 @@ public class ICycleCaseExcelServiceImpl implements IExcelService<TestCycleDTO,Te
 	}
 
 
-	public int populateVersionHeader(Sheet sheet, String projectName, String versionName, CellStyle rowStyle) {
+	public int populateVersionHeader(Sheet sheet, String projectName, TestCycleDTO cycle, CellStyle rowStyle) {
 
 		Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
 		ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
-		ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, "版本：" + versionName);
+		ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, "版本：" + cycle.getVersionName());
 		return 2;
 	}
 
@@ -224,9 +223,6 @@ public class ICycleCaseExcelServiceImpl implements IExcelService<TestCycleDTO,Te
 
 	public Workbook getWorkBook(ExcelUtil.Mode mode) {
 		Workbook workbook = ExcelUtil.getWorkBook(mode);
-		if (log.isDebugEnabled()) {
-			log.debug("导出测试详情：创建workbook成功，类型" + mode.getValue());
-		}
 		return workbook;
 	}
 
