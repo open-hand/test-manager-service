@@ -11,6 +11,7 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.service.IExcelService;
+import io.choerodon.test.manager.domain.service.impl.ICycleCaseExcelServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
@@ -107,47 +108,11 @@ public class ExcelServiceImpl implements ExcelService {
 		testCycleService.populateUsers(Lists.newArrayList(cycle));
 		Map<Long, List<TestCycleCaseDTO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, null, projectId))
 				.orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
-		Workbook workbook = iExcelService.getWorkBook(ExcelUtil.Mode.HSSF);
-		doExportCycleCaseInOneCycle(cycleCaseMap, workbook, testCaseService.getProjectInfo(projectId).getName(), cycle);
+		IExcelService service=new <TestCycleDTO,TestCycleCaseDTO> ICycleCaseExcelServiceImpl();
+		Workbook workbook = service.exportWorkBook(cycleCaseMap, testCaseService.getProjectInfo(projectId).getName(), cycle);
 		downloadWorkBook(workbook, response);
 	}
 
-
-	private void doExportCycleCaseInOneCycle(Map<Long, List<TestCycleCaseDTO>> cycleCaseMap, Workbook workbook, String projectName, TestCycleDTO cycle) {
-		Sheet sheet = workbook.createSheet();
-		//初始化cellStyle
-		CellStyle headerRowStyle = workbook.createCellStyle();
-		headerRowStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		headerRowStyle.setFillForegroundColor((short) 22);
-		CellStyle caseStyle1 = workbook.createCellStyle();
-		caseStyle1.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		caseStyle1.setFillForegroundColor((short) 26);
-		caseStyle1.setBorderLeft(XSSFCellStyle.BORDER_THIN);//左边框
-		caseStyle1.setBorderRight(XSSFCellStyle.BORDER_THIN);//右边框
-		CellStyle caseStyle2 = workbook.createCellStyle();
-		caseStyle2.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		caseStyle2.setFillForegroundColor((short) 9);
-		caseStyle2.setBorderLeft(XSSFCellStyle.BORDER_THIN);
-		caseStyle2.setBorderRight(XSSFCellStyle.BORDER_THIN);
-
-		iExcelService.populateSheetStyle(sheet);
-		int i = iExcelService.populateVersionHeader(sheet, projectName, cycle.getVersionName(), headerRowStyle);
-		i = iExcelService.populateHeader(sheet, i, cycle, headerRowStyle);
-		Iterator<Map.Entry<Long, List<TestCycleCaseDTO>>> iterator = cycleCaseMap.entrySet().iterator();
-		if (log.isDebugEnabled()) {
-			log.debug("构建WorkBook开始，总共" + cycleCaseMap.values().size() + "条测试执行");
-		}
-
-		Queue styleQueue = Queues.newArrayDeque(Lists.newArrayList(caseStyle1, caseStyle2));
-		while (iterator.hasNext()) {
-			i = iExcelService.populateBody(sheet, i, iterator.next().getValue(), styleQueue);
-			iterator.remove();
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("WorkBook构建完成。。");
-		}
-
-	}
 
 	private void downloadWorkBook(Workbook workbook, HttpServletResponse response) {
 		try {
