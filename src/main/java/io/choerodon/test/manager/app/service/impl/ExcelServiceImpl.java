@@ -11,9 +11,9 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.service.IExcelService;
-import io.choerodon.test.manager.domain.service.impl.IExcelServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -107,7 +107,7 @@ public class ExcelServiceImpl implements ExcelService {
 		testCycleService.populateUsers(Lists.newArrayList(cycle));
 		Map<Long, List<TestCycleCaseDTO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, null, projectId))
 				.orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
-		Workbook workbook = iExcelService.getWorkBook(IExcelServiceImpl.WorkBookFactory.Mode.HSSF);
+		Workbook workbook = iExcelService.getWorkBook(ExcelUtil.Mode.HSSF);
 		doExportCycleCaseInOneCycle(cycleCaseMap, workbook, testCaseService.getProjectInfo(projectId).getName(), cycle);
 		downloadWorkBook(workbook, response);
 	}
@@ -132,8 +132,7 @@ public class ExcelServiceImpl implements ExcelService {
 
 		iExcelService.populateSheetStyle(sheet);
 		int i = iExcelService.populateVersionHeader(sheet, projectName, cycle.getVersionName(), headerRowStyle);
-		i = iExcelService.populateCycleHeader(sheet, i, cycle, headerRowStyle);
-		i = iExcelService.populateCycleCaseHeader(sheet, i, headerRowStyle);
+		i = iExcelService.populateHeader(sheet, i, cycle, headerRowStyle);
 		Iterator<Map.Entry<Long, List<TestCycleCaseDTO>>> iterator = cycleCaseMap.entrySet().iterator();
 		if (log.isDebugEnabled()) {
 			log.debug("构建WorkBook开始，总共" + cycleCaseMap.values().size() + "条测试执行");
