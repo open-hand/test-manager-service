@@ -298,7 +298,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
     public void fixCycleData(Long projectId) {
-        sagaClient.startSaga("test-fix-data", new StartInstanceDTO(JSON.toJSONString(
+        sagaClient.startSaga("test-fix-cycle-data", new StartInstanceDTO(JSON.toJSONString(
                 new TestIssueFolderDTO(null,null,null,projectId,null,null)),
                 "", ""));
     }
