@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
+import java.util.List;
+
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
@@ -16,6 +18,12 @@ public class TestIssueFolderRelDTO {
 
     private Long objectVersionNumber;
 
+    private IssueInfosDTO issueInfosDTO;
+
+    private String folderName;
+
+    private List<TestCaseStepDTO> testCaseStepDTOS;
+
     public TestIssueFolderRelDTO() {
     }
 
@@ -25,6 +33,30 @@ public class TestIssueFolderRelDTO {
         this.projectId = projectId;
         this.issueId = issueId;
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public List<TestCaseStepDTO> getTestCaseStepDTOS() {
+        return testCaseStepDTOS;
+    }
+
+    public void setTestCaseStepDTOS(List<TestCaseStepDTO> testCaseStepDTOS) {
+        this.testCaseStepDTOS = testCaseStepDTOS;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public IssueInfosDTO getIssueInfosDTO() {
+        return issueInfosDTO;
+    }
+
+    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+        this.issueInfosDTO = issueInfosDTO;
     }
 
     public Long getId() {

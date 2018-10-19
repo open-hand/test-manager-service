@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.api.dto.*;
@@ -8,6 +9,7 @@ import io.choerodon.core.exception.CommonException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -115,6 +117,27 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(Long projectId) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<Page<ComponentForListDTO>> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO,
+                                                                     int page, int size, String orders) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueLabelDTO>> listIssueLabel(Long projectId) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(Long projectId, String typeCode) {
+        throw new CommonException(QUERY_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<IssueStatusDTO>> listStatusByProjectId(Long projectId) {
         throw new CommonException(QUERY_ERROR);
     }
 }

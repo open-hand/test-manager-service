@@ -64,4 +64,14 @@ public interface TestCaseService {
     Long queryProjectIdByVersionId(Long versionId);
 
     List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId);
+
+    List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds);
+
+    Page<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest);
+
+    List<IssueLabelDTO> listIssueLabel(Long projectId);
+
+    LookupTypeWithValuesDTO queryLookupValueByCode(Long projectId, String typeCode);
+
+    List<IssueStatusDTO> listStatusByProjectId(Long projectId);
 }
