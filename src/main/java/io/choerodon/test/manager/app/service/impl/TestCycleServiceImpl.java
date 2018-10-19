@@ -21,11 +21,8 @@ import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -148,9 +145,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
 
             Set<Long> newStepSet = compareStep(caseSteps, cycleSteps);
-            newStepSet.forEach(v -> {
-                testCycleCaseStepE.runOneStep(executeId, v, status);
-            });
+            newStepSet.forEach(v -> testCycleCaseStepE.runOneStep(executeId, v, status));
         }
     }
 
@@ -257,6 +252,38 @@ public class TestCycleServiceImpl implements TestCycleService {
         return root;
     }
 
+    @Override
+    public JSONArray getTestCycleCaseCountInVersion(Long versionId,Long projectId){
+        TestCycleE testCycleE=TestCycleEFactory.create();
+        testCycleE.setCycleCaseList(new ArrayList<>());
+        List<TestCycleE> list= iTestCycleService.queryCycleWithBar(new Long[]{versionId},null);
+        List<TestCycleE> allCycle=new ArrayList<>();
+        list.forEach(v->{
+            if(v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())){
+                allCycle.add(v);
+            }
+        });
+        testCycleE.countChildStatus(allCycle);
+        JSONArray root = new JSONArray();
+        if(!ObjectUtils.isEmpty(testCycleE.getCycleCaseList())) {
+            createCountColorJson(testCycleE.getCycleCaseList(), root,projectId);
+        }
+        return root;
+    }
+    private void createCountColorJson(Map<String,Object> cycle,JSONArray root,Long projectId){
+        TestStatusE statusE=TestStatusEFactory.create();
+        statusE.setProjectId(projectId);
+        statusE.setStatusType(TestStatusE.STATUS_TYPE_CASE);
+        Map<String,String> colorMap=statusE.queryAllUnderProject().stream().collect(Collectors.toMap(TestStatusE::getStatusColor,TestStatusE::getStatusName));
+        cycle.forEach((k,v)->{
+            JSONObject object=new JSONObject();
+            object.put("value",v);
+            object.put("name",colorMap.get(k));
+            object.put("color",k);
+            root.add(object);
+        });
+    }
+
     public void populateUsers(List<TestCycleDTO> dtos) {
         Long[] usersId = dtos.stream().map(TestCycleDTO::getCreatedBy).toArray(Long[]::new);
         Map<Long, UserDO> users = userService.query(usersId);
@@ -269,6 +296,8 @@ public class TestCycleServiceImpl implements TestCycleService {
             }
         });
     }
+
+
 
     @Override
     public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {

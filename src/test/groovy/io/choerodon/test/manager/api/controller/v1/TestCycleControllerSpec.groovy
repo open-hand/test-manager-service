@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1
 
+import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.agile.api.dto.ProductVersionPageDTO
@@ -227,6 +228,14 @@ class TestCycleControllerSpec extends Specification {
 
         expect:
         jsonObject2.isEmpty()
+    }
+
+    def "getTestCycleCaseCountInVersion()"(){
+        when:
+        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/count/color/in/version/{versionId}", JSONArray.class, projectId, versionId)
+        then:
+        entity.statusCode.is2xxSuccessful()
+
     }
 
     def "GetTestCycleVersion"() {

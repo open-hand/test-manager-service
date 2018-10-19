@@ -35,6 +35,8 @@ public interface TestCycleService {
 
 	JSONObject getTestCycle(Long versionId,Long assignedTo);
 
+	JSONArray getTestCycleCaseCountInVersion(Long versionId,Long projectId);
+
 	TestCycleDTO getOneCycle(Long cycleId);
 
 	ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
