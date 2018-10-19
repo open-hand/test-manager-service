@@ -83,6 +83,16 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycle"));
     }
 
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询project下的测试循环")
+    @GetMapping("/count/color/in/version/{versionId}")
+    ResponseEntity getTestCycleCaseCountInVersion(@PathVariable(name = "project_id") Long projectId,
+    @PathVariable(name = "versionId") Long versionId){
+        return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId,projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleCaseCountInVerson"));
+    }
+
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询项目下的计划")
