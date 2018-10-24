@@ -1,21 +1,17 @@
 package io.choerodon.test.manager.infra.feign;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -102,21 +98,23 @@ public interface TestCaseFeignClient {
 
     /**
      * 克隆issue
+     *
      * @param projectId
      * @param issueId
-     * @param copyConditionDTO  克隆条件
+     * @param copyConditionDTO 克隆条件
      * @return
      */
-	@PostMapping(value = "/v1/projects/{project_id}/issues/{issueId}/clone_issue")
-	ResponseEntity<IssueDTO> cloneIssueByIssueId(@ApiParam(value = "项目id", required = true)
-														@PathVariable(name = "project_id") Long projectId,
-														@ApiParam(value = "issueId", required = true)
-														@PathVariable(name = "issueId") Long issueId,
-														@ApiParam(value = "复制条件", required = true)
-														@RequestBody CopyConditionDTO copyConditionDTO);
+    @PostMapping(value = "/v1/projects/{project_id}/issues/{issueId}/clone_issue")
+    ResponseEntity<IssueDTO> cloneIssueByIssueId(@ApiParam(value = "项目id", required = true)
+                                                 @PathVariable(name = "project_id") Long projectId,
+                                                 @ApiParam(value = "issueId", required = true)
+                                                 @PathVariable(name = "issueId") Long issueId,
+                                                 @ApiParam(value = "复制条件", required = true)
+                                                 @RequestBody CopyConditionDTO copyConditionDTO);
 
     /**
-     *  将issues的version改为目标version
+     * 将issues的version改为目标version
+     *
      * @param projectId
      * @param versionId 目标version
      * @param issueIds
@@ -132,48 +130,45 @@ public interface TestCaseFeignClient {
 
     /**
      * 克隆issue并将他们的version改为目标version
+     *
      * @param projectId
      * @param versionId
      * @param issueIds
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/batch_clone_issue/{versionId}")
-    ResponseEntity<List<Long>> batchCloneIssue(@ApiParam(value = "项目id", required = true)
-                                                           @PathVariable(name = "project_id") Long projectId,
-                                                           @ApiParam(value = "versionId", required = true)
-                                                           @PathVariable(name = "versionId") Long versionId,
-                                                           @ApiParam(value = "issueIds", required = true)
-                                                           @RequestBody Long[] issueIds);
+    ResponseEntity<List<Long>> batchCloneIssue(@PathVariable(name = "project_id") Long projectId,
+                                               @PathVariable(name = "versionId") Long versionId,
+                                               @RequestBody Long[] issueIds);
 
     /**
-     *  批量删除issue
+     * 批量删除issue
+     *
      * @param projectId
      * @param issueIds
      * @return
      */
     @DeleteMapping(value = "/v1/projects/{project_id}/issues/to_version_test")
-    ResponseEntity batchDeleteIssues(@ApiParam(value = "项目id", required = true)
-                                            @PathVariable(name = "project_id") Long projectId,
-                                            @ApiParam(value = "issue id", required = true)
-                                            @RequestBody List<Long> issueIds);
+    ResponseEntity batchDeleteIssues(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestBody List<Long> issueIds);
 
     /**
-     *  批量替换issue的version
+     * 批量替换issue的version
+     *
      * @param projectId
      * @param versionId
      * @param issueIds
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/to_version_test/{versionId}")
-    ResponseEntity batchIssueToVersionTest(@ApiParam(value = "项目id", required = true)
-                                                  @PathVariable(name = "project_id") Long projectId,
-                                                  @ApiParam(value = "versionId", required = true)
-                                                  @PathVariable(name = "versionId") Long versionId,
-                                                  @ApiParam(value = "issue id", required = true)
-                                                  @RequestBody List<Long> issueIds);
+    ResponseEntity batchIssueToVersionTest(@PathVariable(name = "project_id") Long projectId,
+                                           @PathVariable(name = "versionId") Long versionId,
+                                           @RequestBody List<Long> issueIds);
 
 
-    /** 报表从issue到缺陷获取初始issue
+    /**
+     * 报表从issue到缺陷获取初始issue
+     *
      * @param page
      * @param size
      * @param orders
@@ -183,17 +178,43 @@ public interface TestCaseFeignClient {
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/filter_linked")
     ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-                                                                        @RequestParam(name = "orders") String orders,
-                                                                        @ApiParam(value = "项目id", required = true)
-                                                                        @PathVariable(name = "project_id") Long projectId,
-                                                                        @ApiParam(value = "查询参数", required = true)
-                                                                        @RequestBody(required = false) SearchDTO searchDTO) ;
+                                                                 @RequestParam(name = "orders") String orders,
+                                                                 @PathVariable(name = "project_id") Long projectId,
+                                                                 @RequestBody(required = false) SearchDTO searchDTO);
+
     /**
      * 得到所有projectId各自的issueIds
+     *
      * @param projectId
      * @return
      */
     @GetMapping("/v1/projects/{project_id}/issues/list_issues_by_project")
-    public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(@ApiParam(value = "项目id", required = true)
-                                                                              @PathVariable(name = "project_id") Long projectId);
+    public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(@PathVariable(name = "project_id") Long projectId);
+
+    /**
+     * 得到所有projectId各自的component
+     *
+     * @param projectId
+     * @return
+     */
+    @PostMapping(value = "/v1/projects/{project_id}/component/query_all")
+    ResponseEntity<Page<ComponentForListDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId,
+                                                              @RequestParam(name = "componentId",required = false) Long componentId,
+                                                              @RequestParam(required = false, name = "no_issue_test", defaultValue = "false") Boolean noIssueTest,
+                                                              @RequestBody(required = false) SearchDTO searchDTO,
+                                                              @RequestParam(name = "page") int page,
+                                                              @RequestParam(name = "size") int size,
+                                                              @RequestParam(name = "orders") String orders);
+
+
+    @GetMapping(value = "/v1/projects/{project_id}/issue_labels")
+    ResponseEntity<List<IssueLabelDTO>> listIssueLabel(@PathVariable(name = "project_id") Long projectId);
+
+    @GetMapping(value = "/v1/projects/{project_id}/lookup_values/{typeCode}")
+    ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(@PathVariable(name = "project_id") Long projectId,
+                                                                   @PathVariable(name = "typeCode") String typeCode);
+
+    @GetMapping(value = "/v1/projects/{project_id}/issue_status/list")
+    public ResponseEntity<List<IssueStatusDTO>> listStatusByProjectId(@PathVariable(name = "project_id") Long projectId);
+
 }

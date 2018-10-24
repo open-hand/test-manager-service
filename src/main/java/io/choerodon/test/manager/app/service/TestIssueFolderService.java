@@ -21,9 +21,9 @@ public interface TestIssueFolderService {
 
     Long getDefaultFolderId(Long projectId, Long versionId);
 
-    TestIssueFolderDTO copyFolder(Long projectId, Long folderId, Long versionId);
+    void copyFolder(Long projectId, Long versionId,Long[] folderIds);
 
-    TestIssueFolderDTO moveFolder(Long projectId, TestIssueFolderDTO testIssueFolderDTO);
+    void moveFolder(Long projectId, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
     List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId);
 }

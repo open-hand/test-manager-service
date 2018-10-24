@@ -3,13 +3,14 @@ package io.choerodon.test.manager.infra.common.utils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.Optional;
 
 public class ExcelUtil {
 
     public enum Mode {
-        SXSSF("SXSSF"), HSSF("HSSF");
+        SXSSF("SXSSF"), HSSF("HSSF"),XSSF("XSSF");
         private String value;
 
         Mode(String value) {
@@ -69,8 +70,11 @@ public class ExcelUtil {
             case SXSSF:
                 workbook = new SXSSFWorkbook();
                 break;
+            case XSSF:
+                workbook = new XSSFWorkbook();
+                break;
             default:
-                workbook = new HSSFWorkbook();
+                workbook = new SXSSFWorkbook();
         }
         return workbook;
     }

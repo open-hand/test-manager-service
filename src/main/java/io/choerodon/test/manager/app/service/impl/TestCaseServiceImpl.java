@@ -1,13 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -23,6 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -135,6 +135,32 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseFeignClient.listIssueLinkByBatch(projectId, issueId).getBody();
     }
 
+    public List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds){
+        return testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody();
+    }
+
+    @Override
+    public Page<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest) {
+        return testCaseFeignClient.listByProjectId(projectId,null,null,new SearchDTO(),
+                pageRequest.getPage(),pageRequest.getSize(),pageRequest.getSort().toString()).getBody();
+    }
+
+    @Override
+    public List<IssueLabelDTO> listIssueLabel(Long projectId) {
+        return testCaseFeignClient.listIssueLabel(projectId).getBody();
+    }
+
+    @Override
+    public LookupTypeWithValuesDTO queryLookupValueByCode(Long projectId, String typeCode) {
+        return testCaseFeignClient.queryLookupValueByCode(projectId,typeCode).getBody();
+    }
+
+
+    @Override
+    public List<IssueStatusDTO> listStatusByProjectId(Long projectId) {
+        return testCaseFeignClient.listStatusByProjectId(projectId).getBody();
+    }
+
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
@@ -143,8 +169,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<IssueLinkDTO> getLinkIssueFromTestToIssue(Long projectId, List<Long> issueId) {
-        return listIssueLinkByIssueId(projectId, issueId).stream()
-                .collect(Collectors.toList());
+        return listIssueLinkByIssueId(projectId, issueId).stream().collect(Collectors.toList());
     }
 
     @Override
@@ -218,7 +243,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         return productionVersionClient.queryProjectIdByVersionId(99999L, versionId).getBody();
     }
 
-    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+    ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
         return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);

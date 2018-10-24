@@ -17,11 +17,12 @@ public interface IExcelService<T,R> {
 
 	int populateHeader(Sheet sheet, int rowNum, T cycle, CellStyle rowStyle);
 
+	void populateCellStyle(CellStyle headerRowStyle,CellStyle caseStyle1,CellStyle caseStyle2);
+
 	void populateSheetStyle(Sheet sheet);
 
 	int populateBody(Sheet sheet, int column, List<R> cycleCases, Queue<CellStyle> rowStyles);
 
-	Workbook exportWorkBook(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle);
+	Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle,Workbook workbook);
 
-	Workbook getWorkBook(ExcelUtil.Mode mode);
 }

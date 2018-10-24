@@ -78,21 +78,19 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("复制文件夹")
     @PutMapping("/copy")
-    public ResponseEntity<TestIssueFolderDTO> copyFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestParam(name = "folderId") Long folderId,
-                                     @RequestParam(name = "versionId") Long versionId) {
-        return Optional.ofNullable(testIssueFolderService.copyFolder(projectId,versionId,folderId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.copy"));
+    public ResponseEntity copyFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestParam(name = "versionId") Long versionId,
+                                     @RequestBody Long[] folderIds) {
+        testIssueFolderService.copyFolder(projectId,versionId,folderIds);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
-    public ResponseEntity<TestIssueFolderDTO> moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestBody TestIssueFolderDTO testIssueFolderDTO){
-        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId,testIssueFolderDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
+    public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestBody List<TestIssueFolderDTO> testIssueFolderDTOS){
+        testIssueFolderService.moveFolder(projectId,testIssueFolderDTOS);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

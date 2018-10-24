@@ -26,7 +26,17 @@ public class TestCaseStepDTO {
 
     private String nextRank;
 
+    private IssueInfosDTO issueInfosDTO;
+
 	private List<TestCycleCaseAttachmentRelDO> attachments;
+
+    public IssueInfosDTO getIssueInfosDTO() {
+        return issueInfosDTO;
+    }
+
+    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+        this.issueInfosDTO = issueInfosDTO;
+    }
 
     public Long getStepId() {
         return stepId;

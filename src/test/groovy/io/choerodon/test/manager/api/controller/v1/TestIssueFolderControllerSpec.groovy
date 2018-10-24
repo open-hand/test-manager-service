@@ -15,6 +15,7 @@ import io.choerodon.test.manager.infra.exception.IssueFolderException
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.apache.commons.lang.StringUtils
+import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -220,14 +221,17 @@ class TestIssueFolderControllerSpec extends Specification {
         testIssueFolderDTO.setVersionId(2L)
         testIssueFolderDTO.setProjectId(projectId)
         testIssueFolderDTO.setObjectVersionNumber(objectVersionNumbers[1])
+        List<TestIssueFolderDTO> testIssueFolderDTOS = Lists.newArrayList(testIssueFolderDTO)
 
         TestIssueFolderDTO testIssueFolderException = new TestIssueFolderDTO()
         testIssueFolderException.setFolderId(999L)
         testIssueFolderException.setName("修改名字异常")
         testIssueFolderException.setType("temp")
+        List<TestIssueFolderDTO> testIssueFolderDTOSException = Lists.newArrayList(testIssueFolderException)
+
 
         when: '向查询issueFolder的移动接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/issueFolder/move', testIssueFolderDTO, projectId)
+        restTemplate.put('/v1/projects/{project_id}/issueFolder/move', testIssueFolderDTOS, projectId)
 
         then: '返回值'
         1 * testCaseService.batchIssueToVersionTest(_, _, _)
@@ -241,7 +245,7 @@ class TestIssueFolderControllerSpec extends Specification {
         changedIssueFolder.objectVersionNumber == 3L
 
         when: '向testIssueFolder的修改接口发请求'
-        HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(testIssueFolderException)
+        HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(testIssueFolderDTOSException)
         def resultFailure = restTemplate.exchange('/v1/projects/{project_id}/issueFolder/move',
                 HttpMethod.PUT,
                 jsonObjectHttpEntity,
@@ -256,6 +260,9 @@ class TestIssueFolderControllerSpec extends Specification {
 
     def "CopyFolder"() {
         given:
+        Long[] folderIds = new Long[1]
+        folderIds[0] = foldersId[0]
+
         TestIssueFolderDO testIssueFolderDO = new TestIssueFolderDO()
         testIssueFolderDO.setName("修改名字")
         testIssueFolderDO.setVersionId(3L)
@@ -266,7 +273,7 @@ class TestIssueFolderControllerSpec extends Specification {
         issuesId.add(1L)
 
         when: '向查询issueFolder的复制接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/issueFolder/copy?folderId={folderId}&versionId={versionId}', null, projectId, foldersId[0], 3L)
+        restTemplate.put('/v1/projects/{project_id}/issueFolder/copy?versionId={versionId}', folderIds, projectId, 3L)
 
         then: '返回值'
         1 * testCaseService.batchCloneIssue(_, _, _) >> issuesId
