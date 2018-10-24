@@ -50,6 +50,8 @@ public class ExcelServiceImpl implements ExcelService {
     private static final String FILENAME = "cheorodon";
     private static final String EXPORTSUCCESSINFO = "导出测试详情：创建workbook成功，类型:";
 
+    private static final String LOOKUPSHEETNAME = "Sheet0";
+
 
     Log log = LogFactory.getLog(this.getClass());
     @Autowired
@@ -147,10 +149,17 @@ public class ExcelServiceImpl implements ExcelService {
 
         Workbook needWorkbook = null;
 
+        Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+
         for (Long versionId : versionsId) {
             folderE.setVersionId(versionId);
             needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), testCaseService.getProjectInfo(projectId).getName(),
-                    ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+                    ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
+        }
+        if(!ObjectUtils.isEmpty(needWorkbook)) {
+            needWorkbook.setSheetHidden(0, true);
+            needWorkbook.setActiveSheet(1);
+            needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         }
         downloadWorkBook(needWorkbook != null ? needWorkbook : workbook, response);
     }
@@ -177,7 +186,12 @@ public class ExcelServiceImpl implements ExcelService {
             log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         }
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
-        Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
+
+        needWorkbook.setSheetHidden(0, true);
+        needWorkbook.setActiveSheet(1);
+        needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         downloadWorkBook(needWorkbook, response);
     }
 
@@ -197,7 +211,12 @@ public class ExcelServiceImpl implements ExcelService {
             log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         }
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
-        Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), testCaseService.getProjectInfo(projectId).getName(), ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
+
+        needWorkbook.setSheetHidden(0, true);
+        needWorkbook.setActiveSheet(1);
+        needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         downloadWorkBook(needWorkbook, response);
     }
 
@@ -205,13 +224,34 @@ public class ExcelServiceImpl implements ExcelService {
     public void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(response, request, FILENAME);
 
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+        testIssueFolderDTO.setProjectId(projectId);
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         if (log.isDebugEnabled()) {
             log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         }
 
+        Map<Long, List<TestIssueFolderRelDTO>> map = new HashMap<>();
+        List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = new ArrayList<>();
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
+
+        issueInfosDTO.setAssigneeId(1L);
+        issueInfosDTO.setPriorityCode("1");
+        testIssueFolderRelDTO.setFolderId(1L);
+
+        testIssueFolderRelDTO.setIssueInfosDTO(issueInfosDTO);
+        testIssueFolderRelDTOS.add(testIssueFolderRelDTO);
+        map.put(1L,testIssueFolderRelDTOS);
+
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
-        Workbook needWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), "模板项目", new TestIssueFolderDTO(), workbook);
+        Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), null, testIssueFolderDTO, workbook);
+        Workbook needWorkbook = service.exportWorkBookWithOneSheet(map, "模板项目", testIssueFolderDTO, lookupWorkbook);
+        needWorkbook.getSheetAt(1).setColumnHidden(1,true);
+        needWorkbook.getSheetAt(1).setColumnHidden(7,true);
+        needWorkbook.setSheetHidden(0, true);
+        needWorkbook.setActiveSheet(1);
+        needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         downloadWorkBook(needWorkbook, response);
     }
 
@@ -235,6 +275,11 @@ public class ExcelServiceImpl implements ExcelService {
 
         Map<Long, List<TestIssueFolderRelDTO>> folderRelMap = new HashMap<>();
 
+        TestCaseStepE caseStepE = TestCaseStepEFactory.create();
+
+        Map<Long, List<TestCaseStepDTO>> caseStepMap = Optional.ofNullable(ConvertHelper.convertList(caseStepE.querySelf(), TestCaseStepDTO.class))
+                .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+
         for (TestIssueFolderE folder : folders) {
             TestIssueFolderRelE folderRelE = TestIssueFolderRelEFactory.create();
             folderRelE.setFolderId(folder.getFolderId());
@@ -244,30 +289,16 @@ public class ExcelServiceImpl implements ExcelService {
 
             List<Long> issueIds = folderRels.stream().map(TestIssueFolderRelE::getIssueId).collect(Collectors.toList());
 
-            for(int j =0; j < issueIds.size()/400;j++) {
-                Map<Long, IssueInfosDTO> issueInfosMap = new HashMap<>();
+            Map<Long, IssueInfosDTO> issueInfosMap = batchGetIssueInfo(issueIds,folderE);
 
-                Long[] toSendIds = issueIds.subList(j*400,(j+1)*400-1).toArray(new Long[400]);
+            for (TestIssueFolderRelE folderRel : folderRels) {
+                TestIssueFolderRelDTO needRel = ConvertHelper.convert(folderRel, TestIssueFolderRelDTO.class);
+                needRel.setIssueInfosDTO(issueInfosMap.get(folderRel.getIssueId()));
+                needRel.setFolderName(folder.getName());
 
-                if (!ObjectUtils.isEmpty(issueIds)) {
-                    log.debug("开始分批（400一批）获取issue信息，当前第："+ j+1 +"批");
-                    issueInfosMap = testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true);
-                }
+                needRel.setTestCaseStepDTOS(caseStepMap.get(folderRel.getIssueId()));
 
-                TestCaseStepE caseStepE = TestCaseStepEFactory.create();
-
-                Map<Long, List<TestCaseStepDTO>> caseStepMap = Optional.ofNullable(ConvertHelper.convertList(caseStepE.querySelf(), TestCaseStepDTO.class))
-                        .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
-
-                for (TestIssueFolderRelE folderRel : folderRels) {
-                    TestIssueFolderRelDTO needRel = ConvertHelper.convert(folderRel, TestIssueFolderRelDTO.class);
-                    needRel.setIssueInfosDTO(issueInfosMap.get(folderRel.getIssueId()));
-                    needRel.setFolderName(folder.getName());
-
-                    needRel.setTestCaseStepDTOS(caseStepMap.get(folderRel.getIssueId()));
-
-                    folderRelDTOS.add(needRel);
-                }
+                folderRelDTOS.add(needRel);
             }
 
             if (folderE.getVersionId() == null && folderE.getFolderId() != null) {
@@ -276,6 +307,26 @@ public class ExcelServiceImpl implements ExcelService {
             folderRelMap.put(folder.getFolderId(), folderRelDTOS);
         }
         return folderRelMap;
+    }
+
+    private Map<Long, IssueInfosDTO> batchGetIssueInfo(List<Long> issueIds,TestIssueFolderE folderE){
+        Map<Long, IssueInfosDTO> issueInfosMap = new HashMap<>();
+
+        int flag = issueIds.size() / 400;
+        for (int j = 0; j <= flag; j++) {
+            Long[] toSendIds;
+            if (issueIds.size() > 400 && j != flag) {
+                toSendIds = issueIds.subList(j * 400, (j + 1) * 400).toArray(new Long[400]);
+            } else {
+                toSendIds = issueIds.subList(j * 400, issueIds.size()).toArray(new Long[400]);
+            }
+
+            if (!ObjectUtils.isEmpty(issueIds)) {
+                log.debug("开始分批获取issue信息（最大400一批），当前第" + (j + 1) + "批");
+                issueInfosMap.putAll(testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true));
+            }
+        }
+        return issueInfosMap;
     }
 
 }

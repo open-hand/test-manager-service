@@ -44,16 +44,16 @@ class ICycleCaseExcelServiceImplSpec extends Specification {
 
     }
 
-    def "getWorkBook"() {
-        when:
-        Workbook workbook=serviceImpl.getWorkBook(ExcelUtil.Mode.SXSSF)
-        then:
-        workbook instanceof SXSSFWorkbook
-        when:
-        Workbook workbook1=serviceImpl.getWorkBook(ExcelUtil.Mode.HSSF)
-        then:
-        workbook1 instanceof HSSFWorkbook
-    }
+//    def "getWorkBook"() {
+//        when:
+//        Workbook workbook=serviceImpl.getWorkBook(ExcelUtil.Mode.SXSSF)
+//        then:
+//        workbook instanceof SXSSFWorkbook
+//        when:
+//        Workbook workbook1=serviceImpl.getWorkBook(ExcelUtil.Mode.HSSF)
+//        then:
+//        workbook1 instanceof HSSFWorkbook
+//    }
 
 
     def "PopulateCycleCaseStep"() {

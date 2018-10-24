@@ -17,24 +17,14 @@ public class ExcelLookupCaseDTO {
 
     private List<TestIssueFolderDTO> testIssueFolderDTOS;
 
-    private List<IssueLabelDTO> issueLabelDTOS;
-
-    private List<ComponentForListDTO>  componentForListDTOS;
-
     private List<IssueStatusDTO> issueStatusDTOS;
 
-    public ExcelLookupCaseDTO(List<LookupValueDTO> lookupValueDTOS,
-                              List<UserDTO> userDTOS, List<ProductVersionDTO> productVersionDTOS,
-                              List<TestIssueFolderDTO> testIssueFolderDTOS,
-                              List<IssueLabelDTO> issueLabelDTOS,
-                              List<ComponentForListDTO> componentForListDTOS,
-                              List<IssueStatusDTO> issueStatusDTOS) {
+    public ExcelLookupCaseDTO(List<LookupValueDTO> lookupValueDTOS, List<UserDTO> userDTOS, List<ProductVersionDTO> productVersionDTOS,
+                              List<TestIssueFolderDTO> testIssueFolderDTOS, List<IssueStatusDTO> issueStatusDTOS) {
         this.lookupValueDTOS = lookupValueDTOS;
         this.userDTOS = userDTOS;
         this.productVersionDTOS = productVersionDTOS;
         this.testIssueFolderDTOS = testIssueFolderDTOS;
-        this.issueLabelDTOS = issueLabelDTOS;
-        this.componentForListDTOS = componentForListDTOS;
         this.issueStatusDTOS = issueStatusDTOS;
     }
 
@@ -68,22 +58,6 @@ public class ExcelLookupCaseDTO {
 
     public void setTestIssueFolderDTOS(List<TestIssueFolderDTO> testIssueFolderDTOS) {
         this.testIssueFolderDTOS = testIssueFolderDTOS;
-    }
-
-    public List<IssueLabelDTO> getIssueLabelDTOS() {
-        return issueLabelDTOS;
-    }
-
-    public void setIssueLabelDTOS(List<IssueLabelDTO> issueLabelDTOS) {
-        this.issueLabelDTOS = issueLabelDTOS;
-    }
-
-    public List<ComponentForListDTO> getComponentForListDTOS() {
-        return componentForListDTOS;
-    }
-
-    public void setComponentForListDTOS(List<ComponentForListDTO> componentForListDTOS) {
-        this.componentForListDTOS = componentForListDTOS;
     }
 
     public List<IssueStatusDTO> getIssueStatusDTOS() {

@@ -42,8 +42,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     TestCaseService testCaseService;
 
     @Override
-    public List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId){
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null,null,versionId,projectId,null,null);
+    public List<TestIssueFolderDTO> queryByParameter(Long projectId, Long versionId) {
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, null, null);
         return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }
@@ -57,7 +57,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(Long projectId,Long folderId) {
+    public void delete(Long projectId, Long folderId) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setFolderId(folderId);
 
@@ -69,10 +69,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
         List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO).stream()
                 .map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-        testIssueFolderRelService.delete(projectId,issuesId);
+        testIssueFolderRelService.delete(projectId, issuesId);
         iTestIssueFolderService.delete(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class));
-        testCycleService.delete(testCycleDTO,projectId);
+        testCycleService.delete(testCycleDTO, projectId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -116,57 +116,58 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     /**
-     *
      * @param projectId
      * @param versionId 要复制到的目标version
-     * @param folderId  要被复制的源folder
+     * @param folderIds  要被复制的源folder
      * @return 被复制成功的目标folder
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderDTO copyFolder(Long projectId, Long versionId, Long folderId) {
-        //通过folder查找
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setFolderId(folderId);
-        TestIssueFolderDTO resTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.queryByPrimaryKey(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        //创建文件夹
-        resTestIssueFolderDTO.setFolderId(null);
-        resTestIssueFolderDTO.setVersionId(versionId);
-        TestIssueFolderDTO returnTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
-                .convert(resTestIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        //复制issue到目的文件夹
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, null, null, null);
-        List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
-        List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
-        for (TestIssueFolderRelDTO resTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
-            IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
-            issueInfosDTO.setIssueId(resTestIssueFolderRelDTO.getIssueId());
-            issueInfosDTOS.add(issueInfosDTO);
+    public void copyFolder(Long projectId, Long versionId, Long[] folderIds) {
+        for (Long folderId : folderIds) {
+            //通过folder查找
+            TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+            testIssueFolderDTO.setFolderId(folderId);
+            TestIssueFolderDTO resTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.queryByPrimaryKey(ConvertHelper
+                    .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+            //创建文件夹
+            resTestIssueFolderDTO.setFolderId(null);
+            resTestIssueFolderDTO.setVersionId(versionId);
+            TestIssueFolderDTO returnTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
+                    .convert(resTestIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+            //复制issue到目的文件夹
+            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, null, null, null);
+            List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
+            List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
+            for (TestIssueFolderRelDTO resTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
+                IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
+                issueInfosDTO.setIssueId(resTestIssueFolderRelDTO.getIssueId());
+                issueInfosDTOS.add(issueInfosDTO);
+            }
+            testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderDTO.getFolderId(), issueInfosDTOS);
         }
-        testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderDTO.getFolderId(), issueInfosDTOS);
-        return returnTestIssueFolderDTO;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderDTO moveFolder(Long projectId, TestIssueFolderDTO testIssueFolderDTO) {
-        //查找folder下的issues
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
-        testIssueFolderRelDTO.setFolderId(testIssueFolderDTO.getFolderId());
-        List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
-        List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
-        for (TestIssueFolderRelDTO relTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
-            IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
-            issueInfosDTO.setIssueId(relTestIssueFolderRelDTO.getIssueId());
-            issueInfosDTOS.add(issueInfosDTO);
+    public void moveFolder(Long projectId, List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        for (TestIssueFolderDTO testIssueFolderDTO : testIssueFolderDTOS) {
+            //查找folder下的issues
+            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+            testIssueFolderRelDTO.setFolderId(testIssueFolderDTO.getFolderId());
+            List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
+            List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
+            for (TestIssueFolderRelDTO relTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
+                IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
+                issueInfosDTO.setIssueId(relTestIssueFolderRelDTO.getIssueId());
+                issueInfosDTOS.add(issueInfosDTO);
+            }
+            //批量改变issue的version并修改对应关联中的version
+            List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
+            TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
+            testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelDTO, issuesId);
+            //更新folder信息
+            iTestIssueFolderService.updateWithNoType(ConvertHelper.convert(testIssueFolderDTO, TestIssueFolderE.class));
         }
-        //批量改变issue的version并修改对应关联中的version
-        List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-        TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
-        testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelDTO, issuesId);
-        //更新folder信息
-        return ConvertHelper.convert(iTestIssueFolderService.updateWithNoType(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
     }
 }
