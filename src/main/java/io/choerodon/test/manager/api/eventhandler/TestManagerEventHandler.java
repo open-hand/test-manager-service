@@ -2,13 +2,13 @@ package io.choerodon.test.manager.api.eventhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
-import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.*;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
@@ -18,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -94,9 +91,7 @@ public class TestManagerEventHandler {
 		VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
 		loggerInfo(versionEvent);
 		List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(),versionEvent.getVersionId());
-		testIssueFolderDTOS.forEach(v->{
-			testIssueFolderService.delete(versionEvent.getProjectId(),v.getFolderId());
-		});
+		testIssueFolderDTOS.forEach(v-> testIssueFolderService.delete(versionEvent.getProjectId(),v.getFolderId()));
 		return versionEvent;
 	}
 
