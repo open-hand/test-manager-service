@@ -148,7 +148,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         //模板默认加四百行lookup公式
         if (folderRelDTOS.size() == 1 && folderRelDTOS.get(0).getIssueInfosDTO().getIssueId() == null) {
             sheet.setColumnHidden(2, true);
-            sheet.setColumnHidden(7, true);
+            sheet.setColumnHidden(6, true);
             column += addLookupFormula(sheet, column, rowStyles);
         }
         sheet.setColumnHidden(13, true);
