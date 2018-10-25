@@ -69,7 +69,7 @@ class TestCaseControllerTest extends Specification {
 
         then:
         1 * testCaseService.getVersionIds(_) >> versionIds
-        4 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
         0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
@@ -96,7 +96,7 @@ class TestCaseControllerTest extends Specification {
         restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/version?versionId={versionId}", null, 1L,1L)
 
         then:
-        2 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
         0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
@@ -123,7 +123,7 @@ class TestCaseControllerTest extends Specification {
         restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/folder?folderId={folderId}", null, 1L,1L)
 
         then:
-        2 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
         0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
@@ -152,6 +152,7 @@ class TestCaseControllerTest extends Specification {
         restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/template", null,1L)
 
         then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
