@@ -6,7 +6,6 @@ import io.choerodon.agile.api.dto.LookupValueDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.ExcelLookupCaseDTO;
@@ -67,7 +66,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private static final String USERS = "users";
 
     private enum CaseHeader {
-        COLUMN1("文件夹"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
+        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
         COLUMN6("经办人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
         COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)"),COLUMN14("导入出错信息");
         private String chinese;
@@ -190,16 +189,18 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
             Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
-
-            ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
-
-            ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
-
-            ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
         }
+
+        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
+
+        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
+
+        ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
+
+        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 13, ExcelUtil.CellType.TEXT, v));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, folderRel.getTestCaseStepDTOS(), rowStyles) + 1;
     }
