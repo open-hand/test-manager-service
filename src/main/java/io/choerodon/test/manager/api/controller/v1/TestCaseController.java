@@ -86,7 +86,7 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
-    public ResponseEntity<String> downLoadByProject(@PathVariable(name = "project_id") Long projectId,
+    public String downLoadByProject(@PathVariable(name = "project_id") Long projectId,
                          HttpServletRequest request,
                          HttpServletResponse response) {
         return excelService.exportCaseByProject(projectId, request, response);
@@ -95,7 +95,7 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
-    public ResponseEntity<String> downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
+    public String downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "versionId") Long versionId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
@@ -105,7 +105,7 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
-    public ResponseEntity<String> downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
+    public String downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "folderId") Long folderId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {

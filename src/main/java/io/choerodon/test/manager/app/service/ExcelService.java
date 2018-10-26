@@ -12,12 +12,12 @@ public interface ExcelService {
 	void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
 													 HttpServletResponse response);
 
-	ResponseEntity<String> exportCaseByProject(Long projectId, HttpServletRequest request,
+	String exportCaseByProject(Long projectId, HttpServletRequest request,
 								   HttpServletResponse response);
 
-	ResponseEntity<String> exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response);
+	String exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response);
 
-	ResponseEntity<String> exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response);
+	String exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response);
 
 	void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response);
 }

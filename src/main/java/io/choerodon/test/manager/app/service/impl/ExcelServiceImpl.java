@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,6 +53,7 @@ public class ExcelServiceImpl implements ExcelService {
     private static final String EXPORTSUCCESSINFO = "导出测试详情：创建workbook成功，类型:";
 
     private static final String LOOKUPSHEETNAME = "Sheet0";
+    private static final String FILESUFFIX = ".xlsx";
 
 
     Log log = LogFactory.getLog(this.getClass());
@@ -79,23 +79,27 @@ public class ExcelServiceImpl implements ExcelService {
      * @param request
      * @throws UnsupportedEncodingException
      **/
-    private void setExcelHeader(HttpServletRequest request,HttpServletResponse response) {
-        String charsetName = "UTF-8";
-        if (request.getHeader("User-Agent").contains("Firefox")) {
-            charsetName = "GB2312";
-        }
-
+    private void setExcelHeaderByStream(HttpServletRequest request,HttpServletResponse response) {
+        String charsetName = setExcelHeader(request);
         response.reset();
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
         try {
             response.setHeader("Content-Disposition", "attachment;filename="
-                    + new String((".xlsx").getBytes(charsetName),
+                    + new String((FILESUFFIX).getBytes(charsetName),
                     "ISO-8859-1"));
         } catch (UnsupportedEncodingException e1) {
             throw new CommonException(EXPORT_ERROR_SET_HEADER, e1);
         }
 
+    }
+
+    private String setExcelHeader(HttpServletRequest request) {
+        String charsetName = "UTF-8";
+        if (request.getHeader("User-Agent").contains("Firefox")) {
+            charsetName = "GB2312";
+        }
+        return charsetName;
     }
 
 
@@ -108,7 +112,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Override
     public void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
                                           HttpServletResponse response) {
-        setExcelHeader(request,response);
+        setExcelHeaderByStream(request,response);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
         TestCycleE cycleE = TestCycleEFactory.create();
         cycleE.setCycleId(cycleId);
@@ -136,8 +140,8 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    public ResponseEntity<String> exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
-        setExcelHeader(request,response);
+    public String exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
+        setExcelHeader(request);
 
         TestIssueFolderE folderE = TestIssueFolderEFactory.create();
         folderE.setProjectId(projectId);
@@ -166,7 +170,7 @@ public class ExcelServiceImpl implements ExcelService {
             needWorkbook.setActiveSheet(1);
             needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         }
-        String fileName = projectName + LocalDateTime.now();
+        String fileName = projectName + FILESUFFIX;
         return downloadWorkBook(needWorkbook != null ? needWorkbook : workbook,fileName);
     }
 
@@ -179,8 +183,8 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    public ResponseEntity<String> exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
-        setExcelHeader(request,response);
+    public String exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
+        setExcelHeader(request);
 
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
@@ -201,15 +205,15 @@ public class ExcelServiceImpl implements ExcelService {
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(1).substring(9) + LocalDateTime.now();
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + FILESUFFIX;
         return downloadWorkBook(needWorkbook,fileName);
     }
 
 
     @Override
     @Async
-    public ResponseEntity<String> exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
-        setExcelHeader(request,response);
+    public String exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
+        setExcelHeader(request);
 
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
 
@@ -225,20 +229,19 @@ public class ExcelServiceImpl implements ExcelService {
         }
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
 
-        Map<Long,List<TestIssueFolderRelDTO>> relMap = populateFolder(folderE);
         Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
-        Workbook needWorkbook = service.exportWorkBookWithOneSheet(relMap, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
+        Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
 
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(1).substring(9) + "-" + relMap.get(folderId).get(0).getFolderName() + LocalDateTime.now();
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + "-" + folderE.queryByPrimaryKey(folderId).getName() + FILESUFFIX;
         return downloadWorkBook(needWorkbook,fileName);
     }
 
     @Override
     public void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response) {
-        setExcelHeader(request,response);
+        setExcelHeaderByStream(request,response);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
@@ -285,12 +288,13 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    private ResponseEntity<String> downloadWorkBook(Workbook workbook, String fileName) {
+    private String downloadWorkBook(Workbook workbook, String fileName) {
         try(ByteArrayOutputStream os = new ByteArrayOutputStream();){
             workbook.write(os);
             byte[] content = os.toByteArray();
-            MultipartFile file = new MultipartExcel(fileName,content);
-            return fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+            MultipartFile file = new MultipartExcel("file",fileName, "application/vnd.ms-excel",content);
+            ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+            return res.getBody();
         } catch (IOException e) {
             throw new CommonException(EXPORT_ERROR, e);
         } finally {
@@ -317,7 +321,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private Map<Long, List<TestIssueFolderRelDTO>> populateFolder(TestIssueFolderE folderE) {
-        List<TestIssueFolderE> folders = Optional.ofNullable(folderE.queryAllUnderProject()).orElseGet(ArrayList::new);
+         List<TestIssueFolderE> folders = Optional.ofNullable(folderE.queryAllUnderProject()).orElseGet(ArrayList::new);
 
         Map<Long, List<TestIssueFolderRelDTO>> folderRelMap = new HashMap<>();
 

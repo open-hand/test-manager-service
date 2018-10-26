@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.choerodon.agile.api.dto.IssueCommonDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
