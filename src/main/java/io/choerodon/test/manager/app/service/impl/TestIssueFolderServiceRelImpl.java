@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.agile.api.dto.CopyConditionDTO;
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
@@ -13,7 +12,6 @@ import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

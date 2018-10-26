@@ -31,11 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,6 +53,7 @@ public class ExcelServiceImpl implements ExcelService {
     private static final String EXPORTSUCCESSINFO = "导出测试详情：创建workbook成功，类型:";
 
     private static final String LOOKUPSHEETNAME = "Sheet0";
+    private static final String FILESUFFIX = ".xlsx";
 
 
     Log log = LogFactory.getLog(this.getClass());
@@ -87,7 +86,7 @@ public class ExcelServiceImpl implements ExcelService {
         response.setCharacterEncoding("utf-8");
         try {
             response.setHeader("Content-Disposition", "attachment;filename="
-                    + new String((".xlsx").getBytes(charsetName),
+                    + new String((FILESUFFIX).getBytes(charsetName),
                     "ISO-8859-1"));
         } catch (UnsupportedEncodingException e1) {
             throw new CommonException(EXPORT_ERROR_SET_HEADER, e1);
@@ -171,7 +170,7 @@ public class ExcelServiceImpl implements ExcelService {
             needWorkbook.setActiveSheet(1);
             needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         }
-        String fileName = projectName + ".xlsx";
+        String fileName = projectName + FILESUFFIX;
         return downloadWorkBook(needWorkbook != null ? needWorkbook : workbook,fileName);
     }
 
@@ -206,7 +205,7 @@ public class ExcelServiceImpl implements ExcelService {
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + ".xlsx";
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + FILESUFFIX;
         return downloadWorkBook(needWorkbook,fileName);
     }
 
@@ -236,7 +235,7 @@ public class ExcelServiceImpl implements ExcelService {
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + "-" + folderE.queryByPrimaryKey(folderId).getName() + ".xlsx";
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + "-" + folderE.queryByPrimaryKey(folderId).getName() + FILESUFFIX;
         return downloadWorkBook(needWorkbook,fileName);
     }
 
