@@ -6,7 +6,6 @@ import io.choerodon.agile.api.dto.LookupValueDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.ExcelLookupCaseDTO;
@@ -67,9 +66,9 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private static final String USERS = "users";
 
     private enum CaseHeader {
-        COLUMN1("文件夹"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
+        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
         COLUMN6("经办人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
-        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)");
+        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)"),COLUMN14("导入出错信息");
         private String chinese;
 
         CaseHeader(String chinese) {
@@ -97,7 +96,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
             sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet), "version_" + versionInfo.get(folder.getVersionId()).getName());
         }
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
-        ExcelUtil.createCell(row1, 13, ExcelUtil.CellType.TEXT, versionJson);
+        ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
         return 2;
     }
 
@@ -111,11 +110,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         if (sheet.getWorkbook().getNumberOfSheets() == 1) {
             log.debug("开始准备lookup sheet页数据...");
             prepareLookupData(folder);
-            try {
-                setLookupData(sheet, rowNum, rowStyle);
-            } catch (NullPointerException e) {
-                throw new CommonException("缺失导出信息", e);
-            }
+            setLookupData(sheet, rowNum, rowStyle);
         } else {
             setAllNameMapping(sheet, folder);
             for (CaseHeader value : CaseHeader.values()) {
@@ -145,13 +140,15 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
                 column = populateCase(sheet, column, folderRel, style);
             }
         }
-        //模板默认加四百行lookup公式
+        sheet.setColumnHidden(13, true);
+        sheet.setColumnHidden(14, true);
+        //如果是模板默认加四百行lookup公式
         if (folderRelDTOS.size() == 1 && folderRelDTOS.get(0).getIssueInfosDTO().getIssueId() == null) {
             sheet.setColumnHidden(2, true);
             sheet.setColumnHidden(6, true);
+            sheet.setColumnHidden(13,false);
             column += addLookupFormula(sheet, column, rowStyles);
         }
-        sheet.setColumnHidden(13, true);
         setDataValidationByFormula(sheet, sheet.getSheetName() + FOLDERS, 0, 0);
         return column;
     }
@@ -192,16 +189,18 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
             Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
-
-            ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
-
-            ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
-
-            ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
-                    getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
         }
+
+        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
+
+        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
+
+        ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
+                getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
+
+        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 13, ExcelUtil.CellType.TEXT, v));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, folderRel.getTestCaseStepDTOS(), rowStyles) + 1;
     }

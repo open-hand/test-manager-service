@@ -25,10 +25,10 @@ class ICycleCaseExcelServiceImplSpec extends Specification {
         given:
         HttpServletResponse response= Mock(HttpServletResponse)
         HttpServletRequest request=Mock(HttpServletRequest)
-        Method method= service.getClass().getDeclaredMethod("setExcelHeader",HttpServletResponse.class,HttpServletRequest.class,String.class)
+        Method method= service.getClass().getDeclaredMethod("setExcelHeader",HttpServletRequest.class,HttpServletResponse.class)
         method.setAccessible(true)
         when:
-        method.invoke(service,response,request,"filename")
+        method.invoke(service,request,response)
         then:
         1*request.getHeader(_)>>"Firefox"
     }

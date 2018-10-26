@@ -24,6 +24,8 @@ public class TestIssueFolderRelDTO {
 
     private List<TestCaseStepDTO> testCaseStepDTOS;
 
+    private String errorInfo;
+
     public TestIssueFolderRelDTO() {
     }
 
@@ -33,6 +35,14 @@ public class TestIssueFolderRelDTO {
         this.projectId = projectId;
         this.issueId = issueId;
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getErrorInfo() {
+        return errorInfo;
+    }
+
+    public void setErrorInfo(String errorInfo) {
+        this.errorInfo = errorInfo;
     }
 
     public List<TestCaseStepDTO> getTestCaseStepDTOS() {
