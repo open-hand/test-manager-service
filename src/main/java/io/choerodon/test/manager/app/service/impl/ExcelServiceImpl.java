@@ -171,7 +171,7 @@ public class ExcelServiceImpl implements ExcelService {
             needWorkbook.setActiveSheet(1);
             needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
         }
-        String fileName = projectName;
+        String fileName = projectName + ".xlsx";
         return downloadWorkBook(needWorkbook != null ? needWorkbook : workbook,fileName);
     }
 
@@ -206,7 +206,7 @@ public class ExcelServiceImpl implements ExcelService {
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8);
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + ".xlsx";
         return downloadWorkBook(needWorkbook,fileName);
     }
 
@@ -236,7 +236,7 @@ public class ExcelServiceImpl implements ExcelService {
         needWorkbook.setSheetHidden(0, true);
         needWorkbook.setActiveSheet(1);
         needWorkbook.setSheetOrder(LOOKUPSHEETNAME, needWorkbook.getNumberOfSheets() - 1);
-        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + "-" + folderE.queryByPrimaryKey(folderId).getName();
+        String fileName = projectName + "-" + needWorkbook.getSheetName(0).substring(8) + "-" + folderE.queryByPrimaryKey(folderId).getName() + ".xlsx";
         return downloadWorkBook(needWorkbook,fileName);
     }
 
@@ -293,7 +293,7 @@ public class ExcelServiceImpl implements ExcelService {
         try(ByteArrayOutputStream os = new ByteArrayOutputStream();){
             workbook.write(os);
             byte[] content = os.toByteArray();
-            MultipartFile file = new MultipartExcel("file",fileName + ".xlsx", "application/vnd.ms-excel",content);
+            MultipartFile file = new MultipartExcel("file",fileName, "application/vnd.ms-excel",content);
             ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
             return res.getBody();
         } catch (IOException e) {

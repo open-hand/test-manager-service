@@ -21,17 +21,6 @@ class ICycleCaseExcelServiceImplSpec extends Specification {
     @Shared
     ICycleCaseExcelServiceImpl serviceImpl=new ICycleCaseExcelServiceImpl()
 
-    def "setHeader"(){
-        given:
-        HttpServletResponse response= Mock(HttpServletResponse)
-        HttpServletRequest request=Mock(HttpServletRequest)
-        Method method= service.getClass().getDeclaredMethod("setExcelHeader",HttpServletRequest.class,HttpServletResponse.class)
-        method.setAccessible(true)
-        when:
-        method.invoke(service,request,response)
-        then:
-        1*request.getHeader(_)>>"Firefox"
-    }
 
     def "doExportCycleCaseInOneCycle"() {
 //        given:
