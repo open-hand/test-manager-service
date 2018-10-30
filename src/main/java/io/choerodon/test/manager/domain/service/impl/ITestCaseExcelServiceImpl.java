@@ -68,7 +68,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private enum CaseHeader {
         COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
         COLUMN6("经办人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
-        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)"),COLUMN14("导入出错信息");
+        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)"), COLUMN14("导入出错信息");
         private String chinese;
 
         CaseHeader(String chinese) {
@@ -140,13 +140,11 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
                 column = populateCase(sheet, column, folderRel, style);
             }
         }
-        sheet.setColumnHidden(13, true);
         sheet.setColumnHidden(14, true);
         //如果是模板默认加四百行lookup公式
         if (folderRelDTOS.size() == 1 && folderRelDTOS.get(0).getIssueInfosDTO().getIssueId() == null) {
             sheet.setColumnHidden(2, true);
             sheet.setColumnHidden(6, true);
-            sheet.setColumnHidden(13,false);
             column += addLookupFormula(sheet, column, rowStyles);
         }
         setDataValidationByFormula(sheet, sheet.getSheetName() + FOLDERS, 0, 0);
@@ -181,15 +179,13 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private int populateCase(Sheet sheet, int columnNum, TestIssueFolderRelDTO folderRel, CellStyle rowStyles) {
         Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
         Optional.ofNullable(folderRel.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-        if (!ObjectUtils.isEmpty(folderRel.getIssueInfosDTO())) {
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-            //接口修改后，改成描述
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosDTO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
-        }
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+        //接口修改后，改成描述
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
 
         ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));

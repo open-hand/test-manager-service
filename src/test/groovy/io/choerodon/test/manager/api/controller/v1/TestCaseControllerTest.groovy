@@ -1,27 +1,28 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import io.choerodon.agile.api.dto.IssueStatusDTO
-import io.choerodon.agile.api.dto.LookupTypeWithValuesDTO
-import io.choerodon.agile.api.dto.LookupValueDTO
-import io.choerodon.agile.api.dto.ProductVersionDTO
-import io.choerodon.agile.api.dto.ProjectDTO
-import io.choerodon.agile.api.dto.UserDTO
+import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
+import io.choerodon.test.manager.app.service.ExcelService
+import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.infra.feign.FileFeignClient
+import io.reactivex.netty.protocol.http.server.HttpServerRequest
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
+import org.springframework.aop.framework.AdvisedSupport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
 import spock.lang.Stepwise
+
+import java.lang.reflect.Field
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -33,13 +34,20 @@ class TestCaseControllerTest extends Specification {
     TestRestTemplate restTemplate;
 
     @Autowired
+    TestCaseController testCaseController
+
+    private ExcelService excelService
+
+    @Autowired
     TestCaseService testCaseService
 
     @Autowired
     UserService userService
 
-    @Autowired
-    FileFeignClient fileFeignClient
+    void setup() {
+        excelService = Mock(ExcelService)
+        testCaseController.setExcelService(excelService)
+    }
 
 //    def "CreateFormsFromIssueToDefect"() {
 //    }
@@ -53,125 +61,35 @@ class TestCaseControllerTest extends Specification {
 //    def "CreateFormDefectFromIssue"() {
 //    }
 
-//    def "DownLoadByProject"() {
-//        given:
-//        Long[] versionIds = new Long[3];
-//        versionIds[0] = 1L
-//        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
-//        List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
-//        LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
-//        List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test",id: 1L))
-//        Page page = new Page()
-//        page.setContent(userDTOS)
-//        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
-//        productVersionDTO.setName("CaseExcel测试版本")
-//        Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(1L, productVersionDTO)
-//        List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
-//
-//        when:
-//        def resURL = restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel", String,1L)
-//
-//        then:
-//        1 * testCaseService.getVersionIds(_) >> versionIds
-//        1 * testCaseService.getProjectInfo(_) >> projectDTO
-//        0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
-//        0 * testCaseService.queryLookupValueByCode(_,_) >> lookupTypeWithValuesDTO
-//        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-//        1 * testCaseService.getVersionInfo(_) >> versionInfo
-//        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-////        1 * fileFeignClient.uploadFile(_,_,_) >> new String()
-//
-////        and:
-////        !resURL.getBody().isEmpty()
-//    }
-//
-//    def "DownLoadByVersion"() {
-//        given:
-//        Long[] versionIds = new Long[3];
-//        versionIds[0] = 1L
-//        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
-//        List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
-//        LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
-//        List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test",id: 1L))
-//        Page page = new Page()
-//        page.setContent(userDTOS)
-//        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
-//        productVersionDTO.setName("CaseExcel测试版本")
-//        Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(1L, productVersionDTO)
-//        List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
-//
-//        when:
-//        def resURL = restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/version?versionId={versionId}", String, 1L,1L)
-//
-//        then:
-//        1 * testCaseService.getProjectInfo(_) >> projectDTO
-//        0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
-//        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-//        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-//        1 * testCaseService.getVersionInfo(_) >> versionInfo
-//        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-////        1 * fileFeignClient.uploadFile(_,_,_) >> new String()
-////
-////        and:
-////        !resURL.getBody().isEmpty()
-//    }
-//
-//    def "DownLoadByFolder"() {
-//        given:
-//        Long[] versionIds = new Long[3];
-//        versionIds[0] = 1L
-//        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
-//        List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
-//        LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
-//        List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test",id: 1L))
-//        Page page = new Page()
-//        page.setContent(userDTOS)
-//        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
-//        productVersionDTO.setName("CaseExcel测试版本")
-//        Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(1L, productVersionDTO)
-//        List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
-//
-//        when:
-//        def resURL = restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/folder?folderId={folderId}", String, 1L,1L)
-//
-//        then:
-//        1 * testCaseService.getProjectInfo(_) >> projectDTO
-//        0 * testCaseService.getIssueInfoMap(_, _, _) >> new HashMap()
-//        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-//        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-//        1 * testCaseService.getVersionInfo(_) >> versionInfo
-//        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-////        1 * fileFeignClient.uploadFile(_,_,_) >> new String()
-////
-////        and:
-////        !resURL.getBody().isEmpty()
-//    }
-
-    def "DownLoadTemplate"() {
-        given:
-        Long[] versionIds = new Long[3];
-        versionIds[0] = 1L
-        versionIds[1] = 2L
-        versionIds[2] = 3L
-        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
-        List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
-        LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
-        List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test",id: 1L))
-        Page page = new Page()
-        page.setContent(userDTOS)
-        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
-        productVersionDTO.setName("CaseExcel测试版本")
-        Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(1L, productVersionDTO)
-        List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
-
+    def "DownLoadByProject"() {
         when:
-        restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/template", null,1L)
+        testCaseController.downLoadByProject(1L, new MockHttpServletRequest(), new MockHttpServletResponse())
 
         then:
-        1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-        1 * testCaseService.getVersionInfo(_) >> versionInfo
-        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
+        1 * excelService.exportCaseByProject(_, _, _)
+    }
+
+    def "DownLoadByVersion"() {
+        when:
+        testCaseController.downLoadByVersion(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse())
+
+        then:
+        1 * excelService.exportCaseByVersion(_, _, _, _)
+    }
+
+    def "DownLoadByFolder"() {
+        when:
+        testCaseController.downLoadByFolder(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse())
+
+        then:
+        1 * excelService.exportCaseByFolder(_, _, _, _)
+    }
+
+    def "DownLoadTemplate"() {
+        when:
+        restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/template", null, 1L)
+
+        then:
+        1 * excelService.exportCaseTemplate(_, _, _)
     }
 }

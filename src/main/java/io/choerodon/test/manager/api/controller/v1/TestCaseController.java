@@ -32,8 +32,16 @@ public class TestCaseController {
     @Autowired
     ReporterFormService reporterFormService;
 
+    private ExcelService excelService;
+
     @Autowired
-    ExcelService excelService;
+    public TestCaseController(ExcelService excelService) {
+        this.excelService = excelService;
+    }
+
+    public void setExcelService(ExcelService excelService) {
+        this.excelService = excelService;
+    }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成报表从issue到缺陷")
@@ -86,30 +94,30 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
-    public String downLoadByProject(@PathVariable(name = "project_id") Long projectId,
+    public void downLoadByProject(@PathVariable(name = "project_id") Long projectId,
                          HttpServletRequest request,
                          HttpServletResponse response) {
-        return excelService.exportCaseByProject(projectId, request, response);
+        excelService.exportCaseByProject(projectId, request, response);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
-    public String downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
+    public void downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "versionId") Long versionId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
-        return excelService.exportCaseByVersion(projectId, versionId, request, response);
+        excelService.exportCaseByVersion(projectId, versionId, request, response);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
-    public String downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
+    public void downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "folderId") Long folderId,
                                   HttpServletRequest request,
                                   HttpServletResponse response) {
-        return excelService.exportCaseByFolder(projectId,folderId, request, response);
+        excelService.exportCaseByFolder(projectId,folderId, request, response);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

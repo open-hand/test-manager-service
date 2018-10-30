@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.app.service;
 
-import org.springframework.http.ResponseEntity;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,12 +10,12 @@ public interface ExcelService {
 	void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
 													 HttpServletResponse response);
 
-	String exportCaseByProject(Long projectId, HttpServletRequest request,
+	void exportCaseByProject(Long projectId, HttpServletRequest request,
 								   HttpServletResponse response);
 
-	String exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response);
+	void exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response);
 
-	String exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response);
+	void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response);
 
 	void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response);
 }
