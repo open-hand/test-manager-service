@@ -121,7 +121,7 @@ public class ExcelServiceImpl implements ExcelService {
                 .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
         IExcelService service = new <TestCycleDTO, TestCycleCaseDTO>ICycleCaseExcelServiceImpl();
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
+        printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         String projectName = testCaseService.getProjectInfo(projectId).getName();
         Workbook needWorkbook = service.exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook);
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
@@ -148,7 +148,7 @@ public class ExcelServiceImpl implements ExcelService {
         Long[] versionsId = testCaseService.getVersionIds(projectId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
+        printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
 
         Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
@@ -186,7 +186,7 @@ public class ExcelServiceImpl implements ExcelService {
         folderE.setVersionId(versionId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
+        printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
         Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
         Workbook needWorkbook = service.exportWorkBookWithOneSheet(populateFolder(folderE), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), lookupWorkbook);
@@ -213,7 +213,7 @@ public class ExcelServiceImpl implements ExcelService {
         folderE.setFolderId(folderId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
+        printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
 
         Workbook lookupWorkbook = service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
@@ -236,7 +236,7 @@ public class ExcelServiceImpl implements ExcelService {
         folderE.setProjectId(projectId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        log.debug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
+        printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
 
         Long[] versionsId = testCaseService.getVersionIds(projectId);
 
@@ -354,11 +354,17 @@ public class ExcelServiceImpl implements ExcelService {
             }
 
             if (!ObjectUtils.isEmpty(issueIds)) {
-                log.debug("开始分批获取issue信息（最大400一批），当前第" + (j + 1) + "批");
+                printDebug("开始分批获取issue信息（最大400一批），当前第" + (j + 1) + "批");
                 issueInfosMap.putAll(testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true));
             }
         }
         return issueInfosMap;
+    }
+
+    private void printDebug(String info){
+        if (log.isDebugEnabled()) {
+            log.debug(info);
+        }
     }
 
 }
