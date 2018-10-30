@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.service.impl
 
 import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE
 import io.choerodon.test.manager.infra.feign.FileFeignClient
@@ -28,14 +29,8 @@ class ITestCycleCaseAttachmentRelServiceImplSpec extends Specification {
     @Autowired
     ITestCycleCaseAttachmentRelService attachmentRelService
 
-    FileFeignClient client
-
-    def setup() {
-        client = Mock(FileFeignClient)
-        Field field = attachmentRelService.getClass().getDeclaredFields()[0]
-        field.setAccessible(true)
-        field.set(attachmentRelService, client)
-    }
+    @Autowired
+    FileService client
 
     def "Delete"() {
         given:

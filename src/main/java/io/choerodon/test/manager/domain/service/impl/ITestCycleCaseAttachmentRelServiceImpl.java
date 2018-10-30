@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.app.service.FileService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory;
-import io.choerodon.test.manager.domain.service.ITestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
 
 
     @Autowired
-    FileFeignClient fileFeignClient;
+    FileService fileFeignClient;
 
 
     @Override

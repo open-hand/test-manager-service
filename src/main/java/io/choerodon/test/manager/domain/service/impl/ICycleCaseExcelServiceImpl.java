@@ -73,14 +73,15 @@ public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCy
     public int populateCycleCase(Sheet sheet, int columnNum, TestCycleCaseDTO cycleCase, CellStyle rowStyles) {
         Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
         Optional.ofNullable(cycleCase.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCase.getIssueInfosDTO().getIssueName()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCase.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+        if(!ObjectUtils.isEmpty(cycleCase.getIssueInfosDTO())) {
+            Optional.ofNullable(cycleCase.getIssueInfosDTO().getIssueName()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(cycleCase.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(getLabelCell(cycleCase.getIssueInfosDTO().getLabelIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
+        }
         Optional.ofNullable(cycleCase.getExecutionStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCase.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(getDefectsCell(cycleCase.getDefects(), TestCycleCaseDefectRelE.CYCLE_CASE)).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(getLabelCell(cycleCase.getIssueInfosDTO().getLabelIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
-
         Optional.ofNullable(cycleCase.getAssigneeUser()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v.getRealName()));
         Optional.ofNullable(cycleCase.getLastUpdateDate()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.DATE, dateFormat.format(v)));
 

@@ -1,17 +1,17 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.swagger.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -182,8 +181,16 @@ public class TestCycleCaseController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseSum"));
 	}
 
+	private ExcelService excelService;
+
 	@Autowired
-	ExcelService excelService;
+	public TestCycleCaseController(ExcelService excelService) {
+		this.excelService = excelService;
+	}
+
+	public void setExcelService(ExcelService excelService) {
+		this.excelService = excelService;
+	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("excel")
