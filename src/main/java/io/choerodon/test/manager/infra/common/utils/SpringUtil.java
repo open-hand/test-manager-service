@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.infra.common.utils;
 
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -10,12 +9,13 @@ public class SpringUtil  implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        if(SpringUtil.applicationContext == null) {
-            SpringUtil.applicationContext = applicationContext;
-        }
+    public void setApplicationContext(ApplicationContext applicationContext){
+        setContext(applicationContext);
     }
 
+    public static void setContext(ApplicationContext ctx){
+        applicationContext=ctx;
+    }
     public static ApplicationContext getApplicationContext(){
         return applicationContext;
     }
