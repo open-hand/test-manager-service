@@ -88,12 +88,12 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         }
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
-        String versionName = "版本：";
+        String versionName = "版本";
         String versionJson = "";
         if (folder.getVersionId() != null) {
-            versionName = "版本：" + versionInfo.get(folder.getVersionId()).getName();
+            versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
             versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
-            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet), "version_" + versionInfo.get(folder.getVersionId()).getName());
+            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet), versionName);
         }
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
         ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
@@ -136,7 +136,6 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
                     style = rowStyles.poll();
                     rowStyles.offer(style);
                 }
-
                 column = populateCase(sheet, column, folderRel, style);
             }
         }
