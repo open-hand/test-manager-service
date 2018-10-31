@@ -36,8 +36,8 @@ public class ExcelUtil {
 
     }
 
-    public static Row createRow(Sheet sheet, int column, CellStyle rowStyle) {
-        Row row = sheet.createRow(column);
+    public static Row createRow(Sheet sheet, int rowNum, CellStyle rowStyle) {
+        Row row = sheet.createRow(rowNum);
         Optional.ofNullable(rowStyle).ifPresent(row::setRowStyle);
         return row;
     }
