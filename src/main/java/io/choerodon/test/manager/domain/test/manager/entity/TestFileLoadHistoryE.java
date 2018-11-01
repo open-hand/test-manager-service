@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class TestFileLoadHistoryE {
 
     public enum Action{
-        UPLOAD_ISSUE(1l),DOWNLOAD_ISSUE(2l),DOWNLOAD_CYCLE(3L);
+        UPLOAD_ISSUE(1L),DOWNLOAD_ISSUE(2L),DOWNLOAD_CYCLE(3L);
         private Long action;
         public Long getTypeValue(){
             return action;
@@ -19,7 +19,7 @@ public class TestFileLoadHistoryE {
     }
 
     public enum Source{
-        PROJECT(1L),VERSION(2L),CYCLE(3L);
+        PROJECT(1L),VERSION(2L),CYCLE(3L),FOLDER(4L);
         private Long source;
         public Long getTypeValue(){
             return source;
@@ -30,7 +30,7 @@ public class TestFileLoadHistoryE {
     }
 
     public enum Status{
-        SUSPENDING (1L),SUCCESS(2L),FAILURE(2L);
+        SUSPENDING (1L),SUCCESS(2L),FAILURE(3L);
         private Long status;
         public Long getTypeValue(){
             return status;
@@ -159,5 +159,16 @@ public class TestFileLoadHistoryE {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public TestFileLoadHistoryE() {
+    }
+
+    public TestFileLoadHistoryE(Long projectId, Action actionType, Source sourceType, Long linkedId, Status status) {
+        this.projectId = projectId;
+        this.actionType = actionType.getTypeValue();
+        this.sourceType = sourceType.getTypeValue();
+        this.linkedId = linkedId;
+        this.status = status.getTypeValue();
     }
 }
