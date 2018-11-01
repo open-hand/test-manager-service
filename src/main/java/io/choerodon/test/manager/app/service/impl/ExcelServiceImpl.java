@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +42,6 @@ import java.util.stream.Stream;
  */
 
 @Component
-@Transactional(rollbackFor = Exception.class)
 public class ExcelServiceImpl implements ExcelService {
 
     private static final String EXPORT_ERROR = "error.issue.export";
@@ -106,7 +104,6 @@ public class ExcelServiceImpl implements ExcelService {
         return charsetName;
     }
 
-
     /**
      * 导出一个cycle下的测试详情，默认HSSFWorkBook
      *
@@ -114,13 +111,52 @@ public class ExcelServiceImpl implements ExcelService {
      * @param projectId
      */
     @Override
-    @Async
+    @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
+                                          HttpServletResponse response) {
+        exportCycleCaseInOneCycleByTransaction(cycleId,projectId,request,response);
+    }
+
+    /**
+     * 导出项目下的所有用例，默认XSSF WorkBook
+     *
+     * @param projectId not null
+     * @param request
+     * @param response
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
+        exportCaseProjectByTransaction(projectId,request,response);
+    }
+
+    /**
+     * 导出项目下的所有用例，默认XSSF WorkBook
+     *
+     * @param versionId not null
+     * @param request
+     * @param response
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
+        exportCaseVersionByTransaction(projectId,versionId,request,response);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
+        exportCaseFolderByTransaction(projectId,folderId,request,response);
+    }
+
+
+    @Async
+    public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
                                           HttpServletResponse response) {
         setExcelHeader(request);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
 
-        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, null,
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, cycleId,
                 TestFileLoadHistoryE.Source.CYCLE, TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE);
 
         TestCycleE cycleE = TestCycleEFactory.create();
@@ -140,19 +176,11 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
-    /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
-     *
-     * @param projectId not null
-     * @param request
-     * @param response
-     */
-    @Override
     @Async
-    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
 
-        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, null,
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, projectId,
                 TestFileLoadHistoryE.Source.PROJECT, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
         TestIssueFolderE folderE = TestIssueFolderEFactory.create();
@@ -180,16 +208,8 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
-    /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
-     *
-     * @param versionId not null
-     * @param request
-     * @param response
-     */
-    @Override
     @Async
-    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
@@ -217,9 +237,8 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    @Override
     @Async
-    public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
 
