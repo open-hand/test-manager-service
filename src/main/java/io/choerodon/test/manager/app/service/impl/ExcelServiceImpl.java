@@ -6,6 +6,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.IExcelService;
+import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.service.impl.ICycleCaseExcelServiceImpl;
 import io.choerodon.test.manager.domain.service.impl.IReadMeExcelServiceImpl;
 import io.choerodon.test.manager.domain.service.impl.ITestCaseExcelServiceImpl;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +43,7 @@ import java.util.stream.Stream;
  */
 
 @Component
+@Transactional(rollbackFor = Exception.class)
 public class ExcelServiceImpl implements ExcelService {
 
     private static final String EXPORT_ERROR = "error.issue.export";
@@ -68,6 +72,9 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Autowired
     FileService fileFeignClient;
+
+    @Autowired
+    ITestFileLoadHistoryService iLoadHistoryService;
 
 
     /**
@@ -112,6 +119,10 @@ public class ExcelServiceImpl implements ExcelService {
                                           HttpServletResponse response) {
         setExcelHeader(request);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
+
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, null,
+                TestFileLoadHistoryE.Source.CYCLE, TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE);
+
         TestCycleE cycleE = TestCycleEFactory.create();
         cycleE.setCycleId(cycleId);
         Long[] cycleIds = Stream.concat(cycleE.getChildFolder().stream().map(TestCycleE::getCycleId), Stream.of(cycleId)).toArray(Long[]::new);
@@ -126,7 +137,7 @@ public class ExcelServiceImpl implements ExcelService {
         String projectName = testCaseService.getProjectInfo(projectId).getName();
         service.exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook);
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
-        downloadWorkBook(workbook, fileName);
+        downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
     /**
@@ -140,6 +151,9 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
+
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, null,
+                TestFileLoadHistoryE.Source.PROJECT, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
         TestIssueFolderE folderE = TestIssueFolderEFactory.create();
         folderE.setProjectId(projectId);
@@ -163,7 +177,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName);
+        downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
     /**
@@ -177,8 +191,10 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
-
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
+
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, versionId,
+                TestFileLoadHistoryE.Source.VERSION, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
@@ -197,7 +213,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + FILESUFFIX;
-        downloadWorkBook(workbook, fileName);
+        downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
 
@@ -205,8 +221,10 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeader(request);
-
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
+
+        TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, folderId,
+                TestFileLoadHistoryE.Source.FOLDER,TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
@@ -226,7 +244,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderE.queryByPrimaryKey(folderId).getName() + FILESUFFIX;
-        downloadWorkBook(workbook, fileName);
+        downloadWorkBook(workbook, fileName,loadHistoryE);
     }
 
     @Override
@@ -255,12 +273,9 @@ public class ExcelServiceImpl implements ExcelService {
         map.put(1L, testIssueFolderRelDTOS);
 
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
-
-
         //准备lookup页
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName,
                 ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
-
         for (Long versionId : versionsId) {
             Object needMap = ((HashMap<Long, List<TestIssueFolderRelDTO>>) map).clone();
             folderE.setVersionId(versionId);
@@ -284,17 +299,28 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    private String downloadWorkBook(Workbook workbook, String fileName) {
+    private String downloadWorkBook(Workbook workbook, String fileName,TestFileLoadHistoryE loadHistoryE) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             workbook.write(os);
             byte[] content = os.toByteArray();
             MultipartFile file = new MultipartExcel("file", fileName, "application/vnd.ms-excel", content);
+
             ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+
+            if(res.getStatusCode().is2xxSuccessful()) {
+                loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
+                loadHistoryE.setFileUrl(res.getBody());
+            }else {
+                loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
+                loadHistoryE.setFileStream(os.toString());
+            }
             return res.getBody();
         } catch (IOException e) {
+            loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
             throw new CommonException(EXPORT_ERROR, e);
         } finally {
             try {
+                iLoadHistoryService.update(loadHistoryE);
                 workbook.close();
             } catch (IOException e) {
                 log.warn(EXPORT_ERROR_WORKBOOK_CLOSE, e);
@@ -398,6 +424,11 @@ public class ExcelServiceImpl implements ExcelService {
         if (log.isDebugEnabled()) {
             log.debug(info);
         }
+    }
+
+    private TestFileLoadHistoryE insertHistory(Long projectId, Long optionalParam, TestFileLoadHistoryE.Source source,TestFileLoadHistoryE.Action action) {
+        TestFileLoadHistoryE loadHistoryE = new TestFileLoadHistoryE(projectId, action, source, optionalParam, TestFileLoadHistoryE.Status.SUSPENDING);
+        return iLoadHistoryService.insertOne(loadHistoryE);
     }
 
 }

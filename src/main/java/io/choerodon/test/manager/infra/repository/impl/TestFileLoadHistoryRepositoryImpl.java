@@ -20,7 +20,7 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
     public TestFileLoadHistoryE insertOne(TestFileLoadHistoryE testFileLoadHistoryE) {
         TestFileLoadHistoryDO testIssueFolderRelDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
         testFileLoadHistoryMapper.insert(testIssueFolderRelDO);
-        return ConvertHelper.convert(testIssueFolderRelDO, TestFileLoadHistoryE.class);
+        return ConvertHelper.convert(testFileLoadHistoryMapper.selectByPrimaryKey(testIssueFolderRelDO), TestFileLoadHistoryE.class);
     }
 
     @Override
