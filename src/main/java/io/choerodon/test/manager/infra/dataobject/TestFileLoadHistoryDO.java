@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.dataobject;
 
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,7 +11,7 @@ import javax.persistence.Table;
 @ModifyAudit
 @VersionAudit
 @Table(name = "test_fileload_history")
-public class TestFileLoadHistoryDO {
+public class TestFileLoadHistoryDO extends AuditDomain {
 
     @Id
     @GeneratedValue
@@ -33,8 +34,6 @@ public class TestFileLoadHistoryDO {
     private Long failedCount;
 
     private String fileStream;
-
-    private Long objectVersionNumber;
 
     public Long getId() {
         return id;
@@ -114,13 +113,5 @@ public class TestFileLoadHistoryDO {
 
     public void setFileStream(String fileStream) {
         this.fileStream = fileStream;
-    }
-
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
-    }
-
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
     }
 }

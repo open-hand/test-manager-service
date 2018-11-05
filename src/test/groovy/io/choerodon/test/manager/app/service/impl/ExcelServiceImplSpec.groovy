@@ -1,32 +1,22 @@
 package io.choerodon.test.manager.app.service.impl
 
-import io.choerodon.agile.api.dto.IssueStatusDTO
-import io.choerodon.agile.api.dto.LookupTypeWithValuesDTO
-import io.choerodon.agile.api.dto.LookupValueDTO
-import io.choerodon.agile.api.dto.ProductVersionDTO
-import io.choerodon.agile.api.dto.ProjectDTO
-import io.choerodon.agile.api.dto.StatusMapDTO
-import io.choerodon.agile.api.dto.UserDO
-import io.choerodon.agile.api.dto.UserDTO
+import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelService
 import io.choerodon.test.manager.app.service.FileService
+import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
-import io.choerodon.test.manager.infra.common.utils.ExcelUtil
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
-import io.choerodon.test.manager.infra.feign.FileFeignClient
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
-import io.reactivex.netty.protocol.http.server.HttpServerRequest
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
 import org.springframework.aop.framework.AdvisedSupport
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
@@ -44,7 +34,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
 @Stepwise
-class ExcelServiceImplTest extends Specification {
+class ExcelServiceImplSpec extends Specification {
 
     @Autowired
     TestCaseService testCaseService
@@ -57,6 +47,9 @@ class ExcelServiceImplTest extends Specification {
 
     @Autowired
     ExcelService excelService
+
+    @Autowired
+    NotifyService notifyService
 
     @Autowired
     TestIssueFolderMapper testIssueFolderMapper
@@ -87,9 +80,9 @@ class ExcelServiceImplTest extends Specification {
     @Shared
     TestIssueFolderRelDO resFolderRelDO
     @Shared
-    projectId = 55555L
+    def projectId = 55555L
     @Shared
-    versionId = 55555L
+    def versionId = 55555L
     @Shared
     Long[] issuesId = new Long[2]
     @Shared
@@ -98,9 +91,8 @@ class ExcelServiceImplTest extends Specification {
     void setupSpec() {
         issuesId[0] = 55555L
         issuesId[1] = 55556L
-
-        issueInfosDTOMap = Maps.newHashMap(issuesId[0],new IssueInfosDTO(issueId: issuesId[0],issueNum: 1L,summary: "CaseExcel测试",statusMapDTO: new StatusMapDTO(code: "code"),
-                assigneeName: "CaseExcel测试人",statusName: "CaseExcel测试状态"))
+        issueInfosDTOMap = Maps.newHashMap(issuesId[0], new IssueInfosDTO(issueId: issuesId[0], issueNum: 1L, summary: "CaseExcel测试",
+                priorityDTO: new PriorityDTO(id:1L,name: "CaseExcel测试"), assigneeName: "CaseExcel测试人", statusName: "CaseExcel测试状态"))
         versionIds[0] = versionId
         projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
         List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
@@ -116,7 +108,7 @@ class ExcelServiceImplTest extends Specification {
         request.addHeader("User-Agent", "Chrome")
     }
 
-    def "ExportCaseByProject"() {
+    def "exportCaseProjectByTransaction"() {
         given:
         //将被spring代理的对象取出来
         Field h = excelService.getClass().getDeclaredField("CGLIB\$CALLBACK_0")
@@ -130,12 +122,12 @@ class ExcelServiceImplTest extends Specification {
         testIssueFolderMapper.insert(testIssueFolderDO)
         resFolderDO = testIssueFolderMapper.selectOne(testIssueFolderDO)
 
-        TestIssueFolderRelDO testIssueFolderRelDO = new TestIssueFolderRelDO(issueId: issuesId[0],projectId: projectId,versionId: versionId,folderId: resFolderDO.getFolderId())
+        TestIssueFolderRelDO testIssueFolderRelDO = new TestIssueFolderRelDO(issueId: issuesId[0], projectId: projectId, versionId: versionId, folderId: resFolderDO.getFolderId())
         testIssueFolderRelMapper.insert(testIssueFolderRelDO)
         resFolderRelDO = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO)
 
         when:
-        target.exportCaseByProject(projectId, request, new MockHttpServletResponse(),1L)
+        target.exportCaseProjectByTransaction(projectId, request, new MockHttpServletResponse(), 1L,1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
@@ -146,11 +138,12 @@ class ExcelServiceImplTest extends Specification {
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
-    def "ExportCaseByVersion"() {
+    def "exportCaseVersionByTransaction"() {
         when:
-        target.exportCaseByVersion(projectId, versionId, request, new MockHttpServletResponse())
+        target.exportCaseVersionByTransaction(projectId, versionId, request, new MockHttpServletResponse(), 1L,1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
@@ -160,11 +153,12 @@ class ExcelServiceImplTest extends Specification {
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
-    def "ExportCaseByFolder"() {
+    def "exportCaseFolderByTransaction"() {
         when:
-        target.exportCaseByFolder(projectId, resFolderDO.getFolderId(), request, new MockHttpServletResponse())
+        target.exportCaseFolderByTransaction(projectId, resFolderDO.getFolderId(), request, new MockHttpServletResponse(), 1L,1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
@@ -174,6 +168,7 @@ class ExcelServiceImplTest extends Specification {
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
     def "ExportCaseTemplate"() {
@@ -191,7 +186,7 @@ class ExcelServiceImplTest extends Specification {
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
 
-        and:"清理数据"
+        and: "清理数据"
         testIssueFolderRelMapper.delete(resFolderRelDO)
         testIssueFolderMapper.delete(resFolderDO)
     }

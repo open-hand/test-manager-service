@@ -7,38 +7,45 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class TestFileLoadHistoryE {
 
-    public enum Action{
-        UPLOAD_ISSUE(1L),DOWNLOAD_ISSUE(2L),DOWNLOAD_CYCLE(3L);
+    public enum Action {
+        UPLOAD_ISSUE(1L), DOWNLOAD_ISSUE(2L), DOWNLOAD_CYCLE(3L);
         private Long action;
-        public Long getTypeValue(){
+
+        public Long getTypeValue() {
             return action;
         }
+
         Action(Long action) {
             this.action = action;
         }
     }
 
-    public enum Source{
-        PROJECT(1L),VERSION(2L),CYCLE(3L),FOLDER(4L);
+    public enum Source {
+        PROJECT(1L), VERSION(2L), CYCLE(3L), FOLDER(4L);
         private Long source;
-        public Long getTypeValue(){
+
+        public Long getTypeValue() {
             return source;
         }
+
         Source(Long source) {
             this.source = source;
         }
     }
 
-    public enum Status{
-        SUSPENDING (1L),SUCCESS(2L),FAILURE(3L);
+    public enum Status {
+        SUSPENDING(1L), SUCCESS(2L), FAILURE(3L);
         private Long status;
-        public Long getTypeValue(){
+
+        public Long getTypeValue() {
             return status;
         }
+
         Status(Long status) {
             this.status = status;
         }
     }
+
     private Long id;
 
     private Long projectId;
@@ -60,6 +67,26 @@ public class TestFileLoadHistoryE {
     private String fileStream;
 
     private Long objectVersionNumber;
+
+    private Long createdBy;
+
+    private String folderName;
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Long getId() {
         return id;

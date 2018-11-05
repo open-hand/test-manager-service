@@ -5,6 +5,7 @@ import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
 import io.choerodon.test.manager.app.service.FileService
+import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.infra.feign.FileFeignClient
@@ -71,6 +72,11 @@ class IntegrationTestConfiguration {
     @Primary
     FileService createMock7() {
         return detachedMockFactory.Mock(FileService)
+    }
+    @Bean
+    @Primary
+    NotifyService createMock8() {
+        return detachedMockFactory.Mock(NotifyService)
     }
 
 

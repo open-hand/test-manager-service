@@ -188,7 +188,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}?organizationId=1", TestCycleCaseDTO, 142, caseDTO.get(0).executeId)
         then:
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> Maps.newHashMap(98L, new IssueInfosDTO())
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> Maps.newHashMap(98L, new IssueInfosDTO())
         1 * userService.populateTestCycleCaseDTO(_)
         and:
         result.body.cycleId == cycleIds.get(0)
@@ -198,7 +198,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/issue/{issueId}?organizationId=1", List, 142, 98)
         then:
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> new HashMap<>()
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         1 * userService.query(_) >> new HashMap<>()
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO())
         and:
@@ -206,13 +206,13 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/issue/{issueId}?organizationId=1", List, 142, -1)
         then:
-        0 * testCaseService.getIssueInfoMap(_, _, _,_)
+        0 * testCaseService.getIssueInfoMap(_, _, _, _)
         0 * userService.query(_)
         0 * testCaseService.getVersionInfo(_)
         when:
         restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/issue/{issueId}?organizationId=1", List, 142, 96L)
         then:
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> new HashMap<>()
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         0 * userService.query(_)
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO())
     }
@@ -223,7 +223,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 10)
         then:
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> new HashMap<>()
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         1 * userService.query(_) >> new HashMap<>()
         and:
         result.body.size() == 3
@@ -231,7 +231,7 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 1)
         then:
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> new HashMap<>()
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         1 * userService.query(_) >> new HashMap<>()
         and:
         result.body.size() == 1
@@ -242,9 +242,9 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCaseService client = Mock(TestCaseService)
         TestCycleCaseService service = new TestCycleCaseServiceImpl(testCaseService: client)
         when:
-        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L,1)
+        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L, 1)
         then:
-        0 * client.getIssueInfoMap(_, _, _,_)
+        0 * client.getIssueInfoMap(_, _, _, _)
         when:
         service.populateVersionBuild(144, null)
         then:
@@ -347,8 +347,8 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}?organizationId=1", new SearchDTO(executionStatus: [1, 2, 3] as Long[]), Boolean, 142, fromCycle, 990, 56)
         then:
-        1 * testCaseService.listIssueWithoutSub(_, _, _,_) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.listIssueWithoutSub(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         and:
         caseE.queryOne().assignedTo == 56
     }
@@ -374,14 +374,14 @@ class TestCycleCaseControllerSpec extends Specification {
         testCycleCaseController.setExcelService(excelService)
 
         when:
-        testCycleCaseController.downLoad(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
+        testCycleCaseController.downLoad(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(), 1L)
 
         then:
-        1 * excelService.exportCycleCaseInOneCycle(_, _, _, _,_)
+        1 * excelService.exportCycleCaseInOneCycle(_, _, _, _, _)
     }
 
     //覆盖excelService中的方法
-    def "ExportCycleCaseInOneCycle"() {
+    def "ExportCycleCaseInOneCycleByTransaction"() {
         given:
         //将被spring代理的对象取出来
         Field h = relExcelService.getClass().getDeclaredField("CGLIB\$CALLBACK_0")
@@ -397,21 +397,23 @@ class TestCycleCaseControllerSpec extends Specification {
         Map issueMaps = Maps.newHashMap(98L, new IssueInfosDTO(issueName: "issueName", issueNum: 98L, summary: "CylceCaseExcel测试",
                 assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"));
         issueMaps.put(97L, new IssueInfosDTO(issueName: "issueName1", issueNum: 97L, summary: "CylceCaseExcel测试",
-                 assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"))
+                assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"))
         when:
-        target.exportCycleCaseInOneCycle(caseDTO.get(0).getCycleId(), 142, request, new MockHttpServletResponse(),1L)
+        target.exportCycleCaseInOneCycleByTransaction(caseDTO.get(0).getCycleId(), 142, request, new MockHttpServletResponse(), 1L, 1L)
+
         then:
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
         2 * userService.query(_) >> Maps.newHashMap(10L, new UserDO(realName: "real", loginName: "login"))
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueMaps
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueMaps
         1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(name: "project1")
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
         when:
-        target.exportCycleCaseInOneCycle(caseDTO.get(2).getCycleId(), 142, request, new MockHttpServletResponse(),1L)
+        target.exportCycleCaseInOneCycleByTransaction(caseDTO.get(2).getCycleId(), 142, request, new MockHttpServletResponse(), 1L, 1L)
+
         then:
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
         2 * userService.query(_) >> Maps.newHashMap(10L, new UserDO(realName: "real", loginName: "login"))
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueMaps
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueMaps
         1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(name: "project1")
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
     }
