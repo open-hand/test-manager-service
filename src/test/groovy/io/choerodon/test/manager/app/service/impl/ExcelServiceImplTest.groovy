@@ -5,6 +5,7 @@ import io.choerodon.agile.api.dto.LookupTypeWithValuesDTO
 import io.choerodon.agile.api.dto.LookupValueDTO
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.agile.api.dto.ProjectDTO
+import io.choerodon.agile.api.dto.StatusMapDTO
 import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.agile.api.dto.UserDTO
 import io.choerodon.core.domain.Page
@@ -98,7 +99,7 @@ class ExcelServiceImplTest extends Specification {
         issuesId[0] = 55555L
         issuesId[1] = 55556L
 
-        issueInfosDTOMap = Maps.newHashMap(issuesId[0],new IssueInfosDTO(issueId: issuesId[0],issueNum: 1L,summary: "CaseExcel测试",
+        issueInfosDTOMap = Maps.newHashMap(issuesId[0],new IssueInfosDTO(issueId: issuesId[0],issueNum: 1L,summary: "CaseExcel测试",statusMapDTO: new StatusMapDTO(code: "code"),
                 assigneeName: "CaseExcel测试人",statusName: "CaseExcel测试状态"))
         versionIds[0] = versionId
         projectDTO = new ProjectDTO(name: "CaseExcel测试项目")

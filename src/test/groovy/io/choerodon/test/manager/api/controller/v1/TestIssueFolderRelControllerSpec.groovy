@@ -318,7 +318,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         detailFolderRelDTOS.size() ==1
 
         when: '分支覆盖到searchDTO.getOtherArgs()不为空的情况，但searchDTO.getOtherArgs().containsKey(sIssueIds)为假的情况'
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithNoIssueIds, Page.class, projectId, foldersId[0], 1, 1)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithNoIssueIds, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
         1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
@@ -329,7 +329,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
 
         when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds为空的情况'
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithNoVersions, Page.class, projectId, foldersId[0], 1, 1)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithNoVersions, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
         1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
@@ -339,7 +339,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         detailFolderRelDTOS3.size() == 1
 
         when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds不为空的情况'
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTOWithVersions, Page.class, projectId, foldersId[0], 1, 1)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithVersions, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
         1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map

@@ -61,9 +61,9 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         list.add(defect1)
         dto.setDefects(list)
         when:
-        service.populateCycleCaseDefectInfo(Lists.newArrayList(dto), 1L)
+        service.populateCycleCaseDefectInfo(Lists.newArrayList(dto), 1L,1L)
         then:
-        1 * client.getIssueInfoMap(_, _, false) >> new HashMap<>()
+        1 * client.getIssueInfoMap(_, _, false,1L) >> new HashMap<>()
     }
 
     def "PopulateCaseStepDefectInfo"() {
@@ -78,7 +78,7 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         list.add(defect1)
         dto.setDefects(list)
         when:
-        service.populateCaseStepDefectInfo(Lists.newArrayList(dto), 1L)
+        service.populateCaseStepDefectInfo(Lists.newArrayList(dto), 1L,1L)
         then:
         1 * client.getIssueInfoMap(_, _, false) >> new HashMap<>()
     }
@@ -87,7 +87,7 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         given:
         TestCycleCaseDTO dto=new TestCycleCaseDTO(issueId: 1)
         when:
-        service.populateDefectAndIssue(dto,144L)
+        service.populateDefectAndIssue(dto,144L,1L)
         then:
         1*client.getIssueInfoMap(_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO())
         when:
