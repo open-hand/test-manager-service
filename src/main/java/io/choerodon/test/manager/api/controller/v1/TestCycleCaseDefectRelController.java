@@ -30,11 +30,12 @@ public class TestCycleCaseDefectRelController {
     @ApiOperation("增加缺陷")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseDefectRelDTO>> insert(@PathVariable(name = "project_id") Long projectId,
-                                                                  @RequestBody List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO) {
+                                                                  @RequestBody List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO,
+                                                                  @RequestParam Long organizationId ) {
         List<TestCycleCaseDefectRelDTO> dtos = new ArrayList<>();
         testCycleCaseDefectRelDTO.forEach(v -> {
             v.setProjectId(projectId);
-            dtos.add(testCycleCaseDefectRelService.insert(v, projectId));
+            dtos.add(testCycleCaseDefectRelService.insert(v, projectId,organizationId));
         });
         return Optional.ofNullable(dtos)
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -55,9 +56,10 @@ public class TestCycleCaseDefectRelController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("修改缺陷的projectId")
     @PutMapping("/fix")
-    public void fixDefectData(@PathVariable(name = "project_id") Long projectId) {
+    public void fixDefectData(@PathVariable(name = "project_id") Long projectId,
+                              @RequestParam Long organizationId) {
         TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
         testCycleCaseDefectRelDTO.setProjectId(projectId);
-        testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelDTO);
+        testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelDTO,organizationId);
     }
 }

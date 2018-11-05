@@ -63,9 +63,10 @@ public class TestCycleCaseStepController {
 															@ApiIgnore
 															@ApiParam(value = "分页信息", required = true)
 															@SortDefault(value = "rank", direction = Sort.Direction.DESC)
-																	PageRequest pageRequest) {
+																	PageRequest pageRequest,@RequestParam Long organizationId
+															) {
 
-		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, pageRequest, projectId))
+		return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, pageRequest, projectId,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 

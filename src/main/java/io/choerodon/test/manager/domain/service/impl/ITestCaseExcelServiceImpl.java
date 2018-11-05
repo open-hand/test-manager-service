@@ -180,7 +180,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         Optional.ofNullable(folderRel.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(folderRel.getIssueInfosDTO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(folderRel.getIssueInfosDTO().getPriorityName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getIssueInfosDTO().getPriorityDTO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
         //接口修改后，改成描述
         Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));

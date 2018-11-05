@@ -11,11 +11,11 @@ import io.choerodon.agile.infra.common.utils.StringUtil;
  */
 public class IssueLinkDTO {
 
-    private Long issueId;
+	private Long issueId;
 
 	private Long linkTypeId;
 
-    private Long linkedIssueId;
+	private Long linkedIssueId;
 
 	private String linkTypeName;
 
@@ -23,55 +23,49 @@ public class IssueLinkDTO {
 
 	private String issueNum;
 
-    private String summary;
-
-	private String priorityCode;
-
-	private String name;
-
-	private String statusCode;
-
-	private String statusColor;
+	private String summary;
 
 	private String typeCode;
 
-	private String statusName;
-
-	private String priorityName;
-
 	private Long linkId;
 
-    public Long getIssueId() {
-        return issueId;
-    }
+	private IssueTypeDTO issueTypeDTO;
 
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
-    }
+	private StatusMapDTO statusMapDTO;
+
+	private PriorityDTO priorityDTO;
+
+	public Long getIssueId() {
+		return issueId;
+	}
+
+	public void setIssueId(Long issueId) {
+		this.issueId = issueId;
+	}
 
 	public Long getLinkTypeId() {
 		return linkTypeId;
-    }
+	}
 
 	public void setLinkTypeId(Long linkTypeId) {
 		this.linkTypeId = linkTypeId;
-    }
+	}
 
-    public Long getLinkedIssueId() {
-        return linkedIssueId;
-    }
+	public Long getLinkedIssueId() {
+		return linkedIssueId;
+	}
 
-    public void setLinkedIssueId(Long linkedIssueId) {
-        this.linkedIssueId = linkedIssueId;
-    }
+	public void setLinkedIssueId(Long linkedIssueId) {
+		this.linkedIssueId = linkedIssueId;
+	}
 
-    public String getSummary() {
-        return summary;
-    }
+	public String getSummary() {
+		return summary;
+	}
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
 
 	public String getLinkTypeName() {
 		return linkTypeName;
@@ -97,38 +91,6 @@ public class IssueLinkDTO {
 		this.issueNum = issueNum;
 	}
 
-	public String getPriorityCode() {
-		return priorityCode;
-	}
-
-	public void setPriorityCode(String priorityCode) {
-		this.priorityCode = priorityCode;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
-	}
-
-	public String getStatusColor() {
-		return statusColor;
-	}
-
-	public void setStatusColor(String statusColor) {
-		this.statusColor = statusColor;
-	}
-
 	public String getTypeCode() {
 		return typeCode;
 	}
@@ -137,20 +99,28 @@ public class IssueLinkDTO {
 		this.typeCode = typeCode;
 	}
 
-	public String getStatusName() {
-		return statusName;
+	public IssueTypeDTO getIssueTypeDTO() {
+		return issueTypeDTO;
 	}
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
+	public void setIssueTypeDTO(IssueTypeDTO issueTypeDTO) {
+		this.issueTypeDTO = issueTypeDTO;
 	}
 
-	public String getPriorityName() {
-		return priorityName;
+	public StatusMapDTO getStatusMapDTO() {
+		return statusMapDTO;
 	}
 
-	public void setPriorityName(String priorityName) {
-		this.priorityName = priorityName;
+	public void setStatusMapDTO(StatusMapDTO statusMapDTO) {
+		this.statusMapDTO = statusMapDTO;
+	}
+
+	public PriorityDTO getPriorityDTO() {
+		return priorityDTO;
+	}
+
+	public void setPriorityDTO(PriorityDTO priorityDTO) {
+		this.priorityDTO = priorityDTO;
 	}
 
 	public Long getLinkId() {
@@ -161,9 +131,9 @@ public class IssueLinkDTO {
 		this.linkId = linkId;
 	}
 
-    @Override
-    public String toString() {
-        return StringUtil.getToString(this);
-    }
+	@Override
+	public String toString() {
+		return StringUtil.getToString(this);
+	}
 
 }

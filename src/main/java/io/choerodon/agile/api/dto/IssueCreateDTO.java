@@ -32,6 +32,10 @@ public class IssueCreateDTO {
 
     private Integer storyPoints;
 
+    private Long priorityId;
+
+    private Long issueTypeId;
+
     @Transient
     private List<TestCaseStepDTO> testCaseStepDTOS;
 

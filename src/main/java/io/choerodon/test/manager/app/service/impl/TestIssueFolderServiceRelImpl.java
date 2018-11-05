@@ -45,7 +45,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     TestCaseStepService testCaseStepService;
 
     @Override
-    public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds) {
+    public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds,Long organizationId) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
         for (Long issueId : issueIds) {
@@ -57,7 +57,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             return new Page<>();
         }
         List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
-        Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true);
+        Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true,organizationId);
         if (ObjectUtils.isEmpty(map)) {
             return new Page<>();
         }
@@ -89,7 +89,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     }
 
     @Override
-    public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest) {
+    public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest,Long organizationId) {
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
@@ -139,7 +139,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         int size = highPage >= allFilteredIssues.length ? allFilteredIssues.length - lowPage : pageSize;
         Long[] pagedIssues = new Long[size];
         System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
-        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues).stream().collect(Collectors.toList()), allFilteredIssues);
+        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues,organizationId).stream().collect(Collectors.toList()), allFilteredIssues);
     }
 
     @Transactional(rollbackFor = Exception.class)

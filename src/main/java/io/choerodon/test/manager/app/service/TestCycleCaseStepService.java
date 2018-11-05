@@ -26,7 +26,7 @@ public interface TestCycleCaseStepService {
      * @param
      * @return
      */
-    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest, Long projectId);
+    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest, Long projectId, Long organizationId);
 
 
 

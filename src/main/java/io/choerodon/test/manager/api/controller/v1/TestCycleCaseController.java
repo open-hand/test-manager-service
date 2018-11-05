@@ -48,11 +48,11 @@ public class TestCycleCaseController {
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询测试组下循环用例")
-	@GetMapping("/query/issue/{issueId}")
+	@GetMapping("/organizationue/{issueId}")
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
-																@PathVariable(name = "issueId") Long issueId
-	) {
-		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId))
+																@PathVariable(name = "issueId") Long issueId,
+																@RequestParam Long organizationId) {
+		return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
 	}
@@ -65,9 +65,10 @@ public class TestCycleCaseController {
 															   @ApiParam(value = "分页信息", required = true)
 															   @SortDefault(value = "rank", direction = Sort.Direction.ASC)
 																	   PageRequest pageRequest,
-															   @RequestBody TestCycleCaseDTO dto) {
+															   @RequestBody TestCycleCaseDTO dto,
+															   @RequestParam Long organizationId) {
 		Assert.notNull(dto.getCycleId(),"error.queryByCycle.cycleId.not.null");
-		return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageRequest, projectId))
+		return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageRequest, projectId,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
 	}
@@ -91,8 +92,9 @@ public class TestCycleCaseController {
 	@ApiOperation("查询一个循环用例")
 	@GetMapping("/query/one/{executeId}")
 	public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "project_id") Long projectId,
-													 @PathVariable(name = "executeId") Long executeId) {
-		return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId))
+													 @PathVariable(name = "executeId") Long executeId,
+													 @RequestParam Long organizationId) {
+		return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
 	}
@@ -144,9 +146,10 @@ public class TestCycleCaseController {
 														 @ApiParam(value = "指派人", required = true)
 														 @PathVariable(name = "assignee") Long assignee,
 														 @ApiParam(value = "查询参数", required = true)
-														 @RequestBody(required = false) SearchDTO searchDTO) {
+														 @RequestBody(required = false) SearchDTO searchDTO,
+														 @RequestParam Long organizationId) {
 		return Optional.ofNullable(
-				testCycleCaseService.createFilteredCycleCaseInCycle(projectId, fromCycleId, toCycleId, assignee, searchDTO))
+				testCycleCaseService.createFilteredCycleCaseInCycle(projectId, fromCycleId, toCycleId, assignee, searchDTO,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
 	}
@@ -197,7 +200,8 @@ public class TestCycleCaseController {
 	@GetMapping("/download/excel/{cycleId}")
 	public void downLoad(@PathVariable(name = "project_id") Long projectId, @PathVariable(name = "cycleId") Long cycleId,
 						 HttpServletRequest request,
-						 HttpServletResponse response) {
-		excelService.exportCycleCaseInOneCycle(cycleId, projectId, request, response);
+						 HttpServletResponse response,
+						 @RequestParam Long organizationId) {
+		excelService.exportCycleCaseInOneCycle(cycleId, projectId, request, response,organizationId);
 	}
 }
