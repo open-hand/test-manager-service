@@ -24,6 +24,16 @@ public class TestFileLoadHistoryDTO {
 
     private Long objectVersionNumber;
 
+    private Long createdBy;
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
     public Long getId() {
         return id;
     }

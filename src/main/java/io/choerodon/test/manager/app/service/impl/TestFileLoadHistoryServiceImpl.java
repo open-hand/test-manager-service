@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.app.service.TestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
@@ -16,7 +17,10 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     @Autowired
     ITestFileLoadHistoryService iTestFileLoadHistoryService;
     @Override
-    public List<TestFileLoadHistoryDTO> query(TestFileLoadHistoryDTO testFileLoadHistoryDTO) {
+    public List<TestFileLoadHistoryDTO> query(Long projectId) {
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
+        testFileLoadHistoryDTO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
+        testFileLoadHistoryDTO.setProjectId(projectId);
         return ConvertHelper.convertList(iTestFileLoadHistoryService.query( ConvertHelper.convert(testFileLoadHistoryDTO, TestFileLoadHistoryE.class)),TestFileLoadHistoryDTO.class);
     }
 }

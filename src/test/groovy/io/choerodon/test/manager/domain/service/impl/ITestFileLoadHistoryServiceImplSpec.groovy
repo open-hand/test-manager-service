@@ -53,7 +53,7 @@ class ITestFileLoadHistoryServiceImplSpec extends Specification {
 
     def "Query"() {
         when:
-        def result2 = restTemplate.postForEntity("/v1/projects/{project_id}/test/fileload/history",new TestFileLoadHistoryDTO(id: id),List,144)
+        def result2 = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history",List,144)
         then:
         result2.getBody().size()==1
     }

@@ -381,7 +381,7 @@ class TestCycleCaseControllerSpec extends Specification {
     }
 
     //覆盖excelService中的方法
-    def "ExportCycleCaseInOneCycle"() {
+    def "ExportCycleCaseInOneCycleByTransaction"() {
         given:
         //将被spring代理的对象取出来
         Field h = relExcelService.getClass().getDeclaredField("CGLIB\$CALLBACK_0")
@@ -399,7 +399,8 @@ class TestCycleCaseControllerSpec extends Specification {
         issueMaps.put(97L, new IssueInfosDTO(issueName: "issueName1", issueNum: 97L, summary: "CylceCaseExcel测试",
                  assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"))
         when:
-        target.exportCycleCaseInOneCycle(caseDTO.get(0).getCycleId(), 142, request, new MockHttpServletResponse(),1L)
+        target.exportCycleCaseInOneCycleByTransaction(caseDTO.get(0).getCycleId(), 142, request, new MockHttpServletResponse(), 1L)
+
         then:
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
         2 * userService.query(_) >> Maps.newHashMap(10L, new UserDO(realName: "real", loginName: "login"))
@@ -407,7 +408,7 @@ class TestCycleCaseControllerSpec extends Specification {
         1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(name: "project1")
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
         when:
-        target.exportCycleCaseInOneCycle(caseDTO.get(2).getCycleId(), 142, request, new MockHttpServletResponse(),1L)
+        target.exportCycleCaseInOneCycleByTransaction(caseDTO.get(2).getCycleId(), 142, request, new MockHttpServletResponse(), 1L)
         then:
         1 * testCaseService.getVersionInfo(_) >> Maps.newHashMap(11111L, new ProductVersionDTO(name: "versionName"))
         2 * userService.query(_) >> Maps.newHashMap(10L, new UserDO(realName: "real", loginName: "login"))
