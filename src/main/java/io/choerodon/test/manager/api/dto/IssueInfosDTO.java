@@ -117,15 +117,12 @@ public class IssueInfosDTO {
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
 		issueName = issueDTO.getIssueNum();
-		issueStatusName = issueDTO.getStatusName();
 		issueId = issueDTO.getIssueId();
-		issueColor = issueDTO.getStatusColor();
 		summary = issueDTO.getSummary();
 		projectId = issueDTO.getProjectId();
-		statusCode = issueDTO.getStatusCode();
 		typeCode = issueDTO.getTypeCode();
-		typeCode = issueDTO.getTypeCode();
-//		statusMapDTO=issueDTO.getStatusMapDTO();
+		typeDTO = issueDTO.getIssueTypeDTO();
+		statusMapDTO=issueDTO.getStatusMapDTO();
 	}
 
 	public Long getObjectVersionNumber() {

@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.app.service.impl
 
-
+import io.choerodon.agile.api.dto.StatusMapDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
@@ -80,7 +80,7 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         when:
         service.populateCaseStepDefectInfo(Lists.newArrayList(dto), 1L,1L)
         then:
-        1 * client.getIssueInfoMap(_, _, false) >> new HashMap<>()
+        1 * client.getIssueInfoMap(_, _, false) >> Lists.newArrayList (1L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
     }
 
     def "populateDefectAndIssue"(){
@@ -89,7 +89,7 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         when:
         service.populateDefectAndIssue(dto,144L,1L)
         then:
-        1*client.getIssueInfoMap(_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO())
+        1*client.getIssueInfoMap(_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
         when:
         dto.setDefects(Lists.newArrayList(new TestCycleCaseDefectRelE(issueId: 1L)))
         service.populateDefectAndIssue(dto,144L)
