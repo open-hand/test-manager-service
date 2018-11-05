@@ -24,36 +24,18 @@ public interface TestCaseFeignClient {
     ResponseEntity<IssueDTO> createIssue(@PathVariable(name = "project_id") Long projectId,
                                          @RequestBody IssueCreateDTO issueCreateDTO);
 
-    @PutMapping("/v1/projects/{project_id}/issues")
-    ResponseEntity<IssueDTO> updateIssue(@PathVariable(name = "project_id") Long projectId,
-                                         @RequestBody JSONObject issueUpdate);
-
-    @DeleteMapping(value = "/v1/projects/{project_id}/issues/{issueId}")
-    ResponseEntity deleteIssue(@PathVariable(name = "project_id") Long projectId,
-                               @PathVariable("issueId") Long issueId);
 
     @GetMapping(value = "/v1/projects/{project_id}/issues/{issueId}")
     ResponseEntity<IssueDTO> queryIssue(@PathVariable(name = "project_id") Long projectId,
-                                        @PathVariable("issueId") Long issueId);
-
-    @PostMapping(value = "/v1/projects/{project_id}/issues/no_sub")
-    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-                                                           @RequestParam(name = "orders") String orders,
-                                                           @PathVariable(name = "project_id") Long projectId,
-                                                           @RequestBody(required = false) SearchDTO searchDTO);
-
-    @PostMapping(value = "/v1/projects/{project_id}/issues/type_code/{typeCode}")
-    ResponseEntity<Page<IssueCommonDTO>> listByOptions(
-            @PathVariable(name = "project_id") Long projectId,
-            @PathVariable(name = "typeCode") String typeCode,
-            @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-            @RequestParam(name = "orders") String orders);
+                                        @PathVariable("issueId") Long issueId ,
+                                        @RequestParam("organizationId")Long organizationId);
 
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub")
-    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSubToTestComponent(
+    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSubToTestComponent(
             @PathVariable(name = "project_id") Long projectId,
             @RequestBody(required = false) SearchDTO searchDTO,
+            @RequestParam("organizationId")Long organizationId,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
             @RequestParam(name = "orders") String orders);
 
@@ -83,7 +65,8 @@ public interface TestCaseFeignClient {
                                                                             @ApiParam(value = "项目id", required = true)
                                                                             @PathVariable(name = "project_id") Long projectId,
                                                                             @ApiParam(value = "查询参数", required = true)
-                                                                            @RequestBody(required = false) SearchDTO searchDTO);
+                                                                            @RequestBody(required = false) SearchDTO searchDTO,
+                                                                            @RequestParam("organizationId")Long organizationId);
 
     /**
      * @param projectId 缺陷到issue报表过滤接口
@@ -110,7 +93,8 @@ public interface TestCaseFeignClient {
                                                  @ApiParam(value = "issueId", required = true)
                                                  @PathVariable(name = "issueId") Long issueId,
                                                  @ApiParam(value = "复制条件", required = true)
-                                                 @RequestBody CopyConditionDTO copyConditionDTO);
+                                                 @RequestBody CopyConditionDTO copyConditionDTO,
+                                                 @RequestParam("organizationId")Long organizationId);
 
     /**
      * 将issues的version改为目标version
@@ -180,7 +164,8 @@ public interface TestCaseFeignClient {
     ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
                                                                  @RequestParam(name = "orders") String orders,
                                                                  @PathVariable(name = "project_id") Long projectId,
-                                                                 @RequestBody(required = false) SearchDTO searchDTO);
+                                                                 @RequestBody(required = false) SearchDTO searchDTO,
+                                                                 @RequestParam("organizationId")Long organizationId);
 
     /**
      * 得到所有projectId各自的issueIds

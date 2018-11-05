@@ -15,21 +15,21 @@ import java.util.Map;
  */
 public interface TestCaseService {
     //
-    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
 
-    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
 
-    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId);
+    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId,Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
 
-    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page);
+    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page,Long organizationId);
 
-    Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail);
+    Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail,Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail,Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest,Long organizationId);
 
     List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 
@@ -51,7 +51,7 @@ public interface TestCaseService {
 
     List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
 
-    IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO);
+    IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId);
 
     List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
 

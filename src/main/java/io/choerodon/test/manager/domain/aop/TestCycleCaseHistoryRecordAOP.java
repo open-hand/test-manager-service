@@ -116,21 +116,21 @@ public class TestCycleCaseHistoryRecordAOP {
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelDTO.getDefectLinkId());
 		historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
-		String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelDTO.getIssueId()).getBody().getIssueNum();
+		String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelDTO.getIssueId(),(Long) jp.getArgs()[2]).getBody().getIssueNum();
 		historyDTO.setNewValue(defectName);
 		testCycleCaseHistoryService.insert(historyDTO);
 
 	}
 
-	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))&& args(testCycleCaseDefectRelDTO,projectId)")
-	public Object recordDefectDelete(ProceedingJoinPoint pjp, TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) throws Throwable {
+	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))&& args(testCycleCaseDefectRelDTO,projectId,organizationId)")
+	public Object recordDefectDelete(ProceedingJoinPoint pjp, TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId) throws Throwable {
 		TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
 		testCycleCaseDefectRelE.setId(testCycleCaseDefectRelDTO.getId());
 		testCycleCaseDefectRelE = testCycleCaseDefectRelE.querySelf().get(0);
 		TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
 		historyDTO.setField(TestCycleCaseHistoryE.FIELD_DEFECT);
 		historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
-		String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId()).getBody().getIssueNum();
+		String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId(),organizationId).getBody().getIssueNum();
 		historyDTO.setOldValue(defectName);
 		historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
 		Object o = pjp.proceed();

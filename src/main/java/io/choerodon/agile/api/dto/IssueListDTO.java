@@ -2,10 +2,15 @@ package io.choerodon.agile.api.dto;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author dinghuang123@gmail.com
  */
-public class IssueListDTO {
+public class IssueListDTO implements Serializable {
 
     private Long issueId;
 
@@ -13,25 +18,88 @@ public class IssueListDTO {
 
     private String typeCode;
 
-    private String statusCode;
-
     private String summary;
-
-    private String priorityCode;
 
     private Long assigneeId;
 
+    private Long reporterId;
+
     private Long projectId;
+
+    private Long issueTypeId;
 
     private String assigneeName;
 
-    private String imageUrl;
+    private String reporterName;
 
-    private String priorityName;
+    private String reporterImageUrl;
+
+    private String assigneeImageUrl;
+
+//    private String priorityName;
 
     private String statusName;
 
-    private String statusColor;
+    private String typeName;
+
+    private String epicName;
+
+    private Integer storyPoints;
+
+    private Boolean addIssue;
+
+    private BigDecimal remainingTime;
+
+    private PriorityDTO priorityDTO;
+
+    private StatusMapDTO statusMapDTO;
+
+    private IssueTypeDTO issueTypeDTO;
+
+    public Long getIssueTypeId() {
+        return issueTypeId;
+    }
+
+    public void setIssueTypeId(Long issueTypeId) {
+        this.issueTypeId = issueTypeId;
+
+    }
+
+    private Date lastUpdateDate;
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    private List<VersionIssueRelDTO> versionIssueRelDTOS;
+
+    public Long getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(Long reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public String getReporterName() {
+        return reporterName;
+    }
+
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
+    }
+
+    public List<VersionIssueRelDTO> getVersionIssueRelDTOS() {
+        return versionIssueRelDTOS;
+    }
+
+    public void setVersionIssueRelDTOS(List<VersionIssueRelDTO> versionIssueRelDTOS) {
+        this.versionIssueRelDTOS = versionIssueRelDTOS;
+    }
 
     public Long getIssueId() {
         return issueId;
@@ -57,14 +125,6 @@ public class IssueListDTO {
         this.typeCode = typeCode;
     }
 
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public String getSummary() {
         return summary;
     }
@@ -73,13 +133,13 @@ public class IssueListDTO {
         this.summary = summary;
     }
 
-    public String getPriorityCode() {
-        return priorityCode;
-    }
-
-    public void setPriorityCode(String priorityCode) {
-        this.priorityCode = priorityCode;
-    }
+//    public String getPriorityCode() {
+//        return priorityCode;
+//    }
+//
+//    public void setPriorityCode(String priorityCode) {
+//        this.priorityCode = priorityCode;
+//    }
 
     public Long getAssigneeId() {
         return assigneeId;
@@ -105,13 +165,13 @@ public class IssueListDTO {
         this.assigneeName = assigneeName;
     }
 
-    public String getPriorityName() {
-        return priorityName;
-    }
-
-    public void setPriorityName(String priorityName) {
-        this.priorityName = priorityName;
-    }
+//    public String getPriorityName() {
+//        return priorityName;
+//    }
+//
+//    public void setPriorityName(String priorityName) {
+//        this.priorityName = priorityName;
+//    }
 
     public String getStatusName() {
         return statusName;
@@ -121,20 +181,76 @@ public class IssueListDTO {
         this.statusName = statusName;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getReporterImageUrl() {
+        return reporterImageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setReporterImageUrl(String reporterImageUrl) {
+        this.reporterImageUrl = reporterImageUrl;
     }
 
-    public String getStatusColor() {
-        return statusColor;
+    public String getAssigneeImageUrl() {
+        return assigneeImageUrl;
     }
 
-    public void setStatusColor(String statusColor) {
-        this.statusColor = statusColor;
+    public void setAssigneeImageUrl(String assigneeImageUrl) {
+        this.assigneeImageUrl = assigneeImageUrl;
+    }
+
+    public Integer getStoryPoints() {
+        return storyPoints;
+    }
+
+    public void setStoryPoints(Integer storyPoints) {
+        this.storyPoints = storyPoints;
+    }
+
+    public Boolean getAddIssue() {
+        return addIssue;
+    }
+
+    public void setAddIssue(Boolean addIssue) {
+        this.addIssue = addIssue;
+    }
+
+    public String getEpicName() {
+        return epicName;
+    }
+
+    public void setEpicName(String epicName) {
+        this.epicName = epicName;
+    }
+
+    public BigDecimal getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(BigDecimal remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+
+    public void setPriorityDTO(PriorityDTO priorityDTO) {
+        this.priorityDTO = priorityDTO;
+    }
+
+    public PriorityDTO getPriorityDTO() {
+        return priorityDTO;
+    }
+
+    public void setStatusMapDTO(StatusMapDTO statusMapDTO) {
+        this.statusMapDTO = statusMapDTO;
+    }
+
+    public StatusMapDTO getStatusMapDTO() {
+        return statusMapDTO;
+    }
+
+    public void setIssueTypeDTO(IssueTypeDTO issueTypeDTO) {
+        this.issueTypeDTO = issueTypeDTO;
+    }
+
+    public IssueTypeDTO getIssueTypeDTO() {
+        return issueTypeDTO;
     }
 
     @Override

@@ -113,8 +113,8 @@ public class ExcelServiceImpl implements ExcelService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
-                                          HttpServletResponse response) {
-        exportCycleCaseInOneCycleByTransaction(cycleId,projectId,request,response);
+                                          HttpServletResponse response,Long organizationId) {
+        exportCycleCaseInOneCycleByTransaction(cycleId,projectId,request,response,organizationId);
     }
 
     /**
@@ -126,8 +126,8 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response) {
-        exportCaseProjectByTransaction(projectId,request,response);
+    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
+        exportCaseProjectByTransaction(projectId,request,response,organizationId);
     }
 
     /**
@@ -139,20 +139,20 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
-        exportCaseVersionByTransaction(projectId,versionId,request,response);
+    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
+        exportCaseVersionByTransaction(projectId,versionId,request,response,organizationId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
-        exportCaseFolderByTransaction(projectId,folderId,request,response);
+    public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
+        exportCaseFolderByTransaction(projectId,folderId,request,response,organizationId);
     }
 
 
     @Async
     public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
-                                          HttpServletResponse response) {
+                                                       HttpServletResponse response,Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
 
@@ -165,7 +165,7 @@ public class ExcelServiceImpl implements ExcelService {
         TestCycleDTO cycle = ConvertHelper.convert(cycleE.queryOne(), TestCycleDTO.class);
         testCycleService.populateVersion(cycle, projectId);
         testCycleService.populateUsers(Lists.newArrayList(cycle));
-        Map<Long, List<TestCycleCaseDTO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, null, projectId))
+        Map<Long, List<TestCycleCaseDTO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, null, projectId,organizationId))
                 .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
         IExcelService service = new <TestCycleDTO, TestCycleCaseDTO>ICycleCaseExcelServiceImpl();
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
@@ -177,7 +177,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Async
-    public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
         setExcelHeader(request);
 
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, projectId,
@@ -197,7 +197,7 @@ public class ExcelServiceImpl implements ExcelService {
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
         for (Long versionId : versionsId) {
             folderE.setVersionId(versionId);
-            service.exportWorkBookWithOneSheet(populateFolder(folderE), projectName,
+            service.exportWorkBookWithOneSheet(populateFolder(folderE,organizationId), projectName,
                     ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
         }
         workbook.setSheetHidden(0, true);
@@ -209,7 +209,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     @Async
-    public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
@@ -226,7 +226,7 @@ public class ExcelServiceImpl implements ExcelService {
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
-        service.exportWorkBookWithOneSheet(populateFolder(folderE), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        service.exportWorkBookWithOneSheet(populateFolder(folderE,organizationId), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
 
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
@@ -238,7 +238,7 @@ public class ExcelServiceImpl implements ExcelService {
 
 
     @Async
-    public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response) {
+    public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response,Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
 
@@ -256,7 +256,7 @@ public class ExcelServiceImpl implements ExcelService {
         IExcelService service = new <TestIssueFolderDTO, TestIssueFolderRelDTO>ITestCaseExcelServiceImpl();
 
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
-        service.exportWorkBookWithOneSheet(populateFolder(folderE), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        service.exportWorkBookWithOneSheet(populateFolder(folderE,organizationId), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
 
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
@@ -361,7 +361,7 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private Map<Long, List<TestIssueFolderRelDTO>> populateFolder(TestIssueFolderE folderE) {
+    private Map<Long, List<TestIssueFolderRelDTO>> populateFolder(TestIssueFolderE folderE,Long organizationId) {
         List<TestIssueFolderE> folders = Optional.ofNullable(folderE.queryAllUnderProject()).orElseGet(ArrayList::new);
 
         Map<Long, List<TestIssueFolderRelDTO>> folderRelMap = new HashMap<>();
@@ -380,7 +380,7 @@ public class ExcelServiceImpl implements ExcelService {
 
             List<Long> issueIds = folderRels.stream().map(TestIssueFolderRelE::getIssueId).collect(Collectors.toList());
 
-            Map<Long, IssueInfosDTO> issueInfosMap = batchGetIssueInfo(issueIds, folderE);
+            Map<Long, IssueInfosDTO> issueInfosMap = batchGetIssueInfo(issueIds, folderE,organizationId);
 
             for (TestIssueFolderRelE folderRel : folderRels) {
                 TestIssueFolderRelDTO needRel = ConvertHelper.convert(folderRel, TestIssueFolderRelDTO.class);
@@ -400,7 +400,7 @@ public class ExcelServiceImpl implements ExcelService {
         return folderRelMap;
     }
 
-    private Map<Long, IssueInfosDTO> batchGetIssueInfo(List<Long> issueIds, TestIssueFolderE folderE) {
+    private Map<Long, IssueInfosDTO> batchGetIssueInfo(List<Long> issueIds, TestIssueFolderE folderE,Long organizationId) {
         Map<Long, IssueInfosDTO> issueInfosMap = new HashMap<>();
 
         int flag = issueIds.size() / 400;
@@ -414,7 +414,7 @@ public class ExcelServiceImpl implements ExcelService {
 
             if (!ObjectUtils.isEmpty(issueIds)) {
                 printDebug("开始分批获取issue信息（最大400一批），当前第" + (j + 1) + "批");
-                issueInfosMap.putAll(testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true));
+                issueInfosMap.putAll(testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true,organizationId));
             }
         }
         return issueInfosMap;

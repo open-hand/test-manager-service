@@ -99,7 +99,7 @@ class ExcelServiceImplTest extends Specification {
         issuesId[1] = 55556L
 
         issueInfosDTOMap = Maps.newHashMap(issuesId[0],new IssueInfosDTO(issueId: issuesId[0],issueNum: 1L,summary: "CaseExcel测试",
-                priorityName: "高",assigneeName: "CaseExcel测试人",statusName: "CaseExcel测试状态"))
+                assigneeName: "CaseExcel测试人",statusName: "CaseExcel测试状态"))
         versionIds[0] = versionId
         projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
         List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
@@ -134,12 +134,12 @@ class ExcelServiceImplTest extends Specification {
         resFolderRelDO = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO)
 
         when:
-        target.exportCaseByProject(projectId, request, new MockHttpServletResponse())
+        target.exportCaseByProject(projectId, request, new MockHttpServletResponse(),1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionIds(_) >> versionIds
-        1 * testCaseService.getIssueInfoMap(_, _, _) >> issueInfosDTOMap
+        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
@@ -153,7 +153,7 @@ class ExcelServiceImplTest extends Specification {
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * testCaseService.getIssueInfoMap(_, _, _) >> issueInfosDTOMap
+        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
@@ -167,7 +167,7 @@ class ExcelServiceImplTest extends Specification {
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * testCaseService.getIssueInfoMap(_, _, _) >> issueInfosDTOMap
+        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo

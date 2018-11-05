@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Sets;
-import io.choerodon.agile.api.dto.IssueCommonDTO;
+import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -83,7 +83,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId) {
+    public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId,Long organizationId) {
         TestCycleDTO queryTestCycleDTO = new TestCycleDTO();
         queryTestCycleDTO.setCycleId(dto.getCycleId());
         //找到所有的子阶段
@@ -104,7 +104,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.queryByFatherCycle(ConvertHelper.convertList(testCycleCaseDTOS, TestCycleCaseE.class), pageRequest);
         Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
 
-        populateCycleCaseWithDefect(dots, projectId);
+        populateCycleCaseWithDefect(dots, projectId,organizationId);
         populateUsers(dots);
         return dots;
     }
@@ -121,13 +121,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId) {
+    public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId,Long organizationId) {
 
         List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
         if (ObjectUtils.isEmpty(dto)) {
             return new ArrayList<>();
         }
-        populateCycleCaseWithDefect(dto, projectId);
+        populateCycleCaseWithDefect(dto, projectId,organizationId);
         populateUsers(dto);
         populateVersionBuild(projectId, dto);
         return dto;
@@ -142,7 +142,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
      * @return
      */
     @Override
-    public List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId) {
+    public List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId,Long organizationId) {
         if (issueIds == null || issueIds.length == 0) {
             return new ArrayList<>();
         }
@@ -150,16 +150,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (dto == null || dto.isEmpty()) {
             return new ArrayList<>();
         }
-        populateCycleCaseWithDefect(dto, projectId);
+        populateCycleCaseWithDefect(dto, projectId,organizationId);
         return dto;
     }
 
     @Override
-    public List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId) {
+    public List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId,Long organizationId) {
         Assert.notNull(cycleIds, "error.query.case.in.versions.project.not.be.null");
 
         List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds), TestCycleCaseDTO.class);
-        populateCycleCaseWithDefect(dto, projectId);
+        populateCycleCaseWithDefect(dto, projectId,organizationId);
         populateUsers(dto);
         return dto;
     }
@@ -170,7 +170,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
      * @param testCycleCaseDTOS
      * @param projectId
      */
-    private void populateCycleCaseWithDefect(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId) {
+    private void populateCycleCaseWithDefect(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId,Long organizationId ) {
         List<TestCycleCaseDefectRelDTO> list = new ArrayList<>();
         for (TestCycleCaseDTO v : testCycleCaseDTOS) {
             List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
@@ -184,7 +184,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(issueLists)) {
             return;
         }
-        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true,organizationId);
 
         list.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
         testCycleCaseDTOS.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
@@ -208,11 +208,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId) {
+    public TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId,Long organizationId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(cycleCaseId);
         TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.queryOne(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
-        testCycleCaseDefectRelService.populateDefectAndIssue(dto, projectId);
+        testCycleCaseDefectRelService.populateDefectAndIssue(dto, projectId,organizationId);
         userService.populateTestCycleCaseDTO(dto);
         return dto;
     }
@@ -260,7 +260,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO) {
+    public boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO,Long organizationId) {
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
         testCycleCaseE.setCycleId(fromCycleId);
         Map filterMap = new HashMap();
@@ -269,14 +269,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
         if (!(ObjectUtils.isEmpty(testCycleCaseES))) {
             List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
-            testCycleCaseDefectRelService.populateCycleCaseDefectInfo(testCycleCase, projectId);
+            testCycleCaseDefectRelService.populateCycleCaseDefectInfo(testCycleCase, projectId,organizationId);
 
             Map idMap = new HashMap();
             Object[] ids = testCycleCase.stream().map(TestCycleCaseDTO::getIssueId).toArray();
             idMap.put("issueIds", ids);
             searchDTO.setOtherArgs(idMap);
-            ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0, 9999999));
-            Set issueListDTOS = responseEntity.getBody().stream().map(IssueCommonDTO::getIssueId).collect(Collectors.toSet());
+            ResponseEntity<Page<IssueListDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0, 9999999),organizationId);
+            Set issueListDTOS = responseEntity.getBody().stream().map(IssueListDTO::getIssueId).collect(Collectors.toSet());
 
             Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
             final String[] lastRank = new String[1];

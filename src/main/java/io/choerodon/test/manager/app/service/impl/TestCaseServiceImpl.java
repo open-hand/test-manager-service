@@ -42,29 +42,29 @@ public class TestCaseServiceImpl implements TestCaseService {
     ProjectFeignClient projectFeignClient;
 
     @Override
-    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSub.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
+        return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO,organizationId, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
     }
 
     @Override
-    public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+    public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSubDetail.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSubDetail.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
+        return testCaseFeignClient.listIssueWithoutSubDetail(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO,organizationId);
     }
 
     @Override
-    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
+    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.queryIssue.param.projectId.not.null");
         Assert.notNull(issueId, "error.TestCaseService.queryIssue.param.issueId.not.null");
-        return testCaseFeignClient.queryIssue(projectId, issueId);
+        return testCaseFeignClient.queryIssue(projectId, issueId,organizationId);
     }
 
     @Override
-    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
-        return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
+        return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
     }
 
     /**
@@ -75,9 +75,9 @@ public class TestCaseServiceImpl implements TestCaseService {
      * @param pageRequest
      * @return
      */
-    public <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page) {
+    public <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page,Long organizationId) {
         Assert.notNull(page, "error.TestCaseService.getIssueInfoMapAndPopulatePageInfo.param.page.not.be.null");
-        Page<IssueListDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest).getBody();
+        Page<IssueListDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest,organizationId).getBody();
 
         page.setTotalElements(returnDto.getTotalElements());
         page.setSize(returnDto.getSize());
@@ -89,32 +89,32 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail) {
+    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail,Long organizationId) {
         PageRequest pageRequest = new PageRequest();
         pageRequest.setSize(999999999);
         pageRequest.setPage(0);
         pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
         if (needDetail) {
-            return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
+            return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
         } else {
-            return listIssueWithoutSub(projectId, searchDTO, pageRequest).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+            return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
         }
     }
 
     @Override
-    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail) {
+    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail,Long organizationId) {
         if (ObjectUtils.isEmpty(issueIds)) {
             return new HashMap<>();
         }
-        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), needDetail);
+        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), needDetail,organizationId);
     }
 
     @Override
-    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest) {
+    public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest,Long organizationId) {
         if (ObjectUtils.isEmpty(issueIds)) {
             return new HashMap<>();
         }
-        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest);
+        return getIssueInfoMap(projectId, buildIdsSearchDTO(issueIds), pageRequest,organizationId);
     }
 
     private SearchDTO buildIdsSearchDTO(Long[] issueIds) {
@@ -214,9 +214,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO) {
+    public IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.cloneIssueByIssueId.param.projectId.not.be.null");
-        return testCaseFeignClient.cloneIssueByIssueId(projectId, issueId, copyConditionDTO).getBody();
+        return testCaseFeignClient.cloneIssueByIssueId(projectId, issueId, copyConditionDTO,organizationId).getBody();
     }
 
     @Override
@@ -243,16 +243,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         return productionVersionClient.queryProjectIdByVersionId(99999L, versionId).getBody();
     }
 
-    ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+    ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
-        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO);
+        return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO,organizationId);
 
     }
 
     @Override
     public List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.queryIssueTestGroupByProject.param.projectId.not.be.null");
+        Assert.notNull(projectId, "error.TestCaseService.queryIssueTestGroupBy·Project.param.projectId.not.be.null");
         return testCaseFeignClient.queryIssueTestGroupByProject(projectId).getBody();
     }
 }

@@ -29,38 +29,19 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
         throw new CommonException(CREATE_ERROR);
     }
 
-    @Override
-    public ResponseEntity<IssueDTO> updateIssue(Long projectId, JSONObject issueUpdate) {
-        throw new CommonException(UPDATE_ERROR);
-    }
 
     @Override
-    public ResponseEntity deleteIssue(Long projectId, Long issueId) {
-        throw new CommonException(DELETE_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId) {
+    public ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId,Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(int page, int size,
-                                                                  String orders, Long projectId, SearchDTO searchDTO) {
-        throw new CommonException(BATCH_QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<Page<IssueCommonDTO>> listByOptions(Long projectId, String typeCode, int page, int size, String orders) {
-        throw new CommonException(BATCH_QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, int page, int size, String orders) {
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO,Long organizationId, int page, int size, String orders) {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
+    @Deprecated
     public ResponseEntity<List<IssueLinkDTO>> listIssueLinkByIssueId(Long projectId, Long issueId) {
         throw new CommonException(QUERY_ERROR);
     }
@@ -76,7 +57,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
 	@Override
-	public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO) {
+	public ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO,Long organizationId) {
 		throw new CommonException(QUERY_ERROR);
 	}
 
@@ -86,7 +67,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<IssueDTO> cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO) {
+    public ResponseEntity<IssueDTO> cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -111,7 +92,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO) {
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO,Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 

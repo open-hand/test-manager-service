@@ -45,10 +45,10 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         IssueDTO mockResult=new IssueDTO(issueNum: "name1")
         TestCycleCaseDefectRelDTO defect = new TestCycleCaseDefectRelDTO(issueId: 99L, defectType: TestCycleCaseDefectRelE.CASE_STEP, defectLinkId: 999L)
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect", Lists.newArrayList(defect),List,144)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect?organizationId=1", Lists.newArrayList(defect),List,144)
         defectId = result.getBody().get(0).getAt("id")
         then:
-        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+        1*caseService.queryIssue(_,_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
         result.getBody().get(0).getAt("id") != null
         result.statusCode.is2xxSuccessful()
     }
@@ -58,8 +58,8 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         IssueDTO mockResult=new IssueDTO(issueNum: "name1")
 //        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
         when:
-        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}",144L,defectId)
+        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}?organizationId=1",144L,defectId)
         then:
-        1*caseService.queryIssue(_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+        1*caseService.queryIssue(_,_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
     }
 }

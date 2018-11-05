@@ -38,8 +38,9 @@ public class TestIssueFolderRelController {
                                                  @RequestParam(name = "folderId", required = false) Long folderId,
                                                  @RequestBody
                                                          TestFolderRelQueryDTO testFolderRelQueryDTO,
-                                                 @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest) {
-        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, testFolderRelQueryDTO, pageRequest))
+                                                 @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
+                                                 @RequestParam Long organizationId) {
+        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, testFolderRelQueryDTO, pageRequest,organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
     }
@@ -50,8 +51,9 @@ public class TestIssueFolderRelController {
     public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
                                           @RequestParam(name = "folderId",required = false) Long folderId,
                                           @RequestParam(name = "versionId",required = false) Long versionId,
-                                          @RequestBody Long[] issueIds) {
-        return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds))
+                                          @RequestBody Long[] issueIds,
+                                          @RequestParam Long organizationId) {
+        return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds,organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
     }

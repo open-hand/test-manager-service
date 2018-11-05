@@ -33,62 +33,62 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) {
+    public TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId) {
         return ConvertHelper.convert(iTestCycleCaseDefectRelService.insert(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class)), TestCycleCaseDefectRelDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) {
+    public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId) {
         iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
     }
 
     @Override
-    public void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId) {
+    public void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId,Long organizationId) {
         if (ObjectUtils.isEmpty(lists)) {
             return;
         }
         Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelDTO::getIssueId).filter(Objects::nonNull).distinct().toArray(Long[]::new);
-        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false,organizationId);
         lists.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
     }
 
     @Override
-    public void populateDefectAndIssue(TestCycleCaseDTO dto ,Long projectId){
+    public void populateDefectAndIssue(TestCycleCaseDTO dto ,Long projectId,Long organizationId){
         Stream<Long> stream=Stream.of(dto.getIssueId());
         if(!ObjectUtils.isEmpty(dto.getDefects())){
             stream=Stream.concat(stream,dto.getDefects().stream().map(TestCycleCaseDefectRelDTO::getIssueId));
         }
         Long[] issueLists = stream.filter(Objects::nonNull).distinct().toArray(Long[]::new);
-        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false,organizationId);
         dto.setIssueInfosDTO(defectMap.get(dto.getIssueId()));
         Optional.ofNullable(dto.getDefects()).ifPresent(v->v.forEach(u -> u.setIssueInfosDTO(defectMap.get(u.getIssueId()))));
     }
 
     @Override
-    public void populateCycleCaseDefectInfo(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId) {
+    public void populateCycleCaseDefectInfo(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId,Long organizationId) {
         List<TestCycleCaseDefectRelDTO> list = new ArrayList<>();
         for (TestCycleCaseDTO v : testCycleCaseDTOS) {
             List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
             list.addAll(defects);
         }
-        populateDefectInfo(list, projectId);
+        populateDefectInfo(list, projectId,organizationId);
     }
 
     @Override
-    public void populateCaseStepDefectInfo(List<TestCycleCaseStepDTO> testCycleCaseDTOS, Long projectId) {
+    public void populateCaseStepDefectInfo(List<TestCycleCaseStepDTO> testCycleCaseDTOS, Long projectId,Long organizationId) {
         List<TestCycleCaseDefectRelDTO> list = new ArrayList<>();
         for (TestCycleCaseStepDTO v : testCycleCaseDTOS) {
             List<TestCycleCaseDefectRelDTO> defects = v.getDefects();
             list.addAll(defects);
         }
-        populateDefectInfo(list, projectId);
+        populateDefectInfo(list, projectId,organizationId);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO) {
+    public Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO,Long organizationId) {
         TestCycleCaseDefectRelE defectRelE=TestCycleCaseDefectRelEFactory.create();
         List<Long> issueIds= defectRelE.queryAllIssueIds();
         List<List<Long>> handledIssueIds = Lists.partition(issueIds, 50);
@@ -96,7 +96,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         Boolean flag = false;
         for (List<Long> toSendIssueId : handledIssueIds) {
             Long[] tempIssueId = toSendIssueId.toArray(new Long[toSendIssueId.size()]);
-            issueInfoMap = testCaseService.getIssueInfoMap(testCycleCaseDefectRelDTO.getProjectId(), tempIssueId, false);
+            issueInfoMap = testCaseService.getIssueInfoMap(testCycleCaseDefectRelDTO.getProjectId(), tempIssueId, false,organizationId);
 
             for (Long id: toSendIssueId) {
                 IssueInfosDTO issueInfosDTO = issueInfoMap.get(id);

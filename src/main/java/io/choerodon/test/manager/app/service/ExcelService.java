@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface ExcelService {
 	void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
-													 HttpServletResponse response);
+													 HttpServletResponse response,Long organizationId);
 
 	void exportCaseByProject(Long projectId, HttpServletRequest request,
-								   HttpServletResponse response);
+								   HttpServletResponse response,Long organizationId);
 
-	void exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response);
+	void exportCaseByVersion(Long projectId,Long versionId, HttpServletRequest request, HttpServletResponse response,Long organizationId);
 
-	void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response);
+	void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response,Long organizationId);
 
 	void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response);
 }

@@ -19,8 +19,6 @@ public class IssueComponentDetailDTO {
 
 	private Long statusId;
 
-	private String priorityCode;
-
 	private Long assigneeId;
 
 	private String assigneeName;
@@ -28,12 +26,6 @@ public class IssueComponentDetailDTO {
 	private String assigneeImageUrl;
 
 	private Long projectId;
-
-	private String priorityName;
-
-	private String statusCode;
-
-	private String statusName;
 
 	private String issueNum;
 
@@ -51,7 +43,11 @@ public class IssueComponentDetailDTO {
 
 	private String epicColor;
 
-	private String statusColor;
+	private IssueTypeDTO issueTypeDTO;
+
+	private StatusMapDTO statusMapDTO;
+
+	private PriorityDTO priorityDTO;
 
 	private List<VersionIssueRelDTO> versionIssueRelDTOList;
 
@@ -91,13 +87,6 @@ public class IssueComponentDetailDTO {
 		this.reporterImageUrl = reporterImageUrl;
 	}
 
-	public String getStatusColor() {
-		return statusColor;
-	}
-
-	public void setStatusColor(String statusColor) {
-		this.statusColor = statusColor;
-	}
 
 	public Long getIssueId() {
 		return issueId;
@@ -131,13 +120,6 @@ public class IssueComponentDetailDTO {
 		this.statusId = statusId;
 	}
 
-	public String getPriorityCode() {
-		return priorityCode;
-	}
-
-	public void setPriorityCode(String priorityCode) {
-		this.priorityCode = priorityCode;
-	}
 
 	public Long getAssigneeId() {
 		return assigneeId;
@@ -153,30 +135,6 @@ public class IssueComponentDetailDTO {
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
-	}
-
-	public String getPriorityName() {
-		return priorityName;
-	}
-
-	public void setPriorityName(String priorityName) {
-		this.priorityName = priorityName;
-	}
-
-	public String getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(String statusCode) {
-		this.statusCode = statusCode;
-	}
-
-	public String getStatusName() {
-		return statusName;
-	}
-
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
 	}
 
 	public String getIssueNum() {
@@ -249,6 +207,30 @@ public class IssueComponentDetailDTO {
 
 	public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
 		this.componentIssueRelDTOList = componentIssueRelDTOList;
+	}
+
+	public IssueTypeDTO getIssueTypeDTO() {
+		return issueTypeDTO;
+	}
+
+	public void setIssueTypeDTO(IssueTypeDTO issueTypeDTO) {
+		this.issueTypeDTO = issueTypeDTO;
+	}
+
+	public StatusMapDTO getStatusMapDTO() {
+		return statusMapDTO;
+	}
+
+	public void setStatusMapDTO(StatusMapDTO statusMapDTO) {
+		this.statusMapDTO = statusMapDTO;
+	}
+
+	public PriorityDTO getPriorityDTO() {
+		return priorityDTO;
+	}
+
+	public void setPriorityDTO(PriorityDTO priorityDTO) {
+		this.priorityDTO = priorityDTO;
 	}
 
 	@Override

@@ -14,17 +14,17 @@ public interface TestCycleCaseService {
 
 	void delete(Long cycleCaseId, Long projectId);
 
-	Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId);
+	Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId,Long organizationId);
 
 	Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
 
-	TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId);
+	TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId,Long organizationId);
 
-	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId);
+	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId,Long organizationId);
 
-	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId);
+	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId,Long organizationId);
 
-	List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId);
+	List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId,Long organizationId);
 
 	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
@@ -46,7 +46,7 @@ public interface TestCycleCaseService {
 	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 
-	boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO);
+	boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO,Long organizationId);
 
 
 	Long countCaseNotRun(Long projectId);
