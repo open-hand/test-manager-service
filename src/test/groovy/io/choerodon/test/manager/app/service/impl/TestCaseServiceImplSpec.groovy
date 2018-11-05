@@ -84,23 +84,23 @@ class TestCaseServiceImplSpec extends Specification {
 
     def "GetIssueInfoMap1"() {
         when:
-        service.getIssueInfoMap(1L,new SearchDTO(),true)
+        service.getIssueInfoMap(1L,new SearchDTO(),true,1L)
         then:
-        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueComponentDetailDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueComponentDetailDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
         when:
-        service.getIssueInfoMap(1L,new SearchDTO(),false)
+        service.getIssueInfoMap(1L,new SearchDTO(),false,1L)
         then:
-        1*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+        1*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
 
     }
 
     def "GetIssueInfoMap2"() {
         when:
-        service.getIssueInfoMap(1L,[1,2] as Long[],true)
+        service.getIssueInfoMap(1L,[1,2] as Long[],true,1L)
         then:
-        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueComponentDetailDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueComponentDetailDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
         when:
-        service.getIssueInfoMap(1L,[] as Long[],true)
+        service.getIssueInfoMap(1L,[] as Long[],true,1L)
         then:
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
@@ -109,11 +109,11 @@ class TestCaseServiceImplSpec extends Specification {
 
     def "GetIssueInfoMap3"() {
         when:
-        service.getIssueInfoMap(1L,[1,2] as Long[],new PageRequest(sort: new Sort("id")))
+        service.getIssueInfoMap(1L,[1,2] as Long[],new PageRequest(sort: new Sort("id")),1L)
         then:
-        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L)),new PageInfo(0,1,false),1),HttpStatus.OK)
+        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
         when:
-        service.getIssueInfoMap(1L,[] as Long[],new PageRequest())
+        service.getIssueInfoMap(1L,[] as Long[],new PageRequest(),1L)
         then:
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)

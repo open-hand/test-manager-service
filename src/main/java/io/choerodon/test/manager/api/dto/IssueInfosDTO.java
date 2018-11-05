@@ -40,7 +40,7 @@ public class IssueInfosDTO {
 
 	private String assigneeImageUrl;
 
-//	private String priorityName;
+	private IssueTypeDTO typeDTO;
 	 private PriorityDTO priorityDTO;
 
 	private String statusName;
@@ -100,6 +100,7 @@ public class IssueInfosDTO {
 		this.versionIssueRelDTOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
 		this.labelIssueRelDTOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
 		this.componentIssueRelDTOList = issueComponentDetailDTO.getComponentIssueRelDTOList();
+		typeDTO=issueComponentDetailDTO.getIssueTypeDTO();
 	}
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
@@ -116,14 +117,12 @@ public class IssueInfosDTO {
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
 		issueName = issueDTO.getIssueNum();
-		issueStatusName = issueDTO.getStatusName();
 		issueId = issueDTO.getIssueId();
-		issueColor = issueDTO.getStatusColor();
 		summary = issueDTO.getSummary();
 		projectId = issueDTO.getProjectId();
-		statusCode = issueDTO.getStatusCode();
 		typeCode = issueDTO.getTypeCode();
-//		statusMapDTO=issueDTO.getStatusMapDTO();
+		typeDTO = issueDTO.getIssueTypeDTO();
+		statusMapDTO=issueDTO.getStatusMapDTO();
 	}
 
 	public Long getObjectVersionNumber() {
