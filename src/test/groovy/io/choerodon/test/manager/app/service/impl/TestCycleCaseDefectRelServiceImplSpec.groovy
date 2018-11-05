@@ -40,13 +40,13 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         TestCycleCaseDefectRelDTO defect3 = new TestCycleCaseDefectRelDTO(issueId: 3)
 
         when:
-        service.populateDefectInfo(new ArrayList<>(), 1L)
+        service.populateDefectInfo(new ArrayList<>(), 1L,1L)
         then:
-        0 * client.getIssueInfoMap(_, _, false)
+        0 * client.getIssueInfoMap(_, _, false,_)
         when:
-        service.populateDefectInfo(Lists.newArrayList(defect1, defect2, defect3), 1L)
+        service.populateDefectInfo(Lists.newArrayList(defect1, defect2, defect3), 1L,1L)
         then:
-        1 * client.getIssueInfoMap(_, _, false) >> new HashMap<>()
+        1 * client.getIssueInfoMap(_, _, false,_) >> new HashMap<>()
     }
 
     def "PopulateCycleCaseDefectInfo"() {

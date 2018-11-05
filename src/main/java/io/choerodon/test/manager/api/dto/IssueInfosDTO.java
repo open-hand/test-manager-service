@@ -24,6 +24,8 @@ public class IssueInfosDTO {
 
 	private String statusCode;
 
+	private StatusMapDTO statusMapDTO;
+
 	private String typeCode;
 
 	private Long objectVersionNumber;
@@ -70,19 +72,8 @@ public class IssueInfosDTO {
 	public IssueInfosDTO() {
 	}
 
-	public IssueInfosDTO(IssueCommonDTO issueCommonDTO) {
-		issueName = issueCommonDTO.getIssueNum();
-		issueStatusName = issueCommonDTO.getStatusName();
-		issueId = issueCommonDTO.getIssueId();
-		issueColor = issueCommonDTO.getStatusColor();
-		summary = issueCommonDTO.getSummary();
-		projectId = issueCommonDTO.getProjectId();
-		statusCode = issueCommonDTO.getStatusCode();
-		typeCode = issueCommonDTO.getTypeCode();
-	}
-
 	public IssueInfosDTO(IssueComponentDetailDTO issueComponentDetailDTO) {
-		this.issueStatusName = issueComponentDetailDTO.getStatusMapDTO().getName();
+		this.statusMapDTO = issueComponentDetailDTO.getStatusMapDTO();
 		this.issueId = issueComponentDetailDTO.getIssueId();
 //		this.issueColor = issueComponentDetailDTO.getStatusColor();
 		this.summary = issueComponentDetailDTO.getSummary();
@@ -118,7 +109,7 @@ public class IssueInfosDTO {
 //		issueColor = issueListDTO.getStatusColor();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
-		statusCode = issueListDTO.getStatusMapDTO().getCode();
+		statusMapDTO = issueListDTO.getStatusMapDTO();
 		typeCode = issueListDTO.getTypeCode();
 
 	}
@@ -132,6 +123,7 @@ public class IssueInfosDTO {
 		projectId = issueDTO.getProjectId();
 		statusCode = issueDTO.getStatusCode();
 		typeCode = issueDTO.getTypeCode();
+//		statusMapDTO=issueDTO.getStatusMapDTO();
 	}
 
 	public Long getObjectVersionNumber() {
@@ -269,6 +261,15 @@ public class IssueInfosDTO {
 //	public void setPriorityName(String priorityName) {
 //		this.priorityName = priorityName;
 //	}
+
+
+	public StatusMapDTO getStatusMapDTO() {
+		return statusMapDTO;
+	}
+
+	public void setStatusMapDTO(StatusMapDTO statusMapDTO) {
+		this.statusMapDTO = statusMapDTO;
+	}
 
 	public String getStatusName() {
 		return statusName;

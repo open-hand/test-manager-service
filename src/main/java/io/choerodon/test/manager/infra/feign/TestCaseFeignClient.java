@@ -32,7 +32,7 @@ public interface TestCaseFeignClient {
 
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub")
-    ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSubToTestComponent(
+    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSubToTestComponent(
             @PathVariable(name = "project_id") Long projectId,
             @RequestBody(required = false) SearchDTO searchDTO,
             @RequestParam("organizationId")Long organizationId,

@@ -12,7 +12,7 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 public interface TestCycleCaseDefectRelService {
 	TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId);
 
-	void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId);
+	void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId);
 
 	void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId,Long organizationId);
 

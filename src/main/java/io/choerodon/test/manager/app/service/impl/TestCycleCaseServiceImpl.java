@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.google.common.collect.Sets;
-import io.choerodon.agile.api.dto.IssueCommonDTO;
+import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -275,8 +275,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             Object[] ids = testCycleCase.stream().map(TestCycleCaseDTO::getIssueId).toArray();
             idMap.put("issueIds", ids);
             searchDTO.setOtherArgs(idMap);
-            ResponseEntity<Page<IssueCommonDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0, 9999999),organizationId);
-            Set issueListDTOS = responseEntity.getBody().stream().map(IssueCommonDTO::getIssueId).collect(Collectors.toSet());
+            ResponseEntity<Page<IssueListDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0, 9999999),organizationId);
+            Set issueListDTOS = responseEntity.getBody().stream().map(IssueListDTO::getIssueId).collect(Collectors.toSet());
 
             Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
             final String[] lastRank = new String[1];

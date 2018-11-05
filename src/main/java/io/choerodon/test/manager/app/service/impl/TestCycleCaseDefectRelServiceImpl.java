@@ -39,7 +39,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId) {
+    public void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId) {
         iTestCycleCaseDefectRelService.delete(ConvertHelper.convert(testCycleCaseDefectRelDTO, TestCycleCaseDefectRelE.class));
 
     }

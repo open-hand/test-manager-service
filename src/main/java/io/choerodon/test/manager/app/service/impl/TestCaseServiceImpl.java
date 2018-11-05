@@ -42,7 +42,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     ProjectFeignClient projectFeignClient;
 
     @Override
-    public ResponseEntity<Page<IssueCommonDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
+    public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithoutSub.param.pageRequest.not.null");
         return testCaseFeignClient.listIssueWithoutSubToTestComponent(projectId, searchDTO,organizationId, pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString());
@@ -64,7 +64,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
-        return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+        return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
     }
 
     /**
@@ -97,7 +97,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (needDetail) {
             return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
         } else {
-            return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueCommonDTO::getIssueId, IssueInfosDTO::new));
+            return listIssueWithoutSub(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
         }
     }
 

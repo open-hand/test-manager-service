@@ -46,10 +46,11 @@ public class TestCycleCaseDefectRelController {
     @ApiOperation("删除缺陷")
     @DeleteMapping("/delete/{defectId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
-                                           @PathVariable(name = "defectId") Long defectId) {
+                                           @PathVariable(name = "defectId") Long defectId,
+                                           @RequestParam Long organizationId) {
         TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
         testCycleCaseDefectRelDTO.setId(defectId);
-        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO, projectId);
+        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO, projectId,organizationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

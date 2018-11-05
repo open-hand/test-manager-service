@@ -48,7 +48,7 @@ public class TestCycleCaseController {
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("查询测试组下循环用例")
-	@GetMapping("/organizationue/{issueId}")
+	@GetMapping("/query/issue/{issueId}")
 	public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
 																@PathVariable(name = "issueId") Long issueId,
 																@RequestParam Long organizationId) {

@@ -63,26 +63,26 @@ class TestCaseControllerTest extends Specification {
 
     def "DownLoadByProject"() {
         when:
-        testCaseController.downLoadByProject(1L, new MockHttpServletRequest(), new MockHttpServletResponse())
+        testCaseController.downLoadByProject(1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByProject(_, _, _)
+        1 * excelService.exportCaseByProject(_, _, _,_)
     }
 
     def "DownLoadByVersion"() {
         when:
-        testCaseController.downLoadByVersion(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse())
+        testCaseController.downLoadByVersion(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByVersion(_, _, _, _)
+        1 * excelService.exportCaseByVersion(_, _, _, _,_)
     }
 
     def "DownLoadByFolder"() {
         when:
-        testCaseController.downLoadByFolder(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse())
+        testCaseController.downLoadByFolder(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByFolder(_, _, _, _)
+        1 * excelService.exportCaseByFolder(_, _, _, _,_)
     }
 
     def "DownLoadTemplate"() {
