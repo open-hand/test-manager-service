@@ -92,9 +92,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
         resInsertDO = testIssueFolderMapper.selectOne(testIssueFolderDO)
 
         List list = testIssueFolderRelMapper.selectAll()
-        println("list.size:"+list.size())
-        for (TestIssueFolderRelDO testIssueFolderRelDO:list){
-            println("issueId:"+testIssueFolderRelDO.issueId)
+        println("list.size:" + list.size())
+        for (TestIssueFolderRelDO testIssueFolderRelDO : list) {
+            println("issueId:" + testIssueFolderRelDO.issueId)
         }
 
         TestIssueFolderDO folderDO = new TestIssueFolderDO()
@@ -198,7 +198,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when:
         HttpEntity requestEntity = new HttpEntity<>()
         def entity = restTemplate.exchange('/v1/projects/{project_id}/issueFolderRel/copy/issue/{issueId}',
-                HttpMethod.PUT, requestEntity, TestIssueFolderRelDTO, projectId,11L)
+                HttpMethod.PUT, requestEntity, TestIssueFolderRelDTO, projectId, 11L)
 
         then: '返回值'
         testCaseService.batchCloneIssue(_, _, _) >> issuesId
@@ -233,7 +233,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}&organizationId=1', issues, Page.class, projectId, foldersId[0], versionId)
 
         then: '返回值'
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS = entity.body
 
@@ -243,14 +243,14 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向testIssueFolderRel的查询接口发请求'
         def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}&organizationId=1', exceptionIssues, Page.class, projectId, foldersId[0], versionId)
         then: '返回值'
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
 
         when: '向testIssueFolderRel的查询接口发请求'
         resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}&organizationId=1', issues, Page.class, projectId, foldersId[0], versionId)
         then: '返回值'
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> new HashMap<>()
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
 
@@ -281,12 +281,12 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
         SearchDTO searchDTO = new SearchDTO()
         Map searchMap = new HashMap()
-        searchMap.put("issueIds",issues)
+        searchMap.put("issueIds", issues)
         searchDTO.setOtherArgs(searchMap)
 
         SearchDTO wrongSearchDTO = new SearchDTO()
         Map searchMap2 = new HashMap()
-        searchMap2.put("issueIds",wrongIssues)
+        searchMap2.put("issueIds", wrongIssues)
         wrongSearchDTO.setOtherArgs(searchMap2)
 
         TestFolderRelQueryDTO relQueryDTO = new TestFolderRelQueryDTO()
@@ -311,17 +311,17 @@ class TestIssueFolderRelControllerSpec extends Specification {
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTO, Page.class, projectId, foldersId[0], 0, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS = entity.body
         expect: "设置期望值"
-        detailFolderRelDTOS.size() ==1
+        detailFolderRelDTOS.size() == 1
 
         when: '分支覆盖到searchDTO.getOtherArgs()不为空的情况，但searchDTO.getOtherArgs().containsKey(sIssueIds)为假的情况'
         entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithNoIssueIds, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS2 = entity.body
         expect: "设置期望值"
@@ -332,7 +332,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithNoVersions, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS3 = entity.body
         expect: "设置期望值"
@@ -342,25 +342,23 @@ class TestIssueFolderRelControllerSpec extends Specification {
         entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTOWithVersions, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         1 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
         entity.statusCode.is2xxSuccessful()
         List detailFolderRelDTOS4 = entity.body
         expect: "设置期望值"
         detailFolderRelDTOS4.size() == 1
 
         when: '分支覆盖到searchDTO.getOtherArgs()为空且testFolderRelQueryDTO.getVersionIds不为空的情况'
-        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', wrongRelQueryDTO, Page.class, projectId, foldersId[0], 1, 1)
+        entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', wrongRelQueryDTO, Page.class, projectId, foldersId[0], 1, 1)
         then: '返回值'
         0 * testCaseService.queryIssueIdsByOptions(_, _) >> longIssues
-        0 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
         entity.statusCode.is2xxSuccessful()
         assert entity.body.isEmpty()
 
         when: '向testIssueFolderRel的查询接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}', relQueryDTO, Page.class, projectId, null, null,null,null)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query?folderId={folderId}&page={page}&size={size}&organizationId=1', relQueryDTO, Page.class, projectId, null, null, null, null)
         then: '返回值'
-        1 * testCaseService.queryIssueIdsByOptions(_, _) >>  new ArrayList<>()
-        0 * testCaseService.getIssueInfoMap(_, _, _,_) >> map
+        1 * testCaseService.queryIssueIdsByOptions(_, _) >> new ArrayList<>()
         resultFailure.statusCode.is2xxSuccessful()
         assert resultFailure.body.isEmpty()
     }
@@ -399,7 +397,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
 
         and:
         println("ori.Size " + originIFR.size())
-        println("ori:" + originIFR.get(0).getIssueId() +"|||"+ originIFR.get(1).getIssueId())
+        println("ori:" + originIFR.get(0).getIssueId() + "|||" + originIFR.get(1).getIssueId())
         println("tar.Size " + targetIFR.size())
         println("tar:" + targetIFR.get(0).getIssueId() + "|||" + targetIFR.get(1).getIssueId())
 

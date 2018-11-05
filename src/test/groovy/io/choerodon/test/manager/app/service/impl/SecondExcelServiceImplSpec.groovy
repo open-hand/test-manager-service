@@ -32,28 +32,28 @@ class SecondExcelServiceImplSpec extends Specification {
 
     def "ExportCycleCaseInOneCycle"() {
         when:
-        excelService.exportCycleCaseInOneCycle(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse())
+        excelService.exportCycleCaseInOneCycle(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse(),1L)
         then:
         noExceptionThrown()
     }
 
     def "ExportCaseByProject"() {
         when:
-        excelService.exportCaseByProject(1L,new MockHttpServletRequest(),new MockHttpServletResponse())
+        excelService.exportCaseByProject(1L,new MockHttpServletRequest(),new MockHttpServletResponse(),1L)
         then:
         noExceptionThrown()
     }
 
     def "ExportCaseByVersion"() {
         when:
-        excelService.exportCaseByVersion(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse())
+        excelService.exportCaseByVersion(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse(),1L)
         then:
         noExceptionThrown()
     }
 
     def "ExportCaseByFolder"() {
         when:
-        excelService.exportCaseByFolder(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse())
+        excelService.exportCaseByFolder(1L,1L,new MockHttpServletRequest(),new MockHttpServletResponse(),1L)
         then:
         noExceptionThrown()
     }
