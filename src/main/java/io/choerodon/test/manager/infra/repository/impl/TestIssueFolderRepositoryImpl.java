@@ -46,7 +46,7 @@ public class TestIssueFolderRepositoryImpl implements TestIssueFolderRepository 
         }
         TestIssueFolderDO testIssueFolderDO = ConvertHelper.convert(testIssueFolderE, TestIssueFolderDO.class);
         testIssueFolderMapper.insert(testIssueFolderDO);
-        return ConvertHelper.convert(testIssueFolderMapper.selectOne(testIssueFolderDO), TestIssueFolderE.class);
+        return ConvertHelper.convert(testIssueFolderDO, TestIssueFolderE.class);
     }
 
     @Override

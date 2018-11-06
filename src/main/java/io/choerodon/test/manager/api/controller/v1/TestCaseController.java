@@ -98,33 +98,36 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
-    public void downLoadByProject(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity downLoadByProject(@PathVariable(name = "project_id") Long projectId,
                          HttpServletRequest request,
                          HttpServletResponse response,
                                   @RequestParam Long organizationId) {
         excelService.exportCaseByProject(projectId, request, response,organizationId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
-    public void downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "versionId") Long versionId,
                                   HttpServletRequest request,
                                   HttpServletResponse response,
                                   @RequestParam Long organizationId) {
         excelService.exportCaseByVersion(projectId, versionId, request, response,organizationId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
-    public void downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                   @RequestParam(name = "folderId") Long folderId,
                                   HttpServletRequest request,
                                   HttpServletResponse response,
                                  @RequestParam Long organizationId) {
         excelService.exportCaseByFolder(projectId,folderId, request, response,organizationId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

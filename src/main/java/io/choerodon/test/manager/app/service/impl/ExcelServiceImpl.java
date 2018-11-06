@@ -195,7 +195,12 @@ public class ExcelServiceImpl implements ExcelService {
         loadHistoryE.setRate(95.0);
         notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId);
+
+        int sum = 0;
+        for (List<TestCycleCaseDTO> list :cycleCaseMap.values()){
+            sum+=list.size();
+        }
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
     }
 
     @Async
@@ -224,10 +229,16 @@ public class ExcelServiceImpl implements ExcelService {
 
         double versionOffset = 90.00 / versionsId.length;
         int i = 0;
+        Map<Long, List<TestIssueFolderRelDTO>> allRelMaps = new HashMap<>();
         for (Long versionId : versionsId) {
             folderE.setVersionId(versionId);
-            service.exportWorkBookWithOneSheet(populateFolder(folderE, userId, 5 + (versionOffset * (i++)), versionOffset, loadHistoryE, organizationId),
-                    projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+            Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5 + (versionOffset * (i++)), versionOffset, loadHistoryE, organizationId);
+            allRelMaps.putAll(everyRelMaps);
+            service.exportWorkBookWithOneSheet(everyRelMaps,projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        }
+        int sum = 0;
+        for (List<TestIssueFolderRelDTO> list :allRelMaps.values()){
+            sum+=list.size();
         }
         loadHistoryE.setRate(95.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
@@ -236,7 +247,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
     }
 
     @Async
@@ -264,13 +275,21 @@ public class ExcelServiceImpl implements ExcelService {
 
         loadHistoryE.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
-        service.exportWorkBookWithOneSheet(populateFolder(folderE, userId, 5, 95, loadHistoryE, organizationId), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+
+        Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5, 90, loadHistoryE, organizationId);
+
+        service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+
+        int sum = 0;
+        for (List<TestIssueFolderRelDTO> list :everyRelMaps.values()){
+            sum+=list.size();
+        }
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + versionName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
     }
 
 
@@ -299,14 +318,19 @@ public class ExcelServiceImpl implements ExcelService {
         loadHistoryE.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
 
-        service.exportWorkBookWithOneSheet(populateFolder(folderE, userId, 5, 95, loadHistoryE, organizationId), projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+        Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5, 90, loadHistoryE, organizationId);
+        service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
 
+        int sum = 0;
+        for (List<TestIssueFolderRelDTO> list :everyRelMaps.values()){
+            sum+=list.size();
+        }
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
     }
 
     @Override
@@ -361,7 +385,7 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryE loadHistoryE, Long userId) {
+    private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryE loadHistoryE, Long userId,int sum) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             workbook.write(os);
             byte[] content = os.toByteArray();
@@ -369,13 +393,15 @@ public class ExcelServiceImpl implements ExcelService {
 
             loadHistoryE.setRate(99.9);
             ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+
+            loadHistoryE.setLastUpdateDate(new Date());
             if (res.getStatusCode().is2xxSuccessful()) {
-                loadHistoryE.setSuccessfulCount(1L);
+                loadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
                 loadHistoryE.setFileUrl(res.getBody());
                 notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
             } else {
-                loadHistoryE.setFailedCount(1L);
+                loadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
                 loadHistoryE.setFileStream(os.toString());
                 notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));

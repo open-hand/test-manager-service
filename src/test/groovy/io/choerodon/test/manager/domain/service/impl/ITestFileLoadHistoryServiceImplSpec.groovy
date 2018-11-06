@@ -49,11 +49,4 @@ class ITestFileLoadHistoryServiceImplSpec extends Specification {
         result.getStatus()==TestFileLoadHistoryE.Status.SUCCESS.getTypeValue()
 
     }
-
-    def "Query"() {
-        when:
-        def result2 = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history",List,144)
-        then:
-        result2.getBody().size()==1
-    }
 }
