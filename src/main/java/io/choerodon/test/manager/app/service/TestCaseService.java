@@ -47,11 +47,9 @@ public interface TestCaseService {
 
     List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId);
 
-    IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId);
+    IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId,String applyType);
 
     List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
-
-    IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId);
 
     List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
 

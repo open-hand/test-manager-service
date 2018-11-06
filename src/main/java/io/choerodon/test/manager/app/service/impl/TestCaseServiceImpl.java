@@ -202,9 +202,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId) {
+    public IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId,String applyType) {
         Assert.notNull(projectId, "error.TestCaseService.createTest.param.projectId.not.be.null");
-        return testCaseFeignClient.createIssue(projectId, issueCreateDTO).getBody();
+        return testCaseFeignClient.createIssue(projectId,applyType, issueCreateDTO).getBody();
     }
 
     @Override
@@ -213,11 +213,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseFeignClient.batchIssueToVersion(projectId, versionId, issueIds).getBody();
     }
 
-    @Override
-    public IssueDTO cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId) {
-        Assert.notNull(projectId, "error.TestCaseService.cloneIssueByIssueId.param.projectId.not.be.null");
-        return testCaseFeignClient.cloneIssueByIssueId(projectId, issueId, copyConditionDTO,organizationId).getBody();
-    }
 
     @Override
     public List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {

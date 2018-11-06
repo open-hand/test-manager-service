@@ -73,8 +73,9 @@ public class TestIssueFolderRelController {
     public ResponseEntity<TestIssueFolderRelDTO> insertTestAndRelationship(@PathVariable(name = "project_id") Long projectId,
                                                                            @RequestParam(name = "folderId", required = false) Long folderId,
                                                                            @RequestParam(name = "versionId") Long versionId,
+                                                                           @RequestParam(value = "applyType") String applyType,
                                                                            @RequestBody IssueCreateDTO issueCreateDTO) {
-        return Optional.ofNullable(testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, versionId))
+        return Optional.ofNullable(testIssueFolderRelService.insertTestAndRelationship(issueCreateDTO, projectId, folderId, versionId,applyType))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }

@@ -25,7 +25,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     private static final String BATCH_QUERY_ERROR = "error.UserFeign.queryList";
 
     @Override
-    public ResponseEntity<IssueDTO> createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
+    public ResponseEntity<IssueDTO> createIssue(Long projectId, String applyType,IssueCreateDTO issueCreateDTO) {
         throw new CommonException(CREATE_ERROR);
     }
 
@@ -63,11 +63,6 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<List<Long>> queryIssueIdsByOptions(Long projectId, SearchDTO searchDTO) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<IssueDTO> cloneIssueByIssueId(Long projectId, Long issueId, CopyConditionDTO copyConditionDTO,Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 

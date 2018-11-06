@@ -144,9 +144,9 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId) {
+    public TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId,String applyType) {
         Long newFolderId = getDefaultFolderId(projectId, folderId, versionId);
-        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId);
+        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId,applyType);
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(newFolderId, versionId, projectId, issueDTO.getIssueId(), null);
         return ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
                 .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);

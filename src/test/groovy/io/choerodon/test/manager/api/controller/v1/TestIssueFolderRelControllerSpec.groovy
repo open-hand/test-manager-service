@@ -111,9 +111,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issueDTO3.setProjectId(444444444L)
 
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, projectId, resInsertDO.getFolderId(), versionId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, TestIssueFolderRelDTO, projectId, resInsertDO.getFolderId(), versionId)
         then:
-        1 * testCaseService.createTest(_, _) >> issueDTO
+        1 * testCaseService.createTest(_, _,_) >> issueDTO
         entity.statusCode.is2xxSuccessful()
 
         and:
@@ -125,9 +125,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
         foldersId.add(entity.body.folderId)
 
         when: '向issueFolderRel的插入创建接口发请求'
-        def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
+        def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
         then:
-        1 * testCaseService.createTest(_, _) >> issueDTO2
+        1 * testCaseService.createTest(_, _,_) >> issueDTO2
         entity2.statusCode.is2xxSuccessful()
 
         and:
@@ -135,18 +135,18 @@ class TestIssueFolderRelControllerSpec extends Specification {
         entity2.body.issueId == 999999L
 
         when: '向testIssueFolderRel的插入接口发请求'
-        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, String.class, projectId, foldersId[0], versionId)
+        def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, String.class, projectId, foldersId[0], versionId)
         then: '返回值'
-        1 * testCaseService.createTest(_, _) >> issueDTO
+        1 * testCaseService.createTest(_, _,_) >> issueDTO
         resultFailure.statusCode.is2xxSuccessful()
         JSONObject exceptionInfo = JSONObject.parse(resultFailure.body)
         assert exceptionInfo.get("failed").toString() == "true"
         assert exceptionInfo.get("code").toString() == "error.db.duplicateKey"
 
         when: '覆盖testIssueFolder的getDefaultFolderId方法中resultTestIssueFolderDTO不为空的情况'
-        def entity3 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}', issueCreateDTO, TestIssueFolderRelDTO, 444444444L, null, 444444444L)
+        def entity3 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, TestIssueFolderRelDTO, 444444444L, null, 444444444L)
         then:
-        1 * testCaseService.createTest(_, _) >> issueDTO3
+        1 * testCaseService.createTest(_, _,_) >> issueDTO3
         entity3.statusCode.is2xxSuccessful()
 
         and:

@@ -22,6 +22,7 @@ public interface TestCaseFeignClient {
 
     @PostMapping("/v1/projects/{project_id}/issues")
     ResponseEntity<IssueDTO> createIssue(@PathVariable(name = "project_id") Long projectId,
+                                         @RequestParam(value = "applyType") String applyType,
                                          @RequestBody IssueCreateDTO issueCreateDTO);
 
 
@@ -79,22 +80,6 @@ public interface TestCaseFeignClient {
                                                       @ApiParam(value = "查询参数", required = true)
                                                       @RequestBody SearchDTO searchDTO);
 
-    /**
-     * 克隆issue
-     *
-     * @param projectId
-     * @param issueId
-     * @param copyConditionDTO 克隆条件
-     * @return
-     */
-    @PostMapping(value = "/v1/projects/{project_id}/issues/{issueId}/clone_issue")
-    ResponseEntity<IssueDTO> cloneIssueByIssueId(@ApiParam(value = "项目id", required = true)
-                                                 @PathVariable(name = "project_id") Long projectId,
-                                                 @ApiParam(value = "issueId", required = true)
-                                                 @PathVariable(name = "issueId") Long issueId,
-                                                 @ApiParam(value = "复制条件", required = true)
-                                                 @RequestBody CopyConditionDTO copyConditionDTO,
-                                                 @RequestParam("organizationId")Long organizationId);
 
     /**
      * 将issues的version改为目标version
