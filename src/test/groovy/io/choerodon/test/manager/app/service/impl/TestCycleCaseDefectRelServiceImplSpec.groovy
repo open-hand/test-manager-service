@@ -80,7 +80,7 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         when:
         service.populateCaseStepDefectInfo(Lists.newArrayList(dto), 1L,1L)
         then:
-        1 * client.getIssueInfoMap(_, _, false) >> Lists.newArrayList (1L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
+        1 * client.getIssueInfoMap(_, _, false,_) >> Maps.newHashMap (1L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
     }
 
     def "populateDefectAndIssue"(){
@@ -89,12 +89,12 @@ class TestCycleCaseDefectRelServiceImplSpec extends Specification {
         when:
         service.populateDefectAndIssue(dto,144L,1L)
         then:
-        1*client.getIssueInfoMap(_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
+        1*client.getIssueInfoMap(_,_,_,_)>> org.assertj.core.util.Maps.newHashMap(98L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
         when:
         dto.setDefects(Lists.newArrayList(new TestCycleCaseDefectRelE(issueId: 1L)))
-        service.populateDefectAndIssue(dto,144L)
+        service.populateDefectAndIssue(dto,144L,1L)
         then:
-        1*client.getIssueInfoMap(_,_,_)>> Maps.newHashMap(1L,new IssueInfosDTO())
+        1*client.getIssueInfoMap(_,_,_,_)>> Maps.newHashMap(1L,new IssueInfosDTO(statusMapDTO: new StatusMapDTO(code: "code")))
 
     }
 }
