@@ -40,7 +40,7 @@ public class IssueInfosDTO {
 
 	private String assigneeImageUrl;
 
-	private IssueTypeDTO typeDTO;
+	private IssueTypeDTO issueTypeDTO;
 	 private PriorityDTO priorityDTO;
 
 	private String statusName;
@@ -100,7 +100,7 @@ public class IssueInfosDTO {
 		this.versionIssueRelDTOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
 		this.labelIssueRelDTOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
 		this.componentIssueRelDTOList = issueComponentDetailDTO.getComponentIssueRelDTOList();
-		typeDTO=issueComponentDetailDTO.getIssueTypeDTO();
+		issueTypeDTO=issueComponentDetailDTO.getIssueTypeDTO();
 	}
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
@@ -112,7 +112,7 @@ public class IssueInfosDTO {
 		projectId = issueListDTO.getProjectId();
 		statusMapDTO = issueListDTO.getStatusMapDTO();
 		typeCode = issueListDTO.getTypeCode();
-
+		issueTypeDTO=issueListDTO.getIssueTypeDTO();
 	}
 
 	public IssueInfosDTO(IssueDTO issueDTO) {
@@ -121,7 +121,7 @@ public class IssueInfosDTO {
 		summary = issueDTO.getSummary();
 		projectId = issueDTO.getProjectId();
 		typeCode = issueDTO.getTypeCode();
-		typeDTO = issueDTO.getIssueTypeDTO();
+		issueTypeDTO = issueDTO.getIssueTypeDTO();
 		statusMapDTO=issueDTO.getStatusMapDTO();
 	}
 
@@ -364,5 +364,13 @@ public class IssueInfosDTO {
 
 	public void setPriorityDTO(PriorityDTO priorityDTO) {
 		this.priorityDTO = priorityDTO;
+	}
+
+	public IssueTypeDTO getIssueTypeDTO() {
+		return issueTypeDTO;
+	}
+
+	public void setIssueTypeDTO(IssueTypeDTO issueTypeDTO) {
+		this.issueTypeDTO = issueTypeDTO;
 	}
 }
