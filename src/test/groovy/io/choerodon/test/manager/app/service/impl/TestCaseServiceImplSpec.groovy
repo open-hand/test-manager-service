@@ -103,7 +103,7 @@ class TestCaseServiceImplSpec extends Specification {
         service.getIssueInfoMap(1L,[] as Long[],true,1L)
         then:
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
-        0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
+        0*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_,_)
 
     }
 
@@ -111,12 +111,12 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMap(1L,[1,2] as Long[],new PageRequest(sort: new Sort("id")),1L)
         then:
-        1*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
+        1*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_,_)>>new ResponseEntity<>(new Page(Lists.newArrayList(new IssueListDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code"))),new PageInfo(0,1,false),1),HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L,[] as Long[],new PageRequest(),1L)
         then:
         0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
-        0*testCaseFeignClient.listIssueWithoutSubDetail(_,_,_,_,_,_)
+        0*testCaseFeignClient.listIssueWithoutSubToTestComponent(_,_,_,_,_,_)
     }
 
     def "ListIssueLinkByIssueId"() {
