@@ -1,9 +1,7 @@
 package io.choerodon.agile.api.dto;
 
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
-import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -11,8 +9,6 @@ import java.util.List;
  * @author dinghuang123@gmail.com
  */
 public class IssueCreateDTO {
-
-    private String issueNum;
 
     private String typeCode;
 
@@ -24,20 +20,17 @@ public class IssueCreateDTO {
 
     private Long assigneeId;
 
+    private Long reporterId;
+
     private Long projectId;
 
     private Long epicId;
 
     private Long sprintId;
 
-    private Integer storyPoints;
-
     private Long priorityId;
 
     private Long issueTypeId;
-
-    @Transient
-    private List<TestCaseStepDTO> testCaseStepDTOS;
 
     private List<VersionIssueRelDTO> versionIssueRelDTOList;
 
@@ -45,21 +38,11 @@ public class IssueCreateDTO {
 
     private List<ComponentIssueRelDTO> componentIssueRelDTOList;
 
-    private List<IssueLinkDTO> issueLinkDTOList;
-
     private BigDecimal remainingTime;
 
     private BigDecimal estimateTime;
 
     private String epicName;
-
-    public String getIssueNum() {
-        return issueNum;
-    }
-
-    public void setIssueNum(String issueNum) {
-        this.issueNum = issueNum;
-    }
 
     public String getTypeCode() {
         return typeCode;
@@ -125,14 +108,6 @@ public class IssueCreateDTO {
         this.sprintId = sprintId;
     }
 
-    public Integer getStoryPoints() {
-        return storyPoints;
-    }
-
-    public void setStoryPoints(Integer storyPoints) {
-        this.storyPoints = storyPoints;
-    }
-
     public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
         return versionIssueRelDTOList;
     }
@@ -155,14 +130,6 @@ public class IssueCreateDTO {
 
     public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
         this.componentIssueRelDTOList = componentIssueRelDTOList;
-    }
-
-    public List<IssueLinkDTO> getIssueLinkDTOList() {
-        return issueLinkDTOList;
-    }
-
-    public void setIssueLinkDTOList(List<IssueLinkDTO> issueLinkDTOList) {
-        this.issueLinkDTOList = issueLinkDTOList;
     }
 
     public BigDecimal getRemainingTime() {
@@ -189,12 +156,28 @@ public class IssueCreateDTO {
         this.epicName = epicName;
     }
 
-    public List<TestCaseStepDTO> getTestCaseStepDTOS() {
-        return testCaseStepDTOS;
+    public Long getReporterId() {
+        return reporterId;
     }
 
-    public void setTestCaseStepDTOS(List<TestCaseStepDTO> testCaseStepDTOS) {
-        this.testCaseStepDTOS = testCaseStepDTOS;
+    public void setReporterId(Long reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public void setPriorityId(Long priorityId) {
+        this.priorityId = priorityId;
+    }
+
+    public Long getPriorityId() {
+        return priorityId;
+    }
+
+    public void setIssueTypeId(Long issueTypeId) {
+        this.issueTypeId = issueTypeId;
+    }
+
+    public Long getIssueTypeId() {
+        return issueTypeId;
     }
 
     @Override
