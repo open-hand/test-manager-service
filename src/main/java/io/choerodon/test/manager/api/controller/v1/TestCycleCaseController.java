@@ -198,11 +198,12 @@ public class TestCycleCaseController {
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
 	@ApiOperation("excel")
 	@GetMapping("/download/excel/{cycleId}")
-	public void downLoad(@PathVariable(name = "project_id") Long projectId,
+	public ResponseEntity downLoad(@PathVariable(name = "project_id") Long projectId,
 						 @PathVariable(name = "cycleId") Long cycleId,
 						 HttpServletRequest request,
 						 HttpServletResponse response,
 						 @RequestParam Long organizationId) {
 		excelService.exportCycleCaseInOneCycle(cycleId, projectId, request, response,organizationId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

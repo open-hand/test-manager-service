@@ -31,8 +31,8 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
     }
 
     @Override
-    public List<TestFileLoadHistoryE> query(TestFileLoadHistoryE testFileLoadHistoryE) {
+    public List<TestFileLoadHistoryE> queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE) {
         TestFileLoadHistoryDO testIssueFolderRelDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
-        return ConvertHelper.convertList(testFileLoadHistoryMapper.select(testIssueFolderRelDO), TestFileLoadHistoryE.class);
+        return ConvertHelper.convertList(testFileLoadHistoryMapper.queryDownloadFile(testIssueFolderRelDO), TestFileLoadHistoryE.class);
     }
 }

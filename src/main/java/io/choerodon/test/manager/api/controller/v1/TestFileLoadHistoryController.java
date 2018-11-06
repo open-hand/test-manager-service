@@ -27,7 +27,7 @@ public class TestFileLoadHistoryController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询上传历史")
     @GetMapping
-    public ResponseEntity<List<TestFileLoadHistoryDTO>> insert(@PathVariable(name = "project_id") Long projectId) {
+    public ResponseEntity<List<TestFileLoadHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId) {
         return Optional.ofNullable(testFileLoadHistoryService.query(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.filehistory.query"));

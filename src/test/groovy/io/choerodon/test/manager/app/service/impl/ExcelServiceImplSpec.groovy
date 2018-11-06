@@ -150,7 +150,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-        1 * testCaseService.getVersionInfo(_) >> versionInfo
+        2 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
         (4.._) * notifyService.postWebSocket(_, _, _)

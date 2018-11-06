@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
+import java.util.Date;
+
 public class TestFileLoadHistoryDTO {
 
     private Long id;
@@ -25,6 +27,36 @@ public class TestFileLoadHistoryDTO {
     private Long objectVersionNumber;
 
     private Long createdBy;
+
+    private Date creationDate;
+
+    private Date lastUpdateDate;
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 
     public Long getCreatedBy() {
         return createdBy;
