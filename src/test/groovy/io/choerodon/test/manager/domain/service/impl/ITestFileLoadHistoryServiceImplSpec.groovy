@@ -22,7 +22,6 @@ class ITestFileLoadHistoryServiceImplSpec extends Specification {
     @Autowired
     ITestFileLoadHistoryService service;
 
-
     @Shared
     Long id;
 

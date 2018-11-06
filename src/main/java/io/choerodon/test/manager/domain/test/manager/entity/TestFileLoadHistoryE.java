@@ -3,46 +3,48 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 @Scope("prototype")
 public class TestFileLoadHistoryE {
 
     public enum Action {
         UPLOAD_ISSUE(1L), DOWNLOAD_ISSUE(2L), DOWNLOAD_CYCLE(3L);
-        private Long action;
+        private Long actionFlag;
 
         public Long getTypeValue() {
-            return action;
+            return actionFlag;
         }
 
         Action(Long action) {
-            this.action = action;
+            this.actionFlag = action;
         }
     }
 
     public enum Source {
         PROJECT(1L), VERSION(2L), CYCLE(3L), FOLDER(4L);
-        private Long source;
+        private Long sourceFlag;
 
         public Long getTypeValue() {
-            return source;
+            return sourceFlag;
         }
 
         Source(Long source) {
-            this.source = source;
+            this.sourceFlag = source;
         }
     }
 
     public enum Status {
         SUSPENDING(1L), SUCCESS(2L), FAILURE(3L);
-        private Long status;
+        private Long statusFlag;
 
         public Long getTypeValue() {
-            return status;
+            return statusFlag;
         }
 
         Status(Long status) {
-            this.status = status;
+            this.statusFlag = status;
         }
     }
 
@@ -70,14 +72,44 @@ public class TestFileLoadHistoryE {
 
     private Long createdBy;
 
-    private String folderName;
+    private String name;
 
-    public String getFolderName() {
-        return folderName;
+    private Double rate;
+
+    private Date creationDate;
+
+    private Date lastUpdateDate;
+
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Double getRate() {
+        return rate;
+    }
+
+    public void setRate(Double rate) {
+        this.rate = rate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getCreatedBy() {

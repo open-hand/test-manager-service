@@ -10,6 +10,6 @@ public interface ITestFileLoadHistoryService {
 
     TestFileLoadHistoryE update(TestFileLoadHistoryE testFileLoadHistoryE);
 
-    List<TestFileLoadHistoryE> query(TestFileLoadHistoryE testFileLoadHistoryE);
+    List<TestFileLoadHistoryE> queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE);
 
 }

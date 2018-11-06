@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestFileLoadHistoryDO" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="project_id" property="projectId"/>
+        <id column="action_type" property="actionType"/>
+        <id column="source_type" property="sourceType"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="link_id" property="linkId"/>
+        <id column="file_url" property="fileUrl"/>
+        <id column="status" property="status"/>
+        <id column="successful_count" property="successfulCount"/>
+        <id column="failed_count" property="failedCount"/>
+        <id column="file_stream" property="fileStream"/>
+        <id column="created_by" property="createdBy"/>
+        <id column="creation_date" property="creationDate"/>
+        <id column="last_update_date" property="lastUpdateDate"/>
+
+    </resultMap>
+
+    <select id="queryDownloadFile" resultMap="BaseResultMap">
+        SELECT
+        id,project_id,action_type,source_type,object_version_number,
+        linked_id,file_url,file_stream,status,successful_count,failed_count,
+        created_by,creation_date,last_update_date
+        FROM test_fileload_history
+        <where>
+            <if test="createdBy != null">
+                AND created_by = #{createdBy}
+            </if>
+            <if test="sourceType != null">
+                AND source_type = 2 OR source_type = 3
+            </if>
+        </where>
+    </select>
+</mapper>
