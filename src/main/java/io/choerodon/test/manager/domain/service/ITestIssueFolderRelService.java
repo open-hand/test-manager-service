@@ -1,9 +1,8 @@
 package io.choerodon.test.manager.domain.service;
 
-import java.util.List;
-
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018

@@ -3,12 +3,10 @@ package io.choerodon.test.manager.app.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import org.springframework.http.ResponseEntity;
-
 
 import java.util.List;
 import java.util.Map;

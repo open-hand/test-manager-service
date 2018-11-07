@@ -1,9 +1,8 @@
 package io.choerodon.test.manager.domain.service;
 
-import java.util.List;
-
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018

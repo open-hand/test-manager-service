@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

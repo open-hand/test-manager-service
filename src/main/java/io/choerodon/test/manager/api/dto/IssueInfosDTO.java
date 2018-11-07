@@ -75,17 +75,14 @@ public class IssueInfosDTO {
 	public IssueInfosDTO(IssueComponentDetailDTO issueComponentDetailDTO) {
 		this.statusMapDTO = issueComponentDetailDTO.getStatusMapDTO();
 		this.issueId = issueComponentDetailDTO.getIssueId();
-//		this.issueColor = issueComponentDetailDTO.getStatusColor();
 		this.summary = issueComponentDetailDTO.getSummary();
 		this.projectId = issueComponentDetailDTO.getProjectId();
 		this.statusCode = issueComponentDetailDTO.getStatusMapDTO().getCode();
 		this.typeCode = issueComponentDetailDTO.getTypeCode();
 		this.statusId = issueComponentDetailDTO.getStatusId();
-//		this.priorityCode = issueComponentDetailDTO.getPriorityDTO().get;
 		this.assigneeId = issueComponentDetailDTO.getAssigneeId();
 		this.assigneeName = issueComponentDetailDTO.getAssigneeName();
 		this.assigneeImageUrl = issueComponentDetailDTO.getAssigneeImageUrl();
-//		this.priorityName = issueComponentDetailDTO.getPriorityDTO().getName();
 		priorityDTO=issueComponentDetailDTO.getPriorityDTO();
 		this.statusName = issueComponentDetailDTO.getStatusMapDTO().getName();
 		this.issueNum = issueComponentDetailDTO.getIssueNum();
@@ -96,7 +93,6 @@ public class IssueInfosDTO {
 		this.creationDate = issueComponentDetailDTO.getCreationDate();
 		this.epicName = issueComponentDetailDTO.getEpicName();
 		this.epicColor = issueComponentDetailDTO.getEpicColor();
-//		this.statusColor = issueComponentDetailDTO.getStatusColor();
 		this.versionIssueRelDTOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
 		this.labelIssueRelDTOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
 		this.componentIssueRelDTOList = issueComponentDetailDTO.getComponentIssueRelDTOList();
@@ -107,7 +103,6 @@ public class IssueInfosDTO {
 		issueName = issueListDTO.getIssueNum();
 		issueStatusName = issueListDTO.getStatusName();
 		issueId = issueListDTO.getIssueId();
-//		issueColor = issueListDTO.getStatusColor();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
 		statusMapDTO = issueListDTO.getStatusMapDTO();
@@ -252,14 +247,6 @@ public class IssueInfosDTO {
 	public void setAssigneeImageUrl(String assigneeImageUrl) {
 		this.assigneeImageUrl = assigneeImageUrl;
 	}
-//
-//	public String getPriorityName() {
-//		return priorityName;
-//	}
-//
-//	public void setPriorityName(String priorityName) {
-//		this.priorityName = priorityName;
-//	}
 
 
 	public StatusMapDTO getStatusMapDTO() {

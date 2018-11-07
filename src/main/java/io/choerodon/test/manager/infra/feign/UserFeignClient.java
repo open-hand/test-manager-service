@@ -4,16 +4,11 @@ package io.choerodon.test.manager.infra.feign;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.infra.feign.callback.UserFeignClientFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -32,11 +27,11 @@ public interface UserFeignClient {
 	 * @param id             id
 	 * @return UserDO
 	 */
-	@RequestMapping(value = "/v1/organizations/{organization_id}/users/{id}", method = RequestMethod.GET)
+	@GetMapping(value = "/v1/organizations/{organization_id}/users/{id}")
 	ResponseEntity<UserDO> query(@PathVariable(name = "organization_id") Long organizationId,
 								 @PathVariable("id") Long id);
 
-	@RequestMapping(value = "/v1/users/ids", method = RequestMethod.POST)
+	@PostMapping(value = "/v1/users/ids")
 	ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids);
 
 

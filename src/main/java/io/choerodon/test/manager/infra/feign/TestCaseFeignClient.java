@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.infra.feign;
 
-import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
