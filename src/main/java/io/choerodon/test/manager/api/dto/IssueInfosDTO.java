@@ -101,7 +101,7 @@ public class IssueInfosDTO {
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
 		issueName = issueListDTO.getIssueNum();
-		issueStatusName = issueListDTO.getStatusName();
+//		issueStatusName = issueListDTO.getStatusName();
 		issueId = issueListDTO.getIssueId();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();

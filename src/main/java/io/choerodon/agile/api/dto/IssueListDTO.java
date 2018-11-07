@@ -12,6 +12,8 @@ import java.util.List;
  */
 public class IssueListDTO implements Serializable {
 
+    private static final long serialVersionUID = -5933366721660198265L;
+
     private Long issueId;
 
     private String issueNum;
@@ -36,12 +38,6 @@ public class IssueListDTO implements Serializable {
 
     private String assigneeImageUrl;
 
-//    private String priorityName;
-
-    private String statusName;
-
-    private String typeName;
-
     private String epicName;
 
     private Integer storyPoints;
@@ -56,6 +52,10 @@ public class IssueListDTO implements Serializable {
 
     private IssueTypeDTO issueTypeDTO;
 
+    private Date lastUpdateDate;
+
+    private List<VersionIssueRelDTO> versionIssueRelDTOS;
+
     public Long getIssueTypeId() {
         return issueTypeId;
     }
@@ -65,8 +65,6 @@ public class IssueListDTO implements Serializable {
 
     }
 
-    private Date lastUpdateDate;
-
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
@@ -74,8 +72,6 @@ public class IssueListDTO implements Serializable {
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
-
-    private List<VersionIssueRelDTO> versionIssueRelDTOS;
 
     public Long getReporterId() {
         return reporterId;
@@ -133,14 +129,6 @@ public class IssueListDTO implements Serializable {
         this.summary = summary;
     }
 
-//    public String getPriorityCode() {
-//        return priorityCode;
-//    }
-//
-//    public void setPriorityCode(String priorityCode) {
-//        this.priorityCode = priorityCode;
-//    }
-
     public Long getAssigneeId() {
         return assigneeId;
     }
@@ -163,22 +151,6 @@ public class IssueListDTO implements Serializable {
 
     public void setAssigneeName(String assigneeName) {
         this.assigneeName = assigneeName;
-    }
-
-//    public String getPriorityName() {
-//        return priorityName;
-//    }
-//
-//    public void setPriorityName(String priorityName) {
-//        this.priorityName = priorityName;
-//    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
     }
 
     public String getReporterImageUrl() {
