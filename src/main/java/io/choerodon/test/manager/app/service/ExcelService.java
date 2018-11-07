@@ -3,6 +3,8 @@ package io.choerodon.test.manager.app.service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 /**
  * Created by 842767365@qq.com on 8/9/18.
  */
@@ -28,4 +30,6 @@ public interface ExcelService {
     void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
 
     void exportFailCaseByTransaction(Long projectId, Long fileHistoryId,Long userId);
+
+	void downloadWorkBookByStream(Workbook workbook, HttpServletResponse response);
 }

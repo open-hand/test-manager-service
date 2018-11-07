@@ -1,21 +1,26 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.agile.api.dto.SearchDTO;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.app.service.ExcelImportService;
+import io.choerodon.test.manager.app.service.ExcelService;
+import io.choerodon.test.manager.app.service.ReporterFormService;
+import io.choerodon.agile.api.dto.*;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.test.manager.app.service.ExcelService;
-import io.choerodon.test.manager.app.service.ReporterFormService;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +38,9 @@ public class TestCaseController {
     ReporterFormService reporterFormService;
 
     private ExcelService excelService;
+
+    @Autowired
+    private ExcelImportService excelImportService;
 
     @Autowired
     public TestCaseController(ExcelService excelService) {
@@ -146,5 +154,25 @@ public class TestCaseController {
                                            @RequestParam(name = "historyId") Long historyId) {
         excelService.exportFailCase(projectId,historyId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("生成excel导入模板")
+    @GetMapping("/download/excel/import_template")
+    public void downloadImportTemplate(@PathVariable("project_id") Long projectId,
+                                       HttpServletResponse response) {
+        excelImportService.downloadImportTemp(response);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("从excel导入模板导入issue以及测试用例")
+    @PostMapping("/import/testCase")
+    public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
+                                       @RequestParam Long versionId,
+                                       @RequestParam("file") MultipartFile excelFile) {
+        excelImportService.importIssueByExcel(projectId, versionId,
+                DetailsHelper.getUserDetails().getUserId(),
+                ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

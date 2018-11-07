@@ -1,13 +1,14 @@
 package io.choerodon.test.manager.api.dto;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.util.Assert;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
 /**
  * Created by zongw.lee@gmail.com on 25/10/2018
@@ -21,6 +22,14 @@ public class MultipartExcel implements MultipartFile {
     private String contentType;
 
     private final byte[] content;
+
+    public MultipartExcel(String name, String originalFilename, Workbook workbook) {
+        Assert.hasLength(name, "Name must not be null");
+        this.name = name;
+        this.originalFilename = (originalFilename != null ? originalFilename : "");
+        this.contentType = "application/vnd.ms-excel";
+        this.content = ExcelUtil.getBytes(workbook);
+    }
 
 
     /**

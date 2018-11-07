@@ -4,12 +4,15 @@ import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
+import io.choerodon.test.manager.app.service.ExcelImportService
 import io.choerodon.test.manager.app.service.ExcelService
 import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
+import io.choerodon.test.manager.domain.service.IExcelImportService
 import io.choerodon.test.manager.infra.feign.FileFeignClient
 import io.reactivex.netty.protocol.http.server.HttpServerRequest
+import org.apache.poi.ss.usermodel.Workbook
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
 import org.springframework.aop.framework.AdvisedSupport
@@ -43,6 +46,9 @@ class TestCaseControllerTest extends Specification {
 
     @Autowired
     UserService userService
+
+    @Autowired
+    IExcelImportService iExcelImportService
 
     void setup() {
         excelService = Mock(ExcelService)
@@ -91,5 +97,17 @@ class TestCaseControllerTest extends Specification {
 
         then:
         1 * excelService.exportCaseTemplate(_, _, _)
+    }
+
+    def "downloadImportTemplate"() {
+        //
+        when:
+        Workbook importTemp = iExcelImportService.buildImportTemp()
+        then:
+        File tempFile = new File("/tmp/import_temp.xlsx")
+        if (tempFile.exists()) {
+            tempFile.delete()
+        }
+        importTemp.write(tempFile.newOutputStream())
     }
 }

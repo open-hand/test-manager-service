@@ -482,7 +482,8 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    private void downloadWorkBookByStream(Workbook workbook, HttpServletResponse response) {
+    @Override
+    public void downloadWorkBookByStream(Workbook workbook, HttpServletResponse response) {
         try {
             workbook.write(response.getOutputStream());
         } catch (IOException e) {
