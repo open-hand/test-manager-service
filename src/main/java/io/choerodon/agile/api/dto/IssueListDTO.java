@@ -2,7 +2,6 @@ package io.choerodon.agile.api.dto;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -10,9 +9,7 @@ import java.util.List;
 /**
  * @author dinghuang123@gmail.com
  */
-public class IssueListDTO implements Serializable {
-
-    private static final long serialVersionUID = -5933366721660198265L;
+public class IssueListDTO {
 
     private Long issueId;
 
