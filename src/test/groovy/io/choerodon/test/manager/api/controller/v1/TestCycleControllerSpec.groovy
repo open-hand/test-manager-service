@@ -371,6 +371,15 @@ class TestCycleControllerSpec extends Specification {
         cycleIds.add(testCycleDTOS.get(3).getCycleId())
     }
 
+
+    def "getCycleInVersion"() {
+        when:
+        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/get/cycles/all/in/version/{versionId}', List, projectId, versionId)
+        then:
+        entity.body.size()==2
+        entity.statusCode.is2xxSuccessful()
+    }
+
     def "Delete"() {
         given: '清理数据'
         testCycleCaseMapper.delete(testCycleCaseDO)
@@ -393,4 +402,7 @@ class TestCycleControllerSpec extends Specification {
         cycleId << cycleIds
 
     }
+
+
+
 }
