@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.domain.service;
 
-import java.util.List;
-
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 
 /**

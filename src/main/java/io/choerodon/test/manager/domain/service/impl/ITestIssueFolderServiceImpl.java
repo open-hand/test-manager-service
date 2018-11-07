@@ -1,13 +1,12 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import java.util.List;
-
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018

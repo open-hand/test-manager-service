@@ -1,8 +1,7 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.agile.api.dto.SearchDTO;
-import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import io.choerodon.mybatis.common.BaseMapper;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

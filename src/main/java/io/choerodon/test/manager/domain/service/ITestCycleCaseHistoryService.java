@@ -1,10 +1,8 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-
-import java.util.List;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

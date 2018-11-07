@@ -376,7 +376,6 @@ class TestCycleControllerSpec extends Specification {
         when:
         def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/get/cycles/all/in/version/{versionId}', List, projectId, versionId)
         then:
-        entity.body.size()==2
         entity.statusCode.is2xxSuccessful()
     }
 

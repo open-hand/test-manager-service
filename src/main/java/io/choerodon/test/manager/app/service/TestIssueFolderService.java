@@ -1,10 +1,9 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONObject;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
