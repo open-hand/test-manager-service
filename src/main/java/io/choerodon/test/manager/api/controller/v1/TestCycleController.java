@@ -4,6 +4,8 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
@@ -29,9 +31,6 @@ import java.util.Optional;
 public class TestCycleController {
     @Autowired
     TestCycleService testCycleService;
-
-    @Autowired
-    TestCycleMapper testCycleMapper;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加测试循环")
@@ -173,6 +172,18 @@ public class TestCycleController {
         testCycleService.synchroFolderInVersion(versionId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询version下所有cycle")
+    @GetMapping("/get/cycles/all/in/version/{versionId}")
+    ResponseEntity getCyclesInVersion(@PathVariable(name = "project_id") Long projectId,
+                                      @PathVariable(name = "versionId") Long versionId){
+
+        return Optional.ofNullable(testCycleService.getCyclesInVersion(versionId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycle.query.getCyclesInVersion"));
+    }
+
 
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

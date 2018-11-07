@@ -324,6 +324,15 @@ public class TestCycleServiceImpl implements TestCycleService {
         }
     }
 
+
+    @Override
+    public List<TestCycleDTO> getCyclesInVersion(Long versionId) {
+       TestCycleE cycleE=TestCycleEFactory.create();
+        cycleE.setVersionId(versionId);
+        cycleE.setType(TestCycleE.CYCLE);
+        return ConvertHelper.convertList(cycleE.querySelf(),TestCycleDTO.class);
+    }
+
     @Override
     @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
     public void fixCycleData(Long projectId) {
