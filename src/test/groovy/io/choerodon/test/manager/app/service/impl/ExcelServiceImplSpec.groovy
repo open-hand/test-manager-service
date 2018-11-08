@@ -9,10 +9,14 @@ import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
+import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService
+import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE
+import io.choerodon.test.manager.domain.test.manager.factory.TestFileLoadHistoryEFactory
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
+import org.apache.http.auth.AUTH
 import org.assertj.core.util.Lists
 import org.assertj.core.util.Maps
 import org.springframework.aop.framework.AdvisedSupport
@@ -57,6 +61,9 @@ class ExcelServiceImplSpec extends Specification {
     @Autowired
     TestIssueFolderRelMapper testIssueFolderRelMapper
 
+    @Autowired
+    ITestFileLoadHistoryService historyService
+
     @Shared
     Long[] versionIds = new Long[1]
     @Shared
@@ -92,7 +99,7 @@ class ExcelServiceImplSpec extends Specification {
         issuesId[0] = 55555L
         issuesId[1] = 55556L
         issueInfosDTOMap = Maps.newHashMap(issuesId[0], new IssueInfosDTO(issueId: issuesId[0], issueNum: 1L, summary: "CaseExcel测试",
-                priorityDTO: new PriorityDTO(id:1L,name: "CaseExcel测试"), assigneeName: "CaseExcel测试人", statusName: "CaseExcel测试状态"))
+                priorityDTO: new PriorityDTO(id: 1L, name: "CaseExcel测试"), assigneeName: "CaseExcel测试人", statusName: "CaseExcel测试状态"))
         versionIds[0] = versionId
         projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
         List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
@@ -127,12 +134,12 @@ class ExcelServiceImplSpec extends Specification {
         resFolderRelDO = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO)
 
         when:
-        target.exportCaseProjectByTransaction(projectId, request, new MockHttpServletResponse(), 1L,1L)
+        target.exportCaseProjectByTransaction(projectId, request, new MockHttpServletResponse(), 1L, 1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionIds(_) >> versionIds
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
@@ -143,11 +150,11 @@ class ExcelServiceImplSpec extends Specification {
 
     def "exportCaseVersionByTransaction"() {
         when:
-        target.exportCaseVersionByTransaction(projectId, versionId, request, new MockHttpServletResponse(), 1L,1L)
+        target.exportCaseVersionByTransaction(projectId, versionId, request, new MockHttpServletResponse(), 1L, 1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         2 * testCaseService.getVersionInfo(_) >> versionInfo
@@ -157,22 +164,70 @@ class ExcelServiceImplSpec extends Specification {
     }
 
     def "exportCaseFolderByTransaction"() {
+        given:
+        testIssueFolderRelMapper.delete(resFolderRelDO)
+
         when:
-        target.exportCaseFolderByTransaction(projectId, resFolderDO.getFolderId(), request, new MockHttpServletResponse(), 1L,1L)
+        target.exportCaseFolderByTransaction(projectId, resFolderDO.getFolderId(), request, new MockHttpServletResponse(), 1L, 1L)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * testCaseService.getIssueInfoMap(_, _, _,_) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.INTERNAL_SERVER_ERROR)
         (4.._) * notifyService.postWebSocket(_, _, _)
+    }
+
+    def "exportFailCaseByTransaction"() {
+        given:
+        TestFileLoadHistoryE historyE = TestFileLoadHistoryEFactory.create()
+        //项目
+        historyE.setProjectId(1L)
+        historyE.setActionType(TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE)
+        historyE.setSourceType(TestFileLoadHistoryE.Source.PROJECT)
+        historyE.setStatus(TestFileLoadHistoryE.Status.FAILURE)
+        historyE.setLinkedId(1L)
+        TestFileLoadHistoryE projectHistoryE = historyService.insertOne(historyE)
+        //版本
+        historyE.setSourceType(TestFileLoadHistoryE.Source.VERSION)
+        TestFileLoadHistoryE versionHistoryE = historyService.insertOne(historyE)
+        //文件夹
+        historyE.setSourceType(TestFileLoadHistoryE.Source.FOLDER)
+        historyE.setLinkedId(resFolderDO.getFolderId())
+        TestFileLoadHistoryE folderHistoryE = historyService.insertOne(historyE)
+
+        when:
+        target.exportFailCaseByTransaction(projectId, projectHistoryE.getId(), 1L)
+
+        then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        2 * notifyService.postWebSocket(_, _, _)
+
+        when:
+        target.exportFailCaseByTransaction(projectId, versionHistoryE.getId(), 1L)
+
+        then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getVersionInfo(_) >> versionInfo
+        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.INTERNAL_SERVER_ERROR)
+        1 * notifyService.postWebSocket(_, _, _)
+
+        when:
+        target.exportFailCaseByTransaction(projectId, folderHistoryE.getId(), 1L)
+
+        then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getVersionInfo(_) >> versionInfo
+        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        2 * notifyService.postWebSocket(_, _, _)
     }
 
     def "ExportCaseTemplate"() {
         given:
+        request.removeAttribute("User-Agent")
         request.addHeader("User-Agent", "Firefox")
 
         when:
@@ -187,7 +242,6 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
 
         and: "清理数据"
-        testIssueFolderRelMapper.delete(resFolderRelDO)
         testIssueFolderMapper.delete(resFolderDO)
     }
 }

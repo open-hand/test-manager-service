@@ -1,17 +1,15 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.app.service.ExcelImportService;
-import io.choerodon.test.manager.app.service.ExcelService;
-import io.choerodon.test.manager.app.service.ReporterFormService;
-import io.choerodon.agile.api.dto.*;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.app.service.ExcelService;
+import io.choerodon.test.manager.app.service.ExcelServiceHandler;
+import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -37,18 +35,21 @@ public class TestCaseController {
     @Autowired
     ReporterFormService reporterFormService;
 
-    private ExcelService excelService;
-
     @Autowired
     private ExcelImportService excelImportService;
 
     @Autowired
-    public TestCaseController(ExcelService excelService) {
-        this.excelService = excelService;
+    ExcelService excelService;
+
+    private ExcelServiceHandler excelServiceHandler;
+
+    @Autowired
+    public TestCaseController(ExcelServiceHandler excelServiceHandler) {
+        this.excelServiceHandler = excelServiceHandler;
     }
 
-    public void setExcelService(ExcelService excelService) {
-        this.excelService = excelService;
+    public void setExcelServiceHandler(ExcelServiceHandler excelServiceHandler) {
+        this.excelServiceHandler = excelServiceHandler;
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -62,7 +63,7 @@ public class TestCaseController {
                                                        @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
                                                        @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest,organizationId))
+        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
@@ -74,16 +75,16 @@ public class TestCaseController {
                                                                 @RequestBody Long[] issueIds,
                                                                 @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds,organizationId))
+        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
     }
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("通过缺陷Id生成报表从缺陷到issue")
-	@PostMapping("/get/reporter/from/defect/by/issueId")
-	public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
-														@RequestBody Long[] issueIds,
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
+    @PostMapping("/get/reporter/from/defect/by/issueId")
+    public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
+                                                        @RequestBody Long[] issueIds,
                                                         @RequestParam Long organizationId) {
 		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds,organizationId))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -97,7 +98,7 @@ public class TestCaseController {
     public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO, @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
                                                     @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest,organizationId))
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
@@ -106,10 +107,10 @@ public class TestCaseController {
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
     public ResponseEntity downLoadByProject(@PathVariable(name = "project_id") Long projectId,
-                         HttpServletRequest request,
-                         HttpServletResponse response,
-                                  @RequestParam Long organizationId) {
-        excelService.exportCaseByProject(projectId, request, response,organizationId);
+                                            HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            @RequestParam Long organizationId) {
+        excelServiceHandler.exportCaseByProject(projectId, request, response, organizationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -117,11 +118,11 @@ public class TestCaseController {
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
     public ResponseEntity downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
-                                  @RequestParam(name = "versionId") Long versionId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  @RequestParam Long organizationId) {
-        excelService.exportCaseByVersion(projectId, versionId, request, response,organizationId);
+                                            @RequestParam(name = "versionId") Long versionId,
+                                            HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            @RequestParam Long organizationId) {
+        excelServiceHandler.exportCaseByVersion(projectId, versionId, request, response, organizationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -129,11 +130,11 @@ public class TestCaseController {
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
-                                  @RequestParam(name = "folderId") Long folderId,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response,
-                                 @RequestParam Long organizationId) {
-        excelService.exportCaseByFolder(projectId,folderId, request, response,organizationId);
+                                           @RequestParam(name = "folderId") Long folderId,
+                                           HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           @RequestParam Long organizationId) {
+        excelServiceHandler.exportCaseByFolder(projectId, folderId, request, response, organizationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -141,8 +142,8 @@ public class TestCaseController {
     @ApiOperation("生成excel模板")
     @GetMapping("/download/excel/template")
     public void downLoadTemplate(@PathVariable(name = "project_id") Long projectId,
-                         HttpServletRequest request,
-                         HttpServletResponse response) {
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
         excelService.exportCaseTemplate(projectId, request, response);
     }
 
@@ -151,7 +152,7 @@ public class TestCaseController {
     @GetMapping("/download/excel/fail")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
                                            @RequestParam(name = "historyId") Long historyId) {
-        excelService.exportFailCase(projectId,historyId);
+        excelServiceHandler.exportFailCase(projectId, historyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
