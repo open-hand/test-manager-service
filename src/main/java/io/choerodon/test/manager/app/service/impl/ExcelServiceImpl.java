@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.IExcelService;
@@ -22,7 +21,6 @@ import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -114,87 +112,44 @@ public class ExcelServiceImpl implements ExcelService {
         return charsetName;
     }
 
-    /**
-     * 导出一个cycle下的测试详情，默认HSSFWorkBook
-     *
-     * @param cycleId
-     * @param projectId
-     */
-    @Override
-    public void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
-                                          HttpServletResponse response, Long organizationId) {
-        ExcelService service = (ExcelService) AopContext.currentProxy();
-        service.exportCycleCaseInOneCycleByTransaction(cycleId, projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
-     *
-     * @param projectId not null
-     * @param request
-     * @param response
-     */
-    @Override
-    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        ExcelService service = (ExcelService) AopContext.currentProxy();
-        service.exportCaseProjectByTransaction(projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
-     *
-     * @param versionId not null
-     * @param request
-     * @param response
-     */
-    @Override
-    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        ExcelService service = (ExcelService) AopContext.currentProxy();
-        service.exportCaseVersionByTransaction(projectId, versionId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    @Override
-    public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        ExcelService service = (ExcelService) AopContext.currentProxy();
-        service.exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    @Override
-    public void exportFailCase(Long projectId, Long fileHistoryId) {
-        ExcelService service = (ExcelService) AopContext.currentProxy();
-        service.exportFailCaseByTransaction(projectId, fileHistoryId, DetailsHelper.getUserDetails().getUserId());
-    }
-
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void exportFailCaseByTransaction(Long projectId, Long fileHistoryId, Long lUserId) {
         TestFileLoadHistoryE historyE = new TestFileLoadHistoryE();
         String userId = String.valueOf(lUserId);
-        DetailsHelper.getUserDetails().setUserId(lUserId);
         historyE.setId(fileHistoryId);
         TestFileLoadHistoryE loadHistoryE = iLoadHistoryService.queryByPrimaryKey(fileHistoryId);
-        String fileName = "导出失败重传" + FILESUFFIX;
 
-        MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, loadHistoryE.getFileStream());
+        String projcetName = testCaseService.getProjectInfo(loadHistoryE.getProjectId()).getName();
+        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
+        TestCycleE cycleE = TestCycleEFactory.create();
+        Map<Long, ProductVersionDTO> versions = testCaseService.getVersionInfo(loadHistoryE.getProjectId());
+        ProductVersionDTO version = null;
 
         switch (String.valueOf(loadHistoryE.getSourceType())) {
             case "1":
-                loadHistoryE.setName(testCaseService.getProjectInfo(loadHistoryE.getLinkedId()).getName());
+                loadHistoryE.setName(projcetName);
                 break;
             case "2":
-                loadHistoryE.setName(Optional.ofNullable(testCaseService.getVersionInfo(loadHistoryE.getProjectId()).get(loadHistoryE.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除"));
+                version = versions.get(loadHistoryE.getLinkedId());
+                loadHistoryE.setName(Optional.ofNullable(version).map(ProductVersionDTO::getName).orElse("版本已被删除"));
                 break;
             case "3":
-                TestCycleE cycleE = TestCycleEFactory.create();
                 cycleE.setCycleId(loadHistoryE.getLinkedId());
                 loadHistoryE.setName(Optional.ofNullable(cycleE.queryOne()).map(TestCycleE::getCycleName).orElse("循环已被删除"));
                 break;
             default:
-                TestIssueFolderE folderE = TestIssueFolderEFactory.create();
                 loadHistoryE.setName(Optional.ofNullable(folderE.queryByPrimaryKey(loadHistoryE.getLinkedId())).map(TestIssueFolderE::getName).orElse("文件夹已被删除"));
-                break;
+                version = versions.get(folderE.getVersionId());
         }
+
+        String fileName = projcetName+ "-" + Optional.ofNullable(version).map(ProductVersionDTO::getName)
+                + "-" + Optional.ofNullable(folderE).map(TestIssueFolderE::getName) + "-" +
+                Optional.ofNullable(cycleE).map(TestCycleE::getCycleName) + "-失败重传" + FILESUFFIX;
+
+        MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, loadHistoryE.getFileStream());
+
         loadHistoryE.setRate(99.9);
         notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(loadHistoryE));
 

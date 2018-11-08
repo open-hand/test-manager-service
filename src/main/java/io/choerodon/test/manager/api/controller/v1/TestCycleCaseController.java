@@ -10,7 +10,7 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.app.service.ExcelService;
+import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -184,15 +184,15 @@ public class TestCycleCaseController {
 				.orElseThrow(() -> new CommonException("error.testCycleCase.query.countCaseSum"));
 	}
 
-	private ExcelService excelService;
+	private ExcelServiceHandler excelServiceHandler;
 
 	@Autowired
-	public TestCycleCaseController(ExcelService excelService) {
-		this.excelService = excelService;
+	public TestCycleCaseController(ExcelServiceHandler excelServiceHandler) {
+		this.excelServiceHandler = excelServiceHandler;
 	}
 
-	public void setExcelService(ExcelService excelService) {
-		this.excelService = excelService;
+	public void setExcelServiceHandler(ExcelServiceHandler excelServiceHandler) {
+		this.excelServiceHandler = excelServiceHandler;
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -203,7 +203,7 @@ public class TestCycleCaseController {
 						 HttpServletRequest request,
 						 HttpServletResponse response,
 						 @RequestParam Long organizationId) {
-		excelService.exportCycleCaseInOneCycle(cycleId, projectId, request, response,organizationId);
+		excelServiceHandler.exportCycleCaseInOneCycle(cycleId, projectId, request, response,organizationId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

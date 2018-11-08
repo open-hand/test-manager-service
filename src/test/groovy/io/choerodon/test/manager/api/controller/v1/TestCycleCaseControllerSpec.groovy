@@ -16,21 +16,26 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.api.dto.TestStatusDTO
 import io.choerodon.test.manager.app.service.ExcelService
+import io.choerodon.test.manager.app.service.ExcelServiceHandler
 import io.choerodon.test.manager.app.service.FileService
+import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCaseStepService
 import io.choerodon.test.manager.app.service.TestCycleCaseService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.app.service.impl.TestCycleCaseServiceImpl
 import io.choerodon.test.manager.domain.service.ITestCycleService
+import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService
 import io.choerodon.test.manager.domain.service.impl.ITestCycleServiceImpl
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
+import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory
+import io.choerodon.test.manager.domain.test.manager.factory.TestFileLoadHistoryEFactory
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
@@ -92,13 +97,22 @@ class TestCycleCaseControllerSpec extends Specification {
     @Autowired
     TestCycleCaseController testCycleCaseController
 
-    private ExcelService excelService
+    private ExcelServiceHandler excelServiceHandler
 
     @Autowired
     ExcelService relExcelService
 
     @Autowired
     FileService fileService
+
+    @Autowired
+    ITestFileLoadHistoryService historyService
+
+    @Autowired
+    FileService fileFeignClient
+
+    @Autowired
+    NotifyService notifyService
 
     @Shared
     Object target
@@ -370,14 +384,14 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "exportExcle"() {
         given:
-        excelService = Mock(ExcelService)
-        testCycleCaseController.setExcelService(excelService)
+        excelServiceHandler = Mock(ExcelServiceHandler)
+        testCycleCaseController.setExcelServiceHandler(excelServiceHandler)
 
         when:
         testCycleCaseController.downLoad(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(), 1L)
 
         then:
-        1 * excelService.exportCycleCaseInOneCycle(_, _, _, _, _)
+        1 * excelServiceHandler.exportCycleCaseInOneCycle(_, _, _, _, _)
     }
 
     //覆盖excelService中的方法
@@ -398,6 +412,25 @@ class TestCycleCaseControllerSpec extends Specification {
                 assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"));
         issueMaps.put(97L, new IssueInfosDTO(issueName: "issueName1", issueNum: 97L, summary: "CylceCaseExcel测试",
                 assigneeName: "CylceCaseExcel测试人", statusName: "CylceCaseExcel测试状态"))
+
+        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
+        //循环
+        TestFileLoadHistoryE historyE = TestFileLoadHistoryEFactory.create()
+        historyE.setProjectId(1L)
+        historyE.setActionType(TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE)
+        historyE.setStatus(TestFileLoadHistoryE.Status.FAILURE)
+        historyE.setLinkedId(caseDTO.get(0).getCycleId())
+        historyE.setSourceType(TestFileLoadHistoryE.Source.CYCLE)
+        TestFileLoadHistoryE resHistoryE = historyService.insertOne(historyE)
+
+        when:
+        target.exportFailCaseByTransaction(55555L, resHistoryE.getId(), 1L)
+
+        then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        2 * notifyService.postWebSocket(_, _, _)
+
         when:
         target.exportCycleCaseInOneCycleByTransaction(caseDTO.get(0).getCycleId(), 142, request, new MockHttpServletResponse(), 1L, 1L)
 
