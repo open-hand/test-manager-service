@@ -66,7 +66,7 @@ public class TestFileLoadHistoryE {
 
     private Long failedCount;
 
-    private String fileStream;
+    private byte[] fileStream;
 
     private Long objectVersionNumber;
 
@@ -204,11 +204,11 @@ public class TestFileLoadHistoryE {
         this.failedCount = failedCount;
     }
 
-    public String getFileStream() {
+    public byte[] getFileStream() {
         return fileStream;
     }
 
-    public void setFileStream(String fileStream) {
+    public void setFileStream(byte[] fileStream) {
         this.fileStream = fileStream;
     }
 

@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -21,6 +22,7 @@ import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -58,6 +60,8 @@ public class ExcelServiceImpl implements ExcelService {
     private static final String LOOKUPSHEETNAME = "数据源页";
     private static final String FILESUFFIX = ".xlsx";
 
+    private static final String EXCELCONTENTTYPE = "application/vnd.ms-excel";
+
 
     Log log = LogFactory.getLog(this.getClass());
     @Autowired
@@ -81,7 +85,6 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     NotifyService notifyService;
 
-
     /**
      * 设置http请求报文为下载文件
      *
@@ -91,7 +94,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void setExcelHeaderByStream(HttpServletRequest request, HttpServletResponse response) {
         String charsetName = setExcelHeader(request);
         response.reset();
-        response.setContentType("application/vnd.ms-excel");
+        response.setContentType(EXCELCONTENTTYPE);
         response.setCharacterEncoding("utf-8");
         try {
             response.setHeader("Content-Disposition", "attachment;filename="
@@ -118,10 +121,10 @@ public class ExcelServiceImpl implements ExcelService {
      * @param projectId
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycle(Long cycleId, Long projectId, HttpServletRequest request,
                                           HttpServletResponse response, Long organizationId) {
-        exportCycleCaseInOneCycleByTransaction(cycleId, projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
+        ExcelService service = (ExcelService) AopContext.currentProxy();
+        service.exportCycleCaseInOneCycleByTransaction(cycleId, projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
     /**
@@ -132,9 +135,9 @@ public class ExcelServiceImpl implements ExcelService {
      * @param response
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        exportCaseProjectByTransaction(projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
+        ExcelService service = (ExcelService) AopContext.currentProxy();
+        service.exportCaseProjectByTransaction(projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
     /**
@@ -145,24 +148,77 @@ public class ExcelServiceImpl implements ExcelService {
      * @param response
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        exportCaseVersionByTransaction(projectId, versionId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
+        ExcelService service = (ExcelService) AopContext.currentProxy();
+        service.exportCaseVersionByTransaction(projectId, versionId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
+        ExcelService service = (ExcelService) AopContext.currentProxy();
+        service.exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
+    @Override
+    public void exportFailCase(Long projectId, Long fileHistoryId) {
+        ExcelService service = (ExcelService) AopContext.currentProxy();
+        service.exportFailCaseByTransaction(projectId, fileHistoryId, DetailsHelper.getUserDetails().getUserId());
+    }
 
+    @Override
     @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void exportFailCaseByTransaction(Long projectId, Long fileHistoryId, Long lUserId) {
+        TestFileLoadHistoryE historyE = new TestFileLoadHistoryE();
+        String userId = String.valueOf(lUserId);
+        DetailsHelper.getUserDetails().setUserId(lUserId);
+        historyE.setId(fileHistoryId);
+        TestFileLoadHistoryE loadHistoryE = iLoadHistoryService.queryByPrimaryKey(fileHistoryId);
+        String fileName = "导出失败重传" + FILESUFFIX;
+
+        MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, loadHistoryE.getFileStream());
+
+        switch (String.valueOf(loadHistoryE.getSourceType())) {
+            case "1":
+                loadHistoryE.setName(testCaseService.getProjectInfo(loadHistoryE.getLinkedId()).getName());
+                break;
+            case "2":
+                loadHistoryE.setName(Optional.ofNullable(testCaseService.getVersionInfo(loadHistoryE.getProjectId()).get(loadHistoryE.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除"));
+                break;
+            case "3":
+                TestCycleE cycleE = TestCycleEFactory.create();
+                cycleE.setCycleId(loadHistoryE.getLinkedId());
+                loadHistoryE.setName(Optional.ofNullable(cycleE.queryOne()).map(TestCycleE::getCycleName).orElse("循环已被删除"));
+                break;
+            default:
+                TestIssueFolderE folderE = TestIssueFolderEFactory.create();
+                loadHistoryE.setName(Optional.ofNullable(folderE.queryByPrimaryKey(loadHistoryE.getLinkedId())).map(TestIssueFolderE::getName).orElse("文件夹已被删除"));
+                break;
+        }
+        loadHistoryE.setRate(99.9);
+        notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(loadHistoryE));
+
+        ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+
+        if (res.getStatusCode().is2xxSuccessful()) {
+            loadHistoryE.setLastUpdateDate(new Date());
+            loadHistoryE.setFileStream(null);
+            loadHistoryE.setSuccessfulCount(loadHistoryE.getFailedCount());
+            loadHistoryE.setFailedCount(null);
+            loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
+            loadHistoryE.setFileUrl(res.getBody());
+            notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(loadHistoryE));
+            iLoadHistoryService.update(loadHistoryE);
+        }
+    }
+
+    @Override
+    @Async
+    @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
                                                        HttpServletResponse response, Long userId, Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
-
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, cycleId,
                 TestFileLoadHistoryE.Source.CYCLE, TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE);
 
@@ -184,7 +240,10 @@ public class ExcelServiceImpl implements ExcelService {
         notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
         Map<Long, List<TestCycleCaseDTO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, null, projectId, organizationId))
                 .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
-
+        int sum = 0;
+        for (List<TestCycleCaseDTO> list : cycleCaseMap.values()) {
+            sum += list.size();
+        }
         loadHistoryE.setRate(65.0);
         notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
         IExcelService service = new <TestCycleDTO, TestCycleCaseDTO>ICycleCaseExcelServiceImpl();
@@ -195,18 +254,14 @@ public class ExcelServiceImpl implements ExcelService {
         loadHistoryE.setRate(95.0);
         notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
-
-        int sum = 0;
-        for (List<TestCycleCaseDTO> list :cycleCaseMap.values()){
-            sum+=list.size();
-        }
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum);
     }
 
+    @Override
     @Async
+    @Transactional(rollbackFor = Exception.class)
     public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         setExcelHeader(request);
-
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, projectId,
                 TestFileLoadHistoryE.Source.PROJECT, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
@@ -234,11 +289,11 @@ public class ExcelServiceImpl implements ExcelService {
             folderE.setVersionId(versionId);
             Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5 + (versionOffset * (i++)), versionOffset, loadHistoryE, organizationId);
             allRelMaps.putAll(everyRelMaps);
-            service.exportWorkBookWithOneSheet(everyRelMaps,projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+            service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
         }
         int sum = 0;
-        for (List<TestIssueFolderRelDTO> list :allRelMaps.values()){
-            sum+=list.size();
+        for (List<TestIssueFolderRelDTO> list : allRelMaps.values()) {
+            sum += list.size();
         }
         loadHistoryE.setRate(95.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
@@ -247,17 +302,18 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum);
     }
 
+    @Override
     @Async
+    @Transactional(rollbackFor = Exception.class)
     public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, versionId,
                 TestFileLoadHistoryE.Source.VERSION, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
-
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
         String versionName = testCaseService.getVersionInfo(projectId).get(versionId).getName();
@@ -278,22 +334,24 @@ public class ExcelServiceImpl implements ExcelService {
 
         Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5, 90, loadHistoryE, organizationId);
 
+        int sum = 0;
+        for (List<TestIssueFolderRelDTO> list : everyRelMaps.values()) {
+            sum += list.size();
+        }
         service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
 
-        int sum = 0;
-        for (List<TestIssueFolderRelDTO> list :everyRelMaps.values()){
-            sum+=list.size();
-        }
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + versionName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum);
     }
 
 
+    @Override
     @Async
+    @Transactional(rollbackFor = Exception.class)
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
@@ -319,18 +377,19 @@ public class ExcelServiceImpl implements ExcelService {
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
 
         Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5, 90, loadHistoryE, organizationId);
-        service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
 
         int sum = 0;
-        for (List<TestIssueFolderRelDTO> list :everyRelMaps.values()){
-            sum+=list.size();
+        for (List<TestIssueFolderRelDTO> list : everyRelMaps.values()) {
+            sum += list.size();
         }
+        service.exportWorkBookWithOneSheet(everyRelMaps, projectName, ConvertHelper.convert(folderE, TestIssueFolderDTO.class), workbook);
+
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, loadHistoryE, userId,sum);
+        downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum);
     }
 
     @Override
@@ -385,33 +444,37 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
 
-    private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryE loadHistoryE, Long userId,int sum) {
+    private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryE loadHistoryE, Long userId, int sum) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             workbook.write(os);
             byte[] content = os.toByteArray();
-            MultipartFile file = new MultipartExcel("file", fileName, "application/vnd.ms-excel", content);
+            MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, content);
 
             loadHistoryE.setRate(99.9);
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
+
             ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
 
             loadHistoryE.setLastUpdateDate(new Date());
+            loadHistoryE.setFileStream(content);
             if (res.getStatusCode().is2xxSuccessful()) {
+                loadHistoryE.setFileStream(null);
                 loadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
                 loadHistoryE.setFileUrl(res.getBody());
-                notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
             } else {
                 loadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
-                loadHistoryE.setFileStream(os.toString());
-                notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            loadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
             loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
             throw new CommonException(EXPORT_ERROR, e);
         } finally {
             try {
                 iLoadHistoryService.update(loadHistoryE);
+                loadHistoryE.setFileStream(null);
+                notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
                 workbook.close();
             } catch (IOException e) {
                 log.warn(EXPORT_ERROR_WORKBOOK_CLOSE, e);
@@ -494,19 +557,19 @@ public class ExcelServiceImpl implements ExcelService {
     private Map<Long, IssueInfosDTO> batchGetIssueInfo(List<Long> issueIds, TestIssueFolderE folderE, Long userId, double startRate, double offset, TestFileLoadHistoryE loadHistoryE, Long organizationId) {
         Map<Long, IssueInfosDTO> issueInfosMap = new HashMap<>();
 
-        int flag = issueIds.size() / 400;
+        int flag = issueIds.size() / 40;
         double issuesOffset = offset / (flag + 1.00);
         for (int j = 0; j <= flag; j++) {
             Long[] toSendIds;
-            if (issueIds.size() > 400 && j != flag) {
-                toSendIds = issueIds.subList(j * 400, (j + 1) * 400).toArray(new Long[400]);
+            if (issueIds.size() > 40 && j != flag) {
+                toSendIds = issueIds.subList(j * 40, (j + 1) * 40).toArray(new Long[40]);
                 loadHistoryE.setRate(startRate + (j + 1) * issuesOffset);
                 notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
             } else {
-                toSendIds = issueIds.subList(j * 400, issueIds.size()).toArray(new Long[400]);
+                toSendIds = issueIds.subList(j * 40, issueIds.size()).toArray(new Long[40]);
             }
             if (!ObjectUtils.isEmpty(issueIds)) {
-                printDebug("开始分批获取issue信息（最大400一批），当前第" + (j + 1) + "批");
+                printDebug("开始分批获取issue信息（最大40一批），当前第" + (j + 1) + "批");
                 issueInfosMap.putAll(testCaseService.getIssueInfoMap(folderE.getProjectId(), toSendIds, true, organizationId));
             }
         }

@@ -35,4 +35,11 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
         TestFileLoadHistoryDO testIssueFolderRelDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
         return ConvertHelper.convertList(testFileLoadHistoryMapper.queryDownloadFile(testIssueFolderRelDO), TestFileLoadHistoryE.class);
     }
+
+    @Override
+    public TestFileLoadHistoryE queryByPrimaryKey(Long id) {
+        TestFileLoadHistoryDO testFileLoadHistoryDO = new TestFileLoadHistoryDO();
+        testFileLoadHistoryDO.setId(id);
+        return ConvertHelper.convert(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDO),TestFileLoadHistoryE.class);
+    }
 }

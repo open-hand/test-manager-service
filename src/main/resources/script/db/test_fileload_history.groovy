@@ -27,7 +27,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             }
             column(name: 'successful_count', type: 'BIGINT UNSIGNED', remarks: '成功数')
             column(name: 'failed_count', type: 'BIGINT UNSIGNED', remarks: '失败数')
-            column(name: 'file_stream', type: 'text', remarks: '失败文件')
+            column(name: 'file_stream', type: 'BLOB', remarks: '失败文件')
 
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
@@ -49,4 +49,5 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             createSequence(sequenceName: 'table_test_fileload_s', startValue: "1")
         }
     }
+
 }

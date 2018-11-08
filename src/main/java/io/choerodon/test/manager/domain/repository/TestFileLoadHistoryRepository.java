@@ -11,4 +11,7 @@ public interface TestFileLoadHistoryRepository {
     TestFileLoadHistoryE update(TestFileLoadHistoryE testFileLoadHistoryE);
 
     List<TestFileLoadHistoryE>queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE);
+
+    TestFileLoadHistoryE queryByPrimaryKey(Long id);
+
 }

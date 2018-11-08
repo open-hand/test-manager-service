@@ -27,4 +27,9 @@ public class ITestFileLoadHistoryServiceImpl implements ITestFileLoadHistoryServ
     public List<TestFileLoadHistoryE> queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE) {
         return testFileLoadHistoryRepository.queryDownloadFile(testFileLoadHistoryE);
     }
+
+    @Override
+    public TestFileLoadHistoryE queryByPrimaryKey(Long id) {
+        return testFileLoadHistoryRepository.queryByPrimaryKey(id);
+    }
 }

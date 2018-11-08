@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryService {
@@ -37,12 +39,14 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
         List<TestFileLoadHistoryDTO> historyDTOS = ConvertHelper.convertList(iTestFileLoadHistoryService.queryDownloadFile(ConvertHelper.convert(testFileLoadHistoryDTO, TestFileLoadHistoryE.class)), TestFileLoadHistoryDTO.class);
 
         historyDTOS.stream().filter(v -> v.getSourceType() == 1L).forEach(v -> v.setName(testCaseService.getProjectInfo(v.getLinkedId()).getName()));
-        historyDTOS.stream().filter(v -> v.getSourceType() == 2L).forEach(v -> v.setName(testCaseService.getVersionInfo(v.getProjectId()).get(v.getLinkedId()).getName()));
+        historyDTOS.stream().filter(v -> v.getSourceType() == 2L).forEach(v ->
+                v.setName(Optional.ofNullable(testCaseService.getVersionInfo(v.getProjectId()).get(v.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除")));
         historyDTOS.stream().filter(v -> v.getSourceType() == 3L).forEach(v -> {
             cycleE.setCycleId(v.getLinkedId());
-            v.setName(cycleE.queryOne().getCycleName());
+            v.setName(Optional.ofNullable(cycleE.queryOne()).map(TestCycleE::getCycleName).orElse("循环已被删除"));
         });
-        historyDTOS.stream().filter(v -> v.getSourceType() == 4L).forEach(v -> v.setName(folderE.queryByPrimaryKey(v.getLinkedId()).getName()));
+        historyDTOS.stream().filter(v -> v.getSourceType() == 4L).forEach(v ->
+                v.setName(Optional.ofNullable(folderE.queryByPrimaryKey(v.getLinkedId())).map(TestIssueFolderE::getName).orElse("文件夹已被删除")));
 
         return historyDTOS;
     }
