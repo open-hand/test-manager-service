@@ -33,7 +33,19 @@ public class TestFileLoadHistoryDO extends AuditDomain {
 
     private Long failedCount;
 
-    private String fileStream;
+    private byte[] fileStream;
+
+    private Long createdBy;
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Long getId() {
         return id;
@@ -107,11 +119,11 @@ public class TestFileLoadHistoryDO extends AuditDomain {
         this.failedCount = failedCount;
     }
 
-    public String getFileStream() {
+    public byte[] getFileStream() {
         return fileStream;
     }
 
-    public void setFileStream(String fileStream) {
+    public void setFileStream(byte[] fileStream) {
         this.fileStream = fileStream;
     }
 }

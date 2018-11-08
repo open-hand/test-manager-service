@@ -6,12 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @EnableAsync
 @EnableDiscoveryClient
@@ -19,12 +16,12 @@ import java.util.concurrent.Executors;
 @EnableFeignClients("io.choerodon")
 @EnableEurekaClient
 @EnableChoerodonResourceServer
+@EnableAspectJAutoProxy(exposeProxy = true)
 @Configuration
 public class TestManagerServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(TestManagerServiceApplication.class, args);
     }
-
+    
 }
 
