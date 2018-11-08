@@ -5,6 +5,7 @@ import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelService
+import io.choerodon.test.manager.app.service.ExcelServiceHandler
 import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import spock.lang.Specification
@@ -34,9 +37,12 @@ class TestCaseControllerTest extends Specification {
     TestRestTemplate restTemplate;
 
     @Autowired
+    ExcelService excelService
+
+    @Autowired
     TestCaseController testCaseController
 
-    private ExcelService excelService
+    private ExcelServiceHandler excelServiceHandler
 
     @Autowired
     TestCaseService testCaseService
@@ -45,8 +51,8 @@ class TestCaseControllerTest extends Specification {
     UserService userService
 
     void setup() {
-        excelService = Mock(ExcelService)
-        testCaseController.setExcelService(excelService)
+        excelServiceHandler = Mock(ExcelServiceHandler)
+        testCaseController.setExcelServiceHandler(excelServiceHandler)
     }
 
 
@@ -55,7 +61,7 @@ class TestCaseControllerTest extends Specification {
         testCaseController.downLoadByProject(1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByProject(_, _, _,_)
+        1 * excelServiceHandler.exportCaseByProject(_, _, _,_)
     }
 
     def "DownLoadByVersion"() {
@@ -63,7 +69,7 @@ class TestCaseControllerTest extends Specification {
         testCaseController.downLoadByVersion(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByVersion(_, _, _, _,_)
+        1 * excelServiceHandler.exportCaseByVersion(_, _, _, _,_)
     }
 
     def "DownLoadByFolder"() {
@@ -71,14 +77,38 @@ class TestCaseControllerTest extends Specification {
         testCaseController.downLoadByFolder(1L, 1L, new MockHttpServletRequest(), new MockHttpServletResponse(),1L)
 
         then:
-        1 * excelService.exportCaseByFolder(_, _, _, _,_)
+        1 * excelServiceHandler.exportCaseByFolder(_, _, _, _,_)
     }
 
     def "DownLoadTemplate"() {
+        given:
+        Long[] issuesId = new Long[2]
+        issuesId[0] = 55555L
+        issuesId[1] = 55556L
+        Long[] versionIds = new Long[1]
+        versionIds[0] = 55555L
+        ProjectDTO projectDTO = new ProjectDTO(name: "CaseExcel测试项目")
+        List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
+        LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
+        List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test", id: 1L))
+        Page page = new Page()
+        page.setContent(userDTOS)
+        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
+        productVersionDTO.setName("CaseExcel测试版本")
+        Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(55555L, productVersionDTO)
+        List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
+        MockHttpServletRequest request = new MockHttpServletRequest()
+        request.addHeader("User-Agent", "Chrome")
+
         when:
         restTemplate.getForEntity("/v1/projects/{project_id}/case/download/excel/template", null, 1L)
 
         then:
-        1 * excelService.exportCaseTemplate(_, _, _)
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getVersionIds(_) >> versionIds
+        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * testCaseService.getVersionInfo(_) >> versionInfo
+        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
     }
 }
