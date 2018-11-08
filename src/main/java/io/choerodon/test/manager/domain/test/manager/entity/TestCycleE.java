@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -53,10 +51,6 @@ public class TestCycleE {
 
     @Autowired
     TestCycleRepository testCycleRepository;
-
-    public Page<TestCycleE> querySelf(PageRequest pageRequest) {
-        return testCycleRepository.query(this, pageRequest);
-    }
 
     public List<TestCycleE> queryAll(){
         return testCycleRepository.queryAll();

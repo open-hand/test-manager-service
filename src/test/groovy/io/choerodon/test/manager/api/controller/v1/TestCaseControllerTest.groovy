@@ -49,17 +49,6 @@ class TestCaseControllerTest extends Specification {
         testCaseController.setExcelService(excelService)
     }
 
-//    def "CreateFormsFromIssueToDefect"() {
-//    }
-//
-//    def "CreateFormsFromIssueToDefectByIssueId"() {
-//    }
-//
-//    def "CreateFormDefectFromIssueById"() {
-//    }
-//
-//    def "CreateFormDefectFromIssue"() {
-//    }
 
     def "DownLoadByProject"() {
         when:
