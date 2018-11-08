@@ -53,9 +53,6 @@ public class ReporterFormServiceImpl implements ReporterFormService {
     public Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Page page = new Page();
         Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page,organizationId);
-        if (issueResponse.isEmpty()) {
-            return page;
-        }
         List<ReporterFormE> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId,organizationId);
 
         page.setContent(reporterFormES);
@@ -92,17 +89,6 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         return doCreateFromDefectToIssue(issueResponse.values().stream().collect(Collectors.toList()), projectId,organizationId);
     }
 
-
-    public Page<DefectReporterFormE> createFormDefectFromIssue(Long projectId, PageRequest pageRequest,Long organizationId) {
-        Page page = new Page();
-        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, new SearchDTO(), pageRequest, page,organizationId);
-
-        List<DefectReporterFormE> reporterFormES = doCreateFromDefectToIssue(issueResponse.values().stream().collect(Collectors.toList()), projectId,organizationId);
-
-        page.setContent(reporterFormES);
-        page.setNumberOfElements(reporterFormES.size());
-        return page;
-    }
 
     @Override
     public Page<ReporterFormE> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
@@ -152,7 +138,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         }
         Long[] issueIds = issues.toArray(new Long[issues.size()]);
         List<TestCycleCaseDefectRelE> defectLists = testCycleCaseDefectRelRepository.queryInIssues(issueIds, projectId);
-        if (defectLists == null || defectLists.isEmpty()) {
+        if (ObjectUtils.isEmpty(defectLists)) {
             return formES;
         }
 
