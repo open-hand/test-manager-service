@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Component
 @Scope("prototype")
@@ -36,7 +37,7 @@ public class TestFileLoadHistoryE {
     }
 
     public enum Status {
-        SUSPENDING(1L), SUCCESS(2L), FAILURE(3L);
+        SUSPENDING(1L), SUCCESS(2L), FAILURE(3L), CANCEL(4L);
         private Long statusFlag;
 
         public Long getTypeValue() {
@@ -45,6 +46,20 @@ public class TestFileLoadHistoryE {
 
         Status(Long status) {
             this.statusFlag = status;
+        }
+
+        public static Status valueOf(Long statusFlag) {
+            if (statusFlag == null) {
+                return null;
+            }
+
+            for (Status status : values()) {
+                if (Objects.equals(status.statusFlag, statusFlag)) {
+                    return status;
+                }
+            }
+
+            return null;
         }
     }
 

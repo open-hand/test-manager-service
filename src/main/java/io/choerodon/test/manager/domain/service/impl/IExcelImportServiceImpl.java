@@ -3,7 +3,9 @@ package io.choerodon.test.manager.domain.service.impl;
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
@@ -54,12 +56,29 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     private static final ExcelReadMeOptionDTO[] README_OPTIONS = new ExcelReadMeOptionDTO[5];
 
+    private static final TestCaseStepE[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepE[3];
+
+    private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
+
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionDTO("用例概要", true);
         README_OPTIONS[1] = new ExcelReadMeOptionDTO("用例描述", false);
         README_OPTIONS[2] = new ExcelReadMeOptionDTO("测试步骤", false);
         README_OPTIONS[3] = new ExcelReadMeOptionDTO("测试数据", false);
         README_OPTIONS[4] = new ExcelReadMeOptionDTO("预期结果", false);
+
+        for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
+            EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepE();
+            EXAMPLE_TEST_CASE_STEPS[i].setTestStep("步骤" + (i + 1));
+            EXAMPLE_TEST_CASE_STEPS[i].setTestData("数据" + (i + 1));
+            EXAMPLE_TEST_CASE_STEPS[i].setExpectedResult("结果" + (i + 1));
+        }
+
+        for (int i = 0; i < EXAMPLE_ISSUES.length; i++) {
+            EXAMPLE_ISSUES[i] = new IssueCreateDTO();
+            EXAMPLE_ISSUES[i].setSummary("概要" + (i + 1));
+            EXAMPLE_ISSUES[i].setDescription("描述" + (i + 1));
+        }
     }
 
     @Override
@@ -70,6 +89,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         addTestCaseSheet(importTemp);
 
         return importTemp;
+    }
+
+    @Override
+    public boolean cancelFileUpload(Long historyId) {
+        return loadHistoryRepository.cancelFileUpload(historyId);
     }
 
     @Override
@@ -86,6 +110,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     public TestFileLoadHistoryE initLoadHistory(Long projectId, Long folderId, Long userId) {
         TestFileLoadHistoryE loadHistoryE = new TestFileLoadHistoryE(projectId, TestFileLoadHistoryE.Action.UPLOAD_ISSUE,
                 TestFileLoadHistoryE.Source.FOLDER, folderId, TestFileLoadHistoryE.Status.SUSPENDING);
+        loadHistoryE.setCreationDate(new Date());
         loadHistoryE.setSuccessfulCount(0L);
         loadHistoryE.setFailedCount(0L);
         loadHistoryE.setCreatedBy(userId);
@@ -102,26 +127,20 @@ public class IExcelImportServiceImpl implements IExcelImportService {
             logger.debug(loadHistoryE.getFileUrl());
             return response.getBody();
         } else {
-            loadHistoryE.setFileStream(new String(ExcelUtil.getBytes(errorWorkbook)));
+            loadHistoryE.setFileStream(ExcelUtil.getBytes(errorWorkbook));
             return null;
         }
     }
 
     private void shiftRow(Sheet sheet, int from, int to) {
         Row fromRow = sheet.getRow(from);
-        Row toRow = sheet.getRow(to);
-        if (toRow == null) {
-            toRow = sheet.createRow(to);
-        }
+        Row toRow = ExcelUtil.getOrCreateRow(sheet, to);
         Cell fromCell;
         Cell toCell;
         for (int i = 0; i <= README_OPTIONS.length; i++) {
             fromCell = fromRow.getCell(i);
             if (fromCell != null) {
-                toCell = toRow.getCell(i);
-                if (toCell == null) {
-                    toCell = toRow.createCell(i, CELL_TYPE_STRING);
-                }
+                toCell = ExcelUtil.getOrCreateCell(toRow, i, CELL_TYPE_STRING);
                 toCell.setCellValue(ExcelUtil.getStringValue(fromCell));
                 fromRow.removeCell(fromCell);
             }
@@ -159,6 +178,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
+    public boolean isCanceled(Long id) {
+        return Objects.equals(loadHistoryRepository.queryLoadHistoryStatus(id), TestFileLoadHistoryE.Status.CANCEL);
+    }
+
+    @Override
     public boolean isIssueHeaderRow(Row row) {
         if (row.getRowNum() == 0) {
             return false;
@@ -191,13 +215,14 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     @Override
     public IssueDTO processIssueHeaderRow(Row row, Long projectId, Long versionId, Long folderId) {
-        String summary = ExcelUtil.getStringValue(row.getCell(0));
-        if (StringUtils.isBlank(summary)) {
+        if (ExcelUtil.isBlank(row.getCell(0))) {
             markAsError(row, "测试概要不能为空");
             return null;
         }
 
         String description = ExcelUtil.getStringValue(row.getCell(1));
+        String summary = ExcelUtil.getStringValue(row.getCell(0));
+
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setPriorityCode("medium");
@@ -219,7 +244,12 @@ public class IExcelImportServiceImpl implements IExcelImportService {
             issueFolderRelE.setVersionId(versionId);
             issueFolderRelE.setFolderId(folderId);
             issueFolderRelE.setIssueId(issueDTO.getIssueId());
-            issueFolderRelE.addSelf();
+            try {
+                issueFolderRelE.addSelf();
+            } catch (Exception e) {
+                markAsError(row, "导入测试任务异常");
+                return null;
+            }
         } else {
             markAsError(row, "导入测试任务异常");
         }
@@ -235,7 +265,8 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         }
     }
 
-    private void removeRow(Row row) {
+    @Override
+    public void removeRow(Row row) {
         for (int i = 0; i <= README_OPTIONS.length; i++) {
             if (row.getCell(i) != null) {
                 row.removeCell(row.getCell(i));
@@ -255,24 +286,47 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public void finishImport(TestFileLoadHistoryE loadHistoryE, Long userId, boolean success) {
+    public void finishImport(TestFileLoadHistoryE loadHistoryE, Long userId, TestFileLoadHistoryE.Status status) {
         loadHistoryE.setLastUpdateDate(new Date());
-        loadHistoryE.setStatus(success ?
-                TestFileLoadHistoryE.Status.SUCCESS :
-                TestFileLoadHistoryE.Status.FAILURE
-        );
+        loadHistoryE.setStatus(status);
 
-        loadHistoryRepository.update(loadHistoryE);
+        loadHistoryE = loadHistoryRepository.update(loadHistoryE);
         updateProgress(loadHistoryE, userId, 100.);
     }
 
-    private void markAsError(Row row, String errorMsg) {
-        Cell cell = row.getCell(README_OPTIONS.length);
-        if (cell == null) {
-            cell = row.createCell(README_OPTIONS.length, CELL_TYPE_STRING);
+    private boolean isEmptyRow(Row row) {
+        if (row == null) {
+            return true;
         }
 
-        cell.setCellValue(errorMsg);
+        for (int i = 0; i < README_OPTIONS.length; i++) {
+            if (!ExcelUtil.isBlank(row.getCell(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isEmptyTemp(Sheet sheet) {
+        Iterator<Row> iterator = sheet.rowIterator();
+        if (!iterator.hasNext()) {
+            return true;
+        }
+
+        iterator.next();
+        do {
+            if (!isEmptyRow(iterator.next())) {
+                return false;
+            }
+        } while (iterator.hasNext());
+
+        return true;
+    }
+
+    private void markAsError(Row row, String errorMsg) {
+        ExcelUtil.getOrCreateCell(row, README_OPTIONS.length, CELL_TYPE_STRING).setCellValue(errorMsg);
 
         logger.info("行 {} 发生错误：{}", row.getRowNum() + 1, errorMsg);
     }
@@ -293,17 +347,45 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         setReadMeSheetStyle(readMeSheet);
     }
 
-    // 填充测试用例页内容
-    private void fillTestCaseSheet(Sheet testCaseSheet) {
-        Row header = testCaseSheet.createRow(0);
+    private void writeHeader(Sheet sheet, int rowNum, int colNum) {
+        Row header = ExcelUtil.getOrCreateRow(sheet, rowNum);
         for (int i = 0; i < README_OPTIONS.length; i++) {
-            Cell cell = header.createCell(i, CELL_TYPE_STRING);
+            Cell cell = header.createCell(i + colNum, CELL_TYPE_STRING);
             if (README_OPTIONS[i].getRequired()) {
                 cell.setCellValue(README_OPTIONS[i].getFiled() + "*");
             } else {
                 cell.setCellValue(README_OPTIONS[i].getFiled());
             }
         }
+    }
+
+    private void writeExample(Sheet sheet, int rowNum, int colNum, IssueCreateDTO issueCreateDTO, TestCaseStepE... steps) {
+        Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
+        row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
+        row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
+
+        for (int i = 0; i < steps.length; i++) {
+            row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
+            row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+        }
+    }
+
+    // 填充测试用例页内容
+    private void fillTestCaseSheet(Sheet testCaseSheet) {
+        writeHeader(testCaseSheet, 0, 0);
+
+        testCaseSheet.getRow(0).createCell(README_OPTIONS.length + 1, CELL_TYPE_STRING).setCellValue("示例");
+        testCaseSheet.addMergedRegion(new CellRangeAddress(0, 0, README_OPTIONS.length + 1, README_OPTIONS.length + 5));
+        writeHeader(testCaseSheet, 1, README_OPTIONS.length + 1);
+
+        writeExample(testCaseSheet, 2, README_OPTIONS.length + 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
+        writeExample(testCaseSheet, 5, README_OPTIONS.length + 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
+        writeExample(testCaseSheet, 6, README_OPTIONS.length + 1, EXAMPLE_ISSUES[2],
+                EXAMPLE_TEST_CASE_STEPS[0],
+                EXAMPLE_TEST_CASE_STEPS[1]
+        );
     }
 
     // 设置测试用例页样式

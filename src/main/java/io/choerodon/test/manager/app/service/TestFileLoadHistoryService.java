@@ -7,4 +7,6 @@ import java.util.List;
 public interface TestFileLoadHistoryService {
 
    List<TestFileLoadHistoryDTO> query(Long projectId);
+
+    TestFileLoadHistoryDTO queryLatestImportIssueHistory();
 }

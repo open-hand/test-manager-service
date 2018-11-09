@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 public interface ExcelImportService {
 
+    boolean cancelFileUpload(Long historyId);
+
     void downloadImportTemp(HttpServletResponse response);
 
     void importIssueByExcel(Long projectId, Long versionId, Long userId, Workbook workbook);

@@ -12,6 +12,8 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +51,18 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
                 v.setName(Optional.ofNullable(folderE.queryByPrimaryKey(v.getLinkedId())).map(TestIssueFolderE::getName).orElse("文件夹已被删除")));
 
         return historyDTOS;
+    }
+
+    @Override
+    public TestFileLoadHistoryDTO queryLatestImportIssueHistory() {
+        TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
+        testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE);
+        if (testFileLoadHistoryE == null) {
+            return null;
+        }
+
+        return ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDTO.class);
     }
 
 }

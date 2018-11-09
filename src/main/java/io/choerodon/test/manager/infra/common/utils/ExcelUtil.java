@@ -1,5 +1,8 @@
 package io.choerodon.test.manager.infra.common.utils;
 
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -122,10 +125,7 @@ public class ExcelUtil {
     }
 
     public static boolean isBlank(Cell cell) {
-        if (cell == null) {
-            return true;
-        }
-        return cell.getCellType() == Cell.CELL_TYPE_BLANK;
+        return StringUtils.isBlank(getStringValue(cell));
     }
 
     private static String getStringValue(CellValue cellValue) {
@@ -153,7 +153,7 @@ public class ExcelUtil {
     }
 
     public static String getStringValue(Cell cell) {
-        if (isBlank(cell)) {
+        if (cell == null || cell.getCellType() == Cell.CELL_TYPE_BLANK) {
             return "";
         }
         switch (cell.getCellType()) {
@@ -178,6 +178,24 @@ public class ExcelUtil {
 
                 return getStringValue(evaluator.evaluate(cell));
         }
+    }
+
+    public static Row getOrCreateRow(Sheet sheet, int rowNum) {
+        Row row = sheet.getRow(rowNum);
+        if (row == null) {
+            row = sheet.createRow(rowNum);
+        }
+
+        return row;
+    }
+
+    public static Cell getOrCreateCell(Row row, int colNum, int type) {
+        Cell cell = row.getCell(colNum);
+        if (cell == null) {
+            cell = row.createCell(colNum, type);
+        }
+
+        return cell;
     }
 
 }

@@ -14,4 +14,9 @@ public interface TestFileLoadHistoryRepository {
 
     TestFileLoadHistoryE queryByPrimaryKey(Long id);
 
+    TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE);
+
+    TestFileLoadHistoryE.Status queryLoadHistoryStatus(Long id);
+
+    boolean cancelFileUpload(Long historyId);
 }

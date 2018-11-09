@@ -32,4 +32,9 @@ public class ITestFileLoadHistoryServiceImpl implements ITestFileLoadHistoryServ
     public TestFileLoadHistoryE queryByPrimaryKey(Long id) {
         return testFileLoadHistoryRepository.queryByPrimaryKey(id);
     }
+
+    @Override
+    public TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
+        return testFileLoadHistoryRepository.queryLatestImportIssueHistory(testFileLoadHistoryE);
+    }
 }

@@ -12,6 +12,8 @@ public interface ITestFileLoadHistoryService {
 
     List<TestFileLoadHistoryE> queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE);
 
+    TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE);
+
     TestFileLoadHistoryE queryByPrimaryKey(Long id);
 
 }

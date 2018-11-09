@@ -14,6 +14,8 @@ public interface IExcelImportService {
 
     Workbook buildImportTemp();
 
+    boolean cancelFileUpload(Long historyId);
+
     void processRow(IssueDTO issueDTO, Row row);
 
     TestFileLoadHistoryE initLoadHistory(Long projectId, Long folderId, Long userId);
@@ -24,11 +26,17 @@ public interface IExcelImportService {
 
     TestIssueFolderE getFolder(Long projectId, Long versionId);
 
+    boolean isCanceled(Long id);
+
     boolean isIssueHeaderRow(Row row);
 
     IssueDTO processIssueHeaderRow(Row row, Long projectId, Long versionId, Long folderId);
 
+    void removeRow(Row row);
+
     void updateProgress(TestFileLoadHistoryE loadHistoryE, Long userId, double rate);
 
-    void finishImport(TestFileLoadHistoryE loadHistoryE, Long userId, boolean success);
+    void finishImport(TestFileLoadHistoryE loadHistoryE, Long userId, TestFileLoadHistoryE.Status status);
+
+    boolean isEmptyTemp(Sheet sheet);
 }

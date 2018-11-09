@@ -42,4 +42,24 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
         testFileLoadHistoryDO.setId(id);
         return ConvertHelper.convert(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDO),TestFileLoadHistoryE.class);
     }
+
+    @Override
+    public TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
+        TestFileLoadHistoryDO testFileLoadHistoryDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
+        List<TestFileLoadHistoryDO> testFileLoadHistoryDOs = testFileLoadHistoryMapper.queryLatestImportIssueHistory(testFileLoadHistoryDO);
+        if (testFileLoadHistoryDOs == null || testFileLoadHistoryDOs.isEmpty()) {
+            return null;
+        }
+        return ConvertHelper.convert(testFileLoadHistoryDOs.get(0), TestFileLoadHistoryE.class);
+    }
+
+    @Override
+    public TestFileLoadHistoryE.Status queryLoadHistoryStatus(Long id) {
+        return TestFileLoadHistoryE.Status.valueOf(testFileLoadHistoryMapper.queryLoadHistoryStatus(id));
+    }
+
+    @Override
+    public boolean cancelFileUpload(Long historyId) {
+        return testFileLoadHistoryMapper.cancelFileUpload(historyId) == 1;
+    }
 }

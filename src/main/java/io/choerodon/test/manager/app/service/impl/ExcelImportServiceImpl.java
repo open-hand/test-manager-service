@@ -33,6 +33,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private ExcelService excelService;
 
     @Override
+    public boolean cancelFileUpload(Long historyId) {
+        return iExcelImportService.cancelFileUpload(historyId);
+    }
+
+    @Override
     public void downloadImportTemp(HttpServletResponse response) {
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("UTF-8");
@@ -45,17 +50,19 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public void importIssueByExcel(Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
         TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId);
         TestFileLoadHistoryE loadHistoryE = iExcelImportService.initLoadHistory(projectId, folderE.getFolderId(), userId);
+        TestFileLoadHistoryE.Status status = TestFileLoadHistoryE.Status.SUCCESS;
 
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
+
+        if (iExcelImportService.isEmptyTemp(testCasesSheet)) {
+            logger.info("空模板");
+            iExcelImportService.finishImport(loadHistoryE, userId, status);
+            return;
+        }
 
         Iterator<Row> rowIterator = testCasesSheet.rowIterator();
         if (rowIterator.hasNext()) {
             rowIterator.next();
-        }
-        if (!rowIterator.hasNext()) {
-            logger.info("空模板");
-            iExcelImportService.finishImport(loadHistoryE, userId, true);
-            return;
         }
 
         double nonBlankRowCount = (testCasesSheet.getPhysicalNumberOfRows() - 1) / 95.;
@@ -66,8 +73,21 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         IssueDTO issueDTO = null;
         Row currentRow;
         logger.info("开始导入");
-        do {
+        while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
+
+            if (status == TestFileLoadHistoryE.Status.CANCEL) {
+                iExcelImportService.removeRow(currentRow);
+                continue;
+            }
+
+            if (iExcelImportService.isCanceled(loadHistoryE.getId())) {
+                status = TestFileLoadHistoryE.Status.CANCEL;
+                logger.info("已取消");
+                iExcelImportService.removeRow(currentRow);
+                continue;
+            }
+
             if (iExcelImportService.isIssueHeaderRow(currentRow)) {
                 issueDTO = iExcelImportService.processIssueHeaderRow(currentRow, projectId, versionId, folderE.getFolderId());
                 if (issueDTO == null) {
@@ -84,19 +104,20 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
             iExcelImportService.updateProgress(loadHistoryE, userId, ++progress / nonBlankRowCount);
 
-        } while (rowIterator.hasNext());
+        }
 
         loadHistoryE.setSuccessfulCount(successfulCount);
         loadHistoryE.setFailedCount(failedCount);
 
-        boolean isSuccessful = true;
         if (!errorRowIndexes.isEmpty()) {
             logger.info("导入数据有误，上传 error workbook");
             iExcelImportService.shiftErrorRowsToTop(testCasesSheet, errorRowIndexes);
-            isSuccessful = iExcelImportService.uploadErrorWorkbook(issuesWorkbook, loadHistoryE) != null;
+            if (iExcelImportService.uploadErrorWorkbook(issuesWorkbook, loadHistoryE) == null) {
+                status = TestFileLoadHistoryE.Status.FAILURE;
+            }
         }
 
-        iExcelImportService.finishImport(loadHistoryE, userId, isSuccessful);
+        iExcelImportService.finishImport(loadHistoryE, userId, status);
     }
 
 }

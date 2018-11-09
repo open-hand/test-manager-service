@@ -36,4 +36,34 @@
         </where>
         ORDER BY creation_date DESC
     </select>
+
+    <select id="queryLatestImportIssueHistory" resultMap="BaseResultMap">
+        SELECT
+        id,project_id,action_type,source_type,object_version_number,
+        linked_id,file_url,file_stream,status,successful_count,failed_count,
+        created_by,creation_date,last_update_date
+        FROM test_fileload_history
+        <where>
+            creation_date = (
+            SELECT
+            MAX(creation_date)
+            FROM test_fileload_history
+            <where>
+                created_by = #{createdBy} AND action_type = 1
+            </where>
+            ) AND action_type = 1
+        </where>
+    </select>
+
+    <select id="queryLoadHistoryStatus" resultType="_long">
+        SELECT status FROM test_fileload_history WHERE id = #{id}
+    </select>
+
+    <update id="cancelFileUpload">
+        UPDATE test_fileload_history
+        SET status = 4
+        <where>
+            id = #{id} AND action_type = 1
+        </where>
+    </update>
 </mapper>
