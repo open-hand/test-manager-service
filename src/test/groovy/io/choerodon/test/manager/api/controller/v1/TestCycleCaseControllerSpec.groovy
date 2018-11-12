@@ -344,44 +344,6 @@ class TestCycleCaseControllerSpec extends Specification {
         result.body.size() == 3
     }
 
-    def "CreateFilteredCycleCaseInCycle"() {
-        given:
-        Long fromCycle = caseDTO.get(0).cycleId
-        TestCycleCaseE caseE = TestCycleCaseEFactory.create();
-        caseE.setCycleId(990)
-        TestCycleCaseDefectRelE defectRelE = TestCycleCaseDefectRelEFactory.create();
-        defectRelE.setIssueId(98L)
-        defectRelE.setDefectType(TestCycleCaseDefectRelE.CYCLE_CASE)
-        defectRelE.setDefectLinkId(fromCycle)
-        defectRelE.addSelf();
-        Page page = new Page()
-        page.setContent(Lists.newArrayList(new IssueListDTO(issueId: 98L, issueNum: "issueNum1")))
-        Map map = new HashMap()
-        map.put(98L, new IssueInfosDTO(issueId: 98L, issueNum: "issueNum1"))
-        when:
-        restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}?organizationId=1", new SearchDTO(executionStatus: [1, 2, 3] as Long[]), Boolean, 142, fromCycle, 990, 56)
-        then:
-        1 * testCaseService.listIssueWithoutSub(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
-        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
-        and:
-        caseE.queryOne().assignedTo == 56
-    }
-
-    def "containsDefect"() {
-        given:
-        TestCycleCaseServiceImpl service = new TestCycleCaseServiceImpl()
-        expect:
-        service.containsDefect(param1, param2) == result
-        where:
-        param1          | param2                                                                                                | result
-        new HashSet<>() | null                                                                                                  | true
-        "111L" as Set   | null                                                                                                  | false
-        "111L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L))) | true
-        "112L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L))) | false
-        "112L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO())                                                   | false
-    }
-
-
     def "exportExcle"() {
         given:
         excelServiceHandler = Mock(ExcelServiceHandler)

@@ -63,7 +63,9 @@ class TestFileLoadHistoryControllerSpec extends Specification {
     @Shared
     TestFileLoadHistoryDO cycleHistory
 
-    def setup() {
+
+    def "QueryIssues"() {
+        given:
         TestCycleDO cycleDO = new TestCycleDO(cycleName: "fileHistory测试")
         testCycleMapper.insert(cycleDO)
         resCycleDO = testCycleMapper.selectOne(cycleDO)
@@ -73,24 +75,20 @@ class TestFileLoadHistoryControllerSpec extends Specification {
         folderE.setProjectId(projectId)
         folderE.setVersionId(versionId)
         folderE.setType("cycle")
-        resFolderE = folderE.addSelf();
 
+        resFolderE = folderE.addSelf();
         projectHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 1L, linkedId: projectId)
         versionHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 2L, linkedId: versionId)
         folderHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 4L, linkedId: resFolderE.getFolderId())
-        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId())
+        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId(),createdBy: 0L)
         historyMapper.insert(projectHistory)
         historyMapper.insert(versionHistory)
         historyMapper.insert(folderHistory)
         historyMapper.insert(cycleHistory)
-    }
-
-    def "Query"() {
-        given:
         Map<Long, ProductVersionDTO> versionsMap = Maps.newHashMap(versionId, new ProductVersionDTO(projectId: projectId, versionId: versionId, name: "fileHistory测试版本"))
 
         when:
-        def entities = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history", List, 144)
+        def entities = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history/issue", List, projectId)
 
         then:
         1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(id: projectId, name: "fileHistory测试项目")
@@ -98,7 +96,16 @@ class TestFileLoadHistoryControllerSpec extends Specification {
 
         and:
         entities.getStatusCode().is2xxSuccessful()
-        entities.getBody().size() >= 4
+        entities.getBody().size() >= 3
+    }
+
+    def "QueryCycle"() {
+        when:
+        def entities = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history/cycle", List, projectId)
+
+        then:
+        entities.getStatusCode().is2xxSuccessful()
+        entities.getBody().size() == 1
 
         and: "清理数据"
         resFolderE.deleteSelf()

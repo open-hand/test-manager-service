@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCycleDTO, TestCycleCaseDTO> {
 
     private enum CycleCaseHeader {
-        COLUMN1("文件夹"), COLUMN2("用例编号"), COLUMN3("用例概要"), COLUMN4("执行状态"), COLUMN5("说明"), COLUMN6("缺陷编号概要"), COLUMN7("模块"), COLUMN8("标签"), COLUMN9("执行方"),
+        COLUMN1("测试阶段"), COLUMN2("用例编号"), COLUMN3("用例概要"), COLUMN4("执行状态"), COLUMN5("说明"), COLUMN6("缺陷编号概要"), COLUMN7("模块"), COLUMN8("标签"), COLUMN9("执行方"),
         COLUMN10("执行时间"), COLUMN11("测试步骤"), COLUMN12("测试数据"), COLUMN13("预期结果"), COLUMN14("步骤状态"), COLUMN15("步骤注释"), COLUMN16("步骤缺陷编号概要");
         private String chinese;
         private String us;

@@ -1,11 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.google.common.collect.Sets;
-import io.choerodon.agile.api.dto.IssueListDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
@@ -25,7 +21,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -256,68 +251,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public List<Long> getActiveCase(Long range, Long projectId, String day) {
         return iTestCycleCaseService.getActiveCase(range, projectId, day);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO,Long organizationId) {
-        TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
-        testCycleCaseE.setCycleId(fromCycleId);
-        Map filterMap = new HashMap();
-        Optional.ofNullable(searchDTO.getExecutionStatus()).ifPresent(v -> filterMap.put("executionStatus", v));
-
-        List<TestCycleCaseE> testCycleCaseES = testCycleCaseE.filter(filterMap);
-        if (!(ObjectUtils.isEmpty(testCycleCaseES))) {
-            List<TestCycleCaseDTO> testCycleCase = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
-            testCycleCaseDefectRelService.populateCycleCaseDefectInfo(testCycleCase, projectId,organizationId);
-
-            Map idMap = new HashMap();
-            Object[] ids = testCycleCase.stream().map(TestCycleCaseDTO::getIssueId).toArray();
-            idMap.put("issueIds", ids);
-            searchDTO.setOtherArgs(idMap);
-            ResponseEntity<Page<IssueListDTO>> responseEntity = testCaseService.listIssueWithoutSub(projectId, searchDTO, new PageRequest(0, 9999999),organizationId);
-            Set issueListDTOS = responseEntity.getBody().stream().map(IssueListDTO::getIssueId).collect(Collectors.toSet());
-
-            Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE);
-            final String[] lastRank = new String[1];
-            lastRank[0] = testCycleCaseE.getLastedRank(testCycleCaseE.getCycleId());
-            String[] defectStatus = searchDTO.getDefectStatus();
-            Set<String> defectSets = Sets.newHashSet();
-            if (!ObjectUtils.isEmpty(defectStatus)) {
-                for (String de : defectStatus) {
-                    defectSets.add(de);
-                }
-            }
-            testCycleCase.stream().filter(v -> issueListDTOS.contains(v.getIssueId()) && containsDefect(defectSets, v.getDefects()))
-                    .forEach(u -> {
-                        u.setExecuteId(null);
-                        u.setRank(RankUtil.Operation.INSERT.getRank(lastRank[0], null));
-                        u.setAssignedTo(assignee);
-                        u.setCycleId(toCycleId);
-                        u.setExecutionStatus(defaultStatus);
-                        u.setObjectVersionNumber(Long.valueOf(0));
-                        lastRank[0] = iTestCycleCaseService.cloneCycleCase(ConvertHelper.convert(u, TestCycleCaseE.class), projectId).getRank();
-                    });
-
-        }
-
-        return true;
-    }
-
-    private boolean containsDefect(Set<String> defectSet, List<TestCycleCaseDefectRelDTO> defects) {
-        if (defectSet.isEmpty()) {
-            return true;
-        }
-        if (ObjectUtils.isEmpty(defects)) {
-            return false;
-        }
-
-        for (TestCycleCaseDefectRelDTO v : defects) {
-            if (v.getIssueInfosDTO() != null && defectSet.contains(v.getIssueInfosDTO().getStatusCode())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

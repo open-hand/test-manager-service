@@ -40,7 +40,7 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
     public TestFileLoadHistoryE queryByPrimaryKey(Long id) {
         TestFileLoadHistoryDO testFileLoadHistoryDO = new TestFileLoadHistoryDO();
         testFileLoadHistoryDO.setId(id);
-        return ConvertHelper.convert(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDO),TestFileLoadHistoryE.class);
+        return ConvertHelper.convert(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDO), TestFileLoadHistoryE.class);
     }
 
     @Override
@@ -61,5 +61,10 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
     @Override
     public boolean cancelFileUpload(Long historyId) {
         return testFileLoadHistoryMapper.cancelFileUpload(historyId) == 1;
+    }
+
+    public List<TestFileLoadHistoryE> queryDownloadFileByParameter(TestFileLoadHistoryE testFileLoadHistoryE) {
+        TestFileLoadHistoryDO testIssueFolderRelDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
+        return ConvertHelper.convertList(testFileLoadHistoryMapper.select(testIssueFolderRelDO), TestFileLoadHistoryE.class);
     }
 }

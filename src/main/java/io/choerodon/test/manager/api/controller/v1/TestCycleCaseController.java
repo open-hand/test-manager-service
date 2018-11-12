@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
@@ -128,30 +127,6 @@ public class TestCycleCaseController {
 		return Optional.ofNullable(testCycleCaseService.getActiveCase(range, projectId, day))
 				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
 				.orElseThrow(() -> new CommonException("error.testCycleCase.get.range"));
-	}
-
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("根据循环过滤创建新的cycle")
-	@PostMapping("/insert/case/filter/{fromCycleId}/to/{toCycleId}/assigneeTo/{assignee}")
-	public ResponseEntity createFilteredCycleCaseInCycle(@ApiIgnore
-														 @ApiParam(value = "分页信息", required = true)
-														 @SortDefault(value = "issueId", direction = Sort.Direction.DESC)
-																 PageRequest pageRequest,
-														 @ApiParam(value = "项目id", required = true)
-														 @PathVariable(name = "project_id") Long projectId,
-														 @ApiParam(value = "循环id", required = true)
-														 @PathVariable(name = "fromCycleId") Long fromCycleId,
-														 @ApiParam(value = "循环id", required = true)
-														 @PathVariable(name = "toCycleId") Long toCycleId,
-														 @ApiParam(value = "指派人", required = true)
-														 @PathVariable(name = "assignee") Long assignee,
-														 @ApiParam(value = "查询参数", required = true)
-														 @RequestBody(required = false) SearchDTO searchDTO,
-														 @RequestParam Long organizationId) {
-		return Optional.ofNullable(
-				testCycleCaseService.createFilteredCycleCaseInCycle(projectId, fromCycleId, toCycleId, assignee, searchDTO,organizationId))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.testCycleCase.create.filtered"));
 	}
 
 	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

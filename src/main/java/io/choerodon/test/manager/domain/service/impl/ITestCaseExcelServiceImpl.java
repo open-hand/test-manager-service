@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
@@ -93,7 +94,8 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         if (folder.getVersionId() != null) {
             versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
             versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
-            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet), versionName);
+            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
+                    WorkbookUtil.createSafeSheetName(versionName.replace('-','_'),'_'));
         }
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
         ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
@@ -277,7 +279,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
      * 生成下拉框
      *
      * @param sheet
-     * @param formulaString 期望哪些值作为下拉选项
+     * @param formulaString 下拉框的唯一名
      * @param firstCol      下拉框是哪些列
      * @param lastCol
      */

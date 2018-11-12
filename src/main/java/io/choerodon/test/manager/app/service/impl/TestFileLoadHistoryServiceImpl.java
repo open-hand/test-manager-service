@@ -17,6 +17,7 @@ import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +31,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     TestCaseService testCaseService;
 
     @Override
-    public List<TestFileLoadHistoryDTO> query(Long projectId) {
-        TestCycleE cycleE = TestCycleEFactory.create();
+    public List<TestFileLoadHistoryDTO> queryIssues(Long projectId) {
         TestIssueFolderE folderE = TestIssueFolderEFactory.create();
 
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
@@ -43,13 +43,30 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
         historyDTOS.stream().filter(v -> v.getSourceType() == 1L).forEach(v -> v.setName(testCaseService.getProjectInfo(v.getLinkedId()).getName()));
         historyDTOS.stream().filter(v -> v.getSourceType() == 2L).forEach(v ->
                 v.setName(Optional.ofNullable(testCaseService.getVersionInfo(v.getProjectId()).get(v.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除")));
-        historyDTOS.stream().filter(v -> v.getSourceType() == 3L).forEach(v -> {
+        historyDTOS.removeIf(v->v.getSourceType() == 3L);
+        historyDTOS.stream().filter(v -> v.getSourceType() == 4L).forEach(v -> {
+            folderE.setFolderId(v.getLinkedId());
+            v.setName(Optional.ofNullable(folderE.queryByPrimaryKey()).map(TestIssueFolderE::getName).orElse("文件夹已被删除"));
+        });
+
+        return historyDTOS;
+    }
+
+    @Override
+    public List<TestFileLoadHistoryDTO> queryCycles(Long projectId) {
+        TestCycleE cycleE = TestCycleEFactory.create();
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
+        testFileLoadHistoryDTO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
+        testFileLoadHistoryDTO.setProjectId(projectId);
+        testFileLoadHistoryDTO.setSourceType(3L);
+
+        List<TestFileLoadHistoryDTO> historyDTOS = ConvertHelper.convertList(iTestFileLoadHistoryService.queryDownloadFileByParameter(ConvertHelper.convert(testFileLoadHistoryDTO, TestFileLoadHistoryE.class)), TestFileLoadHistoryDTO.class);
+        Collections.reverse(historyDTOS);
+
+        historyDTOS.stream().forEach(v -> {
             cycleE.setCycleId(v.getLinkedId());
             v.setName(Optional.ofNullable(cycleE.queryOne()).map(TestCycleE::getCycleName).orElse("循环已被删除"));
         });
-        historyDTOS.stream().filter(v -> v.getSourceType() == 4L).forEach(v ->
-                v.setName(Optional.ofNullable(folderE.queryByPrimaryKey(v.getLinkedId())).map(TestIssueFolderE::getName).orElse("文件夹已被删除")));
-
         return historyDTOS;
     }
 

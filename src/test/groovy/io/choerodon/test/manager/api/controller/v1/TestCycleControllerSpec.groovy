@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.controller.v1
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.google.common.collect.Maps
+import com.netflix.discovery.converters.Auto
 import io.choerodon.agile.api.dto.IssueLinkDTO
 import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.agile.api.dto.ProductVersionPageDTO
@@ -22,6 +23,7 @@ import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.feign.UserFeignClient
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper
@@ -29,6 +31,7 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
 import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
@@ -64,6 +67,9 @@ class TestCycleControllerSpec extends Specification {
     TestCycleMapper testCycleMapper
 
     @Autowired
+    TestIssueFolderMapper testIssueFolderMapper
+
+    @Autowired
     TestIssueFolderRelMapper testIssueFolderRelMapper
 
     @Autowired
@@ -97,6 +103,8 @@ class TestCycleControllerSpec extends Specification {
     TestCaseStepDO testCaseStepDO1 = new TestCaseStepDO()
     @Shared
     TestCaseStepDO testCaseStepDO2 = new TestCaseStepDO()
+    @Shared
+    TestIssueFolderDO resFolderDO
 
 
     def "Insert"() {
@@ -107,18 +115,26 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO1.setType(TestCycleE.CYCLE)
         testCycleDTO1.setObjectVersionNumber(1L)
 
+        TestIssueFolderDO folderDO = new TestIssueFolderDO()
+        folderDO.setName("cycle测试文件夹")
+        folderDO.setProjectId(projectId)
+        folderDO.setVersionId(versionId)
+        folderDO.setType("cycle")
+        testIssueFolderMapper.insert(folderDO)
+        resFolderDO = testIssueFolderMapper.selectOne(folderDO)
+
         testCycleDTOS.add(testCycleDTO1)
 
         TestCycleDTO testCycleDTO2 = new TestCycleDTO()
         testCycleDTO2.setCycleName("testFolderInsert")
-        testCycleDTO2.setFolderId(11L)
+        testCycleDTO2.setFolderId(resFolderDO.getFolderId())
         testCycleDTO2.setVersionId(versionId)
         testCycleDTO2.setType(TestCycleE.FOLDER)
         testCycleDTO2.setObjectVersionNumber(1L)
 
         insertFolderRel.setProjectId(projectId)
         insertFolderRel.setVersionId(versionId)
-        insertFolderRel.setFolderId(11L)
+        insertFolderRel.setFolderId(resFolderDO.getFolderId())
         insertFolderRel.setIssueId(44444444L)
         testIssueFolderRelMapper.insert(insertFolderRel)
 
@@ -142,7 +158,7 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         and:
         entity.body != null
-        entity.body.folderId == 11L
+        entity.body.folderId == resFolderDO.getFolderId()
         entity.body.type == TestCycleE.FOLDER
         and:
         testCycleDTOS.get(1).setCycleId(entity.getBody().getCycleId())
@@ -224,7 +240,6 @@ class TestCycleControllerSpec extends Specification {
         def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
         1 * testCaseService.getVersionInfo(_) >> map
-        1 * userService.query(_) >> userMap
         then:
         entity.statusCode.is2xxSuccessful()
         JSONObject jsonObject = entity.body
@@ -301,7 +316,7 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO.setCycleName("cloneCycleFolderTest")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/folder/cycleId/{cycleId}', null, List, projectId, testCycleDTOS.get(0).getCycleId())
+        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/cycle/query/folder/cycleId/{cycleId}', List, projectId, testCycleDTOS.get(0).getCycleId())
         then: '返回值'
         entity.statusCode.is2xxSuccessful()
         entity.body.size() == 1
@@ -521,6 +536,7 @@ class TestCycleControllerSpec extends Specification {
         testIssueFolderRelMapper.delete(insertFolderRel)
         testCaseStepMapper.delete(testCaseStepDO1)
         testCaseStepMapper.delete(testCaseStepDO2)
+        testIssueFolderMapper.delete(resFolderDO)
 
         when: '执行方法'
         restTemplate.delete('/v1/projects/{project_id}/cycle/delete/{cycleId}', projectId, cycleId)
