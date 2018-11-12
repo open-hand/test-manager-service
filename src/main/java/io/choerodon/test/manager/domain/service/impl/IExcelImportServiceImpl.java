@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -42,7 +43,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     private FileService fileService;
 
     @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
+    private TestCaseService testCaseFeignClient;
 
     @Autowired
     private TestFileLoadHistoryRepository loadHistoryRepository;
@@ -262,12 +263,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     private IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
-        ResponseEntity<IssueDTO> response = testCaseFeignClient.createIssue(projectId, "test", issueCreateDTO);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            return null;
-        }
+        return testCaseFeignClient.createTest(issueCreateDTO,projectId, "test");
     }
 
     @Override
