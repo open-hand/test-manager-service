@@ -119,14 +119,11 @@ class TestCaseControllerTest extends Specification {
     }
 
     def "downloadImportTemplate"() {
-        //
         when:
         Workbook importTemp = iExcelImportService.buildImportTemp()
         then:
-        File tempFile = new File("/tmp/import_temp.xlsx")
-        if (tempFile.exists()) {
-            tempFile.delete()
-        }
-        importTemp.write(tempFile.newOutputStream())
+        File file = File.createTempFile("import_temp", ".xlsx")
+        importTemp.write(file.newOutputStream())
+        file.delete()
     }
 }

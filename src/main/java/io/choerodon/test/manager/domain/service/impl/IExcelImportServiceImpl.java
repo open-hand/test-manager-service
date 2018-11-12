@@ -97,7 +97,12 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public void processRow(IssueDTO issueDTO, Row row) {
+    public void processRow(IssueDTO issueDTO, Row row, List<Integer> errorRowIndexes) {
+        if (issueDTO == null) {
+            errorRowIndexes.add(row.getRowNum());
+            return;
+        }
+
         TestCaseStepE testCaseStepE = buildTestCaseStepE(issueDTO.getIssueId(), row);
         if (testCaseStepE != null) {
             testCaseStepE.createOneStep();
@@ -323,6 +328,16 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         } while (iterator.hasNext());
 
         return true;
+    }
+
+    @Override
+    public Iterator<Row> rowIteratorSkipFirst(Sheet sheet) {
+        Iterator<Row> rowIterator = sheet.rowIterator();
+        if (rowIterator.hasNext()) {
+            rowIterator.next();
+        }
+
+        return rowIterator;
     }
 
     private void markAsError(Row row, String errorMsg) {

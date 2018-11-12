@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
@@ -16,7 +17,7 @@ public interface IExcelImportService {
 
     boolean cancelFileUpload(Long historyId);
 
-    void processRow(IssueDTO issueDTO, Row row);
+    void processRow(IssueDTO issueDTO, Row row, List<Integer> errorRowIndexes);
 
     TestFileLoadHistoryE initLoadHistory(Long projectId, Long folderId, Long userId);
 
@@ -39,4 +40,6 @@ public interface IExcelImportService {
     void finishImport(TestFileLoadHistoryE loadHistoryE, Long userId, TestFileLoadHistoryE.Status status);
 
     boolean isEmptyTemp(Sheet sheet);
+
+    Iterator<Row> rowIteratorSkipFirst(Sheet sheet);
 }
