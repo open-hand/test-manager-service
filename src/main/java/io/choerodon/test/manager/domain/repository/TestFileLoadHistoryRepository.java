@@ -10,7 +10,7 @@ public interface TestFileLoadHistoryRepository {
 
     TestFileLoadHistoryE update(TestFileLoadHistoryE testFileLoadHistoryE);
 
-    List<TestFileLoadHistoryE>queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE);
+    List<TestFileLoadHistoryE> queryDownloadFile(TestFileLoadHistoryE testFileLoadHistoryE);
 
     TestFileLoadHistoryE queryByPrimaryKey(Long id);
 
@@ -19,4 +19,7 @@ public interface TestFileLoadHistoryRepository {
     TestFileLoadHistoryE.Status queryLoadHistoryStatus(Long id);
 
     boolean cancelFileUpload(Long historyId);
+
+    List<TestFileLoadHistoryE> queryDownloadFileByParameter(TestFileLoadHistoryE testFileLoadHistoryE);
+
 }

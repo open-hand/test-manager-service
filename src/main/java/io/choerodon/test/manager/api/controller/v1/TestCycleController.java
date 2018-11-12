@@ -129,7 +129,7 @@ public class TestCycleController {
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("通过cycleId获取目录下所有的文件夹")
-    @PostMapping("/query/folder/cycleId/{cycleId}")
+    @GetMapping("/query/folder/cycleId/{cycleId}")
     ResponseEntity getFolderByCycleId(@PathVariable(name = "project_id") Long projectId,
                                       @PathVariable(name = "cycleId") Long cycleId) {
         return Optional.ofNullable(testCycleService.getFolderByCycleId(cycleId))

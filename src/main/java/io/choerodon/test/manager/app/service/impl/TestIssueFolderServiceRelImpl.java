@@ -68,7 +68,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
                 IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
                 issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
-                TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey(resultRelDTO.getFolderId());
+                testIssueFolderE.setFolderId(resultRelDTO.getFolderId());
+                TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey();
                 issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
                 issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
@@ -117,29 +118,37 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
             return new Page<>();
         }
-        //先去过滤issues
-        //将list中issuedId转换为Long数组
-        Long[] issueIds = resultRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).toArray(Long[]::new);
-        //将issueId放入searchDTO中
-        Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
-        args.put(sIssueIds, issueIds);
-        if (searchDTO.getOtherArgs() == null) {
-            searchDTO.setOtherArgs(args);
-        }
-        //返回过滤后的issueIds，进行分页
-        Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().toArray(Long[]::new);
-        if (ObjectUtils.isEmpty(allFilteredIssues)) {
+
+        Long[] allIssuesArray = getFilterIssues(projectId,searchDTO,resultRelDTOS);
+
+        if (ObjectUtils.isEmpty(allIssuesArray)) {
             return new Page<>();
         }
+
+        //进行分页
         int pageNum = pageRequest.getPage();
         int pageSize = pageRequest.getSize();
         int highPage = (pageNum + 1) * pageSize;
         int lowPage = pageNum * pageSize;
         //创建一个Long数组，将对应分页的issuesId传给它
-        int size = highPage >= allFilteredIssues.length ? allFilteredIssues.length - lowPage : pageSize;
+        int size = highPage >= allIssuesArray.length ? allIssuesArray.length - lowPage : pageSize;
         Long[] pagedIssues = new Long[size];
-        System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
-        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues,organizationId).stream().collect(Collectors.toList()), allFilteredIssues);
+        System.arraycopy(allIssuesArray, lowPage, pagedIssues, 0, size);
+        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues,organizationId).stream().collect(Collectors.toList()), allIssuesArray);
+    }
+
+    private Long[] getFilterIssues(Long projectId,SearchDTO searchDTO,List<TestIssueFolderRelDTO> resultRelDTOS){
+        //返回过滤后的issueIds
+        List<Long> filteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId);
+
+        List<Long> allFilteredIssues = new ArrayList<>();
+        resultRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).forEach(v->{
+            if(filteredIssues.contains(v)){
+                allFilteredIssues.add(v);
+            }
+        });
+        Collections.reverse(allFilteredIssues);
+        return allFilteredIssues.toArray(new Long[allFilteredIssues.size()]);
     }
 
     @Transactional(rollbackFor = Exception.class)

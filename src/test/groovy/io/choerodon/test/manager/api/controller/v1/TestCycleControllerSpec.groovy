@@ -224,7 +224,6 @@ class TestCycleControllerSpec extends Specification {
         def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
         1 * testCaseService.getVersionInfo(_) >> map
-        1 * userService.query(_) >> userMap
         then:
         entity.statusCode.is2xxSuccessful()
         JSONObject jsonObject = entity.body

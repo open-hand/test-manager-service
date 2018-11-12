@@ -37,4 +37,9 @@ public class ITestFileLoadHistoryServiceImpl implements ITestFileLoadHistoryServ
     public TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
         return testFileLoadHistoryRepository.queryLatestImportIssueHistory(testFileLoadHistoryE);
     }
+
+    @Override
+    public List<TestFileLoadHistoryE> queryDownloadFileByParameter(TestFileLoadHistoryE testFileLoadHistoryE) {
+        return testFileLoadHistoryRepository.queryDownloadFileByParameter(testFileLoadHistoryE);
+    }
 }

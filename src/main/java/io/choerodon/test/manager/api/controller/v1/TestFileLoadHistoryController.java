@@ -26,10 +26,10 @@ public class TestFileLoadHistoryController {
     private ExcelImportService excelImportService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询上传历史")
-    @GetMapping
-    public ResponseEntity<List<TestFileLoadHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testFileLoadHistoryService.query(projectId))
+    @ApiOperation("查询issue上传历史")
+    @GetMapping("/issue")
+    public ResponseEntity<List<TestFileLoadHistoryDTO>> queryIssues(@PathVariable(name = "project_id") Long projectId) {
+        return Optional.ofNullable(testFileLoadHistoryService.queryIssues(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.filehistory.query"));
     }
@@ -49,5 +49,14 @@ public class TestFileLoadHistoryController {
     public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId, @RequestParam Long historyId) {
         excelImportService.cancelFileUpload(historyId);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询cycle上传历史")
+    @GetMapping("/cycle")
+    public ResponseEntity<List<TestFileLoadHistoryDTO>> queryCycles(@PathVariable(name = "project_id") Long projectId) {
+        return Optional.ofNullable(testFileLoadHistoryService.queryCycles(projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.filehistory.query"));
     }
 }

@@ -1,9 +1,8 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.agile.api.dto.SearchDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 
 import java.util.List;
 
@@ -44,9 +43,6 @@ public interface TestCycleCaseService {
      * @param testCycleCaseDTO
      */
 	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
-
-
-	boolean createFilteredCycleCaseInCycle(Long projectId, Long fromCycleId, Long toCycleId, Long assignee, SearchDTO searchDTO,Long organizationId);
 
 
 	Long countCaseNotRun(Long projectId);

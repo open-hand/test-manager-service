@@ -16,10 +16,12 @@ import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +63,12 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Autowired
     private SagaClient sagaClient;
+
+    @Autowired
+    ITestIssueFolderService folderService;
+
+    @Autowired
+    TestIssueFolderMapper testIssueFolderMapper;
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -246,7 +254,6 @@ public class TestCycleServiceImpl implements TestCycleService {
 
         List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
 
-        populateUsers(cycles);
         initVersionTree(versionStatus, versions, cycles);
 
         return root;
@@ -302,6 +309,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
         Map<String, JSONObject> versionsMap = new HashMap<>();
+        Map<Long,String> versions = versionDTOList.stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId,ProductVersionDTO::getName));
 
         for (ProductVersionDTO versionDTO : versionDTOList) {
             JSONObject version;
@@ -320,7 +328,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             JSONObject versionName = createVersionNode(versionDTO.getName(), nowStatusHeight + "-" + nowNamesHeight, versionDTO.getVersionId());
             versionNames.add(versionName);
 
-            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versionDTO.getVersionId(), cycleDTOList);
+            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versionDTO.getVersionId(), cycleDTOList,versions);
         }
     }
 
@@ -352,7 +360,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         return version;
     }
 
-    private JSONObject createCycle(TestCycleDTO testCycleDTO, String height) {
+    private JSONObject createCycle(TestCycleDTO testCycleDTO, String height,Map<Long,String> versions) {
         JSONObject version = new JSONObject();
         version.put("title", testCycleDTO.getCycleName());
         version.put("environment", testCycleDTO.getEnvironment());
@@ -365,37 +373,43 @@ public class TestCycleServiceImpl implements TestCycleService {
                 version.put("createdUser", JSONObject.toJSON(v))
         );
         version.put("folderId", testCycleDTO.getFolderId());
+        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
+        Optional.ofNullable(testCycleDTO.getFolderId()).ifPresent(v->{
+            folderE.setFolderId(v);
+            version.put("folderName", folderE.queryByPrimaryKey().getName());
+        });
         version.put("toDate", testCycleDTO.getToDate());
         version.put("fromDate", testCycleDTO.getFromDate());
         version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
         version.put("objectVersionNumber", testCycleDTO.getObjectVersionNumber());
         version.put("key", height);
+        version.put("versionName", versions.get(testCycleDTO.getVersionId()));
         JSONArray versionNames = new JSONArray();
         version.put(NODE_CHILDREN, versionNames);
         return version;
     }
 
 
-    private void initCycleTree(JSONArray cycles, String height, Long versionId, List<TestCycleDTO> cycleDTOList) {
+    private void initCycleTree(JSONArray cycles, String height, Long versionId, List<TestCycleDTO> cycleDTOList,Map<Long,String> versions) {
 
         cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE))
                 .forEach(v -> {
-                    JSONObject cycle = createCycle(v, height + "-" + cycles.size());
+                    JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions);
                     cycles.add(cycle);
-                    initCycleFolderTree(cycle.getJSONArray(NODE_CHILDREN), cycle.get("key").toString(), v.getCycleId(), cycleDTOList);
+                    initCycleFolderTree(cycle.getJSONArray(NODE_CHILDREN), cycle.get("key").toString(), v.getCycleId(), cycleDTOList, versions);
                 });
 
         cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP))
                 .forEach(v -> {
-                    JSONObject cycle = createCycle(v, height + "-" + cycles.size());
+                    JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions);
                     cycles.add(cycle);
                 });
     }
 
 
-    private void initCycleFolderTree(JSONArray folders, String height, Long parentId, List<TestCycleDTO> cycleDTOList) {
+    private void initCycleFolderTree(JSONArray folders, String height, Long parentId, List<TestCycleDTO> cycleDTOList,Map<Long,String> versions) {
         cycleDTOList.stream().filter(v -> parentId.equals(v.getParentCycleId())).forEach(u ->
-                folders.add(createCycle(u, height + "-" + folders.size()))
+                folders.add(createCycle(u, height + "-" + folders.size(),versions))
         );
     }
 

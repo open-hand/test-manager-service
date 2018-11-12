@@ -48,7 +48,7 @@ public class ITestIssueFolderServiceImpl implements ITestIssueFolderService {
 
     @Override
     public TestIssueFolderE queryByPrimaryKey(TestIssueFolderE testIssueFolderE) {
-        return testIssueFolderE.queryByPrimaryKey(testIssueFolderE.getFolderId());
+        return testIssueFolderE.queryByPrimaryKey();
     }
 
 }

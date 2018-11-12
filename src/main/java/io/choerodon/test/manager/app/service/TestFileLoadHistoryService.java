@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface TestFileLoadHistoryService {
 
-   List<TestFileLoadHistoryDTO> query(Long projectId);
-
     TestFileLoadHistoryDTO queryLatestImportIssueHistory();
+
+    List<TestFileLoadHistoryDTO> queryIssues(Long projectId);
+
+    List<TestFileLoadHistoryDTO> queryCycles(Long projectId);
 }

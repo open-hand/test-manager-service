@@ -30,9 +30,7 @@
             <if test="createdBy != null">
                 AND created_by = #{createdBy}
             </if>
-            <if test="sourceType != null">
-                AND source_type = 2 OR source_type = 3
-            </if>
+                AND action_type = 2 OR action_type = 3
         </where>
         ORDER BY creation_date DESC
     </select>
