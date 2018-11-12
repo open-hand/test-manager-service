@@ -62,53 +62,6 @@ class ExcelImportServiceImplSpec extends Specification {
         }
     }
 
-    def "cancelFileUpload"() {
-        given:
-        loadHistoryMapper.insertList(ConvertHelper.convertList(
-                [
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                status: TestFileLoadHistoryE.Status.SUCCESS,
-                                actionType: TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE
-                        ),
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                createdBy: userDetails.userId,
-                                status: TestFileLoadHistoryE.Status.SUCCESS,
-                                actionType: TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE
-                        ),
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                status: TestFileLoadHistoryE.Status.SUSPENDING,
-                                actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
-                        ),
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                createdBy: userDetails.userId,
-                                status: TestFileLoadHistoryE.Status.FAILURE,
-                                actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
-                        ),
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                status: TestFileLoadHistoryE.Status.SUCCESS,
-                                actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
-                        ),
-                        new TestFileLoadHistoryE(
-                                creationDate: new Date(),
-                                createdBy: userDetails.userId,
-                                status: TestFileLoadHistoryE.Status.CANCEL,
-                                actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
-                        )
-                ],
-                TestFileLoadHistoryDO
-        ))
-        expect:
-        result == excelImportService.cancelFileUpload(id)
-        where:
-        id << [8L, 9L, 10L, 11L, 12L, 13L]
-        result << [false, false, true, true, true, true]
-    }
-
     def "queryLatestImportIssueHistory"() {
         given:
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE)

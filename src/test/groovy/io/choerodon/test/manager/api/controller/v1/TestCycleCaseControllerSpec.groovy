@@ -344,21 +344,6 @@ class TestCycleCaseControllerSpec extends Specification {
         result.body.size() == 3
     }
 
-    def "containsDefect"() {
-        given:
-        TestCycleCaseServiceImpl service = new TestCycleCaseServiceImpl()
-        expect:
-        service.containsDefect(param1, param2) == result
-        where:
-        param1          | param2                                                                                                | result
-        new HashSet<>() | null                                                                                                  | true
-        "111L" as Set   | null                                                                                                  | false
-        "111L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L))) | true
-        "112L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO(issueInfosDTO: new IssueInfosDTO(statusCode: 111L))) | false
-        "112L" as Set   | Lists.newArrayList(new TestCycleCaseDefectRelDTO())                                                   | false
-    }
-
-
     def "exportExcle"() {
         given:
         excelServiceHandler = Mock(ExcelServiceHandler)

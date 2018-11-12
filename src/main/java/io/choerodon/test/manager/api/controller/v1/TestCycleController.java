@@ -1,16 +1,13 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
-import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.TestCycleService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -130,8 +127,8 @@ public class TestCycleController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("通过cycleId获取目录下所有的文件夹")
     @GetMapping("/query/folder/cycleId/{cycleId}")
-    ResponseEntity getFolderByCycleId(@PathVariable(name = "project_id") Long projectId,
-                                      @PathVariable(name = "cycleId") Long cycleId) {
+    ResponseEntity<List<TestCycleDTO>> getFolderByCycleId(@PathVariable(name = "project_id") Long projectId,
+                                                          @PathVariable(name = "cycleId") Long cycleId) {
         return Optional.ofNullable(testCycleService.getFolderByCycleId(cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.getFolderByCycleId"));
