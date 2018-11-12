@@ -60,10 +60,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             return;
         }
 
-        Iterator<Row> rowIterator = testCasesSheet.rowIterator();
-        if (rowIterator.hasNext()) {
-            rowIterator.next();
-        }
+        Iterator<Row> rowIterator = iExcelImportService.rowIteratorSkipFirst(testCasesSheet);
 
         double nonBlankRowCount = (testCasesSheet.getPhysicalNumberOfRows() - 1) / 95.;
         double progress = 0.;
@@ -76,12 +73,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
 
-            if (status == TestFileLoadHistoryE.Status.CANCEL) {
-                iExcelImportService.removeRow(currentRow);
-                continue;
-            }
-
-            if (iExcelImportService.isCanceled(loadHistoryE.getId())) {
+            if (status == TestFileLoadHistoryE.Status.CANCEL || iExcelImportService.isCanceled(loadHistoryE.getId())) {
                 status = TestFileLoadHistoryE.Status.CANCEL;
                 logger.info("已取消");
                 iExcelImportService.removeRow(currentRow);
@@ -96,14 +88,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     successfulCount++;
                 }
             }
-            if (issueDTO == null) {
-                errorRowIndexes.add(currentRow.getRowNum());
-            } else {
-                iExcelImportService.processRow(issueDTO, currentRow);
-            }
-
+            iExcelImportService.processRow(issueDTO, currentRow, errorRowIndexes);
             iExcelImportService.updateProgress(loadHistoryE, userId, ++progress / nonBlankRowCount);
-
         }
 
         loadHistoryE.setSuccessfulCount(successfulCount);

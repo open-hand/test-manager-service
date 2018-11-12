@@ -67,39 +67,33 @@ class ExcelImportServiceImplSpec extends Specification {
         loadHistoryMapper.insertList(ConvertHelper.convertList(
                 [
                         new TestFileLoadHistoryE(
-                                id: 1L,
                                 creationDate: new Date(),
                                 status: TestFileLoadHistoryE.Status.SUCCESS,
                                 actionType: TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE
                         ),
                         new TestFileLoadHistoryE(
-                                id: 2L,
                                 creationDate: new Date(),
                                 createdBy: userDetails.userId,
                                 status: TestFileLoadHistoryE.Status.SUCCESS,
                                 actionType: TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE
                         ),
                         new TestFileLoadHistoryE(
-                                id: 3L,
                                 creationDate: new Date(),
                                 status: TestFileLoadHistoryE.Status.SUSPENDING,
                                 actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
                         ),
                         new TestFileLoadHistoryE(
-                                id: 4L,
                                 creationDate: new Date(),
                                 createdBy: userDetails.userId,
                                 status: TestFileLoadHistoryE.Status.FAILURE,
                                 actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
                         ),
                         new TestFileLoadHistoryE(
-                                id: 5L,
                                 creationDate: new Date(),
                                 status: TestFileLoadHistoryE.Status.SUCCESS,
                                 actionType: TestFileLoadHistoryE.Action.UPLOAD_ISSUE
                         ),
                         new TestFileLoadHistoryE(
-                                id: 6L,
                                 creationDate: new Date(),
                                 createdBy: userDetails.userId,
                                 status: TestFileLoadHistoryE.Status.CANCEL,
@@ -111,8 +105,8 @@ class ExcelImportServiceImplSpec extends Specification {
         expect:
         result == excelImportService.cancelFileUpload(id)
         where:
-        id << [0L, 1L, 2L, 3L, 4L, 5L, 6L]
-        result << [false, false, false, true, true, true, true]
+        id << [8L, 9L, 10L, 11L, 12L, 13L]
+        result << [false, false, true, true, true, true]
     }
 
     def "queryLatestImportIssueHistory"() {
@@ -123,7 +117,7 @@ class ExcelImportServiceImplSpec extends Specification {
         testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
         then:
         with(testFileLoadHistoryE) {
-            id == 39
+            id == 40
             projectId == 0
             actionType == 1
             sourceType == 0
