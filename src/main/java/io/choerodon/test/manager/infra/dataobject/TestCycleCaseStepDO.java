@@ -33,6 +33,8 @@ public class TestCycleCaseStepDO extends AuditDomain {
 
     @Transient
     private String cycleName;
+    @Transient
+    private Long cycleId;
 
     @Transient
     private Long issueId;
@@ -79,6 +81,13 @@ public class TestCycleCaseStepDO extends AuditDomain {
         this.comment = comment;
     }
 
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
     public String getTestStep() {
         return testStep;

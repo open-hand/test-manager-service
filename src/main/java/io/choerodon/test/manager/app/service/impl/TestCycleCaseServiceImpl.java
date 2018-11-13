@@ -117,7 +117,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId,Long organizationId) {
-
         List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryByIssue(issuseId), TestCycleCaseDTO.class);
         if (ObjectUtils.isEmpty(dto)) {
             return new ArrayList<>();
@@ -179,7 +178,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(issueLists)) {
             return;
         }
-        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true,organizationId);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false,organizationId);
 
         list.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));
         testCycleCaseDTOS.forEach(v -> v.setIssueInfosDTO(defectMap.get(v.getIssueId())));

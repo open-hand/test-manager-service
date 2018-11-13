@@ -35,26 +35,28 @@ public class TestCycleCaseStepE {
 
     private Long objectVersionNumber;
 
-	private Long stepStatus;
+    private Long stepStatus;
 
-	private Long issueId;
+    private Long issueId;
 
     private List<TestCycleCaseAttachmentRelE> stepAttachment;
 
-	private String statusName;
+    private String statusName;
 
     private List<TestCycleCaseDefectRelE> defects;
 
-	private String cycleName;
+    private String cycleName;
 
-	public TestCycleCaseStepE runOneStep(Long executeId,Long stepId,Long status){
-        this.executeId=executeId;
-        this.stepId=stepId;
-        this.stepStatus=status;
+    private Long cycleId;
 
-        Assert.notNull(this.executeId,"error.cant.run.step.because.executeId.is.null");
-        Assert.notNull(this.stepId,"error.cant.run.step.because.stepId.is.null");
-        Assert.notNull(this.stepStatus,"error.cant.run.step.because.stepStatus.is.null");
+    public TestCycleCaseStepE runOneStep(Long executeId, Long stepId, Long status) {
+        this.executeId = executeId;
+        this.stepId = stepId;
+        this.stepStatus = status;
+
+        Assert.notNull(this.executeId, "error.cant.run.step.because.executeId.is.null");
+        Assert.notNull(this.stepId, "error.cant.run.step.because.stepId.is.null");
+        Assert.notNull(this.stepStatus, "error.cant.run.step.because.stepStatus.is.null");
         return addSelf();
     }
 
@@ -66,9 +68,9 @@ public class TestCycleCaseStepE {
     }
 
 
-	public List<TestCycleCaseStepE> querySelf() {
-		return testCycleCaseStepRepository.query(this);
-	}
+    public List<TestCycleCaseStepE> querySelf() {
+        return testCycleCaseStepRepository.query(this);
+    }
 
     public TestCycleCaseStepE addSelf() {
         return testCycleCaseStepRepository.insert(this);
@@ -80,6 +82,14 @@ public class TestCycleCaseStepE {
 
     public void deleteSelf() {
         testCycleCaseStepRepository.delete(this);
+    }
+
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
     }
 
     public Long getExecuteStepId() {
@@ -126,11 +136,11 @@ public class TestCycleCaseStepE {
         this.testCycleCaseStepRepository = testCycleCaseStepRepository;
     }
 
-	public Long getStepStatus() {
+    public Long getStepStatus() {
         return stepStatus;
     }
 
-	public void setStepStatus(Long stepStatus) {
+    public void setStepStatus(Long stepStatus) {
         this.stepStatus = stepStatus;
     }
 
@@ -176,30 +186,30 @@ public class TestCycleCaseStepE {
     }
 
     public void setDefects(List<TestCycleCaseDefectRelDO> defects) {
-        this.defects = ConvertHelper.convertList(defects,TestCycleCaseDefectRelE.class);
+        this.defects = ConvertHelper.convertList(defects, TestCycleCaseDefectRelE.class);
     }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 
-	public String getStatusName() {
-		return statusName;
-	}
+    public String getStatusName() {
+        return statusName;
+    }
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
-	}
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 }
