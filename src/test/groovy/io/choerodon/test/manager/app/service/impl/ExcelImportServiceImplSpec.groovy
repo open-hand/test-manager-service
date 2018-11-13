@@ -56,6 +56,9 @@ class ExcelImportServiceImplSpec extends Specification {
     private CustomUserDetails userDetails
 
     @Autowired
+    TestFileLoadHistoryMapper historyMapper
+
+    @Autowired
     NotifyService notifyService
 
     @Autowired
@@ -85,16 +88,22 @@ class ExcelImportServiceImplSpec extends Specification {
     def "queryLatestImportIssueHistory"() {
         given:
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE)
-        testFileLoadHistoryE.setCreatedBy(userDetails.userId)
+        testFileLoadHistoryE.setCreatedBy(0L)
+
+        TestFileLoadHistoryDO historyDO = new TestFileLoadHistoryDO(projectId: 144L, actionType: 1L, sourceType: 1L, linkedId: 144L,createdBy: 0L)
+        historyMapper.insert(historyDO)
+        TestFileLoadHistoryDO resHistoryDO = historyMapper.selectOne(historyDO)
+
+
         when:
         testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
         then:
         with(testFileLoadHistoryE) {
-            id == 40
-            projectId == 0
+            id == resHistoryDO.getId()
+            projectId == 144
             actionType == 1
-            sourceType == 0
-            status == 1
+            sourceType == 1
+            status == 0
             createdBy == 0
         }
     }
