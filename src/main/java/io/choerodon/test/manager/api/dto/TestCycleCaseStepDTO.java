@@ -19,6 +19,8 @@ public class TestCycleCaseStepDTO {
     private String comment;
     private Long objectVersionNumber;
 
+    private Long cycleId;
+
 	private Long stepStatus;
 
     private String testStep;
@@ -47,6 +49,14 @@ public class TestCycleCaseStepDTO {
 
     public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
         this.issueInfosDTO = issueInfosDTO;
+    }
+
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
     }
 
     public String getTestStep() {
