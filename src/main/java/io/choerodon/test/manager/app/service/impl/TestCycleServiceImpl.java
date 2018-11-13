@@ -367,6 +367,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         version.put("description", testCycleDTO.getDescription());
         version.put("build", testCycleDTO.getBuild());
         version.put("type", testCycleDTO.getType());
+        version.put("parentCycleId", testCycleDTO.getParentCycleId());
         version.put("versionId", testCycleDTO.getVersionId());
         version.put("cycleId", testCycleDTO.getCycleId());
         Optional.ofNullable(testCycleDTO.getCreatedUser()).ifPresent(v ->
