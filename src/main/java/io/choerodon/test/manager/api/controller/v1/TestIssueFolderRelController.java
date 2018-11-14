@@ -59,15 +59,6 @@ public class TestIssueFolderRelController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除文件夹下的issue")
-    @PutMapping("/delete")
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                 @RequestBody List<Long> issuesId) {
-        testIssueFolderRelService.delete(projectId,issuesId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试并建立测试和文件夹的关系")
     @PostMapping("/testAndRelationship")
     public ResponseEntity<TestIssueFolderRelDTO> insertTestAndRelationship(@PathVariable(name = "project_id") Long projectId,

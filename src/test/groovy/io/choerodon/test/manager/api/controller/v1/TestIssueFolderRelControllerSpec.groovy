@@ -446,6 +446,41 @@ class TestIssueFolderRelControllerSpec extends Specification {
         targetIFR2.size() > 1
     }
 
+//    def "Delete"() {
+//        given:
+//        TestIssueFolderRelDO testIssueFolderRelDO1 = new TestIssueFolderRelDO()
+//        testIssueFolderRelDO1.setIssueId(11L)
+//        TestIssueFolderRelDO testIssueFolderRelDO2 = new TestIssueFolderRelDO()
+//        testIssueFolderRelDO2.setIssueId(22L)
+//        TestIssueFolderRelDO testIssueFolderRelDO3 = new TestIssueFolderRelDO()
+//        testIssueFolderRelDO3.setIssueId(33L)
+//        TestIssueFolderRelDO testIssueFolderRelDO4 = new TestIssueFolderRelDO()
+//        testIssueFolderRelDO4.setIssueId(44L)
+//        TestIssueFolderRelDO testIssueFolderRelDO5 = new TestIssueFolderRelDO()
+//        testIssueFolderRelDO5.setIssueId(55L)
+//        List issues = new ArrayList()
+//        issues.add(11L)
+//        issues.add(22L)
+//        issues.add(33L)
+//        issues.add(44L)
+//        issues.add(55L)
+//        when: '执行方法'
+//        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/delete', issues, projectId)
+//
+//        then: '返回值'
+//        def result1 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO1)
+//        def result2 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO2)
+//        def result3 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO3)
+//        def result4 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO4)
+//        def result5 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO5)
+//
+//        expect: '期望值'
+//        result1 == null
+//        result2 == null
+//        result3 == null
+//        result4 == null
+//        result5 == null
+//    }
     def "Delete"() {
         given:
         TestIssueFolderRelDO testIssueFolderRelDO1 = new TestIssueFolderRelDO()
@@ -465,7 +500,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issues.add(44L)
         issues.add(55L)
         when: '执行方法'
-        restTemplate.put('/v1/projects/{project_id}/issueFolderRel/delete', issues, projectId)
+        testIssueFolderRelService.delete(projectId,issues)
 
         then: '返回值'
         def result1 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO1)

@@ -68,7 +68,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
         List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO).stream()
                 .map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-        testIssueFolderRelService.delete(projectId, issuesId);
+        testCaseService.batchDeleteIssues(projectId, issuesId);
         iTestIssueFolderService.delete(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class));
         testCycleService.delete(testCycleDTO, projectId);
