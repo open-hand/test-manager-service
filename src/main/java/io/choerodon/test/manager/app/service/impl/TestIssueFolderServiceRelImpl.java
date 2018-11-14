@@ -196,15 +196,6 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             iTestIssueFolderRelService.delete(ConvertHelper
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
-        testCaseService.batchDeleteIssues(projectId, issuesId);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void deleteJustOneRel(Long projectId, Long issueId) {
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
-        testIssueFolderRelDTO.setIssueId(issueId);
-        iTestIssueFolderRelService.delete(ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
     }
 
     @Transactional(rollbackFor = Exception.class)

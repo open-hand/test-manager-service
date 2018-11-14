@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.eventhandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -116,7 +117,9 @@ public class TestManagerEventHandler {
 
 		TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
 		testIssueFolderRelDTO.setIssueId(issuePayload.getIssueId());
-		testIssueFolderRelService.deleteJustOneRel(issuePayload.getProjectId(),issuePayload.getIssueId());
+
+		List<Long> issuesId = Lists.newArrayList(issuePayload.getIssueId());
+		testIssueFolderRelService.delete(issuePayload.getProjectId(),issuesId);
 
 		TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 		testCaseStepDTO.setIssueId(issuePayload.getIssueId());
