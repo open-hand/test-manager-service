@@ -36,6 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -413,7 +415,11 @@ public class ExcelServiceImpl implements ExcelService {
 
             loadHistoryE.setLastUpdateDate(new Date());
             loadHistoryE.setFileStream(content);
-            if (res.getStatusCode().is2xxSuccessful()) {
+            //判断是否返回是url
+            String regex = "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[.]xlsx";//设置正则表达式
+            Pattern pat = Pattern.compile(regex.trim());//比对
+            Matcher mat = pat.matcher(res.getBody().trim());
+            if (mat.matches()) {
                 loadHistoryE.setFileStream(null);
                 loadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
