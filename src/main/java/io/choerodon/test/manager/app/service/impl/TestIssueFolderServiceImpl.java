@@ -155,12 +155,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
             testIssueFolderRelDTO.setFolderId(testIssueFolderDTO.getFolderId());
             List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
-            List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
-            for (TestIssueFolderRelDTO relTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
-                IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
-                issueInfosDTO.setIssueId(relTestIssueFolderRelDTO.getIssueId());
-                issueInfosDTOS.add(issueInfosDTO);
-            }
             //批量改变issue的version并修改对应关联中的version
             List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
             TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
