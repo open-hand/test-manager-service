@@ -378,7 +378,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Optional.ofNullable(testCycleDTO.getFolderId()).map(v -> {
             folderE.setFolderId(v);
             TestIssueFolderE res = folderE.queryByPrimaryKey();
-            res.setName(res == null ? "文件夹存在错误，文件夹不存在" : res.getName());
+            Optional.ofNullable(res).ifPresent(n->n.setName(n.getName()));
             return res;
         }).ifPresent(v -> version.put("folderName", v.getName()));
         version.put("toDate", testCycleDTO.getToDate());
