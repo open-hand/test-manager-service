@@ -386,17 +386,6 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     // 填充测试用例页内容
     private void fillTestCaseSheet(Sheet testCaseSheet) {
         writeHeader(testCaseSheet, 0, 0);
-
-        testCaseSheet.getRow(0).createCell(README_OPTIONS.length + 1, CELL_TYPE_STRING).setCellValue("示例");
-        testCaseSheet.addMergedRegion(new CellRangeAddress(0, 0, README_OPTIONS.length + 1, README_OPTIONS.length + 5));
-        writeHeader(testCaseSheet, 1, README_OPTIONS.length + 1);
-
-        writeExample(testCaseSheet, 2, README_OPTIONS.length + 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
-        writeExample(testCaseSheet, 5, README_OPTIONS.length + 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
-        writeExample(testCaseSheet, 6, README_OPTIONS.length + 1, EXAMPLE_ISSUES[2],
-                EXAMPLE_TEST_CASE_STEPS[0],
-                EXAMPLE_TEST_CASE_STEPS[1]
-        );
     }
 
     // 设置测试用例页样式
@@ -451,5 +440,16 @@ public class IExcelImportServiceImpl implements IExcelImportService {
             readMeSheet.getRow(1).createCell(i, CELL_TYPE_STRING).setCellValue(optionDTO.getFiled());
             readMeSheet.getRow(optionDTO.getRequired() ? 2 : 3).createCell(i, CELL_TYPE_STRING).setCellValue("√");
         }
+
+        writeHeader(readMeSheet, 0, 0);
+
+        readMeSheet.createRow(8).createCell(1, CELL_TYPE_STRING).setCellValue("示例");
+        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 5));
+        writeExample(readMeSheet, 9, 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
+        writeExample(readMeSheet, 10, 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
+        writeExample(readMeSheet, 11, 1, EXAMPLE_ISSUES[2],
+                EXAMPLE_TEST_CASE_STEPS[0],
+                EXAMPLE_TEST_CASE_STEPS[1]
+        );
     }
 }
