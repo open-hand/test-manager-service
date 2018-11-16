@@ -418,7 +418,7 @@ public class ExcelServiceImpl implements ExcelService {
             //判断是否返回是url
             String regex = "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[.]xlsx";//设置正则表达式
             Pattern pat = Pattern.compile(regex.trim());//比对
-            Matcher mat = pat.matcher(res.getBody().trim());
+            Matcher mat = pat.matcher(Optional.ofNullable(res.getBody()).orElseGet(String::new).trim());
             if (mat.matches()) {
                 loadHistoryE.setFileStream(null);
                 loadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
@@ -431,7 +431,7 @@ public class ExcelServiceImpl implements ExcelService {
         } catch (Exception e) {
             loadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
             loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
-            throw new CommonException(EXPORT_ERROR, e);
+            printDebug(e.getMessage());
         } finally {
             try {
                 iLoadHistoryService.update(loadHistoryE);
