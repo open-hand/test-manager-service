@@ -77,7 +77,7 @@ public class ExcelServiceImpl implements ExcelService {
     TestCaseService testCaseService;
 
     @Autowired
-    FileService fileFeignClient;
+    FileService fileService;
 
     @Autowired
     ITestFileLoadHistoryService iLoadHistoryService;
@@ -156,7 +156,7 @@ public class ExcelServiceImpl implements ExcelService {
         loadHistoryE.setRate(99.9);
         notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(loadHistoryE));
 
-        ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+        ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
 
         if (res.getStatusCode().is2xxSuccessful()) {
             loadHistoryE.setLastUpdateDate(new Date());
@@ -411,7 +411,7 @@ public class ExcelServiceImpl implements ExcelService {
             loadHistoryE.setRate(99.9);
             notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
 
-            ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+            ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
 
             loadHistoryE.setLastUpdateDate(new Date());
             loadHistoryE.setFileStream(content);

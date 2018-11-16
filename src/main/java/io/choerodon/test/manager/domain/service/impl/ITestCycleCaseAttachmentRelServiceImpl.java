@@ -22,7 +22,7 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
 
 
     @Autowired
-    FileService fileFeignClient;
+    FileService fileService;
 
 
     @Override
@@ -37,7 +37,7 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
             throw new CommonException(i);
         }
 
-        ResponseEntity<String> response = fileFeignClient.deleteFile(bucketName, url);
+        ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
         if (response == null || response.getStatusCode() != HttpStatus.OK) {
             throw new CommonException("error.attachment.upload");
         }
@@ -52,7 +52,7 @@ public class ITestCycleCaseAttachmentRelServiceImpl implements ITestCycleCaseAtt
         attachmentRelE.setAttachmentName(fileName);
         attachmentRelE.setComment(comment);
 
-        ResponseEntity<String> response = fileFeignClient.uploadFile(bucketName, fileName, file);
+        ResponseEntity<String> response = fileService.uploadFile(bucketName, fileName, file);
         if (response == null || response.getStatusCode() != HttpStatus.OK) {
             throw new CommonException("error.attachment.upload");
         }
