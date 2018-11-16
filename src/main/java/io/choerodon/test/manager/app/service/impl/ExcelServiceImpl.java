@@ -36,6 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,7 +77,7 @@ public class ExcelServiceImpl implements ExcelService {
     TestCaseService testCaseService;
 
     @Autowired
-    FileService fileFeignClient;
+    FileService fileService;
 
     @Autowired
     ITestFileLoadHistoryService iLoadHistoryService;
@@ -154,7 +156,7 @@ public class ExcelServiceImpl implements ExcelService {
         loadHistoryE.setRate(99.9);
         notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(loadHistoryE));
 
-        ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+        ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
 
         if (res.getStatusCode().is2xxSuccessful()) {
             loadHistoryE.setLastUpdateDate(new Date());
@@ -409,11 +411,16 @@ public class ExcelServiceImpl implements ExcelService {
             loadHistoryE.setRate(99.9);
             notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
 
-            ResponseEntity<String> res = fileFeignClient.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
-
             loadHistoryE.setLastUpdateDate(new Date());
             loadHistoryE.setFileStream(content);
-            if (res.getStatusCode().is2xxSuccessful()) {
+
+            ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+
+            //判断是否返回是url
+            String regex = "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[.]xlsx";//设置正则表达式
+            Pattern pat = Pattern.compile(regex.trim());//比对
+            Matcher mat = pat.matcher(Optional.ofNullable(res.getBody()).orElseGet(String::new).trim());
+            if (mat.matches()) {
                 loadHistoryE.setFileStream(null);
                 loadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
                 loadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
@@ -425,7 +432,7 @@ public class ExcelServiceImpl implements ExcelService {
         } catch (Exception e) {
             loadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
             loadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
-            throw new CommonException(EXPORT_ERROR, e);
+            printDebug(e.getMessage());
         } finally {
             try {
                 iLoadHistoryService.update(loadHistoryE);

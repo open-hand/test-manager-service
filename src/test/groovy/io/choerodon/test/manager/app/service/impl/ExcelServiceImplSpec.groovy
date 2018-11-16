@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
+import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelService
@@ -47,7 +48,7 @@ class ExcelServiceImplSpec extends Specification {
     UserService userService
 
     @Autowired
-    FileService fileFeignClient
+    FileService fileService
 
     @Autowired
     ExcelService excelService
@@ -144,7 +145,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>("http://minio.staging.saas.hand-china.com/test/file_5bf86f5c8e384b66b64a51689a81d831_.xlsx", HttpStatus.OK)
         (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
@@ -159,7 +160,20 @@ class ExcelServiceImplSpec extends Specification {
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         2 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        (4.._) * notifyService.postWebSocket(_, _, _)
+
+        when:"fileFeign异常情况"
+        def exception = target.exportCaseVersionByTransaction(projectId, versionId, request, new MockHttpServletResponse(), 1L, 1L)
+
+        then:
+        1 * testCaseService.getProjectInfo(_) >> projectDTO
+        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
+        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        2 * testCaseService.getVersionInfo(_) >> versionInfo
+        1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
+        1 * fileService.uploadFile(_, _, _) >> new CommonException("error.file.upload")
         (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
@@ -176,7 +190,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.INTERNAL_SERVER_ERROR)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>("error.file.upload", HttpStatus.INTERNAL_SERVER_ERROR)
         (4.._) * notifyService.postWebSocket(_, _, _)
     }
 
@@ -203,7 +217,7 @@ class ExcelServiceImplSpec extends Specification {
 
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
         2 * notifyService.postWebSocket(_, _, _)
 
         when:
@@ -212,7 +226,7 @@ class ExcelServiceImplSpec extends Specification {
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionInfo(_) >> versionInfo
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.INTERNAL_SERVER_ERROR)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.INTERNAL_SERVER_ERROR)
         1 * notifyService.postWebSocket(_, _, _)
 
         when:
@@ -221,7 +235,7 @@ class ExcelServiceImplSpec extends Specification {
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionInfo(_) >> versionInfo
-        1 * fileFeignClient.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
+        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
         2 * notifyService.postWebSocket(_, _, _)
     }
 

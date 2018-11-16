@@ -33,6 +33,4 @@ public interface TestIssueFolderRelService {
     List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
     void cloneOneIssue(Long projectId, Long issueId);
-
-    void deleteJustOneRel(Long projectId, Long issueId);
 }

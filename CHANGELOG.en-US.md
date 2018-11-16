@@ -84,3 +84,27 @@ All notable changes to choerodon-front-agile will be documented in this file.
 #### 0.10.0 Significant repair features
 
 - The defect association table supplements the `project_id` field
+
+## [0.11.0] - 2018-11-16
+
+### Add
+
+#### 0.11.0 Significantly added features
+
+- Test case can import through template excel file 
+- Test case export function
+- Test execution details page add before/next button
+
+### Modify
+
+#### 0.11.0 Significantly modify the feature
+
+- Test execution export changed to asynchronous modification, adding progress bar
+- Modify some interfaces for agile services
+- Test case folder copying and moving support batch mode
+
+### Fix
+
+#### 0.11.0 Significant repair features
+
+- the target of clone test phase in test plan modle support different version, cycle

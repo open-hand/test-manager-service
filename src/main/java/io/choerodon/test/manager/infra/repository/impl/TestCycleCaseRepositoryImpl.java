@@ -73,13 +73,15 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 		List<TestCycleCaseDO> converts = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDO.class);
 		List<TestCycleCaseDO> dtos = queryByFatherCycleWithDataBase(converts,pageRequest);
 		Long total= 0L;
-		if(dtos!=null && !dtos.isEmpty()){
-			for (TestCycleCaseDO convert:converts) {
-				total += testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
-			}
-		}
+        for (TestCycleCaseDO convert:converts) {
+            total += testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
+        }
+		if(dtos.isEmpty() && total != 0L){
+            pageRequest.setPage((total.intValue() / pageRequest.getSize())-1);
+            dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
+        }
 		PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-		Page<TestCycleCaseDO> page = new Page<>(Optional.ofNullable(dtos).orElseGet(ArrayList::new), info, total);
+		Page<TestCycleCaseDO> page = new Page<>(dtos, info, total);
 		return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
 	}
 
