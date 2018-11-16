@@ -175,9 +175,6 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileService.uploadFile(_, _, _) >> new CommonException("error.file.upload")
         (4.._) * notifyService.postWebSocket(_, _, _)
-
-        and:
-        thrown(CommonException)
     }
 
     def "exportCaseFolderByTransaction"() {
