@@ -411,10 +411,11 @@ public class ExcelServiceImpl implements ExcelService {
             loadHistoryE.setRate(99.9);
             notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(loadHistoryE));
 
-            ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
-
             loadHistoryE.setLastUpdateDate(new Date());
             loadHistoryE.setFileStream(content);
+
+            ResponseEntity<String> res = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, fileName, file);
+
             //判断是否返回是url
             String regex = "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[.]xlsx";//设置正则表达式
             Pattern pat = Pattern.compile(regex.trim());//比对
