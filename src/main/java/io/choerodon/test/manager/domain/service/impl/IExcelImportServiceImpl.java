@@ -10,7 +10,7 @@ import java.util.Objects;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 
-import io.choerodon.test.manager.api.dto.IssueTypeDTO;
+import io.choerodon.agile.api.dto.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -22,9 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.test.manager.api.dto.ExcelReadMeOptionDTO;
 import io.choerodon.test.manager.api.dto.MultipartExcel;
 import io.choerodon.test.manager.app.service.FileService;
@@ -225,10 +222,27 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public IssueTypeDTO getIssueType(Long organizationId, Long projectId, String applyType) {
-        ResponseEntity<IssueTypeDTO> response = issueFeignClient.queryIssueType(projectId, applyType, organizationId);
+    public Long getIssueTypeId(Long organizationId, Long projectId, String applyType) {
+        ResponseEntity<List<IssueTypeDTO>> response = issueFeignClient.queryIssueType(projectId, applyType, organizationId);
         if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
+            for (IssueTypeDTO issueTypeDTO : response.getBody()) {
+                if ("issue_test".equals(issueTypeDTO.getTypeCode())) {
+                    return issueTypeDTO.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Long getPriorityId(Long organizationId, Long projectId) {
+        ResponseEntity<List<PriorityDTO>> response = issueFeignClient.queryPriorityId(projectId, organizationId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            for (PriorityDTO priorityDTO : response.getBody()) {
+                if (priorityDTO.getDefault()) {
+                    return priorityDTO.getId();
+                }
+            }
         }
         return null;
     }
@@ -245,12 +259,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        issueCreateDTO.setPriorityCode("priority-8");
-        issueCreateDTO.setPriorityId(8L);
+        Long priorityId = getPriorityId(organizationId, projectId);
+        issueCreateDTO.setPriorityCode("priority-" + priorityId);
+        issueCreateDTO.setPriorityId(priorityId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode("issue_test");
-        issueCreateDTO.setIssueTypeId(getIssueType(organizationId, projectId, "test").getId());
+        issueCreateDTO.setIssueTypeId(getIssueTypeId(organizationId, projectId, "test"));
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);
