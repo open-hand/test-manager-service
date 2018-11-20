@@ -173,8 +173,9 @@ public class TestCaseController {
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
                                        @RequestParam Long versionId,
-                                       @RequestParam("file") MultipartFile excelFile) {
-        excelImportService.importIssueByExcel(projectId, versionId,
+                                       @RequestParam("file") MultipartFile excelFile,
+                                       @RequestParam Long organizationId) {
+        excelImportService.importIssueByExcel(organizationId, projectId, versionId,
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
         return new ResponseEntity(HttpStatus.NO_CONTENT);

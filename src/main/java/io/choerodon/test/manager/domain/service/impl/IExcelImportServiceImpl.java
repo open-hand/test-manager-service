@@ -9,6 +9,8 @@ import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+
+import io.choerodon.test.manager.api.dto.IssueTypeDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -32,7 +34,7 @@ import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 @Service
 public class IExcelImportServiceImpl implements IExcelImportService {
@@ -44,6 +46,9 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     @Autowired
     private TestCaseService testCaseFeignClient;
+
+    @Autowired
+    private IssueFeignClient issueFeignClient;
 
     @Autowired
     private TestFileLoadHistoryRepository loadHistoryRepository;
@@ -220,7 +225,16 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public IssueDTO processIssueHeaderRow(Row row, Long projectId, Long versionId, Long folderId) {
+    public IssueTypeDTO getIssueType(Long organizationId, Long projectId, String applyType) {
+        ResponseEntity<IssueTypeDTO> response = issueFeignClient.queryIssueType(projectId, applyType, organizationId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        }
+        return null;
+    }
+
+    @Override
+    public IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId) {
         if (ExcelUtil.isBlank(row.getCell(0))) {
             markAsError(row, "测试概要不能为空");
             return null;
@@ -231,12 +245,12 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        issueCreateDTO.setPriorityCode("medium");
+        issueCreateDTO.setPriorityCode("priority-8");
         issueCreateDTO.setPriorityId(8L);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode("issue_test");
-        issueCreateDTO.setIssueTypeId(18L);
+        issueCreateDTO.setIssueTypeId(getIssueType(organizationId, projectId, "test").getId());
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);

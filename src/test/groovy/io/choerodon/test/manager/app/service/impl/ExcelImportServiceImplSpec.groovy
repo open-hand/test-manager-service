@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.agile.api.dto.IssueDTO
-import io.choerodon.core.convertor.ConvertHelper
 import io.choerodon.core.oauth.CustomUserDetails
-import io.choerodon.core.oauth.DetailsHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.ExcelImportService
 import io.choerodon.test.manager.app.service.FileService
@@ -29,7 +27,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 
 import javax.servlet.http.HttpServletResponse
 
@@ -114,7 +111,7 @@ class ExcelImportServiceImplSpec extends Specification {
         workbook.createSheet("测试用例")
         ExcelImportService service=AopTestUtils.getTargetObject(excelImportService);
         when:
-        service.importIssueByExcel(144,4L,1L,workbook)
+        service.importIssueByExcel(144, 4L, 1L, workbook,)
         then:
         1*notifyService.postWebSocket(_,_,_)
     }
@@ -131,7 +128,7 @@ class ExcelImportServiceImplSpec extends Specification {
         ExcelUtil.createCell(row2,2, ExcelUtil.CellType.TEXT,"step")
         ExcelImportService service=AopTestUtils.getTargetObject(excelImportService);
         when:
-        service.importIssueByExcel(144,4L,1L,workbook)
+        service.importIssueByExcel(144, 4L, 1L, workbook,)
         then:
         3*notifyService.postWebSocket(_,_,_)
         1*testCaseService.createTest(_,_,_)>>new IssueDTO(issueId: 199L)
@@ -148,7 +145,7 @@ class ExcelImportServiceImplSpec extends Specification {
         ExcelUtil.createCell(row2,2, ExcelUtil.CellType.TEXT,"step")
         ExcelImportService service=AopTestUtils.getTargetObject(excelImportService);
         when:
-        service.importIssueByExcel(144,4L,1L,workbook)
+        service.importIssueByExcel(144, 4L, 1L, workbook,)
         then:
         3*notifyService.postWebSocket(_,_,_)
         1*testCaseService.createTest(_,_,_)>>null
@@ -166,7 +163,7 @@ class ExcelImportServiceImplSpec extends Specification {
         ExcelUtil.createCell(row2,2, ExcelUtil.CellType.TEXT,"step")
         ExcelImportService service=AopTestUtils.getTargetObject(excelImportService);
         when:
-        service.importIssueByExcel(144,4L,1L,workbook)
+        service.importIssueByExcel(144, 4L, 1L, workbook,)
         then:
         3*notifyService.postWebSocket(_,_,_)
         1*testCaseService.createTest(_,_,_)>>null
@@ -179,7 +176,7 @@ class ExcelImportServiceImplSpec extends Specification {
         HSSFWorkbook workbook=new HSSFWorkbook()
         Row row=ExcelUtil.createRow(workbook.createSheet(),0,null)
         when:
-        def re=iExcelImportService.processIssueHeaderRow(row,144L,2L,1L)
+        def re=iExcelImportService.processIssueHeaderRow(row, , 144L, 2L, 1L)
         then:
         re==null
     }
