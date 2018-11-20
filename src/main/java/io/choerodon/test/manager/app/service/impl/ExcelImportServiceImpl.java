@@ -18,8 +18,10 @@ import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.test.manager.app.service.ExcelImportService;
 import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
+import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
@@ -31,6 +33,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Autowired
     private ExcelService excelService;
+
+    public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
+        ((IExcelImportServiceImpl) iExcelImportService).setIssueFeignClient(issueFeignClient);
+    }
 
     @Override
     public boolean cancelFileUpload(Long historyId) {

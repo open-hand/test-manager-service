@@ -20,9 +20,9 @@ public interface IssueFeignClient {
     @GetMapping("/v1/projects/{project_id}/schemes/query_issue_types_with_sm_id")
     ResponseEntity<List<IssueTypeDTO>> queryIssueType(@PathVariable("project_id") Long projectId,
                                                       @RequestParam("apply_type") String applyType,
-                                                      @RequestParam Long organizationId);
+                                                      @RequestParam("organizationId") Long organizationId);
 
     @GetMapping("/v1/projects/{project_id}/priority/list_by_org")
     ResponseEntity<List<PriorityDTO>> queryPriorityId(@PathVariable("project_id") Long projectId,
-                                                      @RequestParam Long organizationId);
+                                                      @RequestParam("organizationId") Long organizationId);
 }
