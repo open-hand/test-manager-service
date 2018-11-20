@@ -5,8 +5,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
             column(name: 'id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }
-            column(name: 'log', type: 'TEXT', remarks: '编码'){
-                constraints(primaryKey: true)
+            column(name: 'log', type: 'text', remarks: '编码'){
+                constraints(nullable: true)
             }
         }
 
