@@ -47,7 +47,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
+    public void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
         TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId);
         TestFileLoadHistoryE loadHistoryE = iExcelImportService.initLoadHistory(projectId, folderE.getFolderId(), userId);
         TestFileLoadHistoryE.Status status = TestFileLoadHistoryE.Status.SUCCESS;
@@ -81,7 +81,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
 
             if (iExcelImportService.isIssueHeaderRow(currentRow)) {
-                issueDTO = iExcelImportService.processIssueHeaderRow(currentRow, projectId, versionId, folderE.getFolderId());
+                issueDTO = iExcelImportService.processIssueHeaderRow(currentRow, organizationId, projectId, versionId, folderE.getFolderId());
                 if (issueDTO == null) {
                     failedCount++;
                 } else {

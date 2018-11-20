@@ -10,5 +10,5 @@ public interface ExcelImportService {
 
     void downloadImportTemp(HttpServletResponse response);
 
-    void importIssueByExcel(Long projectId, Long versionId, Long userId, Workbook workbook);
+    void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook workbook);
 }
