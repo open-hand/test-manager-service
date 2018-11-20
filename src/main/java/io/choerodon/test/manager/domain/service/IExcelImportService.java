@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.test.manager.api.dto.IssueTypeDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
@@ -32,7 +31,9 @@ public interface IExcelImportService {
 
     boolean isIssueHeaderRow(Row row);
 
-    IssueTypeDTO getIssueType(Long organizationId, Long projectId, String applyType);
+    Long getIssueTypeId(Long organizationId, Long projectId, String applyType);
+
+    Long getPriorityId(Long organizationId, Long projectId);
 
     IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId);
 
