@@ -47,6 +47,10 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     @Autowired
     private IssueFeignClient issueFeignClient;
 
+    public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
+        this.issueFeignClient = issueFeignClient;
+    }
+
     @Autowired
     private TestFileLoadHistoryRepository loadHistoryRepository;
 
