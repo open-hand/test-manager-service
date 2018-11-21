@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -134,7 +136,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         ResponseEntity<String> response = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, ".xlsx",
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
-        if (response.getStatusCode().is2xxSuccessful()) {
+        boolean failed = false;
+        if (response.getBody().startsWith("{")) {
+            JSONObject jsonObject = JSON.parseObject(response.getBody());
+            failed = jsonObject.containsKey("failed") && jsonObject.getBooleanValue("failed");
+        }
+
+        if (response.getStatusCode().is2xxSuccessful() && !failed) {
             loadHistoryE.setFileUrl(response.getBody());
             logger.debug(loadHistoryE.getFileUrl());
             return response.getBody();
@@ -296,7 +304,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     private IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
-        return testCaseFeignClient.createTest(issueCreateDTO,projectId, "test");
+        return testCaseFeignClient.createTest(issueCreateDTO, projectId, "test");
     }
 
     @Override
@@ -350,12 +358,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         }
 
         iterator.next();
-        do {
+        while (iterator.hasNext()) {
             if (!isEmptyRow(iterator.next())) {
                 return false;
             }
-        } while (iterator.hasNext());
-
+        }
         return true;
     }
 
