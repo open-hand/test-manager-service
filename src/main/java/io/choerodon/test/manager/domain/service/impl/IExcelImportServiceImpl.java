@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+
+import io.choerodon.agile.api.dto.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -20,9 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.test.manager.api.dto.ExcelReadMeOptionDTO;
 import io.choerodon.test.manager.api.dto.MultipartExcel;
 import io.choerodon.test.manager.app.service.FileService;
@@ -32,7 +33,7 @@ import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 @Service
 public class IExcelImportServiceImpl implements IExcelImportService {
@@ -44,6 +45,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     @Autowired
     private TestCaseService testCaseFeignClient;
+
+    @Autowired
+    private IssueFeignClient issueFeignClient;
+
+    public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
+        this.issueFeignClient = issueFeignClient;
+    }
 
     @Autowired
     private TestFileLoadHistoryRepository loadHistoryRepository;
@@ -128,7 +136,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         ResponseEntity<String> response = fileService.uploadFile(TestCycleCaseAttachmentRelE.ATTACHMENT_BUCKET, ".xlsx",
                 new MultipartExcel("file", ".xlsx", errorWorkbook));
 
-        if (response.getStatusCode().is2xxSuccessful()) {
+        boolean failed = false;
+        if (response.getBody().startsWith("{")) {
+            JSONObject jsonObject = JSON.parseObject(response.getBody());
+            failed = jsonObject.containsKey("failed") && jsonObject.getBooleanValue("failed");
+        }
+
+        if (response.getStatusCode().is2xxSuccessful() && !failed) {
             loadHistoryE.setFileUrl(response.getBody());
             logger.debug(loadHistoryE.getFileUrl());
             return response.getBody();
@@ -220,7 +234,33 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public IssueDTO processIssueHeaderRow(Row row, Long projectId, Long versionId, Long folderId) {
+    public Long getIssueTypeId(Long organizationId, Long projectId, String applyType) {
+        ResponseEntity<List<IssueTypeDTO>> response = issueFeignClient.queryIssueType(projectId, applyType, organizationId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            for (IssueTypeDTO issueTypeDTO : response.getBody()) {
+                if ("issue_test".equals(issueTypeDTO.getTypeCode())) {
+                    return issueTypeDTO.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Long getPriorityId(Long organizationId, Long projectId) {
+        ResponseEntity<List<PriorityDTO>> response = issueFeignClient.queryPriorityId(projectId, organizationId);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            for (PriorityDTO priorityDTO : response.getBody()) {
+                if (priorityDTO.getDefault()) {
+                    return priorityDTO.getId();
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId) {
         if (ExcelUtil.isBlank(row.getCell(0))) {
             markAsError(row, "测试概要不能为空");
             return null;
@@ -231,12 +271,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        issueCreateDTO.setPriorityCode("medium");
-        issueCreateDTO.setPriorityId(8L);
+        Long priorityId = getPriorityId(organizationId, projectId);
+        issueCreateDTO.setPriorityCode("priority-" + priorityId);
+        issueCreateDTO.setPriorityId(priorityId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode("issue_test");
-        issueCreateDTO.setIssueTypeId(18L);
+        issueCreateDTO.setIssueTypeId(getIssueTypeId(organizationId, projectId, "test"));
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);
@@ -263,7 +304,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     private IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
-        return testCaseFeignClient.createTest(issueCreateDTO,projectId, "test");
+        return testCaseFeignClient.createTest(issueCreateDTO, projectId, "test");
     }
 
     @Override
@@ -317,12 +358,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         }
 
         iterator.next();
-        do {
+        while (iterator.hasNext()) {
             if (!isEmptyRow(iterator.next())) {
                 return false;
             }
-        } while (iterator.hasNext());
-
+        }
         return true;
     }
 

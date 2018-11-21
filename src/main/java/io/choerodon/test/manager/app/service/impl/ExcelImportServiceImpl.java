@@ -18,8 +18,10 @@ import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.test.manager.app.service.ExcelImportService;
 import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
+import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
@@ -31,6 +33,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Autowired
     private ExcelService excelService;
+
+    public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
+        ((IExcelImportServiceImpl) iExcelImportService).setIssueFeignClient(issueFeignClient);
+    }
 
     @Override
     public boolean cancelFileUpload(Long historyId) {
@@ -47,7 +53,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
+    public void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
         TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId);
         TestFileLoadHistoryE loadHistoryE = iExcelImportService.initLoadHistory(projectId, folderE.getFolderId(), userId);
         TestFileLoadHistoryE.Status status = TestFileLoadHistoryE.Status.SUCCESS;
@@ -81,7 +87,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
 
             if (iExcelImportService.isIssueHeaderRow(currentRow)) {
-                issueDTO = iExcelImportService.processIssueHeaderRow(currentRow, projectId, versionId, folderE.getFolderId());
+                issueDTO = iExcelImportService.processIssueHeaderRow(currentRow, organizationId, projectId, versionId, folderE.getFolderId());
                 if (issueDTO == null) {
                     failedCount++;
                 } else {

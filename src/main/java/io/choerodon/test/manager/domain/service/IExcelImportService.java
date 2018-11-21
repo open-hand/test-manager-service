@@ -6,8 +6,11 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.http.ResponseEntity;
 
 import io.choerodon.agile.api.dto.IssueDTO;
+import io.choerodon.agile.api.dto.IssueTypeDTO;
+import io.choerodon.agile.api.dto.PriorityDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
@@ -31,7 +34,11 @@ public interface IExcelImportService {
 
     boolean isIssueHeaderRow(Row row);
 
-    IssueDTO processIssueHeaderRow(Row row, Long projectId, Long versionId, Long folderId);
+    Long getIssueTypeId(Long organizationId, Long projectId, String applyType);
+
+    Long getPriorityId(Long organizationId, Long projectId);
+
+    IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId);
 
     void removeRow(Row row);
 
