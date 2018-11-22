@@ -20,26 +20,9 @@ spring:
           brokers: localhost:9092
           zkNodes: localhost:2181
       default-binder: kafka
-  sleuth:
-    integration:
-      enabled: false
-    scheduled:
-      enabled: false
-    sampler:
-      percentage: 1.0
   redis:
     host: localhost:6379
 choerodon:
-  event:
-    consumer:
-      enabled: false # 是否开启，不设置默认开启
-      queue-type: kafka # 消息队列类型
-      enable-duplicate-remove: true # 是否开启去重
-      failed-strategy: nothing # 失败策略。支持nothing(什么都不做), send_back_event_store(回传到event store)两种
-      retry:
-        enabled: true # 是否开启重试功能
-      kafka:
-        bootstrap-servers: localhost:9092 # kafka地址
   saga:
     consumer:
       enabled: true # 是否启用消费端
@@ -74,10 +57,8 @@ feign:
               timeoutInMilliseconds: 30000
 ribbon:
   ConnectTimeout: 5000
-  ReadTimeout: 500000
+  ReadTimeout: 5000
 logging:
   level:
     root: info
     io.choerodon.test.manager: debug
-swagger:
-  basepackage: io.choerodon #扫描api包路径
