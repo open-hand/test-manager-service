@@ -44,7 +44,11 @@ env:
     SPRING_CLOUD_CONFIG_ENABLED: true
     SPRING_CLOUD_CONFIG_URI: http://config-server.io-choerodon:8010/
     SPRING_REDIS_HOST: redis.tools.svc
-    JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+    SKYWALKING_OPTS: >-
+      -javaagent:/agent/skywalking-agent.jar
+      -Dskywalking.agent.application_code=test-manager-service
+      -Dskywalking.agent.sample_n_per_3_secs=-1
+      -Dskywalking.collector.backend_service=oap.skywalking:11800
 
 metrics:
   path: /prometheus
