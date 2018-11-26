@@ -9,6 +9,7 @@ import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.infra.feign.FileFeignClient
+import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
@@ -56,6 +57,12 @@ class IntegrationTestConfiguration {
     @Bean
     KafkaTemplate kafkaTemplate() {
         detachedMockFactory.Mock(KafkaTemplate)
+    }
+
+    @Bean
+    @Primary
+    RedissonClient redissonClient(){
+        detachedMockFactory.Mock(RedissonClient)
     }
 
     @Bean
