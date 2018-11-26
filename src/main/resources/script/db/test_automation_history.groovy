@@ -6,10 +6,11 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
                 constraints(primaryKey: true)
             }
             column(name: 'framework', type: 'VARCHAR(60)', remarks: '使用框架')
-            column(name: 'duration', type: 'DATETIME', remarks: '持续时间')
             column(name: 'test_status', type: 'tinyint(1)', remarks: '状态')
             column(name: 'instance_id', type: 'BIGINT UNSIGNED', remarks: 'instance_id')
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: 'project_id')
+            column(name: 'cycle_id', type: 'BIGINT UNSIGNED', remarks: 'cycle_id')
+            column(name: 'result_id', type: 'BIGINT UNSIGNED', remarks: 'result_id')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")

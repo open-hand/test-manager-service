@@ -19,13 +19,13 @@ public class TestAutomationHistoryE extends AuditDomain {
 
     private String framework;
 
-    private Date duration;
-
     private Long testStatus;
 
     private Long instanceId;
 
     private Long projectId;
+    private Long cycleId;
+    private Long resultId;
 
     public Long getId() {
         return id;
@@ -43,12 +43,20 @@ public class TestAutomationHistoryE extends AuditDomain {
         this.framework = framework;
     }
 
-    public Date getDuration() {
-        return duration;
+    public Long getCycleId() {
+        return cycleId;
     }
 
-    public void setDuration(Date duration) {
-        this.duration = duration;
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
+
+    public Long getResultId() {
+        return resultId;
+    }
+
+    public void setResultId(Long resultId) {
+        this.resultId = resultId;
     }
 
     public Long getTestStatus() {
