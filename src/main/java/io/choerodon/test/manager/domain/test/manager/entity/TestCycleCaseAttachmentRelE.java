@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleCaseAttachmentRelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,9 @@ public class TestCycleCaseAttachmentRelE {
     public static final String ATTACHMENT_CYCLE_CASE = "CYCLE_CASE";
     public static final String ATTACHMENT_CASE_STEP = "CASE_STEP";
 	public static final String ATTACHMENT_CYCLE_STEP = "CYCLE_STEP";
-    public static final String ATTACHMENT_BUCKET = "test";
+
+	@Value("${file.bucketName:test}")
+    public static String ATTACHMENT_BUCKET;
 
     private Long id;
     private String attachmentType;
