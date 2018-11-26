@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper">
+
+
+    <resultMap type="io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="code" property="code"/>
+        <id column="app_id" property="appId"/>
+        <id column="app_version_id" property="appVersionId"/>
+        <id column="project_version_id" property="projectVersionId"/>
+        <id column="env_id" property="envId"/>
+        <id column="command_id" property="commandId"/>
+        <id column="project_id" property="project_id"/>
+        <id column="pod_status" property="podStatus"/>
+        <id column="pod_name" property="podName"/>
+        <id column="container_name" property="containerName"/>
+        <id column="log_id" property="logId"/>
+    </resultMap>
+
+    <select id="queryValueByEnvIdAndAppId" resultType="java.lang.String">
+        SELECT
+        tv.
+        VALUE
+        FROM
+        (
+        SELECT
+        tai.id instance_id,
+        te.id commandId,
+        te.value_id value_id
+        FROM
+        test_env_command te,
+        test_app_instance tai
+        WHERE
+        te.instance_id = tai.id
+        AND tai.app_id = #{appId}
+        AND tai.env_id = #{envId}
+        ORDER BY
+        te.creation_date DESC
+        LIMIT 1
+        ) r,
+        test_env_command_value tv
+        WHERE
+        r.value_id = tv.id
+  </select>
+</mapper>

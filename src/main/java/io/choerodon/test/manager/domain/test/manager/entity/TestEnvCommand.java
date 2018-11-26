@@ -23,6 +23,29 @@ public class TestEnvCommand extends AuditDomain {
 
     private Long valueId;
 
+    private Long instanceId;
+
+    public enum CommandType {
+        CREATE("create"), RESTART("restart");
+        private String type;
+
+        public String getTypeValue() {
+            return type;
+        }
+
+        CommandType(String type) {
+            this.type = type;
+        }
+    }
+
+    public Long getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -45,5 +68,13 @@ public class TestEnvCommand extends AuditDomain {
 
     public void setValueId(Long valueId) {
         this.valueId = valueId;
+    }
+
+    public TestEnvCommand(CommandType commandType, Long valueId) {
+        this.commandType = commandType.type;
+        this.valueId = valueId;
+    }
+
+    public TestEnvCommand() {
     }
 }

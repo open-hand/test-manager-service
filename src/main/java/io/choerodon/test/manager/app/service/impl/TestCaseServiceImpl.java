@@ -3,11 +3,13 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
+import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -40,6 +42,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     ProjectFeignClient projectFeignClient;
+
+    @Autowired
+    ApplicationFeignClient applicationFeignClient;
 
     @Override
     public ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
@@ -159,6 +164,16 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public List<IssueStatusDTO> listStatusByProjectId(Long projectId) {
         return testCaseFeignClient.listStatusByProjectId(projectId).getBody();
+    }
+
+    @Override
+    public String getVersionValue(Long projectId, Long appVersionId) {
+        return applicationFeignClient.getVersionValue(projectId,appVersionId).getBody();
+    }
+
+    @Override
+    public ApplicationRepDTO queryByAppId(Long projectId, Long applicationId) {
+        return applicationFeignClient.queryByAppId(projectId,applicationId).getBody();
     }
 
     @Override

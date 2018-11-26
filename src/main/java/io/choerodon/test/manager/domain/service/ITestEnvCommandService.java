@@ -10,5 +10,7 @@ import java.util.List;
 public interface ITestEnvCommandService {
     List<TestEnvCommand> queryEnvCommand(TestEnvCommand envCommand);
 
+    void updateByPrimaryKey(TestEnvCommand envCommand);
+
     TestEnvCommand insertOne(TestEnvCommand envCommand);
 }

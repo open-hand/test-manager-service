@@ -2,10 +2,12 @@ package io.choerodon.test.manager.app.service;
 
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
+import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -70,4 +72,8 @@ public interface TestCaseService {
     LookupTypeWithValuesDTO queryLookupValueByCode(Long projectId, String typeCode);
 
     List<IssueStatusDTO> listStatusByProjectId(Long projectId);
+
+    String getVersionValue(Long projectId,Long appVersionId);
+
+    ApplicationRepDTO queryByAppId( Long projectId,Long applicationId);
 }

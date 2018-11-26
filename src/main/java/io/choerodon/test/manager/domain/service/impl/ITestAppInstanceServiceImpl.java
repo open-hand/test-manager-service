@@ -21,6 +21,11 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     }
 
     @Override
+    public String queryValueByEnvIdAndAppId(Long envId, Long appId) {
+        return mapper.queryValueByEnvIdAndAppId(envId,appId);
+    }
+
+    @Override
     public TestAppInstanceE update(TestAppInstanceE testAppInstanceE) {
         if(mapper.updateByPrimaryKey(testAppInstanceE)==0){
             throw new CommonException("error.ItestAppInstanceEServiceImpl.update");

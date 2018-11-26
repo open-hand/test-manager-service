@@ -1,17 +1,20 @@
 package io.choerodon.test.manager.domain.service;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface ITestAppInstanceService {
 
-    List<TestAppInstanceE> query(TestAppInstanceE testEnvCommandValue);
+    List<TestAppInstanceE> query(TestAppInstanceE instanceE);
 
-    TestAppInstanceE update(TestAppInstanceE testEnvCommandValue);
+    String queryValueByEnvIdAndAppId( Long envId, Long appId);
 
-    void delete(TestAppInstanceE testEnvCommandValue);
+    TestAppInstanceE update(TestAppInstanceE instanceE);
 
-    TestAppInstanceE insert(TestAppInstanceE testEnvCommandValue);
+    void delete(TestAppInstanceE instanceE);
+
+    TestAppInstanceE insert(TestAppInstanceE instanceE);
 
 }
