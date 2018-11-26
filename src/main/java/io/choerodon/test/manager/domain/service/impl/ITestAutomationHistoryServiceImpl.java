@@ -21,6 +21,11 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
     }
 
     @Override
+    public TestAutomationHistoryE queryByPrimaryKey(Long historyId) {
+        return testAutomationHistoryMapper.selectByPrimaryKey(historyId);
+    }
+
+    @Override
     public TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory) {
         if(testAutomationHistoryMapper.updateByPrimaryKey(testAutomationHistory)==0){
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.update");

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ITestEnvCommandValueService {
 
-    List<TestEnvCommandValue> query(TestEnvCommandValue testEnvCommandValue);
+    TestEnvCommandValue query(Long id);
 
     TestEnvCommandValue update(TestEnvCommandValue testEnvCommandValue);
 

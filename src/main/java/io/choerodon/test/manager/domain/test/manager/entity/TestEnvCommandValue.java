@@ -34,4 +34,11 @@ public class TestEnvCommandValue extends AuditDomain {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public TestEnvCommandValue(String value) {
+        this.value = value;
+    }
+
+    public TestEnvCommandValue() {
+    }
 }

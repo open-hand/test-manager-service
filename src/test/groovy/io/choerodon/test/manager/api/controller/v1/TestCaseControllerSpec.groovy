@@ -35,7 +35,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
 @Stepwise
-class TestCaseControllerTest extends Specification {
+class TestCaseControllerSpec extends Specification {
     @Autowired
     TestRestTemplate restTemplate;
 

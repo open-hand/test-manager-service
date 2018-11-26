@@ -15,8 +15,8 @@ public class ITestEnvCommandValueServiceImpl implements ITestEnvCommandValueServ
     @Autowired
     TestEnvCommandValueMapper mapper;
     @Override
-    public List<TestEnvCommandValue> query(TestEnvCommandValue testEnvCommandValue) {
-        return mapper.select(testEnvCommandValue);
+    public TestEnvCommandValue query(Long id) {
+        return mapper.selectByPrimaryKey(id);
     }
 
     @Override

@@ -8,6 +8,8 @@ public interface ITestAutomationHistoryService {
 
     List<TestAutomationHistoryE> query(TestAutomationHistoryE testAutomationHistory);
 
+    TestAutomationHistoryE queryByPrimaryKey(Long historyId);
+
     TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory);
 
     void delete(TestAutomationHistoryE testAutomationHistory);

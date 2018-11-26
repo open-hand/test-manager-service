@@ -5,11 +5,11 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceLogE;
 import java.util.List;
 
 public interface ITestAppInstanceLogService {
-    List<TestAppInstanceLogE> query(TestAppInstanceLogE testAppInstanceE);
+    List<TestAppInstanceLogE> query(TestAppInstanceLogE logE);
 
-    TestAppInstanceLogE update(TestAppInstanceLogE testAppInstanceE);
+    TestAppInstanceLogE update(TestAppInstanceLogE logE);
 
-    void delete(TestAppInstanceLogE testAppInstanceE);
+    void delete(TestAppInstanceLogE logE);
 
-    TestAppInstanceLogE insert(TestAppInstanceLogE testAppInstanceE);
+    TestAppInstanceLogE insert(TestAppInstanceLogE logE);
 }

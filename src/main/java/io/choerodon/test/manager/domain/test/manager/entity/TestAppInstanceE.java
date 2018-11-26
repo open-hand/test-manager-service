@@ -26,6 +26,8 @@ public class TestAppInstanceE extends AuditDomain {
     private Long commandId;
     private Long projectId;
     private Long podStatus;
+    private Long podName;
+    private Long containerName;
     private Long logId;
 
     public Long getId() {
@@ -106,5 +108,34 @@ public class TestAppInstanceE extends AuditDomain {
 
     public void setLogId(Long logId) {
         this.logId = logId;
+    }
+
+    public Long getPodName() {
+        return podName;
+    }
+
+    public void setPodName(Long podName) {
+        this.podName = podName;
+    }
+
+    public Long getContainerName() {
+        return containerName;
+    }
+
+    public void setContainerName(Long containerName) {
+        this.containerName = containerName;
+    }
+
+    public TestAppInstanceE(String code, Long appVersionId, Long projectVersionId, Long envId, Long commandId, Long projectId, Long podStatus) {
+        this.code = code;
+        this.appVersionId = appVersionId;
+        this.projectVersionId = projectVersionId;
+        this.envId = envId;
+        this.commandId = commandId;
+        this.projectId = projectId;
+        this.podStatus = podStatus;
+    }
+
+    public TestAppInstanceE() {
     }
 }
