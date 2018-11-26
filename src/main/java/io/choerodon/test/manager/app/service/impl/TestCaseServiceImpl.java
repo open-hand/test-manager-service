@@ -4,6 +4,7 @@ package io.choerodon.test.manager.app.service.impl;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
+import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
@@ -174,6 +175,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public ApplicationRepDTO queryByAppId(Long projectId, Long applicationId) {
         return applicationFeignClient.queryByAppId(projectId,applicationId).getBody();
+    }
+
+    @Override
+    public ApplicationVersionRepDTO getAppversion(Long projectId, Long appVersionId) {
+        return applicationFeignClient.getAppversion(projectId,appVersionId).getBody();
     }
 
     @Override

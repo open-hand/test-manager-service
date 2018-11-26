@@ -16,20 +16,25 @@ import io.choerodon.test.manager.app.service.ScheduleService;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
+import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.domain.service.ITestEnvCommandService;
 import io.choerodon.test.manager.domain.service.ITestEnvCommandValueService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommand;
 import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommandValue;
 import io.choerodon.test.manager.infra.common.utils.FileUtil;
 import io.choerodon.test.manager.infra.common.utils.GenerateUUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -52,6 +57,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     @Autowired
     TestCaseService testCaseService;
 
+    @Autowired
+    ITestAutomationHistoryService historyService;
+
     private static final String SCHEDULECODE = "test-deploy-instance";
 
     private static final String DEPLOYDTONAME = "deploy";
@@ -65,7 +73,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     public ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
         ReplaceResult replaceResult = new ReplaceResult();
         //从devops取得value
-        String versionValue = testCaseService.getVersionValue(projectId,appVersionId);
+        String versionValue = testCaseService.getVersionValue(projectId, appVersionId);
         try {
             FileUtil.checkYamlFormat(versionValue);
         } catch (Exception e) {
@@ -83,6 +91,90 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         }
         return replaceResult;
     }
+
+    @JobTask(code = SCHEDULECODE,
+            level = ResourceLevel.PROJECT,
+            maxRetryCount = 5, params = {
+            @JobParam(name = "deployDTO"),
+            @JobParam(name = "projectId", type = Long.class)
+    })
+    @Override
+    public Map<String, TestAppInstanceDTO> createBySchedule(Map<String, Object> data) {
+        String deployDTOString = (String) data.get(DEPLOYDTONAME);
+        Long projectId = (Long) data.get("projectId");
+        Map returnMap = new HashMap<String, TestAppInstanceDTO>();
+        returnMap.put("AppInstanceDTO", create(JSON.toJavaObject(JSON.parseObject(deployDTOString), ApplicationDeployDTO.class), projectId));
+        return returnMap;
+    }
+
+    @Override
+    public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
+        Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
+        ApplicationDeployDTO deployDTO = JSON.parseObject(JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
+        scheduleService.getMethodByService(projectId, "test-manager-service")
+                .stream().filter(v -> v.getCode().equals(SCHEDULECODE))
+                .findFirst()
+                .ifPresent(v -> taskDTO.setMethodId(v.getId()));
+        taskDTO.getParams().clear();
+        taskDTO.getParams().put(DEPLOYDTONAME, deployDTO);
+        taskDTO.getParams().put("projectId", projectId);
+
+        String appName = testCaseService.queryByAppId(projectId, deployDTO.getAppId()).getName();
+        String appVersion = testCaseService.getAppversion(projectId, deployDTO.getAppVerisonId()).getVersion();
+        taskDTO.setName("test-deploy-" + appName + "-" + appVersion + "-" + GenerateUUID.generateUUID());
+        taskDTO.setDescription("测试应用：" + appName + "版本：" + appVersion + "定时部署");
+        return scheduleService.create(projectId, taskDTO);
+    }
+
+
+    @Override
+    public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId) {
+        TestEnvCommand envCommand;
+        TestEnvCommandValue commandValue;
+
+        if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
+            //校验values
+            FileUtil.checkYamlFormat(deployDTO.getValues());
+            commandValue = new TestEnvCommandValue(getReplaceResult(testCaseService.getVersionValue(projectId, deployDTO.getAppVerisonId()),
+                    deployDTO.getValues()).getDeltaYaml().trim());
+            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueService.insert(commandValue).getId());
+        } else {
+            //从history里面查instance，然后再去command里面找value，最后一个创建的value就是最新更改值
+            TestEnvCommand needEnvCommand = new TestEnvCommand();
+            needEnvCommand.setInstanceId(historyService.queryByPrimaryKey(deployDTO.getHistoryId()).getInstanceId());
+            List<TestEnvCommand> envCommands = commandService.queryEnvCommand(needEnvCommand);
+
+            TestEnvCommand retryCommand = envCommands.get(0);
+            //重用EnvCommandValue表中以前的value数据
+            commandValue = commandValueService.query(retryCommand.getValueId());
+            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
+        }
+
+        TestEnvCommand resultCommand = commandService.insertOne(envCommand);
+        TestAppInstanceE instanceE = new TestAppInstanceE(deployDTO.getCode(), deployDTO.getAppVerisonId(), deployDTO.getProjectVersionId(),
+                deployDTO.getEnvironmentId(), resultCommand.getId(), projectId, 0L);
+        TestAppInstanceE resultInstance = instanceService.insert(instanceE);
+
+        //回表EncCommand更新instanceId
+        resultCommand.setInstanceId(resultInstance.getId());
+        commandService.updateByPrimaryKey(resultCommand);
+
+        Yaml yaml = new Yaml();
+        Map result = yaml.loadAs(commandValue.getValue(), Map.class);
+        String frameWork = (String) result.get("framework");
+        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
+        historyE.setFramework(frameWork);
+        historyE.setInstanceId(resultInstance.getId());
+        historyE.setProjectId(projectId);
+        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
+        historyService.insert(historyE);
+
+        //把更改值与从devops查到的值进行整合变为新的 配置value 传给devops 开始部署
+        //调用devops传给它  releaseName: appId-appversionId-instanceid  deployDTO.getAppId()-deployDTO.getAppVerisonId()-instanceE.getId()
+
+        return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
+    }
+
 
     private ReplaceResult getReplaceResult(String versionValue, String deployValue) {
         if (versionValue.equals(deployValue)) {
@@ -129,77 +221,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             errorLines.add(errorLineDTO);
         }
         return errorLines;
-    }
-
-    @JobTask(code = SCHEDULECODE,
-            level = ResourceLevel.PROJECT,
-            maxRetryCount = 5, params = {
-            @JobParam(name = "deployDTO"),
-            @JobParam(name = "projectId", type = Long.class)
-    })
-    @Override
-    public Map<String, TestAppInstanceDTO> createBySchedule(Map<String, Object> data) {
-        String deployDTOString = (String) data.get(DEPLOYDTONAME);
-        Long projectId = (Long) data.get("projectId");
-        Map returnMap = new HashMap<String, TestAppInstanceDTO>();
-        returnMap.put("AppInstanceDTO", create(JSON.toJavaObject(JSON.parseObject(deployDTOString), ApplicationDeployDTO.class), projectId));
-        return returnMap;
-    }
-
-    @Override
-    public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
-        Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
-        ApplicationDeployDTO deployDTO = JSON.parseObject(JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
-        scheduleService.getMethodByService(projectId, "test-manager-service")
-                .stream().filter(v -> v.getCode().equals(SCHEDULECODE))
-                .findFirst()
-                .ifPresent(v -> taskDTO.setMethodId(v.getId()));
-        taskDTO.getParams().clear();
-        taskDTO.getParams().put(DEPLOYDTONAME, deployDTO);
-        taskDTO.getParams().put("projectId", projectId);
-
-        String appName = testCaseService.queryByAppId(projectId,deployDTO.getAppId()).getName();
-        String appVersionName = testCaseService.queryByAppId(projectId,deployDTO.getAppVerisonId()).getName();
-        taskDTO.setName("test-deploy-" + appName +
-                "-" + appVersionName + "-" + GenerateUUID.generateUUID());
-        taskDTO.setDescription("测试应用："+ appName + "版本：" + appVersionName +"定时部署");
-        return scheduleService.create(projectId, taskDTO);
-    }
-
-
-    @Override
-    public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId) {
-        TestEnvCommand envCommand;
-        TestEnvCommandValue commandValue;
-        if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
-            //校验values
-            FileUtil.checkYamlFormat(deployDTO.getValues());
-            commandValue = new TestEnvCommandValue(getReplaceResult(testCaseService.getVersionValue(projectId,deployDTO.getAppVerisonId()), deployDTO.getValues()).getDeltaYaml().trim());
-            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueService.insert(commandValue).getId());
-        } else {
-            //从history里面查instance，然后再去command里面找value，最后一个创建的value就是最新更改值
-            TestEnvCommand needCommand = new TestEnvCommand();
-            needCommand.setInstanceId(0L);
-            TestEnvCommand retryCommand = commandService.queryEnvCommand(needCommand).get(0);
-            commandValue = commandValueService.query(retryCommand.getValueId());
-            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
-        }
-
-        TestEnvCommand resultCommand = commandService.insertOne(envCommand);
-        TestAppInstanceE instanceE = new TestAppInstanceE(deployDTO.getCode(), deployDTO.getAppVerisonId(), deployDTO.getProjectVersionId(),
-                deployDTO.getEnvironmentId(), resultCommand.getId(), projectId, 0L);
-        TestAppInstanceE resultInstance = instanceService.insert(instanceE);
-
-        resultCommand.setInstanceId(resultInstance.getId());
-        commandService.updateByPrimaryKey(resultCommand);
-
-        //插入history，framework字段从value中获取
-        //commandValue.getValue();
-
-        //把更改值与从devops查到的值进行整合变为新的 配置value 传给devops 开始部署
-        //调用devops传给它  releaseName: appId-appversionId-instanceid  deployDTO.getAppId()-deployDTO.getAppVerisonId()-instanceE.getId()
-
-        return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
     }
 
 }

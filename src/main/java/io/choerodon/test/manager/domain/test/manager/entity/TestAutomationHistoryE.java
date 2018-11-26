@@ -7,12 +7,25 @@ import io.choerodon.mybatis.domain.AuditDomain;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Table(name ="test_automation_history")
 @ModifyAudit
 @VersionAudit
 public class TestAutomationHistoryE extends AuditDomain {
+
+    public enum Status {
+        NONEXECUTION(0L) ,COMPLETE(1L),PARTIALEXECUTION(2L);
+        private Long testStatus;
+
+        public Long getStatus() {
+            return testStatus;
+        }
+
+        Status(Long status) {
+            this.testStatus = status;
+        }
+    }
+
     @Id
     @GeneratedValue
     private Long id;
@@ -63,8 +76,8 @@ public class TestAutomationHistoryE extends AuditDomain {
         return testStatus;
     }
 
-    public void setTestStatus(Long testStatus) {
-        this.testStatus = testStatus;
+    public void setTestStatus(Status status) {
+        this.testStatus = status.getStatus();
     }
 
     public Long getInstanceId() {

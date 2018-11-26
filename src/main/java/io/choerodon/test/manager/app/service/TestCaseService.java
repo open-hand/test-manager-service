@@ -3,11 +3,11 @@ package io.choerodon.test.manager.app.service;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
+import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -17,21 +17,21 @@ import java.util.Map;
  */
 public interface TestCaseService {
     //
-    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
+    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
+    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId,Long organizationId);
+    ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page,Long organizationId);
+    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page, Long organizationId);
 
-    Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail,Long organizationId);
+    Object getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail,Long organizationId);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail, Long organizationId);
 
-    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest,Long organizationId);
+    Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId);
 
     List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 
@@ -41,7 +41,7 @@ public interface TestCaseService {
 
     Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
-    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId,Map<String, Object> searchParamMap);
+    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap);
 
     Long[] getVersionIds(Long projectId);
 
@@ -49,7 +49,7 @@ public interface TestCaseService {
 
     List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId);
 
-    IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId,String applyType);
+    IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
 
     List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
 
@@ -73,7 +73,9 @@ public interface TestCaseService {
 
     List<IssueStatusDTO> listStatusByProjectId(Long projectId);
 
-    String getVersionValue(Long projectId,Long appVersionId);
+    String getVersionValue(Long projectId, Long appVersionId);
 
-    ApplicationRepDTO queryByAppId( Long projectId,Long applicationId);
+    ApplicationRepDTO queryByAppId(Long projectId, Long applicationId);
+
+    ApplicationVersionRepDTO getAppversion(Long projectId, Long appVersionId);
 }
