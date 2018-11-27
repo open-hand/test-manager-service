@@ -26,10 +26,19 @@ public class TestAppInstanceE extends AuditDomain {
     private Long commandId;
     private Long projectId;
     private Long podStatus;
-    private Long podName;
-    private Long containerName;
+    private String podName;
+    private String containerName;
     private Long logId;
 
+    public static String getAppIdFromReleaseName(String releaseName){
+        return releaseName.split("-")[0];
+    }
+    public static String getAppVersionIDFromReleaseName(String releaseName){
+        return releaseName.split("-")[1];
+    }
+    public static String getInstanceIDFromReleaseName(String releaseName){
+        return releaseName.split("-")[2];
+    }
     public Long getId() {
         return id;
     }
@@ -110,19 +119,19 @@ public class TestAppInstanceE extends AuditDomain {
         this.logId = logId;
     }
 
-    public Long getPodName() {
+    public String getPodName() {
         return podName;
     }
 
-    public void setPodName(Long podName) {
+    public void setPodName(String podName) {
         this.podName = podName;
     }
 
-    public Long getContainerName() {
+    public String getContainerName() {
         return containerName;
     }
 
-    public void setContainerName(Long containerName) {
+    public void setContainerName(String containerName) {
         this.containerName = containerName;
     }
 

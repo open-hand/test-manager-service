@@ -45,4 +45,9 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
         }
         return mapper.selectByPrimaryKey(testAppInstanceE.getId());
     }
+
+    @Override
+    public TestAppInstanceE queryOne(TestAppInstanceE id){
+       return mapper.selectOne(id);
+    }
 }

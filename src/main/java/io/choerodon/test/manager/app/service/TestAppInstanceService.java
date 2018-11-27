@@ -25,4 +25,6 @@ public interface TestAppInstanceService {
 
     ReplaceResult queryValues(Long projectId,Long appId, Long envId, Long appVersionId);
 
+    void updateInstance(String releaseNames,Long status,String logFile,String podName,String conName);
+
 }

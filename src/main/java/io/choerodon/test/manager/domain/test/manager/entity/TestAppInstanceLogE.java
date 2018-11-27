@@ -17,7 +17,7 @@ public class TestAppInstanceLogE extends AuditDomain {
     @GeneratedValue
     private Long id;
 
-    private Long log;
+    private String log;
 
     public Long getId() {
         return id;
@@ -27,18 +27,11 @@ public class TestAppInstanceLogE extends AuditDomain {
         this.id = id;
     }
 
-    public Long getLog() {
+    public String getLog() {
         return log;
     }
 
-    public void setLog(Long log) {
+    public void setLog(String log) {
         this.log = log;
-    }
-
-    public TestAppInstanceLogE(Long log) {
-        this.log = log;
-    }
-
-    public TestAppInstanceLogE() {
     }
 }

@@ -17,4 +17,5 @@ public interface ITestAppInstanceService {
 
     TestAppInstanceE insert(TestAppInstanceE instanceE);
 
+    TestAppInstanceE queryOne(TestAppInstanceE id);
 }

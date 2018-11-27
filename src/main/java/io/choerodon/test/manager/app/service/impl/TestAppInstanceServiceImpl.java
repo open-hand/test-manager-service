@@ -15,14 +15,8 @@ import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
-import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
-import io.choerodon.test.manager.domain.service.ITestEnvCommandService;
-import io.choerodon.test.manager.domain.service.ITestEnvCommandValueService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommand;
-import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommandValue;
+import io.choerodon.test.manager.domain.service.*;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.FileUtil;
 import io.choerodon.test.manager.infra.common.utils.GenerateUUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +25,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -44,6 +35,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     @Autowired
     ITestAppInstanceService instanceService;
+
+    @Autowired
+    ITestAppInstanceLogService testAppInstanceLogService;
 
     @Autowired
     ITestEnvCommandService commandService;
@@ -221,6 +215,33 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             errorLines.add(errorLineDTO);
         }
         return errorLines;
+    }
+
+    /** devops更新实例信息
+     * @param releaseNames
+     * @param status
+     * @param logFile
+     * @param podName
+     * @param conName
+     */
+    @Override
+    public void updateInstance(String releaseNames,Long status,String logFile,String podName,String conName){
+
+        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+        //实例执行完成更新日志
+        Optional.ofNullable(logFile).ifPresent((v)->{
+            TestAppInstanceLogE logE=new TestAppInstanceLogE();
+            logE.setLog(v);
+            testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
+        });
+        //更新实例状态
+        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
+        testAppInstanceE.setPodStatus(status);
+        testAppInstanceE.setPodName(podName);
+        testAppInstanceE.setContainerName(conName);
+        instanceService.update(testAppInstanceE);
     }
 
 }
