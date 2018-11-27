@@ -8,8 +8,10 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+import io.choerodon.test.manager.domain.test.manager.event.InstancePayload;
 import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
 import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
@@ -32,9 +34,6 @@ public class TestManagerEventHandler {
 	TestIssueFolderRelService testIssueFolderRelService;
 
 	@Autowired
-	private TestCycleService testCycleService;
-
-	@Autowired
 	private TestCycleCaseService testCycleCaseService;
 
 	@Autowired
@@ -45,6 +44,9 @@ public class TestManagerEventHandler {
 
 	@Autowired
 	private FixDataService fixDataService;
+
+	@Autowired
+	private TestAppInstanceService testAppInstanceService;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -139,5 +141,11 @@ public class TestManagerEventHandler {
 	public void fixData(String message) throws IOException {
 		TestIssueFolderDTO testIssueFolderDTO = objectMapper.readValue(message, TestIssueFolderDTO.class);
 		fixDataService.fixCycleData(testIssueFolderDTO.getProjectId());
+	}
+
+	@SagaTask(code = "test-update-instance",description = "更新Appinstance状态",sagaCode = "devops-update-test-instance	",seq = 1)
+	public void updateInstance(String message) throws IOException {
+		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
+		testAppInstanceService.updateInstance(instanceE.getReleaseNames(),instanceE.getStatus(),instanceE.getLogFile(),instanceE.getPodName(),instanceE.getConName());
 	}
 }
