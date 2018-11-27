@@ -61,12 +61,12 @@ class TestStatusMapperSpec extends Specification {
         when:
         def result1 = mapper.ifDeleteCycleCaseAllow(new Long(3))
         then:
-        result1==1
+        result1==2
         when:
         caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
         def result2 = mapper.ifDeleteCycleCaseAllow(new Long(3))
         then:
-        result2==0
+        result2==1
     }
 
     def "IfDeleteCaseStepAllow"() {
