@@ -24,15 +24,15 @@ public class TestCycleCaseDO extends AuditDomain {
 
     private String rank;
 
-	private Long executionStatus;
+    private Long executionStatus;
 
-	private Long assignedTo;
+    private Long assignedTo;
 
-	@Column(name = "description")
-	private String comment;
+    @Column(name = "description")
+    private String comment;
 
-	@Transient
-	private String executionStatusName;
+    @Transient
+    private String executionStatusName;
 
     @Transient
     private String cycleName;
@@ -40,26 +40,30 @@ public class TestCycleCaseDO extends AuditDomain {
     @Transient
     private String folderName;
 
-	@Transient
-	private Long versionId;
+    @Transient
+    private Long versionId;
 
-	@Transient
+    @Transient
     private Long lastExecuteId;
 
-	@Transient
+    @Transient
     private Long nextExecuteId;
 
     @Transient
     List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
     @Transient
-    List<TestCycleCaseDefectRelDO>caseDefect;
+    List<TestCycleCaseDefectRelDO> caseDefect;
 
     @Transient
-    List<TestCycleCaseDefectRelDO>subStepDefects;
+    List<TestCycleCaseDefectRelDO> subStepDefects;
 
-	@Transient
-	List<TestCycleCaseStepDO> cycleCaseStep;
+    @Transient
+    List<TestCycleCaseStepDO> cycleCaseStep;
+
+    public void setId(Long id) {
+        executeId = id;
+    }
 
     public Long getExecuteId() {
         return executeId;
@@ -85,19 +89,19 @@ public class TestCycleCaseDO extends AuditDomain {
         this.issueId = issueId;
     }
 
-	public String getExecutionStatusName() {
-		return executionStatusName;
-	}
+    public String getExecutionStatusName() {
+        return executionStatusName;
+    }
 
-	public void setExecutionStatusName(String executionStatusName) {
-		this.executionStatusName = executionStatusName;
-	}
+    public void setExecutionStatusName(String executionStatusName) {
+        this.executionStatusName = executionStatusName;
+    }
 
-	public Long getExecutionStatus() {
+    public Long getExecutionStatus() {
         return executionStatus;
     }
 
-	public void setExecutionStatus(Long executionStatus) {
+    public void setExecutionStatus(Long executionStatus) {
         this.executionStatus = executionStatus;
     }
 
@@ -165,21 +169,21 @@ public class TestCycleCaseDO extends AuditDomain {
         this.subStepDefects = subStepDefects;
     }
 
-	public List<TestCycleCaseStepDO> getCycleCaseStep() {
-		return cycleCaseStep;
-	}
+    public List<TestCycleCaseStepDO> getCycleCaseStep() {
+        return cycleCaseStep;
+    }
 
-	public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
-		this.cycleCaseStep = cycleCaseStep;
-	}
+    public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
+        this.cycleCaseStep = cycleCaseStep;
+    }
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
     public Long getLastExecuteId() {
         return lastExecuteId;

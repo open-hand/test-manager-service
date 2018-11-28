@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 
 import io.choerodon.test.manager.domain.repository.TestStatusRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,11 +16,11 @@ import java.util.List;
 @Scope("prototype")
 public class TestStatusE {
 
-	public static final String STATUS_UN_EXECUTED = "未执行";
+    public static final String STATUS_UN_EXECUTED = "未执行";
 
-	public static final String STATUS_TYPE_CASE = "CYCLE_CASE";
+    public static final String STATUS_TYPE_CASE = "CYCLE_CASE";
 
-	public static final String STATUS_TYPE_CASE_STEP = "CASE_STEP";
+    public static final String STATUS_TYPE_CASE_STEP = "CASE_STEP";
 
     private Long statusId;
 
@@ -33,31 +34,35 @@ public class TestStatusE {
 
     private Long objectVersionNumber;
 
-	private Long projectId;
+    private Long projectId;
 
 
     @Autowired
     TestStatusRepository testStatusRepository;
 
-	public TestStatusE queryOne() {
-		return testStatusRepository.queryOne(statusId);
-	}
+    public TestStatusE queryOne() {
+        return testStatusRepository.queryOne(statusId);
+    }
 
-	public List<TestStatusE> queryAllUnderProject() {
-		return testStatusRepository.queryAllUnderProject(this);
-	}
+    public TestStatusE queryOneSelective() {
+        return testStatusRepository.queryOne(this);
+    }
+
+    public List<TestStatusE> queryAllUnderProject() {
+        return testStatusRepository.queryAllUnderProject(this);
+    }
 
     public TestStatusE addSelf() {
         return testStatusRepository.insert(this);
     }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public TestStatusE updateSelf() {
         return testStatusRepository.update(this);

@@ -2,7 +2,9 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.domain.repository.TestCaseStepRepository;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -35,17 +37,33 @@ public class TestCaseStepE {
 
     private String nextRank;
 
-	private List<TestCycleCaseAttachmentRelDO> attachments;
+    private List<TestCycleCaseAttachmentRelDO> attachments;
 
     @Autowired
     private TestCaseStepRepository testCaseStepRepository;
 
-	public TestCaseStepE createOneStep() {
+    public TestCaseStepE createOneStep() {
         if (lastRank == null) {
             lastRank = getLastedStepRank();
         }
-		setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
-		return addSelf();
+
+        setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+        return addSelf();
+    }
+
+    public static List<TestCaseStepE> createSteps(List<TestCaseStepE> testCaseSteps) {
+        TestCaseStepE currentStep = testCaseSteps.get(0);
+        currentStep.setRank(RankUtil.Operation.INSERT.getRank(currentStep.getLastedStepRank(), null));
+        TestCaseStepE prevStep = currentStep;
+
+        for (int i = 1; i < testCaseSteps.size(); i++) {
+            currentStep = testCaseSteps.get(i);
+            currentStep.setRank(RankUtil.Operation.INSERT.getRank(prevStep.rank, null));
+            prevStep = currentStep;
+        }
+
+        TestCaseStepRepository repository = SpringUtil.getApplicationContext().getBean(TestCaseStepRepository.class);
+        return repository.batchInsert(testCaseSteps);
     }
 
     public String getLastedStepRank() {
@@ -53,11 +71,11 @@ public class TestCaseStepE {
         return testCaseStepRepository.getLastedRank(issueId);
     }
 
-	public TestCaseStepE changeOneStep() {
-		if (!StringUtils.isEmpty(lastRank) || !StringUtils.isEmpty(nextRank)) {
-			setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
-		}
-		return updateSelf();
+    public TestCaseStepE changeOneStep() {
+        if (!StringUtils.isEmpty(lastRank) || !StringUtils.isEmpty(nextRank)) {
+            setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+        }
+        return updateSelf();
     }
 
     public List<TestCaseStepE> querySelf() {
@@ -81,7 +99,7 @@ public class TestCaseStepE {
     }
 
 
-	public Long getStepId() {
+    public Long getStepId() {
         return stepId;
     }
 
@@ -161,11 +179,11 @@ public class TestCaseStepE {
         return testCaseStepRepository;
     }
 
-	public List<TestCycleCaseAttachmentRelDO> getAttachments() {
+    public List<TestCycleCaseAttachmentRelDO> getAttachments() {
         return attachments;
     }
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
-		this.attachments = attachments;
+        this.attachments = attachments;
     }
 }

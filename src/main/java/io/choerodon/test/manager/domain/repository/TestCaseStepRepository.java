@@ -12,6 +12,8 @@ public interface TestCaseStepRepository {
 
     TestCaseStepE insert(TestCaseStepE testCaseStepE);
 
+    List<TestCaseStepE> batchInsert(List<TestCaseStepE> testCaseSteps);
+
     void delete(TestCaseStepE testCaseStepE);
 
     TestCaseStepE update(TestCaseStepE testCaseStepE);

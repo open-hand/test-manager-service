@@ -59,4 +59,11 @@ ORDER BY
 	rank DESC
 
     </select>
+
+    <insert id="batchInsertTestCaseSteps" parameterType="java.util.List">
+        INSERT INTO test_case_step(rank, issue_id, test_step, test_data, expected_result) VALUES
+        <foreach collection="list" item="testCaseStep" separator=",">
+            (#{testCaseStep.rank}, #{testCaseStep.issueId}, #{testCaseStep.testStep}, #{testCaseStep.testData}, #{testCaseStep.expectedResult})
+        </foreach>
+    </insert>
 </mapper>

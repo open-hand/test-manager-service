@@ -54,7 +54,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Async
     @Override
     public void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
-        TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId);
+        TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId, "导入");
         TestFileLoadHistoryE loadHistoryE = iExcelImportService.initLoadHistory(projectId, folderE.getFolderId(), userId);
         TestFileLoadHistoryE.Status status = TestFileLoadHistoryE.Status.SUCCESS;
 

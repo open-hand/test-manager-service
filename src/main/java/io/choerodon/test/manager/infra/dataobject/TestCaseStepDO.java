@@ -35,6 +35,10 @@ public class TestCaseStepDO extends AuditDomain {
     @Transient
     private List<TestCycleCaseAttachmentRelDO> attachments;
 
+    public void setId(Long id) {
+        stepId = id;
+    }
+
     public Long getStepId() {
         return stepId;
     }

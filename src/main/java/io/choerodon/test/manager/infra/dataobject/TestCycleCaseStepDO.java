@@ -48,6 +48,9 @@ public class TestCycleCaseStepDO extends AuditDomain {
     @Transient
     private List<TestCycleCaseDefectRelDO> defects;
 
+    public void setId(Long id) {
+        executeStepId = id;
+    }
 
     public Long getExecuteStepId() {
         return executeStepId;
