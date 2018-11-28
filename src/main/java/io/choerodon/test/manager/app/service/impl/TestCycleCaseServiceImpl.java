@@ -15,9 +15,11 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +81,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId,Long organizationId) {
-        TestCycleDTO queryTestCycleDTO = new TestCycleDTO();
-        queryTestCycleDTO.setCycleId(dto.getCycleId());
+
+        TestCycleE testCycleE=TestCycleEFactory.create();
+        testCycleE.setCycleId(dto.getCycleId());
+        TestIssueFolderE folderE= TestIssueFolderEFactory.create();
+        folderE.setFolderId(testCycleE.queryOne().getFolderId());
+        if(!folderE.queryOne(folderE).getProjectId().equals(projectId))
+            return new Page();
         //找到所有的子阶段
-        List<TestCycleE> testCycleES = iTestCycleService.queryChildCycle(ConvertHelper.convert(queryTestCycleDTO, TestCycleE.class));
+        List<TestCycleE> testCycleES = iTestCycleService.queryChildCycle(testCycleE);
         //装配值进DTO中
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
         testCycleCaseDTOS.add(dto);

@@ -45,4 +45,14 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
     }
+
+    public void shutdownInstance(Long instanceId,Long status){
+        TestAutomationHistoryE historyE=new TestAutomationHistoryE();
+        historyE.setInstanceId(instanceId);
+        TestAutomationHistoryE historyE1=testAutomationHistoryMapper.selectOne(historyE);
+        historyE.setObjectVersionNumber(historyE1.getObjectVersionNumber());
+        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
+        historyE.setId(historyE1.getId());
+        testAutomationHistoryMapper.updateByPrimaryKey(historyE);
+    }
 }
