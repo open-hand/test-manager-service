@@ -42,7 +42,6 @@ security:
     enabled: false
   ignored:
   - /v2/api-docs
-  - /v1/automation/import/report/mocha
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration:

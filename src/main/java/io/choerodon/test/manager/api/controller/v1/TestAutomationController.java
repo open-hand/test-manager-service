@@ -25,7 +25,7 @@ public class TestAutomationController {
     @Autowired
     private JsonImportService jsonImportService;
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(permissionPublic = true)
     @ApiOperation("从导入自动化测试报告")
     @PostMapping("/import/report/mocha")
     public ResponseEntity<Long> importMochaReport(@RequestParam String releaseName,
