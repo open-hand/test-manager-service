@@ -15,4 +15,6 @@ public interface ITestAutomationHistoryService {
     void delete(TestAutomationHistoryE testAutomationHistory);
 
     TestAutomationHistoryE insert(TestAutomationHistoryE testAutomationHistory);
+
+    void shutdownInstance(Long instanceId,Long status);
 }

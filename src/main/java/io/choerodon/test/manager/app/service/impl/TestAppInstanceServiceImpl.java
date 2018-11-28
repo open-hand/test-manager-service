@@ -244,4 +244,19 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         instanceService.update(testAppInstanceE);
     }
 
+    @Override
+    public void shutdownInstance(Long instanceId,Long status){
+        if(status.equals(0L))
+            return;
+        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+
+        //更新实例状态
+        testAppInstanceE.setId(instanceId);
+        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
+        testAppInstanceE.setPodStatus(1L);
+        instanceService.update(testAppInstanceE);
+
+    }
+
 }

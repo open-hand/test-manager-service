@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.eventhandler;
 
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import io.choerodon.asgard.saga.annotation.SagaTask;
@@ -8,6 +9,7 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,6 +50,9 @@ public class TestManagerEventHandler {
 
 	@Autowired
 	private TestAppInstanceService testAppInstanceService;
+
+	@Autowired
+	private ITestAutomationHistoryService iTestAutomationHistoryService;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -147,5 +153,16 @@ public class TestManagerEventHandler {
 	public void updateInstance(String message) throws IOException {
 		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
 		testAppInstanceService.updateInstance(instanceE.getReleaseNames(),instanceE.getStatus(),instanceE.getLogFile(),instanceE.getPodName(),instanceE.getConName());
+	}
+
+	@SagaTask(code = "test-update-instance-history",description = "更新AppinstanceHistory状态",sagaCode = "devops-update-test-instance-history",seq = 1)
+	public void updateInstanceHistory(String message) throws IOException {
+		JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class,InstancePayload.class);
+		List<InstancePayload> list =  objectMapper.readValue(message, javaType);
+		list.stream().filter(v->v.getStatus().equals(1L)).distinct().forEach(u->{
+			Long instanceId=Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(u.getReleaseNames()));
+			testAppInstanceService.shutdownInstance(instanceId,u.getStatus());
+			iTestAutomationHistoryService.shutdownInstance(instanceId,u.getStatus());
+		});
 	}
 }
