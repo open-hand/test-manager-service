@@ -36,8 +36,10 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory
 import io.choerodon.test.manager.domain.test.manager.factory.TestFileLoadHistoryEFactory
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import io.reactivex.netty.protocol.http.server.HttpServerRequest
 import org.apache.commons.lang.StringUtils
@@ -114,16 +116,21 @@ class TestCycleCaseControllerSpec extends Specification {
     @Autowired
     NotifyService notifyService
 
+    @Autowired
+    TestIssueFolderMapper folderMapper;
     @Shared
     Object target
 
     def "initEnv"() {
         given:
+        TestIssueFolderDO folderDO=new TestIssueFolderDO(name: "111",projectId: 142L,versionId: 11111L)
+        folderMapper.insert(folderDO)
+
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
         testCycleDTO1.setFromDate(new Date())
         testCycleDTO1.setToDate(new Date())
         testCycleDTO1.setCycleName("testCycleCaseInsert")
-        testCycleDTO1.setFolderId(11111L)
+        testCycleDTO1.setFolderId(folderDO.getFolderId())
         testCycleDTO1.setVersionId(11111L)
         testCycleDTO1.setType(TestCycleE.CYCLE)
         testCycleDTO1.setObjectVersionNumber(1L)
@@ -145,7 +152,6 @@ class TestCycleCaseControllerSpec extends Specification {
         and:
         entity.body != null
         cycleIds.add(entity.body.cycleId)
-        entity.body.folderId == 11111L
 
         when: '向插入status的接口发请求'
         entity = restTemplate.postForEntity('/v1/projects/{project_id}/status', statusDO, TestStatusDTO, 142)
