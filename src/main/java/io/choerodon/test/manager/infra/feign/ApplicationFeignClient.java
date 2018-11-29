@@ -3,12 +3,12 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author zongw.lee@gmail.com
@@ -51,6 +51,17 @@ public interface ApplicationFeignClient {
     ResponseEntity<ApplicationVersionRepDTO> getAppversion(
             @PathVariable(value = "project_id") Long projectId,
             @PathVariable(value = "app_versionId") Long appVersionId);
+
+    /**
+     * @param projectId     项目id
+     * @param replaceResult 部署value
+     * @return ReplaceResult
+     */
+    @PostMapping("/v1/projects/{project_id}/app_instances/previewValue")
+    ResponseEntity<ReplaceResult> previewValues(
+            @PathVariable(value = "project_id") Long projectId,
+            @RequestBody ReplaceResult replaceResult,
+            @RequestParam(value = "appVersionId") Long appVersionId);
 
 }
 

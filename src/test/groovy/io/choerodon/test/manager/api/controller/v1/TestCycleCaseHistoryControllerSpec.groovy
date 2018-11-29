@@ -1,25 +1,18 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import com.netflix.discovery.converters.Auto
-import io.choerodon.agile.api.dto.UserDO
+
 import io.choerodon.core.domain.Page
-import io.choerodon.mybatis.pagehelper.domain.PageRequest
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE
-import org.apache.commons.collections.MapUtils
-import org.assertj.core.util.Maps
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
-import org.springframework.test.util.AopTestUtils
 import spock.lang.Specification
 import spock.lang.Stepwise
-
-import java.lang.reflect.Field
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 

@@ -8,13 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name ="test_automation_history")
+@Table(name = "test_automation_history")
 @ModifyAudit
 @VersionAudit
 public class TestAutomationHistoryE extends AuditDomain {
 
     public enum Status {
-        NONEXECUTION(0L) ,COMPLETE(1L),PARTIALEXECUTION(2L);
+        NONEXECUTION(0L), COMPLETE(1L), PARTIALEXECUTION(2L);
         private Long testStatus;
 
         public Long getStatus() {
@@ -78,6 +78,10 @@ public class TestAutomationHistoryE extends AuditDomain {
 
     public void setTestStatus(Status status) {
         this.testStatus = status.getStatus();
+    }
+
+    public void setTestStatus(Long testStatus) {
+        this.testStatus = testStatus;
     }
 
     public Long getInstanceId() {

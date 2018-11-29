@@ -14,7 +14,7 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     
     @Autowired
     TestAppInstanceMapper mapper;
-    
+
     @Override
     public List<TestAppInstanceE> query(TestAppInstanceE testAppInstanceE) {
         return mapper.select(testAppInstanceE);
@@ -40,7 +40,7 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
 
     @Override
     public TestAppInstanceE insert(TestAppInstanceE testAppInstanceE) {
-        if(mapper.updateByPrimaryKey(testAppInstanceE)==0){
+        if(mapper.insert(testAppInstanceE)==0){
             throw new CommonException("error.ITestAppInstanceServiceImpl.insert");
         }
         return mapper.selectByPrimaryKey(testAppInstanceE.getId());

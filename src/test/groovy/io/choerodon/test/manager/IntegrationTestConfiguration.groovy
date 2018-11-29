@@ -6,6 +6,7 @@ import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
 import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.NotifyService
+import io.choerodon.test.manager.app.service.ScheduleService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.infra.feign.FileFeignClient
@@ -79,6 +80,11 @@ class IntegrationTestConfiguration {
     @Primary
     NotifyService createMock8() {
         return detachedMockFactory.Mock(NotifyService)
+    }
+    @Bean
+    @Primary
+    ScheduleService createMock9() {
+        return detachedMockFactory.Mock(ScheduleService)
     }
 
 

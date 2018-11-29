@@ -23,9 +23,6 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
-        createIndex(indexName: 'uk_code', tableName: 'test_app_instance', unique: true) {
-            column(name: 'code')
-        }
     }
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-11-21-add_sequence_test_app_instance') {
 

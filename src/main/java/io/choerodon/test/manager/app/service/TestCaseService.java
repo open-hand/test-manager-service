@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
@@ -78,4 +79,6 @@ public interface TestCaseService {
     ApplicationRepDTO queryByAppId(Long projectId, Long applicationId);
 
     ApplicationVersionRepDTO getAppversion(Long projectId, Long appVersionId);
+
+    ReplaceResult previewValues(Long projectId,ReplaceResult replaceResult, Long appVersionId);
 }
