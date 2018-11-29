@@ -131,13 +131,14 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         TestEnvCommandValue commandValue;
         ReplaceResult sendResult =  new ReplaceResult();
         sendResult.setYaml(deployDTO.getValues());
-        String replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId()).getYaml();
+        String replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId()).getDeltaYaml();
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
             Long commandValueId = null;
             if (!ObjectUtils.isEmpty(replaceResult)) {
                 commandValue = new TestEnvCommandValue();
+                commandValue.setValue(replaceResult);
                 commandValueId = commandValueService.insert(commandValue).getId();
             }
             envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueId);
