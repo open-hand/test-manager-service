@@ -1,0 +1,96 @@
+# Default values for api-gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: registry.saas.hand-china.com/operation-test-manager/test-mocha
+  pullPolicy: Always
+
+env:
+  open:
+    APIGATEWAY: http://api.staging.saas.hand-china.com
+    PROJECTID: 144
+    USERNAME: 16965
+    PASSWORD: Smartisan0000
+    RESULTGATEWAY: http://api.staging.saas.hand-china.com
+    RESULTPATH: mochawesome-report
+    RESULTNAME: mochawesome
+    SLOW: 250
+    TIMEOUT: 15000
+
+job:
+  activeDeadlineSeconds: 1200
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances chart run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
+  limits:
+    # cpu: 100m
+    # memory: 2Gi
+  requests:
+    # cpu: 100m
+    # memory: 1Gi
+
+
+---
+# Default values for api-gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: registry.choerodon.com.cn/choerodon-c7ntest/choerodon-front-test-manager
+  pullPolicy: Always
+
+preJob:
+  preConfig:
+    mysql:
+      host: 192.168.12.156
+      port: 3306
+      username: root
+      password: handhand
+      dbname: iam_service
+      enabledelete: true
+
+metrics:
+  path: /prometheus
+  group: nginx
+
+logs:
+  parser: nginx
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  host: test.choerodon.staging.saas.hand-china.com
+
+env:
+  open:
+    PRO_HTTP: http
+    PRO_COOKIE_SERVER: choerodon.staging.saas.hand-china.com
+    PRO_LOCAL: true
+    PRO_CLIENT_ID: testManager
+    PRO_TITLE_NAME: TestManager
+    PRO_API_HOST: api.staging.saas.hand-china.com
+    PRO_HEADER_TITLE_NAME: TestManager
+    PRO_AGILE_HOST: http://minio.staging.saas.hand-china.com/agile-service/
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances chart run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
+  limits:
+    # cpu: 100m
+    # memory: 2Gi
+  requests:
+    # cpu: 100m
+    # memory: 1Gi
+
+
