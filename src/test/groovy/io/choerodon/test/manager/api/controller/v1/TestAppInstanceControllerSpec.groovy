@@ -183,7 +183,7 @@ class TestAppInstanceControllerSpec extends Specification {
         noExceptionThrown()
 
         when: "错误yaml格式"
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1&envId=1&appVersionId=1",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1111&envId=1111&appVersionId=1111",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> "234as4^&(^&#\$%ad23"
