@@ -50,6 +50,7 @@ public class FileUtil {
 
     private FileUtil() {
     }
+
     /**
      * 通过inputStream流 替换文件的参数
      *
@@ -947,36 +948,32 @@ public class FileUtil {
     }
 
     /**
-     * 保存 json 为文件
+     * 保存json为文件
      *
-     * @param path     目标路径
-     * @param fileName 存储文件名
-     * @param data     json 内容
+     * @param path
+     * @param fileName
+     * @param data
+     * @return
      */
-    public static void saveDataToFile(String path, String fileName, String data) {
-        File file = new File(path + System.getProperty("file.separator") + fileName);
-        //如果文件不存在，则新建一个
-        if (!file.exists()) {
-            new File(path).mkdirs();
-            try {
-                if (!file.createNewFile()) {
-                    throw new CommonException("error.file.create");
-                }
-            } catch (IOException e) {
-                logger.info(e.getMessage());
-            }
-        }
-        //写入
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file, false)) {
-            try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8")) {
-                try (BufferedWriter writer = new BufferedWriter(outputStreamWriter)) {
-                    writer.write(data);
+    public static File saveDataToFile(String prefix, String suffix, String data) {
+        File file = null;
+        try {
+            //新建临时文件
+            file = File.createTempFile(prefix, suffix);
+
+            //写入
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file, false)) {
+                try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8")) {
+                    try (BufferedWriter writer = new BufferedWriter(outputStreamWriter)) {
+                        writer.write(data);
+                    }
                 }
             }
         } catch (IOException e) {
-            logger.info(e.getMessage());
+            throw new CommonException("error.file.create",e);
         }
         logger.info("文件写入成功！");
+        return file;
     }
 
 
@@ -1134,7 +1131,7 @@ public class FileUtil {
     }
 
     private static void compressHandle(File sourceFile, ZipOutputStream zos, String name,
-                                boolean keepDirStructure){
+                                       boolean keepDirStructure) {
         File[] listFiles = sourceFile.listFiles();
         if (listFiles == null || listFiles.length == 0) {
             // 需要保留原来的文件结构时,需要对空文件夹进行处理

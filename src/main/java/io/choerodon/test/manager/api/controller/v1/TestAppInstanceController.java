@@ -9,7 +9,7 @@ import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
-import io.choerodon.test.manager.app.service.impl.TestAppInstanceDTO;
+import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,9 +43,9 @@ public class TestAppInstanceController {
     @GetMapping("/value")
     public ResponseEntity<ReplaceResult> queryValues(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestParam Long appId,
-            @RequestParam Long envId,
-            @RequestParam Long appVersionId) {
+            @RequestParam(value = "appId") Long appId,
+            @RequestParam(value = "envId") Long envId,
+            @RequestParam(value = "appVersionId") Long appVersionId) {
         return Optional.ofNullable(instanceService.queryValues(projectId, appId, envId, appVersionId))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.values.query"));

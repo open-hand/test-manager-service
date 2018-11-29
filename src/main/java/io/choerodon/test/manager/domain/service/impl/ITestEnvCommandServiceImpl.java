@@ -24,6 +24,8 @@ public class ITestEnvCommandServiceImpl implements ITestEnvCommandService {
     @Override
     public List<TestEnvCommand> queryEnvCommand(TestEnvCommand envCommand) {
         PageRequest pageRequest = new PageRequest();
+        pageRequest.setPage(0);
+        pageRequest.setSize(99999999);
         pageRequest.setSort(new Sort(Sort.Direction.DESC, "creation_date"));
         return PageHelper.doPageAndSort(pageRequest, () -> envCommandMapper.select(envCommand));
     }

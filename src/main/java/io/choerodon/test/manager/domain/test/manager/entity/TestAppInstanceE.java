@@ -3,12 +3,13 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name ="test_app_instance")
+@Table(name = "test_app_instance")
 @ModifyAudit
 @VersionAudit
 public class TestAppInstanceE extends AuditDomain {
@@ -135,11 +136,13 @@ public class TestAppInstanceE extends AuditDomain {
         this.containerName = containerName;
     }
 
-    public TestAppInstanceE(String code, Long appVersionId, Long projectVersionId, Long envId, Long commandId, Long projectId, Long podStatus) {
-        this.code = code;
-        this.appVersionId = appVersionId;
-        this.projectVersionId = projectVersionId;
-        this.envId = envId;
+    public TestAppInstanceE(ApplicationDeployDTO deployDTO, Long commandId,
+                            Long projectId, Long podStatus) {
+        this.appId = deployDTO.getAppId();
+        this.code = deployDTO.getCode();
+        this.appVersionId = deployDTO.getAppVerisonId();
+        this.projectVersionId = deployDTO.getProjectVersionId();
+        this.envId = deployDTO.getEnvironmentId();
         this.commandId = commandId;
         this.projectId = projectId;
         this.podStatus = podStatus;

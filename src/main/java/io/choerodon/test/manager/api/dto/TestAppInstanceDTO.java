@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.app.service.impl;
+package io.choerodon.test.manager.api.dto;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -12,6 +12,10 @@ public class TestAppInstanceDTO {
     private Long envId;
     private Long commandId;
     private Long podStatus;
+    private Long projectId;
+    private Long podName;
+    private Long containerName;
+    private Long logId;
 
     public Long getId() {
         return id;
@@ -75,5 +79,37 @@ public class TestAppInstanceDTO {
 
     public void setPodStatus(Long podStatus) {
         this.podStatus = podStatus;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public Long getPodName() {
+        return podName;
+    }
+
+    public void setPodName(Long podName) {
+        this.podName = podName;
+    }
+
+    public Long getContainerName() {
+        return containerName;
+    }
+
+    public void setContainerName(Long containerName) {
+        this.containerName = containerName;
+    }
+
+    public Long getLogId() {
+        return logId;
+    }
+
+    public void setLogId(Long logId) {
+        this.logId = logId;
     }
 }

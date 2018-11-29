@@ -1,17 +1,18 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.devops.api.dto.ErrorLineDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
+import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -25,7 +26,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -77,76 +81,84 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             replaceResult.setErrorLines(getErrorLine(e.getMessage()));
             return replaceResult;
         }
-        String deployValue = FileUtil.checkValueFormat(
-                instanceService.queryValueByEnvIdAndAppId(envId, appId));
+        String deployValue = FileUtil.checkValueFormat(instanceService.queryValueByEnvIdAndAppId(envId, appId));
         replaceResult.setYaml(versionValue);
         if (deployValue != null) {
-            replaceResult = getReplaceResult(versionValue, deployValue);
+            ReplaceResult sendResult = new ReplaceResult();
+            sendResult.setYaml(deployValue);
+            replaceResult = testCaseService.previewValues(projectId,sendResult,appVersionId);
         }
         return replaceResult;
     }
 
     @JobTask(code = SCHEDULECODE,
             level = ResourceLevel.PROJECT,
-            maxRetryCount = 5, params = {
-            @JobParam(name = "deployDTO"),
+            maxRetryCount = 3, params = {
+            @JobParam(name = DEPLOYDTONAME),
             @JobParam(name = "projectId", type = Long.class)
     })
     @Override
     public Map<String, TestAppInstanceDTO> createBySchedule(Map<String, Object> data) {
-        String deployDTOString = (String) data.get(DEPLOYDTONAME);
-        Long projectId = (Long) data.get("projectId");
-        Map returnMap = new HashMap<String, TestAppInstanceDTO>();
-        returnMap.put("AppInstanceDTO", create(JSON.toJavaObject(JSON.parseObject(deployDTOString), ApplicationDeployDTO.class), projectId));
+        ApplicationDeployDTO deployDTO = JSON.parseObject(JSON.toJSONString(data.get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
+        Long projectId = ((Integer) data.get("projectId")).longValue();
+        Map<String, TestAppInstanceDTO> returnMap = Maps.newHashMap();
+        returnMap.put("AppInstanceDTO", create(deployDTO, projectId));
         return returnMap;
     }
 
     @Override
     public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
         Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
-        ApplicationDeployDTO deployDTO = JSON.parseObject(JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
+        ApplicationDeployDTO deploy = JSON.parseObject(JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
         scheduleService.getMethodByService(projectId, "test-manager-service")
                 .stream().filter(v -> v.getCode().equals(SCHEDULECODE))
                 .findFirst()
                 .ifPresent(v -> taskDTO.setMethodId(v.getId()));
         taskDTO.getParams().clear();
-        taskDTO.getParams().put(DEPLOYDTONAME, deployDTO);
+        taskDTO.getParams().put(DEPLOYDTONAME, deploy);
         taskDTO.getParams().put("projectId", projectId);
 
-        String appName = testCaseService.queryByAppId(projectId, deployDTO.getAppId()).getName();
-        String appVersion = testCaseService.getAppversion(projectId, deployDTO.getAppVerisonId()).getVersion();
+        String appName = testCaseService.queryByAppId(projectId, deploy.getAppId()).getName();
+        String appVersion = testCaseService.getAppversion(projectId, deploy.getAppVerisonId()).getVersion();
         taskDTO.setName("test-deploy-" + appName + "-" + appVersion + "-" + GenerateUUID.generateUUID());
         taskDTO.setDescription("测试应用：" + appName + "版本：" + appVersion + "定时部署");
         return scheduleService.create(projectId, taskDTO);
     }
 
-
     @Override
     public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId) {
         TestEnvCommand envCommand;
         TestEnvCommandValue commandValue;
-
+        ReplaceResult sendResult =  new ReplaceResult();
+        sendResult.setYaml(deployDTO.getValues());
+        String replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId()).getYaml();
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
-            commandValue = new TestEnvCommandValue(getReplaceResult(testCaseService.getVersionValue(projectId, deployDTO.getAppVerisonId()),
-                    deployDTO.getValues()).getDeltaYaml().trim());
-            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueService.insert(commandValue).getId());
+            Long commandValueId = null;
+            if (!ObjectUtils.isEmpty(replaceResult)) {
+                commandValue = new TestEnvCommandValue();
+                commandValueId = commandValueService.insert(commandValue).getId();
+            }
+            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueId);
         } else {
             //从history里面查instance，然后再去command里面找value，最后一个创建的value就是最新更改值
             TestEnvCommand needEnvCommand = new TestEnvCommand();
             needEnvCommand.setInstanceId(historyService.queryByPrimaryKey(deployDTO.getHistoryId()).getInstanceId());
             List<TestEnvCommand> envCommands = commandService.queryEnvCommand(needEnvCommand);
-
+            Assert.notNull(envCommands, "error.deploy.retry.envCommands.are.empty");
             TestEnvCommand retryCommand = envCommands.get(0);
             //重用EnvCommandValue表中以前的value数据
-            commandValue = commandValueService.query(retryCommand.getValueId());
-            envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
+            if (!ObjectUtils.isEmpty(retryCommand.getValueId())) {
+                commandValue = commandValueService.query(retryCommand.getValueId());
+                envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
+            } else {
+                envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, null);
+            }
         }
 
         TestEnvCommand resultCommand = commandService.insertOne(envCommand);
-        TestAppInstanceE instanceE = new TestAppInstanceE(deployDTO.getCode(), deployDTO.getAppVerisonId(), deployDTO.getProjectVersionId(),
-                deployDTO.getEnvironmentId(), resultCommand.getId(), projectId, 0L);
+        TestAppInstanceE instanceE = new TestAppInstanceE(deployDTO, resultCommand.getId(), projectId, 0L);
         TestAppInstanceE resultInstance = instanceService.insert(instanceE);
 
         //回表EncCommand更新instanceId
@@ -154,7 +166,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         commandService.updateByPrimaryKey(resultCommand);
 
         Yaml yaml = new Yaml();
-        Map result = yaml.loadAs(commandValue.getValue(), Map.class);
+        Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
         String frameWork = (String) result.get("framework");
         TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setFramework(frameWork);
@@ -167,33 +179,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         //调用devops传给它  releaseName: appId-appversionId-instanceid  deployDTO.getAppId()-deployDTO.getAppVerisonId()-instanceE.getId()
 
         return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
-    }
-
-
-    private ReplaceResult getReplaceResult(String versionValue, String deployValue) {
-        if (versionValue.equals(deployValue)) {
-            ReplaceResult replaceResult = new ReplaceResult();
-            replaceResult.setDeltaYaml("");
-            replaceResult.setHighlightMarkers(new ArrayList<>());
-            replaceResult.setNewLines(new ArrayList<>());
-            return replaceResult;
-        }
-
-        String fileName = GenerateUUID.generateUUID() + ".yaml";
-        String path = "deployfile";
-        FileUtil.saveDataToFile(path, fileName, versionValue + "\n" + "---" + "\n" + deployValue);
-        ReplaceResult replaceResult;
-        try {
-            replaceResult = FileUtil.replaceNew(path + System.getProperty("file.separator") + fileName);
-        } catch (Exception e) {
-            throw new CommonException(e.getMessage(), e);
-        }
-        if (replaceResult.getHighlightMarkers() == null) {
-            replaceResult.setHighlightMarkers(new ArrayList<>());
-        }
-        replaceResult.setTotalLine(FileUtil.getFileTotalLine(replaceResult.getYaml()));
-        FileUtil.deleteFile(path + System.getProperty("file.separator") + fileName);
-        return replaceResult;
     }
 
     private List<ErrorLineDTO> getErrorLine(String value) {
