@@ -21,11 +21,13 @@ public interface TestAppInstanceService {
 
     Map<String, TestAppInstanceDTO> createBySchedule(Map<String,Object> data);
 
+    void closeInstance(String releaseNames,Long status,String logFile);
+
     QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId);
 
     ReplaceResult queryValues(Long projectId,Long appId, Long envId, Long appVersionId);
 
-    void updateInstance(String releaseNames,Long status,String logFile,String podName,String conName);
+    void updateInstance(String releaseNames,String podName,String conName);
 
     void shutdownInstance(Long instanceId,Long status);
 }

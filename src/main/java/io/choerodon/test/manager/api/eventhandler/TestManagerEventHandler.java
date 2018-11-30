@@ -149,17 +149,24 @@ public class TestManagerEventHandler {
 		fixDataService.fixCycleData(testIssueFolderDTO.getProjectId());
 	}
 
-	@SagaTask(code = "test-update-instance",description = "更新Appinstance状态",sagaCode = "devops-update-test-instance	",seq = 1)
+	@SagaTask(code = "test-start-instance",description = "更新Appinstance状态",sagaCode = "devops-start-test-instance	",seq = 1)
 	public void updateInstance(String message) throws IOException {
 		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
-		testAppInstanceService.updateInstance(instanceE.getReleaseNames(),instanceE.getStatus(),instanceE.getLogFile(),instanceE.getPodName(),instanceE.getConName());
+		testAppInstanceService.updateInstance(instanceE.getReleaseNames(),instanceE.getPodName(),instanceE.getConName());
 	}
+
+	@SagaTask(code = "test-close-instance",description = "更新Appinstance状态",sagaCode = "devops-close-test-instance	",seq = 1)
+	public void closeInstance(String message) throws IOException {
+		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
+		testAppInstanceService.closeInstance(instanceE.getReleaseNames(),instanceE.getStatus(),instanceE.getLogFile());
+	}
+
 
 	@SagaTask(code = "test-update-instance-history",description = "更新AppinstanceHistory状态",sagaCode = "devops-update-test-instance-history",seq = 1)
 	public void updateInstanceHistory(String message) throws IOException {
 		JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class,InstancePayload.class);
 		List<InstancePayload> list =  objectMapper.readValue(message, javaType);
-		list.stream().filter(v->v.getStatus().equals(1L)).distinct().forEach(u->{
+		list.stream().filter(v->v.getStatus().equals(0L)).distinct().forEach(u->{
 			Long instanceId=Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(u.getReleaseNames()));
 			testAppInstanceService.shutdownInstance(instanceId,u.getStatus());
 			iTestAutomationHistoryService.shutdownInstance(instanceId,u.getStatus());
