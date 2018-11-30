@@ -205,30 +205,42 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     /** devops更新实例信息
      * @param releaseNames
-     * @param status
-     * @param logFile
      * @param podName
      * @param conName
      */
     @Override
-    public void updateInstance(String releaseNames,Long status,String logFile,String podName,String conName){
+    public void updateInstance(String releaseNames,String podName,String conName){
 
         TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
-        //实例执行完成更新日志
-        Optional.ofNullable(logFile).ifPresent((v)->{
-            TestAppInstanceLogE logE=new TestAppInstanceLogE();
-            logE.setLog(v);
-            testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
-        });
         //更新实例状态
         testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(status);
+        testAppInstanceE.setPodStatus(0L);
         testAppInstanceE.setPodName(podName);
         testAppInstanceE.setContainerName(conName);
         instanceService.update(testAppInstanceE);
     }
+
+    /** 关闭实例
+     * @param releaseNames
+     * @param status
+     * @param logFile
+     */
+    @Override
+    public void closeInstance(String releaseNames,Long status,String logFile){
+        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
+
+        TestAppInstanceLogE logE=new TestAppInstanceLogE();
+        logE.setLog(logFile);
+        testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
+        testAppInstanceE.setPodStatus(status);
+        instanceService.update(testAppInstanceE);
+    }
+
 
     @Override
     public void shutdownInstance(Long instanceId,Long status){
