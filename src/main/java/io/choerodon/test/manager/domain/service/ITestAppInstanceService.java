@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.domain.service;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

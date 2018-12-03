@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +12,6 @@ import java.util.Map;
 public class ScheduleTaskDTO {
 
     @ApiModelProperty(value = "执行任务方法id")
-    @NotNull(message = "error.scheduleTask.methodNull")
     private Long methodId;
 
     @ApiModelProperty(value = "输入参数的map形式")
