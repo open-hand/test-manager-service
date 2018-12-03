@@ -87,7 +87,7 @@ class TestAppInstanceControllerSpec extends Specification {
         def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(deltaYaml: "")
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: "",deltaYaml: "")
         TestEnvCommand insertCommand = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         TestAutomationHistoryE historyE = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche",
                 instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
@@ -104,7 +104,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues,deltaYaml: changedValues)
         TestEnvCommand insertCommand2 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         and:
         insertCommand2.commandType.equals("restart")
@@ -116,7 +116,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO2, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml:changedValues,deltaYaml: changedValues)
         TestEnvCommand insertCommand3 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         TestAutomationHistoryE historyE3 = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche",
                 instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
@@ -135,7 +135,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO2, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml:changedValues,deltaYaml: changedValues)
         TestEnvCommand insertCommand4 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         and:
         insertCommand4.commandType.equals("restart")
@@ -150,7 +150,8 @@ class TestAppInstanceControllerSpec extends Specification {
                 new ScheduleMethodDTO(id: 1L, code: "test-deploy-instance"), new ScheduleMethodDTO(id: 2L, code: "test"))
         ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVerisonId: 1L,
                 environmentId: 1L, projectVersionId: 1L, code: "0.1.0-自动化测试部署测试", values: values)
-        ScheduleTaskDTO taskDTO = new ScheduleTaskDTO(params: Maps.newHashMap("deploy", deployDTO))
+        ScheduleTaskDTO taskDTO = new ScheduleTaskDTO()
+        taskDTO.setParams(Maps.newHashMap("deploy", deployDTO))
 
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/app_instances/schedule",

@@ -4,11 +4,14 @@ import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -81,4 +84,6 @@ public interface TestCaseService {
     ApplicationVersionRepDTO getAppversion(Long projectId, Long appVersionId);
 
     ReplaceResult previewValues(Long projectId,ReplaceResult replaceResult, Long appVersionId);
+
+    void deployTestApp(Long projectId,DevopsApplicationDeployDTO applicationDeployDTO);
 }

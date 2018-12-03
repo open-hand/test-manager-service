@@ -7,7 +7,9 @@ import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ErrorLineDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
@@ -93,29 +95,28 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     @JobTask(code = SCHEDULECODE,
             level = ResourceLevel.PROJECT,
+            description = "自动化测试任务-定时部署",
             maxRetryCount = 3, params = {
             @JobParam(name = DEPLOYDTONAME),
             @JobParam(name = "projectId", type = Long.class)
     })
     @Override
-    public Map<String, TestAppInstanceDTO> createBySchedule(Map<String, Object> data) {
-        ApplicationDeployDTO deployDTO = JSON.parseObject(JSON.toJSONString(data.get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
-        Long projectId = ((Integer) data.get("projectId")).longValue();
-        Map<String, TestAppInstanceDTO> returnMap = Maps.newHashMap();
-        returnMap.put("AppInstanceDTO", create(deployDTO, projectId));
-        return returnMap;
+    public void createBySchedule(Map<String, Object> data) {
+        create(JSON.parseObject((String)data.get(DEPLOYDTONAME), ApplicationDeployDTO.class)
+                , Long.valueOf((Integer)data.get("projectId")));
     }
 
     @Override
     public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
         Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
-        ApplicationDeployDTO deploy = JSON.parseObject(JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME)), ApplicationDeployDTO.class);
+        String deployString = JSON.toJSONString(taskDTO.getParams().get(DEPLOYDTONAME));
+        ApplicationDeployDTO deploy = JSON.parseObject(deployString, ApplicationDeployDTO.class);
         scheduleService.getMethodByService(projectId, "test-manager-service")
                 .stream().filter(v -> v.getCode().equals(SCHEDULECODE))
                 .findFirst()
                 .ifPresent(v -> taskDTO.setMethodId(v.getId()));
         taskDTO.getParams().clear();
-        taskDTO.getParams().put(DEPLOYDTONAME, deploy);
+        taskDTO.getParams().put(DEPLOYDTONAME, deployString);
         taskDTO.getParams().put("projectId", projectId);
 
         String appName = testCaseService.queryByAppId(projectId, deploy.getAppId()).getName();
@@ -127,18 +128,21 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     @Override
     public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId) {
+        Yaml yaml = new Yaml();
+        Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
+        Assert.notNull(result,"error.values.framework.can.not.be.null");
         TestEnvCommand envCommand;
         TestEnvCommandValue commandValue;
         ReplaceResult sendResult =  new ReplaceResult();
         sendResult.setYaml(deployDTO.getValues());
-        String replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId()).getDeltaYaml();
+        ReplaceResult replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId());
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
             Long commandValueId = null;
-            if (!ObjectUtils.isEmpty(replaceResult)) {
+            if (!ObjectUtils.isEmpty(replaceResult.getDeltaYaml())) {
                 commandValue = new TestEnvCommandValue();
-                commandValue.setValue(replaceResult);
+                commandValue.setValue(replaceResult.getDeltaYaml());
                 commandValueId = commandValueService.insert(commandValue).getId();
             }
             envCommand = new TestEnvCommand(TestEnvCommand.CommandType.CREATE, commandValueId);
@@ -166,8 +170,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         resultCommand.setInstanceId(resultInstance.getId());
         commandService.updateByPrimaryKey(resultCommand);
 
-        Yaml yaml = new Yaml();
-        Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
         String frameWork = (String) result.get("framework");
         TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setFramework(frameWork);
@@ -176,8 +178,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
         historyService.insert(historyE);
 
-        //把更改值与从devops查到的值进行整合变为新的 配置value 传给devops 开始部署
-        //调用devops传给它  releaseName: appId-appversionId-instanceid  deployDTO.getAppId()-deployDTO.getAppVerisonId()-instanceE.getId()
+        //开始部署
+        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO,resultInstance.getId(),replaceResult.getYaml());
+        testCaseService.deployTestApp(projectId,devopsDeployDTO);
 
         return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
     }

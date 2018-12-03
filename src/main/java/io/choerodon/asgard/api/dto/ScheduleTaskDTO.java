@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -19,6 +21,7 @@ public class ScheduleTaskDTO {
 
     @ApiModelProperty(value = "定时任务名")
     @NotEmpty(message = "error.scheduleTask.nameEmpty")
+    @Size(max = 255, message = "error.scheduleTask.name.size")
     private String name;
 
     @ApiModelProperty(value = "定时任务描述")
@@ -47,6 +50,28 @@ public class ScheduleTaskDTO {
 
     @ApiModelProperty(value = "cron-trigger的cron表达式")
     private String cronExpression;
+
+    //需要
+    private NotifyUser notifyUser;
+
+    //指定的通知用户
+    private Long[] assignUserIds;
+
+    public NotifyUser getNotifyUser() {
+        return notifyUser;
+    }
+
+    public void setNotifyUser(NotifyUser notifyUser) {
+        this.notifyUser = notifyUser;
+    }
+
+    public Long[] getAssignUserIds() {
+        return assignUserIds;
+    }
+
+    public void setAssignUserIds(Long[] assignUserIds) {
+        this.assignUserIds = assignUserIds;
+    }
 
     public Long getMethodId() {
         return methodId;
@@ -134,5 +159,53 @@ public class ScheduleTaskDTO {
 
     public void setSimpleRepeatIntervalUnit(String simpleRepeatIntervalUnit) {
         this.simpleRepeatIntervalUnit = simpleRepeatIntervalUnit;
+    }
+
+    public ScheduleTaskDTO(Long methodId, Map<String, Object> params, String name, String description, Date startTime) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
+        this.methodId = methodId;
+        this.params = params;
+        this.name = name + "-" + simpleDateFormat.format(new Date());
+        this.description = description;
+        this.startTime = startTime;
+        this.triggerType = "simple-trigger";
+        this.simpleRepeatCount = 0;
+        this.simpleRepeatInterval = 3600L;
+        this.simpleRepeatIntervalUnit = "SECONDS";
+        this.endTime = null;
+        this.cronExpression = null;
+    }
+
+    public ScheduleTaskDTO() {
+    }
+
+    public static class NotifyUser {
+        boolean creator;
+        boolean administrator;
+        boolean assigner;
+
+        public boolean getCreator() {
+            return creator;
+        }
+
+        public void setCreator(boolean creator) {
+            this.creator = creator;
+        }
+
+        public boolean getAdministrator() {
+            return administrator;
+        }
+
+        public void setAdministrator(boolean administrator) {
+            this.administrator = administrator;
+        }
+
+        public boolean getAssigner() {
+            return assigner;
+        }
+
+        public void setAssigner(boolean assigner) {
+            this.assigner = assigner;
+        }
     }
 }

@@ -5,6 +5,7 @@ import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
@@ -186,6 +187,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public ReplaceResult previewValues(Long projectId, ReplaceResult replaceResult, Long appVersionId) {
         return applicationFeignClient.previewValues(projectId,replaceResult,appVersionId).getBody();
+    }
+
+    @Override
+    public void deployTestApp(Long projectId, DevopsApplicationDeployDTO applicationDeployDTO) {
+        applicationFeignClient.deployTestApp(projectId,applicationDeployDTO);
     }
 
     @Override

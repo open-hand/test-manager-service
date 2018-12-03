@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -62,6 +63,17 @@ public interface ApplicationFeignClient {
             @PathVariable(value = "project_id") Long projectId,
             @RequestBody ReplaceResult replaceResult,
             @RequestParam(value = "appVersionId") Long appVersionId);
+
+        /**
+     * 部署自动化测试应用
+     *
+     * @param projectId            项目id
+     * @param applicationDeployDTO 部署信息
+     * @return ApplicationInstanceDTO
+     */
+    @PostMapping("/v1/projects/{project_id}/app_instances/deploy_test_app")
+    void deployTestApp(@PathVariable(value = "project_id") Long projectId,
+                              @RequestBody DevopsApplicationDeployDTO applicationDeployDTO);
 
 }
 
