@@ -98,7 +98,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             maxRetryCount = 3, params = {
             @JobParam(name = DEPLOYDTONAME),
             @JobParam(name = "projectId", type = Long.class),
-            @JobParam(name = "userId", type = Long.class)
+            @JobParam(name = "userId", type = Integer.class)
     })
     @Override
     public void createBySchedule(Map<String, Object> data) {
