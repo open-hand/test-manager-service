@@ -19,7 +19,7 @@ public interface TestAppInstanceService {
 
     TestAppInstanceDTO create(ApplicationDeployDTO deployDTO,Long projectId);
 
-    Map<String, TestAppInstanceDTO> createBySchedule(Map<String,Object> data);
+    void createBySchedule(Map<String,Object> data);
 
     void closeInstance(String releaseNames,Long status,String logFile);
 
