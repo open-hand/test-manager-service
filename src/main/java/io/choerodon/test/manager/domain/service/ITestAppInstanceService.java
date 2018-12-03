@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface ITestAppInstanceService {
 
-    List<TestAppInstanceE> query(TestAppInstanceE instanceE);
-
     String queryValueByEnvIdAndAppId( Long envId, Long appId);
 
     TestAppInstanceE update(TestAppInstanceE instanceE);

@@ -7,10 +7,13 @@ import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ErrorLineDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
+import io.choerodon.mybatis.domain.Audit;
+import io.choerodon.mybatis.helper.AuditHelper;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
@@ -26,9 +29,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -61,10 +66,6 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     private static final String DEPLOYDTONAME = "deploy";
 
-    @Override
-    public List<TestAppInstanceDTO> query(TestAppInstanceE instanceE) {
-        return ConvertHelper.convertList(instanceService.query(instanceE), TestAppInstanceDTO.class);
-    }
 
     @Override
     public ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
@@ -85,7 +86,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         if (deployValue != null) {
             ReplaceResult sendResult = new ReplaceResult();
             sendResult.setYaml(deployValue);
-            replaceResult = testCaseService.previewValues(projectId,sendResult,appVersionId);
+            replaceResult = testCaseService.previewValues(projectId, sendResult, appVersionId);
         }
         return replaceResult;
     }
@@ -95,12 +96,13 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             description = "自动化测试任务-定时部署",
             maxRetryCount = 3, params = {
             @JobParam(name = DEPLOYDTONAME),
-            @JobParam(name = "projectId", type = Long.class)
+            @JobParam(name = "projectId", type = Long.class),
+            @JobParam(name = "userId", type = Long.class)
     })
     @Override
     public void createBySchedule(Map<String, Object> data) {
-        create(JSON.parseObject((String)data.get(DEPLOYDTONAME), ApplicationDeployDTO.class)
-                , Long.valueOf((Integer)data.get("projectId")));
+        create(JSON.parseObject((String) data.get(DEPLOYDTONAME), ApplicationDeployDTO.class)
+                , Long.valueOf((Integer) data.get("projectId")), Long.valueOf((Integer) data.get("userId")));
     }
 
     @Override
@@ -115,6 +117,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         taskDTO.getParams().clear();
         taskDTO.getParams().put(DEPLOYDTONAME, deployString);
         taskDTO.getParams().put("projectId", projectId);
+        taskDTO.getParams().put("userId", DetailsHelper.getUserDetails().getUserId());
 
         String appName = testCaseService.queryByAppId(projectId, deploy.getAppId()).getName();
         String appVersion = testCaseService.getAppversion(projectId, deploy.getAppVerisonId()).getVersion();
@@ -124,15 +127,19 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     @Override
-    public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId) {
+    public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId, Long userId) {
+        AuditHelper.audit().setUser(userId);
+//        Optional.ofNullable(userId).ifPresent(v -> DetailsHelper.getUserDetails().setUserId(v));
         Yaml yaml = new Yaml();
+        Assert.notNull(deployDTO.getValues(), "error.deployDTO.values.can.not.be.null");
         Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
-        Assert.notNull(result,"error.values.framework.can.not.be.null");
+        Assert.notNull(result, "error.values.framework.can.not.be.null");
         TestEnvCommand envCommand;
         TestEnvCommandValue commandValue;
-        ReplaceResult sendResult =  new ReplaceResult();
+        ReplaceResult sendResult = new ReplaceResult();
         sendResult.setYaml(deployDTO.getValues());
-        ReplaceResult replaceResult = testCaseService.previewValues(projectId,sendResult,deployDTO.getAppVerisonId());
+        Assert.notNull(deployDTO.getValues(), "error.deployDTO.appVerisonId.can.not.be.null");
+        ReplaceResult replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVerisonId());
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
@@ -176,8 +183,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         historyService.insert(historyE);
 
         //开始部署
-        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO,resultInstance.getId(),replaceResult.getYaml());
-        testCaseService.deployTestApp(projectId,devopsDeployDTO);
+        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getId(), replaceResult.getYaml());
+        testCaseService.deployTestApp(projectId, devopsDeployDTO);
 
         return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
     }
@@ -203,18 +210,20 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         return errorLines;
     }
 
-    /** devops更新实例信息
+    /**
+     * devops更新实例信息
+     *
      * @param releaseNames
      * @param podName
      * @param conName
      */
     @Override
-    public void updateInstance(String releaseNames,String podName,String conName){
+    public void updateInstance(String releaseNames, String podName, String conName) {
 
-        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
         testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
-        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
         testAppInstanceE.setPodStatus(0L);
         testAppInstanceE.setPodName(podName);
@@ -222,19 +231,21 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         instanceService.update(testAppInstanceE);
     }
 
-    /** 关闭实例
+    /**
+     * 关闭实例
+     *
      * @param releaseNames
      * @param status
      * @param logFile
      */
     @Override
-    public void closeInstance(String releaseNames,Long status,String logFile){
-        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+    public void closeInstance(String releaseNames, Long status, String logFile) {
+        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
-        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
 
-        TestAppInstanceLogE logE=new TestAppInstanceLogE();
+        TestAppInstanceLogE logE = new TestAppInstanceLogE();
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
         testAppInstanceE.setPodStatus(status);
@@ -243,14 +254,14 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
 
     @Override
-    public void shutdownInstance(Long instanceId,Long status){
-        if(status.equals(0L))
+    public void shutdownInstance(Long instanceId, Long status) {
+        if (status.equals(0L))
             return;
-        TestAppInstanceE testAppInstanceE=new TestAppInstanceE();
+        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
 
         //更新实例状态
         testAppInstanceE.setId(instanceId);
-        TestAppInstanceE testAppInstanceE1=instanceService.queryOne(testAppInstanceE);
+        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
         testAppInstanceE.setPodStatus(1L);
         instanceService.update(testAppInstanceE);

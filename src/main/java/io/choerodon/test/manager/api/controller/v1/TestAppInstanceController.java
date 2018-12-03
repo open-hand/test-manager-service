@@ -65,7 +65,7 @@ public class TestAppInstanceController {
     public ResponseEntity<TestAppInstanceDTO> deploy(
             @PathVariable(value = "project_id") Long projectId,
             @RequestBody ApplicationDeployDTO applicationDeployDTO) {
-        return Optional.ofNullable(instanceService.create(applicationDeployDTO, projectId))
+        return Optional.ofNullable(instanceService.create(applicationDeployDTO, projectId,null))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.application.deploy.immediate"));
     }

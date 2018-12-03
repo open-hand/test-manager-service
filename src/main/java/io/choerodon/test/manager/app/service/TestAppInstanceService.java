@@ -15,19 +15,17 @@ import java.util.Map;
  */
 public interface TestAppInstanceService {
 
-    List<TestAppInstanceDTO> query(TestAppInstanceE instanceE);
+    TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId, Long userId);
 
-    TestAppInstanceDTO create(ApplicationDeployDTO deployDTO,Long projectId);
+    void createBySchedule(Map<String, Object> data);
 
-    void createBySchedule(Map<String,Object> data);
-
-    void closeInstance(String releaseNames,Long status,String logFile);
+    void closeInstance(String releaseNames, Long status, String logFile);
 
     QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId);
 
-    ReplaceResult queryValues(Long projectId,Long appId, Long envId, Long appVersionId);
+    ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId);
 
-    void updateInstance(String releaseNames,String podName,String conName);
+    void updateInstance(String releaseNames, String podName, String conName);
 
-    void shutdownInstance(Long instanceId,Long status);
+    void shutdownInstance(Long instanceId, Long status);
 }
