@@ -12,7 +12,6 @@ import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ErrorLineDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
-import io.choerodon.mybatis.domain.Audit;
 import io.choerodon.mybatis.helper.AuditHelper;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
@@ -23,17 +22,15 @@ import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.FileUtil;
 import io.choerodon.test.manager.infra.common.utils.GenerateUUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -66,6 +63,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     private static final String DEPLOYDTONAME = "deploy";
 
+    private static Logger logger = LoggerFactory.getLogger(TestAppInstanceServiceImpl.class);
 
     @Override
     public ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
@@ -97,12 +95,14 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             maxRetryCount = 3, params = {
             @JobParam(name = DEPLOYDTONAME),
             @JobParam(name = "projectId", type = Long.class),
-            @JobParam(name = "userId", type = Long.class)
+            @JobParam(name = "userId", type = Integer.class)
     })
     @Override
     public void createBySchedule(Map<String, Object> data) {
+        logger.info("定时任务执行方法开始，时间{}", new Date());
         create(JSON.parseObject((String) data.get(DEPLOYDTONAME), ApplicationDeployDTO.class)
                 , Long.valueOf((Integer) data.get("projectId")), Long.valueOf((Integer) data.get("userId")));
+        logger.info("定时任务执行方法结束，时间{}", new Date());
     }
 
     @Override
