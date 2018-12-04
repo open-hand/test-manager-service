@@ -19,6 +19,30 @@ public class TestAutomationResultDO extends AuditDomain {
 
     private String result;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
     public Long getId() {
         return id;
     }

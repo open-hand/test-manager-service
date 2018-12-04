@@ -8,20 +8,26 @@ import java.util.concurrent.CompletableFuture;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.JsonImportService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
 import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
 import io.choerodon.test.manager.domain.service.ITestAutomationResultService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonImportServiceImpl.class);
 
     @Autowired
     private IJsonImportService iJsonImportService;
@@ -54,32 +60,37 @@ public class JsonImportServiceImpl implements JsonImportService {
     public Long importMochaReport(String releaseName, String json) {
         Assert.hasText(json, "error.issue.import.json.blank");
 
-        // 异步保存完整json到数据库
-        CompletableFuture<Long> saveAutomationResultTask = CompletableFuture.supplyAsync(() -> {
-            TestAutomationResultE testAutomationResultE = new TestAutomationResultE();
-            testAutomationResultE.setResult(json);
-            return iTestAutomationResultService.add(testAutomationResultE).getId();
-        });
-
         // 查询versionId和projectId
         Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         testAppInstanceE.setId(releaseNameFragments.get("instanceId"));
-        testAppInstanceE = iTestAppInstanceService.query(testAppInstanceE).get(0);
+        List<TestAppInstanceE> instances = iTestAppInstanceService.query(testAppInstanceE);
+        if (instances.isEmpty()) {
+            logger.error("app instance 不存在");
+            throw new CommonException("app instance 不存在");
+        }
+        testAppInstanceE = instances.get(0);
         Long versionId = testAppInstanceE.getProjectVersionId();
         Long projectId = testAppInstanceE.getProjectId();
+        Long createdBy = testAppInstanceE.getCreatedBy();
+        Long lastUpdatedBy = testAppInstanceE.getLastUpdatedBy();
 
-        // 异步查询组织Id，appName和appVersionName
-        Object[] fragments = new Object[3];
-        CompletableFuture.allOf(
-                iJsonImportService.getOrganizationId(projectId)
-                        .thenAccept(organizationId -> fragments[0] = organizationId),
-                iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"))
-                        .thenAccept(appName -> fragments[1] = appName),
-                iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"))
-                        .thenAccept(appVersionName -> fragments[2] = appVersionName)
-        ).join();
-        String folderName = fragments[1] + "-" + fragments[2];
+        // 异步查询组织Id, appName和appVersionName
+        CompletableFuture<String> getAppNameTask = CompletableFuture.supplyAsync(() ->
+                iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId")));
+        CompletableFuture<String> getAppVersionNameTask = CompletableFuture.supplyAsync(() ->
+                iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId")));
+        Long organizationId = iJsonImportService.getOrganizationId(projectId);
+        String folderName = getAppNameTask.join() + "-" + getAppVersionNameTask.join();
+
+        // 异步保存完整json到数据库
+        CompletableFuture<Long> saveAutomationResultTask = CompletableFuture.supplyAsync(() -> {
+            TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
+            testAutomationResultE.setResult(json);
+            testAutomationResultE.setCreatedBy(createdBy);
+            testAutomationResultE.setLastUpdatedBy(lastUpdatedBy);
+            return iTestAutomationResultService.add(testAutomationResultE).getId();
+        });
 
         // 创建文件夹、循环和阶段
         TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId, folderName);
@@ -96,7 +107,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         issues.parallelStream().forEach(element -> {
             if (element instanceof JSONObject) {
                 TestCycleCaseE testCycleCaseE = iJsonImportService.processIssueJson(
-                        (Long) (fragments[0]), projectId, versionId, folderE.getFolderId(), testStage.getCycleId(), (JSONObject) element);
+                        organizationId, projectId, versionId, folderE.getFolderId(), testStage.getCycleId(), (JSONObject) element);
                 synchronized (allTestCycleCases) {
                     allTestCycleCases.add(testCycleCaseE);
                 }
@@ -104,12 +115,21 @@ public class JsonImportServiceImpl implements JsonImportService {
         });
 
         // 将数据容器中的数据保存到数据库
-        for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
-            allSteps.addAll(testCycleCaseE.getTestCaseSteps());
-        }
 
+        for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
+            testCycleCaseE.setCreatedBy(createdBy);
+            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+            for (TestCaseStepE testCaseStepE : testCycleCaseE.getTestCaseSteps()) {
+                testCaseStepE.setCreatedBy(createdBy);
+                testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
+                allSteps.add(testCaseStepE);
+            }
+        }
+        CompletableFuture<Void> createCycleCasesTask = CompletableFuture.runAsync(() ->
+                createCycleCasesAndBackfillExecuteIds(allTestCycleCases));
         createStepsAndBackfillStepIds(allSteps);
-        createCycleCasesAndBackfillExecuteIds(allTestCycleCases);
+
+        createCycleCasesTask.join();
 
         List<TestCycleCaseStepE> testCycleCaseSteps = new ArrayList<>();
         List<TestCycleCaseStepE> currentTestCycleCaseSteps;
@@ -121,6 +141,8 @@ public class JsonImportServiceImpl implements JsonImportService {
                 currentCycleCaseStepE = currentTestCycleCaseSteps.get(i);
                 currentCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
                 currentCycleCaseStepE.setStepId(testCycleCaseE.getTestCaseSteps().get(i).getStepId());
+                currentCycleCaseStepE.setCreatedBy(createdBy);
+                currentCycleCaseStepE.setLastUpdatedBy(lastUpdatedBy);
                 testCycleCaseSteps.add(currentCycleCaseStepE);
             }
         }

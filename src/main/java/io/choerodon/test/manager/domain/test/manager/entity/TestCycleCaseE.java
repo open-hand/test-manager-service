@@ -67,6 +67,8 @@ public class TestCycleCaseE {
 
     private Long nextExecuteId;
 
+    private Long createdBy;
+
 	List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
@@ -344,4 +346,11 @@ public class TestCycleCaseE {
         this.cycleCaseStep = cycleCaseStep;
     }
 
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
 }

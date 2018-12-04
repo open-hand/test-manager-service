@@ -6,6 +6,8 @@ public class TestAutomationResultDTO {
 
     private String result;
 
+    private Long objectVersionNumber;
+
     public Long getId() {
         return id;
     }
@@ -20,5 +22,13 @@ public class TestAutomationResultDTO {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }

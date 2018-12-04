@@ -19,6 +19,28 @@ public class TestAutomationResultE {
 
     private String result;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
+    private Long objectVersionNumber;
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
     public Long getId() {
         return id;
     }
@@ -49,5 +71,13 @@ public class TestAutomationResultE {
 
     public void deleteSelf() {
         testAutomationResultRepository.delete(this);
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }

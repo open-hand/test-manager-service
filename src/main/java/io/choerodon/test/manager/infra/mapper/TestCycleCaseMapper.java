@@ -70,4 +70,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 	String getLastedRank(@Param("cycleId") Long cycleId);
 
 	String getLastedRank_oracle(@Param("cycleId") Long cycleId);
+
+	int batchInsertTestCycleCases(List<TestCycleCaseDO> testCycleCaseDOs);
 }

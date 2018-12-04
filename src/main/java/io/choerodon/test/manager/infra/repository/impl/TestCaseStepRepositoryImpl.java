@@ -53,7 +53,7 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
 
         List<TestCaseStepDO> testCaseStepDOs = ConvertHelper.convertList(testCaseSteps, TestCaseStepDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(
-                testCaseStepMapper::insertList, testCaseStepDOs, testCaseStepDOs.size(), "error.testStepCase.batchInsert");
+                testCaseStepMapper::batchInsertTestCaseSteps, testCaseStepDOs, testCaseStepDOs.size(), "error.testStepCase.batchInsert");
         return ConvertHelper.convertList(testCaseStepDOs, TestCaseStepE.class);
     }
 

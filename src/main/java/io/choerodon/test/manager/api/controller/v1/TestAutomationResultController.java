@@ -26,12 +26,12 @@ public class TestAutomationResultController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
-    public ResponseEntity<List<TestAutomationResultDTO>> query(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<String> query(@PathVariable("project_id") Long projectId,
                                                                @PathVariable("id") Long id) {
         TestAutomationResultDTO testAutomationResultDTO = new TestAutomationResultDTO();
         testAutomationResultDTO.setId(id);
         return Optional.ofNullable(testAutomationResultService.query(testAutomationResultDTO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .map(result -> new ResponseEntity<>(result.get(0).getResult(), HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testAutomationResult.query.id"));
     }
 

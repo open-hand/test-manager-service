@@ -209,7 +209,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
         List<TestCycleCaseDO> testCycleCaseDOs = ConvertHelper.convertList(testCycleCases, TestCycleCaseDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(
-                testCycleCaseMapper::insertList, testCycleCaseDOs, testCycleCaseDOs.size(), "error.testCycleCase.batchInsert");
+                testCycleCaseMapper::batchInsertTestCycleCases, testCycleCaseDOs, testCycleCaseDOs.size(), "error.testCycleCase.batchInsert");
 
         return ConvertHelper.convertList(testCycleCaseDOs, TestCycleCaseE.class);
     }

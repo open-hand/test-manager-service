@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.repository.TestAutomationResultRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationResultE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
@@ -28,13 +27,9 @@ public class TestAutomationResultRepositoryImpl implements TestAutomationResultR
 
     @Override
     public TestAutomationResultE insert(TestAutomationResultE testAutomationResultE) {
-        if (testAutomationResultE == null || testAutomationResultE.getId() != null) {
-            throw new CommonException("error.testAutomationResult.insert.stepId.should.be.null");
-        }
-
         TestAutomationResultDO testAutomationResultDO = ConvertHelper.convert(testAutomationResultE, TestAutomationResultDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(
-                testAutomationResultMapper::insert, testAutomationResultDO, 1, "error.testAutomationResult.insert");
+                testAutomationResultMapper::insertOneResult, testAutomationResultDO, 1, "error.testAutomationResult.insert");
         return ConvertHelper.convert(testAutomationResultDO, TestAutomationResultE.class);
     }
 
@@ -48,8 +43,6 @@ public class TestAutomationResultRepositoryImpl implements TestAutomationResultR
 
     @Override
     public TestAutomationResultE update(TestAutomationResultE testAutomationResultE) {
-        Assert.notNull(testAutomationResultE, "error.testAutomationResult.update.param1.not.null");
-
         TestAutomationResultDO testAutomationResultDO = ConvertHelper.convert(testAutomationResultE, TestAutomationResultDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(
                 testAutomationResultMapper::updateByPrimaryKeySelective, testAutomationResultDO, 1, "error.testAutomationResult.update");

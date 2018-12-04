@@ -32,6 +32,10 @@ public class TestCaseStepDO extends AuditDomain {
 
     private String expectedResult;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
     @Transient
     private List<TestCycleCaseAttachmentRelDO> attachments;
 
@@ -93,5 +97,25 @@ public class TestCaseStepDO extends AuditDomain {
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
         this.attachments = attachments;
+    }
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }

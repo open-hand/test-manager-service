@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.domain.service;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -15,11 +14,11 @@ public interface IJsonImportService {
 
     TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId);
 
-    CompletableFuture<Long> getOrganizationId(Long projectId);
+    Long getOrganizationId(Long projectId);
 
     Map<String, Long> parseReleaseName(String releaseName);
 
-    CompletableFuture<String> getAppName(Long projectId, Long appId);
+    String getAppName(Long projectId, Long appId);
 
-    CompletableFuture<String> getAppVersionName(Long projectId, Long appVersionId);
+    String getAppVersionName(Long projectId, Long appVersionId);
 }

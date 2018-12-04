@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import feign.FeignException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +41,32 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     private static final Pattern EXPECT_PATTERN = Pattern.compile("(?:@expect\\s+)(.*?)(?:\\s*\\n)");
 
-    @Autowired
+    private static final String ERROR_GET_APP_NAME = "error.get.app.name";
+
+    private static final String ERROR_GET_APP_VERSION_NAME = "error.get.app.version.name";
+
+    private static final String ERROR_GET_ORGANIZATION_ID = "error.get.organization.id";
+
     private IExcelImportService iExcelImportService;
 
     @Autowired
+    public void setiExcelImportService(IExcelImportService iExcelImportService) {
+        this.iExcelImportService = iExcelImportService;
+    }
+
     private ProjectFeignClient projectFeignClient;
 
     @Autowired
+    public void setProjectFeignClient(ProjectFeignClient projectFeignClient) {
+        this.projectFeignClient = projectFeignClient;
+    }
+
     private ApplicationFeignClient applicationFeignClient;
+
+    @Autowired
+    public void setApplicationFeignClient(ApplicationFeignClient applicationFeignClient) {
+        this.applicationFeignClient = applicationFeignClient;
+    }
 
     private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, String summary) {
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
@@ -229,50 +248,62 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     }
 
     @Override
-    public CompletableFuture<Long> getOrganizationId(Long projectId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public Long getOrganizationId(Long projectId) {
+        try {
             ResponseEntity<ProjectDTO> response = projectFeignClient.query(projectId);
             if (response.getStatusCode().is2xxSuccessful()) {
+                logger.info("get organization id {} by project id {}", response.getBody().getOrganizationId(), projectId);
                 return response.getBody().getOrganizationId();
             } else {
-                throw new CommonException("error.get.organization.id.from.project.id");
+                throw new CommonException(ERROR_GET_ORGANIZATION_ID);
             }
-        });
+        } catch (FeignException e) {
+            throw new CommonException(ERROR_GET_ORGANIZATION_ID, e);
+        }
     }
 
     @Override
     public Map<String, Long> parseReleaseName(String releaseName) {
+        if (!releaseName.startsWith("att-")) {
+            throw new CommonException("releaseName前缀错误");
+        }
         String[] strings = releaseName.split("-");
         Map<String, Long> fragments = new HashMap<>();
-        fragments.put("appId", Long.parseLong(strings[0]));
-        fragments.put("appVersionId", Long.parseLong(strings[1]));
-        fragments.put("instanceId", Long.parseLong(strings[2]));
+        fragments.put("appId", Long.parseLong(strings[1]));
+        fragments.put("appVersionId", Long.parseLong(strings[2]));
+        fragments.put("instanceId", Long.parseLong(strings[3]));
 
         return fragments;
     }
 
     @Override
-    public CompletableFuture<String> getAppName(Long projectId, Long appId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public String getAppName(Long projectId, Long appId) {
+        try {
             ResponseEntity<ApplicationRepDTO> response = applicationFeignClient.queryByAppId(projectId, appId);
+
             if (response.getStatusCode().is2xxSuccessful()) {
+                logger.info("get app name {} by app id {} project id {}", response.getBody().getName(), appId, projectId);
                 return response.getBody().getName();
             } else {
-                throw new CommonException("error.get.app.name");
+                throw new CommonException(ERROR_GET_APP_NAME);
             }
-        });
+        } catch (FeignException e) {
+            throw new CommonException(ERROR_GET_APP_NAME, e);
+        }
     }
 
     @Override
-    public CompletableFuture<String> getAppVersionName(Long projectId, Long appVersionId) {
-        return CompletableFuture.supplyAsync(() -> {
+    public String getAppVersionName(Long projectId, Long appVersionId) {
+        try {
             ResponseEntity<ApplicationVersionRepDTO> response = applicationFeignClient.getAppversion(projectId, appVersionId);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody().getVersion();
-            } else {
-                throw new CommonException("error.get.app.version.name");
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody().getVersion() == null) {
+                throw new CommonException(ERROR_GET_APP_VERSION_NAME);
             }
-        });
+            logger.info("get app version name {} by app version id {} project id {}", response.getBody().getVersion(), appVersionId, projectId);
+            return response.getBody().getVersion();
+        } catch (FeignException e) {
+            throw new CommonException(ERROR_GET_APP_VERSION_NAME, e);
+        }
     }
 
     private TestCaseStepE parseTestCaseStepJson(Long issueId, JSONObject testCaseStep) {

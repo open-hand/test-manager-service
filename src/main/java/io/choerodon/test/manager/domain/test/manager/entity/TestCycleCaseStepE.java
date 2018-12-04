@@ -50,6 +50,10 @@ public class TestCycleCaseStepE {
 
     private Long cycleId;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
     public static List<TestCycleCaseStepE> createCycleCaseSteps(List<TestCycleCaseStepE> testCycleCaseSteps) {
         TestCycleCaseStepRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepRepository.class);
         return repository.batchInsert(testCycleCaseSteps);
@@ -217,5 +221,21 @@ public class TestCycleCaseStepE {
 
     public void setIssueId(Long issueId) {
         this.issueId = issueId;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }

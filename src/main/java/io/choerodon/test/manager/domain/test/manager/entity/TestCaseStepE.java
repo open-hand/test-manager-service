@@ -37,6 +37,10 @@ public class TestCaseStepE {
 
     private String nextRank;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
     private List<TestCycleCaseAttachmentRelDO> attachments;
 
     @Autowired
@@ -185,5 +189,21 @@ public class TestCaseStepE {
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
         this.attachments = attachments;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }

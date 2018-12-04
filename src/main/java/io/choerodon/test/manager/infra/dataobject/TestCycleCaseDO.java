@@ -49,6 +49,10 @@ public class TestCycleCaseDO extends AuditDomain {
     @Transient
     private Long nextExecuteId;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
     @Transient
     List<TestCycleCaseAttachmentRelDO> caseAttachment;
 
@@ -114,6 +118,10 @@ public class TestCycleCaseDO extends AuditDomain {
     }
 
     public String getComment() {
+        return comment;
+    }
+
+    public String getDescription() {
         return comment;
     }
 
@@ -199,5 +207,25 @@ public class TestCycleCaseDO extends AuditDomain {
 
     public void setNextExecuteId(Long nextExecuteId) {
         this.nextExecuteId = nextExecuteId;
+    }
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }
