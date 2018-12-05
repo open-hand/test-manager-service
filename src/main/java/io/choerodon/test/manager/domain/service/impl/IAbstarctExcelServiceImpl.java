@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+/**
+ * Created by zongw.lee@gmail.com on 11/5/18
+ */
 public abstract class IAbstarctExcelServiceImpl<T,R> implements IExcelService<T,R> {
 
     Log log = LogFactory.getLog(this.getClass());

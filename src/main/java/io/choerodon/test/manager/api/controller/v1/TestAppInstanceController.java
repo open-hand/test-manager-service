@@ -29,7 +29,7 @@ public class TestAppInstanceController {
     TestAppInstanceService instanceService;
 
     /**
-     * 查询value列表
+     * 查询value
      *
      * @param projectId    项目id
      * @param appId        应用id

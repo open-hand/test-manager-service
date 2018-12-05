@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Created by zongw.lee@gmail.com
+ */
 @Transactional
 @Component
 public class FixDataServiceImpl implements FixDataService {
