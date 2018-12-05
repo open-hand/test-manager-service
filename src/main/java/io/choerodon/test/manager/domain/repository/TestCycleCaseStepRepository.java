@@ -21,4 +21,5 @@ public interface TestCycleCaseStepRepository {
 	List<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE);
     List<TestCycleCaseStepE> queryCycleCaseForReporter(Long[] ids);
 
+    List<TestCycleCaseStepE> batchInsert(List<TestCycleCaseStepE> testCycleCaseSteps);
 }

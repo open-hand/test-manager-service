@@ -9,10 +9,7 @@ import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.test.manager.app.service.ExcelImportService;
-import io.choerodon.test.manager.app.service.ExcelService;
-import io.choerodon.test.manager.app.service.ExcelServiceHandler;
-import io.choerodon.test.manager.app.service.ReporterFormService;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -90,10 +87,10 @@ public class TestCaseController {
                                                         @RequestBody Long[] issueIds,
                                                         @RequestParam Long organizationId) {
 
-		return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds,organizationId))
-				.map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-				.orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
-	}
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, issueIds, organizationId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
+    }
 
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -169,7 +166,7 @@ public class TestCaseController {
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("从excel导入模板导入issue以及测试用例")
+    @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
                                        @RequestParam Long versionId,

@@ -171,4 +171,13 @@
             #{item}
         </foreach>
     </select>
+
+    <insert id="batchInsertTestCycleCaseSteps" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="executeStepId">
+        INSERT INTO test_cycle_case_step(execute_id, step_id, description, step_status, object_version_number,
+        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="list" item="cycleCaseStep" separator=",">
+            (#{cycleCaseStep.executeId}, #{cycleCaseStep.stepId}, #{cycleCaseStep.description}, #{cycleCaseStep.stepStatus},
+            1, #{cycleCaseStep.createdBy}, NOW(), #{cycleCaseStep.lastUpdatedBy}, NOW())
+        </foreach>
+    </insert>
 </mapper>

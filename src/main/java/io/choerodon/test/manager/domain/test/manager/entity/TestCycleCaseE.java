@@ -3,10 +3,12 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -47,6 +49,8 @@ public class TestCycleCaseE {
 
     List<TestCycleCaseDefectRelE>subStepDefects;
 
+    List<TestCaseStepE> testCaseSteps;
+
     private Long objectVersionNumber;
 
     private Long lastUpdatedBy;
@@ -63,10 +67,27 @@ public class TestCycleCaseE {
 
     private Long nextExecuteId;
 
+    private Long createdBy;
+
 	List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
     private TestCycleCaseRepository testCycleCaseRepository;
+
+    public static List<TestCycleCaseE> createCycleCases(List<TestCycleCaseE> testCycleCases) {
+        TestCycleCaseE currentCycleCase = testCycleCases.get(0);
+        currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(currentCycleCase.getLastedRank(currentCycleCase.getCycleId()), null));
+        TestCycleCaseE prevCycleCase = currentCycleCase;
+
+        for (int i = 1; i < testCycleCases.size(); i++) {
+            currentCycleCase = testCycleCases.get(i);
+            currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(prevCycleCase.rank, null));
+            prevCycleCase = currentCycleCase;
+        }
+
+        TestCycleCaseRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseRepository.class);
+        return repository.batchInsert(testCycleCases);
+    }
 
     public List<TestCycleCaseE> queryByIssue(Long versionId) {
         return testCycleCaseRepository.queryByIssue(versionId);
@@ -293,10 +314,6 @@ public class TestCycleCaseE {
 		return cycleCaseStep;
 	}
 
-	public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
-		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepE.class);
-	}
-
     public Long getLastExecuteId() {
         return lastExecuteId;
     }
@@ -311,5 +328,29 @@ public class TestCycleCaseE {
 
     public void setNextExecuteId(Long nextExecuteId) {
         this.nextExecuteId = nextExecuteId;
+    }
+
+    public List<TestCaseStepE> getTestCaseSteps() {
+        return testCaseSteps;
+    }
+
+    public void setTestCaseSteps(List<TestCaseStepE> testCaseSteps) {
+        this.testCaseSteps = testCaseSteps;
+    }
+
+    public void setCycleCaseStep(List<TestCycleCaseStepDO> cycleCaseStep) {
+        this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepE.class);
+    }
+
+    public void setCycleCaseStepEs(List<TestCycleCaseStepE> cycleCaseStep) {
+        this.cycleCaseStep = cycleCaseStep;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
     }
 }

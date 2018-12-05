@@ -59,8 +59,6 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     @Autowired
     private NotifyService notifyService;
 
-    private static final String IMPORT_FOLDER_NAME = "导入";
-
     private static final String IMPORT_NOTIFY_CODE = "test-issue-import";
 
     private static final ExcelReadMeOptionDTO[] README_OPTIONS = new ExcelReadMeOptionDTO[5];
@@ -181,19 +179,19 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     @Override
     @Transactional
-    public TestIssueFolderE getFolder(Long projectId, Long versionId) {
+    public TestIssueFolderE getFolder(Long projectId, Long versionId, String folderName) {
         TestIssueFolderE folderE = SpringUtil.getApplicationContext().getBean(TestIssueFolderE.class);
         folderE.setProjectId(projectId);
         folderE.setVersionId(versionId);
-        folderE.setName(IMPORT_FOLDER_NAME);
+        folderE.setName(folderName);
         TestIssueFolderE targetfolderE = folderE.queryOne(folderE);
         if (targetfolderE == null) {
             folderE.setType(TestIssueFolderE.TYPE_CYCLE);
-            logger.info("{} 文件夹不存在，创建", IMPORT_FOLDER_NAME);
+            logger.info("{} 文件夹不存在，创建", folderName);
             return folderE.addSelf();
         }
 
-        logger.info("{} 文件夹已存在", IMPORT_FOLDER_NAME);
+        logger.info("{} 文件夹已存在", folderName);
         return targetfolderE;
     }
 
@@ -303,7 +301,8 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         return issueDTO;
     }
 
-    private IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
+    @Override
+    public IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
         return testCaseFeignClient.createTest(issueCreateDTO, projectId, "test");
     }
 

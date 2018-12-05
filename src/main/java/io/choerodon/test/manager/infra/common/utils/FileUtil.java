@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
 import io.choerodon.core.exception.CommonException;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -20,8 +22,10 @@ import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -61,6 +65,31 @@ public class FileUtil {
             }
         }
         return json;
+    }
+
+    /**
+     * 解压tgz包为字节数组
+     */
+    public static List<byte[]> unTarGzToMemory(InputStream inputStream) throws IOException {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             GzipCompressorInputStream gzInputStream = new GzipCompressorInputStream(inputStream);
+             TarArchiveInputStream tarInputStream = new TarArchiveInputStream(gzInputStream, BUFFER_SIZE)) {
+            List<byte[]> contents = new ArrayList<>();
+            TarArchiveEntry entry;
+            int len;
+            byte[] buf = new byte[2048];
+            while ((entry = tarInputStream.getNextTarEntry()) != null) {
+                if (!entry.isFile()) {
+                    continue;
+                }
+                outputStream.reset();
+                while ((len = tarInputStream.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                contents.add(outputStream.toByteArray());
+            }
+            return contents;
+        }
     }
 
     /**

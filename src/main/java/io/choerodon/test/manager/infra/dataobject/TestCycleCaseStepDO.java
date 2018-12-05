@@ -24,6 +24,10 @@ public class TestCycleCaseStepDO extends AuditDomain {
     private String comment;
 	private Long stepStatus;
 
+	private Long createdBy;
+
+	private Long lastUpdatedBy;
+
     @Transient
     private String testStep;
     @Transient
@@ -48,6 +52,9 @@ public class TestCycleCaseStepDO extends AuditDomain {
     @Transient
     private List<TestCycleCaseDefectRelDO> defects;
 
+    public void setId(Long id) {
+        executeStepId = id;
+    }
 
     public Long getExecuteStepId() {
         return executeStepId;
@@ -74,6 +81,10 @@ public class TestCycleCaseStepDO extends AuditDomain {
     }
 
     public String getComment() {
+        return comment;
+    }
+
+    public String getDescription() {
         return comment;
     }
 
@@ -160,4 +171,24 @@ public class TestCycleCaseStepDO extends AuditDomain {
 	public void setStatusName(String statusName) {
 		this.statusName = statusName;
 	}
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
 }

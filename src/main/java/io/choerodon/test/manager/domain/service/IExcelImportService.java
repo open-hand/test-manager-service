@@ -8,9 +8,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.http.ResponseEntity;
 
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.IssueTypeDTO;
 import io.choerodon.agile.api.dto.PriorityDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
@@ -28,7 +30,7 @@ public interface IExcelImportService {
 
     void shiftErrorRowsToTop(Sheet sheet, List<Integer> errorRowIndexes);
 
-    TestIssueFolderE getFolder(Long projectId, Long versionId);
+    TestIssueFolderE getFolder(Long projectId, Long versionId, String folderName);
 
     boolean isCanceled(Long id);
 
@@ -39,6 +41,8 @@ public interface IExcelImportService {
     Long getPriorityId(Long organizationId, Long projectId);
 
     IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId);
+
+    IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO);
 
     void removeRow(Row row);
 

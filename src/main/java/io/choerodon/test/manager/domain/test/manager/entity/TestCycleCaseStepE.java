@@ -4,6 +4,7 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,15 @@ public class TestCycleCaseStepE {
     private String cycleName;
 
     private Long cycleId;
+
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
+    public static List<TestCycleCaseStepE> createCycleCaseSteps(List<TestCycleCaseStepE> testCycleCaseSteps) {
+        TestCycleCaseStepRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepRepository.class);
+        return repository.batchInsert(testCycleCaseSteps);
+    }
 
     public TestCycleCaseStepE runOneStep(Long executeId, Long stepId, Long status) {
         this.executeId = executeId;
@@ -211,5 +221,21 @@ public class TestCycleCaseStepE {
 
     public void setIssueId(Long issueId) {
         this.issueId = issueId;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }

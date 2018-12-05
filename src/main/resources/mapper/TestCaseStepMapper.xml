@@ -59,4 +59,13 @@ ORDER BY
 	rank DESC
 
     </select>
+
+    <insert id="batchInsertTestCaseSteps" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="stepId">
+        INSERT INTO test_case_step(rank, issue_id, test_step, test_data, expected_result, object_version_number,
+        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="list" item="testCaseStep" separator=",">
+            (#{testCaseStep.rank}, #{testCaseStep.issueId}, #{testCaseStep.testStep}, #{testCaseStep.testData},
+            #{testCaseStep.expectedResult}, 1, #{testCaseStep.createdBy}, NOW(), #{testCaseStep.lastUpdatedBy}, NOW())
+        </foreach>
+    </insert>
 </mapper>

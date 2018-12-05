@@ -46,4 +46,5 @@ public interface TestCycleCaseRepository {
 
     String getLastedRank(Long cycleId);
 
+    List<TestCycleCaseE> batchInsert(List<TestCycleCaseE> testCycleCases);
 }

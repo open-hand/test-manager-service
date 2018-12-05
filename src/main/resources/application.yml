@@ -40,7 +40,8 @@ eureka:
 security:
   basic:
     enabled: false
-  ignored: /v2/api-docs
+  ignored:
+  - /v2/api-docs
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration:
