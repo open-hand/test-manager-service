@@ -295,12 +295,13 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     @Override
     public String getAppVersionName(Long projectId, Long appVersionId) {
         try {
-            ResponseEntity<ApplicationVersionRepDTO> response = applicationFeignClient.getAppversion(projectId, appVersionId);
-            if (!response.getStatusCode().is2xxSuccessful() || response.getBody().getVersion() == null) {
+            ResponseEntity<List<ApplicationVersionRepDTO>> responses = applicationFeignClient.getAppversion(projectId, Lists.newArrayList(appVersionId));
+            ApplicationVersionRepDTO response = responses.getBody().get(0);
+            if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
                 throw new CommonException(ERROR_GET_APP_VERSION_NAME);
             }
-            logger.info("get app version name {} by app version id {} project id {}", response.getBody().getVersion(), appVersionId, projectId);
-            return response.getBody().getVersion();
+            logger.info("get app version name {} by app version id {} project id {}", response.getVersion(), appVersionId, projectId);
+            return response.getVersion();
         } catch (FeignException e) {
             throw new CommonException(ERROR_GET_APP_VERSION_NAME, e);
         }

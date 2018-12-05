@@ -6,10 +6,13 @@ import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
+import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author zongw.lee@gmail.com
@@ -45,13 +48,13 @@ public interface ApplicationFeignClient {
      * 根据版本id查询版本信息
      *
      * @param projectId 项目ID
-     * @param appVersionId     应用版本ID
+     * @param appVersionIds     应用版本ID
      * @return ApplicationVersionRepDTO
      */
-    @GetMapping(value = "/v1/projects/{project_id}/app_versions/{app_versionId}")
-    ResponseEntity<ApplicationVersionRepDTO> getAppversion(
+    @PostMapping(value = "/v1/projects/{project_id}/app_versions/list_by_appVersionIds")
+    ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(
             @PathVariable(value = "project_id") Long projectId,
-            @PathVariable(value = "app_versionId") Long appVersionId);
+            @RequestBody List<Long> appVersionIds);
 
     /**
      * @param projectId     项目id

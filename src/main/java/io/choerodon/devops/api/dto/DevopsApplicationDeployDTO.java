@@ -90,6 +90,6 @@ public class DevopsApplicationDeployDTO {
         this.environmentId = deployDTO.getEnvironmentId();
         this.values = values;
         this.appId = deployDTO.getAppId();
-        this.instanceName = "att" + deployDTO.getAppId()+ "-" + deployDTO.getAppVerisonId() + "-" + appInstanceId;
+        this.instanceName = "att-" + deployDTO.getAppId()+ "-" + deployDTO.getAppVerisonId() + "-" + appInstanceId;
     }
 }
