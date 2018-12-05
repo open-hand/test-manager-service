@@ -160,7 +160,7 @@ class TestAppInstanceControllerSpec extends Specification {
         then:
         1 * scheduleService.getMethodByService(_, _) >> methodDTOS
         1 * testCaseService.queryByAppId(_, _) >> new ApplicationRepDTO(name: "定时任务测试应用")
-        1 * testCaseService.getAppversion(_, _) >> new ApplicationVersionRepDTO(version: "定时任务测试应用版本")
+        1 * testCaseService.getAppversion(_, _) >> Lists.newArrayList(new ApplicationVersionRepDTO(version: "定时任务测试应用版本"))
         1 * scheduleService.create(_, _) >> new QuartzTask()
 
         and:

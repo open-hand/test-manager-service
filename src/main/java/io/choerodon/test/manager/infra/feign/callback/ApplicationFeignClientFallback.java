@@ -9,6 +9,8 @@ import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by zongw.lee@gmail.com on 26/11/2018
  */
@@ -32,7 +34,7 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     }
 
     @Override
-    public ResponseEntity<ApplicationVersionRepDTO> getAppversion(Long projectId, Long appVersionId) {
+    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, List<Long> appVersionId) {
         throw new CommonException(QUERY_VERSION_ERROR);
     }
 

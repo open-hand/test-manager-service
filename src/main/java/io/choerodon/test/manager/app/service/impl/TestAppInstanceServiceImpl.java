@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
@@ -139,7 +140,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         taskDTO.getParams().put("userId", DetailsHelper.getUserDetails().getUserId());
 
         String appName = testCaseService.queryByAppId(projectId, deploy.getAppId()).getName();
-        String appVersion = testCaseService.getAppversion(projectId, deploy.getAppVerisonId()).getVersion();
+        String appVersion = testCaseService.getAppversion(projectId, Lists.newArrayList(deploy.getAppVerisonId())).get(0).getVersion();
         taskDTO.setName("test-deploy-" + appName + "-" + appVersion + "-" + GenerateUUID.generateUUID());
         taskDTO.setDescription("测试应用：" + appName + "版本：" + appVersion + "定时部署");
         return scheduleService.create(projectId, taskDTO);

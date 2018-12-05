@@ -81,7 +81,7 @@ public interface TestCaseService {
 
     ApplicationRepDTO queryByAppId(Long projectId, Long applicationId);
 
-    ApplicationVersionRepDTO getAppversion(Long projectId, Long appVersionId);
+    List<ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionId);
 
     ReplaceResult previewValues(Long projectId,ReplaceResult replaceResult, Long appVersionId);
 
