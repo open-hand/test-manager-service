@@ -64,16 +64,15 @@ public class JsonImportServiceImpl implements JsonImportService {
         Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         testAppInstanceE.setId(releaseNameFragments.get("instanceId"));
-        List<TestAppInstanceE> instances = iTestAppInstanceService.query(testAppInstanceE);
-        if (instances.isEmpty()) {
+        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
+        if (instance == null) {
             logger.error("app instance 不存在");
             throw new CommonException("app instance 不存在");
         }
-        testAppInstanceE = instances.get(0);
-        Long versionId = testAppInstanceE.getProjectVersionId();
-        Long projectId = testAppInstanceE.getProjectId();
-        Long createdBy = testAppInstanceE.getCreatedBy();
-        Long lastUpdatedBy = testAppInstanceE.getLastUpdatedBy();
+        Long versionId = instance.getProjectVersionId();
+        Long projectId = instance.getProjectId();
+        Long createdBy = instance.getCreatedBy();
+        Long lastUpdatedBy = instance.getLastUpdatedBy();
 
         // 异步查询组织Id, appName和appVersionName
         CompletableFuture<String> getAppNameTask = CompletableFuture.supplyAsync(() ->

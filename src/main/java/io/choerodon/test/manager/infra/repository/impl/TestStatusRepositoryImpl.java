@@ -89,10 +89,4 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
         Assert.notNull(statusType, "error.getDefault.parameter.type.not.null");
         return testStatusMapper.getDefaultStatus(statusType);
     }
-
-    @Override
-    public TestStatusE queryOne(TestStatusE testStatusE) {
-        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
-        return ConvertHelper.convert(testStatusMapper.selectOne(testStatusDO), TestStatusE.class);
-    }
 }

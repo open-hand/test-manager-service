@@ -23,6 +23,4 @@ public interface TestStatusRepository {
 	void validateDeleteCaseStepAllow(Long statusId);
 
 	Long getDefaultStatus(String statusType);
-
-    TestStatusE queryOne(TestStatusE testStatusE);
 }
