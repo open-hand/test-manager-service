@@ -65,6 +65,15 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     private static Logger logger = LoggerFactory.getLogger(TestAppInstanceServiceImpl.class);
 
+    /**
+     *  查询value
+     *
+     * @param projectId
+     * @param appId     应用Id
+     * @param envId     环境Id
+     * @param appVersionId  应用版本Id
+     * @return
+     */
     @Override
     public ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
         ReplaceResult replaceResult = new ReplaceResult();
@@ -89,6 +98,10 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         return replaceResult;
     }
 
+    /**
+     * 接受定时任务调用
+     * @param data
+     */
     @JobTask(code = SCHEDULECODE,
             level = ResourceLevel.PROJECT,
             description = "自动化测试任务-定时部署",
@@ -105,6 +118,12 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         logger.info("定时任务执行方法结束，时间{}", new Date());
     }
 
+    /**
+     *  创建定时任务
+     * @param taskDTO
+     * @param projectId
+     * @return
+     */
     @Override
     public QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId) {
         Assert.notNull(taskDTO.getParams().get(DEPLOYDTONAME), "error.deploy.param.deployDTO.not.be.null");
@@ -126,24 +145,35 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         return scheduleService.create(projectId, taskDTO);
     }
 
+    /**
+     * 部署应用
+     * @param deployDTO 部署的信息
+     * @param projectId
+     * @param userId    部署用户
+     * @return
+     */
     @Override
     public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId, Long userId) {
         AuditHelper.audit().setUser(userId);
-//        Optional.ofNullable(userId).ifPresent(v -> DetailsHelper.getUserDetails().setUserId(v));
+
         Yaml yaml = new Yaml();
         Assert.notNull(deployDTO.getValues(), "error.deployDTO.values.can.not.be.null");
         Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
         Assert.notNull(result, "error.values.framework.can.not.be.null");
+
         TestEnvCommand envCommand;
         TestEnvCommandValue commandValue;
+
         ReplaceResult sendResult = new ReplaceResult();
         sendResult.setYaml(deployDTO.getValues());
         Assert.notNull(deployDTO.getValues(), "error.deployDTO.appVerisonId.can.not.be.null");
         ReplaceResult replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVerisonId());
+
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
             Long commandValueId = null;
+            //默认值是否已经改变
             if (!ObjectUtils.isEmpty(replaceResult.getDeltaYaml())) {
                 commandValue = new TestEnvCommandValue();
                 commandValue.setValue(replaceResult.getDeltaYaml());

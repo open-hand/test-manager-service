@@ -23,7 +23,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     }
 
     /**
-     * 导出一个cycle下的测试详情，默认HSSFWorkBook
+     * 导出一个cycle下的测试详情
      *
      * @param cycleId
      * @param projectId
@@ -35,7 +35,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     }
 
     /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
+     * 导出项目下的所有用例
      *
      * @param projectId not null
      * @param request
@@ -47,7 +47,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     }
 
     /**
-     * 导出项目下的所有用例，默认XSSF WorkBook
+     * 导出版本下的所有用例
      *
      * @param versionId not null
      * @param request
@@ -58,11 +58,24 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
         excelService.exportCaseVersionByTransaction(projectId, versionId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
+    /**
+     * 导出文件夹下的所有用例
+     * @param projectId
+     * @param folderId
+     * @param request
+     * @param response
+     * @param organizationId
+     */
     @Override
     public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
         excelService.exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
     }
 
+    /**
+     * 导出失败重试
+     * @param projectId
+     * @param fileHistoryId
+     */
     @Override
     public void exportFailCase(Long projectId, Long fileHistoryId) {
         excelService.exportFailCaseByTransaction(projectId, fileHistoryId, DetailsHelper.getUserDetails().getUserId());

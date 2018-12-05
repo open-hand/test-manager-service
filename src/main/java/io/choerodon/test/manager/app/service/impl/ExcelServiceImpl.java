@@ -42,9 +42,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by 842767365@qq.com on 8/9/18.
+ * Created by zongw.lee@gmail.com on 15/10/2018
  */
-
 @Component
 public class ExcelServiceImpl implements ExcelService {
 
@@ -114,6 +113,12 @@ public class ExcelServiceImpl implements ExcelService {
         return charsetName;
     }
 
+    /**
+     * 失败导出重试
+     * @param projectId
+     * @param fileHistoryId
+     * @param lUserId
+     */
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -170,6 +175,15 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
+    /**
+     * 导出测试循环
+     * @param cycleId
+     * @param projectId
+     * @param request
+     * @param response
+     * @param userId
+     * @param organizationId
+     */
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -215,6 +229,14 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum, NOTIFYCYCLECODE);
     }
 
+    /**
+     * 导出项目下所有测试用例
+     * @param projectId
+     * @param request
+     * @param response
+     * @param userId
+     * @param organizationId
+     */
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -243,6 +265,7 @@ public class ExcelServiceImpl implements ExcelService {
         double versionOffset = 90.00 / versionsId.length;
         int i = 0;
         Map<Long, List<TestIssueFolderRelDTO>> allRelMaps = new HashMap<>();
+        //分别导出版本到各个sheet页中
         for (Long versionId : versionsId) {
             folderE.setVersionId(versionId);
             Map<Long, List<TestIssueFolderRelDTO>> everyRelMaps = populateFolder(folderE, userId, 5 + (versionOffset * (i++)), versionOffset, loadHistoryE, organizationId);
@@ -263,6 +286,15 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum, NOTIFYISSUECODE);
     }
 
+    /**
+     * 导出版本下所有测试用例
+     * @param projectId
+     * @param versionId
+     * @param request
+     * @param response
+     * @param userId
+     * @param organizationId
+     */
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -306,7 +338,15 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum, NOTIFYISSUECODE);
     }
 
-
+    /**
+     * 导出文件夹下所有的测试用例
+     * @param projectId
+     * @param folderId
+     * @param request
+     * @param response
+     * @param userId
+     * @param organizationId
+     */
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -350,6 +390,12 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBook(workbook, fileName, loadHistoryE, userId, sum, NOTIFYISSUECODE);
     }
 
+    /**
+     * 导出模板
+     * @param projectId
+     * @param request
+     * @param response
+     */
     @Override
     public void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response) {
         setExcelHeaderByStream(request, response);
@@ -401,7 +447,15 @@ public class ExcelServiceImpl implements ExcelService {
         downloadWorkBookByStream(workbook, response);
     }
 
-
+    /**
+     * 上载文件到minio
+     * @param workbook
+     * @param fileName
+     * @param loadHistoryE
+     * @param userId
+     * @param sum
+     * @param code
+     */
     private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryE loadHistoryE, Long userId, int sum, String code) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             workbook.write(os);
@@ -445,6 +499,11 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
+    /**
+     * 通过流同步下载
+     * @param workbook
+     * @param response
+     */
     @Override
     public void downloadWorkBookByStream(Workbook workbook, HttpServletResponse response) {
         try {
@@ -461,11 +520,12 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     /**
+     * 按照一定格式装载信息到特定Map中
      * @param folderE
      * @param userId
      * @param startRate
      * @param offset
-     * @return
+     * @return  适用于装载excel的Map
      */
     private Map<Long, List<TestIssueFolderRelDTO>> populateFolder(TestIssueFolderE folderE, Long userId, double startRate, double offset, TestFileLoadHistoryE loadHistoryE, Long organizationId) {
         List<TestIssueFolderE> folders = Optional.ofNullable(folderE.queryAllUnderProject()).orElseGet(ArrayList::new);
@@ -518,6 +578,17 @@ public class ExcelServiceImpl implements ExcelService {
         return folderRelMap;
     }
 
+    /**
+     * 批量获取到issue信息
+     * @param issueIds
+     * @param folderE
+     * @param userId
+     * @param startRate
+     * @param offset
+     * @param loadHistoryE
+     * @param organizationId
+     * @return
+     */
     private Map<Long, IssueInfosDTO> batchGetIssueInfo(List<Long> issueIds, TestIssueFolderE folderE, Long userId, double startRate, double offset, TestFileLoadHistoryE loadHistoryE, Long organizationId) {
         Map<Long, IssueInfosDTO> issueInfosMap = new HashMap<>();
 
@@ -540,6 +611,10 @@ public class ExcelServiceImpl implements ExcelService {
         return issueInfosMap;
     }
 
+    /**
+     * 傻瓜式装载read
+     * @return
+     */
     private List<ExcelReadMeOptionDTO> populateReadMeOptions() {
         List<ExcelReadMeOptionDTO> optionDTOS = new ArrayList<>();
         optionDTOS.add(new ExcelReadMeOptionDTO("文件夹", true));
