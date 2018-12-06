@@ -158,8 +158,11 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestCycleCaseStepE.createCycleCaseSteps(testCycleCaseSteps);
 
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
+        automationHistoryE.setCycleId(testCycleE.getCycleId());
+        Long resultId = saveAutomationResultTask.join();
+        automationHistoryE.setResultId(resultId);
         iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
 
-        return saveAutomationResultTask.join();
+        return resultId;
     }
 }

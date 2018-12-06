@@ -7,6 +7,8 @@
         UPDATE test_automation_history
         SET
         test_status = #{testStatus},
+        cycle_id = #{cycleId},
+        result_id = #{resultId},
         last_updated_by = #{lastUpdatedBy},
         last_update_date = NOW(),
         object_version_number = object_version_number + 1
