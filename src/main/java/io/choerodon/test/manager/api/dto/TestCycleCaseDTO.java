@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
 import io.choerodon.agile.api.dto.IssueLinkDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
@@ -23,9 +24,9 @@ public class TestCycleCaseDTO {
 
     private String rank;
 
-	private Long executionStatus;
+    private Long executionStatus;
 
-	private String executionStatusName;
+    private String executionStatusName;
 
     private Long assignedTo;
 
@@ -37,75 +38,86 @@ public class TestCycleCaseDTO {
 
     private String nextRank;
 
-	private UserDO assigneeUser;
+    private UserDO assigneeUser;
 
-	private UserDO lastUpdateUser;
+    private UserDO lastUpdateUser;
 
-	private Long versionId;
+    private Long versionId;
 
-	private Long lastUpdatedBy;
+    private Long lastUpdatedBy;
 
     private Date lastUpdateDate;
 
-	private String cycleName;
+    private String cycleName;
 
-	private IssueInfosDTO issueInfosDTO;
+    private IssueInfosDTO issueInfosDTO;
 
-	private String folderName;
+    private String folderName;
 
-	private String versionName;
+    private String versionName;
 
-	private Long lastExecuteId;
+    private Long lastExecuteId;
 
-	private Long nextExecuteId;
+    private Long nextExecuteId;
 
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
-    private List<TestCycleCaseDefectRelDTO> caseDefect=new ArrayList<>();
+    private List<TestCycleCaseDefectRelDTO> caseDefect = new ArrayList<>();
 
-	private List<TestCycleCaseDefectRelDTO> subStepDefects=new ArrayList<>();
+    private List<TestCycleCaseDefectRelDTO> subStepDefects = new ArrayList<>();
 
-	List<TestCycleCaseStepDTO> cycleCaseStep;
+    List<TestCycleCaseStepDTO> cycleCaseStep;
 
-	private List<IssueLinkDTO> issueLinkDTOS;
+    private List<IssueLinkDTO> issueLinkDTOS;
 
-	public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
-		return subStepDefects;
-	}
+    private SearchDTO searchDTO;
 
-	public List<IssueLinkDTO> getIssueLinkDTOS() {
-		return issueLinkDTOS;
-	}
+    public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
+        return subStepDefects;
+    }
 
-	public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
-		this.issueLinkDTOS = issueLinkDTOS;
-	}
+    public List<IssueLinkDTO> getIssueLinkDTOS() {
+        return issueLinkDTOS;
+    }
 
-	public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO){
-		if(this.issueLinkDTOS==null){
-			this.issueLinkDTOS=new ArrayList<>();
-		}
-		this.issueLinkDTOS.add(issueLinkDTO);
-	}
-	public String getVersionName() {
-		return versionName;
-	}
+    public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
+        this.issueLinkDTOS = issueLinkDTOS;
+    }
 
-	public void setVersionName(String versionName) {
-		this.versionName = versionName;
-	}
+    public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO) {
+        if (this.issueLinkDTOS == null) {
+            this.issueLinkDTOS = new ArrayList<>();
+        }
+        this.issueLinkDTOS.add(issueLinkDTO);
+    }
 
-	public void setSubStepDefects(List<TestCycleCaseDefectRelE> subStepDefects) {
-		this.subStepDefects = ConvertHelper.convertList(subStepDefects, TestCycleCaseDefectRelDTO.class);
-	}
+    public SearchDTO getSearchDTO() {
+        return searchDTO;
+    }
 
-	public String getExecutionStatusName() {
-		return executionStatusName;
-	}
+    public void setSearchDTO(SearchDTO searchDTO) {
+        this.searchDTO = searchDTO;
+    }
 
-	public void setExecutionStatusName(String executionStatusName) {
-		this.executionStatusName = executionStatusName;
-	}
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public void setSubStepDefects(List<TestCycleCaseDefectRelE> subStepDefects) {
+        this.subStepDefects = ConvertHelper.convertList(subStepDefects, TestCycleCaseDefectRelDTO.class);
+    }
+
+    public String getExecutionStatusName() {
+        return executionStatusName;
+    }
+
+    public void setExecutionStatusName(String executionStatusName) {
+        this.executionStatusName = executionStatusName;
+    }
 
     public Long getExecuteId() {
         return executeId;
@@ -131,63 +143,63 @@ public class TestCycleCaseDTO {
         this.issueId = issueId;
     }
 
-	public Long getExecutionStatus() {
-		return executionStatus;
-	}
+    public Long getExecutionStatus() {
+        return executionStatus;
+    }
 
-	public void setExecutionStatus(Long executionStatus) {
-		this.executionStatus = executionStatus;
-	}
+    public void setExecutionStatus(Long executionStatus) {
+        this.executionStatus = executionStatus;
+    }
 
-	public Long getAssignedTo() {
+    public Long getAssignedTo() {
         return assignedTo;
     }
 
-	public IssueInfosDTO getIssueInfosDTO() {
-		return issueInfosDTO;
-	}
+    public IssueInfosDTO getIssueInfosDTO() {
+        return issueInfosDTO;
+    }
 
-	public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
-		this.issueInfosDTO = issueInfosDTO;
-	}
+    public void setIssueInfosDTO(IssueInfosDTO issueInfosDTO) {
+        this.issueInfosDTO = issueInfosDTO;
+    }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 
-	public String getFolderName() {
-		return folderName;
-	}
+    public String getFolderName() {
+        return folderName;
+    }
 
-	public void setFolderName(String folderName) {
-		this.folderName = folderName;
-	}
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
 
-	public void setAssignedTo(Long assignedTo) {
+    public void setAssignedTo(Long assignedTo) {
         this.assignedTo = assignedTo;
     }
 
-	public UserDO getAssigneeUser() {
-		return assigneeUser;
-	}
+    public UserDO getAssigneeUser() {
+        return assigneeUser;
+    }
 
-	public void setAssigneeUser(UserDO assigneeUser) {
-		this.assigneeUser = assigneeUser;
-	}
+    public void setAssigneeUser(UserDO assigneeUser) {
+        this.assigneeUser = assigneeUser;
+    }
 
-	public UserDO getLastUpdateUser() {
-		return lastUpdateUser;
-	}
+    public UserDO getLastUpdateUser() {
+        return lastUpdateUser;
+    }
 
-	public void setLastUpdateUser(UserDO lastUpdateUser) {
-		this.lastUpdateUser = lastUpdateUser;
-	}
+    public void setLastUpdateUser(UserDO lastUpdateUser) {
+        this.lastUpdateUser = lastUpdateUser;
+    }
 
-	public String getComment() {
+    public String getComment() {
         return comment;
     }
 
@@ -244,15 +256,15 @@ public class TestCycleCaseDTO {
     }
 
 
-	public Long getLastUpdatedBy() {
-		return lastUpdatedBy;
-	}
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
 
-	public void setLastUpdatedBy(Long lastUpdatedBy) {
-		this.lastUpdatedBy = lastUpdatedBy;
-	}
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
 
-	public Date getLastUpdateDate() {
+    public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
 
@@ -260,35 +272,35 @@ public class TestCycleCaseDTO {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public List<TestCycleCaseStepDTO> getCycleCaseStep() {
-		return cycleCaseStep;
-	}
+    public List<TestCycleCaseStepDTO> getCycleCaseStep() {
+        return cycleCaseStep;
+    }
 
-	public void setCycleCaseStep(List<TestCycleCaseStepE> cycleCaseStep) {
-		this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepDTO.class);
-	}
+    public void setCycleCaseStep(List<TestCycleCaseStepE> cycleCaseStep) {
+        this.cycleCaseStep = ConvertHelper.convertList(cycleCaseStep, TestCycleCaseStepDTO.class);
+    }
 
-	public Long getLastExecuteId() {
-		return lastExecuteId;
-	}
+    public Long getLastExecuteId() {
+        return lastExecuteId;
+    }
 
-	public void setLastExecuteId(Long lastExecuteId) {
-		this.lastExecuteId = lastExecuteId;
-	}
+    public void setLastExecuteId(Long lastExecuteId) {
+        this.lastExecuteId = lastExecuteId;
+    }
 
-	public Long getNextExecuteId() {
-		return nextExecuteId;
-	}
+    public Long getNextExecuteId() {
+        return nextExecuteId;
+    }
 
-	public void setNextExecuteId(Long nextExecuteId) {
-		this.nextExecuteId = nextExecuteId;
-	}
+    public void setNextExecuteId(Long nextExecuteId) {
+        this.nextExecuteId = nextExecuteId;
+    }
 }
