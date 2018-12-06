@@ -34,15 +34,23 @@
         <id column="project_id" property="projectId"/>
         <id column="cycle_id" property="cycleId"/>
         <id column="result_id" property="resultId"/>
+        <id column="created_by" property="createdBy"/>
+        <id column="creation_date" property="creationDate"/>
+        <id column="last_update_date" property="lastUpdateDate"/>
         <association property="testAppInstanceE" javaType="io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE">
             <id column="pod_status" property="podStatus"/>
             <id column="app_version_id" property="appVersionId"/>
+            <id column="log_id" property="logId"/>
+            <id column="env_id" property="envId"/>
+            <id column="pod_name" property="podName"/>
+            <id column="container_name" property="containerName"/>
         </association>
     </resultMap>
 
     <select id="queryWithInstance" resultMap="BaseResultMap">
         SELECT history.id,history.framework,history.test_status,history.instance_id,history.object_version_number,history.project_id,
-        history.cycle_id,history.result_id,instance.pod_status,instance.app_version_id
+        history.cycle_id,history.result_id,instance.pod_status,instance.app_version_id,history.created_by,history.creation_date,history.last_update_date
+        ,instance.log_id,instance.env_id,instance.pod_name,instance.container_name
         from test_automation_history history left join test_app_instance instance on history.instance_id=instance.id
         <where>
             history.project_id=#{params.projectId}

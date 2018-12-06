@@ -51,6 +51,6 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
 
         page.stream().filter(u->!ObjectUtils.isEmpty(u.getTestAppInstanceDTO())).forEach(v->
 
-                v.getTestAppInstanceDTO().setAppVersionName(map.get(v.getTestAppInstanceDTO().getAppVersionId()).getAppName()));
+                v.getTestAppInstanceDTO().setAppVersionName(map.get(v.getTestAppInstanceDTO().getAppVersionId()).getVersion()));
     }
 }

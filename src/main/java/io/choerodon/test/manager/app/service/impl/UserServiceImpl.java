@@ -74,7 +74,7 @@ public class UserServiceImpl implements UserService {
 		Map<Long,UserDO> user =query(users);
 		dto.forEach(v -> {
 			if (LongUtils.isUserId(v.getCreatedBy())) {
-				v.setCreateUser(user.get(v.getLastUpdatedBy()));
+				v.setCreateUser(user.get(v.getCreatedBy()));
 			}
 		});
 	}
