@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.google.common.collect.Maps;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
@@ -11,7 +9,6 @@ import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
@@ -24,7 +21,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.micrometer.core.instrument.search.Search;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,7 +108,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Long[] issues = cycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
 
         //先去敏捷筛选issue
-        Map<Long, IssueInfosDTO> filterMap = null;
+        Map<Long, IssueInfosDTO> filterMap = new HashMap<>();
         if (!ObjectUtils.isEmpty(dto.getSearchDTO())) {
             Map map = new HashMap<String, Long[]>();
             map.put("issueIds", issues);
