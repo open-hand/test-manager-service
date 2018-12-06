@@ -353,4 +353,8 @@ public class TestCycleCaseE {
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
+
+    public boolean isPassed() {
+        return "通过".equals(executionStatusName);
+    }
 }

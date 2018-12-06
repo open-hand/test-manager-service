@@ -44,13 +44,17 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     private FileService fileService;
 
     @Autowired
-    private TestCaseService testCaseFeignClient;
+    private TestCaseService testCaseService;
 
     @Autowired
     private IssueFeignClient issueFeignClient;
 
     public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
         this.issueFeignClient = issueFeignClient;
+    }
+
+    public void setTestCaseService(TestCaseService testCaseService) {
+        this.testCaseService = testCaseService;
     }
 
     @Autowired
@@ -303,7 +307,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
     @Override
     public IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO) {
-        return testCaseFeignClient.createTest(issueCreateDTO, projectId, "test");
+        return testCaseService.createTest(issueCreateDTO, projectId, "test");
     }
 
     @Override

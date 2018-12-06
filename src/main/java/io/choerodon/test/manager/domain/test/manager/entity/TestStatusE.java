@@ -45,7 +45,7 @@ public class TestStatusE {
     }
 
     public TestStatusE queryOneSelective() {
-        return testStatusRepository.queryOne(statusId);
+        return testStatusRepository.query(this);
     }
 
     public List<TestStatusE> queryAllUnderProject() {

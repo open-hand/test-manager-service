@@ -238,4 +238,8 @@ public class TestCycleCaseStepE {
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
+
+    public boolean isPassed() {
+        return "通过".equals(statusName);
+    }
 }
