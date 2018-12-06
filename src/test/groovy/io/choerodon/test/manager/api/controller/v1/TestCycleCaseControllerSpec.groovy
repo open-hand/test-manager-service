@@ -239,22 +239,22 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "QueryByCycle"() {
         given:
-        TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0))
+        TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0),searchDTO: new SearchDTO(content: "test"))
         when:
         def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 10)
         then:
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
-        1 * userService.query(_) >> new HashMap<>()
+        0 * userService.query(_) >> new HashMap<>()
         and:
-        result.body.size() == 3
+        result.body.size() == 0
 
         when:
         result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 1)
         then:
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
-        1 * userService.query(_) >> new HashMap<>()
+        0 * userService.query(_) >> new HashMap<>()
         and:
-        result.body.size() == 1
+        result.body.size() == 0
     }
 
     def "validateReturn"() {
@@ -262,7 +262,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCaseService client = Mock(TestCaseService)
         TestCycleCaseService service = new TestCycleCaseServiceImpl(testCaseService: client)
         when:
-        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L, 1)
+        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L, 1,false)
         then:
         0 * client.getIssueInfoMap(_, _, _, _)
         when:
