@@ -17,6 +17,17 @@ public class TestAppInstanceDTO {
     private Long containerName;
     private Long logId;
 
+    private String appVersionName;
+
+
+    public String getAppVersionName() {
+        return appVersionName;
+    }
+
+    public void setAppVersionName(String appVersionName) {
+        this.appVersionName = appVersionName;
+    }
+
     public Long getId() {
         return id;
     }

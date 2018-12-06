@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper">
+
+    <resultMap type="io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="framework" property="framework"/>
+        <id column="test_status" property="testStatus"/>
+        <id column="instance_id" property="instanceId"/>
+        <id column="object_version_number" property="objectVersionNumber"/>
+        <id column="project_id" property="projectId"/>
+        <id column="cycle_id" property="cycleId"/>
+        <id column="result_id" property="resultId"/>
+        <association property="testAppInstanceE" javaType="io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE">
+            <id column="pod_status" property="podStatus"/>
+            <id column="app_version_id" property="appVersionId"/>
+        </association>
+    </resultMap>
+
+    <select id="queryWithInstance" resultMap="BaseResultMap">
+        SELECT history.id,history.framework,history.test_status,history.instance_id,history.object_version_number,history.project_id,
+        history.cycle_id,history.result_id,instance.pod_status,instance.app_version_id
+        from test_automation_history history left join test_app_instance instance on history.instance_id=instance.id
+        <where>
+            history.project_id=#{params.projectId}
+            <if test="params.framework != null">
+                and history.framework=#{params.framework}
+            </if>
+            <if test="params.testStatus != null">
+                and history.test_status=#{params.testStatus}
+            </if>
+            <if test="params.appVersionId != null">
+                and instance.app_version_id=#{params.appVersionId}
+            </if>
+            <if test="params.podStatus != null">
+                and instance.pod_status=#{params.podStatus}
+            </if>
+            <if test="params.podStatus != null">
+                and instance.app_id=#{params.app_id}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -32,13 +32,13 @@ public class TestAppInstanceE extends AuditDomain {
     private Long logId;
 
     public static String getAppIdFromReleaseName(String releaseName){
-        return releaseName.split("-")[0];
-    }
-    public static String getAppVersionIDFromReleaseName(String releaseName){
         return releaseName.split("-")[1];
     }
-    public static String getInstanceIDFromReleaseName(String releaseName){
+    public static String getAppVersionIDFromReleaseName(String releaseName){
         return releaseName.split("-")[2];
+    }
+    public static String getInstanceIDFromReleaseName(String releaseName){
+        return releaseName.split("-")[3];
     }
     public Long getId() {
         return id;
