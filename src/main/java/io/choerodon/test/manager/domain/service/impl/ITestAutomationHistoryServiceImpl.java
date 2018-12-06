@@ -1,6 +1,11 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
@@ -8,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistoryService {
@@ -18,6 +24,13 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
     @Override
     public List<TestAutomationHistoryE> query(TestAutomationHistoryE testAutomationHistory) {
         return testAutomationHistoryMapper.select(testAutomationHistory);
+    }
+
+    @Override
+    public Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest) {
+        Page<TestAutomationHistoryE> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
+                () -> testAutomationHistoryMapper.queryWithInstance(map));
+        return ConvertPageHelper.convertPage(serviceDOPage, TestAutomationHistoryDTO.class);
     }
 
     @Override

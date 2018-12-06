@@ -300,7 +300,6 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
         then:
-        1 * userService.query(_)
         1 * userService.populateTestCycleCaseDTO(_)
     }
 
@@ -317,7 +316,6 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
         then:
-        0 * userService.query(_) >> userMap
         0 * userService.populateTestCycleCaseDTO(_)
     }
 

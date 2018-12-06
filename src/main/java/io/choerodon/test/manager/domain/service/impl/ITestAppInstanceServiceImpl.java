@@ -16,6 +16,11 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     TestAppInstanceMapper mapper;
 
     @Override
+    public List<TestAppInstanceE> query(TestAppInstanceE testAppInstanceE) {
+        return mapper.select(testAppInstanceE);
+    }
+
+    @Override
     public String queryValueByEnvIdAndAppId(Long envId, Long appId) {
         return mapper.queryValueByEnvIdAndAppId(envId,appId);
     }

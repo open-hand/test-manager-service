@@ -1,5 +1,7 @@
-package io.choerodon.test.manager.domain.test.manager.entity;
+package io.choerodon.test.manager.api.dto;
 
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
@@ -7,12 +9,8 @@ import io.choerodon.mybatis.domain.AuditDomain;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-@Table(name = "test_automation_history")
-@ModifyAudit
-@VersionAudit
-public class TestAutomationHistoryE extends AuditDomain {
+public class TestAutomationHistoryDTO extends AuditDomain {
 
     public enum Status {
         NONEXECUTION(0L), COMPLETE(1L), PARTIALEXECUTION(2L);
@@ -41,8 +39,9 @@ public class TestAutomationHistoryE extends AuditDomain {
     private Long cycleId;
     private Long resultId;
 
-    @Transient
-    private TestAppInstanceE testAppInstanceE;
+    private TestAppInstanceDTO testAppInstanceDTO;
+
+    private UserDO createUser;
 
     public Long getId() {
         return id;
@@ -104,12 +103,19 @@ public class TestAutomationHistoryE extends AuditDomain {
         this.projectId = projectId;
     }
 
-    public TestAppInstanceE getTestAppInstanceE() {
-        return testAppInstanceE;
+    public UserDO getCreateUser() {
+        return createUser;
     }
 
-    public void setTestAppInstanceE(TestAppInstanceE testAppInstanceE) {
-        this.testAppInstanceE = testAppInstanceE;
+    public void setCreateUser(UserDO createUser) {
+        this.createUser = createUser;
     }
 
+    public TestAppInstanceDTO getTestAppInstanceDTO() {
+        return testAppInstanceDTO;
+    }
+
+    public void setTestAppInstanceDTO(TestAppInstanceDTO testAppInstanceDTO) {
+        this.testAppInstanceDTO = testAppInstanceDTO;
+    }
 }
