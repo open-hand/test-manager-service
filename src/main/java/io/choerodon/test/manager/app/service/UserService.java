@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,7 @@ public interface UserService {
 	void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto);
 
 	void populateTestCycleCaseDTO(TestCycleCaseDTO dto);
+
+	void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto);
 
 }

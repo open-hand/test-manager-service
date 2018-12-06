@@ -4,6 +4,7 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.UserService;
@@ -64,6 +65,20 @@ public class UserServiceImpl implements UserService {
 		Optional.ofNullable(dto.getAssignedTo()).ifPresent(v->dto.setAssigneeUser(user.get(v)));
 		Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v->dto.setLastUpdateUser(user.get(v)));
 	}
+
+	public void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto){
+		Long[] users = dto.stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+		if(ObjectUtils.isEmpty(users)){
+			return;
+		}
+		Map<Long,UserDO> user =query(users);
+		dto.forEach(v -> {
+			if (LongUtils.isUserId(v.getCreatedBy())) {
+				v.setCreateUser(user.get(v.getLastUpdatedBy()));
+			}
+		});
+	}
+
 
 
 }
