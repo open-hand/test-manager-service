@@ -27,7 +27,7 @@ public class TestAutomationHistoryController {
 
     @PostMapping("/queryWithHistroy")
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    public ResponseEntity<Page<TestAutomationHistoryDTO>> queryWithInstance(@RequestBody(required = false) Map map, @SortDefault(value = "id", direction = Sort.Direction.ASC) PageRequest pageRequest, @PathVariable(name = "project_id")  Long projectId){
+    public ResponseEntity<Page<TestAutomationHistoryDTO>> queryWithInstance(@RequestBody(required = false) Map map, @SortDefault(value = "id", direction = Sort.Direction.DESC) PageRequest pageRequest, @PathVariable(name = "project_id")  Long projectId){
         return Optional.ofNullable(testAutomationHistoryService.queryWithInstance(map,pageRequest,projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.queryWithInstance"));

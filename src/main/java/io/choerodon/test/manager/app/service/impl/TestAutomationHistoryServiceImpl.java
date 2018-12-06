@@ -11,6 +11,7 @@ import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -45,10 +46,11 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
 
     public void populateAPPVersion(Long projectId,Page<TestAutomationHistoryDTO> page){
         Map<Long, ApplicationVersionRepDTO> map=
-                devopsService.getAppversion(projectId,page.stream()
+                devopsService.getAppversion(projectId,page.stream().filter(u-> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))
                         .map(v->v.getTestAppInstanceDTO().getAppVersionId()).distinct().collect(Collectors.toList()));
 
-        page.forEach(v->
-                v.getTestAppInstanceDTO().setAppVersionName(map.get(v.getTestAppInstanceDTO().getAppVersionId()).getAppName()));
+        page.stream().filter(u->!ObjectUtils.isEmpty(u.getTestAppInstanceDTO())).forEach(v->
+
+                v.getTestAppInstanceDTO().setAppVersionName(map.get(v.getTestAppInstanceDTO().getAppVersionId()).getVersion()));
     }
 }
