@@ -9,5 +9,9 @@ import java.util.Map;
 
 public interface TestAutomationHistoryMapper extends BaseMapper<TestAutomationHistoryE> {
 
+    int updateTestStatusByInstanceId(TestAutomationHistoryE automationHistoryE);
+
+    Long queryObjectVersionNumberByInstanceId(TestAutomationHistoryE automationHistoryE);
+
     List<TestAutomationHistoryE> queryWithInstance(@Param("params")Map map);
 }

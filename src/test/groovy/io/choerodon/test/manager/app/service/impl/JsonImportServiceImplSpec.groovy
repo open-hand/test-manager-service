@@ -1,5 +1,9 @@
 package io.choerodon.test.manager.app.service.impl
 
+import feign.FeignException
+import io.choerodon.agile.api.dto.IssueCreateDTO
+import io.choerodon.agile.api.dto.IssueDTO
+import io.choerodon.agile.api.dto.IssueTypeDTO
 import io.choerodon.agile.api.dto.PriorityDTO
 import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.core.exception.CommonException
@@ -7,6 +11,7 @@ import io.choerodon.devops.api.dto.ApplicationRepDTO
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.JsonImportService
+import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.domain.service.IExcelImportService
 import io.choerodon.test.manager.domain.service.IJsonImportService
 import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl
@@ -28,6 +33,7 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.CompletionException
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -55,42 +61,69 @@ class JsonImportServiceImplSpec extends Specification {
     @Shared
     private List<TestAppInstanceE> instances = []
 
-//    def "importMochaReport"() {
-//        given:
-//        TestAppInstanceE instanceE = new TestAppInstanceE(
-//                code: "mocha-test",
-//                projectVersionId: 233L,
-//                projectId: 144L,
-//                createdBy: 8956L,
-//                lastUpdatedBy: 8956L
-//        )
-//        instances << instanceE
-//        instanceMapper.insert(instanceE)
-//        ProjectFeignClient projectFeignClient = Mock()
-//        ApplicationFeignClient applicationFeignClient = Mock()
-//        iJsonImportService.setProjectFeignClient(projectFeignClient)
-//        iJsonImportService.setApplicationFeignClient(applicationFeignClient)
-//        IssueFeignClient issueFeignClient = Mock()
-//        iExcelImportService.setIssueFeignClient(issueFeignClient)
-//
-//        when: "app instance 不存在"
-//        jsonImportService.importMochaReport("att-662-582-1000000", report)
+    def "importMochaReport"() {
+        given:
+        TestAppInstanceE instanceE = new TestAppInstanceE(
+                code: "mocha-test",
+                projectVersionId: 233L,
+                projectId: 144L,
+                createdBy: 8956L,
+                lastUpdatedBy: 8956L
+        )
+        instances << instanceE
+        instanceMapper.insert(instanceE)
+        ProjectFeignClient projectFeignClient = Mock() {
+            _ * query(instanceE.projectId) >>
+                    new ResponseEntity<>(new ProjectDTO(organizationId: 1L), HttpStatus.OK)
+        }
+        ApplicationFeignClient applicationFeignClient = Mock()
+        iJsonImportService.setProjectFeignClient(projectFeignClient)
+        iJsonImportService.setApplicationFeignClient(applicationFeignClient)
+        IssueFeignClient issueFeignClient = Mock() {
+            _ * queryPriorityId(instanceE.projectId, _ as Long) >>
+                    new ResponseEntity<>([new PriorityDTO(id: 8L, isDefault: true)], HttpStatus.OK)
+            _ * queryIssueType(instanceE.projectId, "test", _ as Long) >>
+                    new ResponseEntity<>([new IssueTypeDTO(typeCode: "issue_test", id: 18L)], HttpStatus.OK)
+        }
+        iExcelImportService.setIssueFeignClient(issueFeignClient)
+        TestCaseService testCaseService = Mock() {
+            _ * createTest(_ as IssueCreateDTO, instanceE.projectId, "test") >> new IssueDTO(issueId: 1L)
+        }
+        iExcelImportService.setTestCaseService(testCaseService)
+
+        when: "app instance 不存在"
+        jsonImportService.importMochaReport("att-662-582-5000000", report)
+        then:
+        CommonException commonException = thrown()
+        commonException.message == "app instance 不存在"
+
+        when: "app version id 不存在"
+        jsonImportService.importMochaReport("att-662-582000000-5", report)
+        then:
+        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
+                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
+        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
+                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
+        CompletionException completionException = thrown()
+        completionException.cause.message == "error.get.app.version.name"
+
+        when: "app id 不存在"
+        jsonImportService.importMochaReport("att-662000000-582-5", report)
+        then:
+        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
+                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
+        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
+                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.INTERNAL_SERVER_ERROR)
+        completionException = thrown()
+        completionException.cause.message == "error.get.app.name"
+
+//        when:
+//        Long reportId = jsonImportService.importMochaReport("att-662-582-5", report)
 //        then:
-//        CommonException commonException = thrown()
-//        commonException.message == "app instance 不存在"
-//
-//        when: "app version id 不存在"
-//        jsonImportService.importMochaReport("att-662-582000000-1", report)
-//        then:
-//        1 * projectFeignClient.query(instanceE.projectId) >>
-//                new ResponseEntity<>(new ProjectDTO(organizationId: 1L), HttpStatus.OK)
 //        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as Long) >>
-//                new ResponseEntity<>(new ApplicationVersionRepDTO(version: "版本号"), HttpStatus.OK)
+//                new ResponseEntity<>(new ApplicationVersionRepDTO(version: "测试版本号"), HttpStatus.OK)
 //        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
 //                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
-//        _ * issueFeignClient.queryPriorityId(instanceE.projectId, _ as Long) >>
-//                new ResponseEntity<>([new PriorityDTO(id: 8L, isDefault: true)], HttpStatus.OK)
-//        commonException = thrown()
-//        commonException.message == "error.get.app.version.name"
-//    }
+//        reportId == 1L
+    }
 }

@@ -23,7 +23,19 @@ public class TestCycleCaseHistoryDO extends AuditDomain {
     private String newValue;
 	private String field;
 
-	public String getField() {
+	private Long lastUpdatedBy;
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public String getField() {
 		return field;
 	}
 

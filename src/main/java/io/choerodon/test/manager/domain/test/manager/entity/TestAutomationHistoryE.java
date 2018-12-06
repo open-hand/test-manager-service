@@ -41,6 +41,30 @@ public class TestAutomationHistoryE extends AuditDomain {
     private Long cycleId;
     private Long resultId;
 
+    private Long lastUpdatedBy;
+
+    private Long objectVersionNumber;
+
+    @Override
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    @Override
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
+
     @Transient
     private TestAppInstanceE testAppInstanceE;
 

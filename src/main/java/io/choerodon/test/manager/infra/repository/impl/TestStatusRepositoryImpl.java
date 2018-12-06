@@ -38,6 +38,12 @@ public class TestStatusRepositoryImpl implements TestStatusRepository {
     }
 
     @Override
+    public TestStatusE query(TestStatusE testStatusE) {
+        TestStatusDO testStatusDO = ConvertHelper.convert(testStatusE, TestStatusDO.class);
+        return ConvertHelper.convert(testStatusMapper.selectOne(testStatusDO), TestStatusE.class);
+    }
+
+    @Override
     public TestStatusE insert(TestStatusE testStatusE) {
         if (testStatusE == null || testStatusE.getStatusId() != null) {
             throw new CommonException("error.status.insert.statusId.should.be.null");

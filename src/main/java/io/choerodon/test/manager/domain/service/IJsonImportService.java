@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 
@@ -21,4 +22,6 @@ public interface IJsonImportService {
     String getAppName(Long projectId, Long appId);
 
     String getAppVersionName(Long projectId, Long appVersionId);
+
+    void updateAutomationHistoryStatus(TestAutomationHistoryE automationHistoryE);
 }

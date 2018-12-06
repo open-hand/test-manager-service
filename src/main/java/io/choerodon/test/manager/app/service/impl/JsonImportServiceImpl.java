@@ -113,11 +113,17 @@ public class JsonImportServiceImpl implements JsonImportService {
             }
         });
 
-        // 将数据容器中的数据保存到数据库
+        // 将数据容器中的数据保存到数据库，并更新automation history状态
+        TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
+        automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
+        automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
 
         for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
             testCycleCaseE.setCreatedBy(createdBy);
             testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+            if (!testCycleCaseE.isPassed()) {
+                automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
+            }
             for (TestCaseStepE testCaseStepE : testCycleCaseE.getTestCaseSteps()) {
                 testCaseStepE.setCreatedBy(createdBy);
                 testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
@@ -138,6 +144,9 @@ public class JsonImportServiceImpl implements JsonImportService {
             currentTestCycleCaseSteps = testCycleCaseE.getCycleCaseStep();
             for (i = 0; i < currentTestCycleCaseSteps.size(); i++) {
                 currentCycleCaseStepE = currentTestCycleCaseSteps.get(i);
+                if (!currentCycleCaseStepE.isPassed()) {
+                    automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
+                }
                 currentCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
                 currentCycleCaseStepE.setStepId(testCycleCaseE.getTestCaseSteps().get(i).getStepId());
                 currentCycleCaseStepE.setCreatedBy(createdBy);
@@ -147,6 +156,9 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
 
         TestCycleCaseStepE.createCycleCaseSteps(testCycleCaseSteps);
+
+        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
+        iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
 
         return saveAutomationResultTask.join();
     }

@@ -27,10 +27,12 @@ import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.exception.IssueCreateException;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 
 @Service
 public class IJsonImportServiceImpl implements IJsonImportService {
@@ -48,6 +50,9 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     private static final String ERROR_GET_ORGANIZATION_ID = "error.get.organization.id";
 
     private IExcelImportService iExcelImportService;
+
+    @Autowired
+    private TestAutomationHistoryMapper automationHistoryMapper;
 
     @Autowired
     public void setiExcelImportService(IExcelImportService iExcelImportService) {
@@ -305,6 +310,15 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         } catch (FeignException e) {
             throw new CommonException(ERROR_GET_APP_VERSION_NAME, e);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateAutomationHistoryStatus(TestAutomationHistoryE automationHistoryE) {
+        Long objectVersionNumber = automationHistoryMapper.queryObjectVersionNumberByInstanceId(automationHistoryE);
+        automationHistoryE.setObjectVersionNumber(objectVersionNumber);
+        DBValidateUtil.executeAndvalidateUpdateNum(automationHistoryMapper::updateTestStatusByInstanceId,
+                automationHistoryE, 1, "error.update.testStatus.by.instanceId");
     }
 
     private TestCaseStepE parseTestCaseStepJson(Long issueId, JSONObject testCaseStep) {
