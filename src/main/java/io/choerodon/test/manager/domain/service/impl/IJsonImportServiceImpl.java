@@ -75,6 +75,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, String summary) {
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
+        issueCreateDTO.setTypeCode("issue_auto_test");
 
         CompletableFuture<Void> getPriorityIdTask = CompletableFuture
                 .supplyAsync(() -> iExcelImportService.getPriorityId(organizationId, projectId))
@@ -83,12 +84,11 @@ public class IJsonImportServiceImpl implements IJsonImportService {
                     issueCreateDTO.setPriorityId(priorityId);
                 });
         CompletableFuture<Void> getIssueTypeIdTask = CompletableFuture
-                .supplyAsync(() -> iExcelImportService.getIssueTypeId(organizationId, projectId, "test"))
+                .supplyAsync(() -> iExcelImportService.getIssueTypeId(organizationId, projectId, "test", issueCreateDTO.getTypeCode()))
                 .thenAccept(issueCreateDTO::setIssueTypeId);
 
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
-        issueCreateDTO.setTypeCode("issue_test");
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);

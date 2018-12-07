@@ -236,11 +236,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public Long getIssueTypeId(Long organizationId, Long projectId, String applyType) {
+    public Long getIssueTypeId(Long organizationId, Long projectId, String applyType, String issueTypeCode) {
         ResponseEntity<List<IssueTypeDTO>> response = issueFeignClient.queryIssueType(projectId, applyType, organizationId);
         if (response.getStatusCode().is2xxSuccessful()) {
             for (IssueTypeDTO issueTypeDTO : response.getBody()) {
-                if ("issue_test".equals(issueTypeDTO.getTypeCode())) {
+                if (Objects.equals(issueTypeCode, issueTypeDTO.getTypeCode())) {
                     return issueTypeDTO.getId();
                 }
             }
@@ -279,7 +279,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode("issue_test");
-        issueCreateDTO.setIssueTypeId(getIssueTypeId(organizationId, projectId, "test"));
+        issueCreateDTO.setIssueTypeId(getIssueTypeId(organizationId, projectId, "test", issueCreateDTO.getTypeCode()));
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);
