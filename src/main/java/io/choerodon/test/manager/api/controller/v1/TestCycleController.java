@@ -83,8 +83,8 @@ public class TestCycleController {
     @ApiOperation("查询project下的测试循环")
     @GetMapping("/count/color/in/version/{versionId}")
     ResponseEntity getTestCycleCaseCountInVersion(@PathVariable(name = "project_id") Long projectId,
-    @PathVariable(name = "versionId") Long versionId){
-        return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId,projectId))
+                                                  @PathVariable(name = "versionId") Long versionId) {
+        return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleCaseCountInVerson"));
     }
@@ -152,7 +152,7 @@ public class TestCycleController {
     @ApiOperation("同步cycleId下文件夹")
     @PostMapping("/synchro/folder/all/in/cycle/{cycleId}")
     ResponseEntity synchroFolderInCycle(@PathVariable(name = "project_id") Long projectId,
-                                 @PathVariable(name = "cycleId") Long cycleId
+                                        @PathVariable(name = "cycleId") Long cycleId
     ) {
         Assert.notNull(cycleId, "error.cycleId.not.be.null");
         testCycleService.synchroFolderInCycle(cycleId, projectId);
@@ -174,13 +174,22 @@ public class TestCycleController {
     @ApiOperation("查询version下所有cycle")
     @GetMapping("/get/cycles/all/in/version/{versionId}")
     ResponseEntity getCyclesInVersion(@PathVariable(name = "project_id") Long projectId,
-                                      @PathVariable(name = "versionId") Long versionId){
+                                      @PathVariable(name = "versionId") Long versionId) {
 
         return Optional.ofNullable(testCycleService.getCyclesInVersion(versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.getCyclesInVersion"));
     }
 
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量修改cycle下所有的case的指定人")
+    @PutMapping("/batch/change/cycleCase/assignedTo/{userId}/in/cycle/{cycleId}")
+    ResponseEntity batchChangeAssignedInOneCycle(@PathVariable(name = "project_id") Long projectId,
+                                                 @PathVariable(name = "userId") Long userId,
+                                                 @PathVariable(name = "cycleId") Long cycleId) {
+        testCycleService.batchChangeAssignedInOneCycle(userId,cycleId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

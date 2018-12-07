@@ -271,6 +271,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return dto;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS) {
+        for (TestCycleCaseDTO cycleCaseDTO : cycleCaseDTOS) {
+            testStatusService.populateStatus(cycleCaseDTO);
+            TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(cycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+            userService.populateTestCycleCaseDTO(dto);
+        }
+    }
+
 
     @Override
     public List<Long> getActiveCase(Long range, Long projectId, String day) {

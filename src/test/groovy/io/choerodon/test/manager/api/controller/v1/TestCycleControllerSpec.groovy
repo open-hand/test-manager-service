@@ -412,31 +412,31 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
     }
 
-        def "CreateFormsFromIssueToDefect"() {
-            given:
-            Map map=new HashMap();
-            map.put(888L,new IssueInfosDTO(issueId: 888L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
-            map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))
-            when:
-            def entity = restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
-            then:
-            1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
-            1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 888L,issueId: 4444444L),new IssueLinkDTO(linkedIssueId: 24444444L,issueId: 888L))
-            1*testCaseService.getIssueInfoMap(_, _, _,_)>>map
+    def "CreateFormsFromIssueToDefect"() {
+        given:
+        Map map=new HashMap();
+        map.put(888L,new IssueInfosDTO(issueId: 888L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
+        map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))
+        when:
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        then:
+        1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
+        1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 888L,issueId: 4444444L),new IssueLinkDTO(linkedIssueId: 24444444L,issueId: 888L))
+        1*testCaseService.getIssueInfoMap(_, _, _,_)>>map
 
-            when:
-             restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
-            then:
-            1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> new HashMap<>()
-            0*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueInfosDTO(issueId: 4443L))
-            0*testCaseService.getIssueInfoMap(_, _, _,_)>>map
+        when:
+        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        then:
+        1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> new HashMap<>()
+        0*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueInfosDTO(issueId: 4443L))
+        0*testCaseService.getIssueInfoMap(_, _, _,_)>>map
 
-            when:
-            restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
-            then:
-            1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
-            1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> new ArrayList<>()
-            0*testCaseService.getIssueInfoMap(_, _, _,_)>>map
+        when:
+        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        then:
+        1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
+        1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> new ArrayList<>()
+        0*testCaseService.getIssueInfoMap(_, _, _,_)>>map
 
     }
 
@@ -532,6 +532,31 @@ class TestCycleControllerSpec extends Specification {
         1*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 887L,issueId: 887L))
     }
 
+    def "batchChangeAssignedInOneCycle"(){
+        when:
+        restTemplate.put("/v1/projects/{project_id}/cycle/batch/change/cycleCase/assignedTo/{userId}/in/cycle/{cycleId}",null,projectId,20645L,cycleIds.get(1))
+
+        then:
+        noExceptionThrown()
+        List<TestCycleCaseDO> caseDOS = testCycleCaseMapper.select(new TestCycleCaseDO(cycleId: cycleIds.get(1)))
+        for(TestCycleCaseDO caseDO:caseDOS){
+            caseDO.getAssignedTo() == 20645L
+            caseDO.setAssignedTo(0L)
+            testCycleCaseMapper.updateByPrimaryKey(caseDO)
+        }
+
+
+        when:
+        restTemplate.put("/v1/projects/{project_id}/cycle/batch/change/cycleCase/assignedTo/{userId}/in/cycle/{cycleId}",null,projectId,20645L,cycleIds.get(0))
+
+        then:
+        noExceptionThrown()
+        List<TestCycleCaseDO> caseDOS2 = testCycleCaseMapper.select(new TestCycleCaseDO(cycleId: cycleIds.get(1)))
+        for(TestCycleCaseDO caseDO:caseDOS2){
+            caseDO.getAssignedTo() == 20645L
+        }
+    }
+
     def "Delete"() {
         given: '清理数据'
         testCycleCaseMapper.delete(testCycleCaseDO)
@@ -555,7 +580,4 @@ class TestCycleControllerSpec extends Specification {
         cycleId << cycleIds
 
     }
-
-
-
 }
