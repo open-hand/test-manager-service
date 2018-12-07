@@ -317,6 +317,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     public void updateAutomationHistoryStatus(TestAutomationHistoryE automationHistoryE) {
         Long objectVersionNumber = automationHistoryMapper.queryObjectVersionNumberByInstanceId(automationHistoryE);
         automationHistoryE.setObjectVersionNumber(objectVersionNumber);
+        automationHistoryE.setLastUpdateDate(new Date());
         DBValidateUtil.executeAndvalidateUpdateNum(automationHistoryMapper::updateTestStatusByInstanceId,
                 automationHistoryE, 1, "error.update.testStatus.by.instanceId");
     }

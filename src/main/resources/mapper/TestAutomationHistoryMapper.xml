@@ -10,7 +10,7 @@
         cycle_id = #{cycleId},
         result_id = #{resultId},
         last_updated_by = #{lastUpdatedBy},
-        last_update_date = NOW(),
+        last_update_date = #{lastUpdateDate},
         object_version_number = object_version_number + 1
         WHERE
         instance_id = #{instanceId}
