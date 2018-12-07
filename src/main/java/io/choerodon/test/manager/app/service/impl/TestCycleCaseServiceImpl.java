@@ -99,29 +99,28 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         );
 
         Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.queryByFatherCycle(ConvertHelper.convertList(testCycleCaseDTOS, TestCycleCaseE.class), pageRequest);
+
         Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
         List<TestCycleCaseDTO> cycleCaseDTOS = dots.getContent();
         Long[] issues = cycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
 
-        //先去敏捷筛选issue
-        Map<Long, IssueInfosDTO> filterMap = new HashMap<>();
         if (!ObjectUtils.isEmpty(dto.getSearchDTO())) {
+            //先去敏捷筛选issue
             Map map = new HashMap<String, Long[]>();
             map.put("issueIds", issues);
             dto.getSearchDTO().setOtherArgs(map);
-            filterMap = testCaseService.getIssueInfoMap(projectId, dto.getSearchDTO(), false, organizationId);
-        }
-
-        List<TestCycleCaseDTO> filterCase = new ArrayList<>();
-        //根据筛选出来的issueId,进行本地筛选
-        for (TestCycleCaseDTO caseDTO:cycleCaseDTOS) {
-            if(filterMap.keySet().contains(caseDTO.getIssueId())){
-                filterCase.add(caseDTO);
+            Map<Long, IssueInfosDTO> filterMap = testCaseService.getIssueInfoMap(projectId, dto.getSearchDTO(), false, organizationId);
+            List<TestCycleCaseDTO> filterCase = new ArrayList<>();
+            //根据筛选出来的issueId,进行本地筛选
+            for (TestCycleCaseDTO caseDTO : cycleCaseDTOS) {
+                if (filterMap.keySet().contains(caseDTO.getIssueId())) {
+                    filterCase.add(caseDTO);
+                }
             }
+            dots.setContent(filterCase);
         }
-        dots.setContent(filterCase);
 
-        populateCycleCaseWithDefect(dots, projectId, organizationId,true);
+        populateCycleCaseWithDefect(dots, projectId, organizationId, true);
         populateUsers(dots);
         return dots;
     }
@@ -143,7 +142,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(dto)) {
             return new ArrayList<>();
         }
-        populateCycleCaseWithDefect(dto, projectId, organizationId,false);
+        populateCycleCaseWithDefect(dto, projectId, organizationId, false);
         populateUsers(dto);
         populateVersionBuild(projectId, dto);
         return dto;
@@ -166,7 +165,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (dto == null || dto.isEmpty()) {
             return new ArrayList<>();
         }
-        populateCycleCaseWithDefect(dto, projectId, organizationId,false);
+        populateCycleCaseWithDefect(dto, projectId, organizationId, false);
         return dto;
     }
 
@@ -175,7 +174,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Assert.notNull(cycleIds, "error.query.case.in.versions.project.not.be.null");
 
         List<TestCycleCaseDTO> dto = ConvertHelper.convertList(iTestCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds, versionIds), TestCycleCaseDTO.class);
-        populateCycleCaseWithDefect(dto, projectId, organizationId,false);
+        populateCycleCaseWithDefect(dto, projectId, organizationId, false);
         populateUsers(dto);
         return dto;
     }
