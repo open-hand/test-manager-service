@@ -35,8 +35,12 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     @Override
     public Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest,Long projectId) {
         map.put("projectId",projectId);
-        if(map.containsKey("appName")){
-            map.put("appName",devopsService.getAppVersionId(map.get("appName").toString(),projectId));
+        if(map.containsKey("filter")){
+            List<Long> versionId=devopsService.getAppVersionId(map.get("filter").toString(),projectId,Long.valueOf(map.get("appId").toString()));
+            if(versionId.isEmpty()) {
+                return new Page<>();
+            }
+            map.put("appVersionId", versionId);
         }
         Page<TestAutomationHistoryDTO> list=iTestAutomationHistoryService.queryWithInstance(map,pageRequest);
         populateAPPVersion(projectId,list);
@@ -45,6 +49,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     }
 
     public void populateAPPVersion(Long projectId,Page<TestAutomationHistoryDTO> page){
+        if(ObjectUtils.isEmpty(page))
+            return;
         Map<Long, ApplicationVersionRepDTO> map=
                 devopsService.getAppversion(projectId,page.stream().filter(u-> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))
                         .map(v->v.getTestAppInstanceDTO().getAppVersionId()).distinct().collect(Collectors.toList()));

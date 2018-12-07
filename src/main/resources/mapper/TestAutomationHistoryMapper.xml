@@ -54,20 +54,32 @@
         from test_automation_history history left join test_app_instance instance on history.instance_id=instance.id
         <where>
             history.project_id=#{params.projectId}
-            <if test="params.framework != null">
-                and history.framework=#{params.framework}
+            <if test="params.framework != null and !params.framework.isEmpty()">
+                and history.framework in
+                <foreach collection="params.framework" item="item" index="index" open="(" close=")" separator=",">
+                   #{item1}
+                </foreach>
             </if>
-            <if test="params.testStatus != null">
-                and history.test_status=#{params.testStatus}
+            <if test="params.testStatus != null and !params.testStatus.isEmpty()">
+                and history.test_status in
+                <foreach collection="params.testStatus" item="item2" index="index" open="(" close=")" separator=",">
+                    #{item2}
+                </foreach>
             </if>
-            <if test="params.appVersionId != null">
-                and instance.app_version_id=#{params.appVersionId}
+            <if test="params.appVersionId != null and !params.appVersionId.isEmpty()">
+                and instance.app_version_id in
+                <foreach collection="params.appVersionId" item="item3" index="index" open="(" close=")" separator=",">
+                    #{item3}
+                </foreach>
             </if>
-            <if test="params.podStatus != null">
-                and instance.pod_status=#{params.podStatus}
+            <if test="params.podStatus != null and !params.podStatus.isEmpty()">
+                and instance.pod_status in
+                <foreach collection="params.podStatus" item="item4" index="index" open="(" close=")" separator=",">
+                     #{item4}
+                </foreach>
             </if>
-            <if test="params.podStatus != null">
-                and instance.app_id=#{params.app_id}
+            <if test="params.appId != null">
+                and instance.app_id =#{params.appId}
             </if>
         </where>
     </select>
