@@ -342,6 +342,28 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
+    public void batchChangeAssignedInOneCycle(Long userId, Long cycleId) {
+        TestCycleE cycleE = TestCycleEFactory.create();
+        cycleE.setParentCycleId(cycleId);
+        List<TestCycleE> cycleES = cycleE.querySelf();
+        if (ObjectUtils.isEmpty(cycleES)) {
+            batchChangeCase(userId,cycleId);
+        } else {
+            for (TestCycleE cycle : cycleES) {
+                batchChangeCase(userId,cycle.getCycleId());
+            }
+        }
+    }
+
+    private void batchChangeCase(Long userId, Long cycleId){
+        TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
+        cycleCaseE.setCycleId(cycleId);
+        List<TestCycleCaseDTO> caseDTOS = ConvertHelper.convertList(cycleCaseE.querySelf(), TestCycleCaseDTO.class);
+        caseDTOS.forEach(v->v.setAssignedTo(userId));
+        testCycleCaseService.batchChangeCase(caseDTOS);
+    }
+
+    @Override
     @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
     public void fixCycleData(Long projectId) {
         sagaClient.startSaga("test-fix-cycle-data", new StartInstanceDTO(JSON.toJSONString(
@@ -378,7 +400,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Optional.ofNullable(testCycleDTO.getFolderId()).map(v -> {
             folderE.setFolderId(v);
             TestIssueFolderE res = folderE.queryByPrimaryKey();
-            Optional.ofNullable(res).ifPresent(n->n.setName(n.getName()));
+            Optional.ofNullable(res).ifPresent(n -> n.setName(n.getName()));
             return res;
         }).ifPresent(v -> version.put("folderName", v.getName()));
         version.put("toDate", testCycleDTO.getToDate());

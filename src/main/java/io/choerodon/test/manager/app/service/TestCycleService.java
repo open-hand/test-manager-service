@@ -50,4 +50,6 @@ public interface TestCycleService {
 	void fixCycleData(Long projectId);
 
 	List<TestCycleDTO>getCyclesInVersion(Long versionId);
+
+	void batchChangeAssignedInOneCycle(Long userId,Long cycleId);
 }

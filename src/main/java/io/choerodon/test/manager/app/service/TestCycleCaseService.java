@@ -27,22 +27,29 @@ public interface TestCycleCaseService {
 
 	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-    /**
-     * 启动一个测试例
-     *
-     * @param testCycleCaseDTO
-     * @return
-     */
-    TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+	/**
+	 * 启动一个测试例
+	 *
+	 * @param testCycleCaseDTO
+	 * @return
+	 */
+	TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
 	List<Long> getActiveCase(Long range, Long projectId, String day);
 
-    /**
+	/**
 	 * 修改一个case
-     *
-     * @param testCycleCaseDTO
-     */
+	 *
+	 * @param testCycleCaseDTO
+	 */
 	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+
+	/**
+	 * 修改一堆case
+	 *
+	 * @param cycleCaseDTOS
+	 */
+	void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS);
 
 
 	Long countCaseNotRun(Long projectId);
