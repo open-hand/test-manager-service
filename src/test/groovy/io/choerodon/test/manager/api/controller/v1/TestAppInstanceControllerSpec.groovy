@@ -87,7 +87,7 @@ class TestAppInstanceControllerSpec extends Specification {
         def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: "",deltaYaml: "")
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: values, deltaYaml: "")
         TestEnvCommand insertCommand = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         TestAutomationHistoryE historyE = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche",
                 instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
@@ -104,7 +104,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues,deltaYaml: changedValues)
+        1 * testCaseService.getVersionValue(_, _) >> values
         TestEnvCommand insertCommand2 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         and:
         insertCommand2.commandType.equals("restart")
@@ -116,9 +116,9 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO2, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml:changedValues,deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
         TestEnvCommand insertCommand3 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
-        TestAutomationHistoryE historyE3 = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche",
+        TestAutomationHistoryE historyE3 = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche2",
                 instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
 
         and:
@@ -135,7 +135,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO2, TestAppInstanceDTO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml:changedValues,deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
         TestEnvCommand insertCommand4 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
         and:
         insertCommand4.commandType.equals("restart")
@@ -175,7 +175,7 @@ class TestAppInstanceControllerSpec extends Specification {
         1 * testCaseService.getVersionValue(_, _) >> values
         noExceptionThrown()
 
-        when:"deployValue不为空"
+        when: "deployValue不为空"
         restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=2&envId=2&appVersionId=2",
                 ReplaceResult, 144L)
         then:
@@ -187,7 +187,7 @@ class TestAppInstanceControllerSpec extends Specification {
         restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1111&envId=1111&appVersionId=1111",
                 ReplaceResult, 144L)
         then:
-        1 * testCaseService.getVersionValue(_, _) >> "234as4^&(^&#\$%ad23"
+        1 * testCaseService.getVersionValue(_, _) >> values
         noExceptionThrown()
 
         and: "清理数据"
