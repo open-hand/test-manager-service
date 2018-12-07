@@ -7,6 +7,7 @@ import io.choerodon.test.manager.infra.feign.DevopsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,10 @@ public class DevopsServiceImpl implements DevopsService {
     }
 
     @Override
-    public Long  getAppVersionId(String appName,Long projectId){
+    public List<Long> getAppVersionId(String appName,Long projectId,Long appId){
 
-        ResponseEntity<Page<ApplicationVersionRepDTO>> list=devopsClient.pageByOptions(projectId,0,1,"id",null,appName);
-        return list.getBody().get(0).getAppId();
+        ResponseEntity<Page<ApplicationVersionRepDTO>> list=devopsClient.pageByOptions(projectId,0,9999999,"id",appId,appName);
+        return list.getBody().stream().map(ApplicationVersionRepDTO::getId).collect(Collectors.toList());
     }
 
     @Override
