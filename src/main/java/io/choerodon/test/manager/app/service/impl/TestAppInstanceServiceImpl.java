@@ -200,7 +200,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
                 envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
 
                 TestEnvCommandValue retryChangedValue = commandValueService.query(retryCommand.getValueId());
-                sendResult.setDeltaYaml(retryChangedValue.getValue());
+                sendResult.setYaml(retryChangedValue.getValue());
                 replaceResult = testCaseService.previewValues(projectId, sendResult, retryInstance.getAppVersionId());
             } else {
                 envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, null);
