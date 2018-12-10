@@ -83,10 +83,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
         TestCycleE testCycleE = TestCycleEFactory.create();
         testCycleE.setCycleId(dto.getCycleId());
-        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
-        folderE.setFolderId(testCycleE.queryOne().getFolderId());
-        if (!folderE.queryOne(folderE).getProjectId().equals(projectId))
-            return new Page();
         //找到所有的子阶段
         List<TestCycleE> testCycleES = iTestCycleService.queryChildCycle(testCycleE);
         //装配值进DTO中
