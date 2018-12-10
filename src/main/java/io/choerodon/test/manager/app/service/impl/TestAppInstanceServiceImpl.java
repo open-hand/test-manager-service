@@ -269,7 +269,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
-        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
         testAppInstanceE.setPodStatus(0L);
@@ -288,7 +288,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     @Override
     public void closeInstance(String releaseNames, Long status, String logFile) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
 
