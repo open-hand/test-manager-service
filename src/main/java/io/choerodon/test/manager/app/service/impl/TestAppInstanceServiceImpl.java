@@ -63,16 +63,17 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     private static final String SCHEDULECODE = "test-deploy-instance";
 
     private static final String DEPLOYDTONAME = "deploy";
+    private static final String FRAMEWORKERROR = "error.values.framework.can.not.be.null";
 
     private static Logger logger = LoggerFactory.getLogger(TestAppInstanceServiceImpl.class);
 
     /**
-     *  查询value
+     * 查询value
      *
      * @param projectId
-     * @param appId     应用Id
-     * @param envId     环境Id
-     * @param appVersionId  应用版本Id
+     * @param appId        应用Id
+     * @param envId        环境Id
+     * @param appVersionId 应用版本Id
      * @return
      */
     @Override
@@ -101,6 +102,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     /**
      * 接受定时任务调用
+     *
      * @param data
      */
     @JobTask(code = SCHEDULECODE,
@@ -120,7 +122,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     /**
-     *  创建定时任务
+     * 创建定时任务
+     *
      * @param taskDTO
      * @param projectId
      * @return
@@ -148,6 +151,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     /**
      * 部署应用
+     *
      * @param deployDTO 部署的信息
      * @param projectId
      * @param userId    部署用户
@@ -158,19 +162,15 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         AuditHelper.audit().setUser(userId);
 
         Yaml yaml = new Yaml();
-        Assert.notNull(deployDTO.getValues(), "error.deployDTO.values.can.not.be.null");
-        Map result = yaml.loadAs(deployDTO.getValues(), Map.class);
-        Assert.notNull(result, "error.values.framework.can.not.be.null");
-
         TestEnvCommand envCommand;
         TestEnvCommandValue commandValue;
-
+        ReplaceResult replaceResult = new ReplaceResult();
         ReplaceResult sendResult = new ReplaceResult();
-        sendResult.setYaml(deployDTO.getValues());
-        Assert.notNull(deployDTO.getValues(), "error.deployDTO.appVerisonId.can.not.be.null");
-        ReplaceResult replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVerisonId());
 
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
+            sendResult.setYaml(deployDTO.getValues());
+            Assert.notNull(deployDTO.getAppVerisonId(), "error.deployDTO.appVerisonId.can.not.be.null");
+            replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVerisonId());
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
             Long commandValueId = null;
@@ -188,15 +188,29 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             List<TestEnvCommand> envCommands = commandService.queryEnvCommand(needEnvCommand);
             Assert.notNull(envCommands, "error.deploy.retry.envCommands.are.empty");
             TestEnvCommand retryCommand = envCommands.get(0);
+
+            //先去APPInstance查找appversionId
+            TestAppInstanceE needInstance = new TestAppInstanceE();
+            needInstance.setId(retryCommand.getInstanceId());
+            TestAppInstanceE retryInstance = instanceService.queryOne(needInstance);
+            deployDTO.setAppVerisonId(retryInstance.getAppVersionId());
+            deployDTO.setAppId(retryInstance.getAppId());
+            deployDTO.setEnvironmentId(retryInstance.getEnvId());
+            deployDTO.setCode(retryInstance.getCode());
+            deployDTO.setProjectVersionId(retryInstance.getProjectVersionId());
             //重用EnvCommandValue表中以前的value数据
             if (!ObjectUtils.isEmpty(retryCommand.getValueId())) {
                 commandValue = commandValueService.query(retryCommand.getValueId());
                 envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, commandValue.getId());
+
+                TestEnvCommandValue retryChangedValue = commandValueService.query(retryCommand.getValueId());
+                sendResult.setYaml(retryChangedValue.getValue());
+                replaceResult = testCaseService.previewValues(projectId, sendResult, retryInstance.getAppVersionId());
             } else {
                 envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, null);
+                replaceResult.setYaml(testCaseService.getVersionValue(projectId,retryInstance.getAppVersionId()));
             }
         }
-
         TestEnvCommand resultCommand = commandService.insertOne(envCommand);
         TestAppInstanceE instanceE = new TestAppInstanceE(deployDTO, resultCommand.getId(), projectId, 0L);
         TestAppInstanceE resultInstance = instanceService.insert(instanceE);
@@ -205,6 +219,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         resultCommand.setInstanceId(resultInstance.getId());
         commandService.updateByPrimaryKey(resultCommand);
 
+        Map result = yaml.loadAs(replaceResult.getYaml(), Map.class);
+        Assert.notNull(result, FRAMEWORKERROR);
         String frameWork = (String) result.get("framework");
         TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setFramework(frameWork);

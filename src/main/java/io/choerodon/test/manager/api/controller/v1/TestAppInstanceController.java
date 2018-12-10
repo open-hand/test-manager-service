@@ -5,11 +5,12 @@ import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
+import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,7 +66,7 @@ public class TestAppInstanceController {
     public ResponseEntity<TestAppInstanceDTO> deploy(
             @PathVariable(value = "project_id") Long projectId,
             @RequestBody ApplicationDeployDTO applicationDeployDTO) {
-        return Optional.ofNullable(instanceService.create(applicationDeployDTO, projectId,null))
+        return Optional.ofNullable(instanceService.create(applicationDeployDTO, projectId, DetailsHelper.getUserDetails().getUserId()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.application.deploy.immediate"));
     }
