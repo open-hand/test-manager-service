@@ -40,4 +40,9 @@ public class ITestAppInstanceLogServiceImpl implements ITestAppInstanceLogServic
         }
         return mapper.selectByPrimaryKey(testAppInstanceE.getId());
     }
+
+    @Override
+    public String queryLog(Long logId){
+        return mapper.selectByPrimaryKey(logId).getLog();
+    }
 }

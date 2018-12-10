@@ -44,7 +44,7 @@ public class TestAutomationHistoryController {
         TestAppInstanceLogE logE=new TestAppInstanceLogE();
         logE.setId(logId);
 
-        return Optional.ofNullable( testAppInstanceLogService.query(logE))
+        return Optional.ofNullable( testAppInstanceLogService.queryLog(logId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.queryWithInstance"));
     }

@@ -12,4 +12,6 @@ public interface ITestAppInstanceLogService {
     void delete(TestAppInstanceLogE logE);
 
     TestAppInstanceLogE insert(TestAppInstanceLogE logE);
+
+    String queryLog(Long logId);
 }
