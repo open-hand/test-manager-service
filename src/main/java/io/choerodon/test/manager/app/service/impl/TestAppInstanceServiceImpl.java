@@ -272,7 +272,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(0L);
+        testAppInstanceE.setPodStatus(1L);
         testAppInstanceE.setPodName(podName);
         testAppInstanceE.setContainerName(conName);
         instanceService.update(testAppInstanceE);
@@ -295,7 +295,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         TestAppInstanceLogE logE = new TestAppInstanceLogE();
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
-        testAppInstanceE.setPodStatus(status);
+        testAppInstanceE.setPodStatus(status+1);
         instanceService.update(testAppInstanceE);
     }
 
@@ -310,7 +310,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         testAppInstanceE.setId(instanceId);
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(1L);
+        testAppInstanceE.setPodStatus(3L);
         instanceService.update(testAppInstanceE);
 
     }
