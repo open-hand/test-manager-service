@@ -39,7 +39,7 @@ public class TestAutomationHistoryController {
     }
 
     @GetMapping("/queryLog/{logId}")
-//    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     public ResponseEntity queryLog(@PathVariable("logId") Long logId,@PathVariable("project_id")Long projectId ){
         TestAppInstanceLogE logE=new TestAppInstanceLogE();
         logE.setId(logId);
