@@ -230,7 +230,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         historyService.insert(historyE);
 
         //开始部署
-        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getAppVersionId(), replaceResult.getYaml());
+        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getId(), replaceResult.getYaml());
         testCaseService.deployTestApp(projectId, devopsDeployDTO);
 
         return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
