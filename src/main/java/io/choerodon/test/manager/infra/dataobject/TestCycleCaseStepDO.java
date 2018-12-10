@@ -5,6 +5,7 @@ import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +28,10 @@ public class TestCycleCaseStepDO extends AuditDomain {
 	private Long createdBy;
 
 	private Long lastUpdatedBy;
+
+    private Date creationDate;
+
+    private Date lastUpdateDate;
 
     @Transient
     private String testStep;
@@ -190,5 +195,25 @@ public class TestCycleCaseStepDO extends AuditDomain {
     @Override
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    @Override
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    @Override
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

@@ -31,6 +31,8 @@ public class TestIssueFolderE {
 
     private Long objectVersionNumber;
 
+    private Boolean newFolder;
+
     @Autowired
     private TestIssueFolderRepository testIssueFolderRepository;
 
@@ -112,5 +114,13 @@ public class TestIssueFolderE {
             throw new IssueFolderException(IssueFolderException.ERROR_FOLDER_TYPE);
         }
         return this;
+    }
+
+    public Boolean getNewFolder() {
+        return newFolder;
+    }
+
+    public void setNewFolder(Boolean newFolder) {
+        this.newFolder = newFolder;
     }
 }

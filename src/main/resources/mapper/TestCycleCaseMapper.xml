@@ -619,7 +619,7 @@ ORDER BY
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="list" item="cycleCase" separator=",">
             (#{cycleCase.cycleId}, #{cycleCase.issueId}, #{cycleCase.rank}, #{cycleCase.executionStatus}, #{cycleCase.assignedTo},
-            #{cycleCase.description}, 1, #{cycleCase.createdBy}, NOW(), #{cycleCase.lastUpdatedBy}, NOW())
+            #{cycleCase.description}, 1, #{cycleCase.createdBy}, #{cycleCase.creationDate}, #{cycleCase.lastUpdatedBy}, #{cycleCase.lastUpdateDate})
         </foreach>
     </insert>
 </mapper>

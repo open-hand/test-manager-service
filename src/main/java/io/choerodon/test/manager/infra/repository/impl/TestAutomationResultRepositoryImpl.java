@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class TestAutomationResultRepositoryImpl implements TestAutomationResultR
 
     @Override
     public TestAutomationResultE insert(TestAutomationResultE testAutomationResultE) {
+        Date now = new Date();
+        testAutomationResultE.setCreationDate(now);
+        testAutomationResultE.setLastUpdateDate(now);
         TestAutomationResultDO testAutomationResultDO = ConvertHelper.convert(testAutomationResultE, TestAutomationResultDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(
                 testAutomationResultMapper::insertOneResult, testAutomationResultDO, 1, "error.testAutomationResult.insert");

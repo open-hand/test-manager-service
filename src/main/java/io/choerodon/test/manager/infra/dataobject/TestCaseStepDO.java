@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,6 +36,30 @@ public class TestCaseStepDO extends AuditDomain {
     private Long createdBy;
 
     private Long lastUpdatedBy;
+
+    private Date creationDate;
+
+    private Date lastUpdateDate;
+
+    @Override
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Override
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    @Override
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 
     @Transient
     private List<TestCycleCaseAttachmentRelDO> attachments;

@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import com.alibaba.fastjson.JSON;
@@ -41,10 +39,25 @@ public class JsonImportServiceImpl implements JsonImportService {
     @Autowired
     private ITestAppInstanceService iTestAppInstanceService;
 
-    private void createStepsAndBackfillStepIds(List<TestCaseStepE> caseSteps) {
-        List<TestCaseStepE> createdSteps = TestCaseStepE.createSteps(caseSteps);
-        for (int i = 0; i < caseSteps.size(); i++) {
-            caseSteps.get(i).setStepId(createdSteps.get(i).getStepId());
+    private void createStepsAndBackfillStepIds(List<TestCycleCaseE> cycleCases, Long createdBy, Long lastUpdatedBy) {
+        List<TestCaseStepE> allSteps = new ArrayList<>();
+        for (TestCycleCaseE cycleCase : cycleCases) {
+            for (TestCaseStepE testCaseStepE : cycleCase.getTestCaseSteps()) {
+                testCaseStepE.setCreatedBy(createdBy);
+                testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
+                allSteps.add(testCaseStepE);
+            }
+        }
+
+        List<TestCaseStepE> createdSteps = TestCaseStepE.createSteps(allSteps);
+        for (int i = 0; i < allSteps.size(); i++) {
+            allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
+        }
+
+        for (TestCycleCaseE cycleCase : cycleCases) {
+            for (int i = 0; i < cycleCase.getCycleCaseStep().size(); i++) {
+                cycleCase.getCycleCaseStep().get(i).setStepId(cycleCase.getTestCaseSteps().get(i).getStepId());
+            }
         }
     }
 
@@ -91,27 +104,33 @@ public class JsonImportServiceImpl implements JsonImportService {
             return iTestAutomationResultService.add(testAutomationResultE).getId();
         });
 
-        // 创建文件夹、循环和阶段
-        TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId, folderName);
+        // 创建文件夹
+        TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
+
+        // 创建循环
         TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
+
+        // 创建阶段
         TestCycleE testStage = iJsonImportService.getStage(
-                versionId, folderName, testCycleE.getCycleId(), folderE.getFolderId());
+                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId());
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
         List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
-        List<TestCaseStepE> allSteps = new ArrayList<>();
 
-        // 开始并发解析
-        issues.parallelStream().forEach(element -> {
+        // 开始解析
+        for (Object element : issues) {
             if (element instanceof JSONObject) {
                 TestCycleCaseE testCycleCaseE = iJsonImportService.processIssueJson(
-                        organizationId, projectId, versionId, folderE.getFolderId(), testStage.getCycleId(), (JSONObject) element);
-                synchronized (allTestCycleCases) {
-                    allTestCycleCases.add(testCycleCaseE);
-                }
+                        organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
+                        (JSONObject) element, targetFolderE.getNewFolder());
+                allTestCycleCases.add(testCycleCaseE);
             }
-        });
+        }
+
+        if (!targetFolderE.getNewFolder()) {
+            relatedToExistIssues(allTestCycleCases, targetFolderE);
+        }
 
         // 将数据容器中的数据保存到数据库，并更新automation history状态
         TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
@@ -121,21 +140,32 @@ public class JsonImportServiceImpl implements JsonImportService {
         for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
             testCycleCaseE.setCreatedBy(createdBy);
             testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+            testCycleCaseE.setAssignedTo(createdBy);
             if (!testCycleCaseE.isPassed()) {
                 automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
-            }
-            for (TestCaseStepE testCaseStepE : testCycleCaseE.getTestCaseSteps()) {
-                testCaseStepE.setCreatedBy(createdBy);
-                testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
-                allSteps.add(testCaseStepE);
             }
         }
         CompletableFuture<Void> createCycleCasesTask = CompletableFuture.runAsync(() ->
                 createCycleCasesAndBackfillExecuteIds(allTestCycleCases));
-        createStepsAndBackfillStepIds(allSteps);
+        if (targetFolderE.getNewFolder()) {
+            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+        }
 
         createCycleCasesTask.join();
 
+        backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+
+        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
+        automationHistoryE.setCycleId(testCycleE.getCycleId());
+        Long resultId = saveAutomationResultTask.join();
+        automationHistoryE.setResultId(resultId);
+        iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
+
+        return resultId;
+    }
+
+    private void backfillAndCreateCycleCaseStep(List<TestCycleCaseE> allTestCycleCases, TestAutomationHistoryE automationHistoryE,
+                                                Long createdBy, Long lastUpdatedBy) {
         List<TestCycleCaseStepE> testCycleCaseSteps = new ArrayList<>();
         List<TestCycleCaseStepE> currentTestCycleCaseSteps;
         TestCycleCaseStepE currentCycleCaseStepE;
@@ -148,7 +178,6 @@ public class JsonImportServiceImpl implements JsonImportService {
                     automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
                 }
                 currentCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-                currentCycleCaseStepE.setStepId(testCycleCaseE.getTestCaseSteps().get(i).getStepId());
                 currentCycleCaseStepE.setCreatedBy(createdBy);
                 currentCycleCaseStepE.setLastUpdatedBy(lastUpdatedBy);
                 testCycleCaseSteps.add(currentCycleCaseStepE);
@@ -156,13 +185,19 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
 
         TestCycleCaseStepE.createCycleCaseSteps(testCycleCaseSteps);
+    }
 
-        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleId(testCycleE.getCycleId());
-        Long resultId = saveAutomationResultTask.join();
-        automationHistoryE.setResultId(resultId);
-        iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
-
-        return resultId;
+    private void relatedToExistIssues(List<TestCycleCaseE> allTestCycleCases, TestIssueFolderE targetFolderE) {
+        List<TestIssueFolderRelE> issueFolderRels = iJsonImportService.queryAllUnderFolder(targetFolderE);
+        issueFolderRels.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+        for (int i = 0; i < issueFolderRels.size(); i++) {
+            Long issueId = issueFolderRels.get(i).getIssueId();
+            allTestCycleCases.get(i).setIssueId(issueId);
+            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setIssueId(issueId));
+            List<TestCaseStepE> testCaseStepEs = iJsonImportService.queryAllStepsUnderIssue(issueId);
+            for (int j = 0; j < testCaseStepEs.size(); j++) {
+                allTestCycleCases.get(i).getCycleCaseStep().get(j).setStepId(testCaseStepEs.get(j).getStepId());
+            }
+        }
     }
 }

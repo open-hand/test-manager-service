@@ -5,7 +5,7 @@
     <insert id="insertOneResult" parameterType="io.choerodon.test.manager.infra.dataobject.TestAutomationResultDO"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO test_automation_result(result, object_version_number, created_by, creation_date, last_updated_by, last_update_date) VALUES (
-            #{result}, 1, #{createdBy}, NOW(), #{lastUpdatedBy}, NOW()
+            #{result}, 1, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate}
         )
     </insert>
 

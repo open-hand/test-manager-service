@@ -69,6 +69,8 @@ public class TestCycleCaseE {
 
     private Long createdBy;
 
+    private Date creationDate;
+
 	List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
@@ -356,5 +358,13 @@ public class TestCycleCaseE {
 
     public boolean isPassed() {
         return "通过".equals(executionStatusName);
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }

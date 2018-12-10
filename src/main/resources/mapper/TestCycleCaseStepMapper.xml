@@ -177,7 +177,7 @@
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="list" item="cycleCaseStep" separator=",">
             (#{cycleCaseStep.executeId}, #{cycleCaseStep.stepId}, #{cycleCaseStep.description}, #{cycleCaseStep.stepStatus},
-            1, #{cycleCaseStep.createdBy}, NOW(), #{cycleCaseStep.lastUpdatedBy}, NOW())
+            1, #{cycleCaseStep.createdBy}, #{cycleCaseStep.creationDate}, #{cycleCaseStep.lastUpdatedBy}, #{cycleCaseStep.lastUpdateDate})
         </foreach>
     </insert>
 </mapper>
