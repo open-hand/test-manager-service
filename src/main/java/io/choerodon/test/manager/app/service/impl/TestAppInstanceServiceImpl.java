@@ -194,7 +194,10 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             needInstance.setId(retryCommand.getInstanceId());
             TestAppInstanceE retryInstance = instanceService.queryOne(needInstance);
             deployDTO.setAppVerisonId(retryInstance.getAppVersionId());
-
+            deployDTO.setAppId(retryInstance.getAppId());
+            deployDTO.setEnvironmentId(retryInstance.getEnvId());
+            deployDTO.setCode(retryInstance.getCode());
+            deployDTO.setProjectVersionId(retryInstance.getProjectVersionId());
             //重用EnvCommandValue表中以前的value数据
             if (!ObjectUtils.isEmpty(retryCommand.getValueId())) {
                 commandValue = commandValueService.query(retryCommand.getValueId());
