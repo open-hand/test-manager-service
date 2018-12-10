@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +54,10 @@ public class TestCycleCaseStepE {
     private Long createdBy;
 
     private Long lastUpdatedBy;
+
+    private Date creationDate;
+
+    private Date lastUpdateDate;
 
     public static List<TestCycleCaseStepE> createCycleCaseSteps(List<TestCycleCaseStepE> testCycleCaseSteps) {
         TestCycleCaseStepRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepRepository.class);
@@ -241,5 +246,21 @@ public class TestCycleCaseStepE {
 
     public boolean isPassed() {
         return "通过".equals(statusName);
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

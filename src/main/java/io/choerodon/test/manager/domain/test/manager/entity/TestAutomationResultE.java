@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,27 @@ public class TestAutomationResultE {
 
     private Long lastUpdatedBy;
 
+    private Date creationDate;
+
+    private Date lastUpdateDate;
+
     private Long objectVersionNumber;
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 
     public Long getCreatedBy() {
         return createdBy;

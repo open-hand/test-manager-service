@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -105,10 +102,13 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         if (testCycleCaseSteps == null || testCycleCaseSteps.isEmpty()) {
             throw new CommonException("error.cycle.case.step.list.empty");
         }
+        Date now = new Date();
         for (TestCycleCaseStepE testCycleCaseStep : testCycleCaseSteps) {
             if (testCycleCaseStep == null || testCycleCaseStep.getExecuteStepId() != null) {
                 throw new CommonException("error.cycle.case.step.insert.executeStepId.should.be.null");
             }
+            testCycleCaseStep.setCreationDate(now);
+            testCycleCaseStep.setLastUpdateDate(now);
         }
 
         List<TestCycleCaseStepDO> testCycleCaseStepDOs = ConvertHelper.convertList(testCycleCaseSteps, TestCycleCaseStepDO.class);

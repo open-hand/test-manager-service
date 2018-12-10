@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import java.util.Date;
+
 import io.choerodon.mybatis.annotation.ModifyAudit;
 import io.choerodon.mybatis.annotation.VersionAudit;
 import io.choerodon.mybatis.domain.AuditDomain;
@@ -44,6 +46,18 @@ public class TestAutomationHistoryE extends AuditDomain {
     private Long lastUpdatedBy;
 
     private Long objectVersionNumber;
+
+    private Date lastUpdateDate;
+
+    @Override
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    @Override
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
 
     @Override
     public Long getObjectVersionNumber() {

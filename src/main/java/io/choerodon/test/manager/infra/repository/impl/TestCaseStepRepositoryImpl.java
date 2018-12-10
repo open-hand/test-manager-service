@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,10 +46,13 @@ public class TestCaseStepRepositoryImpl implements TestCaseStepRepository {
         if (testCaseSteps == null || testCaseSteps.isEmpty()) {
             throw new CommonException("error.case.step.list.empty");
         }
+        Date now = new Date();
         for (TestCaseStepE testCaseStep : testCaseSteps) {
             if (testCaseStep == null || testCaseStep.getStepId() != null) {
                 throw new CommonException(ERROR_STEP_ID_NOT_NULL);
             }
+            testCaseStep.setLastUpdateDate(now);
+            testCaseStep.setCreationDate(now);
         }
 
         List<TestCaseStepDO> testCaseStepDOs = ConvertHelper.convertList(testCaseSteps, TestCaseStepDO.class);

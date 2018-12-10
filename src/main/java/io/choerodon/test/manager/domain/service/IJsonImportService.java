@@ -1,15 +1,17 @@
 package io.choerodon.test.manager.domain.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 
 public interface IJsonImportService {
-    TestCycleCaseE processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, JSONObject issue);
+
+    List<TestIssueFolderRelE> queryAllUnderFolder(TestIssueFolderE issueFolderE);
+
+    TestCycleCaseE processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, JSONObject issue, boolean newFolder);
 
     TestCycleE getCycle(Long versionId, String folderName);
 
@@ -24,4 +26,8 @@ public interface IJsonImportService {
     String getAppVersionName(Long projectId, Long appVersionId);
 
     void updateAutomationHistoryStatus(TestAutomationHistoryE automationHistoryE);
+
+    List<TestCaseStepE> queryAllStepsUnderIssue(Long issueId);
+
+    TestIssueFolderE getFolder(Long projectId, Long versionId, String folderName);
 }

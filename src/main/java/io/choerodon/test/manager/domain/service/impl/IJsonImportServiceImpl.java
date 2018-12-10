@@ -21,18 +21,24 @@ import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.ProjectDTO;
 import io.choerodon.agile.api.dto.VersionIssueRelDTO;
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
 import io.choerodon.test.manager.infra.exception.IssueCreateException;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 
 @Service
 public class IJsonImportServiceImpl implements IJsonImportService {
@@ -43,6 +49,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     private static final Pattern EXPECT_PATTERN = Pattern.compile("(?:@expect\\s+)(.*?)(?:\\s*\\n)");
 
+    private static final Pattern AUTO_TEST_STAGE_PATTERN = Pattern.compile("自动化测试mocha-\\d{4}(?:\\.\\d{1,2}){2}-\\d+?-.+?-第(\\d+)次测试");
+
     private static final String ERROR_GET_APP_NAME = "error.get.app.name";
 
     private static final String ERROR_GET_APP_VERSION_NAME = "error.get.app.version.name";
@@ -50,6 +58,9 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     private static final String ERROR_GET_ORGANIZATION_ID = "error.get.organization.id";
 
     private IExcelImportService iExcelImportService;
+
+    @Autowired
+    private TestCaseStepMapper caseStepMapper;
 
     @Autowired
     private TestAutomationHistoryMapper automationHistoryMapper;
@@ -73,7 +84,20 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         this.applicationFeignClient = applicationFeignClient;
     }
 
-    private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, String summary) {
+    @Autowired
+    private TestIssueFolderRelMapper issueFolderRelMapper;
+
+    @Override
+    public List<TestIssueFolderRelE> queryAllUnderFolder(TestIssueFolderE issueFolderE) {
+        TestIssueFolderRelE issueFolderRelE = new TestIssueFolderRelE();
+        issueFolderRelE.setFolderId(issueFolderE.getFolderId());
+
+        TestIssueFolderRelDO issueFolderRelDO = ConvertHelper.convert(issueFolderRelE, TestIssueFolderRelDO.class);
+        List<TestIssueFolderRelDO> issueFolderRelDOs = issueFolderRelMapper.select(issueFolderRelDO);
+        return ConvertHelper.convertList(issueFolderRelDOs, TestIssueFolderRelE.class);
+    }
+
+    private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, Long createdBy, String summary) {
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setTypeCode("issue_auto_test");
 
@@ -89,6 +113,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
+        issueCreateDTO.setAssigneeId(createdBy);
+        issueCreateDTO.setReporterId(createdBy);
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);
@@ -136,21 +162,25 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     }
 
     @Override
-    public TestCycleCaseE processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, JSONObject issue) {
+    public TestCycleCaseE processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, JSONObject issue, boolean newFolder) {
         String summary = issue.getString("title");
         if (StringUtils.isBlank(summary)) {
             logger.error("用例 title 不能为空");
             summary = "null";
         }
 
-        IssueDTO issueDTO = createIssue(organizationId, projectId, versionId, folderId, summary);
-        if (issueDTO == null) {
-            logger.error("issue 创建失败");
-            throw new IssueCreateException();
+        TestCycleCaseE testCycleCaseE = SpringUtil.getApplicationContext().getBean(TestCycleCaseE.class);
+
+        IssueDTO issueDTO = null;
+        if (newFolder) {
+            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
+            if (issueDTO == null) {
+                logger.error("issue 创建失败");
+                throw new IssueCreateException();
+            }
+            testCycleCaseE.setIssueId(issueDTO.getIssueId());
         }
 
-        TestCycleCaseE testCycleCaseE = SpringUtil.getApplicationContext().getBean(TestCycleCaseE.class);
-        testCycleCaseE.setIssueId(issueDTO.getIssueId());
         testCycleCaseE.setCycleId(cycleId);
         testCycleCaseE.setVersionId(versionId);
         String[] failures = getExecutionInfo(issue, "failures");
@@ -165,12 +195,18 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         List<TestCaseStepE> testCaseSteps = new ArrayList<>();
         List<TestCycleCaseStepE> testCycleCaseSteps = new ArrayList<>();
         TestCaseStepE testCaseStepE;
+        TestCycleCaseStepE cycleCaseStepE;
         for (Object element : testCaseStepsArray) {
             if (element instanceof JSONObject) {
-                testCaseStepE = parseTestCaseStepJson(issueDTO.getIssueId(), (JSONObject) element);
+                testCaseStepE = parseTestCaseStepJson((JSONObject) element);
                 if (testCaseStepE != null) {
                     testCaseSteps.add(testCaseStepE);
-                    testCycleCaseSteps.add(parseTestCycleCaseStepJson(testCaseStepE, (JSONObject) element));
+                    cycleCaseStepE = parseTestCycleCaseStepJson(testCaseStepE, (JSONObject) element);
+                    testCycleCaseSteps.add(cycleCaseStepE);
+                    if (issueDTO != null) {
+                        testCaseStepE.setIssueId(issueDTO.getIssueId());
+                        cycleCaseStepE.setIssueId(issueDTO.getIssueId());
+                    }
                 }
             }
         }
@@ -185,7 +221,6 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
         testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
         testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
-        testCycleCaseStepE.setIssueId(testCaseStepE.getIssueId());
 
         TestStatusE statusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
         statusE.setProjectId(0L);
@@ -236,20 +271,27 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
-        testCycleE.setCycleName(stageName);
-        TestCycleE targetStage = testCycleE.queryOne();
-        if (targetStage == null) {
-            logger.info("{} 阶段不存在，创建", stageName);
-            testCycleE.setParentCycleId(parentCycleId);
-            testCycleE.setFolderId(folderId);
-            testCycleE.setType(TestCycleE.FOLDER);
-            testCycleE.setFromDate(new Date());
-            testCycleE.setToDate(testCycleE.getFromDate());
-            return testCycleE.addSelf();
+        testCycleE.setFolderId(folderId);
+        testCycleE.setParentCycleId(parentCycleId);
+
+        int lastTestStageNumber = 0;
+        List<TestCycleE> childCycleEs = testCycleE.querySelf();
+        for (TestCycleE cycleE : childCycleEs) {
+            Matcher matcher = AUTO_TEST_STAGE_PATTERN.matcher(cycleE.getCycleName());
+            if (matcher.matches()) {
+                int stageNumber = Integer.parseInt(matcher.group(1));
+                if (stageNumber > lastTestStageNumber) {
+                    lastTestStageNumber = stageNumber;
+                }
+            }
         }
 
-        logger.info("{} 阶段已存在", stageName);
-        return targetStage;
+        testCycleE.setCycleName(stageName + "-第" + ++lastTestStageNumber + "次测试");
+        logger.info("创建阶段 {}", testCycleE.getCycleName());
+        testCycleE.setType(TestCycleE.FOLDER);
+        testCycleE.setFromDate(new Date());
+        testCycleE.setToDate(testCycleE.getFromDate());
+        return testCycleE.addSelf();
     }
 
     @Override
@@ -317,11 +359,42 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     public void updateAutomationHistoryStatus(TestAutomationHistoryE automationHistoryE) {
         Long objectVersionNumber = automationHistoryMapper.queryObjectVersionNumberByInstanceId(automationHistoryE);
         automationHistoryE.setObjectVersionNumber(objectVersionNumber);
+        automationHistoryE.setLastUpdateDate(new Date());
         DBValidateUtil.executeAndvalidateUpdateNum(automationHistoryMapper::updateTestStatusByInstanceId,
                 automationHistoryE, 1, "error.update.testStatus.by.instanceId");
     }
 
-    private TestCaseStepE parseTestCaseStepJson(Long issueId, JSONObject testCaseStep) {
+    @Override
+    public List<TestCaseStepE> queryAllStepsUnderIssue(Long issueId) {
+        TestCaseStepE caseStepE = TestCaseStepEFactory.create();
+        caseStepE.setIssueId(issueId);
+        TestCaseStepDO caseStepDO = ConvertHelper.convert(caseStepE, TestCaseStepDO.class);
+        List<TestCaseStepDO> caseStepDOs = caseStepMapper.query(caseStepDO);
+        return ConvertHelper.convertList(caseStepDOs, TestCaseStepE.class);
+    }
+
+    @Override
+    public TestIssueFolderE getFolder(Long projectId, Long versionId, String folderName) {
+        TestIssueFolderE targetFolderE;
+        TestIssueFolderE folderE = SpringUtil.getApplicationContext().getBean(TestIssueFolderE.class);
+        folderE.setProjectId(projectId);
+        folderE.setVersionId(versionId);
+        folderE.setName(folderName);
+        targetFolderE = folderE.queryOne(folderE);
+        if (targetFolderE == null) {
+            folderE.setType(TestIssueFolderE.TYPE_CYCLE);
+            logger.info("{} 文件夹不存在，创建", folderName);
+            targetFolderE = folderE.addSelf();
+            targetFolderE.setNewFolder(true);
+        } else {
+            targetFolderE.setNewFolder(false);
+            logger.info("{} 文件夹已存在", folderName);
+        }
+
+        return targetFolderE;
+    }
+
+    private TestCaseStepE parseTestCaseStepJson(JSONObject testCaseStep) {
         String testStep = testCaseStep.getString("title");
         String code = testCaseStep.getString("code");
         String testData = getTestData(code);
@@ -331,7 +404,6 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         }
 
         TestCaseStepE caseStepE = SpringUtil.getApplicationContext().getBean(TestCaseStepE.class);
-        caseStepE.setIssueId(issueId);
         caseStepE.setTestStep(testStep);
         caseStepE.setTestData(testData);
         caseStepE.setExpectedResult(expectedResult);

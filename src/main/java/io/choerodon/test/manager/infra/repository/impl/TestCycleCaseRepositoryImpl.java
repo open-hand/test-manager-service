@@ -20,10 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -201,10 +198,13 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         if (testCycleCases == null || testCycleCases.isEmpty()) {
             throw new CommonException("error.cycle.case.list.empty");
         }
+        Date now = new Date();
         for (TestCycleCaseE testCycleCaseE : testCycleCases) {
             if (testCycleCaseE == null || testCycleCaseE.getExecuteId() != null) {
                 throw new CommonException("error.cycle.case.insert.executeId.should.be.null");
             }
+            testCycleCaseE.setCreationDate(now);
+            testCycleCaseE.setLastUpdateDate(now);
         }
 
         List<TestCycleCaseDO> testCycleCaseDOs = ConvertHelper.convertList(testCycleCases, TestCycleCaseDO.class);

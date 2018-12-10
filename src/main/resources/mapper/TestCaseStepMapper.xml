@@ -65,7 +65,8 @@ ORDER BY
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="list" item="testCaseStep" separator=",">
             (#{testCaseStep.rank}, #{testCaseStep.issueId}, #{testCaseStep.testStep}, #{testCaseStep.testData},
-            #{testCaseStep.expectedResult}, 1, #{testCaseStep.createdBy}, NOW(), #{testCaseStep.lastUpdatedBy}, NOW())
+            #{testCaseStep.expectedResult}, 1, #{testCaseStep.createdBy}, #{testCaseStep.creationDate},
+            #{testCaseStep.lastUpdatedBy}, #{testCaseStep.lastUpdateDate})
         </foreach>
     </insert>
 </mapper>
