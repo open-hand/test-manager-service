@@ -193,6 +193,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             TestAppInstanceE needInstance = new TestAppInstanceE();
             needInstance.setId(retryCommand.getInstanceId());
             TestAppInstanceE retryInstance = instanceService.queryOne(needInstance);
+            deployDTO.setAppVerisonId(retryInstance.getAppVersionId());
 
             //重用EnvCommandValue表中以前的value数据
             if (!ObjectUtils.isEmpty(retryCommand.getValueId())) {
@@ -226,7 +227,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         historyService.insert(historyE);
 
         //开始部署
-        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getId(), replaceResult.getYaml());
+        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getAppVersionId(), replaceResult.getYaml());
         testCaseService.deployTestApp(projectId, devopsDeployDTO);
 
         return ConvertHelper.convert(resultInstance, TestAppInstanceDTO.class);
