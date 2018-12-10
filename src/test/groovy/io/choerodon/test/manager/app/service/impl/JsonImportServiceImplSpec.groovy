@@ -147,18 +147,28 @@ class JsonImportServiceImplSpec extends Specification {
         completionException = thrown()
         completionException.cause.message == "error.get.app.name"
 
-        when:
+        when: "第一次导入"
         Long reportId = jsonImportService.importMochaReport("att-662-582-5", report)
-        for (long i in 1000000L..1000009L) {
+        automationResultMapper.deleteByPrimaryKey(reportId)
+        then:
+        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
+                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
+        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
+                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        reportId == 2L
+
+        when: "重试"
+        reportId = jsonImportService.importMochaReport("att-662-582-5", report)
+        for (long i in 1000001L..1000009L) {
             issueFolderRelMapper.delete(new TestIssueFolderRelDO(issueId: i))
             cycleCaseMapper.delete(new TestCycleCaseDO(issueId: i))
         }
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
+                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
-        reportId == 2L
+                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        reportId == 3L
     }
 }
