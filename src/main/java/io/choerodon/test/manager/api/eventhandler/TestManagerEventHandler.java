@@ -149,13 +149,13 @@ public class TestManagerEventHandler {
 		fixDataService.fixCycleData(testIssueFolderDTO.getProjectId());
 	}
 
-	@SagaTask(code = "test-start-instance",description = "更新Appinstance状态",sagaCode = "test-pod-update-saga	",seq = 1)
+	@SagaTask(code = "test-start-instance",description = "更新Appinstance状态",sagaCode = "test-pod-update-saga",seq = 1)
 	public void updateInstance(String message) throws IOException {
 		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
 		testAppInstanceService.updateInstance(instanceE.getReleaseNames(),instanceE.getPodName(),instanceE.getConName());
 	}
 
-	@SagaTask(code = "test-close-instance",description = "更新Appinstance状态",sagaCode = "test-job-log-saga	",seq = 1)
+	@SagaTask(code = "test-close-instance",description = "更新Appinstance状态",sagaCode = "test-job-log-saga",seq = 1)
 	public void closeInstance(String message) throws IOException {
 		InstancePayload instanceE = objectMapper.readValue(message,  InstancePayload.class);
 		testAppInstanceService.closeInstance(instanceE.getReleaseNames(),instanceE.getStatus(),instanceE.getLogFile());
