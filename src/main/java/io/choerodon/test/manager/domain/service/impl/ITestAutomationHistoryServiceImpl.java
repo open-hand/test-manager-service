@@ -66,6 +66,6 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
         historyE.setObjectVersionNumber(historyE1.getObjectVersionNumber());
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
         historyE.setId(historyE1.getId());
-        testAutomationHistoryMapper.updateByPrimaryKey(historyE);
+        testAutomationHistoryMapper.updateByPrimaryKeySelective(historyE);
     }
 }

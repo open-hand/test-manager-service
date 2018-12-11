@@ -302,10 +302,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
     @Override
     public void shutdownInstance(Long instanceId, Long status) {
-        if (status.equals(0L))
-            return;
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-
         //更新实例状态
         testAppInstanceE.setId(instanceId);
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);

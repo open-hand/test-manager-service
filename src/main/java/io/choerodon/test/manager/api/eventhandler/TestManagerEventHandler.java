@@ -167,7 +167,7 @@ public class TestManagerEventHandler {
 		JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class,InstancePayload.class);
 		List<InstancePayload> list =  objectMapper.readValue(message, javaType);
 		list.stream().filter(v->v.getStatus().equals(0L)).distinct().forEach(u->{
-			Long instanceId=Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(u.getReleaseNames()));
+			Long instanceId=Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(u.getReleaseNames()));
 			testAppInstanceService.shutdownInstance(instanceId,u.getStatus());
 			iTestAutomationHistoryService.shutdownInstance(instanceId,u.getStatus());
 		});
