@@ -99,7 +99,7 @@ class ExcelImportServiceImplSpec extends Specification {
 
 
         when:
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(resHistoryDO.getCreatedBy())
         then:
         with(testFileLoadHistoryE) {
             id == resHistoryDO.getId()
