@@ -27,7 +27,7 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
 
     @Override
     public TestAppInstanceE update(TestAppInstanceE testAppInstanceE) {
-        if(mapper.updateByPrimaryKey(testAppInstanceE)==0){
+        if(mapper.updateByPrimaryKeySelective(testAppInstanceE)==0){
             throw new CommonException("error.ItestAppInstanceEServiceImpl.update");
         }
         return mapper.selectByPrimaryKey(testAppInstanceE.getId());

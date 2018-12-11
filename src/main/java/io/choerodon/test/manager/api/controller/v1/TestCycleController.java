@@ -191,12 +191,4 @@ public class TestCycleController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("修复cycle及其关联的数据")
-    @GetMapping("/fix")
-    public ResponseEntity fixCycleData(@PathVariable(name = "project_id") Long projectId) {
-        testCycleService.fixCycleData(projectId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }

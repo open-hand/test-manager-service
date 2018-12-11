@@ -47,8 +47,6 @@ public interface TestCycleService {
 
 	void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
 
-	void fixCycleData(Long projectId);
-
 	List<TestCycleDTO>getCyclesInVersion(Long versionId);
 
 	void batchChangeAssignedInOneCycle(Long userId,Long cycleId);

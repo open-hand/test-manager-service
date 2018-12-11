@@ -62,9 +62,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     private static final String NODE_CHILDREN = "children";
 
     @Autowired
-    private SagaClient sagaClient;
-
-    @Autowired
     ITestIssueFolderService folderService;
 
     @Autowired
@@ -361,14 +358,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleCaseDTO> caseDTOS = ConvertHelper.convertList(cycleCaseE.querySelf(), TestCycleCaseDTO.class);
         caseDTOS.forEach(v->v.setAssignedTo(userId));
         testCycleCaseService.batchChangeCase(caseDTOS);
-    }
-
-    @Override
-    @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
-    public void fixCycleData(Long projectId) {
-        sagaClient.startSaga("test-fix-cycle-data", new StartInstanceDTO(JSON.toJSONString(
-                new TestIssueFolderDTO(null, null, null, projectId, null, null)),
-                "", ""));
     }
 
 

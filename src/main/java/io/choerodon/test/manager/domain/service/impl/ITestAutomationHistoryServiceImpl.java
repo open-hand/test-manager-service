@@ -40,7 +40,7 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
 
     @Override
     public TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory) {
-        if(testAutomationHistoryMapper.updateByPrimaryKey(testAutomationHistory)==0){
+        if(testAutomationHistoryMapper.updateByPrimaryKeySelective(testAutomationHistory)==0){
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.update");
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
@@ -66,6 +66,6 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
         historyE.setObjectVersionNumber(historyE1.getObjectVersionNumber());
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
         historyE.setId(historyE1.getId());
-        testAutomationHistoryMapper.updateByPrimaryKey(historyE);
+        testAutomationHistoryMapper.updateByPrimaryKeySelective(historyE);
     }
 }

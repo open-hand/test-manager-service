@@ -269,10 +269,10 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
-        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(0L);
+        testAppInstanceE.setPodStatus(1L);
         testAppInstanceE.setPodName(podName);
         testAppInstanceE.setContainerName(conName);
         instanceService.update(testAppInstanceE);
@@ -288,29 +288,26 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     @Override
     public void closeInstance(String releaseNames, Long status, String logFile) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-        testAppInstanceE.setId(Long.getLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
 
         TestAppInstanceLogE logE = new TestAppInstanceLogE();
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
-        testAppInstanceE.setPodStatus(status);
+        testAppInstanceE.setPodStatus(status+1);
         instanceService.update(testAppInstanceE);
     }
 
 
     @Override
     public void shutdownInstance(Long instanceId, Long status) {
-        if (status.equals(0L))
-            return;
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-
         //更新实例状态
         testAppInstanceE.setId(instanceId);
         TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
         testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(1L);
+        testAppInstanceE.setPodStatus(3L);
         instanceService.update(testAppInstanceE);
 
     }
