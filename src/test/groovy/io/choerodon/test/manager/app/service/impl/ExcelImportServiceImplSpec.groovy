@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 import javax.servlet.http.HttpServletResponse
 
@@ -39,7 +40,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-//@Stepwise
+@Stepwise
 class ExcelImportServiceImplSpec extends Specification {
 
     @Autowired
