@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -7,9 +9,11 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -201,6 +205,23 @@ public class TestCycleCaseDTO {
 
     public String getComment() {
         return comment;
+    }
+
+    public String getCommentWithoutRichText(){
+        if(StringUtils.isEmpty(comment))
+            return null;
+        JSONArray root=JSONArray.parseArray(comment);
+        Iterator list=root.iterator();
+        String result=null;
+        while (list.hasNext()){
+            JSONObject object= (JSONObject) list.next();
+            if(!(object.get("insert") instanceof JSONObject))
+                result+=object.get("insert");
+        }
+        if(StringUtils.isEmpty(result))
+            return null;
+
+        return result;
     }
 
     public void setComment(String comment) {

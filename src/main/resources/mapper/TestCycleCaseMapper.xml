@@ -36,7 +36,7 @@
         </collection>
         <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO">
             <id column="step_id" property="stepId"/>
-            <id column="description" property="comment"/>
+            <id column="comment" property="description"/>
             <id column="step_status_name" property="statusName"/>
             <id column="test_step" property="testStep"/>
             <id column="test_data" property="testData"/>
@@ -392,7 +392,7 @@
         step.test_step,
         step.test_data,
         step.expected_result,
-        step.step_coment,
+        step.coment,
         step.step_status_name,
         defect.defect_type,
         defect.id defece_id,
@@ -424,7 +424,7 @@
         step1.execute_step_id,
         step1.execute_id,
         step1.step_id,
-        step1.description step_coment,
+        step1.description coment,
         status_name step_status_name,
         step2.test_step,
         step2.test_data,

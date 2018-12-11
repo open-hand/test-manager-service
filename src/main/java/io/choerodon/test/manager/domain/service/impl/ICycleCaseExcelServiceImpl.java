@@ -80,7 +80,7 @@ public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCy
             Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
         }
         Optional.ofNullable(cycleCase.getExecutionStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCase.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(cycleCase.getCommentWithoutRichText()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(getDefectsCell(cycleCase.getDefects(), TestCycleCaseDefectRelE.CYCLE_CASE)).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCase.getAssigneeUser()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v.getRealName()));
         Optional.ofNullable(cycleCase.getLastUpdateDate()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.DATE, dateFormat.format(v)));

@@ -13,8 +13,8 @@ public class TestAppInstanceDTO {
     private Long commandId;
     private Long podStatus;
     private Long projectId;
-    private Long podName;
-    private Long containerName;
+    private String podName;
+    private String containerName;
     private Long logId;
 
     private String appVersionName;
@@ -100,19 +100,19 @@ public class TestAppInstanceDTO {
         this.projectId = projectId;
     }
 
-    public Long getPodName() {
+    public String getPodName() {
         return podName;
     }
 
-    public void setPodName(Long podName) {
+    public void setPodName(String podName) {
         this.podName = podName;
     }
 
-    public Long getContainerName() {
+    public String getContainerName() {
         return containerName;
     }
 
-    public void setContainerName(Long containerName) {
+    public void setContainerName(String containerName) {
         this.containerName = containerName;
     }
 
