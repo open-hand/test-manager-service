@@ -8,6 +8,7 @@ import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.core.exception.CommonException
 import io.choerodon.devops.api.dto.ApplicationRepDTO
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
+import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl
@@ -84,6 +85,8 @@ class JsonImportServiceImplSpec extends Specification {
 
     def "importMochaReport"() {
         given:
+        PageHelper.clearPage();
+        PageHelper.clearSort();
         TestAppInstanceE instanceE = new TestAppInstanceE(
                 code: "mocha-test",
                 projectVersionId: 233L,
