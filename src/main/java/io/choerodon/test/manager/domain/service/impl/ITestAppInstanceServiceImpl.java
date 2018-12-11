@@ -4,9 +4,13 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -16,8 +20,9 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     TestAppInstanceMapper mapper;
 
     @Override
-    public List<TestAppInstanceE> query(TestAppInstanceE testAppInstanceE) {
-        return mapper.select(testAppInstanceE);
+    public List<TestAppInstanceE> queryDelayInstance(int delayTime) {
+        Date delayTiming=DateUtils.addMinutes(new Date(),-delayTime);
+        return mapper.queryDelayInstance(delayTiming);
     }
 
     @Override
