@@ -95,11 +95,11 @@ class ExcelImportServiceImplSpec extends Specification {
 
         TestFileLoadHistoryDO historyDO = new TestFileLoadHistoryDO(projectId: 144L, actionType: 1L, sourceType: 1L, linkedId: 144L,createdBy: 0L)
         historyMapper.insert(historyDO)
-        TestFileLoadHistoryDO resHistoryDO = historyMapper.selectOne(historyDO)
+        TestFileLoadHistoryDO resHistoryDO = historyMapper.selectByPrimaryKey(historyDO.getId())
 
 
         when:
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(resHistoryDO.getCreatedBy())
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(historyDO.getCreatedBy())
         then:
         with(testFileLoadHistoryE) {
             id == resHistoryDO.getId()
