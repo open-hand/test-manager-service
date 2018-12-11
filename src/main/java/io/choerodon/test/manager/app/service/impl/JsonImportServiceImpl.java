@@ -116,6 +116,20 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
+        TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
+        automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
+        automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
+        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
+        automationHistoryE.setCycleId(testCycleE.getCycleId());
+
+        // 如果测试用例数量为 0
+        if (issues.isEmpty()) {
+            Long resultId = saveAutomationResultTask.join();
+            automationHistoryE.setResultId(resultId);
+            iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
+            return resultId;
+        }
+
         List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
 
         // 开始解析
@@ -133,10 +147,6 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
 
         // 将数据容器中的数据保存到数据库，并更新automation history状态
-        TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
-        automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
-        automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
-
         for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
             testCycleCaseE.setCreatedBy(createdBy);
             testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
@@ -155,8 +165,6 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
 
-        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleId(testCycleE.getCycleId());
         Long resultId = saveAutomationResultTask.join();
         automationHistoryE.setResultId(resultId);
         iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);

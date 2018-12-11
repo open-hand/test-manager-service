@@ -74,6 +74,10 @@ class JsonImportServiceImplSpec extends Specification {
             .file.newInputStream()).get(0), StandardCharsets.UTF_8)
 
     @Shared
+    private String emptyReport = new String(FileUtil.unTarGzToMemory(new ClassPathResource("empty_mocha_report.tar.gz")
+            .file.newInputStream()).get(0), StandardCharsets.UTF_8)
+
+    @Shared
     private List<TestAppInstanceE> instances = []
 
     private List<TestAutomationHistoryE> automationHistories = []
@@ -132,7 +136,7 @@ class JsonImportServiceImplSpec extends Specification {
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
-        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
+        (0..1) * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
         CompletionException completionException = thrown()
         completionException.cause.message == "error.get.app.version.name"
@@ -140,7 +144,7 @@ class JsonImportServiceImplSpec extends Specification {
         when: "app id 不存在"
         jsonImportService.importMochaReport("att-662000000-582-5", report)
         then:
-        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
+        (0..1) * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.INTERNAL_SERVER_ERROR)
@@ -170,5 +174,15 @@ class JsonImportServiceImplSpec extends Specification {
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
         reportId == 3L
+
+        when: "测试用例数量为 0"
+        reportId = jsonImportService.importMochaReport("att-663-583-5", emptyReport)
+        automationResultMapper.deleteByPrimaryKey(reportId)
+        then:
+        1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
+                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.11-111111-master")], HttpStatus.OK)
+        1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
+                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        reportId == 4L
     }
 }
