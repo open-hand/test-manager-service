@@ -363,14 +363,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleCaseService.batchChangeCase(caseDTOS);
     }
 
-    @Override
-    @Saga(code = "test-fix-cycle-data", description = "修复数据", inputSchemaClass = TestIssueFolderDTO.class)
-    public void fixCycleData(Long projectId) {
-        sagaClient.startSaga("test-fix-cycle-data", new StartInstanceDTO(JSON.toJSONString(
-                new TestIssueFolderDTO(null, null, null, projectId, null, null)),
-                "", ""));
-    }
-
 
     private JSONObject createVersionNode(String title, String height, Long versionId) {
         JSONObject version = new JSONObject();
