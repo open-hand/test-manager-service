@@ -11,7 +11,7 @@
         <id column="project_version_id" property="projectVersionId"/>
         <id column="env_id" property="envId"/>
         <id column="command_id" property="commandId"/>
-        <id column="project_id" property="project_id"/>
+        <id column="project_id" property="projectId"/>
         <id column="pod_status" property="podStatus"/>
         <id column="pod_name" property="podName"/>
         <id column="container_name" property="containerName"/>
@@ -43,4 +43,9 @@
         WHERE
         r.value_id = tv.id
   </select>
+
+    <select id="queryDelayInstance" resultMap="BaseResultMap">
+      select * from test_app_instance where
+        pod_status=0 and creation_date  &lt; #{delayTiming}
+    </select>
 </mapper>

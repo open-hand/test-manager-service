@@ -30,4 +30,12 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
             createSequence(sequenceName: 'test_app_instance_s', startValue: "1")
         }
     }
+
+    changeSet(id:'2018-12-11-instance-add-indexx-delayTime',author: 'jialong.zuo') {
+
+        createIndex(indexName: 'ids_instance_creation_date', tableName: 'test_app_instance') {
+            column(name: 'pod_status')
+            column(name: 'creation_date')
+        }
+    }
 }

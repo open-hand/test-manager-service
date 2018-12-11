@@ -39,6 +39,9 @@ public class IDevOpsServiceImpl implements IDevOpsService {
     @Value("${autotesting.lock.leaseTimeSeconds:10}")
     int leaseTime;
 
+    @Value("${autotesting.lock.delayTimeMinutes:15}")
+    int delayTime;
+
     Log log= LogFactory.getLog(this.getClass());
 
     private static final String CODE="test_manager_task_lock";
@@ -63,10 +66,8 @@ public class IDevOpsServiceImpl implements IDevOpsService {
                 lock.unlock();
                 return;
             }
-            TestAppInstanceE instanceE=new TestAppInstanceE();
-            instanceE.setPodStatus(0L);
             try {
-                List<TestAppInstanceE> list=testAppInstanceService.query(instanceE);
+                List<TestAppInstanceE> list=testAppInstanceService.queryDelayInstance(delayTime);
                 if(!ObjectUtils.isEmpty(list)){
                     Map releaseList=list.stream().collect(Collectors.groupingBy(TestAppInstanceE::getEnvId,
                             Collectors.mapping((v)->"att-"+v.getAppId()+"-"+v.getAppVersionId()+"-"+v.getId(),Collectors.toList())));

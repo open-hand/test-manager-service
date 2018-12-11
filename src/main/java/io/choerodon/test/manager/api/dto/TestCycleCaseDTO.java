@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
@@ -210,14 +211,20 @@ public class TestCycleCaseDTO {
     public String getCommentWithoutRichText(){
         if(StringUtils.isEmpty(comment))
             return null;
-        JSONArray root=JSONArray.parseArray(comment);
-        Iterator list=root.iterator();
         String result=null;
-        while (list.hasNext()){
-            JSONObject object= (JSONObject) list.next();
-            if(!(object.get("insert") instanceof JSONObject))
-                result+=object.get("insert");
+        try {
+            JSONArray root = JSONArray.parseArray(comment);
+            Iterator list=root.iterator();
+
+            while (list.hasNext()){
+                JSONObject object= (JSONObject) list.next();
+                if(!(object.get("insert") instanceof JSONObject))
+                    result+=object.get("insert");
+            }
+        }catch (JSONException e){
+            return comment;
         }
+
         if(StringUtils.isEmpty(result))
             return null;
 
