@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ITestAppInstanceService {
 
-    List<TestAppInstanceE> query(TestAppInstanceE testAppInstanceE);
+    List<TestAppInstanceE> queryDelayInstance(int delayTime);
 
     String queryValueByEnvIdAndAppId( Long envId, Long appId);
 

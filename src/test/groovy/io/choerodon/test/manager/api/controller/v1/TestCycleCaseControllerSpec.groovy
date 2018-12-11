@@ -178,7 +178,7 @@ class TestCycleCaseControllerSpec extends Specification {
     def "InsertOneCase"() {
         given:
         TestCycleCaseDTO dto = new TestCycleCaseDTO(cycleId: cycleIds.get(0), issueId: 98L, assignedTo: 10L)
-        TestCycleCaseDTO dto2 = new TestCycleCaseDTO(cycleId: cycleIds.get(0), issueId: 97L, assignedTo: 10L, comment: "comment1")
+        TestCycleCaseDTO dto2 = new TestCycleCaseDTO(cycleId: cycleIds.get(0), issueId: 97L, assignedTo: 10L, comment: "[{'insert':'ffff1'}]")
         TestCycleCaseDTO dto3 = new TestCycleCaseDTO(issueId: 96L, cycleId: cycleIds.get(0))
 
         when:
@@ -276,7 +276,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setAssignedTo(4L)
-        searchDto.setComment("111")
+        searchDto.setComment("[{'insert':'ffff1'}]")
         searchDto.setExecutionStatus(3L)
         searchDto.setObjectVersionNumber(1L)
         Map userMap = Maps.newHashMap(4L, new UserDO(loginName: "login", realName: "real"))
@@ -295,7 +295,7 @@ class TestCycleCaseControllerSpec extends Specification {
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
         searchDto.setObjectVersionNumber(2L)
-        searchDto.setComment("comment1")
+        searchDto.setComment("[{'insert':'ffff1'}]")
         searchDto.setAssignedTo(10L)
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
@@ -325,7 +325,7 @@ class TestCycleCaseControllerSpec extends Specification {
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
         searchDto.setObjectVersionNumber(1L)
-        searchDto.setComment("comment1")
+        searchDto.setComment("[{'insert':'ffff'}]")
         searchDto.setAssignedTo(10L)
         Map userMap = Maps.newHashMap(4L, new UserDO(loginName: "login", realName: "real"))
         userMap.put(10L, new UserDO(loginName: "login", realName: "real"))
