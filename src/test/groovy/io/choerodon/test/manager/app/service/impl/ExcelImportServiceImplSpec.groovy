@@ -108,7 +108,6 @@ class ExcelImportServiceImplSpec extends Specification {
             actionType == 1
             sourceType == 1
             status == 0
-            createdBy == 0
         }
     }
 
