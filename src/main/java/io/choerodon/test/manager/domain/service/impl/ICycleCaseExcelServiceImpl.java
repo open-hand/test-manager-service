@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ComponentIssueRelDTO;
 import io.choerodon.agile.api.dto.LabelIssueRelDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -9,6 +11,7 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -17,6 +20,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -80,12 +84,31 @@ public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCy
             Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
         }
         Optional.ofNullable(cycleCase.getExecutionStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCase.getCommentWithoutRichText()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(cycleCase.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, getCommentWithoutRichText(v)));
         Optional.ofNullable(getDefectsCell(cycleCase.getDefects(), TestCycleCaseDefectRelE.CYCLE_CASE)).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCase.getAssigneeUser()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v.getRealName()));
         Optional.ofNullable(cycleCase.getLastUpdateDate()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.DATE, dateFormat.format(v)));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, cycleCase.getCycleCaseStep(), cycleCase.getDefects(), rowStyles) + 1;
+    }
+
+    private String getCommentWithoutRichText(String comment){
+        if(StringUtils.isEmpty(comment))
+            return null;
+        String result=null;
+
+        JSONArray root = JSONArray.parseArray(comment);
+        Iterator list=root.iterator();
+
+        while (list.hasNext()){
+            JSONObject object= (JSONObject) list.next();
+            if(!(object.get("insert") instanceof JSONObject))
+                result+=object.get("insert");
+        }
+        if(StringUtils.isEmpty(result))
+            return null;
+
+        return result;
     }
 
     public int populateCycleCaseStep(Sheet sheet, int column, List<TestCycleCaseStepDTO> cycleCaseStep, List<TestCycleCaseDefectRelDTO> defects, CellStyle rowStyles) {

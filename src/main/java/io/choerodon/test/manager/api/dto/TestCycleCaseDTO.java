@@ -208,28 +208,6 @@ public class TestCycleCaseDTO {
         return comment;
     }
 
-    public String getCommentWithoutRichText(){
-        if(StringUtils.isEmpty(comment))
-            return null;
-        String result=null;
-        try {
-            JSONArray root = JSONArray.parseArray(comment);
-            Iterator list=root.iterator();
-
-            while (list.hasNext()){
-                JSONObject object= (JSONObject) list.next();
-                if(!(object.get("insert") instanceof JSONObject))
-                    result+=object.get("insert");
-            }
-        }catch (JSONException e){
-            return comment;
-        }
-
-        if(StringUtils.isEmpty(result))
-            return null;
-
-        return result;
-    }
 
     public void setComment(String comment) {
         this.comment = comment;
