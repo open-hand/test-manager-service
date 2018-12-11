@@ -27,5 +27,5 @@ public interface TestAppInstanceService {
 
     void updateInstance(String releaseNames, String podName, String conName);
 
-    void shutdownInstance(Long instanceId, Long status);
+    void shutdownInstance(Long instanceId);
 }
