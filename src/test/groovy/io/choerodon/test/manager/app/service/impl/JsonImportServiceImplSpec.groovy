@@ -163,7 +163,6 @@ class JsonImportServiceImplSpec extends Specification {
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 2L
 
         when: "重试"
         reportId = jsonImportService.importMochaReport("att-662-582-$instanceId", report)
@@ -177,7 +176,6 @@ class JsonImportServiceImplSpec extends Specification {
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 3L
 
         when: "测试用例数量为 0"
         reportId = jsonImportService.importMochaReport("att-663-583-$instanceId", emptyReport)
@@ -187,6 +185,5 @@ class JsonImportServiceImplSpec extends Specification {
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.11-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 4L
     }
 }
