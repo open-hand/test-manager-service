@@ -91,7 +91,6 @@ class ExcelImportServiceImplSpec extends Specification {
     def "queryLatestImportIssueHistory"() {
         given:
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE)
-        testFileLoadHistoryE.setCreatedBy(0L)
 
         TestFileLoadHistoryDO historyDO = new TestFileLoadHistoryDO(projectId: 144L, actionType: 1L, sourceType: 1L, linkedId: 144L,createdBy: 0L)
         historyMapper.insert(historyDO)
@@ -99,7 +98,9 @@ class ExcelImportServiceImplSpec extends Specification {
 
 
         when:
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(historyDO.getCreatedBy())
+        testFileLoadHistoryE.setCreatedBy(historyDO.getCreatedBy())
+
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
         then:
         with(testFileLoadHistoryE) {
             id == resHistoryDO.getId()
