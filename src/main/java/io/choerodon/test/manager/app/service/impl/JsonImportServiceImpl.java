@@ -69,7 +69,7 @@ public class JsonImportServiceImpl implements JsonImportService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Throwable.class)
     public Long importMochaReport(String releaseName, String json) {
         Assert.hasText(json, "error.issue.import.json.blank");
 
@@ -197,12 +197,20 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     private void relatedToExistIssues(List<TestCycleCaseE> allTestCycleCases, TestIssueFolderE targetFolderE) {
         List<TestIssueFolderRelE> issueFolderRels = iJsonImportService.queryAllUnderFolder(targetFolderE);
+        if (issueFolderRels.size() != allTestCycleCases.size()) {
+            logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
+            throw new CommonException("报告内容和 " + targetFolderE.getName() + " 只读文件夹中的内容不一致");
+        }
         issueFolderRels.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
         for (int i = 0; i < issueFolderRels.size(); i++) {
             Long issueId = issueFolderRels.get(i).getIssueId();
             allTestCycleCases.get(i).setIssueId(issueId);
             allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setIssueId(issueId));
             List<TestCaseStepE> testCaseStepEs = iJsonImportService.queryAllStepsUnderIssue(issueId);
+            if (allTestCycleCases.get(i).getCycleCaseStep().size() != testCaseStepEs.size()) {
+                logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
+                throw new CommonException("报告内容和 " + targetFolderE.getName() + " 只读文件夹中的内容不一致");
+            }
             for (int j = 0; j < testCaseStepEs.size(); j++) {
                 allTestCycleCases.get(i).getCycleCaseStep().get(j).setStepId(testCaseStepEs.get(j).getStepId());
             }
