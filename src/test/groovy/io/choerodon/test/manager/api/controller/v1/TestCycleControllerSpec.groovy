@@ -11,6 +11,7 @@ import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.agile.api.dto.StatusMapDTO
 import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.core.domain.Page
+import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
@@ -497,6 +498,8 @@ class TestCycleControllerSpec extends Specification {
     }
     def "CreateFormDefectFromIssue"() {
         given:
+        PageHelper.clearSort();
+        PageHelper.clearPage();
         Map map=new HashMap();
         map.put(889L,new IssueInfosDTO(issueId: 889L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
         map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))
