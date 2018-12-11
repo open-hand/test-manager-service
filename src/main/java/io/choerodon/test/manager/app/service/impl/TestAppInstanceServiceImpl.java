@@ -301,7 +301,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
 
     @Override
-    public void shutdownInstance(Long instanceId, Long status) {
+    public void shutdownInstance(Long instanceId) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
         testAppInstanceE.setId(instanceId);

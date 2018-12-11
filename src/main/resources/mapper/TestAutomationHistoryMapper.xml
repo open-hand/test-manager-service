@@ -78,6 +78,12 @@
                      #{item4}
                 </foreach>
             </if>
+            <if test="params.envId != null and !params.envId.isEmpty()">
+                and instance.env_id in
+                <foreach collection="params.envId" item="item5" index="index" open="(" close=")" separator=",">
+                    #{item5}
+                </foreach>
+            </if>
             <if test="params.appId != null">
                 and instance.app_id =#{params.appId}
             </if>

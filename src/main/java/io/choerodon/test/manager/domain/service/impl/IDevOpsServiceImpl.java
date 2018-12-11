@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.domain.service.IDevOpsService;
@@ -70,6 +71,7 @@ public class IDevOpsServiceImpl implements IDevOpsService {
                     Map releaseList=list.stream().collect(Collectors.groupingBy(TestAppInstanceE::getEnvId,
                             Collectors.mapping((v)->"att-"+v.getAppId()+"-"+v.getAppVersionId()+"-"+v.getId(),Collectors.toList())));
                     devopsService.getTestStatus(releaseList);
+                    LogUtils.debugLog(log," send to devops server for get instance status:"+ JSONObject.toJSONString(releaseList));
                 }
             }catch (Exception e){
                 log.warn(e);
