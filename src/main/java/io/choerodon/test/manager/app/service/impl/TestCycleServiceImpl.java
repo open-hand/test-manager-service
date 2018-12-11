@@ -62,9 +62,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     private static final String NODE_CHILDREN = "children";
 
     @Autowired
-    private SagaClient sagaClient;
-
-    @Autowired
     ITestIssueFolderService folderService;
 
     @Autowired
