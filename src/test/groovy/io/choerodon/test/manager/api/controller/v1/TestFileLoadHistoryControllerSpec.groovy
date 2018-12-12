@@ -84,7 +84,7 @@ class TestFileLoadHistoryControllerSpec extends Specification {
         projectHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 1L, linkedId: projectId)
         versionHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 2L, linkedId: versionId)
         folderHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 4L, linkedId: resFolderE.getFolderId())
-        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId(),createdBy: 0L)
+        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId())
         historyMapper.insert(projectHistory)
         historyMapper.insert(versionHistory)
         historyMapper.insert(folderHistory)
