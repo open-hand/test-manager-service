@@ -308,7 +308,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
-        searchDto.setObjectVersionNumber(1L)
+        searchDto.setObjectVersionNumber(2L)
         searchDto.setComment(null)
         searchDto.setAssignedTo(0L)
         Map userMap = Maps.newHashMap(4L, new UserDO(loginName: "login", realName: "real"))
@@ -316,7 +316,8 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
         then:
-        0 * userService.populateTestCycleCaseDTO(_)
+        1 * userService.populateTestCycleCaseDTO(_)
+        1 * userService.query(_) >> userMap
     }
 
     def "UpdateOneCase3"() {
