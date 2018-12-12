@@ -40,7 +40,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-@Stepwise
 class ExcelImportServiceImplSpec extends Specification {
 
     @Autowired
