@@ -30,13 +30,13 @@ public class DevOpsListener implements ApplicationListener<ApplicationEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-//        if(event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent)event).getApplicationContext().getParent().getParent()==null){
-//            taskService.scheduleWithFixedDelay(()->iDevOpsService.getPodStatus(),0,period, TimeUnit.SECONDS);
-//            LogUtils.infoLog(LogFactory.getLog(this.getClass()),"start a autoTesting ScheduleTask");
-//        }
-//        if(event instanceof ContextClosedEvent){
-//            taskService.shutdown();
-//            LogUtils.infoLog(LogFactory.getLog(this.getClass()),"closing autoTesting ScheduleTask");
-//        }
+        if(event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent)event).getApplicationContext().getParent().getParent()==null){
+            taskService.scheduleWithFixedDelay(()->iDevOpsService.getPodStatus(),0,period, TimeUnit.SECONDS);
+            LogUtils.infoLog(LogFactory.getLog(this.getClass()),"start a autoTesting ScheduleTask");
+        }
+        if(event instanceof ContextClosedEvent){
+            taskService.shutdown();
+            LogUtils.infoLog(LogFactory.getLog(this.getClass()),"closing autoTesting ScheduleTask");
+        }
     }
 }
