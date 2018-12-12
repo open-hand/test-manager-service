@@ -499,24 +499,24 @@ class TestCycleControllerSpec extends Specification {
     def "CreateFormDefectFromIssue"() {
         given:
         Map map=new HashMap();
-        map.put(889L,new IssueInfosDTO(issueId: 889L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
+        map.put(884L,new IssueInfosDTO(issueId: 884L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
         map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))
         TestCycleCaseDefectRelDO defectRelDO1=new TestCycleCaseDefectRelDO();
-        defectRelDO1.setIssueId(889L)
+        defectRelDO1.setIssueId(884L)
         defectRelDO1.setDefectType(TestCycleCaseDefectRelE.CASE_STEP)
         defectRelDO1.setProjectId(projectId)
-        defectRelDO1.setDefectLinkId(testCaseStepDO2.getStepId())
+        defectRelDO1.setDefectLinkId(testCaseStepDO1.getStepId())
         defectRelMapper.insert(defectRelDO1)
         when:
         restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), Page, projectId)
         then:
-        1*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(889L)
+        1*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(884L)
         2*testCaseService.getIssueInfoMap(_,_,_,_)>> map
         1*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 887L,issueId: 887L))
         when:
         restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), Page, -1)
         then:
-        0*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(889L)
+        0*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(884L)
         0*testCaseService.getIssueInfoMap(_,_,_,_)>> map
         0*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 887L,issueId: 887L))
         when:
