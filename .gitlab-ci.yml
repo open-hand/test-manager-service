@@ -15,7 +15,7 @@ maven-test-docker:
   stage: mvn-package
   script:
     - update_pom_version
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install package -Dmaven.test.failure.ignore=true -DskipTests=false -U
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install package -Dmaven.test.failure.ignore=true -DskipTests=true -U
     - >-
         mvn --batch-mode verify sonar:sonar
         -Dsonar.host.url=$SONAR_URL
