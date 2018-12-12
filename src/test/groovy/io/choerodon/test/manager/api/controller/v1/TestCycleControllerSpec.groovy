@@ -498,8 +498,6 @@ class TestCycleControllerSpec extends Specification {
     }
     def "CreateFormDefectFromIssue"() {
         given:
-        PageHelper.clearSort();
-        PageHelper.clearPage();
         Map map=new HashMap();
         map.put(8899L,new IssueInfosDTO(issueId: 8899L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
         map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))

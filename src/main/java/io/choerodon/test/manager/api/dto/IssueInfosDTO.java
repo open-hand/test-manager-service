@@ -63,6 +63,8 @@ public class IssueInfosDTO {
 
 	private String statusColor;
 
+	private String description;
+
 	private List<VersionIssueRelDTO> versionIssueRelDTOList;
 
 	private List<LabelIssueRelDTO> labelIssueRelDTOList;
@@ -76,6 +78,7 @@ public class IssueInfosDTO {
 		this.statusMapDTO = issueComponentDetailDTO.getStatusMapDTO();
 		this.issueId = issueComponentDetailDTO.getIssueId();
 		this.summary = issueComponentDetailDTO.getSummary();
+		this.description=issueComponentDetailDTO.getDescription();
 		this.projectId = issueComponentDetailDTO.getProjectId();
 		this.statusCode = issueComponentDetailDTO.getStatusMapDTO().getCode();
 		this.typeCode = issueComponentDetailDTO.getTypeCode();
@@ -101,7 +104,6 @@ public class IssueInfosDTO {
 
 	public IssueInfosDTO(IssueListDTO issueListDTO) {
 		issueName = issueListDTO.getIssueNum();
-//		issueStatusName = issueListDTO.getStatusName();
 		issueId = issueListDTO.getIssueId();
 		summary = issueListDTO.getSummary();
 		projectId = issueListDTO.getProjectId();
@@ -122,6 +124,14 @@ public class IssueInfosDTO {
 
 	public Long getObjectVersionNumber() {
 		return objectVersionNumber;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setObjectVersionNumber(Long objectVersionNumber) {
