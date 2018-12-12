@@ -68,40 +68,40 @@ class TestFileLoadHistoryControllerSpec extends Specification {
     TestFileLoadHistoryDO cycleHistory
 
 
-    def "QueryIssues"() {
-        given:
-        TestCycleDO cycleDO = new TestCycleDO(cycleName: "fileHistory测试")
-        testCycleMapper.insert(cycleDO)
-        resCycleDO = testCycleMapper.selectOne(cycleDO)
-
-        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
-        folderE.setName("fileHistory测试")
-        folderE.setProjectId(projectId)
-        folderE.setVersionId(versionId)
-        folderE.setType("cycle")
-
-        resFolderE = folderE.addSelf();
-        projectHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 1L, linkedId: projectId)
-        versionHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 2L, linkedId: versionId)
-        folderHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 4L, linkedId: resFolderE.getFolderId())
-        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId())
-        historyMapper.insert(projectHistory)
-        historyMapper.insert(versionHistory)
-        historyMapper.insert(folderHistory)
-        historyMapper.insert(cycleHistory)
-        Map<Long, ProductVersionDTO> versionsMap = Maps.newHashMap(versionId, new ProductVersionDTO(projectId: projectId, versionId: versionId, name: "fileHistory测试版本"))
-
-        when:
-        def entities = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history/issue", List, projectId)
-
-        then:
-        1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(id: projectId, name: "fileHistory测试项目")
-        1 * testCaseService.getVersionInfo(_) >> versionsMap
-
-        and:
-        entities.getStatusCode().is2xxSuccessful()
-        entities.getBody().size() >= 3
-    }
+//    def "QueryIssues"() {
+//        given:
+//        TestCycleDO cycleDO = new TestCycleDO(cycleName: "fileHistory测试")
+//        testCycleMapper.insert(cycleDO)
+//        resCycleDO = testCycleMapper.selectOne(cycleDO)
+//
+//        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
+//        folderE.setName("fileHistory测试")
+//        folderE.setProjectId(projectId)
+//        folderE.setVersionId(versionId)
+//        folderE.setType("cycle")
+//
+//        resFolderE = folderE.addSelf();
+//        projectHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 1L, linkedId: projectId)
+//        versionHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 2L, linkedId: versionId)
+//        folderHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 2L, sourceType: 4L, linkedId: resFolderE.getFolderId())
+//        cycleHistory = new TestFileLoadHistoryDO(projectId: projectId, actionType: 3L, sourceType: 3L, linkedId: resCycleDO.getCycleId())
+//        historyMapper.insert(projectHistory)
+//        historyMapper.insert(versionHistory)
+//        historyMapper.insert(folderHistory)
+//        historyMapper.insert(cycleHistory)
+//        Map<Long, ProductVersionDTO> versionsMap = Maps.newHashMap(versionId, new ProductVersionDTO(projectId: projectId, versionId: versionId, name: "fileHistory测试版本"))
+//
+//        when:
+//        def entities = restTemplate.getForEntity("/v1/projects/{project_id}/test/fileload/history/issue", List, projectId)
+//
+//        then:
+//        1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(id: projectId, name: "fileHistory测试项目")
+//        1 * testCaseService.getVersionInfo(_) >> versionsMap
+//
+//        and:
+//        entities.getStatusCode().is2xxSuccessful()
+//        entities.getBody().size() >= 3
+//    }
 
     def "QueryCycle"() {
         when:
