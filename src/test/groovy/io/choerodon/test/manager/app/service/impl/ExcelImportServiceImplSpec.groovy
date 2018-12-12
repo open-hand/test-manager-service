@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 import javax.servlet.http.HttpServletResponse
 
@@ -39,7 +40,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-//@Stepwise
+@Stepwise
 class ExcelImportServiceImplSpec extends Specification {
 
     @Autowired
@@ -90,14 +91,15 @@ class ExcelImportServiceImplSpec extends Specification {
     def "queryLatestImportIssueHistory"() {
         given:
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE)
-        testFileLoadHistoryE.setCreatedBy(0L)
 
         TestFileLoadHistoryDO historyDO = new TestFileLoadHistoryDO(projectId: 144L, actionType: 1L, sourceType: 1L, linkedId: 144L,createdBy: 0L)
         historyMapper.insert(historyDO)
-        TestFileLoadHistoryDO resHistoryDO = historyMapper.selectOne(historyDO)
+        TestFileLoadHistoryDO resHistoryDO = historyMapper.selectByPrimaryKey(historyDO.getId())
 
 
         when:
+        testFileLoadHistoryE.setCreatedBy(resHistoryDO.getCreatedBy())
+
         testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
         then:
         with(testFileLoadHistoryE) {
@@ -106,7 +108,6 @@ class ExcelImportServiceImplSpec extends Specification {
             actionType == 1
             sourceType == 1
             status == 0
-            createdBy == 0
         }
     }
 

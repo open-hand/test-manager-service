@@ -8,6 +8,7 @@ import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.core.exception.CommonException
 import io.choerodon.devops.api.dto.ApplicationRepDTO
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
+import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl
@@ -84,6 +85,8 @@ class JsonImportServiceImplSpec extends Specification {
 
     def "importMochaReport"() {
         given:
+        PageHelper.clearPage();
+        PageHelper.clearSort();
         TestAppInstanceE instanceE = new TestAppInstanceE(
                 code: "mocha-test",
                 projectVersionId: 233L,
@@ -93,8 +96,9 @@ class JsonImportServiceImplSpec extends Specification {
         )
         instances << instanceE
         instanceMapper.insert(instanceE)
+        Long instanceId = instanceMapper.selectAll().get(0).id
 
-        TestAutomationHistoryE automationHistory = new TestAutomationHistoryE(instanceId: 5L)
+        TestAutomationHistoryE automationHistory = new TestAutomationHistoryE(instanceId: instanceId)
         automationHistories << automationHistory
         automationHistoryMapper.insert(automationHistory)
 
@@ -126,13 +130,13 @@ class JsonImportServiceImplSpec extends Specification {
         iExcelImportService.setTestCaseService(testCaseService)
 
         when: "app instance 不存在"
-        jsonImportService.importMochaReport("att-662-582-5000000", report)
+        jsonImportService.importMochaReport("att-662-582-${instanceId * 100000}", report)
         then:
         CommonException commonException = thrown()
         commonException.message == "app instance 不存在"
 
         when: "app version id 不存在"
-        jsonImportService.importMochaReport("att-662-582000000-5", report)
+        jsonImportService.importMochaReport("att-662-582000000-$instanceId", report)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
@@ -142,7 +146,7 @@ class JsonImportServiceImplSpec extends Specification {
         completionException.cause.message == "error.get.app.version.name"
 
         when: "app id 不存在"
-        jsonImportService.importMochaReport("att-662000000-582-5", report)
+        jsonImportService.importMochaReport("att-662000000-582-$instanceId", report)
         then:
         (0..1) * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
@@ -152,17 +156,16 @@ class JsonImportServiceImplSpec extends Specification {
         completionException.cause.message == "error.get.app.name"
 
         when: "第一次导入"
-        Long reportId = jsonImportService.importMochaReport("att-662-582-5", report)
+        Long reportId = jsonImportService.importMochaReport("att-662-582-$instanceId", report)
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 2L
 
         when: "重试"
-        reportId = jsonImportService.importMochaReport("att-662-582-5", report)
+        reportId = jsonImportService.importMochaReport("att-662-582-$instanceId", report)
         for (long i in 1000001L..1000009L) {
             issueFolderRelMapper.delete(new TestIssueFolderRelDO(issueId: i))
             cycleCaseMapper.delete(new TestCycleCaseDO(issueId: i))
@@ -173,16 +176,14 @@ class JsonImportServiceImplSpec extends Specification {
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 3L
 
         when: "测试用例数量为 0"
-        reportId = jsonImportService.importMochaReport("att-663-583-5", emptyReport)
+        reportId = jsonImportService.importMochaReport("att-663-583-$instanceId", emptyReport)
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.11-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
-        reportId == 4L
     }
 }

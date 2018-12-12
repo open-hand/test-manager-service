@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl
 import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
+import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelService
@@ -118,6 +119,8 @@ class ExcelServiceImplSpec extends Specification {
 
     def "exportCaseProjectByTransaction"() {
         given:
+        PageHelper.clearSort();
+        PageHelper.clearPage();
         //将被spring代理的对象取出来
         Field h = excelService.getClass().getDeclaredField("CGLIB\$CALLBACK_0")
         h.setAccessible(true)

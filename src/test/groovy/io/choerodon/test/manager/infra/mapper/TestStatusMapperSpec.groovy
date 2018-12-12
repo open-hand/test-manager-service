@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -17,6 +18,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
+@Stepwise
 class TestStatusMapperSpec extends Specification {
 
     @Autowired
@@ -54,19 +56,19 @@ class TestStatusMapperSpec extends Specification {
         given:
         TestCycleCaseDO caseDO=new TestCycleCaseDO()
         caseDO.setCycleId(new Long(9999))
-        caseDO.setExecutionStatus(new Long(3))
+        caseDO.setExecutionStatus(new Long(36))
         caseDO.setIssueId(new Long(999))
         caseDO.setRank("0|c00000:")
         caseMapper.insert(caseDO)
         when:
-        def result1 = mapper.ifDeleteCycleCaseAllow(new Long(3))
+        def result1 = mapper.ifDeleteCycleCaseAllow(new Long(36))
         then:
-        result1==2
+        result1==1
         when:
         caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
-        def result2 = mapper.ifDeleteCycleCaseAllow(new Long(3))
+        def result2 = mapper.ifDeleteCycleCaseAllow(new Long(36))
         then:
-        result2==1
+        result2==0
     }
 
     def "IfDeleteCaseStepAllow"() {
