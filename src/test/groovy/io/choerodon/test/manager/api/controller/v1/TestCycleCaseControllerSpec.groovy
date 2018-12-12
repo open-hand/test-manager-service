@@ -342,7 +342,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0))
 
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, Page.class, 142, 1, 0, 10)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, Page.class, 142, cycleIds.get(0), 0, 10)
         then:
         1 * userService.query(_) >> new HashMap<>()
         and:
