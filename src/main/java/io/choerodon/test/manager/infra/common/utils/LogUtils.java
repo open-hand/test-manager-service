@@ -17,6 +17,10 @@ public class LogUtils {
         log.error(msg);
     }
 
+    public static void warnLog(Log log, Object msg,Throwable throwable) {
+        log.warn(msg,throwable);
+    }
+
     public static void infoLog(Log log,String msg){
         log.info(msg);
     }

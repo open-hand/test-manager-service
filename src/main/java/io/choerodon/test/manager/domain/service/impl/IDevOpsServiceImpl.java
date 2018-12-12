@@ -75,7 +75,7 @@ public class IDevOpsServiceImpl implements IDevOpsService {
                     LogUtils.debugLog(log," send to devops server for get instance status:"+ JSONObject.toJSONString(releaseList));
                 }
             }catch (Exception e){
-                log.warn(e);
+                LogUtils.warnLog(log,"Thread.currentThread().getName() warn :",e);
             }
             lock.unlock();
             LogUtils.debugLog(log,Thread.currentThread().getName()+" release redis lock."+res);
