@@ -4,18 +4,11 @@ stages:
   - mvn-package
   - docker-build
 
-#maven-test-branches:
-#  stage: mvn-package
-#  script:
-#    - git_merge develop
-#    - mvn package -U -DskipTests=false
-#    - mvn --batch-mode verify sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.analysis.mode=preview -Dsonar.gitlab.project_id=$CI_PROJECT_PATH -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
-
 maven-test-docker:
   stage: mvn-package
   script:
     - update_pom_version
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install package -Dmaven.test.failure.ignore=true -DskipTests=false -U
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -Dmaven.test.failure.ignore=true -DskipTests=false -U
     - >-
         mvn --batch-mode verify sonar:sonar
         -Dsonar.host.url=$SONAR_URL
