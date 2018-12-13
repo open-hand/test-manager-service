@@ -7,6 +7,8 @@
 - **Test Execute Management**
 - **Test Result Management**
 - **Test Status Management**
+- **Automation Test**
+
 This service is the management center of the Choerodon Microservices Framework. It`s main functions include configuration management, route management, and swagger management.
 
 ## Requirements
