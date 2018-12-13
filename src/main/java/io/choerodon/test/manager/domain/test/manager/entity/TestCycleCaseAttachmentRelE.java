@@ -18,9 +18,7 @@ public class TestCycleCaseAttachmentRelE {
     public static final String ATTACHMENT_CYCLE_CASE = "CYCLE_CASE";
     public static final String ATTACHMENT_CASE_STEP = "CASE_STEP";
 	public static final String ATTACHMENT_CYCLE_STEP = "CYCLE_STEP";
-
-	@Value("${file.bucketName:test}")
-    public static String ATTACHMENT_BUCKET;
+    public static final String ATTACHMENT_BUCKET = "test";
 
     private Long id;
     private String attachmentType;
