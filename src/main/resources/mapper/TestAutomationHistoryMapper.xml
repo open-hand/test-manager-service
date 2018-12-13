@@ -56,7 +56,7 @@
             history.project_id=#{params.projectId}
             <if test="params.framework != null and !params.framework.isEmpty()">
                 and history.framework in
-                <foreach collection="params.framework" item="item" index="index" open="(" close=")" separator=",">
+                <foreach collection="params.framework" item="item1" index="index" open="(" close=")" separator=",">
                    #{item1}
                 </foreach>
             </if>
