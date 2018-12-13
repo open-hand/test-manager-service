@@ -3,14 +3,10 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;

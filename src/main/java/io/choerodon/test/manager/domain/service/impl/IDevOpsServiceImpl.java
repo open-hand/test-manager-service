@@ -2,10 +2,8 @@ package io.choerodon.test.manager.domain.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.test.manager.app.service.DevopsService;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.domain.service.IDevOpsService;
 import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
-import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.choerodon.test.manager.infra.common.utils.LogUtils;
 import org.apache.commons.logging.Log;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +67,7 @@ public class IDevOpsServiceImpl implements IDevOpsService {
                 List<TestAppInstanceE> list=testAppInstanceService.queryDelayInstance(delayTime);
                 if(!ObjectUtils.isEmpty(list)){
                     Map releaseList=list.stream().collect(Collectors.groupingBy(TestAppInstanceE::getEnvId,
-                            Collectors.mapping((v)->"att-"+v.getAppId()+"-"+v.getAppVersionId()+"-"+v.getId(),Collectors.toList())));
+                            Collectors.mapping(v->"att-"+v.getAppId()+"-"+v.getAppVersionId()+"-"+v.getId(),Collectors.toList())));
                     devopsService.getTestStatus(releaseList);
                     LogUtils.debugLog(log," send to devops server for get instance status:"+ JSONObject.toJSONString(releaseList));
                 }

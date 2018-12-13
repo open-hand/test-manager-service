@@ -2,7 +2,6 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleCaseAttachmentRelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
