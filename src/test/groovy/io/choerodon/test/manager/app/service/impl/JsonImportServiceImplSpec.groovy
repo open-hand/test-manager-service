@@ -142,8 +142,8 @@ class JsonImportServiceImplSpec extends Specification {
                 new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
         (0..1) * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
-        CompletionException completionException = thrown()
-        completionException.cause.message == "error.get.app.version.name"
+        CommonException completionException = thrown()
+        completionException.message == "error.get.app.version.name"
 
         when: "app id 不存在"
         jsonImportService.importMochaReport("att-662000000-582-$instanceId", report)
@@ -153,7 +153,7 @@ class JsonImportServiceImplSpec extends Specification {
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
                 new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.INTERNAL_SERVER_ERROR)
         completionException = thrown()
-        completionException.cause.message == "error.get.app.name"
+        completionException.message == "error.get.app.name"
 
         when: "第一次导入"
         Long reportId = jsonImportService.importMochaReport("att-662-582-$instanceId", report)
