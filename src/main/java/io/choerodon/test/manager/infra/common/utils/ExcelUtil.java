@@ -1,7 +1,8 @@
 package io.choerodon.test.manager.infra.common.utils;
 
-import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
-
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import io.choerodon.core.exception.CommonException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -15,14 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Iterator;
 import java.util.Optional;
-
-import io.choerodon.core.exception.CommonException;
 
 public class ExcelUtil {
 
@@ -196,6 +192,22 @@ public class ExcelUtil {
         }
 
         return cell;
+    }
+
+    public static String getColumnWithoutRichText(String rawText){
+        if(StringUtils.isEmpty(rawText))
+            return null;
+        String result=null;
+
+        JSONArray root = JSONArray.parseArray(rawText);
+        Iterator list=root.iterator();
+
+        while (list.hasNext()){
+            JSONObject object= (JSONObject) list.next();
+            if(!(object.get("insert") instanceof JSONObject))
+                result+=object.get("insert");
+        }
+        return result;
     }
 
 }
