@@ -69,7 +69,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private enum CaseHeader {
         COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级*"), COLUMN5("用例描述"),
         COLUMN6("经办人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
-        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)"), COLUMN14("导入出错信息");
+        COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)");
         private String chinese;
 
         CaseHeader(String chinese) {

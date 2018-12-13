@@ -197,17 +197,18 @@ public class ExcelUtil {
     public static String getColumnWithoutRichText(String rawText){
         if(StringUtils.isEmpty(rawText))
             return null;
-        String result=null;
-
+        StringBuilder result =new StringBuilder();
         JSONArray root = JSONArray.parseArray(rawText);
         Iterator list=root.iterator();
 
         while (list.hasNext()){
             JSONObject object= (JSONObject) list.next();
             if(!(object.get("insert") instanceof JSONObject))
-                result+=object.get("insert");
+                result.append(object.getString("insert"));
         }
-        return result;
+        if(result.length()==0)
+            return null;
+        return result.toString();
     }
 
 }
