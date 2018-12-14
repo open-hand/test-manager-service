@@ -107,7 +107,7 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         // 创建阶段
         TestCycleE testStage = iJsonImportService.getStage(
-                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId());
+                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");

@@ -268,7 +268,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId) {
+    public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
@@ -291,6 +291,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setType(TestCycleE.FOLDER);
         testCycleE.setFromDate(new Date());
         testCycleE.setToDate(testCycleE.getFromDate());
+        testCycleE.setCreatedBy(createdBy);
+        testCycleE.setLastUpdatedBy(lastUpdatedBy);
         return testCycleE.addSelf();
     }
 

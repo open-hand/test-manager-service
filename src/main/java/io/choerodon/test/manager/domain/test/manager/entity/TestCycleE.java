@@ -49,6 +49,8 @@ public class TestCycleE {
 
     private Long folderId;
 
+    private Long lastUpdatedBy;
+
     @Autowired
     TestCycleRepository testCycleRepository;
 
@@ -245,5 +247,13 @@ public class TestCycleE {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }

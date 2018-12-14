@@ -43,6 +43,10 @@ public class TestCycleDO extends AuditDomain {
 
     private Long folderId;
 
+    private Long createdBy;
+
+    private Long lastUpdatedBy;
+
     @Transient
     private List<Map<String, Object>> cycleCaseList;
 
@@ -140,5 +144,25 @@ public class TestCycleDO extends AuditDomain {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    @Override
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    @Override
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Override
+    public Long getLastUpdatedBy() {
+        return lastUpdatedBy;
+    }
+
+    @Override
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
+        this.lastUpdatedBy = lastUpdatedBy;
     }
 }
