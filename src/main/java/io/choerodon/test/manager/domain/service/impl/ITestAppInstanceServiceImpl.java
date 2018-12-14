@@ -53,4 +53,20 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     public TestAppInstanceE queryOne(TestAppInstanceE id){
        return mapper.selectOne(id);
     }
+
+    @Override
+    public void updateInstanceWithoutStatus(TestAppInstanceE testAppInstanceE){
+        mapper.updateInstanceWithoutStatus(testAppInstanceE);
+    }
+
+    @Override
+    public void updateStatus(TestAppInstanceE testAppInstanceE){
+        mapper.updateStatus(testAppInstanceE);
+    }
+
+    @Override
+    public void closeInstance(TestAppInstanceE testAppInstanceE){
+        mapper.closeInstance(testAppInstanceE);
+    }
+
 }
