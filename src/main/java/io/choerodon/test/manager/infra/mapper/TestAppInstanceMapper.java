@@ -19,7 +19,7 @@ public interface TestAppInstanceMapper extends BaseMapper<TestAppInstanceE> {
     @Update({"update test_app_instance set pod_status=#{podStatus} where id=#{id} and pod_status < #{podStatus}"})
     int updateStatus(TestAppInstanceE testAppInstanceE);
 
-    @Update({"update test_app_instance set log_id=#{logId}, pod_status=#{podStatus} where id=#{id} and pod_status < #{podStatus}"})
+    @Update({"update test_app_instance set log_id=#{logId} where id=#{id}"})
     int closeInstance(TestAppInstanceE testAppInstanceE);
 
 }

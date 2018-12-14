@@ -293,6 +293,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
         testAppInstanceE.setPodStatus(status+1);
         instanceService.closeInstance(testAppInstanceE);
+        instanceService.updateStatus(testAppInstanceE);
     }
 
 
