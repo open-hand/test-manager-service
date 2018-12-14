@@ -86,13 +86,13 @@ public class JsonImportServiceImpl implements JsonImportService {
         Long createdBy = instance.getCreatedBy();
         Long lastUpdatedBy = instance.getLastUpdatedBy();
 
-        // 异步查询组织Id, appName和appVersionName
+        // 查询组织Id, appName和appVersionName
         String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
         String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
         Long organizationId = iJsonImportService.getOrganizationId(projectId);
         String folderName = appName + "-" + appVersionName;
 
-        // 异步保存完整json到数据库
+        // 保存完整json到数据库
         TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
         testAutomationResultE.setResult(json);
         testAutomationResultE.setCreatedBy(createdBy);
@@ -107,7 +107,7 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         // 创建阶段
         TestCycleE testStage = iJsonImportService.getStage(
-                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId());
+                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
@@ -115,7 +115,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
         automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleId(testCycleE.getCycleId());
+        automationHistoryE.setCycleId(testStage.getCycleId());
 
         // 如果测试用例数量为 0
         if (issues.isEmpty()) {
