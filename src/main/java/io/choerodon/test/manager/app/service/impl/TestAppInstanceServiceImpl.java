@@ -273,6 +273,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         //更新实例状态
         testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         testAppInstanceE.setPodStatus(1L);
+        testAppInstanceE.setLastUpdateDate(new Date());
         instanceService.updateInstanceWithoutStatus(testAppInstanceE);
         instanceService.updateStatus(testAppInstanceE);
     }
@@ -292,6 +293,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
         testAppInstanceE.setPodStatus(status+1);
+        testAppInstanceE.setLastUpdateDate(new Date());
         instanceService.closeInstance(testAppInstanceE);
         instanceService.updateStatus(testAppInstanceE);
     }
@@ -303,6 +305,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         //更新实例状态
         testAppInstanceE.setId(instanceId);
         testAppInstanceE.setPodStatus(3L);
+        testAppInstanceE.setLastUpdateDate(new Date());
         instanceService.updateStatus(testAppInstanceE);
 
     }

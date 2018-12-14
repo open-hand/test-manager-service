@@ -16,6 +16,6 @@ public interface TestAutomationHistoryMapper extends BaseMapper<TestAutomationHi
 
     List<TestAutomationHistoryE> queryWithInstance(@Param("params")Map map);
 
-    @Update({"update test_automation_history set test_status=#{testStatus} where instance_id=#{instanceId}"})
+    @Update({"update test_automation_history set test_status=#{testStatus},last_update_date=#{lastUpdateDate} where instance_id=#{instanceId}"})
     int shutdownInstance(TestAutomationHistoryE automationHistoryE);
 }
