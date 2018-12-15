@@ -274,6 +274,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
         testCycleE.setParentCycleId(parentCycleId);
+        testCycleE.setType(TestCycleE.FOLDER);
 
         int lastTestStageNumber = 0;
         List<TestCycleE> childCycleEs = testCycleE.querySelf();
