@@ -253,6 +253,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setCycleName(folderName);
+        testCycleE.setType(TestCycleE.CYCLE);
         TestCycleE targetCycle = testCycleE.queryOne();
         if (targetCycle == null) {
             logger.info("{} 循环不存在，创建", folderName);
