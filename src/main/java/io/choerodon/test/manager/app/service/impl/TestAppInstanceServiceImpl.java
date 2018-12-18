@@ -268,14 +268,14 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     public void updateInstance(String releaseNames, String podName, String conName) {
 
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-        //更新实例状态
-        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
-        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
-        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-        testAppInstanceE.setPodStatus(1L);
         testAppInstanceE.setPodName(podName);
         testAppInstanceE.setContainerName(conName);
-        instanceService.update(testAppInstanceE);
+        //更新实例状态
+        testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
+        testAppInstanceE.setPodStatus(1L);
+        testAppInstanceE.setLastUpdateDate(new Date());
+        instanceService.updateInstanceWithoutStatus(testAppInstanceE);
+        instanceService.updateStatus(testAppInstanceE);
     }
 
     /**
@@ -289,14 +289,13 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     public void closeInstance(String releaseNames, Long status, String logFile) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
-        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
-        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
-
         TestAppInstanceLogE logE = new TestAppInstanceLogE();
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
         testAppInstanceE.setPodStatus(status+1);
-        instanceService.update(testAppInstanceE);
+        testAppInstanceE.setLastUpdateDate(new Date());
+        instanceService.closeInstance(testAppInstanceE);
+        instanceService.updateStatus(testAppInstanceE);
     }
 
 
@@ -305,10 +304,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
         testAppInstanceE.setId(instanceId);
-        TestAppInstanceE testAppInstanceE1 = instanceService.queryOne(testAppInstanceE);
-        testAppInstanceE.setObjectVersionNumber(testAppInstanceE1.getObjectVersionNumber());
         testAppInstanceE.setPodStatus(3L);
-        instanceService.update(testAppInstanceE);
+        testAppInstanceE.setLastUpdateDate(new Date());
+        instanceService.updateStatus(testAppInstanceE);
 
     }
 

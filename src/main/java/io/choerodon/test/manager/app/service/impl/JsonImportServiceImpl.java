@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -87,22 +86,18 @@ public class JsonImportServiceImpl implements JsonImportService {
         Long createdBy = instance.getCreatedBy();
         Long lastUpdatedBy = instance.getLastUpdatedBy();
 
-        // 异步查询组织Id, appName和appVersionName
-        CompletableFuture<String> getAppNameTask = CompletableFuture.supplyAsync(() ->
-                iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId")));
-        CompletableFuture<String> getAppVersionNameTask = CompletableFuture.supplyAsync(() ->
-                iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId")));
+        // 查询组织Id, appName和appVersionName
+        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
+        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
         Long organizationId = iJsonImportService.getOrganizationId(projectId);
-        String folderName = getAppNameTask.join() + "-" + getAppVersionNameTask.join();
+        String folderName = appName + "-" + appVersionName;
 
-        // 异步保存完整json到数据库
-        CompletableFuture<Long> saveAutomationResultTask = CompletableFuture.supplyAsync(() -> {
-            TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
-            testAutomationResultE.setResult(json);
-            testAutomationResultE.setCreatedBy(createdBy);
-            testAutomationResultE.setLastUpdatedBy(lastUpdatedBy);
-            return iTestAutomationResultService.add(testAutomationResultE).getId();
-        });
+        // 保存完整json到数据库
+        TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
+        testAutomationResultE.setResult(json);
+        testAutomationResultE.setCreatedBy(createdBy);
+        testAutomationResultE.setLastUpdatedBy(lastUpdatedBy);
+        Long resultId = iTestAutomationResultService.add(testAutomationResultE).getId();
 
         // 创建文件夹
         TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
@@ -112,7 +107,7 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         // 创建阶段
         TestCycleE testStage = iJsonImportService.getStage(
-                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId());
+                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
@@ -120,11 +115,10 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
         automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleId(testCycleE.getCycleId());
+        automationHistoryE.setCycleId(testStage.getCycleId());
 
         // 如果测试用例数量为 0
         if (issues.isEmpty()) {
-            Long resultId = saveAutomationResultTask.join();
             automationHistoryE.setResultId(resultId);
             iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
             return resultId;
@@ -155,17 +149,13 @@ public class JsonImportServiceImpl implements JsonImportService {
                 automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
             }
         }
-        CompletableFuture<Void> createCycleCasesTask = CompletableFuture.runAsync(() ->
-                createCycleCasesAndBackfillExecuteIds(allTestCycleCases));
+        createCycleCasesAndBackfillExecuteIds(allTestCycleCases);
         if (targetFolderE.getNewFolder()) {
             createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
         }
 
-        createCycleCasesTask.join();
-
         backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
 
-        Long resultId = saveAutomationResultTask.join();
         automationHistoryE.setResultId(resultId);
         iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
 
@@ -197,12 +187,8 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     private void relatedToExistIssues(List<TestCycleCaseE> allTestCycleCases, TestIssueFolderE targetFolderE) {
         List<TestIssueFolderRelE> issueFolderRels = iJsonImportService.queryAllUnderFolder(targetFolderE);
-        if (issueFolderRels.size() != allTestCycleCases.size()) {
-            logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
-            throw new CommonException("报告内容和 " + targetFolderE.getName() + " 只读文件夹中的内容不一致");
-        }
         issueFolderRels.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-        for (int i = 0; i < issueFolderRels.size(); i++) {
+        for (int i = 0; i < allTestCycleCases.size(); i++) {
             Long issueId = issueFolderRels.get(i).getIssueId();
             allTestCycleCases.get(i).setIssueId(issueId);
             allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setIssueId(issueId));

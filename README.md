@@ -7,14 +7,17 @@
 - **Test Execute Management**
 - **Test Result Management**
 - **Test Status Management**
+- **Automation Test**
+
 This service is the management center of the Choerodon Microservices Framework. It`s main functions include configuration management, route management, and swagger management.
 
 ## Requirements
 - Java8
 - [File Service](https://github.com/choerodon/file-service.git)
 - [Iam Service](https://github.com/choerodon/iam-service.git)
+- [DevOps Service](https://github.com/choerodon/devops-service.git)
+- [Redis](https://redis.io)
 - [MySQL](https://www.mysql.com)
-- [Kafka](https://kafka.apache.org)
 
 ## Installation and Getting Started
 
@@ -56,7 +59,7 @@ mvn spring-boot:run
 ## Dependencies
 - `go-register-server`: Register server
 - `iam-service`：iam service
-- `kafka`
+- `devops-service`：devops service
 - `mysql`: test_manager_service database
 - `api-gateway`: api gateway server
 - `gateway-helper`: gateway helper server

@@ -108,3 +108,32 @@ All notable changes to choerodon-front-agile will be documented in this file.
 #### 0.11.0 Significant repair features
 
 - the target of clone test phase in test plan modle support different version, cycle
+
+## [0.12.0] - 2018-12-14
+
+### Add
+
+#### 0.12.0 Significantly added features
+
+- Add `Automation Test` module
+
+### Modify
+
+#### 0.12.0 Significantly modify the feature
+
+- Add assign in batches function in the `Test Plan` moudle
+- Show the priority and add filter with priority in `Test Plan` and `Test Execution` moudle
+
+### Fix
+
+#### 0.12.0 Significant repair features
+
+- Fix the problem in export as excel moudle
+- Fix the bug of data  in `Test Plan` and `Test Execution` when switching project
+- Fix the bug of data in test step when switching the previous\next in the execution details
+
+### Remove
+
+#### 0.12.0 Significantly remove the feature
+
+- Remove the fix data interface used in version 0.10.0

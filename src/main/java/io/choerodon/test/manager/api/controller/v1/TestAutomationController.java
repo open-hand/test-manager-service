@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class TestAutomationController {
             return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName,
                     new String(bytes, StandardCharsets.UTF_8)), HttpStatus.CREATED);
         } catch (Throwable e) {
-            appInstanceService.shutdownInstance(Long.parseLong(releaseName.substring(releaseName.lastIndexOf('-'))));
+            appInstanceService.shutdownInstance(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)));
             logger.error("导入mocha测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.mocha.report");
         }

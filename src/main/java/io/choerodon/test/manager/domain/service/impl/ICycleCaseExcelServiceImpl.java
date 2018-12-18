@@ -84,31 +84,12 @@ public class ICycleCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestCy
             Optional.ofNullable(getModuleCell(cycleCase.getIssueInfosDTO().getComponentIssueRelDTOList())).ifPresent(v -> ExcelUtil.createCell(row, 7, ExcelUtil.CellType.TEXT, v));
         }
         Optional.ofNullable(cycleCase.getExecutionStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCase.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, getCommentWithoutRichText(v)));
+        Optional.ofNullable(cycleCase.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, ExcelUtil.getColumnWithoutRichText(v)));
         Optional.ofNullable(getDefectsCell(cycleCase.getDefects(), TestCycleCaseDefectRelE.CYCLE_CASE)).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCase.getAssigneeUser()).ifPresent(v -> ExcelUtil.createCell(row, 8, ExcelUtil.CellType.TEXT, v.getRealName()));
         Optional.ofNullable(cycleCase.getLastUpdateDate()).ifPresent(v -> ExcelUtil.createCell(row, 9, ExcelUtil.CellType.DATE, dateFormat.format(v)));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, cycleCase.getCycleCaseStep(), cycleCase.getDefects(), rowStyles) + 1;
-    }
-
-    private String getCommentWithoutRichText(String comment){
-        if(StringUtils.isEmpty(comment))
-            return null;
-        String result=null;
-
-        JSONArray root = JSONArray.parseArray(comment);
-        Iterator list=root.iterator();
-
-        while (list.hasNext()){
-            JSONObject object= (JSONObject) list.next();
-            if(!(object.get("insert") instanceof JSONObject))
-                result+=object.get("insert");
-        }
-        if(StringUtils.isEmpty(result))
-            return null;
-
-        return result;
     }
 
     public int populateCycleCaseStep(Sheet sheet, int column, List<TestCycleCaseStepDTO> cycleCaseStep, List<TestCycleCaseDefectRelDTO> defects, CellStyle rowStyles) {

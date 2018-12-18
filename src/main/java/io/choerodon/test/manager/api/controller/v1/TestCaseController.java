@@ -151,7 +151,7 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("导出之前失败过的excel")
     @GetMapping("/download/excel/fail")
-    public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity downExcelFail(@PathVariable(name = "project_id") Long projectId,
                                            @RequestParam(name = "historyId") Long historyId) {
         excelServiceHandler.exportFailCase(projectId, historyId);
         return new ResponseEntity<>(HttpStatus.OK);

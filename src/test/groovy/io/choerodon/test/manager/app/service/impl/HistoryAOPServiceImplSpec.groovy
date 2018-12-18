@@ -1,16 +1,10 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.google.common.collect.Lists
-import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService
-import io.choerodon.test.manager.domain.aop.TestCaseCountRecordAOP
 import io.choerodon.test.manager.domain.aop.TestCycleCaseHistoryRecordAOP
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseAttachmentRelEFactory
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseHistoryEFactory
-import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.ProceedingJoinPoint
 import org.junit.runner.RunWith
@@ -19,13 +13,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.modules.junit4.PowerMockRunnerDelegate
 import org.spockframework.runtime.Sputnik
-import org.springframework.data.redis.connection.RedisConnectionFactory
-import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.support.atomic.RedisAtomicLong
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.lang.reflect.Method
 
 @PrepareForTest(TestCycleCaseAttachmentRelEFactory.class)
 @RunWith(PowerMockRunner.class)

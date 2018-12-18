@@ -1,33 +1,20 @@
 package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.core.convertor.ConvertHelper
-import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO
 import io.choerodon.test.manager.app.service.TestCaseStepService
 import io.choerodon.test.manager.domain.service.ITestCaseStepService
 import io.choerodon.test.manager.domain.service.ITestStatusService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCaseStepE
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
-import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory
-import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
 import org.powermock.api.mockito.PowerMockito
-import org.powermock.core.classloader.annotations.PowerMockIgnore
 import org.powermock.core.classloader.annotations.PrepareForTest
 import org.powermock.modules.junit4.PowerMockRunner
 import org.powermock.modules.junit4.PowerMockRunnerDelegate
-import org.powermock.modules.junit4.rule.PowerMockRule
 import org.spockframework.runtime.Sputnik
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.junit4.SpringRunner
-import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 /**
  * Created by 842767365@qq.com on 7/27/18.
  */

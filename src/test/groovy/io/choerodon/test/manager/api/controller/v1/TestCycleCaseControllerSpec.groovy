@@ -308,7 +308,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
-        searchDto.setObjectVersionNumber(3L)
+        searchDto.setObjectVersionNumber(2L)
         searchDto.setComment(null)
         searchDto.setAssignedTo(0L)
         Map userMap = Maps.newHashMap(4L, new UserDO(loginName: "login", realName: "real"))
@@ -316,7 +316,8 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
         then:
-        0 * userService.populateTestCycleCaseDTO(_)
+        1 * userService.populateTestCycleCaseDTO(_)
+        1 * userService.query(_) >> userMap
     }
 
     def "UpdateOneCase3"() {
@@ -341,7 +342,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0))
 
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, Page.class, 142, 1, 0, 10)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, Page.class, 142, cycleIds.get(0), 0, 10)
         then:
         1 * userService.query(_) >> new HashMap<>()
         and:

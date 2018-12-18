@@ -49,7 +49,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     private static final Pattern EXPECT_PATTERN = Pattern.compile("(?:@expect\\s+)(.*?)(?:\\s*\\n)");
 
-    private static final Pattern AUTO_TEST_STAGE_PATTERN = Pattern.compile("自动化测试mocha-\\d{4}(?:\\.\\d{1,2}){2}-\\d+?-.+?-第(\\d+)次测试");
+    private static final Pattern AUTO_TEST_STAGE_SUFFIX_PATTERN = Pattern.compile("第(\\d+)次测试");
 
     private static final String ERROR_GET_APP_NAME = "error.get.app.name";
 
@@ -268,7 +268,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId) {
+    public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
@@ -277,8 +277,10 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         int lastTestStageNumber = 0;
         List<TestCycleE> childCycleEs = testCycleE.querySelf();
         for (TestCycleE cycleE : childCycleEs) {
-            Matcher matcher = AUTO_TEST_STAGE_PATTERN.matcher(cycleE.getCycleName());
-            if (matcher.matches()) {
+            String suffix = cycleE.getCycleName().substring(cycleE.getCycleName().lastIndexOf('-') + 1);
+            String prefix = cycleE.getCycleName().substring(0, cycleE.getCycleName().lastIndexOf('-'));
+            Matcher matcher = AUTO_TEST_STAGE_SUFFIX_PATTERN.matcher(suffix);
+            if (Objects.equals(stageName, prefix) && matcher.matches()) {
                 int stageNumber = Integer.parseInt(matcher.group(1));
                 if (stageNumber > lastTestStageNumber) {
                     lastTestStageNumber = stageNumber;
@@ -291,6 +293,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setType(TestCycleE.FOLDER);
         testCycleE.setFromDate(new Date());
         testCycleE.setToDate(testCycleE.getFromDate());
+        testCycleE.setCreatedBy(createdBy);
+        testCycleE.setLastUpdatedBy(lastUpdatedBy);
         return testCycleE.addSelf();
     }
 

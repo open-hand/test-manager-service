@@ -17,4 +17,10 @@ public interface ITestAppInstanceService {
     TestAppInstanceE insert(TestAppInstanceE instanceE);
 
     TestAppInstanceE queryOne(TestAppInstanceE id);
+
+    void updateInstanceWithoutStatus(TestAppInstanceE testAppInstanceE);
+
+    void updateStatus(TestAppInstanceE testAppInstanceE);
+
+    void closeInstance(TestAppInstanceE testAppInstanceE);
 }

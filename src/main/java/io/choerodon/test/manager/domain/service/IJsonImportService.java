@@ -15,7 +15,7 @@ public interface IJsonImportService {
 
     TestCycleE getCycle(Long versionId, String folderName);
 
-    TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId);
+    TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy);
 
     Long getOrganizationId(Long projectId);
 

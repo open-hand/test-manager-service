@@ -8,8 +8,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -55,4 +53,20 @@ public class ITestAppInstanceServiceImpl implements ITestAppInstanceService {
     public TestAppInstanceE queryOne(TestAppInstanceE id){
        return mapper.selectOne(id);
     }
+
+    @Override
+    public void updateInstanceWithoutStatus(TestAppInstanceE testAppInstanceE){
+        mapper.updateInstanceWithoutStatus(testAppInstanceE);
+    }
+
+    @Override
+    public void updateStatus(TestAppInstanceE testAppInstanceE){
+        mapper.updateStatus(testAppInstanceE);
+    }
+
+    @Override
+    public void closeInstance(TestAppInstanceE testAppInstanceE){
+        mapper.closeInstance(testAppInstanceE);
+    }
+
 }

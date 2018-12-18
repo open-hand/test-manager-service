@@ -22,7 +22,7 @@ import static org.mockito.Matchers.anyObject
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(Sputnik.class)
-@PrepareForTest([DetailsHelper.class])
+@PrepareForTest(DetailsHelper.class)
 class ExcelServiceHandlerImplSpec extends Specification {
 
     @Shared

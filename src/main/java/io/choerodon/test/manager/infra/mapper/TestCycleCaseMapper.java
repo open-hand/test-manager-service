@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.mybatis.common.BaseMapper;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

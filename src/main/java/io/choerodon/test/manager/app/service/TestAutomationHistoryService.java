@@ -4,7 +4,6 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 
-import java.util.List;
 import java.util.Map;
 
 public interface TestAutomationHistoryService {

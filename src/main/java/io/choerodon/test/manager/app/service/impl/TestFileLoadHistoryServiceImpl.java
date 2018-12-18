@@ -40,11 +40,11 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
 
         List<TestFileLoadHistoryDTO> historyDTOS = ConvertHelper.convertList(iTestFileLoadHistoryService.queryDownloadFile(ConvertHelper.convert(testFileLoadHistoryDTO, TestFileLoadHistoryE.class)), TestFileLoadHistoryDTO.class);
 
-        historyDTOS.stream().filter(v -> v.getSourceType() == 1L).forEach(v -> v.setName(testCaseService.getProjectInfo(v.getLinkedId()).getName()));
-        historyDTOS.stream().filter(v -> v.getSourceType() == 2L).forEach(v ->
+        historyDTOS.stream().filter(v -> v.getSourceType().equals(1L)).forEach(v -> v.setName(testCaseService.getProjectInfo(v.getLinkedId()).getName()));
+        historyDTOS.stream().filter(v -> v.getSourceType().equals(2L)).forEach(v ->
                 v.setName(Optional.ofNullable(testCaseService.getVersionInfo(v.getProjectId()).get(v.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除")));
-        historyDTOS.removeIf(v->v.getSourceType() == 3L);
-        historyDTOS.stream().filter(v -> v.getSourceType() == 4L).forEach(v -> {
+        historyDTOS.removeIf(v -> v.getSourceType().equals(3L));
+        historyDTOS.stream().filter(v -> v.getSourceType().equals(4L)).forEach(v -> {
             folderE.setFolderId(v.getLinkedId());
             v.setName(Optional.ofNullable(folderE.queryByPrimaryKey()).map(TestIssueFolderE::getName).orElse("文件夹已被删除"));
         });

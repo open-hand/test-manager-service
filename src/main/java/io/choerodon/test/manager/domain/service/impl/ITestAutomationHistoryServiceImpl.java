@@ -12,6 +12,7 @@ import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -62,10 +63,8 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
     public void shutdownInstance(Long instanceId,Long status){
         TestAutomationHistoryE historyE=new TestAutomationHistoryE();
         historyE.setInstanceId(instanceId);
-        TestAutomationHistoryE historyE1=testAutomationHistoryMapper.selectOne(historyE);
-        historyE.setObjectVersionNumber(historyE1.getObjectVersionNumber());
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
-        historyE.setId(historyE1.getId());
-        testAutomationHistoryMapper.updateByPrimaryKeySelective(historyE);
+        historyE.setLastUpdateDate(new Date());
+        testAutomationHistoryMapper.shutdownInstance(historyE);
     }
 }
