@@ -167,6 +167,8 @@ class TestCycleCaseControllerSpec extends Specification {
         testCycleDTO2.setCycleName("childCycle")
         testCycleDTO2.setFolderId(11111L)
         testCycleDTO2.setVersionId(11111L)
+        testCycleDTO2.setFromDate(new Date())
+        testCycleDTO2.setToDate(new Date())
         testCycleDTO2.setType(TestCycleE.FOLDER)
         testCycleDTO2.setParentCycleId(cycleIds.get(0))
         testCycleDTO2.setObjectVersionNumber(1L)

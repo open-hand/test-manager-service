@@ -1,19 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.asgard.saga.annotation.Saga;
-import io.choerodon.asgard.saga.dto.StartInstanceDTO;
-import io.choerodon.asgard.saga.feign.SagaClient;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
@@ -219,6 +214,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
             Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
             temp1.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
+            syncCycleDate(temp1);
         } else if (temp1.getType().equals(TestCycleE.CYCLE)) {
             Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(temp1::setBuild);
             Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(temp1::setCycleName);
@@ -227,9 +223,58 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
             Optional.ofNullable(testCycleDTO.getObjectVersionNumber()).ifPresent(temp1::setObjectVersionNumber);
+            syncFolderDate(temp1);
         }
         return ConvertHelper.convert(iTestCycleService.update(temp1), TestCycleDTO.class);
 
+    }
+
+    /** 修改cycle时间后同步子folder的时间跨度
+     * @param cycleE
+     */
+    private void syncFolderDate(TestCycleE cycleE){
+        List<TestCycleE> folders=cycleE.getChildFolder();
+        folders.stream().filter(u->ifSyncNeed(u,cycleE.getFromDate(),cycleE.getToDate())).forEach(v->iTestCycleService.update(v));
+    }
+    private void syncCycleDate(TestCycleE cycleE){
+       Long parentCycleId=cycleE.getParentCycleId();
+        TestCycleE parentCycle=TestCycleEFactory.create();
+        parentCycle.setCycleId(parentCycleId);
+        TestCycleE cycle=parentCycle.queryOne();
+        if(ifSyncNeed(cycle,cycleE.getFromDate(),cycleE.getToDate())){
+            iTestCycleService.update(cycle);
+        }
+    }
+
+    /** 判断folder是否在限定时间段外 或者cycle是否在限定时间内如果是则为true
+     * @param type
+     * @param from
+     * @param to
+     * @return
+     */
+    private boolean ifSyncNeed(TestCycleE type,Date from,Date to){
+        boolean flag=false;
+
+        if(StringUtils.equals(type.getType(),TestCycleE.FOLDER)){
+            if(type.getFromDate()==null || type.getFromDate().compareTo(from)<0) {
+                type.setFromDate(from);
+                flag = true;
+            }
+            if(type.getToDate()==null || type.getToDate().compareTo(to)>0){
+                type.setToDate(to);
+                flag = true;
+            }
+        }else {
+            if(type.getFromDate()==null || type.getFromDate().compareTo(from)>0) {
+                type.setFromDate(from);
+                flag = true;
+            }
+            if(type.getToDate()==null || type.getToDate().compareTo(to)<0){
+                type.setToDate(to);
+                flag = true;
+            }
+        }
+        return flag;
     }
 
     public TestCycleDTO getOneCycle(Long cycleId) {
