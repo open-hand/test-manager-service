@@ -17,6 +17,7 @@ import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.UserService
+import io.choerodon.test.manager.app.service.impl.TestCycleServiceImpl
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO
@@ -117,6 +118,8 @@ class TestCycleControllerSpec extends Specification {
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
         testCycleDTO1.setCycleName("testCycleInsert")
         testCycleDTO1.setVersionId(versionId)
+        testCycleDTO1.setToDate(new Date())
+        testCycleDTO1.setFromDate(new Date())
         testCycleDTO1.setType(TestCycleE.CYCLE)
         testCycleDTO1.setObjectVersionNumber(1L)
 
@@ -135,6 +138,8 @@ class TestCycleControllerSpec extends Specification {
         testCycleDTO2.setFolderId(resFolderDO.getFolderId())
         testCycleDTO2.setVersionId(versionId)
         testCycleDTO2.setType(TestCycleE.FOLDER)
+        testCycleDTO2.setToDate(new Date())
+        testCycleDTO2.setFromDate(new Date())
         testCycleDTO2.setObjectVersionNumber(1L)
 
         insertFolderRel.setProjectId(projectId)
@@ -211,6 +216,24 @@ class TestCycleControllerSpec extends Specification {
         entity.body.type == "temp"
         and:'清理值'
         testCycleMapper.delete(cycleDO)
+    }
+
+    def "testUpdateDate"(){
+        given:
+        TestCycleServiceImpl service=new TestCycleServiceImpl();
+        Date from=new Date(2018,12,18)
+        Date to=new Date(2018,12,28)
+
+        expect:
+        result==service.ifSyncNeed(param1,from,to)
+        where:
+        param1                                        |               result
+        new  TestCycleE(type: "cycle")              |               true
+        new  TestCycleE(type: "folder")             |               true
+        new  TestCycleE(type: "cycle",fromDate: new Date(2018,12,20),toDate: new Date(2018,12,20))  |true
+        new  TestCycleE(type: "folder",fromDate: new Date(2018,12,20),toDate: new Date(2018,12,20))  |false
+        new  TestCycleE(type: "cycle",fromDate: new Date(2018,12,10),toDate: new Date(2018,12,30))  |false
+        new  TestCycleE(type: "folder",fromDate: new Date(2018,12,10),toDate: new Date(2018,12,30))  |true
     }
 
     def "QueryOne"() {
