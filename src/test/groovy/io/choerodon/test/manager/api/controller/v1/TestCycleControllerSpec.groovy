@@ -49,6 +49,7 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 import java.lang.reflect.Array
+import java.time.Duration
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -234,6 +235,9 @@ class TestCycleControllerSpec extends Specification {
         new  TestCycleE(type: "folder",fromDate: new Date(2018,12,20),toDate: new Date(2018,12,20))  |false
         new  TestCycleE(type: "cycle",fromDate: new Date(2018,12,10),toDate: new Date(2018,12,30))  |false
         new  TestCycleE(type: "folder",fromDate: new Date(2018,12,10),toDate: new Date(2018,12,30))  |true
+        new  TestCycleE(type: "folder",fromDate: new Date(2018,12,10),toDate: new Date(2018,12,13))  |true
+        new  TestCycleE(type: "folder",fromDate: new Date(2018,12,29),toDate: new Date(2018,12,30))  |true
+        new  TestCycleE(type: "folder",fromDate: new Date(2018,10,10),toDate: new Date(2018,12,15))  |true
     }
 
     def "QueryOne"() {

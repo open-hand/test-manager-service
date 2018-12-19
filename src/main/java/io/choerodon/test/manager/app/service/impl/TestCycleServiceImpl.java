@@ -25,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import java.time.Duration;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -256,6 +260,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         boolean flag=false;
 
         if(StringUtils.equals(type.getType(),TestCycleE.FOLDER)){
+            long folderPeriod=getDuration(type.getFromDate(),type.getToDate());
+            long cyclePeriod=getDuration(from,to);
+
             if(type.getFromDate()==null || type.getFromDate().compareTo(from)<0) {
                 type.setFromDate(from);
                 flag = true;
@@ -264,6 +271,8 @@ public class TestCycleServiceImpl implements TestCycleService {
                 type.setToDate(to);
                 flag = true;
             }
+            adaption(type,folderPeriod,cyclePeriod,from,to);
+
         }else {
             if(type.getFromDate()==null || type.getFromDate().compareTo(from)>0) {
                 type.setFromDate(from);
@@ -275,6 +284,32 @@ public class TestCycleServiceImpl implements TestCycleService {
             }
         }
         return flag;
+    }
+
+    public long getDuration(Date from ,Date to){
+        if(to!=null && from !=null) {
+            return ChronoUnit.SECONDS.between(from.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                    to.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        }
+        return 0;
+    }
+
+    private void adaption(TestCycleE folder, long folderDuration, long cycleDuration, Date from, Date to){
+        if(folder.getToDate().compareTo(folder.getFromDate())<0){
+            if(folderDuration<cycleDuration){
+                if(folder.getToDate().compareTo(from)<0){
+                    folder.setFromDate(from);
+                    folder.setToDate(Date.from(from.toInstant().plus(folderDuration,ChronoUnit.SECONDS)));
+                }else if(folder.getFromDate().compareTo(to)>0){
+                    folder.setToDate(to);
+                    folder.setFromDate(Date.from(to.toInstant().minus(folderDuration,ChronoUnit.SECONDS)));
+                }
+
+            }else if(folderDuration>cycleDuration){
+                folder.setFromDate(from);
+                folder.setToDate(to);
+            }
+        }
     }
 
     public TestCycleDTO getOneCycle(Long cycleId) {
