@@ -1,11 +1,11 @@
 package io.choerodon.test.manager.domain.service;
 
+import com.alibaba.fastjson.JSONObject;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
+
 import java.util.List;
 import java.util.Map;
-
-import com.alibaba.fastjson.JSONObject;
-
-import io.choerodon.test.manager.domain.test.manager.entity.*;
 
 public interface IJsonImportService {
 
@@ -15,7 +15,7 @@ public interface IJsonImportService {
 
     TestCycleE getCycle(Long versionId, String folderName);
 
-    TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy);
+    TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy);
 
     Long getOrganizationId(Long projectId);
 

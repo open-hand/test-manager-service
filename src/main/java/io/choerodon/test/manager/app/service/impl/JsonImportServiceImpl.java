@@ -1,18 +1,10 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.JsonImportService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
@@ -20,6 +12,16 @@ import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
 import io.choerodon.test.manager.domain.service.ITestAutomationResultService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
@@ -106,7 +108,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
 
         // 创建阶段
-        TestCycleE testStage = iJsonImportService.getStage(
+        TestCycleDTO testStage = iJsonImportService.getStage(
                 versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器

@@ -90,6 +90,16 @@ public class TestCycleServiceImpl implements TestCycleService {
         return cycleDTO;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO){
+        TestCycleE cycleE = iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+        if(StringUtils.equals(cycleE.getType(),TestCycleE.FOLDER)){
+            syncCycleDate(cycleE);
+        }
+        return ConvertHelper.convert(cycleE, TestCycleDTO.class);
+    }
+
     /**
      * 同步文件夹下的所有执行
      *
