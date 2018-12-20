@@ -219,7 +219,7 @@ public class ExcelUtil {
 
     private static final String FILESUFFIX = ".xlsx";
 
-    private static final String EXCELCONTENTTYPE = "application/vnd.ms-excel";
+    private static final String EXCELCONTENTTYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     private static final String EXPORT_ERROR_SET_HEADER = "error.issue.set.workbook";
 
