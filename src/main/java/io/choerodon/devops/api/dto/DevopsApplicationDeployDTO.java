@@ -86,10 +86,10 @@ public class DevopsApplicationDeployDTO {
     }
 
     public DevopsApplicationDeployDTO(ApplicationDeployDTO deployDTO,Long appInstanceId,String values) {
-        this.appVerisonId = deployDTO.getAppVerisonId();
+        this.appVerisonId = deployDTO.getAppVersionId();
         this.environmentId = deployDTO.getEnvironmentId();
         this.values = values;
         this.appId = deployDTO.getAppId();
-        this.instanceName = "att-" + deployDTO.getAppId()+ "-" + deployDTO.getAppVerisonId() + "-" + appInstanceId;
+        this.instanceName = "att-" + deployDTO.getAppId()+ "-" + deployDTO.getAppVersionId() + "-" + appInstanceId;
     }
 }

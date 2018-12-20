@@ -14,8 +14,11 @@ import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Optional;
@@ -212,6 +215,36 @@ public class ExcelUtil {
         if(result.length()==0)
             return null;
         return result.toString();
+    }
+
+    private static final String FILESUFFIX = ".xlsx";
+
+    private static final String EXCELCONTENTTYPE = "application/vnd.ms-excel";
+
+    private static final String EXPORT_ERROR_SET_HEADER = "error.issue.set.workbook";
+
+
+    public static void setExcelHeaderByStream(HttpServletRequest request, HttpServletResponse response) {
+        String charsetName = setExcelHeader(request);
+        response.reset();
+        response.setContentType(EXCELCONTENTTYPE);
+        response.setCharacterEncoding("utf-8");
+        try {
+            response.setHeader("Content-Disposition", "attachment;filename="
+                    + new String((FILESUFFIX).getBytes(charsetName),
+                    "ISO-8859-1"));
+        } catch (UnsupportedEncodingException e1) {
+            throw new CommonException(EXPORT_ERROR_SET_HEADER, e1);
+        }
+
+    }
+
+    public static String setExcelHeader(HttpServletRequest request) {
+        String charsetName = "UTF-8";
+        if (request.getHeader("User-Agent").contains("Firefox")) {
+            charsetName = "GB2312";
+        }
+        return charsetName;
     }
 
 }

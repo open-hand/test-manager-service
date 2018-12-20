@@ -3,8 +3,10 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -44,10 +46,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     @Override
-    public void downloadImportTemp(HttpServletResponse response) {
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+    public void downloadImportTemp(HttpServletRequest request, HttpServletResponse response) {
+        ExcelUtil.setExcelHeaderByStream(request,response);
         excelService.downloadWorkBookByStream(iExcelImportService.buildImportTemp(), response);
     }
 

@@ -5,7 +5,7 @@ package io.choerodon.test.manager.api.dto;
  */
 public class ApplicationDeployDTO {
     private Long appId;
-    private Long appVerisonId;
+    private Long appVersionId;
     private Long environmentId;
     private Long projectVersionId;
     private Long historyId;
@@ -21,12 +21,12 @@ public class ApplicationDeployDTO {
         this.appId = appId;
     }
 
-    public Long getAppVerisonId() {
-        return appVerisonId;
+    public Long getAppVersionId() {
+        return appVersionId;
     }
 
-    public void setAppVerisonId(Long appVerisonId) {
-        this.appVerisonId = appVerisonId;
+    public void setAppVersionId(Long appVersionId) {
+        this.appVersionId = appVersionId;
     }
 
     public Long getEnvironmentId() {
