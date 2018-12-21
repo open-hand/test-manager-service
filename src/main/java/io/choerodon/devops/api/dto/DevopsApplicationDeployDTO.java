@@ -3,7 +3,7 @@ package io.choerodon.devops.api.dto;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 
 public class DevopsApplicationDeployDTO {
-    private Long appVerisonId;
+    private Long appVersionId;
     private Long environmentId;
     private String values;
     private Long appId;
@@ -13,12 +13,12 @@ public class DevopsApplicationDeployDTO {
     private String instanceName;
     private boolean isNotChange;
 
-    public Long getAppVerisonId() {
-        return appVerisonId;
+    public Long getAppVersionId() {
+        return appVersionId;
     }
 
-    public void setAppVerisonId(Long appVerisonId) {
-        this.appVerisonId = appVerisonId;
+    public void setAppVersionId(Long appVersionId) {
+        this.appVersionId = appVersionId;
     }
 
     public Long getEnvironmentId() {
@@ -86,10 +86,10 @@ public class DevopsApplicationDeployDTO {
     }
 
     public DevopsApplicationDeployDTO(ApplicationDeployDTO deployDTO,Long appInstanceId,String values) {
-        this.appVerisonId = deployDTO.getAppVerisonId();
+        this.appVersionId = deployDTO.getAppVersionId();
         this.environmentId = deployDTO.getEnvironmentId();
         this.values = values;
         this.appId = deployDTO.getAppId();
-        this.instanceName = "att-" + deployDTO.getAppId()+ "-" + deployDTO.getAppVerisonId() + "-" + appInstanceId;
+        this.instanceName = "att-" + deployDTO.getAppId()+ "-" + deployDTO.getAppVersionId() + "-" + appInstanceId;
     }
 }

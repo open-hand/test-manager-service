@@ -143,7 +143,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         taskDTO.getParams().put("userId", DetailsHelper.getUserDetails().getUserId());
 
         String appName = testCaseService.queryByAppId(projectId, deploy.getAppId()).getName();
-        String appVersion = testCaseService.getAppversion(projectId, Lists.newArrayList(deploy.getAppVerisonId())).get(0).getVersion();
+        String appVersion = testCaseService.getAppversion(projectId, Lists.newArrayList(deploy.getAppVersionId())).get(0).getVersion();
         taskDTO.setName("test-deploy-" + appName + "-" + appVersion + "-" + GenerateUUID.generateUUID());
         taskDTO.setDescription("测试应用：" + appName + "版本：" + appVersion + "定时部署");
         return scheduleService.create(projectId, taskDTO);
@@ -169,8 +169,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
 
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             sendResult.setYaml(deployDTO.getValues());
-            Assert.notNull(deployDTO.getAppVerisonId(), "error.deployDTO.appVerisonId.can.not.be.null");
-            replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVerisonId());
+            Assert.notNull(deployDTO.getAppVersionId(), "error.deployDTO.appVerisonId.can.not.be.null");
+            replaceResult = testCaseService.previewValues(projectId, sendResult, deployDTO.getAppVersionId());
             //校验values
             FileUtil.checkYamlFormat(deployDTO.getValues());
             Long commandValueId = null;
@@ -193,7 +193,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             TestAppInstanceE needInstance = new TestAppInstanceE();
             needInstance.setId(retryCommand.getInstanceId());
             TestAppInstanceE retryInstance = instanceService.queryOne(needInstance);
-            deployDTO.setAppVerisonId(retryInstance.getAppVersionId());
+            deployDTO.setAppVersionId(retryInstance.getAppVersionId());
             deployDTO.setAppId(retryInstance.getAppId());
             deployDTO.setEnvironmentId(retryInstance.getEnvId());
             deployDTO.setCode(retryInstance.getCode());

@@ -296,7 +296,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
-        searchDto.setObjectVersionNumber(2L)
+        searchDto.setObjectVersionNumber(1L)
         searchDto.setComment("[{'insert':'ffff1'}]")
         searchDto.setAssignedTo(10L)
         when:

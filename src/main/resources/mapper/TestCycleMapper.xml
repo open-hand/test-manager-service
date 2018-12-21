@@ -162,9 +162,14 @@
         select count(cycle_id) from test_cycle
         <where>
             cycle_name = #{cycleName} and version_id = #{versionId}
-            <if test="parentCycleId!=null">
-                and parent_cycle_id=#{parentCycleId}
-            </if>
+            <choose>
+                <when test="parentCycleId!=null">
+                    and parent_cycle_id=#{parentCycleId}
+                </when>
+                <otherwise>
+                    and type !='folder'
+                </otherwise>
+            </choose>
             <if test="cycleId!=null">
                 and cycle_id !=#{cycleId}
             </if>

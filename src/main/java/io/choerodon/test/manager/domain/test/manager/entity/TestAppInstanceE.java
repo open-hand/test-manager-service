@@ -140,7 +140,7 @@ public class TestAppInstanceE extends AuditDomain {
                             Long projectId, Long podStatus) {
         this.appId = deployDTO.getAppId();
         this.code = deployDTO.getCode();
-        this.appVersionId = deployDTO.getAppVerisonId();
+        this.appVersionId = deployDTO.getAppVersionId();
         this.projectVersionId = deployDTO.getProjectVersionId();
         this.envId = deployDTO.getEnvironmentId();
         this.commandId = commandId;

@@ -85,35 +85,6 @@ public class ExcelServiceImpl implements ExcelService {
     NotifyService notifyService;
 
     /**
-     * 设置http请求报文为下载文件
-     *
-     * @param request
-     * @throws UnsupportedEncodingException
-     **/
-    private void setExcelHeaderByStream(HttpServletRequest request, HttpServletResponse response) {
-        String charsetName = setExcelHeader(request);
-        response.reset();
-        response.setContentType(EXCELCONTENTTYPE);
-        response.setCharacterEncoding("utf-8");
-        try {
-            response.setHeader("Content-Disposition", "attachment;filename="
-                    + new String((FILESUFFIX).getBytes(charsetName),
-                    "ISO-8859-1"));
-        } catch (UnsupportedEncodingException e1) {
-            throw new CommonException(EXPORT_ERROR_SET_HEADER, e1);
-        }
-
-    }
-
-    private String setExcelHeader(HttpServletRequest request) {
-        String charsetName = "UTF-8";
-        if (request.getHeader("User-Agent").contains("Firefox")) {
-            charsetName = "GB2312";
-        }
-        return charsetName;
-    }
-
-    /**
      * 失败导出重试
      * @param projectId
      * @param fileHistoryId
@@ -189,7 +160,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
                                                        HttpServletResponse response, Long userId, Long organizationId) {
-        setExcelHeader(request);
+        ExcelUtil.setExcelHeader(request);
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, cycleId,
                 TestFileLoadHistoryE.Source.CYCLE, TestFileLoadHistoryE.Action.DOWNLOAD_CYCLE);
@@ -241,7 +212,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
-        setExcelHeader(request);
+        ExcelUtil.setExcelHeader(request);
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, projectId,
                 TestFileLoadHistoryE.Source.PROJECT, TestFileLoadHistoryE.Action.DOWNLOAD_ISSUE);
 
@@ -299,7 +270,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
-        setExcelHeader(request);
+        ExcelUtil.setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, versionId,
@@ -351,7 +322,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
-        setExcelHeader(request);
+        ExcelUtil.setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
 
         TestFileLoadHistoryE loadHistoryE = insertHistory(projectId, folderId,
@@ -398,7 +369,7 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     public void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response) {
-        setExcelHeaderByStream(request, response);
+        ExcelUtil.setExcelHeaderByStream(request, response);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 

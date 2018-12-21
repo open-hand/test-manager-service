@@ -160,9 +160,9 @@ public class TestCaseController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成excel导入模板")
     @GetMapping("/download/excel/import_template")
-    public void downloadImportTemplate(@PathVariable("project_id") Long projectId,
+    public void downloadImportTemplate(@PathVariable("project_id") Long projectId,HttpServletRequest request,
                                        HttpServletResponse response) {
-        excelImportService.downloadImportTemp(response);
+        excelImportService.downloadImportTemp(request,response);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
