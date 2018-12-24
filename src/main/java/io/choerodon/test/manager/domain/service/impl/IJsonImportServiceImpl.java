@@ -1,22 +1,9 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import feign.FeignException;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.ProjectDTO;
@@ -25,6 +12,8 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
@@ -39,6 +28,18 @@ import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class IJsonImportServiceImpl implements IJsonImportService {
@@ -64,6 +65,9 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Autowired
     private TestAutomationHistoryMapper automationHistoryMapper;
+
+    @Autowired
+    private TestCycleService testCycleService;
 
     @Autowired
     public void setiExcelImportService(IExcelImportService iExcelImportService) {
@@ -269,7 +273,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleE getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
+    public TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
@@ -297,7 +301,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setToDate(testCycleE.getFromDate());
         testCycleE.setCreatedBy(createdBy);
         testCycleE.setLastUpdatedBy(lastUpdatedBy);
-        return testCycleE.addSelf();
+        return testCycleService.insertWithoutSyncFolder(ConvertHelper.convert(testCycleE, TestCycleDTO.class));
     }
 
     @Override

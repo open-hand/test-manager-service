@@ -17,6 +17,8 @@ import java.util.Map;
 public interface TestCycleService {
 	TestCycleDTO insert(TestCycleDTO testCycleDTO);
 
+	TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO);
+
 	boolean synchroFolder(Long cycleId,Long folderId,Long projectId);
 
 	boolean synchroFolderInCycle(Long cycleId,Long projectId);
