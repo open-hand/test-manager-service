@@ -22,6 +22,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 import java.lang.reflect.Method
+import java.time.LocalDateTime
 import java.util.function.Function
 import java.util.function.Supplier
 
@@ -39,15 +40,15 @@ class RdisAOPServiceImplSpec extends Specification {
         TestCaseCountRecordAOP recordAOP=new TestCaseCountRecordAOP(redisTemplate:new RedisTemplate(),redisTemplateUtil: redisTemplateUtil);
 
         RedisAtomicLong redisAtomicLong= Mock(RedisAtomicLong)
-        Method method=recordAOP.getClass().getDeclaredMethod("countCaseToRedis",String.class,String.class,String.class,String.class,Long.class)
+        Method method=recordAOP.getClass().getDeclaredMethod("countCaseToRedis",String.class,String.class,String.class,String.class,Long.class, LocalDateTime.class)
         method.setAccessible(true)
         when:
-        method.invoke(recordAOP,"144","2018-02-12", TestStatusE.STATUS_UN_EXECUTED,"oldValue",11L)
+        method.invoke(recordAOP,"144","2018-02-12", TestStatusE.STATUS_UN_EXECUTED,"oldValue",11L,LocalDateTime.now())
         then:
         1*redisAtomicLong.incrementAndGet()
         1*redisTemplateUtil.getRedisAtomicLong(_,_)>>redisAtomicLong
         when:
-        method.invoke(recordAOP,"144","2018-02-12", "oldValue",TestStatusE.STATUS_UN_EXECUTED,11L)
+        method.invoke(recordAOP,"144","2018-02-12", "oldValue",TestStatusE.STATUS_UN_EXECUTED,11L,LocalDateTime.now())
         then:
         1*redisAtomicLong.decrementAndGet()
         1*redisTemplateUtil.getRedisAtomicLong(_,_)>>redisAtomicLong

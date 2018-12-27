@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.util.AopTestUtils
 import spock.lang.Shared
@@ -77,13 +78,14 @@ class ExcelImportServiceImplSpec extends Specification {
     def "downloadImportTemp"() {
         given:
         HttpServletResponse response = new MockHttpServletResponse()
+        MockHttpServletRequest request = new MockHttpServletRequest()
         when:
-        excelImportService.downloadImportTemp(response)
+        excelImportService.downloadImportTemp(request,response)
         then:
         with(response) {
             status == HttpStatus.OK.value()
-            contentType == "application/vnd.ms-excel"
-            characterEncoding == "UTF-8"
+            contentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            characterEncoding == "utf-8"
         }
     }
 
