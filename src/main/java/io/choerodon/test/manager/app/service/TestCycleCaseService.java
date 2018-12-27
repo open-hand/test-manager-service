@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 
 import java.util.List;
 
@@ -34,6 +35,8 @@ public interface TestCycleCaseService {
 	 * @return
 	 */
 	TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+
+	List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list , Long projectId);
 
 	List<Long> getActiveCase(Long range, Long projectId, String day);
 

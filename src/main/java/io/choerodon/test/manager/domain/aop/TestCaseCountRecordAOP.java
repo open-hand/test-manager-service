@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.aop;
 
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -22,10 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 8/20/18.
@@ -60,10 +64,34 @@ public class TestCaseCountRecordAOP {
 
 		if (!testCycleCaseDTO.getExecutionStatus().equals(before.getExecutionStatus())) {
 			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
-			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), beforeCeaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), before.getExecuteId());
+			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), beforeCeaseDTO.getExecutionStatusName(), testCycleCaseDTO.getExecutionStatusName(), before.getExecuteId(),
+					LocalDateTime.ofInstant(before.getCreationDate().toInstant(),ZoneId.systemDefault()));
 		}
 		return o;
 	}
+
+	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.create(..)) && args(testCycleCaseDTO,projectId)")
+	public Object createTestCase(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO, Long projectId) throws Throwable {
+		Object o = pjp.proceed();
+		if(!ObjectUtils.isEmpty(testCycleCaseDTO.getExecutionStatus()) && !testCycleCaseDTO.getExecutionStatus().equals(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))){
+			LocalDateTime time = LocalDateTime.ofInstant(((TestCycleCaseDTO) o).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+			countCaseToRedis(String.valueOf(projectId), time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), TestStatusE.STATUS_UN_EXECUTED,null,null,
+					null);
+		}
+		return o;
+	}
+
+
+	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.batchCreateForAutoTest(..)) && args(testCycleCaseDTO,projectId)")
+	public Object batchCreateForAutoTest(ProceedingJoinPoint pjp, List<TestCycleCaseDTO> testCycleCaseDTO, Long projectId) throws Throwable {
+		Object o = pjp.proceed();
+		String key = "summary:" + projectId + ":" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
+		entityIdCounter.addAndGet(testCycleCaseDTO.size());
+		return o;
+	}
+
+
 
 	@Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.delete(..)) && args(cycleCaseId,projectId)")
 	public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
@@ -79,12 +107,12 @@ public class TestCaseCountRecordAOP {
 
 	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
 		if (!testCycleCaseE.getExecutionStatus().equals(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
-			doDecrementRedis(testCycleCaseE.getExecuteId(), String.valueOf(projectId));
+			doDecrementRedis(testCycleCaseE.getExecuteId(), String.valueOf(projectId),LocalDateTime.ofInstant(testCycleCaseE.getCreationDate().toInstant(),ZoneId.systemDefault()));
 		}
 	}
 
 
-	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId) {
+	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId,LocalDateTime oldCreateTime) {
 		if (StringUtils.equals(oldStatus, TestStatusE.STATUS_UN_EXECUTED)) {
 			String key = "summary:" + projectId + ":" + date;
 			RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
@@ -93,11 +121,11 @@ public class TestCaseCountRecordAOP {
 				log.debug("测试执行记录统计状态切面：执行Id:" + executeId + "计数+1, key:" + key);
 			}
 		} else if (StringUtils.equals(newStatus, TestStatusE.STATUS_UN_EXECUTED)) {
-			doDecrementRedis(executeId, projectId);
+			doDecrementRedis(executeId, projectId,oldCreateTime);
 		}
 	}
 
-	private void doDecrementRedis(Long executeId, String projectId) {
+	private void doDecrementRedis(Long executeId, String projectId,LocalDateTime time) {
 		TestCycleCaseHistoryE e = TestCycleCaseHistoryEFactory.create();
 		e.setExecuteId(executeId);
 		e.setOldValue(TestStatusE.STATUS_UN_EXECUTED);
@@ -106,7 +134,10 @@ public class TestCaseCountRecordAOP {
 		pageRequest.setPage(0);
 		pageRequest.setSize(1);
 		pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
-		LocalDateTime time = LocalDateTime.ofInstant(e.querySelf(pageRequest).get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+		Page<TestCycleCaseHistoryE> page=e.querySelf(pageRequest);
+		if(page!=null && !page.isEmpty()) {
+			time = LocalDateTime.ofInstant(page.get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
+		}
 		String key = "summary:" + projectId + ":" + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		RedisAtomicLong entityIdCounter =redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
 		entityIdCounter.decrementAndGet();

@@ -62,8 +62,8 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
     }
 
-    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseE> testCycleCases) {
-        List<TestCycleCaseE> createdTestCycleCases = TestCycleCaseE.createCycleCases(testCycleCases);
+    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseE> testCycleCases,Long projectId) {
+        List<TestCycleCaseE> createdTestCycleCases = TestCycleCaseE.createCycleCases(testCycleCases,projectId);
         for (int i = 0; i < testCycleCases.size(); i++) {
             testCycleCases.get(i).setExecuteId(createdTestCycleCases.get(i).getExecuteId());
         }
@@ -151,7 +151,7 @@ public class JsonImportServiceImpl implements JsonImportService {
                 automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
             }
         }
-        createCycleCasesAndBackfillExecuteIds(allTestCycleCases);
+        createCycleCasesAndBackfillExecuteIds(allTestCycleCases,projectId);
         if (targetFolderE.getNewFolder()) {
             createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
         }

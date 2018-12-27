@@ -10,6 +10,7 @@ import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
@@ -19,6 +20,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,9 +253,18 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
-        testCycleCaseDTO.setExecutionStatus(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE));
+        if(ObjectUtils.isEmpty(testCycleCaseDTO.getExecutionStatus())){
+            testCycleCaseDTO.setExecutionStatus(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE));
+        }
         testCycleCaseDTO.setLastRank(TestCycleCaseEFactory.create().getLastedRank(testCycleCaseDTO.getCycleId()));
         return ConvertHelper.convert(iTestCycleCaseService.runTestCycleCase(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), projectId), TestCycleCaseDTO.class);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list ,Long projectId){
+        TestCycleCaseRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseRepository.class);
+        return repository.batchInsert(ConvertHelper.convertList(list,TestCycleCaseE.class));
     }
 
 

@@ -16,7 +16,9 @@
         <id column="folder_name" property="folderName"/>
         <id column="version_id" property="versionId"/>
         <id column="last_update_date" property="lastUpdateDate"/>
+        <id column="creation_date" property="creationDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
+        <id column="created_by" property="createdBy"/>
         <id column="last_execute_id" property="lastExecuteId"/>
         <id column="next_execute_id" property="nextExecuteId"/>
         <collection property="caseDefect"
@@ -78,6 +80,8 @@
         attach.id,
         cycle.last_update_date,
         cycle.last_updated_by,
+        cycle.creation_date,
+        cycle.created_by,
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
@@ -161,6 +165,8 @@
         attach.id,
         cycle.last_update_date,
         cycle.last_updated_by,
+        cycle.creation_date,
+        cycle.created_by,
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
