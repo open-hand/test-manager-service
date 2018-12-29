@@ -78,9 +78,9 @@ class TestAppInstanceControllerSpec extends Specification {
 
     def "Deploy"() {
         given:
-        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVerisonId: 1L,
+        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVersionId: 1L,
                 environmentId: 1L, projectVersionId: 1L, code: "0.1.0-自动化测试部署测试", values: values)
-        ApplicationDeployDTO deployDTO2 = new ApplicationDeployDTO(appId: 2L, appVerisonId: 2L,
+        ApplicationDeployDTO deployDTO2 = new ApplicationDeployDTO(appId: 2L, appVersionId: 2L,
                 environmentId: 2L, projectVersionId: 2L, code: "0.1.0-自动化测试部署测试2", values: values)
 
         when:
@@ -148,7 +148,7 @@ class TestAppInstanceControllerSpec extends Specification {
         given:
         List<ScheduleMethodDTO> methodDTOS = Lists.newArrayList(new ScheduleMethodDTO(id: 3L, code: "instance"),
                 new ScheduleMethodDTO(id: 1L, code: "test-deploy-instance"), new ScheduleMethodDTO(id: 2L, code: "test"))
-        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVerisonId: 1L,
+        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVersionId: 1L,
                 environmentId: 1L, projectVersionId: 1L, code: "0.1.0-自动化测试部署测试", values: values)
         ScheduleTaskDTO taskDTO = new ScheduleTaskDTO()
         taskDTO.setParams(Maps.newHashMap("deploy", deployDTO))

@@ -2,6 +2,8 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
@@ -76,7 +78,7 @@ public class TestCycleCaseE {
     @Autowired
     private TestCycleCaseRepository testCycleCaseRepository;
 
-    public static List<TestCycleCaseE> createCycleCases(List<TestCycleCaseE> testCycleCases) {
+    public static List<TestCycleCaseE> createCycleCases(List<TestCycleCaseE> testCycleCases,Long projectId) {
         TestCycleCaseE currentCycleCase = testCycleCases.get(0);
         currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(currentCycleCase.getLastedRank(currentCycleCase.getCycleId()), null));
         TestCycleCaseE prevCycleCase = currentCycleCase;
@@ -87,8 +89,8 @@ public class TestCycleCaseE {
             prevCycleCase = currentCycleCase;
         }
 
-        TestCycleCaseRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseRepository.class);
-        return repository.batchInsert(testCycleCases);
+        TestCycleCaseService repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseService.class);
+        return repository.batchCreateForAutoTest(ConvertHelper.convertList(testCycleCases, TestCycleCaseDTO.class),projectId);
     }
 
     public List<TestCycleCaseE> queryByIssue(Long versionId) {

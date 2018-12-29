@@ -241,7 +241,7 @@ public class ExcelUtil {
 
     public static String setExcelHeader(HttpServletRequest request) {
         String charsetName = "UTF-8";
-        if (request.getHeader("User-Agent").contains("Firefox")) {
+        if (request.getHeader("User-Agent")!=null && request.getHeader("User-Agent").contains("Firefox")) {
             charsetName = "GB2312";
         }
         return charsetName;
