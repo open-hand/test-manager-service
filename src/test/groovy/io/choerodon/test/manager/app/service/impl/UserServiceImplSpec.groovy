@@ -6,6 +6,7 @@ import io.choerodon.agile.api.dto.UserDTO
 import io.choerodon.core.domain.Page
 import io.choerodon.core.domain.PageInfo
 import io.choerodon.mybatis.pagehelper.domain.PageRequest
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
 import io.choerodon.test.manager.infra.common.utils.LongUtils
@@ -80,6 +81,23 @@ class UserServiceImplSpec extends Specification {
         userService.populateTestCycleCaseDTO(new TestCycleCaseDTO(lastUpdatedBy:0L))
         then:
         0*client.listUsersByIds(_)
+    }
+
+    def "populateTestAutomationHistory"(){
+        given:
+        Page page=new Page()
+        page.setContent(Lists.newArrayList(new TestAutomationHistoryDTO(createdBy: 11L)))
+        when:
+        userService.populateTestAutomationHistory(page);
+        then:
+        1*client.listUsersByIds(_)>> new ResponseEntity(Lists.newArrayList(new UserDO(id: 11)),HttpStatus.OK)
+        when:
+        page.setContent([])
+        userService.populateTestAutomationHistory(page);
+        then:
+        0*client.listUsersByIds(_)
+
+
     }
 
     def "isUserId"(){
