@@ -95,7 +95,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
             versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
             versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
             sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
-                    WorkbookUtil.createSafeSheetName(versionName.replace('-','_'),'_'));
+                    WorkbookUtil.createSafeSheetName(versionName.replace('-','_').replace(' ','_'),'_'));
         }
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
         ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);

@@ -105,14 +105,14 @@ public class TestCaseCountRecordAOP {
 	}
 
 
-	private void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
+	public void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
 		if (!testCycleCaseE.getExecutionStatus().equals(testStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE))) {
 			doDecrementRedis(testCycleCaseE.getExecuteId(), String.valueOf(projectId),LocalDateTime.ofInstant(testCycleCaseE.getCreationDate().toInstant(),ZoneId.systemDefault()));
 		}
 	}
 
 
-	private void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId,LocalDateTime oldCreateTime) {
+	public void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId,LocalDateTime oldCreateTime) {
 		if (StringUtils.equals(oldStatus, TestStatusE.STATUS_UN_EXECUTED)) {
 			String key = "summary:" + projectId + ":" + date;
 			RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key,redisTemplate);
