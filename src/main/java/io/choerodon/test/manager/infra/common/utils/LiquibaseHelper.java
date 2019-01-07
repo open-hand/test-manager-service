@@ -31,26 +31,6 @@ public class LiquibaseHelper {
         return currentDbType;
     }
 
-    public static boolean isSupportSequence(String url) {
-        return dbType(url).isSupportSequence();
-    }
-
-    public static boolean isH2Base(String url) {
-        return url.startsWith("jdbc:h2");
-    }
-
-    public static boolean isOracle(String url){
-        return url.startsWith("jdbc:oracle");
-    }
-
-    public static boolean isMysql(String url) {
-        return url.startsWith("jdbc:mysql");
-    }
-
-    public static boolean isSqlServer(String url) {
-        return url.startsWith("jdbc:sqlserver");
-    }
-
     public enum DbType {
         MYSQL(true, false), ORACLE(false, true), HANA(false, true), SQLSERVER(true, false), H2(true, false), DB2(false, true);
 
