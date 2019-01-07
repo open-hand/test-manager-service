@@ -296,9 +296,9 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
-        searchDto.setObjectVersionNumber(1L)
+        searchDto.setObjectVersionNumber(2L)
         searchDto.setComment("[{'insert':'ffff1'}]")
-        searchDto.setAssignedTo(10L)
+        searchDto.setAssignedTo(4L)
         when:
         restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/update", searchDto, TestCycleCaseDTO, 142)
         then:
@@ -310,7 +310,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
-        searchDto.setObjectVersionNumber(2L)
+        searchDto.setObjectVersionNumber(3L)
         searchDto.setComment(null)
         searchDto.setAssignedTo(0L)
         Map userMap = Maps.newHashMap(4L, new UserDO(loginName: "login", realName: "real"))
