@@ -47,7 +47,8 @@ public class TestCaseCountRecordAOP {
 	@Autowired
 	RedisTemplate redisTemplate;
 
-	RedisTemplateUtil redisTemplateUtil=new RedisTemplateUtil();
+	@Autowired
+	RedisTemplateUtil redisTemplateUtil;
 
 	private static final String FIELD_STATUS = "执行状态";
 

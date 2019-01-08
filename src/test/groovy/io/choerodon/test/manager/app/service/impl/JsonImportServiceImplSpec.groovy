@@ -16,6 +16,7 @@ import io.choerodon.test.manager.domain.service.impl.IJsonImportServiceImpl
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE
 import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE
 import io.choerodon.test.manager.infra.common.utils.FileUtil
+import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
+import org.springframework.data.redis.support.atomic.RedisAtomicLong
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Shared
@@ -70,6 +72,9 @@ class JsonImportServiceImplSpec extends Specification {
     @Autowired
     private TestCycleCaseMapper cycleCaseMapper
 
+    @Autowired
+    RedisTemplateUtil redisTemplateUtil;
+
     @Shared
     private String report = new String(FileUtil.unTarGzToMemory(new ClassPathResource("mochawesome.json.tar.gz")
             .file.newInputStream()).get(0), StandardCharsets.UTF_8)
@@ -87,6 +92,8 @@ class JsonImportServiceImplSpec extends Specification {
         given:
         PageHelper.clearPage();
         PageHelper.clearSort();
+        RedisAtomicLong RAL=Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
         TestAppInstanceE instanceE = new TestAppInstanceE(
                 code: "mocha-test",
                 projectVersionId: 233L,

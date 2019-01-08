@@ -4,12 +4,14 @@ import io.choerodon.core.exception.CommonException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 
 import java.util.Collections;
 
+@Component
 public class RedisTemplateUtil {
 
    public RedisAtomicLong getRedisAtomicLong(String key, RedisTemplate redisTemplate){

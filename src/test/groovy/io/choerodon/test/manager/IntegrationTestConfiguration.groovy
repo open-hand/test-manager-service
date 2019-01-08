@@ -8,6 +8,7 @@ import io.choerodon.test.manager.app.service.*
 import io.choerodon.test.manager.domain.aop.TestCaseCountRecordAOP
 import io.choerodon.test.manager.domain.aop.TestCycleCaseHistoryRecordAOP
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE
+import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil
 import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -17,6 +18,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
+import org.springframework.data.redis.support.atomic.RedisAtomicLong
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
@@ -94,17 +96,8 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    TestCaseCountRecordAOP createMock11() {
-        return new AOPProxy();
-    }
-
-    class AOPProxy extends TestCaseCountRecordAOP{
-        @Override
-        void countCaseToRedis(TestCycleCaseE testCycleCaseE, Long projectId) {
-        }
-        @Override
-        void countCaseToRedis(String projectId, String date, String oldStatus, String newStatus, Long executeId, LocalDateTime oldCreateTime) {
-        }
+    RedisTemplateUtil createMock11() {
+        return detachedMockFactory.Mock(RedisTemplateUtil);
     }
 
     @PostConstruct
