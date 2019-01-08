@@ -36,6 +36,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory
 import io.choerodon.test.manager.domain.test.manager.factory.TestFileLoadHistoryEFactory
+import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
@@ -51,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
+import org.springframework.data.redis.support.atomic.RedisAtomicLong
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -115,6 +117,9 @@ class TestCycleCaseControllerSpec extends Specification {
 
     @Autowired
     NotifyService notifyService
+
+    @Autowired
+    RedisTemplateUtil redisTemplateUtil;
 
     @Autowired
     TestIssueFolderMapper folderMapper;
@@ -275,6 +280,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase"() {
         given:
+        RedisAtomicLong RAL=Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setAssignedTo(4L)
@@ -293,6 +300,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase1"() {
         given:
+        RedisAtomicLong RAL=Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
@@ -307,6 +316,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase2"() {
         given:
+        RedisAtomicLong RAL=Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
@@ -324,6 +335,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase3"() {
         given:
+        RedisAtomicLong RAL=Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
         TestCycleCaseDTO searchDto = caseDTO.get(2);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
