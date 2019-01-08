@@ -47,7 +47,7 @@ public class TestAutomationController {
             return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName,
                     new String(bytes, StandardCharsets.UTF_8)), HttpStatus.CREATED);
         } catch (Throwable e) {
-            appInstanceService.shutdownInstance(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)));
+            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)),3L);
             logger.error("导入mocha测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.mocha.report");
         }

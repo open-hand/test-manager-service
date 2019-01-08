@@ -208,7 +208,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
                 replaceResult = testCaseService.previewValues(projectId, sendResult, retryInstance.getAppVersionId());
             } else {
                 envCommand = new TestEnvCommand(TestEnvCommand.CommandType.RESTART, null);
-                replaceResult.setYaml(testCaseService.getVersionValue(projectId,retryInstance.getAppVersionId()));
+                replaceResult.setYaml(testCaseService.getVersionValue(projectId, retryInstance.getAppVersionId()));
             }
         }
         TestEnvCommand resultCommand = commandService.insertOne(envCommand);
@@ -278,36 +278,25 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         instanceService.updateStatus(testAppInstanceE);
     }
 
-    /**
-     * 关闭实例
-     *
-     * @param releaseNames
-     * @param status
-     * @param logFile
-     */
     @Override
-    public void closeInstance(String releaseNames, Long status, String logFile) {
+    public void updateLog(String releaseNames, String logFile) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         testAppInstanceE.setId(Long.valueOf(TestAppInstanceE.getInstanceIDFromReleaseName(releaseNames)));
         TestAppInstanceLogE logE = new TestAppInstanceLogE();
         logE.setLog(logFile);
         testAppInstanceE.setLogId(testAppInstanceLogService.insert(logE).getId());
-        testAppInstanceE.setPodStatus(status+1);
         testAppInstanceE.setLastUpdateDate(new Date());
         instanceService.closeInstance(testAppInstanceE);
-        instanceService.updateStatus(testAppInstanceE);
     }
 
-
     @Override
-    public void shutdownInstance(Long instanceId) {
+    public void updateStatus(Long instanceId, Long status) {
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
         //更新实例状态
         testAppInstanceE.setId(instanceId);
-        testAppInstanceE.setPodStatus(3L);
+        testAppInstanceE.setPodStatus(status);
         testAppInstanceE.setLastUpdateDate(new Date());
         instanceService.updateStatus(testAppInstanceE);
-
     }
 
 }
