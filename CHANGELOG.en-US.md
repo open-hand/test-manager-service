@@ -144,7 +144,7 @@ All notable changes to choerodon-front-agile will be documented in this file.
 
 #### 0.13.0 Significantly modify the feature
 
-- Optimize the defect correlation function in `Test Execution`
+- Optimize the defect correlation function in `Test Execution` .
 - When importing test results, `Test Cycle` can auto scale its time range in `Automation Test` module.
 - Automatically adapt the parent `Test Cycle` time when modifying the test phase time in `Test Plan` module.
 
