@@ -137,3 +137,21 @@ All notable changes to choerodon-front-agile will be documented in this file.
 #### 0.12.0 Significantly remove the feature
 
 - Remove the fix data interface used in version 0.10.0
+
+## [0.13.0] - 2019-01-11
+
+### Modify
+
+#### 0.13.0 Significantly modify the feature
+
+- Optimize the defect correlation function in `Test Execution` .
+- When importing test results, `Test Cycle` can auto scale its time range in `Automation Test` module.
+- Automatically adapt the parent `Test Cycle` time when modifying the test phase time in `Test Plan` module.
+
+### Fix
+
+#### 0.13.0 Significant repair features
+
+- Fix `Automated Test` does not update the status to a failed when an error occurs while running.
+- Fix export error in `Test Case` when the version name contains spaces.
+- Fix the problem that can not delete `Test Cycle` which created by `Automated Test`.
