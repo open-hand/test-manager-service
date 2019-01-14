@@ -92,9 +92,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO){
+    public TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO) {
         TestCycleE cycleE = iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
-        if(StringUtils.equals(cycleE.getType(),TestCycleE.FOLDER)){
+        if (StringUtils.equals(cycleE.getType(), TestCycleE.FOLDER)) {
             syncCycleDate(cycleE);
         }
         return ConvertHelper.convert(cycleE, TestCycleDTO.class);
@@ -243,52 +243,57 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     }
 
-    /** 修改cycle时间后同步子folder的时间跨度
+    /**
+     * 修改cycle时间后同步子folder的时间跨度
+     *
      * @param cycleE
      */
-    private void syncFolderDate(TestCycleE cycleE){
-        List<TestCycleE> folders=cycleE.getChildFolder();
-        folders.stream().filter(u->ifSyncNeed(u,cycleE.getFromDate(),cycleE.getToDate())).forEach(v->iTestCycleService.update(v));
+    private void syncFolderDate(TestCycleE cycleE) {
+        List<TestCycleE> folders = cycleE.getChildFolder();
+        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> iTestCycleService.update(v));
     }
-    private void syncCycleDate(TestCycleE cycleE){
-       Long parentCycleId=cycleE.getParentCycleId();
-        TestCycleE parentCycle=TestCycleEFactory.create();
+
+    private void syncCycleDate(TestCycleE cycleE) {
+        Long parentCycleId = cycleE.getParentCycleId();
+        TestCycleE parentCycle = TestCycleEFactory.create();
         parentCycle.setCycleId(parentCycleId);
-        TestCycleE cycle=parentCycle.queryOne();
-        if(ifSyncNeed(cycle,cycleE.getFromDate(),cycleE.getToDate())){
+        TestCycleE cycle = parentCycle.queryOne();
+        if (ifSyncNeed(cycle, cycleE.getFromDate(), cycleE.getToDate())) {
             iTestCycleService.update(cycle);
         }
     }
 
-    /** 判断folder是否在限定时间段外 或者cycle是否在限定时间内如果是则为true
+    /**
+     * 判断folder是否在限定时间段外 或者cycle是否在限定时间内如果是则为true
+     *
      * @param type
      * @param from
      * @param to
      * @return
      */
-    private boolean ifSyncNeed(TestCycleE type,Date from,Date to){
-        boolean flag=false;
+    private boolean ifSyncNeed(TestCycleE type, Date from, Date to) {
+        boolean flag = false;
 
-        if(StringUtils.equals(type.getType(),TestCycleE.FOLDER)){
-            long folderPeriod=getDuration(type.getFromDate(),type.getToDate());
-            long cyclePeriod=getDuration(from,to);
+        if (StringUtils.equals(type.getType(), TestCycleE.FOLDER)) {
+            long folderPeriod = getDuration(type.getFromDate(), type.getToDate());
+            long cyclePeriod = getDuration(from, to);
 
-            if(type.getFromDate()==null || type.getFromDate().compareTo(from)<0) {
+            if (type.getFromDate() == null || type.getFromDate().compareTo(from) < 0) {
                 type.setFromDate(from);
                 flag = true;
             }
-            if(type.getToDate()==null || type.getToDate().compareTo(to)>0){
+            if (type.getToDate() == null || type.getToDate().compareTo(to) > 0) {
                 type.setToDate(to);
                 flag = true;
             }
-            adaption(type,folderPeriod,cyclePeriod,from,to);
+            adaption(type, folderPeriod, cyclePeriod, from, to);
 
-        }else {
-            if(type.getFromDate()==null || type.getFromDate().compareTo(from)>0) {
+        } else {
+            if (type.getFromDate() == null || type.getFromDate().compareTo(from) > 0) {
                 type.setFromDate(from);
                 flag = true;
             }
-            if(type.getToDate()==null || type.getToDate().compareTo(to)<0){
+            if (type.getToDate() == null || type.getToDate().compareTo(to) < 0) {
                 type.setToDate(to);
                 flag = true;
             }
@@ -296,26 +301,26 @@ public class TestCycleServiceImpl implements TestCycleService {
         return flag;
     }
 
-    public long getDuration(Date from ,Date to){
-        if(to!=null && from !=null) {
+    public long getDuration(Date from, Date to) {
+        if (to != null && from != null) {
             return ChronoUnit.SECONDS.between(from.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
                     to.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
         return 0;
     }
 
-    private void adaption(TestCycleE folder, long folderDuration, long cycleDuration, Date from, Date to){
-        if(folder.getToDate().compareTo(folder.getFromDate())<0){
-            if(folderDuration<cycleDuration){
-                if(folder.getToDate().compareTo(from)<0){
+    private void adaption(TestCycleE folder, long folderDuration, long cycleDuration, Date from, Date to) {
+        if (folder.getToDate().compareTo(folder.getFromDate()) < 0) {
+            if (folderDuration < cycleDuration) {
+                if (folder.getToDate().compareTo(from) < 0) {
                     folder.setFromDate(from);
-                    folder.setToDate(Date.from(from.toInstant().plus(folderDuration,ChronoUnit.SECONDS)));
-                }else if(folder.getFromDate().compareTo(to)>0){
+                    folder.setToDate(Date.from(from.toInstant().plus(folderDuration, ChronoUnit.SECONDS)));
+                } else if (folder.getFromDate().compareTo(to) > 0) {
                     folder.setToDate(to);
-                    folder.setFromDate(Date.from(to.toInstant().minus(folderDuration,ChronoUnit.SECONDS)));
+                    folder.setFromDate(Date.from(to.toInstant().minus(folderDuration, ChronoUnit.SECONDS)));
                 }
 
-            }else if(folderDuration>cycleDuration){
+            } else if (folderDuration > cycleDuration) {
                 folder.setFromDate(from);
                 folder.setToDate(to);
             }
@@ -434,19 +439,19 @@ public class TestCycleServiceImpl implements TestCycleService {
         cycleE.setParentCycleId(cycleId);
         List<TestCycleE> cycleES = cycleE.querySelf();
         if (ObjectUtils.isEmpty(cycleES)) {
-            batchChangeCase(userId,cycleId);
+            batchChangeCase(userId, cycleId);
         } else {
             for (TestCycleE cycle : cycleES) {
-                batchChangeCase(userId,cycle.getCycleId());
+                batchChangeCase(userId, cycle.getCycleId());
             }
         }
     }
 
-    private void batchChangeCase(Long userId, Long cycleId){
+    private void batchChangeCase(Long userId, Long cycleId) {
         TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseDTO> caseDTOS = ConvertHelper.convertList(cycleCaseE.querySelf(), TestCycleCaseDTO.class);
-        caseDTOS.forEach(v->v.setAssignedTo(userId));
+        caseDTOS.forEach(v -> v.setAssignedTo(userId));
         testCycleCaseService.batchChangeCase(caseDTOS);
     }
 
@@ -481,7 +486,11 @@ public class TestCycleServiceImpl implements TestCycleService {
             TestIssueFolderE res = folderE.queryByPrimaryKey();
             Optional.ofNullable(res).ifPresent(n -> n.setName(n.getName()));
             return res;
-        }).ifPresent(v -> version.put("folderName", v.getName()));
+        }).ifPresent(v -> {
+            version.put("folderName", v.getName());
+            version.put("folderVersionID", v.getVersionId());
+            version.put("folderVersionName", versions.get(v.getVersionId()));
+        });
         version.put("toDate", testCycleDTO.getToDate());
         version.put("fromDate", testCycleDTO.getFromDate());
         version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
