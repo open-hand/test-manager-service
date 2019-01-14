@@ -484,7 +484,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         Optional.ofNullable(testCycleDTO.getFolderId()).map(v -> {
             folderE.setFolderId(v);
             TestIssueFolderE res = folderE.queryByPrimaryKey();
-            Optional.ofNullable(res).ifPresent(n -> n.setName(n.getName()));
+            Optional.ofNullable(res).ifPresent(n -> {
+                n.setName(n.getName());
+                n.setVersionId(n.getVersionId());
+            });
             return res;
         }).ifPresent(v -> {
             version.put("folderName", v.getName());
