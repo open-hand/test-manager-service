@@ -19,15 +19,15 @@ public interface TestCycleCaseStepService {
      */
     List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO);
 
-
     /**
      * 查询循环测试步骤
      *
-     * @param
-     * @return
+     * @param CycleCaseId    CycleCaseId
+     * @param projectId      projectId
+     * @param organizationId organizationId
+     * @return TestCycleCaseStepDTO
      */
-    Page<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, PageRequest pageRequest, Long projectId, Long organizationId);
-
+    List<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
 
 
 }

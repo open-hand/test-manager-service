@@ -51,7 +51,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		return ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class);
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId) {
 		TestCaseStepE testCaseStepE = ConvertHelper.convert(testCaseStepDTO, TestCaseStepE.class);
@@ -61,8 +61,9 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 		}
 		testCaseStepE = steps.get(0);
 		testCaseStepE.setStepId(null);
-		testCaseStepE.setLastRank(testCaseStepE.getLastedStepRank());
 		testCaseStepE.setObjectVersionNumber(null);
+        testCaseStepE.setLastRank(testCaseStepDTO.getLastRank());
+        testCaseStepE.setNextRank(testCaseStepDTO.getNextRank());
 		return changeStep(ConvertHelper.convert(testCaseStepE, TestCaseStepDTO.class), projectId);
 	}
 

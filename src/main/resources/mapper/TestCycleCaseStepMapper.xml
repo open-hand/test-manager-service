@@ -79,7 +79,8 @@
         LEFT JOIN test_case_step step ON cycle.step_id = step.step_id
         ORDER BY
         step.rank
-        <if test="pageSize !=0">
+        desc
+        <if test="pageSize !=0 and pageSize != null and page !=0 and page != null">
             limit #{page} , #{pageSize}
         </if>
         ) test
