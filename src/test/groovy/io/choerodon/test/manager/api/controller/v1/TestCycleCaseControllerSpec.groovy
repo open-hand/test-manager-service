@@ -436,15 +436,13 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "QuerySubStep"() {
         when:
-        ResponseEntity<Page<TestCycleCaseStepDTO>> page = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/step/query/{cycleCaseId}?organizationId=1", Page.class, 142, caseDTO.get(0).getExecuteId())
+        ResponseEntity<List<TestCycleCaseStepDTO>> entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/step/query/{cycleCaseId}?organizationId=1", List.class, 142, caseDTO.get(0).getExecuteId())
         then:
-        page.getBody().size() == 1
-        TestCycleCaseStepDTO dto = page.getBody().get(0)
+        entity.getBody().size() == 1
+        TestCycleCaseStepDTO dto = entity.getBody().get(0)
         dto.setComment("111")
         expect:
         restTemplate.put("/v1/projects/{project_id}/cycle/case/step", Lists.newArrayList(dto), 142)
-
-
     }
 
 

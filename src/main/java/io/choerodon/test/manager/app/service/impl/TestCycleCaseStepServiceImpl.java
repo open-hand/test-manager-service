@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
@@ -12,10 +10,15 @@ import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +26,12 @@ import java.util.List;
  */
 @Component
 public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
+
+    @Value("${spring.datasource.url}")
+    private String dsUrl;
+
+    @Autowired
+    TestCycleCaseStepMapper testCycleCaseStepMapper;
     @Autowired
     ITestCycleCaseStepService iTestCycleCaseStepService;
 
@@ -40,12 +49,22 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public Page<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, PageRequest pageRequest, Long projectId, Long organizationId) {
+    public List<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(cycleCaseId);
-        Page<TestCycleCaseStepDTO> dto=ConvertPageHelper.convertPage(iTestCycleCaseStepService.querySubStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class), pageRequest, projectId), TestCycleCaseStepDTO.class);
-        testCycleCaseDefectRelService.populateCaseStepDefectInfo(dto,projectId,organizationId);
-        return dto;
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class).getExecuteId());
+        if (testCycleCaseStepE.getExecuteId() == null) {
+            throw new CommonException("error.test.cycle.case.step.caseId.not.null");
+        }
+        List<TestCycleCaseStepDO> testCycleCaseStepDOS = testCycleCaseStepMapper.queryWithTestCaseStep(ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class), null, null);
+        if (testCycleCaseStepDOS != null && !testCycleCaseStepDOS.isEmpty()) {
+            List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = ConvertHelper.convertList(ConvertHelper.convertList(testCycleCaseStepDOS, TestCycleCaseStepE.class), TestCycleCaseStepDTO.class);
+            testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepDTOS, projectId, organizationId);
+            return testCycleCaseStepDTOS;
+        } else {
+            return new ArrayList<>();
+        }
     }
 
 }

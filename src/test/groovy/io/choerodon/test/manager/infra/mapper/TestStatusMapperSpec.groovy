@@ -31,13 +31,13 @@ class TestStatusMapperSpec extends Specification {
 
     def "QueryAllUnderProject"() {
         given:
-        TestStatusDO statusDO=new TestStatusDO()
+        TestStatusDO statusDO = new TestStatusDO()
         statusDO.setProjectId(new Long(1))
         statusDO.setStatusName("未执行")
         statusDO.setStatusColor("yellow")
         statusDO.setStatusType("CYCLE_CASE")
 
-        TestStatusDO statusDO1=new TestStatusDO()
+        TestStatusDO statusDO1 = new TestStatusDO()
         statusDO1.setProjectId(new Long(1))
         statusDO1.setStatusName("未执行")
         statusDO1.setStatusColor("yellow")
@@ -54,7 +54,7 @@ class TestStatusMapperSpec extends Specification {
 
     def "IfDeleteCycleCaseAllow"() {
         given:
-        TestCycleCaseDO caseDO=new TestCycleCaseDO()
+        TestCycleCaseDO caseDO = new TestCycleCaseDO()
         caseDO.setCycleId(new Long(9999))
         caseDO.setExecutionStatus(new Long(36))
         caseDO.setIssueId(new Long(999))
@@ -63,17 +63,17 @@ class TestStatusMapperSpec extends Specification {
         when:
         def result1 = mapper.ifDeleteCycleCaseAllow(new Long(36))
         then:
-        result1==1
+        result1 == 1
         when:
         caseMapper.deleteByPrimaryKey(caseDO.getExecuteId())
         def result2 = mapper.ifDeleteCycleCaseAllow(new Long(36))
         then:
-        result2==0
+        result2 == 0
     }
 
     def "IfDeleteCaseStepAllow"() {
         given:
-        TestCycleCaseStepDO stepDO=new TestCycleCaseStepDO()
+        TestCycleCaseStepDO stepDO = new TestCycleCaseStepDO()
         stepDO.setExecuteId(new Long(9999))
         stepDO.setStepStatus(new Long(9))
         stepDO.setStepId(new Long(999))
@@ -81,12 +81,12 @@ class TestStatusMapperSpec extends Specification {
         when:
         def result1 = mapper.ifDeleteCaseStepAllow(new Long(9))
         then:
-        result1==1
+        result1 == 1
         when:
         caseStepMapper.deleteByPrimaryKey(stepDO.getExecuteStepId())
         def result2 = mapper.ifDeleteCaseStepAllow(new Long(9))
         then:
-        result2==0
+        result2 == 0
     }
 
 }
