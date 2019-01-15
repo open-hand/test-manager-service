@@ -352,10 +352,16 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public JSONArray getTestCycleCaseCountInVersion(Long versionId, Long projectId) {
+    public JSONArray getTestCycleCaseCountInVersion(Long versionId, Long projectId, Long cycleId) {
         TestCycleE testCycleE = TestCycleEFactory.create();
         testCycleE.setCycleCaseList(new ArrayList<>());
-        List<TestCycleE> list = iTestCycleService.queryCycleWithBar(new Long[]{versionId}, null);
+        List<TestCycleE> list;
+        Optional optionalCycleId = Optional.ofNullable(cycleId);
+        if (optionalCycleId.isPresent()) {
+            list = iTestCycleService.queryCycleWithBarOneCycle(cycleId);
+        } else {
+            list = iTestCycleService.queryCycleWithBar(new Long[]{versionId}, null);
+        }
         List<TestCycleE> allCycle = new ArrayList<>();
         list.forEach(v -> {
             if (v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {

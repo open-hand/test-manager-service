@@ -90,6 +90,12 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 	}
 
 	@Override
+	public List<TestCycleE> queryBarOneCycle(Long cycleId) {
+		Assert.notNull(cycleId, "error.query.cycle.Id.not.null");
+		return ConvertHelper.convertList(cycleMapper.queryOneCycleBar(cycleId), TestCycleE.class);
+	}
+
+	@Override
 	public List<Long> selectCyclesInVersions(Long[] versionIds) {
 		Assert.notNull(versionIds, "error.query.cycle.In.Versions.not.null");
 		versionIds = Stream.of(versionIds).filter(Objects::nonNull).toArray(Long[]::new);

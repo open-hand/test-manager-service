@@ -83,8 +83,9 @@ public class TestCycleController {
     @ApiOperation("查询project下的测试循环")
     @GetMapping("/count/color/in/version/{versionId}")
     ResponseEntity getTestCycleCaseCountInVersion(@PathVariable(name = "project_id") Long projectId,
-                                                  @PathVariable(name = "versionId") Long versionId) {
-        return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId, projectId))
+                                                  @PathVariable(name = "versionId") Long versionId,
+                                                  @RequestParam(required = false, name = "cycleId") Long cycleId) {
+        return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId, projectId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleCaseCountInVerson"));
     }
@@ -187,7 +188,7 @@ public class TestCycleController {
     ResponseEntity batchChangeAssignedInOneCycle(@PathVariable(name = "project_id") Long projectId,
                                                  @PathVariable(name = "userId") Long userId,
                                                  @PathVariable(name = "cycleId") Long cycleId) {
-        testCycleService.batchChangeAssignedInOneCycle(userId,cycleId);
+        testCycleService.batchChangeAssignedInOneCycle(userId, cycleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

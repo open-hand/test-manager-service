@@ -83,6 +83,12 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 		return countStatus(testCycleE.querySelfWithBar(versionId,assignedTo));
 	}
 
+	@Override
+	public List<TestCycleE> queryCycleWithBarOneCycle(Long cycleId) {
+		TestCycleE testCycleE = TestCycleEFactory.create();
+		return countStatus(testCycleE.querySelfWithBarOneCycle(cycleId));
+	}
+
 	private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {
 		testCycleES.stream().filter(v -> StringUtils.equals(v.getType(), TestCycleE.CYCLE))
 				.forEach(u -> u.countChildStatus(u.getChildFolder(testCycleES)));

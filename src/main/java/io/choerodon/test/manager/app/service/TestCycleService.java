@@ -35,7 +35,7 @@ public interface TestCycleService {
 
 	JSONObject getTestCycle(Long versionId,Long assignedTo);
 
-	JSONArray getTestCycleCaseCountInVersion(Long versionId,Long projectId);
+	JSONArray getTestCycleCaseCountInVersion(Long versionId,Long projectId,Long cycleId);
 
 	TestCycleDTO getOneCycle(Long cycleId);
 

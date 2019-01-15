@@ -49,6 +49,47 @@
         where cycle1.version_id =#{versionId} and cycle1.parent_cycle_id is null
     </select>
 
+    <select id="queryOneCycleBar" resultMap="queryAboutBarResultMap">
+        SELECT
+        cycle1.cycle_id,
+        cycle1.parent_cycle_id,
+        cycle1.folder_id,
+        cycle1.cycle_name,
+        cycle1.type,
+        cycle1.version_id,
+        cycle1.description,
+        cycle1.build,
+        cycle1.environment,
+        cycle1.from_date,
+        cycle1.to_date,
+        cycle1.object_version_number,
+        cycle1.created_by,
+        color1.color,
+        color1.counts
+        FROM
+        test_cycle cycle1
+        LEFT JOIN (
+        SELECT
+        color,
+        count( 1 ) counts,
+        temp1.cycle_id
+        FROM
+        (
+        SELECT
+        cycle.execute_id,
+        cycle.cycle_id,
+        cycle.issue_id,
+        status1.status_color color
+        FROM
+        test_cycle_case cycle
+        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+        ) temp1
+        GROUP BY
+        temp1.color,temp1.cycle_id
+        ) color1 ON color1.cycle_id = cycle1.cycle_id
+        WHERE cycle1.parent_cycle_id = #{cycleId}
+    </select>
+
     <select id="query" resultMap="queryAboutBarResultMap">
         SELECT
         cycle1.cycle_id,
