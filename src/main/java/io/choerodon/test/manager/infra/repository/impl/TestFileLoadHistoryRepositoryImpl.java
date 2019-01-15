@@ -8,6 +8,8 @@ import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -65,6 +67,8 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
 
     public List<TestFileLoadHistoryE> queryDownloadFileByParameter(TestFileLoadHistoryE testFileLoadHistoryE) {
         TestFileLoadHistoryDO testIssueFolderRelDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
-        return ConvertHelper.convertList(testFileLoadHistoryMapper.select(testIssueFolderRelDO), TestFileLoadHistoryE.class);
+        List<TestFileLoadHistoryDO> res = testFileLoadHistoryMapper.select(testIssueFolderRelDO);
+        Collections.sort(res, Comparator.comparing(TestFileLoadHistoryDO::getCreationDate));
+        return ConvertHelper.convertList(res, TestFileLoadHistoryE.class);
     }
 }
