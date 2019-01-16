@@ -43,7 +43,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
 @Stepwise
-class TestCycleServiceImplSpec extends Specification {
+class b extends Specification {
     @Autowired
     TestCycleService testCycleService
 

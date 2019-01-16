@@ -356,18 +356,24 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleE testCycleE = TestCycleEFactory.create();
         testCycleE.setCycleCaseList(new ArrayList<>());
         List<TestCycleE> list;
+        List<TestCycleE> allCycle = new ArrayList<>();
+
         Optional optionalCycleId = Optional.ofNullable(cycleId);
         if (optionalCycleId.isPresent()) {
             list = iTestCycleService.queryCycleWithBarOneCycle(cycleId);
+            list.forEach(v -> {
+                if (!ObjectUtils.isEmpty(v.getCycleCaseList())) {
+                    allCycle.add(v);
+                }
+            });
         } else {
             list = iTestCycleService.queryCycleWithBar(new Long[]{versionId}, null);
+            list.forEach(v -> {
+                if (v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {
+                    allCycle.add(v);
+                }
+            });
         }
-        List<TestCycleE> allCycle = new ArrayList<>();
-        list.forEach(v -> {
-            if (v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {
-                allCycle.add(v);
-            }
-        });
         testCycleE.countChildStatus(allCycle);
         JSONArray root = new JSONArray();
         if (!ObjectUtils.isEmpty(testCycleE.getCycleCaseList())) {
