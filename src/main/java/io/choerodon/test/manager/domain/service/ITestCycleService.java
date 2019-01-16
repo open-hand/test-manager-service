@@ -22,6 +22,8 @@ public interface ITestCycleService {
 
 	List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo);
 
+	List<TestCycleE> queryCycleWithBarOneCycle(Long cycleId);
+
 	List<Long> selectCyclesInVersions(Long[] versionIds);
 
 }

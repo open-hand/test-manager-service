@@ -100,6 +100,10 @@ public class TestCycleE {
 		return testCycleRepository.queryBar(versionIds,assignedTo);
     }
 
+    public List<TestCycleE> querySelfWithBarOneCycle(Long cycleId) {
+        return testCycleRepository.queryBarOneCycle(cycleId);
+    }
+
 
     public TestCycleE addSelf() {
         return testCycleRepository.insert(this);

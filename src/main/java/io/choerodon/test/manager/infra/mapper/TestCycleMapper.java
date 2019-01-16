@@ -13,6 +13,8 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
 	List<TestCycleDO> query(@Param("versionIds") Long[] versionId,@Param("assignedTo") Long assignedTo);
 
+	List<TestCycleDO> queryOneCycleBar(@Param("cycleId") Long cycleId);
+
 	/**获取version下的所有循环Id
 	 * @param versionIds
 	 * @return

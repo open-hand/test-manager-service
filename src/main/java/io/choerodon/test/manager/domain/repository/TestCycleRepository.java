@@ -24,6 +24,8 @@ public interface TestCycleRepository {
 
 	List<TestCycleE> queryBar(Long[] versionId,Long assignedTo);
 
+	List<TestCycleE> queryBarOneCycle(Long cycleId);
+
 	List<Long> selectCyclesInVersions(Long[] versionIds);
 
 	void validateCycle(TestCycleE testCycleE);
