@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.testng.TestNgResult;
+import io.choerodon.test.manager.api.dto.testng.TestNgSuite;
 import io.choerodon.test.manager.app.service.JsonImportService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
@@ -12,6 +14,10 @@ import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
 import io.choerodon.test.manager.domain.service.ITestAutomationResultService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+import io.choerodon.test.manager.infra.common.utils.TestNgUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +68,8 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
     }
 
-    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseE> testCycleCases,Long projectId) {
-        List<TestCycleCaseE> createdTestCycleCases = TestCycleCaseE.createCycleCases(testCycleCases,projectId);
+    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseE> testCycleCases, Long projectId) {
+        List<TestCycleCaseE> createdTestCycleCases = TestCycleCaseE.createCycleCases(testCycleCases, projectId);
         for (int i = 0; i < testCycleCases.size(); i++) {
             testCycleCases.get(i).setExecuteId(createdTestCycleCases.get(i).getExecuteId());
         }
@@ -151,7 +157,7 @@ public class JsonImportServiceImpl implements JsonImportService {
                 automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
             }
         }
-        createCycleCasesAndBackfillExecuteIds(allTestCycleCases,projectId);
+        createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
         if (targetFolderE.getNewFolder()) {
             createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
         }
@@ -203,5 +209,20 @@ public class JsonImportServiceImpl implements JsonImportService {
                 allTestCycleCases.get(i).getCycleCaseStep().get(j).setStepId(testCaseStepEs.get(j).getStepId());
             }
         }
+    }
+
+    @Override
+    public Long importTestNgReport(String releaseName, String json) {
+        Document document = null;
+        try {
+            document = DocumentHelper.parseText(json);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        if (document == null) {
+            throw new CommonException("error.importTestNgReport.document.nutNull");
+        }
+        TestNgResult result = TestNgUtil.parseXmlToObject(document);
+        return null;
     }
 }
