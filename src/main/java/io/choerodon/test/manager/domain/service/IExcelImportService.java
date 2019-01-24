@@ -34,8 +34,6 @@ public interface IExcelImportService {
 
     Long getIssueTypeId(Long organizationId, Long projectId, String applyType, String issueTypeCode);
 
-    Long getPriorityId(Long organizationId, Long projectId);
-
     IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId);
 
     IssueDTO createIssue(Long projectId, IssueCreateDTO issueCreateDTO);

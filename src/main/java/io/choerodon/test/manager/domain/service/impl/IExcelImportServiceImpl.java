@@ -1,19 +1,25 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
-
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-
-import io.choerodon.agile.api.dto.*;
+import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.IssueDTO;
+import io.choerodon.agile.api.dto.IssueTypeDTO;
+import io.choerodon.agile.api.dto.VersionIssueRelDTO;
+import io.choerodon.agile.infra.common.enums.IssueTypeCode;
+import io.choerodon.agile.infra.common.utils.AgileUtil;
+import io.choerodon.test.manager.api.dto.ExcelReadMeOptionDTO;
+import io.choerodon.test.manager.api.dto.MultipartExcel;
+import io.choerodon.test.manager.app.service.FileService;
+import io.choerodon.test.manager.app.service.NotifyService;
 import io.choerodon.test.manager.app.service.TestCaseService;
-
+import io.choerodon.test.manager.domain.repository.TestFileLoadHistoryRepository;
+import io.choerodon.test.manager.domain.service.IExcelImportService;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -24,16 +30,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.choerodon.test.manager.api.dto.ExcelReadMeOptionDTO;
-import io.choerodon.test.manager.api.dto.MultipartExcel;
-import io.choerodon.test.manager.app.service.FileService;
-import io.choerodon.test.manager.app.service.NotifyService;
-import io.choerodon.test.manager.domain.repository.TestFileLoadHistoryRepository;
-import io.choerodon.test.manager.domain.service.IExcelImportService;
-import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
-import io.choerodon.test.manager.infra.common.utils.SpringUtil;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 @Service
 public class IExcelImportServiceImpl implements IExcelImportService {
@@ -249,19 +251,6 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     @Override
-    public Long getPriorityId(Long organizationId, Long projectId) {
-        ResponseEntity<List<PriorityDTO>> response = issueFeignClient.queryPriorityId(projectId, organizationId);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            for (PriorityDTO priorityDTO : response.getBody()) {
-                if (priorityDTO.getDefault()) {
-                    return priorityDTO.getId();
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
     public IssueDTO processIssueHeaderRow(Row row, Long organizationId, Long projectId, Long versionId, Long folderId) {
         if (ExcelUtil.isBlank(row.getCell(0))) {
             markAsError(row, "测试概要不能为空");
@@ -273,13 +262,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        Long priorityId = getPriorityId(organizationId, projectId);
+        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId);
         issueCreateDTO.setPriorityCode("priority-" + priorityId);
         issueCreateDTO.setPriorityId(priorityId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
-        issueCreateDTO.setTypeCode("issue_test");
-        issueCreateDTO.setIssueTypeId(getIssueTypeId(organizationId, projectId, "test", issueCreateDTO.getTypeCode()));
+        issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_TEST);
+        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_TEST));
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);

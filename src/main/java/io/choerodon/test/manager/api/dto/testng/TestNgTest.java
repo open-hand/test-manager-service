@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class TestNgTest {
     private String name;
+    private String status;
     private String startedAt;
     private String finishedAt;
     private Long durationMs;
@@ -51,5 +52,13 @@ public class TestNgTest {
 
     public void setCases(List<TestNgCase> cases) {
         this.cases = cases;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

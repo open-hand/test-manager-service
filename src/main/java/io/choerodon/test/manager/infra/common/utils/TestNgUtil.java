@@ -40,6 +40,9 @@ public class TestNgUtil {
     public static final String SUITE_PATH = "//suite";
     public static final String TEST_PATH = "test";
     public static final String CASE_PATH = "class/test-method";
+    public static final String TEST_PASSED = "PASS";
+    public static final String TEST_FAILED = "FAIL";
+    public static final String TEST_SKIPPED = "SKIP";
 
     public static TestNgResult parseXmlToObject(Document document) {
         Element root = document.getRootElement();
@@ -50,6 +53,8 @@ public class TestNgUtil {
             List<TestNgTest> tests = new ArrayList<>();
             List<Element> testNodes = suiteNode.selectNodes(TEST_PATH);
             for (Element testNode : testNodes) {
+                TestNgTest test = new TestNgTest();
+                test.setStatus(TEST_PASSED);
                 List<TestNgCase> cases = new ArrayList<>();
                 List<Element> caseNodes = testNode.selectNodes(CASE_PATH);
                 for (Element caseNode : caseNodes) {
@@ -59,17 +64,23 @@ public class TestNgUtil {
                     }
                     TestNgCase testCase = new TestNgCase();
                     reflectField(testCase, caseNode.attributes());
+                    //处理test的状态
+                    if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
+                        test.setStatus(TEST_FAILED);
+                    }
                     cases.add(testCase);
                 }
-                TestNgTest test = new TestNgTest();
                 test.setCases(cases);
                 reflectField(test, testNode.attributes());
                 tests.add(test);
             }
-            TestNgSuite suite = new TestNgSuite();
-            suite.setTests(tests);
-            reflectField(suite, suiteNode.attributes());
-            suites.add(suite);
+            //跳过没有test的suite
+            if (!tests.isEmpty()) {
+                TestNgSuite suite = new TestNgSuite();
+                suite.setTests(tests);
+                reflectField(suite, suiteNode.attributes());
+                suites.add(suite);
+            }
         }
         TestNgResult result = new TestNgResult();
         result.setSuites(suites);

@@ -142,7 +142,7 @@ class ExcelImportServiceImplSpec extends Specification {
         3*notifyService.postWebSocket(_,_,_)
         1*testCaseService.createTest(_,_,_)>>new IssueDTO(issueId: 199L)
         1*issueFeignClient.queryIssueType(_,_,_)>> new ResponseEntity([new IssueTypeDTO(id: 18L, typeCode: "issue_test")], HttpStatus.OK)
-        1*issueFeignClient.queryPriorityId(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
+        1*issueFeignClient.queryDefaultPriority(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
     }
 
     def "importIssueByExcel3"(){
@@ -164,7 +164,7 @@ class ExcelImportServiceImplSpec extends Specification {
         1*testCaseService.createTest(_,_,_)>>null
         1*fileService.uploadFile(_,_,_)>>new ResponseEntity("url",HttpStatus.OK)
         1*issueFeignClient.queryIssueType(_,_,_)>> new ResponseEntity([new IssueTypeDTO(id: 18L, typeCode: "issue_test")], HttpStatus.OK)
-        1*issueFeignClient.queryPriorityId(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
+        1*issueFeignClient.queryDefaultPriority(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
     }
 
     def "importIssueByExcel4"(){
@@ -186,7 +186,7 @@ class ExcelImportServiceImplSpec extends Specification {
         1*testCaseService.createTest(_,_,_)>>null
         1*fileService.uploadFile(_,_,_)>>new ResponseEntity("url",HttpStatus.GATEWAY_TIMEOUT)
         1*issueFeignClient.queryIssueType(_,_,_)>> new ResponseEntity([new IssueTypeDTO(id: 18L, typeCode: "issue_test")], HttpStatus.OK)
-        1*issueFeignClient.queryPriorityId(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
+        1*issueFeignClient.queryDefaultPriority(_,_)>> new ResponseEntity([new PriorityDTO(id: 8L, default: true)], HttpStatus.OK)
     }
 
     def "importExcel5"(){
