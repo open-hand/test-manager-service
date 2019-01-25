@@ -11,21 +11,28 @@ import java.util.List;
  */
 public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
-	List<TestCycleDO> query(@Param("versionIds") Long[] versionId,@Param("assignedTo") Long assignedTo);
+    List<TestCycleDO> query(@Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
 
-	List<TestCycleDO> queryOneCycleBar(@Param("cycleId") Long cycleId);
+    List<TestCycleDO> queryOneCycleBar(@Param("cycleId") Long cycleId);
 
-	/**获取version下的所有循环Id
-	 * @param versionIds
-	 * @return
-	 */
-	List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
+    /**
+     * 获取version下的所有循环Id
+     *
+     * @param versionIds
+     * @return
+     */
+    List<Long> selectCyclesInVersions(@Param("versionIds") Long[] versionIds);
 
-	/** 验证version下是否有重名cycle
-	 * @param testCycleDO
-	 * @return
-	 */
-	Long validateCycle(TestCycleDO testCycleDO);
+    /**
+     * 验证version下是否有重名cycle
+     *
+     * @param testCycleDO
+     * @return
+     */
+    Long validateCycle(TestCycleDO testCycleDO);
 
-	List<TestCycleDO> queryChildCycle(@Param("dto")TestCycleDO testCycleDO);
+    List<TestCycleDO> queryChildCycle(@Param("dto") TestCycleDO testCycleDO);
+
+    List<TestCycleDO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
+
 }

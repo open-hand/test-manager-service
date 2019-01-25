@@ -175,31 +175,29 @@
     </select>
 
 
-
-
     <!--<select id="queryAboutBar" parameterType="java.lang.Long" resultMap="hashmap">-->
-        <!--SELECT-->
-        <!--color,-->
-        <!--count(1) counts-->
-        <!--FROM-->
-        <!--(-->
-        <!--SELECT-->
-        <!--cycle.execute_id,-->
-        <!--cycle.cycle_id,-->
-        <!--cycle.issue_id,-->
-        <!--status1.status_color color-->
-        <!--FROM-->
-        <!--test_cycle_case cycle-->
-        <!--LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id-->
-        <!--where-->
-        <!--cycle.cycle_id =#{_parameter}-->
-        <!--) temp1-->
-        <!--GROUP BY-->
-        <!--temp1.color-->
+    <!--SELECT-->
+    <!--color,-->
+    <!--count(1) counts-->
+    <!--FROM-->
+    <!--(-->
+    <!--SELECT-->
+    <!--cycle.execute_id,-->
+    <!--cycle.cycle_id,-->
+    <!--cycle.issue_id,-->
+    <!--status1.status_color color-->
+    <!--FROM-->
+    <!--test_cycle_case cycle-->
+    <!--LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id-->
+    <!--where-->
+    <!--cycle.cycle_id =#{_parameter}-->
+    <!--) temp1-->
+    <!--GROUP BY-->
+    <!--temp1.color-->
 
     <!--</select>-->
 
-    <select id="validateCycle"  resultType="java.lang.Long">
+    <select id="validateCycle" resultType="java.lang.Long">
         select count(cycle_id) from test_cycle
         <where>
             cycle_name = #{cycleName} and version_id = #{versionId}
@@ -237,8 +235,19 @@
         test_cycle
         <where>
             <if test="dto!=null and dto.cycleId != null">
-               parent_cycle_id=#{dto.cycleId}
+                parent_cycle_id=#{dto.cycleId}
             </if>
         </where>
+    </select>
+
+    <select id="queryByIds" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+        SELECT cycle_id,cycle_name
+        FROM
+        test_cycle
+        WHERE
+        cycle_id IN
+        <foreach item="item" index="index" collection="cycleIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

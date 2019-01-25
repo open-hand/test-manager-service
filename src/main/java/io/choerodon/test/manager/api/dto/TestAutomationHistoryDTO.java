@@ -5,6 +5,7 @@ import io.choerodon.mybatis.domain.AuditDomain;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
 
 public class TestAutomationHistoryDTO extends AuditDomain {
 
@@ -24,20 +25,34 @@ public class TestAutomationHistoryDTO extends AuditDomain {
     @Id
     @GeneratedValue
     private Long id;
-
     private String framework;
-
     private Long testStatus;
-
     private Long instanceId;
-
     private Long projectId;
-    private Long cycleId;
+    private String cycleIds;
     private Long resultId;
 
     private TestAppInstanceDTO testAppInstanceDTO;
-
     private UserDO createUser;
+
+    private Boolean isMoreCycle;
+    private List<TestCycleDTO> cycleDTOS;
+
+    public Boolean getMoreCycle() {
+        return isMoreCycle;
+    }
+
+    public void setMoreCycle(Boolean moreCycle) {
+        isMoreCycle = moreCycle;
+    }
+
+    public List<TestCycleDTO> getCycleDTOS() {
+        return cycleDTOS;
+    }
+
+    public void setCycleDTOS(List<TestCycleDTO> cycleDTOS) {
+        this.cycleDTOS = cycleDTOS;
+    }
 
     public Long getId() {
         return id;
@@ -55,12 +70,12 @@ public class TestAutomationHistoryDTO extends AuditDomain {
         this.framework = framework;
     }
 
-    public Long getCycleId() {
-        return cycleId;
+    public String getCycleIds() {
+        return cycleIds;
     }
 
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
+    public void setCycleIds(String cycleIds) {
+        this.cycleIds = cycleIds;
     }
 
     public Long getResultId() {

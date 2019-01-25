@@ -1,4 +1,5 @@
 package script.db
+
 databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-11-20-init_table_test_automation_history') {
         createTable(tableName: "test_automation_history") {
@@ -21,9 +22,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy') {
 
     }
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-add_sequence_test_app_instance') {
-
         if (helper.dbType().isSupportSequence()) {
             createSequence(sequenceName: 'test_automation_history_s', startValue: "1")
         }
+    }
+
+    changeSet(id: '2019-01-25-modify-data-type', author: 'shinan.chenX@gmail.com') {
+        modifyDataType(tableName: 'test_automation_history', columnName: 'cycle_id', newDataType: "VARCHAR(255)")
+        renameColumn(columnDataType: 'VARCHAR(255)', newColumnName: 'cycle_ids', oldColumnName: 'cycle_id', tableName: 'test_automation_history')
     }
 }

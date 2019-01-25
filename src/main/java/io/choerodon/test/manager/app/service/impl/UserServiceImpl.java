@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,57 +25,56 @@ import java.util.stream.Stream;
  */
 @Component
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private UserFeignClient userFeignClient;
+    @Autowired
+    private UserFeignClient userFeignClient;
 
-	public Map<Long, UserDO> query(Long[] ids) {
-		if(ObjectUtils.isEmpty(ids)){
-			return new HashMap<>();
-		}
-		return userFeignClient.listUsersByIds(ids).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
-	}
+    public Map<Long, UserDO> query(Long[] ids) {
+        if (ObjectUtils.isEmpty(ids)) {
+            return new HashMap<>();
+        }
+        return userFeignClient.listUsersByIds(ids).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
+    }
 
-	@Override
-	public ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
-		return userFeignClient.list(projectId, userId, pageRequest.getPage(), pageRequest.getSize(), param);
-	}
+    @Override
+    public ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
+        return userFeignClient.list(projectId, userId, pageRequest.getPage(), pageRequest.getSize(), param);
+    }
 
-	public void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto){
-		Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
-		if(ObjectUtils.isEmpty(users)){
-			return;
-		}
-		Map<Long,UserDO> user =query(users);
-		dto.forEach(v -> {
-			if (LongUtils.isUserId(v.getLastUpdatedBy())) {
-				v.setUser(user.get(v.getLastUpdatedBy()));
-			}
-		});
-	}
+    public void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto) {
+        Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+        if (ObjectUtils.isEmpty(users)) {
+            return;
+        }
+        Map<Long, UserDO> user = query(users);
+        dto.forEach(v -> {
+            if (LongUtils.isUserId(v.getLastUpdatedBy())) {
+                v.setUser(user.get(v.getLastUpdatedBy()));
+            }
+        });
+    }
 
-	public void populateTestCycleCaseDTO(TestCycleCaseDTO dto){
-		Long[] users=Stream.of(dto.getAssignedTo(),dto.getLastUpdatedBy()).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
-		if(ObjectUtils.isEmpty(users)){
-			return;
-		}
-		Map<Long,UserDO> user =query(users);
-		Optional.ofNullable(dto.getAssignedTo()).ifPresent(v->dto.setAssigneeUser(user.get(v)));
-		Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v->dto.setLastUpdateUser(user.get(v)));
-	}
+    public void populateTestCycleCaseDTO(TestCycleCaseDTO dto) {
+        Long[] users = Stream.of(dto.getAssignedTo(), dto.getLastUpdatedBy()).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+        if (ObjectUtils.isEmpty(users)) {
+            return;
+        }
+        Map<Long, UserDO> user = query(users);
+        Optional.ofNullable(dto.getAssignedTo()).ifPresent(v -> dto.setAssigneeUser(user.get(v)));
+        Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v -> dto.setLastUpdateUser(user.get(v)));
+    }
 
-	public void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto){
-		Long[] users = dto.stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
-		if(ObjectUtils.isEmpty(users)){
-			return;
-		}
-		Map<Long,UserDO> user =query(users);
-		dto.forEach(v -> {
-			if (LongUtils.isUserId(v.getCreatedBy())) {
-				v.setCreateUser(user.get(v.getCreatedBy()));
-			}
-		});
-	}
-
+    public void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto) {
+        Long[] users = dto.stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+        if (ObjectUtils.isEmpty(users)) {
+            return;
+        }
+        Map<Long, UserDO> user = query(users);
+        dto.forEach(v -> {
+            if (LongUtils.isUserId(v.getCreatedBy())) {
+                v.setCreateUser(user.get(v.getCreatedBy()));
+            }
+        });
+    }
 
 
 }

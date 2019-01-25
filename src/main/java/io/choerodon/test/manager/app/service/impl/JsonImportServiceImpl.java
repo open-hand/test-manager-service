@@ -26,6 +26,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
@@ -270,8 +271,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setInstanceId(instanceId);
         automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        //【todo】
-        automationHistoryE.setCycleId(null);
+        List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
 
         // 创建测试循环
         TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
@@ -283,6 +283,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             // 创建阶段（应用名+镜像名+suite名+第几次）
             TestCycleDTO testStage = iJsonImportService.getStage(
                     versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+            cycleIds.add(testStage.getCycleId());
             List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
             // 创建测试用例
             List<TestNgTest> tests = suite.getTests();
@@ -314,6 +315,8 @@ public class JsonImportServiceImpl implements JsonImportService {
                 backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
             }
         }
+        // 若有多个suite，拼接成listStr
+        automationHistoryE.setCycleIds(cycleIds.stream().map(x->String.valueOf(x)).collect(Collectors.joining()));
 
         // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
