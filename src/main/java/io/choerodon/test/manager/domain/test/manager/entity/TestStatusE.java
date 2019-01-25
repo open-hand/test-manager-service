@@ -2,7 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 
 import io.choerodon.test.manager.domain.repository.TestStatusRepository;
-
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

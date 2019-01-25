@@ -315,7 +315,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             }
         }
 
-        // 更新automation history状态
+        // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
             automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
         }

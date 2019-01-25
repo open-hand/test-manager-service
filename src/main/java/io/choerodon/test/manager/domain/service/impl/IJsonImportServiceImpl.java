@@ -451,13 +451,13 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleCaseE.setCycleId(cycleId);
         testCycleCaseE.setVersionId(versionId);
         //查询状态
-        TestStatusE testStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
-        testStatusE.setProjectId(0L);
-        testStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE);
-        testStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
-        TestStatusE statusE = testStatusE.queryOneSelective();
-        testCycleCaseE.setExecutionStatus(statusE.getStatusId());
-        testCycleCaseE.setExecutionStatusName(statusE.getStatusName());
+        TestStatusE caseStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
+        caseStatusE.setProjectId(0L);
+        caseStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE);
+        caseStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+        TestStatusE caseStatus = caseStatusE.queryOneSelective();
+        testCycleCaseE.setExecutionStatus(caseStatus.getStatusId());
+        testCycleCaseE.setExecutionStatusName(caseStatus.getStatusName());
 
         List<TestNgCase> cases = test.getCases();
         List<TestCaseStepE> testCaseSteps = new ArrayList<>();
@@ -467,20 +467,20 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         for (TestNgCase testNgCase : cases) {
             //获取TestCaseStep
             testCaseStepE = SpringUtil.getApplicationContext().getBean(TestCaseStepE.class);
-            testCaseStepE.setTestStep(testNgCase.getDescription());
+            testCaseStepE.setTestStep(testNgCase.getDescription() != null ? testNgCase.getDescription() : testNgCase.getName());
             //获取TestCycleCaseStep
             testCycleCaseStepE = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepE.class);
             testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
             testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
             testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
             //查询状态
-            TestStatusE testStatusE2 = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
-            testStatusE2.setProjectId(0L);
-            testStatusE2.setStatusType(TestStatusE.STATUS_TYPE_CASE_STEP);
-            testStatusE2.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
-            TestStatusE statusE2 = testStatusE2.queryOneSelective();
-            testCycleCaseE.setExecutionStatus(statusE2.getStatusId());
-            testCycleCaseE.setExecutionStatusName(statusE2.getStatusName());
+            TestStatusE stepStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
+            stepStatusE.setProjectId(0L);
+            stepStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE_STEP);
+            stepStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+            TestStatusE stepStatus = stepStatusE.queryOneSelective();
+            testCycleCaseStepE.setStepStatus(stepStatus.getStatusId());
+            testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
             if (issueDTO != null) {
                 testCaseStepE.setIssueId(issueDTO.getIssueId());
                 testCycleCaseStepE.setIssueId(issueDTO.getIssueId());

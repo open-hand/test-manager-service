@@ -40,6 +40,7 @@ public class TestNgUtil {
     public static final String SUITE_PATH = "//suite";
     public static final String TEST_PATH = "test";
     public static final String CASE_PATH = "class/test-method";
+    public static final String LINE_PATH = "reporter-output/line";
     public static final String TEST_PASSED = "PASS";
     public static final String TEST_FAILED = "FAIL";
     public static final String TEST_SKIPPED = "SKIP";
@@ -68,6 +69,8 @@ public class TestNgUtil {
                     if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
                         test.setStatus(TEST_FAILED);
                     }
+                    //获取步骤相关参数
+                    handleParams(testCase, caseNode);
                     cases.add(testCase);
                 }
                 test.setCases(cases);
@@ -86,6 +89,20 @@ public class TestNgUtil {
         result.setSuites(suites);
         reflectField(result, root.attributes());
         return result;
+    }
+
+    /**
+     * 获取步骤相关参数
+     * @param testCase
+     * @param caseNode
+     */
+    public static void handleParams(TestNgCase testCase, Element caseNode) {
+        List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
+        for (Element lineNode : lineNodes) {
+            String value = lineNode.getStringValue();
+            String content = value.substring(8, value.length() - 2);
+            System.out.println(content);
+        }
     }
 
     public static void reflectField(Object obj, List<Attribute> attrs) {
