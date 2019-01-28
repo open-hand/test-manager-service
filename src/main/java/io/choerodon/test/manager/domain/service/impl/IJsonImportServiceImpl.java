@@ -468,6 +468,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
             //获取TestCaseStep
             testCaseStepE = SpringUtil.getApplicationContext().getBean(TestCaseStepE.class);
             testCaseStepE.setTestStep(testNgCase.getDescription() != null ? testNgCase.getDescription() : testNgCase.getName());
+            testCaseStepE.setTestData(testNgCase.getInputData());
+            testCaseStepE.setExpectedResult(testNgCase.getExpectData());
             //获取TestCycleCaseStep
             testCycleCaseStepE = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepE.class);
             testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());

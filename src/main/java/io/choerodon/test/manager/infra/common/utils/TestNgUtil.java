@@ -44,6 +44,8 @@ public class TestNgUtil {
     public static final String TEST_PASSED = "PASS";
     public static final String TEST_FAILED = "FAIL";
     public static final String TEST_SKIPPED = "SKIP";
+    public static final String INPUT = "[INPUT]";
+    public static final String EXPECT = "[EXPECT]";
 
     public static TestNgResult parseXmlToObject(Document document) {
         Element root = document.getRootElement();
@@ -93,15 +95,26 @@ public class TestNgUtil {
 
     /**
      * 获取步骤相关参数
+     *
      * @param testCase
      * @param caseNode
      */
     public static void handleParams(TestNgCase testCase, Element caseNode) {
         List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
         for (Element lineNode : lineNodes) {
-            String value = lineNode.getStringValue();
-            String content = value.substring(8, value.length() - 2);
-            System.out.println(content);
+            String text = lineNode.getText();
+            String content = text.substring(text.indexOf("["), text.lastIndexOf("\n"));
+            if (content.startsWith(INPUT)) {
+                //输入参数
+                String input = content.split("\\[INPUT\\]")[1];
+                input = input.length() > 255 ? input.substring(0, 255) : input;
+                testCase.setInputData(input);
+            } else if (content.startsWith(EXPECT)) {
+                //预期结果
+                String expect = content.split("\\[EXPECT\\]")[1];
+                expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
+                testCase.setExpectData(expect);
+            }
         }
     }
 

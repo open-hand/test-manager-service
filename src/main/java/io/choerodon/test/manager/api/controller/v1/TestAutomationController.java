@@ -7,9 +7,6 @@ import io.choerodon.test.manager.app.service.TestAppInstanceService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
 import io.choerodon.test.manager.infra.common.utils.FileUtil;
 import io.swagger.annotations.ApiOperation;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,17 +68,12 @@ public class TestAutomationController {
         }
         String json = new String(bytes, StandardCharsets.UTF_8);
         System.out.println(json);
-        System.out.println("导入自动化测试报告【testng】");
-        jsonImportService.importTestNgReport(releaseName, json);
-
-//        try {
-//            return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName,
-//                    new String(bytes, StandardCharsets.UTF_8)), HttpStatus.CREATED);
-//        } catch (Throwable e) {
-//            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)),3L);
-//            logger.error("导入mocha测试报告失败，测试状态置为失败", e);
-//            throw new CommonException("error.automation.import.mocha.report");
-//        }
-        return null;
+        try {
+            return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, json), HttpStatus.CREATED);
+        } catch (Throwable e) {
+            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)), 3L);
+            logger.error("导入mocha测试报告失败，测试状态置为失败", e);
+            throw new CommonException("error.automation.import.mocha.report");
+        }
     }
 }
