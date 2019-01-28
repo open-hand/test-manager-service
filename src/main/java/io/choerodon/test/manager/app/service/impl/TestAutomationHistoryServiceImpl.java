@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
@@ -13,6 +12,8 @@ import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -34,6 +35,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     @Autowired
     TestCycleMapper testCycleMapper;
 
+    private ModelMapper modelMapper = new ModelMapper();
+
     @Override
     public Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
         map.put("projectId", projectId);
@@ -45,7 +48,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
             map.put("appVersionId", versionId);
         }
         Page<TestAutomationHistoryDTO> list = iTestAutomationHistoryService.queryWithInstance(map, pageRequest);
-        populateAPPVersion(projectId, list);
+//        populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
         populateCycles(list);
         return list;
@@ -68,21 +71,26 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         Map<Long, String[]> map = new HashMap<>(page.getSize());
         List<String> cycleStrIds = new ArrayList<>();
         page.getContent().forEach(x -> {
-            String[] cycleIds = x.getCycleIds().split(",");
-            if (cycleIds.length == 1) {
-                x.setMoreCycle(false);
-            } else {
-                x.setMoreCycle(true);
-                map.put(x.getId(), cycleIds);
-                cycleStrIds.addAll(Arrays.asList(cycleIds));
+            String cycleIdsStr = x.getCycleIds();
+            if(cycleIdsStr!=null&&!cycleIdsStr.equals("")){
+                String[] cycleIds = x.getCycleIds().split(",");
+                if (cycleIds.length <= 1) {
+                    x.setMoreCycle(false);
+                } else {
+                    x.setMoreCycle(true);
+                    map.put(x.getId(), cycleIds);
+                    cycleStrIds.addAll(Arrays.asList(cycleIds));
+                }
             }
         });
         if (!cycleStrIds.isEmpty()) {
             List<TestCycleDO> cycleDTOS = testCycleMapper.queryByIds(cycleStrIds.stream().map(x -> Long.valueOf(x)).collect(Collectors.toList()));
-            Map<Long, TestCycleDTO> cycleMap = ConvertHelper.convertList(cycleDTOS, TestCycleDTO.class).stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, x -> x));
+            List<TestCycleDTO> list = modelMapper.map(cycleDTOS, new TypeToken<List<TestCycleDTO>>() {
+            }.getType());
+            Map<Long, TestCycleDTO> cycleMap = list.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, x -> x));
             page.getContent().forEach(x -> {
                 String[] ids = map.get(x.getId());
-                List<TestCycleDTO> dtos = new ArrayList<>(ids.length);
+                List<TestCycleDTO> dtos = new ArrayList<>();
                 if (ids != null) {
                     for (String s : ids) {
                         dtos.add(cycleMap.get(Long.valueOf(s)));
