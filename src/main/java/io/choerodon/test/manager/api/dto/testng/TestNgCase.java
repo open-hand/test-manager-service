@@ -12,6 +12,24 @@ public class TestNgCase {
     private String startedAt;
     private String finishedAt;
     private Long durationMs;
+    private String inputData;
+    private String expectData;
+
+    public String getInputData() {
+        return inputData;
+    }
+
+    public void setInputData(String inputData) {
+        this.inputData = inputData;
+    }
+
+    public String getExpectData() {
+        return expectData;
+    }
+
+    public void setExpectData(String expectData) {
+        this.expectData = expectData;
+    }
 
     public String getName() {
         return name;

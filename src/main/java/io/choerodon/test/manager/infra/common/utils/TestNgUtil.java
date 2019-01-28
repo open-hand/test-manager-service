@@ -40,6 +40,12 @@ public class TestNgUtil {
     public static final String SUITE_PATH = "//suite";
     public static final String TEST_PATH = "test";
     public static final String CASE_PATH = "class/test-method";
+    public static final String LINE_PATH = "reporter-output/line";
+    public static final String TEST_PASSED = "PASS";
+    public static final String TEST_FAILED = "FAIL";
+    public static final String TEST_SKIPPED = "SKIP";
+    public static final String INPUT = "[INPUT]";
+    public static final String EXPECT = "[EXPECT]";
 
     public static TestNgResult parseXmlToObject(Document document) {
         Element root = document.getRootElement();
@@ -50,6 +56,8 @@ public class TestNgUtil {
             List<TestNgTest> tests = new ArrayList<>();
             List<Element> testNodes = suiteNode.selectNodes(TEST_PATH);
             for (Element testNode : testNodes) {
+                TestNgTest test = new TestNgTest();
+                test.setStatus(TEST_PASSED);
                 List<TestNgCase> cases = new ArrayList<>();
                 List<Element> caseNodes = testNode.selectNodes(CASE_PATH);
                 for (Element caseNode : caseNodes) {
@@ -59,22 +67,55 @@ public class TestNgUtil {
                     }
                     TestNgCase testCase = new TestNgCase();
                     reflectField(testCase, caseNode.attributes());
+                    //处理test的状态
+                    if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
+                        test.setStatus(TEST_FAILED);
+                    }
+                    //获取步骤相关参数
+                    handleParams(testCase, caseNode);
                     cases.add(testCase);
                 }
-                TestNgTest test = new TestNgTest();
                 test.setCases(cases);
                 reflectField(test, testNode.attributes());
                 tests.add(test);
             }
-            TestNgSuite suite = new TestNgSuite();
-            suite.setTests(tests);
-            reflectField(suite, suiteNode.attributes());
-            suites.add(suite);
+            //跳过没有test的suite
+            if (!tests.isEmpty()) {
+                TestNgSuite suite = new TestNgSuite();
+                suite.setTests(tests);
+                reflectField(suite, suiteNode.attributes());
+                suites.add(suite);
+            }
         }
         TestNgResult result = new TestNgResult();
         result.setSuites(suites);
         reflectField(result, root.attributes());
         return result;
+    }
+
+    /**
+     * 获取步骤相关参数
+     *
+     * @param testCase
+     * @param caseNode
+     */
+    public static void handleParams(TestNgCase testCase, Element caseNode) {
+        List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
+        for (Element lineNode : lineNodes) {
+            String text = lineNode.getText();
+            String content = text.substring(text.indexOf("["), text.lastIndexOf("\n"));
+            if (content.startsWith(INPUT)) {
+                //输入参数
+                String input = content.split("\\[INPUT\\]")[1];
+                input = input.length() > 255 ? input.substring(0, 255) : input;
+                testCase.setInputData(input);
+            } else if (content.startsWith(EXPECT)) {
+                //预期结果
+                String expect = content.split("\\[EXPECT\\]")[1];
+                expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
+                testCase.setExpectData(expect);
+            }
+        }
     }
 
     public static void reflectField(Object obj, List<Attribute> attrs) {

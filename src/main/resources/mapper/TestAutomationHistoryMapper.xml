@@ -7,7 +7,7 @@
         UPDATE test_automation_history
         SET
         test_status = #{testStatus},
-        cycle_id = #{cycleId},
+        cycle_ids = #{cycleIds},
         result_id = #{resultId},
         last_updated_by = #{lastUpdatedBy},
         last_update_date = #{lastUpdateDate},
@@ -32,7 +32,7 @@
         <id column="instance_id" property="instanceId"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="project_id" property="projectId"/>
-        <id column="cycle_id" property="cycleId"/>
+        <id column="cycle_ids" property="cycleIds"/>
         <id column="result_id" property="resultId"/>
         <id column="created_by" property="createdBy"/>
         <id column="creation_date" property="creationDate"/>
@@ -49,7 +49,7 @@
 
     <select id="queryWithInstance" resultMap="BaseResultMap">
         SELECT history.id,history.framework,history.test_status,history.instance_id,history.object_version_number,history.project_id,
-        history.cycle_id,history.result_id,instance.pod_status,instance.app_version_id,history.created_by,history.creation_date,history.last_update_date
+        history.cycle_ids,history.result_id,instance.pod_status,instance.app_version_id,history.created_by,history.creation_date,history.last_update_date
         ,instance.log_id,instance.env_id,instance.pod_name,instance.container_name
         from test_automation_history history left join test_app_instance instance on history.instance_id=instance.id
         <where>

@@ -7,11 +7,9 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.testng.TestNgResult;
 import io.choerodon.test.manager.api.dto.testng.TestNgSuite;
+import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import io.choerodon.test.manager.app.service.JsonImportService;
-import io.choerodon.test.manager.domain.service.IExcelImportService;
-import io.choerodon.test.manager.domain.service.IJsonImportService;
-import io.choerodon.test.manager.domain.service.ITestAppInstanceService;
-import io.choerodon.test.manager.domain.service.ITestAutomationResultService;
+import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.common.utils.TestNgUtil;
@@ -28,23 +26,22 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonImportServiceImpl.class);
-
     @Autowired
     private IJsonImportService iJsonImportService;
-
     @Autowired
     private IExcelImportService iExcelImportService;
-
     @Autowired
     private ITestAutomationResultService iTestAutomationResultService;
-
     @Autowired
     private ITestAppInstanceService iTestAppInstanceService;
+    @Autowired
+    ITestAutomationHistoryService historyService;
 
     private void createStepsAndBackfillStepIds(List<TestCycleCaseE> cycleCases, Long createdBy, Long lastUpdatedBy) {
         List<TestCaseStepE> allSteps = new ArrayList<>();
@@ -56,14 +53,16 @@ public class JsonImportServiceImpl implements JsonImportService {
             }
         }
 
-        List<TestCaseStepE> createdSteps = TestCaseStepE.createSteps(allSteps);
-        for (int i = 0; i < allSteps.size(); i++) {
-            allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
-        }
+        if (!allSteps.isEmpty()) {
+            List<TestCaseStepE> createdSteps = TestCaseStepE.createSteps(allSteps);
+            for (int i = 0; i < allSteps.size(); i++) {
+                allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
+            }
 
-        for (TestCycleCaseE cycleCase : cycleCases) {
-            for (int i = 0; i < cycleCase.getCycleCaseStep().size(); i++) {
-                cycleCase.getCycleCaseStep().get(i).setStepId(cycleCase.getTestCaseSteps().get(i).getStepId());
+            for (TestCycleCaseE cycleCase : cycleCases) {
+                for (int i = 0; i < cycleCase.getCycleCaseStep().size(); i++) {
+                    cycleCase.getCycleCaseStep().get(i).setStepId(cycleCase.getTestCaseSteps().get(i).getStepId());
+                }
             }
         }
     }
@@ -123,7 +122,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
         automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleId(testStage.getCycleId());
+        automationHistoryE.setCycleIds(String.valueOf(testStage.getCycleId()));
 
         // 如果测试用例数量为 0
         if (issues.isEmpty()) {
@@ -131,9 +130,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
             return resultId;
         }
-
         List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
-
         // 开始解析
         for (Object element : issues) {
             if (element instanceof JSONObject) {
@@ -144,7 +141,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             }
         }
 
-        if (!targetFolderE.getNewFolder()) {
+        if (!targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
             relatedToExistIssues(allTestCycleCases, targetFolderE);
         }
 
@@ -157,12 +154,16 @@ public class JsonImportServiceImpl implements JsonImportService {
                 automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
             }
         }
-        createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
-        if (targetFolderE.getNewFolder()) {
+        if (!allTestCycleCases.isEmpty()) {
+            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+        }
+        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
             createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
         }
 
-        backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+        if (!allTestCycleCases.isEmpty()) {
+            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+        }
 
         automationHistoryE.setResultId(resultId);
         iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
@@ -212,6 +213,7 @@ public class JsonImportServiceImpl implements JsonImportService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long importTestNgReport(String releaseName, String json) {
         Document document = null;
         try {
@@ -223,6 +225,109 @@ public class JsonImportServiceImpl implements JsonImportService {
             throw new CommonException("error.importTestNgReport.document.nutNull");
         }
         TestNgResult result = TestNgUtil.parseXmlToObject(document);
-        return null;
+        // 查询versionId和projectId
+        Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
+        Long instanceId = releaseNameFragments.get("instanceId");
+        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
+        testAppInstanceE.setId(instanceId);
+        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
+        if (instance == null) {
+            logger.error("app instance 不存在");
+            throw new CommonException("app instance 不存在");
+        }
+        Long versionId = instance.getProjectVersionId();
+        Long projectId = instance.getProjectId();
+        Long createdBy = instance.getCreatedBy();
+        Long lastUpdatedBy = instance.getLastUpdatedBy();
+
+        // 查询组织Id, appName和appVersionName
+        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
+        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
+        Long organizationId = iJsonImportService.getOrganizationId(projectId);
+        String folderBaseName = appName + "-" + appVersionName;
+
+//        //local测试
+//        String folderBaseName = "testng-0.3.0";
+//        Long projectId = 20L;
+//        Long organizationId = 8L;
+//        Long instanceId = 99999L;
+//        Long createdBy = 0L;
+//        Long lastUpdatedBy = 0L;
+//        Long versionId = 12L;
+//        //创建TestAutomationHistoryE
+//        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
+//        historyE.setFramework("TestNg");
+//        historyE.setInstanceId(instanceId);
+//        historyE.setProjectId(projectId);
+//        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
+//        historyService.insert(historyE);
+
+        // 保存完整json到数据库
+        TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
+        testAutomationResultE.setResult(json);
+        testAutomationResultE.setCreatedBy(createdBy);
+        testAutomationResultE.setLastUpdatedBy(lastUpdatedBy);
+        Long resultId = iTestAutomationResultService.add(testAutomationResultE).getId();
+
+        TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
+        automationHistoryE.setInstanceId(instanceId);
+        automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
+        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
+        List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
+
+        // 创建测试循环
+        TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
+        //遍历suite
+        for (TestNgSuite suite : result.getSuites()) {
+            String folderName = folderBaseName + "-" + suite.getName();
+            // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
+            TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
+            // 创建阶段（应用名+镜像名+suite名+第几次）
+            TestCycleDTO testStage = iJsonImportService.getStage(
+                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+            cycleIds.add(testStage.getCycleId());
+            List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
+            // 创建测试用例
+            List<TestNgTest> tests = suite.getTests();
+            for (TestNgTest test : tests) {
+                TestCycleCaseE testCycleCaseE = iJsonImportService.handleIssueByTestNg(organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
+                        test, targetFolderE.getNewFolder());
+                allTestCycleCases.add(testCycleCaseE);
+            }
+            //关联cycleCase到issue
+            if (!targetFolderE.getNewFolder()) {
+                relatedToExistIssues(allTestCycleCases, targetFolderE);
+            }
+            //更新case基本信息
+            for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
+                testCycleCaseE.setCreatedBy(createdBy);
+                testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+                testCycleCaseE.setAssignedTo(createdBy);
+            }
+            //创建case，并回填executeId
+            if (!allTestCycleCases.isEmpty()) {
+                createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+            }
+            //若是第一次创建文件夹，则要创建caseStep
+            if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
+                createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+            }
+            //创建cycleCaseStep
+            if (!allTestCycleCases.isEmpty()) {
+                backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+            }
+        }
+        // 若有多个suite，拼接成listStr
+        automationHistoryE.setCycleIds(cycleIds.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(",")));
+
+        // 若存在失败的用例，则更新状态为部分成功
+        if (!result.getFailed().equals(0L)) {
+            automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.PARTIALEXECUTION);
+        }
+
+        automationHistoryE.setResultId(resultId);
+        iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
+
+        return resultId;
     }
 }

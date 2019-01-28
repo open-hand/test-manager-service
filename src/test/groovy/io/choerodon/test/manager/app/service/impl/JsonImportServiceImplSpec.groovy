@@ -119,7 +119,7 @@ class JsonImportServiceImplSpec extends Specification {
         iJsonImportService.setApplicationFeignClient(applicationFeignClient)
 
         IssueFeignClient issueFeignClient = Mock() {
-            _ * queryPriorityId(instanceE.projectId, _ as Long) >>
+            _ * queryDefaultPriority(instanceE.projectId, _ as Long) >>
                     new ResponseEntity<>([new PriorityDTO(id: 8L, isDefault: true)], HttpStatus.OK)
             _ * queryIssueType(instanceE.projectId, "test", _ as Long) >>
                     new ResponseEntity<>([new IssueTypeDTO(typeCode: "issue_test", id: 18L)], HttpStatus.OK)

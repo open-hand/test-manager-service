@@ -40,7 +40,7 @@ public class TestAutomationHistoryE extends AuditDomain {
     private Long instanceId;
 
     private Long projectId;
-    private Long cycleId;
+    private String cycleIds;
     private Long resultId;
 
     private Long lastUpdatedBy;
@@ -98,12 +98,12 @@ public class TestAutomationHistoryE extends AuditDomain {
         this.framework = framework;
     }
 
-    public Long getCycleId() {
-        return cycleId;
+    public String getCycleIds() {
+        return cycleIds;
     }
 
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
+    public void setCycleIds(String cycleIds) {
+        this.cycleIds = cycleIds;
     }
 
     public Long getResultId() {

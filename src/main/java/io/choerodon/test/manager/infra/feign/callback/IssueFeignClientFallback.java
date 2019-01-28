@@ -14,11 +14,11 @@ import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 public class IssueFeignClientFallback implements IssueFeignClient {
     @Override
     public ResponseEntity<List<IssueTypeDTO>> queryIssueType(Long projectId, String applyType, Long organizationId) {
-        throw new CommonException("error.query.issue.type");
+        throw new CommonException("error.issueFeignClient.queryIssueType");
     }
 
     @Override
-    public ResponseEntity<List<PriorityDTO>> queryPriorityId(Long projectId, Long organizationId) {
-        throw new CommonException("error.query.priority.id");
+    public ResponseEntity<PriorityDTO> queryDefaultPriority(Long projectId, Long organizationId) {
+        throw new CommonException("error.issueFeignClient.queryDefaultPriority");
     }
 }

@@ -8,11 +8,15 @@ import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.ProjectDTO;
 import io.choerodon.agile.api.dto.VersionIssueRelDTO;
+import io.choerodon.agile.infra.common.enums.IssueTypeCode;
+import io.choerodon.agile.infra.common.utils.AgileUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.testng.TestNgCase;
+import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
@@ -20,6 +24,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+import io.choerodon.test.manager.infra.common.utils.TestNgUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
 import io.choerodon.test.manager.infra.exception.IssueCreateException;
@@ -37,7 +42,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,29 +107,22 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, Long createdBy, String summary) {
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
-        issueCreateDTO.setTypeCode("issue_auto_test");
-
-        CompletableFuture<Void> getPriorityIdTask = CompletableFuture
-                .supplyAsync(() -> iExcelImportService.getPriorityId(organizationId, projectId))
-                .thenAccept(priorityId -> {
-                    issueCreateDTO.setPriorityCode("priority-" + priorityId);
-                    issueCreateDTO.setPriorityId(priorityId);
-                });
-        CompletableFuture<Void> getIssueTypeIdTask = CompletableFuture
-                .supplyAsync(() -> iExcelImportService.getIssueTypeId(organizationId, projectId, "test", issueCreateDTO.getTypeCode()))
-                .thenAccept(issueCreateDTO::setIssueTypeId);
-
+        issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_AUTO_TEST);
         issueCreateDTO.setProjectId(projectId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setAssigneeId(createdBy);
         issueCreateDTO.setReporterId(createdBy);
+
+        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_AUTO_TEST));
+        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId);
+        issueCreateDTO.setPriorityCode("priority-" + priorityId);
+        issueCreateDTO.setPriorityId(priorityId);
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);
         versionIssueRelDTO.setRelationType("fix");
         issueCreateDTO.setVersionIssueRelDTOList(Lists.newArrayList(versionIssueRelDTO));
 
-        CompletableFuture.allOf(getPriorityIdTask, getIssueTypeIdTask).join();
         IssueDTO issueDTO = iExcelImportService.createIssue(projectId, issueCreateDTO);
         if (issueDTO != null) {
             TestIssueFolderRelE issueFolderRelE = SpringUtil.getApplicationContext().getBean(TestIssueFolderRelE.class);
@@ -429,5 +426,73 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     private String getTestData(String code) {
         Matcher matcher = DATA_PATTERN.matcher(code);
         return matcher.find() ? matcher.group(1) : null;
+    }
+
+    @Override
+    public TestCycleCaseE handleIssueByTestNg(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, TestNgTest test, boolean newFolder) {
+        String summary = test.getName();
+        if (StringUtils.isBlank(summary)) {
+            logger.error("用例 title 不能为空");
+            summary = "null";
+        }
+
+        TestCycleCaseE testCycleCaseE = SpringUtil.getApplicationContext().getBean(TestCycleCaseE.class);
+
+        IssueDTO issueDTO = null;
+        if (newFolder) {
+            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
+            if (issueDTO == null) {
+                logger.error("issue 创建失败");
+                throw new IssueCreateException();
+            }
+            testCycleCaseE.setIssueId(issueDTO.getIssueId());
+        }
+
+        testCycleCaseE.setCycleId(cycleId);
+        testCycleCaseE.setVersionId(versionId);
+        //查询状态
+        TestStatusE caseStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
+        caseStatusE.setProjectId(0L);
+        caseStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE);
+        caseStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+        TestStatusE caseStatus = caseStatusE.queryOneSelective();
+        testCycleCaseE.setExecutionStatus(caseStatus.getStatusId());
+        testCycleCaseE.setExecutionStatusName(caseStatus.getStatusName());
+
+        List<TestNgCase> cases = test.getCases();
+        List<TestCaseStepE> testCaseSteps = new ArrayList<>();
+        List<TestCycleCaseStepE> testCycleCaseSteps = new ArrayList<>();
+        TestCaseStepE testCaseStepE;
+        TestCycleCaseStepE testCycleCaseStepE;
+        for (TestNgCase testNgCase : cases) {
+            //获取TestCaseStep
+            testCaseStepE = SpringUtil.getApplicationContext().getBean(TestCaseStepE.class);
+            testCaseStepE.setTestStep(testNgCase.getDescription() != null ? testNgCase.getDescription() : testNgCase.getName());
+            testCaseStepE.setTestData(testNgCase.getInputData());
+            testCaseStepE.setExpectedResult(testNgCase.getExpectData());
+            //获取TestCycleCaseStep
+            testCycleCaseStepE = SpringUtil.getApplicationContext().getBean(TestCycleCaseStepE.class);
+            testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
+            testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
+            testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
+            //查询状态
+            TestStatusE stepStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
+            stepStatusE.setProjectId(0L);
+            stepStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE_STEP);
+            stepStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+            TestStatusE stepStatus = stepStatusE.queryOneSelective();
+            testCycleCaseStepE.setStepStatus(stepStatus.getStatusId());
+            testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
+            if (issueDTO != null) {
+                testCaseStepE.setIssueId(issueDTO.getIssueId());
+                testCycleCaseStepE.setIssueId(issueDTO.getIssueId());
+            }
+            testCaseSteps.add(testCaseStepE);
+            testCycleCaseSteps.add(testCycleCaseStepE);
+        }
+
+        testCycleCaseE.setTestCaseSteps(testCaseSteps);
+        testCycleCaseE.setCycleCaseStepEs(testCycleCaseSteps);
+        return testCycleCaseE;
     }
 }
