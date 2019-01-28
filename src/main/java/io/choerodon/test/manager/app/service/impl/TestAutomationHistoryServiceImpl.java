@@ -77,17 +77,19 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
                 cycleStrIds.addAll(Arrays.asList(cycleIds));
             }
         });
-        List<TestCycleDO> cycleDTOS = testCycleMapper.queryByIds(cycleStrIds.stream().map(x -> Long.valueOf(x)).collect(Collectors.toList()));
-        Map<Long, TestCycleDTO> cycleMap = ConvertHelper.convertList(cycleDTOS, TestCycleDTO.class).stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, x -> x));
-        page.getContent().forEach(x -> {
-            String[] ids = map.get(x.getId());
-            List<TestCycleDTO> dtos = new ArrayList<>(ids.length);
-            if (ids != null) {
-                for (String s : ids) {
-                    dtos.add(cycleMap.get(Long.valueOf(s)));
+        if (!cycleStrIds.isEmpty()) {
+            List<TestCycleDO> cycleDTOS = testCycleMapper.queryByIds(cycleStrIds.stream().map(x -> Long.valueOf(x)).collect(Collectors.toList()));
+            Map<Long, TestCycleDTO> cycleMap = ConvertHelper.convertList(cycleDTOS, TestCycleDTO.class).stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, x -> x));
+            page.getContent().forEach(x -> {
+                String[] ids = map.get(x.getId());
+                List<TestCycleDTO> dtos = new ArrayList<>(ids.length);
+                if (ids != null) {
+                    for (String s : ids) {
+                        dtos.add(cycleMap.get(Long.valueOf(s)));
+                    }
                 }
-            }
-            x.setCycleDTOS(dtos);
-        });
+                x.setCycleDTOS(dtos);
+            });
+        }
     }
 }
