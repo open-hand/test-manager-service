@@ -249,14 +249,6 @@ public class JsonImportServiceImpl implements JsonImportService {
         Long organizationId = iJsonImportService.getOrganizationId(projectId);
         String folderBaseName = appName + "-" + appVersionName;
 
-        //创建TestAutomationHistoryE
-        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
-        historyE.setFramework("TestNg");
-        historyE.setInstanceId(instanceId);
-        historyE.setProjectId(projectId);
-        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
-        historyService.insert(historyE);
-
         // 保存完整json到数据库
         TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
         testAutomationResultE.setResult(json);
