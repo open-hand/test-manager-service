@@ -160,6 +160,7 @@
         cycle.execution_status,
         cycle.assigned_to,
         cycle.description,
+        tc.cycle_name,
         attach.url,
         attach.attachment_name,
         attach.id,
@@ -210,6 +211,7 @@
         AND attach.attachment_type = 'CYCLE_CASE'
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
         AND defect.defect_type = 'CYCLE_CASE'
+        left join test_cycle tc on cycle.cycle_id = tc.cycle_id
     </select>
 
     <select id="queryByFatherCycleWithAttachAndDefect" resultMap="BaseResultMap">
