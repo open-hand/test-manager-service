@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.common.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import io.choerodon.test.manager.api.dto.testng.TestNgCase;
 import io.choerodon.test.manager.api.dto.testng.TestNgResult;
 import io.choerodon.test.manager.api.dto.testng.TestNgSuite;
@@ -7,6 +8,7 @@ import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.modelmapper.ModelMapper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -99,26 +101,65 @@ public class TestNgUtil {
      * @param testCase
      * @param caseNode
      */
-    public static void handleParams(TestNgCase testCase, Element caseNode) {
+    private static void handleParams(TestNgCase testCase, Element caseNode) {
         List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
         for (Element lineNode : lineNodes) {
             String text = lineNode.getText();
             String content = text.substring(text.indexOf("["), text.lastIndexOf("\n"));
             if (content.startsWith(INPUT)) {
-                //输入参数
-                String input = content.split("\\[INPUT\\]")[1];
-                input = input.length() > 255 ? input.substring(0, 255) : input;
-                testCase.setInputData(input);
+                handleInputParams(testCase, content);
             } else if (content.startsWith(EXPECT)) {
-                //预期结果
-                String expect = content.split("\\[EXPECT\\]")[1];
-                expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
-                testCase.setExpectData(expect);
+                handleExpectParams(testCase, content);
             }
         }
     }
 
-    public static void reflectField(Object obj, List<Attribute> attrs) {
+    /**
+     * 输入参数的处理
+     */
+    private static void handleInputParams(TestNgCase testCase, String content) {
+        String input = content.split("\\[INPUT\\]")[1];
+        Map<String, Object> map = (Map<String, Object>) JSONObject.parse(input);
+        String method = (String)map.get("method");
+        if (method != null) {
+            switch (method) {
+                case "GET":
+                    input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
+                    break;
+                case "POST":
+                    input = "请求体：" + map.get("body");
+                    break;
+                case "PUT":
+                    input = "请求体：" + map.get("body");
+                    break;
+                case "DELETE":
+                    input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
+                    break;
+                default:
+                    break;
+            }
+        }
+        input = input.length() > 255 ? input.substring(0, 255) : input;
+        testCase.setInputData(input);
+    }
+
+    /**
+     * 预期结果的处理
+     */
+    private static void handleExpectParams(TestNgCase testCase, String content) {
+        String expect = content.split("\\[EXPECT\\]")[1];
+        List<Map<String, String>> list = (List<Map<String, String>>) JSONObject.parse(expect);
+        if(list!=null&&!list.isEmpty()){
+            expect = "预期结果：";
+            for (Map<String, String> map : list) {
+                expect += map.get("key") + "=" + map.get("value") + ";";
+            }
+        }
+        expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
+        testCase.setExpectData(expect);
+    }
+
+    private static void reflectField(Object obj, List<Attribute> attrs) {
         Map<String, String> attrMap = attrs.stream().collect(Collectors.toMap(Attribute::getName, Attribute::getValue));
         Class clz = obj.getClass();
         Method[] methods = clz.getMethods();

@@ -225,42 +225,43 @@ public class JsonImportServiceImpl implements JsonImportService {
             throw new CommonException("error.importTestNgReport.document.nutNull");
         }
         TestNgResult result = TestNgUtil.parseXmlToObject(document);
-        // 查询versionId和projectId
-        Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
-        Long instanceId = releaseNameFragments.get("instanceId");
-        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-        testAppInstanceE.setId(instanceId);
-        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
-        if (instance == null) {
-            logger.error("app instance 不存在");
-            throw new CommonException("app instance 不存在");
-        }
-        Long versionId = instance.getProjectVersionId();
-        Long projectId = instance.getProjectId();
-        Long createdBy = instance.getCreatedBy();
-        Long lastUpdatedBy = instance.getLastUpdatedBy();
-
-        // 查询组织Id, appName和appVersionName
-        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
-        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
-        Long organizationId = iJsonImportService.getOrganizationId(projectId);
-        String folderBaseName = appName + "-" + appVersionName;
+        logger.info("解析结果xml成功");
+//        // 查询versionId和projectId
+//        Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
+//        Long instanceId = releaseNameFragments.get("instanceId");
+//        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
+//        testAppInstanceE.setId(instanceId);
+//        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
+//        if (instance == null) {
+//            logger.error("app instance 不存在");
+//            throw new CommonException("app instance 不存在");
+//        }
+//        Long versionId = instance.getProjectVersionId();
+//        Long projectId = instance.getProjectId();
+//        Long createdBy = instance.getCreatedBy();
+//        Long lastUpdatedBy = instance.getLastUpdatedBy();
+//
+//        // 查询组织Id, appName和appVersionName
+//        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
+//        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
+//        Long organizationId = iJsonImportService.getOrganizationId(projectId);
+//        String folderBaseName = appName + "-" + appVersionName;
 
 //        //local测试
-//        String folderBaseName = "testng-0.3.0";
-//        Long projectId = 20L;
-//        Long organizationId = 8L;
-//        Long instanceId = 99999L;
-//        Long createdBy = 0L;
-//        Long lastUpdatedBy = 0L;
-//        Long versionId = 12L;
-//        //创建TestAutomationHistoryE
-//        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
-//        historyE.setFramework("TestNg");
-//        historyE.setInstanceId(instanceId);
-//        historyE.setProjectId(projectId);
-//        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
-//        historyService.insert(historyE);
+        String folderBaseName = "testng-0.4.0";
+        Long projectId = 20L;
+        Long organizationId = 8L;
+        Long instanceId = 99998L;
+        Long createdBy = 0L;
+        Long lastUpdatedBy = 0L;
+        Long versionId = 12L;
+        //创建TestAutomationHistoryE
+        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
+        historyE.setFramework("TestNg");
+        historyE.setInstanceId(instanceId);
+        historyE.setProjectId(projectId);
+        historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
+        historyService.insert(historyE);
 
         // 保存完整json到数据库
         TestAutomationResultE testAutomationResultE = SpringUtil.getApplicationContext().getBean(TestAutomationResultE.class);
@@ -307,14 +308,17 @@ public class JsonImportServiceImpl implements JsonImportService {
             //创建case，并回填executeId
             if (!allTestCycleCases.isEmpty()) {
                 createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+                logger.info("创建TestCase和TestCycleCase成功");
             }
             //若是第一次创建文件夹，则要创建caseStep
             if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
                 createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+                logger.info("创建TestCaseSteps成功");
             }
             //创建cycleCaseStep
             if (!allTestCycleCases.isEmpty()) {
                 backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+                logger.info("创建TestCycleCaseSteps成功");
             }
         }
         // 若有多个suite，拼接成listStr
@@ -327,6 +331,7 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         automationHistoryE.setResultId(resultId);
         iJsonImportService.updateAutomationHistoryStatus(automationHistoryE);
+        logger.info("更新TestAutomationHistory状态成功");
 
         return resultId;
     }
