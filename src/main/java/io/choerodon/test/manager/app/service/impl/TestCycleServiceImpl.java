@@ -320,7 +320,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                     folder.setFromDate(Date.from(to.toInstant().minus(folderDuration, ChronoUnit.SECONDS)));
                 }
 
-            } else if (folderDuration > cycleDuration) {
+            } else {
                 folder.setFromDate(from);
                 folder.setToDate(to);
             }
