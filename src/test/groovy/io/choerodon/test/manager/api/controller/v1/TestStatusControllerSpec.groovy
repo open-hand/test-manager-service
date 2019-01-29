@@ -2,8 +2,10 @@ package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestStatusDTO
+import io.choerodon.test.manager.api.dto.testng.TestNgCase
 import io.choerodon.test.manager.app.service.TestStatusService
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
+import io.choerodon.test.manager.infra.common.utils.TestNgUtil
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -35,7 +36,24 @@ class TestStatusControllerSpec extends Specification {
     List statusId = new ArrayList<>()
     @Shared
     def projectId = 144L
+//
+//    def "Inasas"() {
+//        given:
+//        String content = "[INPUT] {\"method\":\"POST\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
+//        TestNgUtil.handleInputParams(new TestNgCase(),content)
+//        content = "[INPUT] {\"method\":\"GET\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
+//        TestNgUtil.handleInputParams(new TestNgCase(),content)
+//        content = "[INPUT] {\"method\":\"PUT\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
+//        TestNgUtil.handleInputParams(new TestNgCase(),content)
+//        content = "[INPUT] {\"method\":\"DELETE\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
+//        TestNgUtil.handleInputParams(new TestNgCase(),content)
+//    }
 
+    def "111ss"() {
+        given:
+        String content = "[EXPECT] [{\"key\":\"applyType\",\"value\":\"\\\"agile\\\"\"},{\"key\":\"activeSprint.sprintId\",\"value\":\"null\"}]";
+        TestNgUtil.handleExpectParams(new TestNgCase(),content)
+    }
     def "Insert"() {
         given:
         TestStatusDTO status = new TestStatusDTO()
