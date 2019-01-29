@@ -61,7 +61,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
             stream=Stream.concat(stream,dto.getDefects().stream().map(TestCycleCaseDefectRelDTO::getIssueId));
         }
         Long[] issueLists = stream.filter(Objects::nonNull).distinct().toArray(Long[]::new);
-        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false,organizationId);
+        Map<Long, IssueInfosDTO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true,organizationId);
         dto.setIssueInfosDTO(defectMap.get(dto.getIssueId()));
         Optional.ofNullable(dto.getDefects()).ifPresent(v->v.forEach(u -> u.setIssueInfosDTO(defectMap.get(u.getIssueId()))));
     }
