@@ -67,13 +67,12 @@ public class TestAutomationController {
             throw new CommonException("error.decompress.tarGz", e);
         }
         String json = new String(bytes, StandardCharsets.UTF_8);
-        System.out.println(json);
         try {
             return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, json), HttpStatus.CREATED);
         } catch (Throwable e) {
             appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)), 3L);
-            logger.error("导入mocha测试报告失败，测试状态置为失败", e);
-            throw new CommonException("error.automation.import.mocha.report");
+            logger.error("导入testng测试报告失败，测试状态置为失败", e);
+            throw new CommonException("error.automation.import.testng.report");
         }
     }
 }

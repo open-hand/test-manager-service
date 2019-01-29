@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.common.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.testng.TestNgCase;
 import io.choerodon.test.manager.api.dto.testng.TestNgResult;
 import io.choerodon.test.manager.api.dto.testng.TestNgSuite;
@@ -8,7 +9,6 @@ import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.modelmapper.ModelMapper;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
  * @since 2019/1/21
  */
 public class TestNgUtil {
+    private TestNgUtil() {
+    }
+
     public static final String ATTR_URL = "url";
     public static final String ATTR_NAME = "name";
     public static final String ATTR_STATUS = "status";
@@ -62,21 +65,7 @@ public class TestNgUtil {
                 test.setStatus(TEST_PASSED);
                 List<TestNgCase> cases = new ArrayList<>();
                 List<Element> caseNodes = testNode.selectNodes(CASE_PATH);
-                for (Element caseNode : caseNodes) {
-                    Attribute attrIsConfig = caseNode.attribute(ATTR_IS_CONFIG);
-                    if (attrIsConfig != null && attrIsConfig.getValue().equals("true")) {
-                        continue;
-                    }
-                    TestNgCase testCase = new TestNgCase();
-                    reflectField(testCase, caseNode.attributes());
-                    //处理test的状态
-                    if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
-                        test.setStatus(TEST_FAILED);
-                    }
-                    //获取步骤相关参数
-                    handleParams(testCase, caseNode);
-                    cases.add(testCase);
-                }
+                handleCases(caseNodes, cases, test);
                 test.setCases(cases);
                 reflectField(test, testNode.attributes());
                 tests.add(test);
@@ -96,20 +85,50 @@ public class TestNgUtil {
     }
 
     /**
+     * 处理case
+     *
+     * @param caseNodes
+     * @param cases
+     * @param test
+     */
+    private static void handleCases(List<Element> caseNodes, List<TestNgCase> cases, TestNgTest test) {
+        for (Element caseNode : caseNodes) {
+            Attribute attrIsConfig = caseNode.attribute(ATTR_IS_CONFIG);
+            if (attrIsConfig != null && attrIsConfig.getValue().equals("true")) {
+                continue;
+            }
+            TestNgCase testCase = new TestNgCase();
+            reflectField(testCase, caseNode.attributes());
+            //处理test的状态
+            if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
+                test.setStatus(TEST_FAILED);
+            }
+            //获取步骤相关参数
+            handleParams(testCase, caseNode);
+            cases.add(testCase);
+        }
+    }
+
+    /**
      * 获取步骤相关参数
      *
      * @param testCase
      * @param caseNode
      */
     private static void handleParams(TestNgCase testCase, Element caseNode) {
+        //只处理第一个input和第一个expect
+        Boolean isInputHandle = true;
+        Boolean isExpectHandle = true;
         List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
         for (Element lineNode : lineNodes) {
             String text = lineNode.getText();
-            String content = text.substring(text.indexOf("["), text.lastIndexOf("\n"));
-            if (content.startsWith(INPUT)) {
+            String content = text.substring(text.indexOf('['), text.lastIndexOf('\n'));
+            if (content.startsWith(INPUT) && isInputHandle) {
                 handleInputParams(testCase, content);
-            } else if (content.startsWith(EXPECT)) {
+                isInputHandle = false;
+            } else if (content.startsWith(EXPECT) && isExpectHandle) {
                 handleExpectParams(testCase, content);
+                isExpectHandle = false;
             }
         }
     }
@@ -120,7 +139,7 @@ public class TestNgUtil {
     private static void handleInputParams(TestNgCase testCase, String content) {
         String input = content.split("\\[INPUT\\]")[1];
         Map<String, Object> map = (Map<String, Object>) JSONObject.parse(input);
-        String method = (String)map.get("method");
+        String method = (String) map.get("method");
         if (method != null) {
             switch (method) {
                 case "GET":
@@ -149,7 +168,7 @@ public class TestNgUtil {
     private static void handleExpectParams(TestNgCase testCase, String content) {
         String expect = content.split("\\[EXPECT\\]")[1];
         List<Map<String, String>> list = (List<Map<String, String>>) JSONObject.parse(expect);
-        if(list!=null&&!list.isEmpty()){
+        if (list != null && !list.isEmpty()) {
             expect = "预期结果：";
             for (Map<String, String> map : list) {
                 expect += map.get("key") + "=" + map.get("value") + ";";
@@ -178,7 +197,7 @@ public class TestNgUtil {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new CommonException(e.getMessage());
                 }
             }
         }

@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 public class JsonImportServiceImpl implements JsonImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonImportServiceImpl.class);
+    public static final String APP_INSTANCE_NOT_EXIST = "app instance 不存在";
+    public static final String INSTANCE_ID = "instanceId";
     @Autowired
     private IJsonImportService iJsonImportService;
     @Autowired
@@ -82,11 +84,11 @@ public class JsonImportServiceImpl implements JsonImportService {
         // 查询versionId和projectId
         Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
         TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-        testAppInstanceE.setId(releaseNameFragments.get("instanceId"));
+        testAppInstanceE.setId(releaseNameFragments.get(INSTANCE_ID));
         TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
         if (instance == null) {
-            logger.error("app instance 不存在");
-            throw new CommonException("app instance 不存在");
+            logger.error(APP_INSTANCE_NOT_EXIST);
+            throw new CommonException(APP_INSTANCE_NOT_EXIST);
         }
         Long versionId = instance.getProjectVersionId();
         Long projectId = instance.getProjectId();
@@ -119,7 +121,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
         TestAutomationHistoryE automationHistoryE = new TestAutomationHistoryE();
-        automationHistoryE.setInstanceId(releaseNameFragments.get("instanceId"));
+        automationHistoryE.setInstanceId(releaseNameFragments.get(INSTANCE_ID));
         automationHistoryE.setTestStatus(TestAutomationHistoryE.Status.COMPLETE);
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
         automationHistoryE.setCycleIds(String.valueOf(testStage.getCycleId()));
@@ -215,46 +217,38 @@ public class JsonImportServiceImpl implements JsonImportService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long importTestNgReport(String releaseName, String json) {
-        Document document = null;
+        Document document;
         try {
             document = DocumentHelper.parseText(json);
         } catch (DocumentException e) {
-            e.printStackTrace();
+            throw new CommonException(e.getMessage());
         }
         if (document == null) {
             throw new CommonException("error.importTestNgReport.document.nutNull");
         }
         TestNgResult result = TestNgUtil.parseXmlToObject(document);
         logger.info("解析结果xml成功");
-//        // 查询versionId和projectId
-//        Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
-//        Long instanceId = releaseNameFragments.get("instanceId");
-//        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
-//        testAppInstanceE.setId(instanceId);
-//        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
-//        if (instance == null) {
-//            logger.error("app instance 不存在");
-//            throw new CommonException("app instance 不存在");
-//        }
-//        Long versionId = instance.getProjectVersionId();
-//        Long projectId = instance.getProjectId();
-//        Long createdBy = instance.getCreatedBy();
-//        Long lastUpdatedBy = instance.getLastUpdatedBy();
-//
-//        // 查询组织Id, appName和appVersionName
-//        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
-//        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
-//        Long organizationId = iJsonImportService.getOrganizationId(projectId);
-//        String folderBaseName = appName + "-" + appVersionName;
+        // 查询versionId和projectId
+        Map<String, Long> releaseNameFragments = iJsonImportService.parseReleaseName(releaseName);
+        Long instanceId = releaseNameFragments.get(INSTANCE_ID);
+        TestAppInstanceE testAppInstanceE = new TestAppInstanceE();
+        testAppInstanceE.setId(instanceId);
+        TestAppInstanceE instance = iTestAppInstanceService.queryOne(testAppInstanceE);
+        if (instance == null) {
+            logger.error(APP_INSTANCE_NOT_EXIST);
+            throw new CommonException(APP_INSTANCE_NOT_EXIST);
+        }
+        Long versionId = instance.getProjectVersionId();
+        Long projectId = instance.getProjectId();
+        Long createdBy = instance.getCreatedBy();
+        Long lastUpdatedBy = instance.getLastUpdatedBy();
 
-//        //local测试
-        String folderBaseName = "testng-0.4.0";
-        Long projectId = 20L;
-        Long organizationId = 8L;
-        Long instanceId = 99998L;
-        Long createdBy = 0L;
-        Long lastUpdatedBy = 0L;
-        Long versionId = 12L;
+        // 查询组织Id, appName和appVersionName
+        String appName = iJsonImportService.getAppName(projectId, releaseNameFragments.get("appId"));
+        String appVersionName = iJsonImportService.getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
+        Long organizationId = iJsonImportService.getOrganizationId(projectId);
+        String folderBaseName = appName + "-" + appVersionName;
+
         //创建TestAutomationHistoryE
         TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setFramework("TestNg");
