@@ -9,6 +9,8 @@ import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 public class TestNgUtil {
     private TestNgUtil() {
     }
+
+    public static final Logger logger = LoggerFactory.getLogger(TestNgUtil.class);
 
     public static final String ATTR_URL = "url";
     public static final String ATTR_NAME = "name";
@@ -54,7 +58,7 @@ public class TestNgUtil {
 
     public static TestNgResult parseXmlToObject(Document document) {
         Element root = document.getRootElement();
-        root.attributes();//
+        root.attributes();
         List<TestNgSuite> suites = new ArrayList<>();
         List<Element> suiteNodes = root.selectNodes(SUITE_PATH);
         for (Element suiteNode : suiteNodes) {
@@ -138,27 +142,31 @@ public class TestNgUtil {
      */
     private static void handleInputParams(TestNgCase testCase, String content) {
         String input = content.split("\\[INPUT\\]")[1];
-        Map<String, Object> map = (Map<String, Object>) JSONObject.parse(input);
-        String method = (String) map.get("method");
-        if (method != null) {
-            switch (method) {
-                case "GET":
-                    input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
-                    break;
-                case "POST":
-                    input = "请求体：" + map.get("body");
-                    break;
-                case "PUT":
-                    input = "请求体：" + map.get("body");
-                    break;
-                case "DELETE":
-                    input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
-                    break;
-                default:
-                    break;
+        try {
+            Map<String, Object> map = (Map<String, Object>) JSONObject.parse(input);
+            String method = (String) map.get("method");
+            if (method != null) {
+                switch (method) {
+                    case "GET":
+                        input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
+                        break;
+                    case "POST":
+                        input = "请求体：" + map.get("body");
+                        break;
+                    case "PUT":
+                        input = "请求体：" + map.get("body");
+                        break;
+                    case "DELETE":
+                        input = "请求参数：" + map.get("queryParams") + "，路由参数：" + map.get("pathParams");
+                        break;
+                    default:
+                        break;
+                }
             }
+            input = input.length() > 255 ? input.substring(0, 255) : input;
+        } catch (Exception e) {
+            logger.info("handleInputParams is not Map");
         }
-        input = input.length() > 255 ? input.substring(0, 255) : input;
         testCase.setInputData(input);
     }
 
@@ -167,14 +175,18 @@ public class TestNgUtil {
      */
     private static void handleExpectParams(TestNgCase testCase, String content) {
         String expect = content.split("\\[EXPECT\\]")[1];
-        List<Map<String, String>> list = (List<Map<String, String>>) JSONObject.parse(expect);
-        if (list != null && !list.isEmpty()) {
-            expect = "预期结果：";
-            for (Map<String, String> map : list) {
-                expect += map.get("key") + "=" + map.get("value") + ";";
+        try {
+            List<Map<String, String>> list = (List<Map<String, String>>) JSONObject.parse(expect);
+            if (list != null && !list.isEmpty()) {
+                expect = "预期结果：";
+                for (Map<String, String> map : list) {
+                    expect += map.get("key") + "=" + map.get("value") + ";";
+                }
             }
+            expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
+        } catch (Exception e) {
+            logger.info("handleExpectParams is not MapList");
         }
-        expect = expect.length() > 255 ? expect.substring(0, 255) : expect;
         testCase.setExpectData(expect);
     }
 
