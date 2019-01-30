@@ -114,7 +114,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         int highPage = (pageNum + 1) * pageSize - 1;
         int lowPage = pageNum * pageSize;
         //创建一个Long数组，将对应分页的issuesId传给它
-        int size = highPage - allFilteredIssues.length > 0 ? allFilteredIssues.length - lowPage : pageSize;
+        int size = highPage - allFilteredIssues.length >= 0 ? allFilteredIssues.length - lowPage : pageSize;
 
         Long[] pagedIssues = new Long[size];
         System.arraycopy(allFilteredIssues, lowPage, pagedIssues, 0, size);
