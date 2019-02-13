@@ -25,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import java.time.Duration;
-import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -336,7 +334,8 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public JSONObject getTestCycle(Long projectId, Long assignedTo) {
-        List<ProductVersionDTO> versions = new ArrayList<>(testCaseService.getVersionInfo(projectId).values());
+        List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
+                .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
         if (versions.isEmpty()) {
             return new JSONObject();
         }
