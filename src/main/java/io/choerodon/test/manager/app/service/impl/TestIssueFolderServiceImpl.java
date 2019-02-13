@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +86,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public JSONObject getTestIssueFolder(Long projectId) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values().stream().collect(Collectors.toList());
+        List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
+                .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
         if (versions.isEmpty()) {
             return new JSONObject();
         }
@@ -117,7 +119,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     /**
      * @param projectId
      * @param versionId 要复制到的目标version
-     * @param folderIds  要被复制的源folder
+     * @param folderIds 要被复制的源folder
      * @return 被复制成功的目标folder
      */
     @Transactional(rollbackFor = Exception.class)
