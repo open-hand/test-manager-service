@@ -2,10 +2,8 @@ package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestStatusDTO
-import io.choerodon.test.manager.api.dto.testng.TestNgCase
 import io.choerodon.test.manager.app.service.TestStatusService
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
-import io.choerodon.test.manager.infra.common.utils.TestNgUtil
 import io.choerodon.test.manager.infra.dataobject.TestStatusDO
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
 import org.apache.commons.lang.StringUtils
@@ -36,24 +34,7 @@ class TestStatusControllerSpec extends Specification {
     List statusId = new ArrayList<>()
     @Shared
     def projectId = 144L
-//
-//    def "Inasas"() {
-//        given:
-//        String content = "[INPUT] {\"method\":\"POST\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
-//        TestNgUtil.handleInputParams(new TestNgCase(),content)
-//        content = "[INPUT] {\"method\":\"GET\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
-//        TestNgUtil.handleInputParams(new TestNgCase(),content)
-//        content = "[INPUT] {\"method\":\"PUT\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
-//        TestNgUtil.handleInputParams(new TestNgCase(),content)
-//        content = "[INPUT] {\"method\":\"DELETE\",\"pathParams\":{},\"body\":\"{\\\"priorityCode\\\":\\\"priority-58\\\",\\\"priorityId\\\":58,\\\"projectId\\\":\\\"340\\\",\\\"sprintId\\\":1033,\\\"summary\\\":\\\"丁煌测试2\\\",\\\"issueTypeId\\\":116,\\\"typeCode\\\":\\\"story\\\",\\\"parentIssueId\\\":0}\",\"queryParams\":{\"applyType\":\"agile\"},\"uri\":\"http://api.staging.saas.hand-china.com/agile/v1/projects/340/issues?applyType=agile\"}";
-//        TestNgUtil.handleInputParams(new TestNgCase(),content)
-//    }
 
-    def "111ss"() {
-        given:
-        String content = "[EXPECT] [{\"key\":\"applyType\",\"value\":\"\\\"agile\\\"\"},{\"key\":\"activeSprint.sprintId\",\"value\":\"null\"}]";
-        TestNgUtil.handleExpectParams(new TestNgCase(),content)
-    }
     def "Insert"() {
         given:
         TestStatusDTO status = new TestStatusDTO()
@@ -128,7 +109,7 @@ class TestStatusControllerSpec extends Specification {
         def info = null
 
         when: '向修改issues的接口发请求'
-        restTemplate.put('/v1/projects/{project_id}/status/update', statusNew,projectId)
+        restTemplate.put('/v1/projects/{project_id}/status/update', statusNew, projectId)
 
         then: '返回值'
         TestStatusDO testStatusDO = testStatusMapper.selectByPrimaryKey(statusId[0])
@@ -154,8 +135,8 @@ class TestStatusControllerSpec extends Specification {
     }
 
     def "Delete"() {
-        when:'向刪除issues的接口发请求'
-        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', projectId,issueId)
+        when: '向刪除issues的接口发请求'
+        restTemplate.delete('/v1/projects/{project_id}/status/{statusId}', projectId, issueId)
 
         then: '返回值'
         def result = testStatusMapper.selectByPrimaryKey(issueId as Long)
