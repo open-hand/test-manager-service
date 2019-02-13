@@ -103,8 +103,8 @@ public class TestNgUtil {
             }
             TestNgCase testCase = new TestNgCase();
             reflectField(testCase, caseNode.attributes());
-            //处理test的状态
-            if (test.getStatus().equals(TEST_PASSED) && testCase.getStatus().equals(TEST_FAILED)) {
+            //case有一个没通过则整个test都failed
+            if (test.getStatus().equals(TEST_PASSED) && !testCase.getStatus().equals(TEST_PASSED)) {
                 test.setStatus(TEST_FAILED);
             }
             //获取步骤相关参数
