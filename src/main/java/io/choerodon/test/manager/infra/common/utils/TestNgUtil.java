@@ -49,7 +49,8 @@ public class TestNgUtil {
     public static final String SUITE_PATH = "//suite";
     public static final String TEST_PATH = "test";
     public static final String CASE_PATH = "class/test-method";
-    public static final String LINE_PATH = "reporter-output/line";
+    public static final String PARAM_PATH = "reporter-output/line";
+    public static final String ERROR_PATH = "exception/message";
     public static final String TEST_PASSED = "PASS";
     public static final String TEST_FAILED = "FAIL";
     public static final String TEST_SKIPPED = "SKIP";
@@ -107,12 +108,28 @@ public class TestNgUtil {
             if (test.getStatus().equals(TEST_PASSED) && !testCase.getStatus().equals(TEST_PASSED)) {
                 test.setStatus(TEST_FAILED);
             }
+            //设置执行失败的错误信息
+            handleError(testCase, caseNode);
             //获取步骤相关参数
             handleParams(testCase, caseNode);
             cases.add(testCase);
         }
     }
 
+    /**
+     * 获取失败异常信息
+     *
+     * @param testCase
+     * @param caseNode
+     */
+    private static void handleError(TestNgCase testCase, Element caseNode) {
+        List<Element> errorNdoes = caseNode.selectNodes(ERROR_PATH);
+        for (Element errorNdoe : errorNdoes) {
+            String text = errorNdoe.getText();
+            String content = text.substring(text.indexOf('\n'), text.lastIndexOf('\n')).trim();
+            testCase.setExceptionMessage(content);
+        }
+    }
     /**
      * 获取步骤相关参数
      *
@@ -123,7 +140,7 @@ public class TestNgUtil {
         //只处理第一个input和第一个expect
         Boolean isInputHandle = true;
         Boolean isExpectHandle = true;
-        List<Element> lineNodes = caseNode.selectNodes(LINE_PATH);
+        List<Element> lineNodes = caseNode.selectNodes(PARAM_PATH);
         for (Element lineNode : lineNodes) {
             String text = lineNode.getText();
             String content = text.substring(text.indexOf('['), text.lastIndexOf('\n'));
