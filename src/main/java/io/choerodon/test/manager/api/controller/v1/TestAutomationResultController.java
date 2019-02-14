@@ -1,20 +1,22 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.util.List;
-import java.util.Optional;
-
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.TestAutomationResultDTO;
+import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
+import io.choerodon.test.manager.app.service.TestAutomationResultService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
-import io.choerodon.test.manager.api.dto.TestAutomationResultDTO;
-import io.choerodon.test.manager.app.service.TestAutomationResultService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/projects/{project_id}/automation/result")
@@ -22,17 +24,24 @@ public class TestAutomationResultController {
 
     @Autowired
     private TestAutomationResultService testAutomationResultService;
+    @Autowired
+    private TestAutomationHistoryService testAutomationHistoryService;
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
-    public ResponseEntity<String> query(@PathVariable("project_id") Long projectId,
-                                                               @PathVariable("id") Long id) {
+    public ResponseEntity<Map<String, String>> query(@PathVariable("project_id") Long projectId,
+                                                     @PathVariable("id") Long id) {
+        Map<String, String> result = new HashMap<>(2);
+        String framework = testAutomationHistoryService.queryFrameworkByResultId(projectId, id);
         TestAutomationResultDTO testAutomationResultDTO = new TestAutomationResultDTO();
         testAutomationResultDTO.setId(id);
-        return Optional.ofNullable(testAutomationResultService.query(testAutomationResultDTO))
-                .map(result -> new ResponseEntity<>(result.get(0).getResult(), HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testAutomationResult.query.id"));
+        List<TestAutomationResultDTO> list = testAutomationResultService.query(testAutomationResultDTO);
+        if (!list.isEmpty()) {
+            result.put("framework", framework);
+            result.put("json", list.get(0).getResult());
+        }
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

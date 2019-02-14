@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.core.domain.Page;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
@@ -10,6 +11,7 @@ import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import org.modelmapper.ModelMapper;
@@ -72,7 +74,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         List<String> cycleStrIds = new ArrayList<>();
         page.getContent().forEach(x -> {
             String cycleIdsStr = x.getCycleIds();
-            if(cycleIdsStr!=null&&!cycleIdsStr.equals("")){
+            if (cycleIdsStr != null && !cycleIdsStr.equals("")) {
                 String[] cycleIds = x.getCycleIds().split(",");
                 if (cycleIds.length <= 1) {
                     x.setMoreCycle(false);
@@ -99,5 +101,17 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
                 x.setCycleDTOS(dtos);
             });
         }
+    }
+
+    @Override
+    public String queryFrameworkByResultId(Long projectId, Long resultId) {
+        TestAutomationHistoryE testAutomationHistory = new TestAutomationHistoryE();
+        testAutomationHistory.setResultId(resultId);
+        testAutomationHistory.setProjectId(projectId);
+        List<TestAutomationHistoryE> list = iTestAutomationHistoryService.query(testAutomationHistory);
+        if (list == null || list.isEmpty()) {
+            throw new CommonException("error.testAutomationHistoryService.queryFrameworkByResultId");
+        }
+        return list.get(0).getFramework();
     }
 }
