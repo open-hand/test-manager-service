@@ -475,11 +475,12 @@ public class IJsonImportServiceImpl implements IJsonImportService {
             testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
             testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
             testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
+            testCycleCaseStepE.setComment(testNgCase.getExceptionMessage());
             //查询状态
             TestStatusE stepStatusE = SpringUtil.getApplicationContext().getBean(TestStatusE.class);
             stepStatusE.setProjectId(0L);
             stepStatusE.setStatusType(TestStatusE.STATUS_TYPE_CASE_STEP);
-            stepStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+            stepStatusE.setStatusName(testNgCase.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
             TestStatusE stepStatus = stepStatusE.queryOneSelective();
             testCycleCaseStepE.setStepStatus(stepStatus.getStatusId());
             testCycleCaseStepE.setStatusName(stepStatus.getStatusName());

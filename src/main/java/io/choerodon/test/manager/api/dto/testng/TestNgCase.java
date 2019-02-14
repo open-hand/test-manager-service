@@ -14,6 +14,15 @@ public class TestNgCase {
     private Long durationMs;
     private String inputData;
     private String expectData;
+    private String exceptionMessage;
+
+    public String getExceptionMessage() {
+        return exceptionMessage;
+    }
+
+    public void setExceptionMessage(String exceptionMessage) {
+        this.exceptionMessage = exceptionMessage;
+    }
 
     public String getInputData() {
         return inputData;
