@@ -8,5 +8,7 @@ import java.util.Map;
 
 public interface TestAutomationHistoryService {
 
-    Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest,Long projectId);
+    Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId);
+
+    String queryFrameworkByResultId(Long projectId, Long resultId);
 }

@@ -8,6 +8,16 @@ public class TestAutomationResultDTO {
 
     private Long objectVersionNumber;
 
+    private String framework;
+
+    public String getFramework() {
+        return framework;
+    }
+
+    public void setFramework(String framework) {
+        this.framework = framework;
+    }
+
     public Long getId() {
         return id;
     }

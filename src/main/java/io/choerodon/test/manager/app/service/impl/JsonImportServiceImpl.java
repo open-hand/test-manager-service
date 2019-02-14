@@ -16,6 +16,7 @@ import io.choerodon.test.manager.infra.common.utils.TestNgUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,10 +217,14 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Long importTestNgReport(String releaseName, String json) {
+    public Long importTestNgReport(String releaseName, String xml) {
+        //xml转json，并设置缩进
+        org.json.JSONObject xmlJSONObj = XML.toJSONObject(xml);
+        String json = xmlJSONObj.toString(4);
+        //xml转document
         Document document;
         try {
-            document = DocumentHelper.parseText(json);
+            document = DocumentHelper.parseText(xml);
         } catch (DocumentException e) {
             throw new CommonException(e.getMessage());
         }

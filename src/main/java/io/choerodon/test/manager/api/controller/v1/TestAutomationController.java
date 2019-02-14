@@ -66,9 +66,9 @@ public class TestAutomationController {
         } catch (IOException e) {
             throw new CommonException("error.decompress.tarGz", e);
         }
-        String json = new String(bytes, StandardCharsets.UTF_8);
+        String xml = new String(bytes, StandardCharsets.UTF_8);
         try {
-            return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, json), HttpStatus.CREATED);
+            return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {
             appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入testng测试报告失败，测试状态置为失败", e);
