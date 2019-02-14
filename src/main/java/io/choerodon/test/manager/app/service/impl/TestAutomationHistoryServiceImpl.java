@@ -50,7 +50,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
             map.put("appVersionId", versionId);
         }
         Page<TestAutomationHistoryDTO> list = iTestAutomationHistoryService.queryWithInstance(map, pageRequest);
-//        populateAPPVersion(projectId, list);
+        populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
         populateCycles(list);
         return list;
