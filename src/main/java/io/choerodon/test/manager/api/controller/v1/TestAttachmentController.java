@@ -29,30 +29,26 @@ public class TestAttachmentController {
     @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-	@ApiOperation("增加附件")
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("增加附件")
     @PostMapping
-	public ResponseEntity<List<TestCycleCaseAttachmentRelDTO>> uploadFile(@RequestParam("bucket_name") String bucketName,
-																		  @RequestParam("attachmentLinkId") Long attachmentLinkId,
-																		  @RequestParam("attachmentType") String attachmentType,
-																		  @PathVariable(name = "project_id") Long projectId,
-																		  HttpServletRequest request) {
-		List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-
-		List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS = new ArrayList<>();
-		files.forEach(v -> attachmentRelDTOS.add(testCycleCaseAttachmentRelService.upload(bucketName, v.getOriginalFilename(), v, attachmentLinkId, attachmentType, null)));
-		return Optional.ofNullable(attachmentRelDTOS)
-				.map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-				.orElseThrow(() -> new CommonException("error.upload.file"));
+    public ResponseEntity<List<TestCycleCaseAttachmentRelDTO>> uploadFile(@RequestParam("bucket_name") String bucketName,
+                                                                          @RequestParam("attachmentLinkId") Long attachmentLinkId,
+                                                                          @RequestParam("attachmentType") String attachmentType,
+                                                                          @PathVariable(name = "project_id") Long projectId,
+                                                                          HttpServletRequest request) {
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request, bucketName, attachmentLinkId, attachmentType))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.upload.file"));
 
     }
 
-	@Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除附件")
-	@DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
-	public ResponseEntity removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,
-										   @PathVariable(name = "project_id") Long projectId) {
+    @DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
+    public ResponseEntity removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,
+                                           @PathVariable(name = "project_id") Long projectId) {
         testCycleCaseAttachmentRelService.delete(bucketName, attachId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
