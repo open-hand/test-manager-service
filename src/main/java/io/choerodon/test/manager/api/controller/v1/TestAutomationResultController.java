@@ -30,9 +30,9 @@ public class TestAutomationResultController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
-    public ResponseEntity<Map<String, String>> query(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
                                                      @PathVariable("id") Long id) {
-        Map<String, String> result = new HashMap<>(2);
+        Map<String, Object> result = new HashMap<>(2);
         String framework = testAutomationHistoryService.queryFrameworkByResultId(projectId, id);
         TestAutomationResultDTO testAutomationResultDTO = new TestAutomationResultDTO();
         testAutomationResultDTO.setId(id);
@@ -40,6 +40,7 @@ public class TestAutomationResultController {
         if (!list.isEmpty()) {
             result.put("framework", framework);
             result.put("json", list.get(0).getResult());
+            result.put("creationDate", list.get(0).getCreationDate());
         }
         return new ResponseEntity(result, HttpStatus.OK);
     }

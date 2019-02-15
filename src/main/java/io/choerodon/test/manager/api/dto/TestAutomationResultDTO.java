@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.dto;
 
+import java.util.Date;
+
 public class TestAutomationResultDTO {
 
     private Long id;
@@ -9,6 +11,16 @@ public class TestAutomationResultDTO {
     private Long objectVersionNumber;
 
     private String framework;
+
+    private Date creationDate;
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
     public String getFramework() {
         return framework;
