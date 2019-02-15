@@ -253,11 +253,15 @@ class TestCycleControllerSpec extends Specification {
         ProductVersionDTO productVersionDTO = new ProductVersionDTO()
         productVersionDTO.setVersionId(versionId)
         productVersionDTO.setStatusName("testCycle")
+        productVersionDTO.setStatusCode("a")
+        productVersionDTO.setSequence(1)
         productVersionDTO.setName("testCycle")
 
         ProductVersionDTO productVersionDTO2 = new ProductVersionDTO()
         productVersionDTO2.setVersionId(22222222L)
         productVersionDTO2.setName("testCycle2")
+        productVersionDTO2.setStatusCode("a")
+        productVersionDTO2.setSequence(2)
         productVersionDTO2.setStatusName("testCycle2")
 
         Map map = new HashMap()

@@ -110,7 +110,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         testAutomationHistory.setProjectId(projectId);
         List<TestAutomationHistoryE> list = iTestAutomationHistoryService.query(testAutomationHistory);
         if (list == null || list.isEmpty()) {
-            throw new CommonException("error.testAutomationHistoryService.queryFrameworkByResultId");
+            return null;
         }
         return list.get(0).getFramework();
     }
