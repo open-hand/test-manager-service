@@ -69,12 +69,12 @@ class TestAutomationResultControllerSpec extends Specification {
         def response = restTemplate.exchange("/v1/projects/{project_id}/automation/result/query/{id}",
                 HttpMethod.GET,
                 null,
-                String,
+                Map,
                 144L, automationResultIds[0]
         )
         then:
         response.statusCode == HttpStatus.OK
-        response.body == "测试报告内容1"
+        response.body.get("json") == "测试报告内容1"
     }
 
     def "removeAutomationResult"() {
