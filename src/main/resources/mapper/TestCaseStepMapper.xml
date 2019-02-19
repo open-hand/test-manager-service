@@ -69,4 +69,14 @@ ORDER BY
             #{testCaseStep.lastUpdatedBy}, #{testCaseStep.lastUpdateDate})
         </foreach>
     </insert>
+
+    <update id="updateAuditFields">
+        update test_case_step
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where issue_id IN
+        <foreach item="item" index="index" collection="issueIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

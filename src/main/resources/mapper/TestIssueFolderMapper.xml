@@ -9,4 +9,14 @@
         <id column="project_id" property="projectId"/>
         <id column="type" property="type"/>
     </resultMap>
+
+    <update id="updateAuditFields">
+        update test_issue_folder
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where folder_id IN
+        <foreach item="item" index="index" collection="folderIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

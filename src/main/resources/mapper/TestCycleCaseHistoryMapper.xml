@@ -32,4 +32,13 @@
       select * from test_cycle_case_history where id=#{id}
     </select>
 
+    <update id="updateAuditFields">
+        update test_cycle_case_history
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where execute_id IN
+        <foreach item="item" index="index" collection="executeIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

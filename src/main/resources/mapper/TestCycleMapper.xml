@@ -250,4 +250,14 @@
             #{item}
         </foreach>
     </select>
+
+    <update id="updateAuditFields">
+        update test_cycle
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where cycle_id IN
+        <foreach item="item" index="index" collection="cycleIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

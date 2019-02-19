@@ -52,4 +52,10 @@ FROM
 WHERE
 	step_status = #{statusId}
     </select>
+
+    <update id="updateAuditFields">
+        update test_cycle_case_step
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where status_id = #{statusId}
+    </update>
 </mapper>

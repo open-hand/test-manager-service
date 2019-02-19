@@ -181,4 +181,14 @@
             1, #{cycleCaseStep.createdBy}, #{cycleCaseStep.creationDate}, #{cycleCaseStep.lastUpdatedBy}, #{cycleCaseStep.lastUpdateDate})
         </foreach>
     </insert>
+
+    <update id="updateAuditFields">
+        update test_cycle_case_step
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where execute_id IN
+        <foreach item="item" index="index" collection="executeIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>
