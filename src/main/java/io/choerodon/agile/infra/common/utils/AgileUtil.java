@@ -4,7 +4,6 @@ import io.choerodon.agile.api.dto.IssueTypeDTO;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.agile.infra.common.enums.SchemeApplyType;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 import java.util.HashMap;
@@ -31,15 +30,14 @@ public class AgileUtil {
     public static final String PRIORITY_ID = "priorityId";
 
 
-    public static Long queryIssueTypeId(Long projectId, Long organizationId, String issueTypeCode) {
+    public static Long queryIssueTypeId(Long projectId, Long organizationId, String issueTypeCode, IssueFeignClient issueFeignClient) {
         Long issueTypeId;
         Object issueTypeMapObj = threadLocal.get().get(ISSUE_TYPE_MAP);
         if (issueTypeMapObj == null) {
-            //获取自动化测试问题类型id
-            IssueFeignClient issueFeignClient = SpringUtil.getApplicationContext().getBean(IssueFeignClient.class);
+            //获取问题类型id
             Map<String, Long> issueTypeCodeMap = issueFeignClient.queryIssueType(projectId, SchemeApplyType.TEST, organizationId).getBody()
                     .stream().collect(Collectors.toMap(IssueTypeDTO::getTypeCode, IssueTypeDTO::getId));
-            issueTypeId = issueTypeCodeMap.get(IssueTypeCode.ISSUE_AUTO_TEST);
+            issueTypeId = issueTypeCodeMap.get(issueTypeCode);
             threadLocal.get().put(ISSUE_TYPE_MAP, issueTypeCodeMap);
         } else {
             issueTypeId = ((Map<String, Long>) issueTypeMapObj).get(issueTypeCode);
@@ -50,12 +48,10 @@ public class AgileUtil {
         return issueTypeId;
     }
 
-    public static Long queryDefaultPriorityId(Long projectId, Long organizationId) {
+    public static Long queryDefaultPriorityId(Long projectId, Long organizationId, IssueFeignClient issueFeignClient) {
         Long defaultPriorityId;
         Object priorityIdObj = threadLocal.get().get(PRIORITY_ID);
         if (priorityIdObj == null) {
-            //获取自动化测试问题类型id
-            IssueFeignClient issueFeignClient = SpringUtil.getApplicationContext().getBean(IssueFeignClient.class);
             //获取默认优先级
             defaultPriorityId = issueFeignClient.queryDefaultPriority(projectId, organizationId).getBody().getId();
             threadLocal.get().put(PRIORITY_ID, defaultPriorityId);

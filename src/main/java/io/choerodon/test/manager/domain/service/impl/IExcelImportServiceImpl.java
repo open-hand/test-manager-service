@@ -262,13 +262,13 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId);
+        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId, issueFeignClient);
         issueCreateDTO.setPriorityCode("priority-" + priorityId);
         issueCreateDTO.setPriorityId(priorityId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_TEST);
-        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_TEST));
+        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_TEST, issueFeignClient));
 
         VersionIssueRelDTO versionIssueRelDTO = new VersionIssueRelDTO();
         versionIssueRelDTO.setVersionId(versionId);

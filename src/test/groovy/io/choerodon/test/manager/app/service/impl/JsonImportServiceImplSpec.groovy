@@ -1,10 +1,6 @@
 package io.choerodon.test.manager.app.service.impl
 
-import io.choerodon.agile.api.dto.IssueCreateDTO
-import io.choerodon.agile.api.dto.IssueDTO
-import io.choerodon.agile.api.dto.IssueTypeDTO
-import io.choerodon.agile.api.dto.PriorityDTO
-import io.choerodon.agile.api.dto.ProjectDTO
+import io.choerodon.agile.api.dto.*
 import io.choerodon.core.exception.CommonException
 import io.choerodon.devops.api.dto.ApplicationRepDTO
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
@@ -22,11 +18,7 @@ import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.IssueFeignClient
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient
-import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper
-import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper
-import io.choerodon.test.manager.infra.mapper.TestAutomationResultMapper
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
+import io.choerodon.test.manager.infra.mapper.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -39,7 +31,6 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.CompletionException
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -92,8 +83,8 @@ class JsonImportServiceImplSpec extends Specification {
         given:
         PageHelper.clearPage();
         PageHelper.clearSort();
-        RedisAtomicLong RAL=Mock(RedisAtomicLong)
-        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
+        RedisAtomicLong RAL = Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestAppInstanceE instanceE = new TestAppInstanceE(
                 code: "mocha-test",
                 projectVersionId: 233L,
@@ -111,7 +102,7 @@ class JsonImportServiceImplSpec extends Specification {
 
         ProjectFeignClient projectFeignClient = Mock() {
             _ * query(instanceE.projectId) >>
-                    new ResponseEntity<>(new ProjectDTO(organizationId: 1L), HttpStatus.OK)
+            new ResponseEntity<>(new ProjectDTO(organizationId: 1L), HttpStatus.OK)
         }
         ApplicationFeignClient applicationFeignClient = Mock()
 
@@ -120,12 +111,13 @@ class JsonImportServiceImplSpec extends Specification {
 
         IssueFeignClient issueFeignClient = Mock() {
             _ * queryDefaultPriority(instanceE.projectId, _ as Long) >>
-                    new ResponseEntity<>([new PriorityDTO(id: 8L, isDefault: true)], HttpStatus.OK)
+            new ResponseEntity<>(new PriorityDTO(id: 8L, isDefault: true), HttpStatus.OK)
             _ * queryIssueType(instanceE.projectId, "test", _ as Long) >>
-                    new ResponseEntity<>([new IssueTypeDTO(typeCode: "issue_test", id: 18L)], HttpStatus.OK)
+            new ResponseEntity<>([new IssueTypeDTO(typeCode: "issue_test", id: 18L), new IssueTypeDTO(typeCode: "issue_auto_test", id: 19L)], HttpStatus.OK)
         }
 
         iExcelImportService.setIssueFeignClient(issueFeignClient)
+        iJsonImportService.setIssueFeignClient(issueFeignClient)
         def issueDTOs = []
         for (long i in 1000001L..1000009L) {
             issueDTOs << new IssueDTO(issueId: i)
@@ -146,9 +138,9 @@ class JsonImportServiceImplSpec extends Specification {
         jsonImportService.importMochaReport("att-662-582000000-$instanceId", report)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
+        new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.INTERNAL_SERVER_ERROR)
         (0..1) * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
+        new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.OK)
         CommonException completionException = thrown()
         completionException.message == "error.get.app.version.name"
 
@@ -156,9 +148,9 @@ class JsonImportServiceImplSpec extends Specification {
         jsonImportService.importMochaReport("att-662000000-582-$instanceId", report)
         then:
         (0..1) * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
+        new ResponseEntity<>([new ApplicationVersionRepDTO(version: "测试版本号")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.INTERNAL_SERVER_ERROR)
+        new ResponseEntity<>(new ApplicationRepDTO(name: "应用名称"), HttpStatus.INTERNAL_SERVER_ERROR)
         completionException = thrown()
         completionException.message == "error.get.app.name"
 
@@ -167,9 +159,9 @@ class JsonImportServiceImplSpec extends Specification {
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
+        new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
 
         when: "重试"
         reportId = jsonImportService.importMochaReport("att-662-582-$instanceId", report)
@@ -180,17 +172,17 @@ class JsonImportServiceImplSpec extends Specification {
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
+        new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.10-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
 
         when: "测试用例数量为 0"
         reportId = jsonImportService.importMochaReport("att-663-583-$instanceId", emptyReport)
         automationResultMapper.deleteByPrimaryKey(reportId)
         then:
         1 * applicationFeignClient.getAppversion(instanceE.projectId, _ as List<Long>) >>
-                new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.11-111111-master")], HttpStatus.OK)
+        new ResponseEntity<>([new ApplicationVersionRepDTO(version: "2018.12.11-111111-master")], HttpStatus.OK)
         1 * applicationFeignClient.queryByAppId(instanceE.projectId, _ as Long) >>
-                new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
+        new ResponseEntity<>(new ApplicationRepDTO(name: "自动化测试mocha"), HttpStatus.OK)
     }
 }

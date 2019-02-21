@@ -29,6 +29,7 @@ import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO;
 import io.choerodon.test.manager.infra.exception.IssueCreateException;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
@@ -74,6 +75,13 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     private TestCycleService testCycleService;
 
     @Autowired
+    private IssueFeignClient issueFeignClient;
+
+    public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
+        this.issueFeignClient = issueFeignClient;
+    }
+
+    @Autowired
     public void setiExcelImportService(IExcelImportService iExcelImportService) {
         this.iExcelImportService = iExcelImportService;
     }
@@ -113,8 +121,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         issueCreateDTO.setAssigneeId(createdBy);
         issueCreateDTO.setReporterId(createdBy);
 
-        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_AUTO_TEST));
-        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId);
+        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_AUTO_TEST, issueFeignClient));
+        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId, issueFeignClient);
         issueCreateDTO.setPriorityCode("priority-" + priorityId);
         issueCreateDTO.setPriorityId(priorityId);
 
