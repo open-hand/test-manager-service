@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-02-15.
@@ -107,9 +105,9 @@ public class DemoServiceImpl implements DemoService {
         initIssueSteps(testIssueIds, projectId, userId, dateOne);
         initIssueFolderRels(issueFolderIds, testIssueIds, projectId, versionId, userId, dateOne);
         List<Long> cycleIds = initCycles(versionId, dateOne, dateThree, dateFour, dateSix, userId);
-        List<Long> phaseIds = initCycleFolders(cycleIds, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
+        Map<Long, List<Long>> phaseIdsMap = initCycleFolders(cycleIds, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
         Long statusWIPId = initTestStatus(projectId, userId, dateOne);
-        Long[] defectExecution = updateExecutionStatus(phaseIds, testIssueIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
+        Long[] defectExecution = updateExecutionStatus(phaseIdsMap, testIssueIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
         initExecutionDefect(defectExecution, projectId, organizationId, userId, dateThree);
     }
 
@@ -167,8 +165,10 @@ public class DemoServiceImpl implements DemoService {
         insertIssueSteps("0|c0000g:", testIssueIds.get(4), "点击立即下单按钮", "", "下单成功", projectId);
         insertIssueSteps("0|c0000k:", testIssueIds.get(4), "页面转跳", "", "转跳到我的订单页面", projectId);
 
-        testIssueIds.remove(0);
-        testCaseStepMapper.updateAuditFields(testIssueIds.toArray(new Long[testIssueIds.size()]), userId, date);
+        List<Long> testIssueIdsNew = new ArrayList<>(testIssueIds);
+        testIssueIdsNew.remove(0);
+
+        testCaseStepMapper.updateAuditFields(testIssueIdsNew.toArray(new Long[testIssueIdsNew.size()]), userId, date);
     }
 
     private void insertIssueSteps(String rank, Long issueId, String testStep, String testData, String expectedResult, Long projectId) {
@@ -227,36 +227,47 @@ public class DemoServiceImpl implements DemoService {
         return testCycleService.insert(testCycleDTO).getCycleId();
     }
 
-    private List<Long> initCycleFolders(List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
-        List<Long> cycleFolderIds = new ArrayList<>();
+    private Map<Long, List<Long>> initCycleFolders(List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
+        List<Long> cycleFolderIdsOne = new ArrayList<>();
+        List<Long> cycleFolderIdsTwo = new ArrayList<>();
 
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(0), "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4)));
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(0), "维护配送信息", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
+        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4)));
+        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
+        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "维护配送信息", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
 
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(0)));
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(1), "维护配送信息", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
-        cycleFolderIds.add(insertCycleFolder(cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(4)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(0)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "维护配送信息", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(4)));
 
-        testCycleMapper.updateAuditFields(cycleFolderIds.toArray(new Long[cycleFolderIds.size()]), userId, dateOne);
+        testCycleMapper.updateAuditFields(cycleFolderIdsOne.toArray(new Long[cycleFolderIdsOne.size()]), userId, dateOne);
+        testCycleMapper.updateAuditFields(cycleFolderIdsTwo.toArray(new Long[cycleFolderIdsTwo.size()]), userId, dateFour);
 
-        return cycleFolderIds;
+        Map<Long, List<Long>> phaseIdsMap = new HashMap<>();
+
+        phaseIdsMap.put(0L, cycleFolderIdsOne);
+        phaseIdsMap.put(1L, cycleFolderIdsTwo);
+
+        return phaseIdsMap;
     }
 
     private Date changeDateTimeStart(Date date) {
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
+        Date newDate = (Date) date.clone();
 
-        return date;
+        newDate.setHours(0);
+        newDate.setMinutes(0);
+        newDate.setSeconds(0);
+
+        return newDate;
     }
 
     private Date changeDateTimeEnd(Date date) {
-        date.setHours(23);
-        date.setMinutes(59);
-        date.setSeconds(59);
+        Date newDate = (Date) date.clone();
 
-        return date;
+        newDate.setHours(23);
+        newDate.setMinutes(59);
+        newDate.setSeconds(59);
+
+        return newDate;
     }
 
     private Long insertCycleFolder(Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId) {
@@ -289,17 +300,22 @@ public class DemoServiceImpl implements DemoService {
         return statusID;
     }
 
-    private Long[] updateExecutionStatus(List<Long> phaseIds, List<Long> testIssueIds, Long statusWIPId, Long projectId, Long organizationId, Long userId, Date dateTwo, Date dateThree) {
+    private Long[] updateExecutionStatus(Map<Long, List<Long>> phaseIdsMap, List<Long> testIssueIds, Long statusWIPId, Long projectId, Long organizationId, Long userId, Date dateTwo, Date dateThree) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         Long[] defectExecution = new Long[2];
         List<Long> executionIdsOne = new ArrayList<>();
         List<Long> executionIdsTwo = new ArrayList<>();
+        List<Long> executionIdsThree = new ArrayList<>();
 
         PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(0);
         pageRequest.setSize(30);
 
-        for (Long phaseId : phaseIds) {
+        List<Long> phaseIdsOne = phaseIdsMap.get(0L);
+        List<Long> phaseIdsTwo = phaseIdsMap.get(1L);
+
+
+        for (Long phaseId : phaseIdsOne) {
             testCycleCaseDTO.setCycleId(phaseId);
             Page<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
 
@@ -307,23 +323,35 @@ public class DemoServiceImpl implements DemoService {
                 if (executionDTO.getIssueId().equals(testIssueIds.get(2))) {
                     updateExecutionStepStatus(executionDTO.getExecuteId(), 2, projectId, organizationId);
                     executionDTO.setExecutionStatus(statusWIPId);
-                    defectExecution[0] = executionDTO.getExecuteId();
-                    defectExecution[1] = executionDTO.getIssueId();
                     executionIdsOne.add(executionDTO.getExecuteId());
                 } else if (executionDTO.getIssueId().equals(testIssueIds.get(4))) {
                     updateExecutionStepStatus(executionDTO.getExecuteId(), 4, projectId, organizationId);
                     executionDTO.setExecutionStatus(3L);
+                    defectExecution[0] = executionDTO.getExecuteId();
+                    defectExecution[1] = testIssueIds.get(0);
                     executionIdsTwo.add(executionDTO.getExecuteId());
                 } else {
                     updateExecutionStepStatus(executionDTO.getExecuteId(), 0, projectId, organizationId);
                     executionDTO.setExecutionStatus(2L);
                     executionIdsOne.add(executionDTO.getExecuteId());
                 }
+                executionDTO.setAssignedTo(userId);
                 testCycleCaseService.changeOneCase(executionDTO, projectId);
             }
         }
+
+        for (Long phaseId : phaseIdsTwo) {
+            testCycleCaseDTO.setCycleId(phaseId);
+            Page<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
+
+            for (TestCycleCaseDTO executionDTO : executionDTOs) {
+                executionIdsThree.add(executionDTO.getExecuteId());
+            }
+        }
+
         updateExecutionAuditFields(executionIdsOne, userId, dateTwo);
         updateExecutionAuditFields(executionIdsTwo, userId, dateThree);
+        updateExecutionAuditFields(executionIdsThree, userId, dateThree);
 
         String key = REDIS_COUNT_KEY + projectId + ":" + LocalDate.now().format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
         redisTemplate.delete(key);
@@ -351,18 +379,18 @@ public class DemoServiceImpl implements DemoService {
         switch (flag) {
             case 2:
                 testCaseStepDTOs.get(0).setStepStatus(5L);
-                testCaseStepDTOs.get(1).setStepStatus(4L);
+                testCaseStepDTOs.get(1).setStepStatus(6L);
                 testCaseStepDTOs.get(2).setStepStatus(5L);
-                testCaseStepDTOs.get(3).setStepStatus(4L);
+                testCaseStepDTOs.get(3).setStepStatus(6L);
                 testCaseStepDTOs.get(4).setStepStatus(5L);
-                testCaseStepDTOs.get(5).setStepStatus(4L);
+                testCaseStepDTOs.get(5).setStepStatus(6L);
                 break;
             case 4:
                 testCaseStepDTOs.get(0).setStepStatus(5L);
                 testCaseStepDTOs.get(1).setStepStatus(5L);
                 testCaseStepDTOs.get(2).setStepStatus(5L);
                 testCaseStepDTOs.get(3).setStepStatus(5L);
-                testCaseStepDTOs.get(4).setStepStatus(4L);
+                testCaseStepDTOs.get(4).setStepStatus(6L);
                 break;
             default:
                 for (TestCycleCaseStepDTO testCycleCaseStepDTO : testCaseStepDTOs) {
@@ -378,6 +406,7 @@ public class DemoServiceImpl implements DemoService {
         testCycleCaseDefectRelDTO.setDefectType("CYCLE_CASE");
         testCycleCaseDefectRelDTO.setDefectLinkId(defectExecution[0]);
         testCycleCaseDefectRelDTO.setIssueId(defectExecution[1]);
+        testCycleCaseDefectRelDTO.setProjectId(projectId);
 
         Long defectId = testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO, projectId, organizationId).getId();
 
