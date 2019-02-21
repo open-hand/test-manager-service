@@ -155,3 +155,39 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix `Automated Test` does not update the status to a failed when an error occurs while running.
 - Fix export error in `Test Case` when the version name contains spaces.
 - Fix the problem that can not delete `Test Cycle` which created by `Automated Test`.
+
+## [0.14.0] - 2019-02-22
+
+### Add
+
+#### 0.14.0 Significantly added features
+
+- Add `Test Results Report(color piece show)`.
+- Add `Test Automation Framework` support- `TestNG`.
+
+### Modify
+
+#### 0.14.0 Significantly modify the feature
+
+- Optimize `Execution Details` interface display.
+- Optimize `Test Steps` cloning sorting operation.
+- Optimize `Test Plan` page.
+- Optimize `Test Plan` export function data sorting, operation.
+- Optimize time display.
+- Optimize `Custom Status` components of color card.
+- Optimize `Test Cases` interface display Gantt chart - optimization `Test Plan` page edge rolling.
+- Optimize `Tree` components according to the version.
+- Optimize `Create Use Case` on version restrictions.
+- Optimize `Test Execution` page.
+
+### Fix
+
+#### 0.14.0 Significant repair features
+
+- Fix `Testing Phase` associated use case folder version shows error.
+- Fix `Rich Text Edit Box` paste image repeating mistakes.
+- Fix `Test Digest` page scrolling page form errors.
+- Fix `Test Plan` page in the gantt chart change time produce a page fault.
+- Fix `Create Bugs` is agent cannot search problem.
+- Fix dragging in `Test Plans` modify specific date error problem.
+- Fix `Test Defect Report` specific data show the wrong questions.
