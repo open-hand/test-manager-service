@@ -344,6 +344,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         root.put("versions", versionStatus);
 
         List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
+        populateUsers(cycles);
 
         initVersionTree(versionStatus, versions, cycles);
 
