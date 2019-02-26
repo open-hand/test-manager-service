@@ -32,5 +32,5 @@ public interface TestIssueFolderRelService {
 
     List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    void cloneOneIssue(Long projectId, Long issueId);
+    TestIssueFolderRelDTO cloneOneIssue(Long projectId, Long issueId);
 }
