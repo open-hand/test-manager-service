@@ -4,6 +4,7 @@ import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,4 +36,5 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
     List<TestCycleDO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
 
+    void updateAuditFields(@Param("cycleIds") Long[] cycleId, @Param("userId") Long userId, @Param("date") Date date);
 }

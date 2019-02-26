@@ -32,4 +32,10 @@
         WHERE
         folder_id = #{folderId}
     </update>
+
+    <update id="updateAuditFields">
+        update test_issue_folder_rel
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where project_id = #{projectId}
+    </update>
 </mapper>

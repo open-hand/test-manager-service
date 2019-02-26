@@ -4,6 +4,7 @@ import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -72,4 +73,6 @@ public interface TestCycleCaseMapper extends BaseMapper<TestCycleCaseDO> {
 	String getLastedRank_oracle(@Param("cycleId") Long cycleId);
 
 	int batchInsertTestCycleCases(List<TestCycleCaseDO> testCycleCaseDOs);
+
+	void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
 }

@@ -4,6 +4,7 @@ import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dataobject.TestCaseStepDO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,4 +19,5 @@ public interface TestCaseStepMapper extends BaseMapper<TestCaseStepDO> {
 
     int batchInsertTestCaseSteps(List<TestCaseStepDO> testCaseStepDOs);
 
+    void updateAuditFields(@Param("issueIds") Long[] issueId, @Param("userId") Long userId, @Param("date") Date date);
 }
