@@ -12,52 +12,52 @@ import java.util.List;
  */
 public interface TestCycleCaseService {
 
-	void delete(Long cycleCaseId, Long projectId);
+    void delete(Long cycleCaseId, Long projectId);
 
-	Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId,Long organizationId);
+    Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId);
 
-	Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
+    Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
 
-	TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId,Long organizationId);
+    TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
 
-	List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId,Long organizationId);
+    List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId, Long organizationId);
 
-	List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId,Long organizationId);
+    List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId, Long organizationId);
 
-	List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId,Long organizationId);
+    List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId, Long organizationId);
 
-	void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+    void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-	/**
-	 * 启动一个测试例
-	 *
-	 * @param testCycleCaseDTO
-	 * @return
-	 */
-	TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+    /**
+     * 启动一个测试例
+     *
+     * @param testCycleCaseDTO
+     * @return
+     */
+    TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-	List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list , Long projectId);
+    List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list, Long projectId);
 
-	List<Long> getActiveCase(Long range, Long projectId, String day);
+    List<Long> getActiveCase(Long range, Long projectId, String day);
 
-	/**
-	 * 修改一个case
-	 *
-	 * @param testCycleCaseDTO
-	 */
-	TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
+    /**
+     * 修改一个case
+     *
+     * @param testCycleCaseDTO
+     */
+    TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-	/**
-	 * 修改一堆case
-	 *
-	 * @param cycleCaseDTOS
-	 */
-	void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS);
+    /**
+     * 修改一堆case
+     *
+     * @param cycleCaseDTOS
+     */
+    void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS);
 
 
-	Long countCaseNotRun(Long projectId);
+    Long countCaseNotRun(Long projectId);
 
-	Long countCaseNotPlain(Long projectId);
+    Long countCaseNotPlain(Long projectId);
 
-	Long countCaseSum(Long projectId);
+    Long countCaseSum(Long projectId);
 }
