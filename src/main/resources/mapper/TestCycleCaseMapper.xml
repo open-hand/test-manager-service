@@ -255,7 +255,7 @@
                 AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
             </if>
         </where>
-        order by rank
+        order by cycle_id
         <if test="pageSize !=0">
             limit #{page} , #{pageSize}
         </if>
@@ -317,7 +317,7 @@
                 AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
             </if>
         </where>
-        order by rank
+        order by cycle_id
         )tt
         <if test="pageSize !=0">
             WHERE
@@ -333,7 +333,7 @@
         AND attach.attachment_type = 'CYCLE_CASE'
         LEFT JOIN test_cycle_case_defect_rel defect ON cycle.execute_id = defect.defect_link_id
         AND defect.defect_type = 'CYCLE_CASE'
-        LEFT JOIN test_cycle rCycle ON cycle.cycle_id = rCycle.cycle_id ORDER BY rank
+        LEFT JOIN test_cycle rCycle ON cycle.cycle_id = rCycle.cycle_id
     </select>
 
     <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">

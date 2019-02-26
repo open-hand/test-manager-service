@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
 import io.choerodon.core.domain.PageInfo;
+import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
@@ -88,9 +89,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         switch (LiquibaseHelper.dbType(dsUrl)) {
             case MYSQL:
             case H2:
-                return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+                return PageHelper.doSort(pageRequest.getSort(),()-> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
             case ORACLE:
-                return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+                return PageHelper.doSort(pageRequest.getSort(),()->testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
             default:
                 throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
         }
