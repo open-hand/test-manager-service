@@ -108,7 +108,8 @@ public class TestIssueFolderRelController {
     @PutMapping("/copy/issue/{issueId}")
     public ResponseEntity<TestIssueFolderRelDTO> cloneOneIssue(@PathVariable(name = "project_id") Long projectId,
                                     @PathVariable(name = "issueId") Long issueId) {
-        testIssueFolderRelService.cloneOneIssue(projectId, issueId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return Optional.ofNullable(testIssueFolderRelService.cloneOneIssue(projectId, issueId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testIssueFolderRel.clone"));
     }
 }
