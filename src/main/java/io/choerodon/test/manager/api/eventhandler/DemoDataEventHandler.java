@@ -20,7 +20,10 @@ public class DemoDataEventHandler {
     @Autowired
     DemoService demoService;
 
-    @SagaTask(code = "test-demo-data", description = "初始化测试管理demo数据", sagaCode = "agile-demo-for-test", seq = 1)
+    @SagaTask(code = "register-test-init-demo-data",
+            description = "创建test的demo数据",
+            sagaCode = "register-org",
+            seq = 180)
     public void initTestDemoData(String message) throws IOException {
         DemoPayload demoPayloadE = objectMapper.readValue(message, DemoPayload.class);
         demoService.demoInit(demoPayloadE);
