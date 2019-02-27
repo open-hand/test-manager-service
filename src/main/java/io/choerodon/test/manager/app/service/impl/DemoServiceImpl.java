@@ -100,9 +100,9 @@ public class DemoServiceImpl implements DemoService {
 
         List<Long> testIssueIds = demoPayload.getTestIssueIds();
         long versionId = demoPayload.getVersionId();
-        long projectId = demoPayload.getProjectId();
-        long userId = demoPayload.getUserId();
-        long organizationId = demoPayload.getOrganizationId();
+        long projectId = demoPayload.getProject().getId();
+        long userId = demoPayload.getUser().getId();
+        long organizationId = demoPayload.getOrganization().getId();
         Date dateOne = demoPayload.getDateOne();
         Date dateTwo = demoPayload.getDateTwo();
         Date dateThree = demoPayload.getDateThree();
