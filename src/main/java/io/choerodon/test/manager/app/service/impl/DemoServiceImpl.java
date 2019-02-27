@@ -96,19 +96,26 @@ public class DemoServiceImpl implements DemoService {
     private static final String STRING_1 = "维护配送信息";
 
     @Override
-    public void demoInit(DemoPayload demoPayload) {
+    public OrganizationRegisterEventPayload demoInit(DemoPayload demoPayload) {
 
-        List<Long> testIssueIds = demoPayload.getTestData().getTestIssueIds();
-        long versionId = demoPayload.getTestData().getVersionId();
-        long projectId = demoPayload.getProject().getId();
-        long userId = demoPayload.getUser().getId();
-        long organizationId = demoPayload.getOrganization().getId();
-        Date dateOne = demoPayload.getTestData().getDateOne();
-        Date dateTwo = demoPayload.getTestData().getDateTwo();
-        Date dateThree = demoPayload.getTestData().getDateThree();
-        Date dateFour = demoPayload.getTestData().getDateFour();
-        Date dateFive = demoPayload.getTestData().getDateFive();
-        Date dateSix = demoPayload.getTestData().getDateSix();
+        DemoPayload.Organization organization = demoPayload.getOrganization();
+        DemoPayload.User user = demoPayload.getUser();
+        DemoPayload.User userA = demoPayload.getUserA();
+        DemoPayload.User userB = demoPayload.getUserB();
+        DemoPayload.Project project = demoPayload.getProject();
+        DemoPayload.TestData testData = demoPayload.getTestData();
+
+        List<Long> testIssueIds = testData.getTestIssueIds();
+        long versionId = testData.getVersionId();
+        long projectId = project.getId();
+        long userId = user.getId();
+        long organizationId = organization.getId();
+        Date dateOne = testData.getDateOne();
+        Date dateTwo = testData.getDateTwo();
+        Date dateThree = testData.getDateThree();
+        Date dateFour = testData.getDateFour();
+        Date dateFive = testData.getDateFive();
+        Date dateSix = testData.getDateSix();
 
         List<Long> issueFolderIds = initIssueFolders(versionId, projectId, userId, dateOne);
         initIssueSteps(testIssueIds, projectId, userId, dateOne);
@@ -118,6 +125,42 @@ public class DemoServiceImpl implements DemoService {
         Long statusWIPId = initTestStatus(projectId, userId, dateOne);
         Long[] defectExecution = updateExecutionStatus(phaseIdsMap, testIssueIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
         initExecutionDefect(defectExecution, projectId, organizationId, userId, dateThree);
+
+        OrganizationRegisterEventPayload organizationRegisterEventPayload = new OrganizationRegisterEventPayload();
+
+        OrganizationRegisterEventPayload.Organization organizationNew = new OrganizationRegisterEventPayload.Organization();
+        OrganizationRegisterEventPayload.Project projectNew = new OrganizationRegisterEventPayload.Project();
+        OrganizationRegisterEventPayload.User userNew = new OrganizationRegisterEventPayload.User();
+        OrganizationRegisterEventPayload.User userANew = new OrganizationRegisterEventPayload.User();
+        OrganizationRegisterEventPayload.User userBNew = new OrganizationRegisterEventPayload.User();
+
+        organizationNew.setCode(organization.getCode());
+        organizationNew.setId(organization.getId());
+        organizationNew.setName(organization.getName());
+
+        projectNew.setCode(project.getCode());
+        projectNew.setId(project.getId());
+        projectNew.setName(project.getName());
+
+        userNew.setEmail(user.getEmail());
+        userNew.setId(user.getId());
+        userNew.setLoginName(user.getLoginName());
+
+        userANew.setEmail(userA.getEmail());
+        userANew.setId(userA.getId());
+        userANew.setLoginName(userA.getLoginName());
+
+        userBNew.setEmail(userB.getEmail());
+        userBNew.setId(userB.getId());
+        userBNew.setLoginName(userB.getLoginName());
+
+        organizationRegisterEventPayload.setOrganization(organizationNew);
+        organizationRegisterEventPayload.setProject(projectNew);
+        organizationRegisterEventPayload.setUser(userNew);
+        organizationRegisterEventPayload.setUserA(userANew);
+        organizationRegisterEventPayload.setUserB(userBNew);
+
+        return organizationRegisterEventPayload;
     }
 
     private List<Long> initIssueFolders(Long versionId, Long projectId, Long userId, Date date) {
