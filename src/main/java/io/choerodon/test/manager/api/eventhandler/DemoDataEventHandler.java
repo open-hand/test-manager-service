@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.api.eventhandler;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.api.dto.DemoPayload;
+import io.choerodon.test.manager.api.dto.OrganizationRegisterEventPayload;
 import io.choerodon.test.manager.app.service.DemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,8 +26,10 @@ public class DemoDataEventHandler {
             description = "创建test的demo数据",
             sagaCode = "register-org",
             seq = 180)
-    public void initTestDemoData(String message) throws IOException {
+    public String initTestDemoData(String message) throws IOException {
         DemoPayload demoPayloadE = objectMapper.readValue(message, DemoPayload.class);
-        demoService.demoInit(demoPayloadE);
+        OrganizationRegisterEventPayload result = demoService.demoInit(demoPayloadE);
+
+        return JSON.toJSONString(result);
     }
 }
