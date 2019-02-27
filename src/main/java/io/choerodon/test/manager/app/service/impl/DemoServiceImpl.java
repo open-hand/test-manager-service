@@ -98,17 +98,17 @@ public class DemoServiceImpl implements DemoService {
     @Override
     public void demoInit(DemoPayload demoPayload) {
 
-        List<Long> testIssueIds = demoPayload.getTestIssueIds();
-        long versionId = demoPayload.getVersionId();
+        List<Long> testIssueIds = demoPayload.getTestData().getTestIssueIds();
+        long versionId = demoPayload.getTestData().getVersionId();
         long projectId = demoPayload.getProject().getId();
         long userId = demoPayload.getUser().getId();
         long organizationId = demoPayload.getOrganization().getId();
-        Date dateOne = demoPayload.getDateOne();
-        Date dateTwo = demoPayload.getDateTwo();
-        Date dateThree = demoPayload.getDateThree();
-        Date dateFour = demoPayload.getDateFour();
-        Date dateFive = demoPayload.getDateFive();
-        Date dateSix = demoPayload.getDateSix();
+        Date dateOne = demoPayload.getTestData().getDateOne();
+        Date dateTwo = demoPayload.getTestData().getDateTwo();
+        Date dateThree = demoPayload.getTestData().getDateThree();
+        Date dateFour = demoPayload.getTestData().getDateFour();
+        Date dateFive = demoPayload.getTestData().getDateFive();
+        Date dateSix = demoPayload.getTestData().getDateSix();
 
         List<Long> issueFolderIds = initIssueFolders(versionId, projectId, userId, dateOne);
         initIssueSteps(testIssueIds, projectId, userId, dateOne);
