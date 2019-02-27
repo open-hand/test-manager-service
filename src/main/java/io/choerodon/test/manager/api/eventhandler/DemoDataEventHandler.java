@@ -26,10 +26,9 @@ public class DemoDataEventHandler {
             description = "创建test的demo数据",
             sagaCode = "register-org",
             seq = 180)
-    public String initTestDemoData(String message) throws IOException {
+    public OrganizationRegisterEventPayload initTestDemoData(String message) throws IOException {
         DemoPayload demoPayloadE = objectMapper.readValue(message, DemoPayload.class);
-        OrganizationRegisterEventPayload result = demoService.demoInit(demoPayloadE);
 
-        return JSON.toJSONString(result);
+        return demoService.demoInit(demoPayloadE);
     }
 }
