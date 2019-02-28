@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         if (ObjectUtils.isEmpty(ids)) {
             return new HashMap<>();
         }
-        return userFeignClient.listUsersByIds(ids).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
+        return userFeignClient.listUsersByIds(ids, false).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
     }
 
     @Override

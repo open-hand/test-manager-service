@@ -32,7 +32,8 @@ public interface UserFeignClient {
 								 @PathVariable("id") Long id);
 
 	@PostMapping(value = "/v1/users/ids")
-	ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids);
+	ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids,
+												@RequestParam(value = "only_enabled", defaultValue = "true", required = false) Boolean onlyEnabled);
 
 
 	@GetMapping(value = "/v1/projects/{project_id}/users")
