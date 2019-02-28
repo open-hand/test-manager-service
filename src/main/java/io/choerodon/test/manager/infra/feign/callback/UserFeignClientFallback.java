@@ -17,23 +17,23 @@ import java.util.List;
 @Component
 public class UserFeignClientFallback implements UserFeignClient {
 
-	private static final String QUERY_ERROR = "error.UserFeign.query";
-	private static final String BATCH_QUERY_ERROR = "error.UserFeign.queryList";
+    private static final String QUERY_ERROR = "error.UserFeign.query";
+    private static final String BATCH_QUERY_ERROR = "error.UserFeign.queryList";
 
-	@Override
-	public ResponseEntity<UserDO> query(Long organizationId, Long id) {
-		throw new CommonException(QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<UserDO> query(Long organizationId, Long id) {
+        throw new CommonException(QUERY_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<List<UserDO>> listUsersByIds(Long[] ids) {
-		throw new CommonException(BATCH_QUERY_ERROR);
-	}
+    @Override
+    public ResponseEntity<List<UserDO>> listUsersByIds(Long[] ids, Boolean onlyEnabled) {
+        throw new CommonException(BATCH_QUERY_ERROR);
+    }
 
-	@Override
-	public ResponseEntity<Page<UserDTO>> list(Long id, Long userId, int page, int size, String param) {
-		throw new CommonException(QUERY_ERROR);
+    @Override
+    public ResponseEntity<Page<UserDTO>> list(Long id, Long userId, int page, int size, String param) {
+        throw new CommonException(QUERY_ERROR);
 
-	}
+    }
 
 }
