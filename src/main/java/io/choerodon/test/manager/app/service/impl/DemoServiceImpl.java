@@ -287,9 +287,9 @@ public class DemoServiceImpl implements DemoService {
         cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
         cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), STRING_1, versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
 
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(0)));
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), STRING_1, versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(4)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(0)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), STRING_1, versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
+        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(4)));
 
         testCycleMapper.updateAuditFields(cycleFolderIdsOne.toArray(new Long[cycleFolderIdsOne.size()]), userId, dateOne);
         testCycleMapper.updateAuditFields(cycleFolderIdsTwo.toArray(new Long[cycleFolderIdsTwo.size()]), userId, dateFour);
@@ -406,7 +406,8 @@ public class DemoServiceImpl implements DemoService {
         updateExecutionAuditFields(executionIdsThree, userId, dateThree);
 
         String key = REDIS_COUNT_KEY + projectId + ":" + LocalDate.now().format(DateTimeFormatter.ofPattern(DATE_FORMATTER));
-        redisTemplate.delete(key);
+        RedisAtomicLong entityIdCounter = redisTemplateUtil.getRedisAtomicLong(key, redisTemplate);
+        entityIdCounter.set(0L);
 
         String keyOne = REDIS_COUNT_KEY + projectId + ":" + new SimpleDateFormat(DATE_FORMATTER).format(dateTwo);
         String keyTwo = REDIS_COUNT_KEY + projectId + ":" + new SimpleDateFormat(DATE_FORMATTER).format(dateThree);
@@ -463,5 +464,6 @@ public class DemoServiceImpl implements DemoService {
         Long defectId = testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO, projectId, organizationId).getId();
 
         testCycleCaseDefectRelMapper.updateAuditFields(defectId, userId, date);
+        testCycleCaseHistoryMapper.updateAuditFields(defectExecution, userId, date);
     }
 }
