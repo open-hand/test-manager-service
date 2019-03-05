@@ -110,22 +110,24 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
         TestCycleE parentCycleE = TestCycleEFactory.create();
         parentCycleE.setCycleId(newTestCycleE.getParentCycleId());
-        List<TestCycleE> parentCycleES = parentCycleE.querySelf();
+        if (!protoTestCycleE.getType().equals(TestCycleE.CYCLE)) {
+            List<TestCycleE> parentCycleES = parentCycleE.querySelf();
 
-        Date oldFolderFromDate = protoTestCycleE.getFromDate();
-        Date oldFolderToDate = protoTestCycleE.getToDate();
-        int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
+            Date oldFolderFromDate = protoTestCycleE.getFromDate();
+            Date oldFolderToDate = protoTestCycleE.getToDate();
+            int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
 
-        Date parentFromDate = parentCycleES.get(0).getFromDate();
-        Date parentToDate = parentCycleES.get(0).getToDate();
-        int differentDaysParent = TestDateUtil.differentDaysByMillisecond(parentFromDate, parentToDate);
+            Date parentFromDate = parentCycleES.get(0).getFromDate();
+            Date parentToDate = parentCycleES.get(0).getToDate();
+            int differentDaysParent = TestDateUtil.differentDaysByMillisecond(parentFromDate, parentToDate);
 
-        protoTestCycleE.setFromDate(parentFromDate);
+            protoTestCycleE.setFromDate(parentFromDate);
 
-        if (differentDaysOldFolder > differentDaysParent) {
-            protoTestCycleE.setToDate(parentToDate);
-        } else {
-            protoTestCycleE.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
+            if (differentDaysOldFolder > differentDaysParent) {
+                protoTestCycleE.setToDate(parentToDate);
+            } else {
+                protoTestCycleE.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
+            }
         }
 
         TestCycleE newCycleE = newTestCycleE.cloneCycle(protoTestCycleE);
