@@ -278,42 +278,12 @@ public class JsonImportServiceImpl implements JsonImportService {
             TestCycleDTO testStage = iJsonImportService.getStage(
                     versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
             cycleIds.add(testStage.getCycleId());
-            List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
-            // 创建测试用例
-            List<TestNgTest> tests = suite.getTests();
-            for (TestNgTest test : tests) {
-                TestCycleCaseE testCycleCaseE = iJsonImportService.handleIssueByTestNg(organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
-                        test, targetFolderE.getNewFolder());
-                allTestCycleCases.add(testCycleCaseE);
-            }
-            //关联cycleCase到issue
-            if (!targetFolderE.getNewFolder()) {
-                relatedToExistIssues(allTestCycleCases, targetFolderE);
-            }
-            //更新case基本信息
-            for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
-                testCycleCaseE.setCreatedBy(createdBy);
-                testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
-                testCycleCaseE.setAssignedTo(createdBy);
-            }
-            //创建case，并回填executeId
-            if (!allTestCycleCases.isEmpty()) {
-                createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
-                logger.info("创建TestCase和TestCycleCase成功");
-            }
-            //若是第一次创建文件夹，则要创建caseStep
-            if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
-                createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
-                logger.info("创建TestCaseSteps成功");
-            }
-            //创建cycleCaseStep
-            if (!allTestCycleCases.isEmpty()) {
-                backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
-                logger.info("创建TestCycleCaseSteps成功");
-            }
+            //处理Case
+            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
+
         }
         // 若有多个suite，拼接成listStr
-        automationHistoryE.setCycleIds(cycleIds.stream().map(x -> String.valueOf(x)).collect(Collectors.joining(",")));
+        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
 
         // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
@@ -325,5 +295,47 @@ public class JsonImportServiceImpl implements JsonImportService {
         logger.info("更新TestAutomationHistory状态成功");
 
         return resultId;
+    }
+
+    private void handleTestNgCase(Long organizationId, TestAppInstanceE instance, TestNgSuite suite, TestIssueFolderE targetFolderE, TestCycleDTO testStage, TestAutomationHistoryE automationHistoryE) {
+        Long versionId = instance.getProjectVersionId();
+        Long projectId = instance.getProjectId();
+        Long createdBy = instance.getCreatedBy();
+        Long lastUpdatedBy = instance.getLastUpdatedBy();
+
+        List<TestCycleCaseE> allTestCycleCases = new ArrayList<>();
+        // 创建测试用例
+        List<TestNgTest> tests = suite.getTests();
+        for (TestNgTest test : tests) {
+            TestCycleCaseE testCycleCaseE = iJsonImportService.handleIssueByTestNg(organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
+                    test, targetFolderE.getNewFolder());
+            allTestCycleCases.add(testCycleCaseE);
+        }
+
+        //关联cycleCase到issue
+        if (!targetFolderE.getNewFolder()) {
+            relatedToExistIssues(allTestCycleCases, targetFolderE);
+        }
+        //更新case基本信息
+        for (TestCycleCaseE testCycleCaseE : allTestCycleCases) {
+            testCycleCaseE.setCreatedBy(createdBy);
+            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+            testCycleCaseE.setAssignedTo(createdBy);
+        }
+        //创建case，并回填executeId
+        if (!allTestCycleCases.isEmpty()) {
+            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+            logger.info("创建TestCase和TestCycleCase成功");
+        }
+        //若是第一次创建文件夹，则要创建caseStep
+        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
+            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+            logger.info("创建TestCaseSteps成功");
+        }
+        //创建cycleCaseStep
+        if (!allTestCycleCases.isEmpty()) {
+            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+            logger.info("创建TestCycleCaseSteps成功");
+        }
     }
 }
