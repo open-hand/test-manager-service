@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.IssueTypeDTO;
@@ -20,6 +21,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -164,9 +166,9 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         for (int i = 0; i <= README_OPTIONS.length; i++) {
             fromCell = fromRow.getCell(i);
             if (fromCell != null) {
+                fromRow.removeCell(fromCell);
                 toCell = ExcelUtil.getOrCreateCell(toRow, i, CELL_TYPE_STRING);
                 toCell.setCellValue(ExcelUtil.getStringValue(fromCell));
-                fromRow.removeCell(fromCell);
             }
         }
         toCell = toRow.getCell(README_OPTIONS.length);

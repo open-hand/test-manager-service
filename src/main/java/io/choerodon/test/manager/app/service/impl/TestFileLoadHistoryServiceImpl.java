@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestFileLoadHistoryService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -71,7 +73,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     }
 
     @Override
-    public TestFileLoadHistoryDTO queryLatestImportIssueHistory() {
+    public TestIssuesUploadHistoryDTO queryLatestImportIssueHistory(Long projectId) {
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
         testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
         testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE);
@@ -79,7 +81,16 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
             return null;
         }
 
-        return ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDTO.class);
+        TestIssuesUploadHistoryDTO testIssuesUploadHistoryDTO = ConvertHelper.convert(testFileLoadHistoryE, TestIssuesUploadHistoryDTO.class);
+
+        TestIssueFolderE testIssueFolderE = SpringUtil.getApplicationContext().getBean(TestIssueFolderE.class);
+        testIssueFolderE.setFolderId(testFileLoadHistoryE.getLinkedId());
+        testIssueFolderE = testIssueFolderE.queryByPrimaryKey();
+
+        testIssuesUploadHistoryDTO.setVersionName(testCaseService.getVersionInfo(projectId)
+                .get(testIssueFolderE.getVersionId()).getName());
+
+        return testIssuesUploadHistoryDTO;
     }
 
 }
