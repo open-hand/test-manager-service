@@ -4,6 +4,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.app.service.ExcelImportService;
 import io.choerodon.test.manager.app.service.TestFileLoadHistoryService;
@@ -37,8 +38,8 @@ public class TestFileLoadHistoryController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询最近一次导入记录")
     @GetMapping("/latest")
-    public ResponseEntity<TestFileLoadHistoryDTO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
-        return Optional.ofNullable(testFileLoadHistoryService.queryLatestImportIssueHistory())
+    public ResponseEntity<TestIssuesUploadHistoryDTO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
+        return Optional.ofNullable(testFileLoadHistoryService.queryLatestImportIssueHistory(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.OK));
     }

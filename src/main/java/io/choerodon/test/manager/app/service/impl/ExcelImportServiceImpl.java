@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -36,6 +37,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private ExcelService excelService;
 
+    @Autowired
+    private TestCaseServiceImpl testCaseService;
+
     public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
         ((IExcelImportServiceImpl) iExcelImportService).setIssueFeignClient(issueFeignClient);
     }
@@ -47,7 +51,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Override
     public void downloadImportTemp(HttpServletRequest request, HttpServletResponse response) {
-        ExcelUtil.setExcelHeaderByStream(request,response);
+        ExcelUtil.setExcelHeaderByStream(request, response);
         excelService.downloadWorkBookByStream(iExcelImportService.buildImportTemp(), response);
     }
 
@@ -57,6 +61,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestIssueFolderE folderE = iExcelImportService.getFolder(projectId, versionId, "导入");
         TestFileLoadHistoryE loadHistoryE = iExcelImportService.initLoadHistory(projectId, folderE.getFolderId(), userId);
         TestFileLoadHistoryE.Status status = TestFileLoadHistoryE.Status.SUCCESS;
+        List<Long> issueIds = new ArrayList<>();
 
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
 
@@ -79,11 +84,14 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
 
-            if (status == TestFileLoadHistoryE.Status.CANCEL || iExcelImportService.isCanceled(loadHistoryE.getId())) {
+            if (iExcelImportService.isCanceled(loadHistoryE.getId())) {
                 status = TestFileLoadHistoryE.Status.CANCEL;
                 logger.info("已取消");
                 iExcelImportService.removeRow(currentRow);
-                continue;
+                if (!issueIds.isEmpty()) {
+                    testCaseService.batchDeleteIssues(projectId, issueIds);
+                }
+                break;
             }
 
             if (iExcelImportService.isIssueHeaderRow(currentRow)) {
@@ -92,6 +100,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                     failedCount++;
                 } else {
                     successfulCount++;
+                    issueIds.add(issueDTO.getIssueId());
                 }
             }
             iExcelImportService.processRow(issueDTO, currentRow, errorRowIndexes);
