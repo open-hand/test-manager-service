@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 @Scope("prototype")
 public class TestCycleE {
 
-	public static final String FOLDER = "folder";
-	public static final String CYCLE = "cycle";
-	public static final String TEMP = "temp";
-	public static final String TEMP_CYCLE_NAME = "临时";
+    public static final String FOLDER = "folder";
+    public static final String CYCLE = "cycle";
+    public static final String TEMP = "temp";
+    public static final String TEMP_CYCLE_NAME = "临时";
 
     private Long cycleId;
 
@@ -43,9 +44,9 @@ public class TestCycleE {
 
     private Long objectVersionNumber;
 
-	private Long createdBy;
+    private Long createdBy;
 
-	private CountMap cycleCaseList;
+    private CountMap cycleCaseList;
 
     private Long folderId;
 
@@ -54,7 +55,7 @@ public class TestCycleE {
     @Autowired
     TestCycleRepository testCycleRepository;
 
-    public List<TestCycleE> queryAll(){
+    public List<TestCycleE> queryAll() {
         return testCycleRepository.queryAll();
     }
 
@@ -66,38 +67,38 @@ public class TestCycleE {
         return testCycleRepository.queryChildCycle(this);
     }
 
-	public TestCycleE queryOne() {
-		return testCycleRepository.queryOne(this);
-	}
+    public TestCycleE queryOne() {
+        return testCycleRepository.queryOne(this);
+    }
 
 
-	public TestCycleE cloneCycle(TestCycleE proto) {
-		parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
-		cycleName = Optional.ofNullable(cycleName).orElse(proto.getCycleName());
-		versionId = Optional.ofNullable(versionId).orElse(proto.getVersionId());
-		description = Optional.ofNullable(description).orElse(proto.getDescription());
-		build = Optional.ofNullable(build).orElse(proto.getBuild());
-		environment = Optional.ofNullable(environment).orElse(proto.getEnvironment());
-		fromDate = Optional.ofNullable(fromDate).orElse(proto.getFromDate());
-		toDate = Optional.ofNullable(toDate).orElse(proto.getToDate());
-		type = Optional.ofNullable(type).orElse(proto.getType());
-		folderId = Optional.ofNullable(folderId).orElse(proto.getFolderId());
-		return addSelf();
-	}
+    public TestCycleE cloneCycle(TestCycleE proto) {
+        parentCycleId = Optional.ofNullable(parentCycleId).orElse(proto.getParentCycleId());
+        cycleName = Optional.ofNullable(cycleName).orElse(proto.getCycleName());
+        versionId = Optional.ofNullable(versionId).orElse(proto.getVersionId());
+        description = Optional.ofNullable(description).orElse(proto.getDescription());
+        build = Optional.ofNullable(build).orElse(proto.getBuild());
+        environment = Optional.ofNullable(environment).orElse(proto.getEnvironment());
+        fromDate = Optional.ofNullable(fromDate).orElse(proto.getFromDate());
+        toDate = Optional.ofNullable(toDate).orElse(proto.getToDate());
+        type = Optional.ofNullable(type).orElse(proto.getType());
+        folderId = Optional.ofNullable(folderId).orElse(proto.getFolderId());
+        return addSelf();
+    }
 
-	public List<TestCycleE> getChildFolder() {
-		TestCycleE testCycleE = TestCycleEFactory.create();
-		testCycleE.setParentCycleId(cycleId);
-		testCycleE.setType(FOLDER);
-		return testCycleE.querySelf();
-	}
+    public List<TestCycleE> getChildFolder() {
+        TestCycleE testCycleE = TestCycleEFactory.create();
+        testCycleE.setParentCycleId(cycleId);
+        testCycleE.setType(FOLDER);
+        return testCycleE.querySelf();
+    }
 
-	public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
-		return testCycleES.stream().filter(v -> this.cycleId.equals(v.getParentCycleId())  && v.getType().equals(FOLDER)).collect(Collectors.toList());
-	}
+    public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
+        return testCycleES.stream().filter(v -> this.cycleId.equals(v.getParentCycleId()) && v.getType().equals(FOLDER)).collect(Collectors.toList());
+    }
 
-	public List<TestCycleE> querySelfWithBar(Long[] versionIds,Long assignedTo) {
-		return testCycleRepository.queryBar(versionIds,assignedTo);
+    public List<TestCycleE> querySelfWithBar(Long[] versionIds, Long assignedTo) {
+        return testCycleRepository.queryBar(versionIds, assignedTo);
     }
 
     public List<TestCycleE> querySelfWithBarOneCycle(Long cycleId) {
@@ -141,15 +142,15 @@ public class TestCycleE {
         return description;
     }
 
-	public Long getCreatedBy() {
-		return createdBy;
-	}
+    public Long getCreatedBy() {
+        return createdBy;
+    }
 
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
 
-	public String getBuild() {
+    public String getBuild() {
         return build;
     }
 
@@ -173,17 +174,19 @@ public class TestCycleE {
         return objectVersionNumber;
     }
 
-	public Map getCycleCaseList() {
-		return cycleCaseList;
-	}
+    public Map getCycleCaseList() {
+        return cycleCaseList;
+    }
 
-	public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
-		CountMap map = new CountMap();
-		cycleCaseList.forEach(v ->
-			map.put((String) v.get("color"), (Long) v.get("counts"))
-		);
-		this.cycleCaseList = map;
-	}
+    public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
+        CountMap map = new CountMap();
+        cycleCaseList.forEach(v -> {
+                    ProcessBarSection processBarSection = (ProcessBarSection)v.get("processBarSection");
+                    map.put((String) v.get("color"), processBarSection);
+                }
+        );
+        this.cycleCaseList = map;
+    }
 
     public void setCycleId(Long cycleId) {
         this.cycleId = cycleId;
@@ -226,24 +229,65 @@ public class TestCycleE {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-	public void countChildStatus(List<TestCycleE> cycleCaseList) {
-		cycleCaseList.forEach(v ->
-			this.cycleCaseList.merge(v.getCycleCaseList())
-		);
+    public void countChildStatus(List<TestCycleE> cycleCaseList) {
+        cycleCaseList.forEach(v ->
+                this.cycleCaseList.merge(v.getCycleCaseList())
+        );
 
-	}
+    }
 
-	private static class CountMap extends HashMap<String, Long> {
-		private void merge(Map<String, Long> plus) {
-			plus.forEach((k, v) -> {
-				if (this.containsKey(k)) {
-					this.put(k, super.get(k) + v);
-				} else {
-					this.put(k, v);
-				}
-			});
-		}
-	}
+    private static class CountMap extends HashMap<String, ProcessBarSection> {
+        private void merge(Map<String, ProcessBarSection> plus) {
+            plus.forEach((k, v) -> {
+                if (this.containsKey(k)) {
+                    ProcessBarSection processBarSection = super.get(k);
+                    processBarSection.setCounts(processBarSection.getCounts() + v.getCounts());
+                    this.put(k, processBarSection);
+                } else {
+                    this.put(k, v);
+                }
+            });
+        }
+    }
+
+    private static class ProcessBarSection {
+        private Long statusId;
+        private String statusName;
+        private Long counts;
+        private Long projectId;
+
+        public Long getStatusId() {
+            return statusId;
+        }
+
+        public void setStatusId(Long statusId) {
+            this.statusId = statusId;
+        }
+
+        public String getStatusName() {
+            return statusName;
+        }
+
+        public void setStatusName(String statusName) {
+            this.statusName = statusName;
+        }
+
+        public Long getCounts() {
+            return counts;
+        }
+
+        public void setCounts(Long counts) {
+            this.counts = counts;
+        }
+
+        public Long getProjectId() {
+            return projectId;
+        }
+
+        public void setProjectId(Long projectId) {
+            this.projectId = projectId;
+        }
+    }
 
     public Long getFolderId() {
         return folderId;
