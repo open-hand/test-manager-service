@@ -110,7 +110,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         loadHistoryE.setSuccessfulCount(successfulCount);
         loadHistoryE.setFailedCount(failedCount);
 
-        if (!errorRowIndexes.isEmpty()) {
+        if (!errorRowIndexes.isEmpty() && status != TestFileLoadHistoryE.Status.CANCEL) {
             logger.info("导入数据有误，上传 error workbook");
             iExcelImportService.shiftErrorRowsToTop(testCasesSheet, errorRowIndexes);
             if (iExcelImportService.uploadErrorWorkbook(issuesWorkbook, loadHistoryE) == null) {
