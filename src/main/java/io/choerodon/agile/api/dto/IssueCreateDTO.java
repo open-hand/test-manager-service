@@ -38,11 +38,21 @@ public class IssueCreateDTO {
 
     private List<ComponentIssueRelDTO> componentIssueRelDTOList;
 
+    private List<IssueLinkCreateDTO> issueLinkCreateDTOList;
+
     private BigDecimal remainingTime;
 
     private BigDecimal estimateTime;
 
     private String epicName;
+
+    public List<IssueLinkCreateDTO> getIssueLinkCreateDTOList() {
+        return issueLinkCreateDTOList;
+    }
+
+    public void setIssueLinkCreateDTOList(List<IssueLinkCreateDTO> issueLinkCreateDTOList) {
+        this.issueLinkCreateDTOList = issueLinkCreateDTOList;
+    }
 
     public String getTypeCode() {
         return typeCode;
