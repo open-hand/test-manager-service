@@ -21,4 +21,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
         }
     }
+
+    changeSet(id: '2019-03-13-modify-data-type', author: 'ettwz@hotmail.com') {
+        modifyDataType(tableName: 'test_automation_result', columnName: 'result', newDataType: "LONGTEXT")
+    }
 }
