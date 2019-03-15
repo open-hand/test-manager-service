@@ -47,6 +47,8 @@ public class TestCycleDO extends AuditDomain {
 
     private Long lastUpdatedBy;
 
+    private String rank;
+
     @Transient
     private List<Map<String, Object>> cycleCaseList;
 
@@ -144,6 +146,14 @@ public class TestCycleDO extends AuditDomain {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     @Override

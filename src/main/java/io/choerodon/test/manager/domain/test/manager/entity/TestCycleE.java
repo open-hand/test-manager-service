@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -52,6 +54,12 @@ public class TestCycleE {
 
     private Long lastUpdatedBy;
 
+    private String rank;
+
+    private String lastRank;
+
+    private String nextRank;
+
     @Autowired
     TestCycleRepository testCycleRepository;
 
@@ -83,6 +91,7 @@ public class TestCycleE {
         toDate = Optional.ofNullable(toDate).orElse(proto.getToDate());
         type = Optional.ofNullable(type).orElse(proto.getType());
         folderId = Optional.ofNullable(folderId).orElse(proto.getFolderId());
+        rank = Optional.ofNullable(rank).orElse(proto.getRank());
         return addSelf();
     }
 
@@ -91,6 +100,13 @@ public class TestCycleE {
         testCycleE.setParentCycleId(cycleId);
         testCycleE.setType(FOLDER);
         return testCycleE.querySelf();
+    }
+
+    public List<TestCycleE> getChildFolderByRank() {
+        TestCycleE testCycleE = TestCycleEFactory.create();
+        testCycleE.setParentCycleId(cycleId);
+        testCycleE.setType(FOLDER);
+        return testCycleRepository.queryChildFolderByRank(testCycleE);
     }
 
     public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
@@ -105,9 +121,42 @@ public class TestCycleE {
         return testCycleRepository.queryBarOneCycle(cycleId);
     }
 
+    public String getLastedRank() {
+        return testCycleRepository.getLastedRank(this);
+    }
 
     public TestCycleE addSelf() {
         return testCycleRepository.insert(this);
+    }
+
+    public void checkRank() {
+        if (testCycleRepository.getCount(this) != 0
+                && StringUtils.isEmpty(testCycleRepository.getLastedRank(this))) {
+            fixRank(this);
+        }
+    }
+
+    private void fixRank(TestCycleE testCycleE) {
+        List<TestCycleE> cycleES;
+        if (testCycleE.getType().equals(CYCLE)) {
+            cycleES = testCycleRepository.queryCycleInVersion(testCycleE);
+        } else {
+            TestCycleE testCycleE1 = TestCycleEFactory.create();
+            testCycleE1.setCycleId(testCycleE.getParentCycleId());
+            cycleES = testCycleRepository.queryChildCycle(testCycleE1);
+        }
+        for (int a = 0; a < cycleES.size(); a++) {
+            TestCycleE testCycleETemp = cycleES.get(a);
+            List<TestCycleE> list = testCycleETemp.querySelf();
+            TestCycleE testCycleETemp1 = list.get(0);
+            if (a == 0) {
+                testCycleETemp1.setRank(RankUtil.Operation.INSERT.getRank(null, null));
+            } else {
+                testCycleETemp1.setRank(RankUtil.Operation.INSERT.getRank(cycleES.get(a - 1).getRank(), null));
+            }
+            testCycleETemp1 = testCycleETemp1.updateSelf();
+            cycleES.set(a, testCycleETemp1);
+        }
     }
 
     public TestCycleE updateSelf() {
@@ -181,7 +230,7 @@ public class TestCycleE {
     public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
         CountMap map = new CountMap();
         cycleCaseList.forEach(v -> {
-                    ProcessBarSection processBarSection = (ProcessBarSection)v.get("processBarSection");
+                    ProcessBarSection processBarSection = (ProcessBarSection) v.get("processBarSection");
                     map.put((String) v.get("color"), processBarSection);
                 }
         );
@@ -303,5 +352,29 @@ public class TestCycleE {
 
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
     }
 }

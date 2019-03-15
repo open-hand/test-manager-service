@@ -14,7 +14,6 @@
         <association property="processBarSection" resultMap="processBarSection"/>
     </resultMap>
 
-
     <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="queryAboutBarResultMap">
         <id column="cycle_id" property="cycleId"/>
         <id column="parent_cycle_id" property="parentCycleId"/>
@@ -22,16 +21,15 @@
         <id column="version_id" property="versionId"/>
         <id column="description" property="description"/>
         <id column="build" property="build"/>
-        <id column="folder_id" property="folderId"></id>
+        <id column="folder_id" property="folderId"/>
         <id column="environment" property="environment"/>
         <id column="from_date" property="fromDate"/>
         <id column="to_date" property="toDate"/>
         <id column="type" property="type"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="created_by" property="createdBy"/>
-        <association property="cycleCaseList"
-                     resultMap="hashmap">
-        </association>
+        <id column="rank" property="rank"/>
+        <association property="cycleCaseList" resultMap="hashmap"/>
     </resultMap>
 
     <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="BaseResultMap">
@@ -47,156 +45,127 @@
         <id column="type" property="type"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="created_by" property="createdBy"/>
+        <id column="rank" property="rank"/>
     </resultMap>
-
-    <select id="getCyclesByVersionId" resultMap="BaseResultMap">
-             SELECT cycle1.cycle_id,cycle1.parent_cycle_id,cycle1.cycle_name,cycle1.type,cycle1.version_id
-        ,cycle1.description,cycle1.build,cycle1.environment,cycle1.from_date,cycle1.to_date,cycle1.object_version_number,cycle1.created_by
-        FROM test_cycle cycle1
-        where cycle1.version_id =#{versionId} and cycle1.parent_cycle_id is null
-    </select>
 
     <select id="queryOneCycleBar" resultMap="queryAboutBarResultMap">
         SELECT
-        cycle1.cycle_id,
-        cycle1.parent_cycle_id,
-        cycle1.folder_id,
-        cycle1.cycle_name,
-        cycle1.type,
-        cycle1.version_id,
-        cycle1.description,
-        cycle1.build,
-        cycle1.environment,
-        cycle1.from_date,
-        cycle1.to_date,
-        cycle1.object_version_number,
-        cycle1.created_by,
-        color1.color,
-        color1.counts,
-        color1.statusName,
-        color1.projectId,
-        color1.statusId
+            cycle1.cycle_id,
+            cycle1.parent_cycle_id,
+            cycle1.folder_id,
+            cycle1.cycle_name,
+            cycle1.type,
+            cycle1.version_id,
+            cycle1.description,
+            cycle1.build,
+            cycle1.environment,
+            cycle1.from_date,
+            cycle1.to_date,
+            cycle1.object_version_number,
+            cycle1.created_by,
+            cycle1.rank,
+            color1.color,
+            color1.counts,
+            color1.statusName,
+            color1.projectId,
+            color1.statusId
         FROM
-        test_cycle cycle1
-        LEFT JOIN (
-        SELECT
-        color,
-        count( 1 ) counts,
-        temp1.cycle_id,
-        statusId,
-        statusName,
-        projectId
-        FROM
-        (
-        SELECT
-        cycle.execute_id,
-        cycle.cycle_id,
-        status1.status_id statusId,
-        status1.status_color color,
-        status1.status_name statusName,
-        status1.project_id projectId
-        FROM
-        test_cycle_case cycle
-        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
-        ) temp1
-        GROUP BY
-        temp1.statusId,temp1.cycle_id
-        ) color1 ON color1.cycle_id = cycle1.cycle_id
-        WHERE cycle1.parent_cycle_id = #{cycleId}
-        ORDER BY cycle1.cycle_id,color1.statusId
+            test_cycle cycle1
+            LEFT JOIN (
+            SELECT
+                color,
+                count( 1 ) counts,
+                temp1.cycle_id,
+                statusId,
+                statusName,
+                projectId
+            FROM
+                (
+                SELECT
+                    cycle.execute_id,
+                    cycle.cycle_id,
+                    status1.status_id statusId,
+                    status1.status_color color,
+                    status1.status_name statusName,
+                    status1.project_id projectId
+                FROM
+                    test_cycle_case cycle
+                    LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+                ) temp1
+            GROUP BY
+                temp1.statusId,
+                temp1.cycle_id
+            ) color1 ON color1.cycle_id = cycle1.cycle_id
+        WHERE
+            cycle1.parent_cycle_id = #{cycleId}
+        ORDER BY
+            cycle1.cycle_id,
+            cycle1.rank,
+            color1.statusId
     </select>
 
     <select id="query" resultMap="queryAboutBarResultMap">
         SELECT
-        cycle1.cycle_id,
-        cycle1.parent_cycle_id,
-        cycle1.folder_id,
-        cycle1.cycle_name,
-        cycle1.type,
-        cycle1.version_id,
-        cycle1.description,
-        cycle1.build,
-        cycle1.environment,
-        cycle1.from_date,
-        cycle1.to_date,
-        cycle1.object_version_number,
-        cycle1.created_by,
-        color1.color,
-        color1.counts,
-        color1.statusName,
-        color1.projectId,
-        color1.statusId
+            cycle1.cycle_id,
+            cycle1.parent_cycle_id,
+            cycle1.folder_id,
+            cycle1.cycle_name,
+            cycle1.type,
+            cycle1.version_id,
+            cycle1.description,
+            cycle1.build,
+            cycle1.environment,
+            cycle1.from_date,
+            cycle1.to_date,
+            cycle1.object_version_number,
+            cycle1.created_by,
+            cycle1.rank,
+            color1.color,
+            color1.counts,
+            color1.statusName,
+            color1.projectId,
+            color1.statusId
         FROM
-        test_cycle cycle1
-        LEFT JOIN (
-        SELECT
-        color,
-        count( 1 ) counts,
-        temp1.cycle_id,
-        statusId,
-        statusName,
-        projectId
-        FROM
-        (
-        SELECT
-        cycle.execute_id,
-        cycle.cycle_id,
-        status1.status_id statusId,
-        status1.status_color color,
-        status1.status_name statusName,
-        status1.project_id projectId
-        FROM
-        test_cycle_case cycle
-        LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
-        <if test="assignedTo!=null">
-            where
-            cycle.assigned_to=#{assignedTo}
-        </if>
-        ) temp1
-        GROUP BY
-        temp1.statusId,temp1.cycle_id
-        ) color1 ON color1.cycle_id = cycle1.cycle_id
-        WHERE cycle1.version_id IN
+            test_cycle cycle1
+            LEFT JOIN (
+            SELECT
+                color,
+                count( 1 ) counts,
+                temp1.cycle_id,
+                statusId,
+                statusName,
+                projectId
+            FROM
+                (
+                SELECT
+                    cycle.execute_id,
+                    cycle.cycle_id,
+                    status1.status_id statusId,
+                    status1.status_color color,
+                    status1.status_name statusName,
+                    status1.project_id projectId
+                FROM
+                    test_cycle_case cycle
+                    LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
+            <if test="assignedTo!=null">
+                WHERE
+                    cycle.assigned_to = #{assignedTo}
+            </if>
+                ) temp1
+            GROUP BY
+                temp1.statusId,
+                temp1.cycle_id
+            ) color1 ON color1.cycle_id = cycle1.cycle_id
+        WHERE
+            cycle1.version_id IN
         <foreach item="item" index="index" collection="versionIds"
                  open="(" separator="," close=")">
             #{item}
         </foreach>
-        ORDER BY cycle1.cycle_id,color1.statusId
-    </select>
-
-    <select id="filter" resultMap="BaseResultMap">
-        SELECT
-        DISTINCT
-        t1.cycle_id,
-        t1.parent_cycle_id,
-        t1.cycle_name,
-        t1.type,
-        t1.version_id ,
-        t1.object_version_number
-        FROM
-        test_cycle t1,
-        (
-        SELECT
-        cycle1.cycle_id,
-        cycle1.parent_cycle_id,
-        cycle1.cycle_name,
-        cycle1.type,
-        cycle1.version_id ,
-        cycle1.object_version_number
-        FROM
-        test_cycle cycle1
-        WHERE
-        instr(cycle_name,#{parameter})>0 or instr(environment,#{parameter})>0
-        AND cycle1.version_id IN
-        <foreach item="item" index="index" collection="versionIds"
-                 open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        ) t2
-        WHERE
-        t1.cycle_id = t2.cycle_id
-        OR ( t2.type = 'folder' AND t1.cycle_id = t2.parent_cycle_id )
-        OR ( t2.type = 'cycle' AND t2.cycle_id = t1.parent_cycle_id )
+        ORDER BY
+            cycle1.rank,
+            cycle1.cycle_id,
+            color1.statusId
     </select>
 
     <select id="validateCycle" resultType="java.lang.Long">
@@ -232,7 +201,7 @@
 
     <select id="queryChildCycle" resultMap="BaseResultMap">
         SELECT
-        cycle_id,cycle_name
+        cycle_id,cycle_name,rank
         FROM
         test_cycle
         <where>
@@ -240,10 +209,29 @@
                 parent_cycle_id=#{dto.cycleId}
             </if>
         </where>
+        ORDER BY
+        rank
+    </select>
+
+    <select id="queryCycleInVersion" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+        SELECT
+        cycle_id,cycle_name,rank
+        FROM
+        test_cycle
+        <where>
+            <if test="dto!=null and dto.versionId != null">
+                version_id = #{dto.versionId}
+            </if>
+            <if test="dto!=null and dto.type != null">
+                AND type = #{dto.type}
+            </if>
+        </where>
+        ORDER BY
+        rank
     </select>
 
     <select id="queryByIds" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
-        SELECT cycle_id,cycle_name
+        SELECT cycle_id,cycle_name,rank
         FROM
         test_cycle
         WHERE
@@ -251,6 +239,79 @@
         <foreach item="item" index="index" collection="cycleIds" open="(" separator="," close=")">
             #{item}
         </foreach>
+        ORDER BY
+        rank
+    </select>
+
+    <select id="getCycleLastedRank" resultType="java.lang.String">
+        SELECT
+            rank
+        FROM
+            test_cycle
+        WHERE
+            version_id = #{versionId}
+            AND type = 'cycle'
+        ORDER BY
+            rank DESC
+            LIMIT 1
+    </select>
+
+    <select id="getFolderLastedRank" resultType="java.lang.String">
+        SELECT
+            rank
+        FROM
+            test_cycle
+        WHERE
+            parent_cycle_id = #{cycleId}
+            AND type = 'folder'
+        ORDER BY
+            rank DESC
+            LIMIT 1
+    </select>
+
+    <select id="getCycleCountInVersion" resultType="java.lang.Long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            test_cycle
+        WHERE
+            type = 'cycle'
+            AND version_id = #{versionId}
+    </select>
+
+    <select id="getFolderCountInCycle" resultType="java.lang.Long">
+        SELECT
+            COUNT( 1 )
+        FROM
+            test_cycle
+        WHERE
+            type = 'folder'
+            AND parent_cycle_id = #{cycleId}
+    </select>
+
+    <select id="queryChildFolderByRank" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+        SELECT
+            cycle1.cycle_id,
+            cycle1.parent_cycle_id,
+            cycle1.folder_id,
+            cycle1.cycle_name,
+            cycle1.type,
+            cycle1.version_id,
+            cycle1.description,
+            cycle1.build,
+            cycle1.environment,
+            cycle1.from_date,
+            cycle1.to_date,
+            cycle1.object_version_number,
+            cycle1.created_by,
+            cycle1.rank
+        FROM
+            test_cycle cycle1
+        WHERE
+            type = 'folder'
+            AND parent_cycle_id = #{cycleId}
+        ORDER BY
+            cycle1.rank
     </select>
 
     <update id="updateAuditFields">

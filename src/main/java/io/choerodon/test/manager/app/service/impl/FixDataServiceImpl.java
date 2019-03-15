@@ -2,9 +2,12 @@ package io.choerodon.test.manager.app.service.impl;
 
 import feign.FeignException;
 import feign.codec.DecodeException;
+
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCaseStepEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
@@ -43,6 +46,9 @@ public class FixDataServiceImpl implements FixDataService {
 
     @Autowired
     TestCaseStepService testCaseStepService;
+
+    @Autowired
+    TestCycleRepository testCycleRepository;
 
     private static final String CYCLE = "cycle";
 
@@ -250,6 +256,8 @@ public class FixDataServiceImpl implements FixDataService {
             resTestCycleE.setCycleName(resTestCycleE.getCycleName() + "阶段");
             //如果是cycle或者temp类型就新增一个cycle为其子folder
             Long parentCycleId = resTestCycleE.getCycleId();
+            resTestCycleE.checkRank();
+            testCycleE.setRank(RankUtil.Operation.INSERT.getRank(testCycleRepository.getLastedRank(testCycleE), null));
             needTestCycleE = resTestCycleE.addSelf();
             log.info("add a child cycle for cycle... parentCycleId:" + parentCycleId + " , childCycleId:" + needTestCycleE.getCycleId());
             needTestCycleE.setObjectVersionNumber(1L);

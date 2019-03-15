@@ -13,6 +13,7 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFacto
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.TestDateUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
     @Override
     public TestCycleE insert(TestCycleE testCycleE) {
+        testCycleE.checkRank();
+        testCycleE.setRank(RankUtil.Operation.INSERT.getRank(testCycleRepository.getLastedRank(testCycleE), null));
         return testCycleE.addSelf();
     }
 
@@ -108,6 +111,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
      */
     @Override
     public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
+        newTestCycleE.checkRank();
         TestCycleE parentCycleE = TestCycleEFactory.create();
         parentCycleE.setCycleId(newTestCycleE.getParentCycleId());
         if (!protoTestCycleE.getType().equals(TestCycleE.CYCLE)) {
@@ -129,7 +133,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
                 protoTestCycleE.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
             }
         }
-
+        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(testCycleRepository.getLastedRank(newTestCycleE), null));
         TestCycleE newCycleE = newTestCycleE.cloneCycle(protoTestCycleE);
         cloneSubCycleCase(protoTestCycleE.getCycleId(), newCycleE.getCycleId(), projectId);
 
@@ -147,10 +151,11 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     @Override
     public TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
         TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE, projectId);
-        protoTestCycleE.getChildFolder().forEach(v -> {
+        protoTestCycleE.getChildFolderByRank().forEach(v -> {
             TestCycleE testCycleE = TestCycleEFactory.create();
             testCycleE.setParentCycleId(parentCycle.getCycleId());
             testCycleE.setVersionId(parentCycle.getVersionId());
+            testCycleE.setType(TestCycleE.FOLDER);
             cloneFolder(v, testCycleE, projectId);
         });
         return parentCycle;
@@ -184,5 +189,10 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     @Override
     public List<Long> selectCyclesInVersions(Long[] versionIds) {
         return testCycleRepository.selectCyclesInVersions(versionIds);
+    }
+
+    @Override
+    public List<String> queryUpdateRank(TestCycleE testCycleE) {
+        return testCycleRepository.queryUpdateRank(testCycleE);
     }
 }

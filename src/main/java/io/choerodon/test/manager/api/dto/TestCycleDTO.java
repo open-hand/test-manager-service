@@ -32,10 +32,8 @@ public class TestCycleDTO {
 
     private String environment;
 
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date fromDate;
 
-//    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private Date toDate;
 
     private String type;
@@ -45,6 +43,12 @@ public class TestCycleDTO {
     private Long objectVersionNumber;
 
     private Long folderId;
+
+    private String rank;
+
+    private String lastRank;
+
+    private String nextRank;
 
     public Long getCycleId() {
         return cycleId;
@@ -180,5 +184,29 @@ public class TestCycleDTO {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
     }
 }
