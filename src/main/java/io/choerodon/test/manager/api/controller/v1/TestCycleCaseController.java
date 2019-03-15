@@ -98,17 +98,17 @@ public class TestCycleCaseController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
     }
-
-
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("增加一个测试组下循环用例")
-    @PostMapping("/insert")
-    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
-
-    }
+//
+//
+//    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//    @ApiOperation("增加一个测试组下循环用例")
+//    @PostMapping("/insert")
+//    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "project_id") Long projectId) {
+//        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
+//                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+//                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+//
+//    }
 
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

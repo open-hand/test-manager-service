@@ -2,9 +2,11 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -15,11 +17,14 @@ import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -220,12 +225,21 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleE temp = TestCycleEFactory.create();
         temp.setCycleId(testCycleDTO.getCycleId());
         TestCycleE temp1 = temp.queryOne();
+        Long objectVersionNumber = testCycleDTO.getObjectVersionNumber();
+        if (!StringUtils.isEmpty(testCycleDTO.getRank())) {
+            temp1.checkRank();
+            temp1.setRank(testCycleDTO.getRank());
+            List<String> ranks = iTestCycleService.queryUpdateRank(temp1);
+            Optional.ofNullable(ranks.get(0)).ifPresent(testCycleDTO::setLastRank);
+            Optional.ofNullable(ranks.get(1)).ifPresent(testCycleDTO::setNextRank);
+            objectVersionNumber++;
+        }
         if (temp1.getType().equals(TestCycleE.FOLDER)) {
             Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(temp1::setCycleName);
             Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
             Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
-            temp1.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
+            temp1.setObjectVersionNumber(objectVersionNumber);
             syncCycleDate(temp1);
         } else if (temp1.getType().equals(TestCycleE.CYCLE)) {
             Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(temp1::setBuild);
@@ -234,11 +248,14 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getEnvironment()).ifPresent(temp1::setEnvironment);
             Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
-            Optional.ofNullable(testCycleDTO.getObjectVersionNumber()).ifPresent(temp1::setObjectVersionNumber);
+            temp1.setObjectVersionNumber(objectVersionNumber);
             syncFolderDate(temp1);
         }
+        if (!StringUtils.isEmpty(testCycleDTO.getLastRank()) || !StringUtils.isEmpty(testCycleDTO.getNextRank())) {
+            temp1.setRank(RankUtil.Operation.UPDATE.getRank(testCycleDTO.getLastRank(), testCycleDTO.getNextRank()));
+            temp1.setObjectVersionNumber(objectVersionNumber);
+        }
         return ConvertHelper.convert(iTestCycleService.update(temp1), TestCycleDTO.class);
-
     }
 
     /**
@@ -506,6 +523,9 @@ public class TestCycleServiceImpl implements TestCycleService {
             version.put("folderVersionID", v.getVersionId());
             version.put("folderVersionName", versions.get(v.getVersionId()));
         });
+        version.put("rank", testCycleDTO.getRank());
+        version.put("lastRank", testCycleDTO.getLastRank());
+        version.put("nextRank", testCycleDTO.getNextRank());
         version.put("toDate", testCycleDTO.getToDate());
         version.put("fromDate", testCycleDTO.getFromDate());
         version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
@@ -578,6 +598,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleE.setCycleId(cycleId);
         TestCycleE protoTestCycleE = testCycleE.queryOne();
         Assert.notNull(protoTestCycleE, "error.clone.folder.protoFolder.not.be.null");
+        testCycleDTO.setType(TestCycleE.FOLDER);
 
         return ConvertHelper.convert(iTestCycleService.cloneFolder(protoTestCycleE, ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId), TestCycleDTO.class);
     }

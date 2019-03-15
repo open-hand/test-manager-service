@@ -34,7 +34,19 @@ public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
     List<TestCycleDO> queryChildCycle(@Param("dto") TestCycleDO testCycleDO);
 
+    List<TestCycleDO> queryCycleInVersion(@Param("dto") TestCycleDO testCycleDO);
+
     List<TestCycleDO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
 
     void updateAuditFields(@Param("cycleIds") Long[] cycleId, @Param("userId") Long userId, @Param("date") Date date);
+
+    String getCycleLastedRank(@Param("versionId") Long versionId);
+
+    String getFolderLastedRank(@Param("cycleId") Long cycleId);
+
+    Long getCycleCountInVersion(@Param("versionId") Long versionId);
+
+    Long getFolderCountInCycle(@Param("cycleId") Long cycleId);
+
+    List<TestCycleDO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
 }

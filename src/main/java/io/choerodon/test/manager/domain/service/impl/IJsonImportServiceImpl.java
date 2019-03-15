@@ -10,6 +10,7 @@ import io.choerodon.agile.api.dto.ProjectDTO;
 import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.agile.infra.common.utils.AgileUtil;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
@@ -18,6 +19,7 @@ import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.testng.TestNgCase;
 import io.choerodon.test.manager.api.dto.testng.TestNgTest;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.service.IExcelImportService;
 import io.choerodon.test.manager.domain.service.IJsonImportService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
@@ -76,6 +78,9 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Autowired
     private IssueFeignClient issueFeignClient;
+
+    @Autowired
+     private TestCycleRepository testCycleRepository;
 
     public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
         this.issueFeignClient = issueFeignClient;
@@ -269,6 +274,8 @@ public class IJsonImportServiceImpl implements IJsonImportService {
             testCycleE.setType(TestCycleE.CYCLE);
             testCycleE.setFromDate(new Date());
             testCycleE.setToDate(testCycleE.getFromDate());
+            testCycleE.checkRank();
+            testCycleE.setRank(RankUtil.Operation.INSERT.getRank(testCycleRepository.getLastedRank(testCycleE), null));
             return testCycleE.addSelf();
         }
 

@@ -10,20 +10,22 @@ import java.util.List;
 public interface ITestCycleService {
     TestCycleE insert(TestCycleE testCycleE);
 
-	void delete(TestCycleE testCycleE, Long projectId);
+    void delete(TestCycleE testCycleE, Long projectId);
 
-	TestCycleE update(TestCycleE testCycleE);
+    TestCycleE update(TestCycleE testCycleE);
 
-	List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
+    List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
 
-	TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
+    TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
-	TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
+    TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
-	List<TestCycleE> queryCycleWithBar(Long[] versionId,Long assignedTo);
+    List<TestCycleE> queryCycleWithBar(Long[] versionId, Long assignedTo);
 
-	List<TestCycleE> queryCycleWithBarOneCycle(Long cycleId);
+    List<TestCycleE> queryCycleWithBarOneCycle(Long cycleId);
 
-	List<Long> selectCyclesInVersions(Long[] versionIds);
+    List<Long> selectCyclesInVersions(Long[] versionIds);
+
+    List<String> queryUpdateRank(TestCycleE testCycleE);
 
 }
