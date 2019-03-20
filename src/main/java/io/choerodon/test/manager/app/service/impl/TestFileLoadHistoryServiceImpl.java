@@ -15,8 +15,10 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 
+import jodd.util.ObjectUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -87,8 +89,9 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
         testIssueFolderE.setFolderId(testFileLoadHistoryE.getLinkedId());
         testIssueFolderE = testIssueFolderE.queryByPrimaryKey();
 
-        testIssuesUploadHistoryDTO.setVersionName(testCaseService.getVersionInfo(projectId)
-                .get(testIssueFolderE.getVersionId()).getName());
+        Optional.ofNullable(testCaseService.getVersionInfo(projectId)
+                .get(testIssueFolderE.getVersionId()).getName())
+                .ifPresent(testIssuesUploadHistoryDTO::setVersionName);
 
         return testIssuesUploadHistoryDTO;
     }
