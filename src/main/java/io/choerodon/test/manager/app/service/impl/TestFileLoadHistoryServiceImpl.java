@@ -89,9 +89,10 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
         testIssueFolderE.setFolderId(testFileLoadHistoryE.getLinkedId());
         testIssueFolderE = testIssueFolderE.queryByPrimaryKey();
 
-        Optional.ofNullable(testCaseService.getVersionInfo(projectId)
-                .get(testIssueFolderE.getVersionId()).getName())
-                .ifPresent(testIssuesUploadHistoryDTO::setVersionName);
+        if (!ObjectUtils.isEmpty(testIssueFolderE)) {
+            testIssuesUploadHistoryDTO.setVersionName(testCaseService.getVersionInfo(projectId)
+                    .get(testIssueFolderE.getVersionId()).getName());
+        }
 
         return testIssuesUploadHistoryDTO;
     }
