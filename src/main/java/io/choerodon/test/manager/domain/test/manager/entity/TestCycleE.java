@@ -300,7 +300,7 @@ public class TestCycleE {
     }
 
     private static class ProcessBarSection {
-        public String color;
+        private String color;
         private Long statusId;
         private String statusName;
         private Long counts;
