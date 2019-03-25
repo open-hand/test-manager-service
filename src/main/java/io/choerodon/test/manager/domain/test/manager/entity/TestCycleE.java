@@ -300,10 +300,19 @@ public class TestCycleE {
     }
 
     private static class ProcessBarSection {
+        private String color;
         private Long statusId;
         private String statusName;
         private Long counts;
         private Long projectId;
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
 
         public Long getStatusId() {
             return statusId;

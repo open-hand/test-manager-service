@@ -3,6 +3,7 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleMapper">
     <resultMap id="processBarSection"
                type="io.choerodon.test.manager.domain.test.manager.entity.TestCycleE$ProcessBarSection">
+        <id column="color" property="color"/>
         <id column="statusId" property="statusId"/>
         <id column="statusName" property="statusName"/>
         <id column="counts" property="counts"/>
