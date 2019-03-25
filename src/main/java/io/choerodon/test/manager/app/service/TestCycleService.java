@@ -49,7 +49,7 @@ public interface TestCycleService {
 
     void populateUsers(List<TestCycleDTO> dtos);
 
-    void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
+	void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
 
     List<TestCycleDTO> getCyclesInVersion(Long versionId);
 
