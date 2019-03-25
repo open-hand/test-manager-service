@@ -191,3 +191,28 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix `Create Bugs` is agent cannot search problem.
 - Fix dragging in `Test Plans` modify specific date error problem.
 - Fix `Test Defect Report` specific data show the wrong questions.
+
+## [0.15.0] - 2019-03-22
+
+### Add
+
+#### 0.15.0 Significantly added features
+
+- Add Filtering by label in `Test Case`
+- Add related story features when creating defects in `Test Execution` details
+- Add sort function for `Test Phase`in same `Test cycle`
+- Add init demo data function
+
+### Modify
+
+#### 0.15.0 Significantly modify the feature
+
+- Optimize the logic of update time in function clone `Test Cycle`
+
+### Fix
+
+#### 0.15.0 Significant repair features
+
+- Fix the problem in `Test Execution` details when page turning
+- Fix the problem in the `Test Plan` tree that is inconsistent with the detail progress bar on the right
+- Fix the problem of database errors caused by excessively long reports in `Automation Tests`
