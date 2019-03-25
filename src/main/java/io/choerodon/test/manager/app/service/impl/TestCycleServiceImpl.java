@@ -522,7 +522,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         version.put("nextRank", testCycleDTO.getNextRank());
         version.put("toDate", testCycleDTO.getToDate());
         version.put("fromDate", testCycleDTO.getFromDate());
-        version.put("cycleCaseList", testCycleDTO.getCycleCaseList());
+        version.put("cycleCaseList", testCycleDTO.getCycleCaseWithBarList());
         version.put("objectVersionNumber", testCycleDTO.getObjectVersionNumber());
         version.put("key", height);
         version.put("versionName", versions.get(testCycleDTO.getVersionId()));

@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.agile.api.dto.UserDO;
-
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
+
+import io.choerodon.agile.api.dto.UserDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -38,7 +38,7 @@ public class TestCycleDTO {
 
     private String type;
 
-    private Map cycleCaseList;
+    private List<Object> cycleCaseWithBarList;
 
     private Long objectVersionNumber;
 
@@ -138,12 +138,12 @@ public class TestCycleDTO {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-    public Map getCycleCaseList() {
-        return cycleCaseList;
+    public List<Object> getCycleCaseWithBarList() {
+        return cycleCaseWithBarList;
     }
 
-    public void setCycleCaseList(Map cycleCaseList) {
-        this.cycleCaseList = cycleCaseList;
+    public void setCycleCaseWithBarList(List<Object> cycleCaseWithBarList) {
+        this.cycleCaseWithBarList = cycleCaseWithBarList;
     }
 
     public String getVersionName() {
