@@ -97,7 +97,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         List<TestIssueFolderDTO> testIssueFolderDTOS = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
         List<TestCycleDTO> cycles = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::transferToCycle).collect(Collectors.toList());
-        testCycleService.initVersionTree(versionStatus, versions, cycles);
+        testCycleService.initVersionTree(projectId, versionStatus, versions, cycles);
         return root;
     }
 

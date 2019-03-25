@@ -2,7 +2,6 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -11,20 +10,18 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
-import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -33,6 +30,7 @@ import org.springframework.util.ObjectUtils;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -363,7 +361,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
         populateUsers(cycles);
 
-        initVersionTree(versionStatus, versions, cycles);
+        initVersionTree(projectId, versionStatus, versions, cycles);
 
         return root;
     }
@@ -428,18 +426,21 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 
     @Override
-    public void initVersionTree(JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
-        Map<String, JSONObject> versionsMap = new HashMap<>();
+    public void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
+        Map<String, JSONObject> versionsMap = new HashMap<>(versionDTOList.size());
         Map<Long, String> versions = versionDTOList.stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-
+        Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
+        Map<Long, List<TestCycleDTO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
+        Map<Long, List<TestCycleDTO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+        TestIssueFolderE foldE = TestIssueFolderEFactory.create();
+        foldE.setProjectId(projectId);
+        Map<Long, TestIssueFolderDTO> folderMap = ConvertHelper.convertList(foldE.queryAllUnderProject(), TestIssueFolderDTO.class).stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         for (ProductVersionDTO versionDTO : versionDTOList) {
-            JSONObject version;
-            if (!versionsMap.containsKey(versionDTO.getStatusName())) {
+            JSONObject version = versionsMap.get(versionDTO.getStatusName());
+            if (version == null) {
                 version = createVersionNode(versionDTO.getStatusName(), "0-" + versionsMap.size(), null);
                 versionStatus.add(version);
                 versionsMap.put(versionDTO.getStatusName(), version);
-            } else {
-                version = versionsMap.get(versionDTO.getStatusName());
             }
 
             JSONArray versionNames = version.getJSONArray(NODE_CHILDREN);
@@ -449,7 +450,8 @@ public class TestCycleServiceImpl implements TestCycleService {
             JSONObject versionName = createVersionNode(versionDTO.getName(), nowStatusHeight + "-" + nowNamesHeight, versionDTO.getVersionId());
             versionNames.add(versionName);
 
-            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versionDTO.getVersionId(), cycleDTOList, versions);
+            Long versionId = versionDTO.getVersionId();
+            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versions, cycleVersionGroup.get(versionId), tempVersionGroup.get(versionId), parentGroup, folderMap);
         }
     }
 
@@ -495,7 +497,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         return version;
     }
 
-    private JSONObject createCycle(TestCycleDTO testCycleDTO, String height, Map<Long, String> versions) {
+    private JSONObject createCycle(TestCycleDTO testCycleDTO, String height, Map<Long, String> versions, Map<Long, TestIssueFolderDTO> folderMap) {
         JSONObject version = new JSONObject();
         version.put("title", testCycleDTO.getCycleName());
         version.put("environment", testCycleDTO.getEnvironment());
@@ -509,20 +511,12 @@ public class TestCycleServiceImpl implements TestCycleService {
                 version.put("createdUser", JSONObject.toJSON(v))
         );
         version.put("folderId", testCycleDTO.getFolderId());
-        TestIssueFolderE folderE = TestIssueFolderEFactory.create();
-        Optional.ofNullable(testCycleDTO.getFolderId()).map(v -> {
-            folderE.setFolderId(v);
-            TestIssueFolderE res = folderE.queryByPrimaryKey();
-            Optional.ofNullable(res).ifPresent(n -> {
-                n.setName(n.getName());
-                n.setVersionId(n.getVersionId());
-            });
-            return res;
-        }).ifPresent(v -> {
-            version.put("folderName", v.getName());
-            version.put("folderVersionID", v.getVersionId());
-            version.put("folderVersionName", versions.get(v.getVersionId()));
-        });
+        Optional.ofNullable(testCycleDTO.getFolderId()).map(folderMap::get)
+                .ifPresent(v -> {
+                    version.put("folderName", v.getName());
+                    version.put("folderVersionID", v.getVersionId());
+                    version.put("folderVersionName", versions.get(v.getVersionId()));
+                });
         version.put("rank", testCycleDTO.getRank());
         version.put("lastRank", testCycleDTO.getLastRank());
         version.put("nextRank", testCycleDTO.getNextRank());
@@ -538,27 +532,30 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
 
-    private void initCycleTree(JSONArray cycles, String height, Long versionId, List<TestCycleDTO> cycleDTOList, Map<Long, String> versions) {
+    private void initCycleTree(JSONArray cycles, String height, Map<Long, String> versions, List<TestCycleDTO> cycleList, List<TestCycleDTO> tempList, Map<Long, List<TestCycleDTO>> parentMap, Map<Long, TestIssueFolderDTO> folderMap) {
+        if (cycleList != null) {
+            cycleList.stream().forEach(v -> {
+                JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions, folderMap);
+                cycles.add(cycle);
+                initCycleFolderTree(cycle.getJSONArray(NODE_CHILDREN), cycle.get("key").toString(), parentMap.get(v.getCycleId()), versions, folderMap);
+            });
+        }
 
-        cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE))
-                .forEach(v -> {
-                    JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions);
-                    cycles.add(cycle);
-                    initCycleFolderTree(cycle.getJSONArray(NODE_CHILDREN), cycle.get("key").toString(), v.getCycleId(), cycleDTOList, versions);
-                });
-
-        cycleDTOList.stream().filter(cycleDTO -> cycleDTO.getVersionId().equals(versionId) && StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP))
-                .forEach(v -> {
-                    JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions);
-                    cycles.add(cycle);
-                });
+        if (tempList != null) {
+            tempList.stream().forEach(v -> {
+                JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions, folderMap);
+                cycles.add(cycle);
+            });
+        }
     }
 
 
-    private void initCycleFolderTree(JSONArray folders, String height, Long parentId, List<TestCycleDTO> cycleDTOList, Map<Long, String> versions) {
-        cycleDTOList.stream().filter(v -> parentId.equals(v.getParentCycleId())).forEach(u ->
-                folders.add(createCycle(u, height + "-" + folders.size(), versions))
-        );
+    private void initCycleFolderTree(JSONArray folders, String height, List<TestCycleDTO> cycleDTOList, Map<Long, String> versions, Map<Long, TestIssueFolderDTO> folderMap) {
+        if (cycleDTOList != null) {
+            cycleDTOList.stream().forEach(u ->
+                    folders.add(createCycle(u, height + "-" + folders.size(), versions, folderMap))
+            );
+        }
     }
 
 
