@@ -10,8 +10,8 @@
         <id column="projectId" property="projectId"/>
     </resultMap>
 
-    <resultMap id="hashmap" type="java.util.Map">
-        <result column="color" property="color" jdbcType="VARCHAR"/>
+    <resultMap id="hashmap" type="java.util.LinkedHashMap">
+        <result column="statusId" property="statusId" javaType="Long" jdbcType="BIGINT"/>
         <association property="processBarSection" resultMap="processBarSection"/>
     </resultMap>
 

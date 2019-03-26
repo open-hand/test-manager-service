@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class TestCycleDO extends AuditDomain {
     private String rank;
 
     @Transient
-    private List<Map<String, Object>> cycleCaseList;
+    private List<Map<Long, Object>> cycleCaseList;
 
     public Long getCycleId() {
         return cycleId;
@@ -132,11 +133,11 @@ public class TestCycleDO extends AuditDomain {
         this.type = type;
     }
 
-    public List<Map<String, Object>> getCycleCaseList() {
+    public List<Map<Long, Object>> getCycleCaseList() {
         return cycleCaseList;
     }
 
-    public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
+    public void setCycleCaseList(List<Map<Long, Object>> cycleCaseList) {
         this.cycleCaseList = cycleCaseList;
     }
 
