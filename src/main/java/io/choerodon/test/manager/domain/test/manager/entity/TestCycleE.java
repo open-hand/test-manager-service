@@ -3,8 +3,8 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -290,7 +290,9 @@ public class TestCycleE {
                     processBarSection.setCounts(processBarSection.getCounts() + v.getCounts());
                     this.put(k, processBarSection);
                 } else {
-                    this.put(k, v);
+                    ProcessBarSection newPro = new ProcessBarSection();
+                    BeanUtils.copyProperties(v, newPro);
+                    this.put(k, newPro);
                 }
             });
             LinkedHashMap<Long, ProcessBarSection> res = this.entrySet().stream()
