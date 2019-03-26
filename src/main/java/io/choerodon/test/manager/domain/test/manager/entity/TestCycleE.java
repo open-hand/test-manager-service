@@ -270,10 +270,11 @@ public class TestCycleE {
     }
 
     public void countChildStatus(List<TestCycleE> cycleCaseList) {
-        cycleCaseList.forEach(v ->
-                this.cycleCaseList.merge(v.getCycleCaseList())
-        );
-
+        if (cycleCaseList != null) {
+            cycleCaseList.forEach(v ->
+                    this.cycleCaseList.merge(v.getCycleCaseList())
+            );
+        }
     }
 
     private static class CountMap extends LinkedHashMap<Long, ProcessBarSection> {
