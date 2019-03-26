@@ -31,9 +31,10 @@ public class TestCycleConvertor implements ConvertorI<TestCycleE, TestCycleDO, T
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         BeanUtils.copyProperties(entity, testCycleDTO, "cycleCaseList");
         List<Object> list = new ArrayList<>();
-        entity.getCycleCaseList().forEach((k, v) -> list.add(v));
-        testCycleDTO.setCycleCaseWithBarList(list);
-
+        if (entity.getCycleCaseList() != null) {
+            entity.getCycleCaseList().forEach((k, v) -> list.add(v));
+            testCycleDTO.setCycleCaseWithBarList(list);
+        }
         return testCycleDTO;
     }
 
