@@ -227,12 +227,9 @@ public class TestCycleE {
         return cycleCaseList;
     }
 
-    public void setCycleCaseList(List<Map<String, Object>> cycleCaseList) {
+    public void setCycleCaseList(List<Map<Long, Object>> cycleCaseList) {
         CountMap map = new CountMap();
-        cycleCaseList.forEach(v -> {
-                    ProcessBarSection processBarSection = (ProcessBarSection) v.get("processBarSection");
-                    map.put((String) v.get("color"), processBarSection);
-                }
+        cycleCaseList.forEach(v -> map.put((Long) v.get("statusId"), (ProcessBarSection) v.get("processBarSection"))
         );
         this.cycleCaseList = map;
     }
@@ -285,8 +282,8 @@ public class TestCycleE {
 
     }
 
-    private static class CountMap extends HashMap<String, ProcessBarSection> {
-        private void merge(Map<String, ProcessBarSection> plus) {
+    private static class CountMap extends LinkedHashMap<Long, ProcessBarSection> {
+        private void merge(Map<Long, ProcessBarSection> plus) {
             plus.forEach((k, v) -> {
                 if (this.containsKey(k)) {
                     ProcessBarSection processBarSection = super.get(k);
@@ -296,6 +293,12 @@ public class TestCycleE {
                     this.put(k, v);
                 }
             });
+            LinkedHashMap<Long, ProcessBarSection> res = this.entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                            (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            this.clear();
+            this.putAll(res);
         }
     }
 
