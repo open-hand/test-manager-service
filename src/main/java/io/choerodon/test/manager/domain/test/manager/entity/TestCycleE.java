@@ -21,8 +21,6 @@ public class TestCycleE {
 
     public static final String FOLDER = "folder";
     public static final String CYCLE = "cycle";
-    public static final String TEMP = "temp";
-    public static final String TEMP_CYCLE_NAME = "临时";
 
     private Long cycleId;
 
@@ -107,10 +105,6 @@ public class TestCycleE {
         testCycleE.setParentCycleId(cycleId);
         testCycleE.setType(FOLDER);
         return testCycleRepository.queryChildFolderByRank(testCycleE);
-    }
-
-    public List<TestCycleE> getChildFolder(List<TestCycleE> testCycleES) {
-        return testCycleES.stream().filter(v -> this.cycleId.equals(v.getParentCycleId()) && v.getType().equals(FOLDER)).collect(Collectors.toList());
     }
 
     public List<TestCycleE> querySelfWithBar(Long[] versionIds, Long assignedTo) {
@@ -285,8 +279,8 @@ public class TestCycleE {
     private static class CountMap extends LinkedHashMap<Long, ProcessBarSection> {
         private void merge(Map<Long, ProcessBarSection> plus) {
             plus.forEach((k, v) -> {
-                if (this.containsKey(k)) {
-                    ProcessBarSection processBarSection = super.get(k);
+                ProcessBarSection processBarSection = super.get(k);
+                if (processBarSection != null) {
                     processBarSection.setCounts(processBarSection.getCounts() + v.getCounts());
                     this.put(k, processBarSection);
                 } else {

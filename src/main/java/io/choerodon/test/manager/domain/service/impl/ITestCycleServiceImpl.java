@@ -13,7 +13,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFacto
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.TestDateUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +20,8 @@ import org.springframework.util.Assert;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -95,8 +96,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     }
 
     private List<TestCycleE> countStatus(List<TestCycleE> testCycleES) {
-        testCycleES.stream().filter(v -> StringUtils.equals(v.getType(), TestCycleE.CYCLE))
-                .forEach(u -> u.countChildStatus(u.getChildFolder(testCycleES)));
+        Map<Long, List<TestCycleE>> parentGroup = testCycleES.stream().filter(x -> x.getParentCycleId() != null && TestCycleE.FOLDER.equals(x.getType())).collect(Collectors.groupingBy(TestCycleE::getParentCycleId));
+        testCycleES.parallelStream().filter(v -> StringUtils.equals(v.getType(), TestCycleE.CYCLE))
+                .forEach(u -> u.countChildStatus(parentGroup.get(u.getCycleId())));
         return testCycleES;
     }
 
