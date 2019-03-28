@@ -56,9 +56,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Autowired
     ITestStatusService iTestStatusService;
 
-    @Autowired
-    FixDataService fixDataService;
-
     private static final String NODE_CHILDREN = "children";
 
     @Autowired
@@ -397,16 +394,13 @@ public class TestCycleServiceImpl implements TestCycleService {
         return root;
     }
 
-    private void createCountColorJson(Map<String, Object> cycle, JSONArray root, Long projectId) {
-        TestStatusE statusE = TestStatusEFactory.create();
-        statusE.setProjectId(projectId);
-        statusE.setStatusType(TestStatusE.STATUS_TYPE_CASE);
-        Map<String, String> colorMap = statusE.queryAllUnderProject().stream().collect(Collectors.toMap(TestStatusE::getStatusColor, TestStatusE::getStatusName));
+    private void createCountColorJson(Map<Long, Object> cycle, JSONArray root, Long projectId) {
         cycle.forEach((k, v) -> {
             JSONObject object = new JSONObject();
-            object.put("value", v);
-            object.put("name", colorMap.get(k));
-            object.put("color", k);
+            TestCycleE.ProcessBarSection processBarSection = (TestCycleE.ProcessBarSection)v;
+            object.put("counts", processBarSection.getCounts());
+            object.put("name", processBarSection.getStatusName());
+            object.put("color", processBarSection.getColor());
             root.add(object);
         });
     }
