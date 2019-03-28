@@ -113,12 +113,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if (!errorRowIndexes.isEmpty() && status != TestFileLoadHistoryE.Status.CANCEL) {
             logger.info("导入数据有误，上传 error workbook");
             iExcelImportService.shiftErrorRowsToTop(testCasesSheet, errorRowIndexes);
-            if (iExcelImportService.uploadErrorWorkbook(issuesWorkbook, loadHistoryE) == null) {
-                status = TestFileLoadHistoryE.Status.FAILURE;
-            }
+            status = checkoutStatus(iExcelImportService.uploadErrorWorkbook(issuesWorkbook, loadHistoryE), status);
         }
 
         iExcelImportService.finishImport(loadHistoryE, userId, status);
     }
 
+    private TestFileLoadHistoryE.Status checkoutStatus(String uploadError, TestFileLoadHistoryE.Status status) {
+        if (uploadError == null) {
+            status = TestFileLoadHistoryE.Status.FAILURE;
+        }
+        return status;
+    }
 }

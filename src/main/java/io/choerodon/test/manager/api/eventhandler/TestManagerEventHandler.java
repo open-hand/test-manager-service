@@ -46,9 +46,6 @@ public class TestManagerEventHandler {
     private TestIssueFolderService testIssueFolderService;
 
     @Autowired
-    private FixDataService fixDataService;
-
-    @Autowired
     private TestAppInstanceService testAppInstanceService;
 
     @Autowired
@@ -133,20 +130,6 @@ public class TestManagerEventHandler {
         testCaseStepDTO.setIssueId(issuePayload.getIssueId());
         testCaseStepService.removeStep(testCaseStepDTO);
         return issuePayload;
-    }
-
-    /**
-     * 问题删除事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-fix-data",
-            description = "修复数据",
-            sagaCode = "test-fix-cycle-data",
-            seq = 1)
-    public void fixData(String message) throws IOException {
-        TestIssueFolderDTO testIssueFolderDTO = objectMapper.readValue(message, TestIssueFolderDTO.class);
-        fixDataService.fixCycleData(testIssueFolderDTO.getProjectId());
     }
 
     @SagaTask(code = "test-start-instance", description = "更新Appinstance状态", sagaCode = "test-pod-update-saga", seq = 1)

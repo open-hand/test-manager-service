@@ -96,6 +96,7 @@ class TestCycleServiceImplSpec extends Specification {
         cycle1.setCycleName("纠正")
         cycle1.setVersionId(167L)
         cycle1.setObjectVersionNumber(1l)
+        cycle1.setRank(null)
         TestCycleDTO cycle3 = testCycleService.update(cycle1);
         then:
         cycle3 != null
@@ -193,6 +194,8 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setCycleName("发布6")
         cycle.setVersionId(226L)
         cycle.setType(TestCycleE.CYCLE)
+        cycle.setFromDate(new Date(1546272000000))
+        cycle.setToDate(new Date(1548863999000))
         TestCycleDTO cycle1 = testCycleService.insert(cycle)
 
         TestCycleDTO folder = new TestCycleDTO()
@@ -200,6 +203,8 @@ class TestCycleServiceImplSpec extends Specification {
         folder.setVersionId(226L)
         folder.setType(TestCycleE.FOLDER)
         folder.setParentCycleId(cycle1.getCycleId())
+        folder.setFromDate(new Date(1547481600000))
+        folder.setToDate(new Date(1547567999000))
         TestCycleDTO folder1 = testCycleService.insert(folder)
 
 
@@ -230,21 +235,6 @@ class TestCycleServiceImplSpec extends Specification {
         folder2.getCycleId() != null
         folder2.getCycleId() != folder.getCycleId()
     }
-
-//    def "GetCyclesByVersionId"() {
-//        given:
-//        TestCycleDTO cycle = new TestCycleDTO()
-//        cycle.setCycleName("发布8")
-//        cycle.setVersionId(226L)
-//        cycle.setType(TestCycleE.CYCLE)
-//        TestCycleDTO cycle1 = testCycleService.insert(cycle);
-//
-//        when:
-//        List<TestCycleDTO> cycles = testCycleService.getCyclesByVersionId(226l)
-//        then:
-//        cycles != null
-//        cycles.size() != 0
-//    }
 
     def "GetFolderByCycleId"() {
         given:

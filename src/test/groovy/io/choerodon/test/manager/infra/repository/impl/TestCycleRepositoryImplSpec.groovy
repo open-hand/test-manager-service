@@ -51,23 +51,6 @@ class TestCycleRepositoryImplSpec extends Specification {
         1*mapper.delete(_)
     }
 
-    def "Update"() {
-        given:
-        TestCycleE cycleE = new TestCycleE(cycleId: new Long(1), versionId: 12L, cycleName: "name")
-        when:
-        1 * mapper.validateCycle(_) >> 0L
-        repository.update(cycleE)
-        then:
-        1 * mapper.updateByPrimaryKey(_)>>1
-        1 * mapper.selectByPrimaryKey(_)
-        when:
-        repository.update(cycleE)
-        then:
-        1 * mapper.validateCycle(_) >> 0L
-        1 * mapper.updateByPrimaryKey(_)>>0
-        thrown(CommonException)
-    }
-
     def "Query"() {
         given:
         TestCycleE cycleE=new TestCycleE(cycleId: new Long(1))

@@ -123,12 +123,16 @@ class TestCycleCaseControllerSpec extends Specification {
 
     @Autowired
     TestIssueFolderMapper folderMapper;
+
+    @Autowired
+    ITestCycleService iTestCycleService;
+
     @Shared
     Object target
 
     def "initEnv"() {
         given:
-        TestIssueFolderDO folderDO=new TestIssueFolderDO(name: "111",projectId: 142L,versionId: 11111L)
+        TestIssueFolderDO folderDO = new TestIssueFolderDO(name: "111", projectId: 142L, versionId: 11111L)
         folderMapper.insert(folderDO)
 
         TestCycleDTO testCycleDTO1 = new TestCycleDTO()
@@ -211,9 +215,8 @@ class TestCycleCaseControllerSpec extends Specification {
     }
 
     def "QueryOne"() {
-
         when:
-        def result = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}?organizationId=1", TestCycleCaseDTO, 142, caseDTO.get(0).executeId)
+        def result = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}?cycleId=0&organizationId=1", TestCycleCaseDTO, 142, caseDTO.get(0).executeId)
         then:
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> Maps.newHashMap(98L, new IssueInfosDTO())
         1 * userService.populateTestCycleCaseDTO(_)
@@ -246,7 +249,7 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "QueryByCycle"() {
         given:
-        TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0),searchDTO: new SearchDTO(content: "test"))
+        TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0), searchDTO: new SearchDTO(content: "test"))
         when:
         def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 10)
         then:
@@ -269,7 +272,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCaseService client = Mock(TestCaseService)
         TestCycleCaseService service = new TestCycleCaseServiceImpl(testCaseService: client)
         when:
-        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L, 1,false)
+        service.populateCycleCaseWithDefect(new ArrayList<TestCycleCaseDTO>(), 144L, 1, false)
         then:
         0 * client.getIssueInfoMap(_, _, _, _)
         when:
@@ -280,8 +283,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase"() {
         given:
-        RedisAtomicLong RAL=Mock(RedisAtomicLong)
-        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
+        RedisAtomicLong RAL = Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setAssignedTo(4L)
@@ -300,8 +303,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase1"() {
         given:
-        RedisAtomicLong RAL=Mock(RedisAtomicLong)
-        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
+        RedisAtomicLong RAL = Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
@@ -316,8 +319,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase2"() {
         given:
-        RedisAtomicLong RAL=Mock(RedisAtomicLong)
-        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
+        RedisAtomicLong RAL = Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestCycleCaseDTO searchDto = caseDTO.get(1);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
@@ -335,8 +338,8 @@ class TestCycleCaseControllerSpec extends Specification {
 
     def "UpdateOneCase3"() {
         given:
-        RedisAtomicLong RAL=Mock(RedisAtomicLong)
-        redisTemplateUtil.getRedisAtomicLong(_,_)>>RAL
+        RedisAtomicLong RAL = Mock(RedisAtomicLong)
+        redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestCycleCaseDTO searchDto = caseDTO.get(2);
         searchDto.setRank(searchDto.rank)
         searchDto.setExecutionStatus(1L)
