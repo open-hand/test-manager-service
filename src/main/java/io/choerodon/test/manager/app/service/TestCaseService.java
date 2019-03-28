@@ -61,10 +61,6 @@ public interface TestCaseService {
 
     ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds);
 
-    Long queryProjectIdByVersionId(Long versionId);
-
-    List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId);
-
     List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds);
 
     Page<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest);

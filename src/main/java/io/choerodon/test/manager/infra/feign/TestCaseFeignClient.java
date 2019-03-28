@@ -145,15 +145,6 @@ public interface TestCaseFeignClient {
                                                                  @RequestParam("organizationId")Long organizationId);
 
     /**
-     * 得到所有projectId各自的issueIds
-     *
-     * @param projectId
-     * @return
-     */
-    @GetMapping("/v1/projects/{project_id}/issues/list_issues_by_project")
-    public ResponseEntity<List<IssueProjectDTO>> queryIssueTestGroupByProject(@PathVariable(name = "project_id") Long projectId);
-
-    /**
      * 得到所有projectId各自的component
      *
      * @param projectId

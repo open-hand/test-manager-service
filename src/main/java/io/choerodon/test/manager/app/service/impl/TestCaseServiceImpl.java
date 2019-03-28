@@ -265,22 +265,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseFeignClient.batchDeleteIssues(projectId, issueIds);
     }
 
-    @Override
-    public Long queryProjectIdByVersionId(Long versionId) {
-        Assert.notNull(versionId, "error.TestCaseService.queryProjectIdByVersionId.param.versionId.not.be.null");
-        return productionVersionClient.queryProjectIdByVersionId(99999L, versionId).getBody();
-    }
-
     ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
         return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toString(), projectId, searchDTO,organizationId);
 
-    }
-
-    @Override
-    public List<IssueProjectDTO> queryIssueTestGroupByProject(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.queryIssueTestGroupBy·Project.param.projectId.not.be.null");
-        return testCaseFeignClient.queryIssueTestGroupByProject(projectId).getBody();
     }
 }

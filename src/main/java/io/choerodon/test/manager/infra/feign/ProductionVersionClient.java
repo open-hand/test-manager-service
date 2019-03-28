@@ -32,10 +32,4 @@ public interface ProductionVersionClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/product_version/ids")
     ResponseEntity<List<Long>> listAllVersionId(@PathVariable(name = "project_id") Long projectId);
-
-    @GetMapping(value = "/v1/projects/{project_id}/product_version/{versionId}/project_id")
-    ResponseEntity<Long> queryProjectIdByVersionId(@ApiParam(value = "项目id", required = true)
-                                                          @PathVariable(name = "project_id") Long projectId,
-                                                          @ApiParam(value = "version id", required = true)
-                                                          @PathVariable(name = "versionId") Long versionId);
 }
