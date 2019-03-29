@@ -77,7 +77,10 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         Long[] linkedIssues = linkDTOS.stream().map(IssueLinkDTO::getIssueId).toArray(Long[]::new);
         List<TestCycleCaseDTO> cycleCaseDTOS = testCycleCaseService.queryInIssues(linkedIssues, projectId,organizationId);
 
-        return issueInfosDTO.stream().map(ReporterFormE::new).peek(v -> v.populateLinkedTest(linkDTOS).populateLinkedIssueCycle(cycleCaseDTOS).countDefect()).collect(Collectors.toList());
+        return issueInfosDTO.stream().sorted(Comparator.comparing(IssueInfosDTO::getIssueId).reversed())
+                .map(ReporterFormE::new).peek(v -> v.populateLinkedTest(linkDTOS)
+                .populateLinkedIssueCycle(cycleCaseDTOS).countDefect())
+                .collect(Collectors.toList());
 
     }
 
@@ -105,7 +108,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
             searchDTO.setOtherArgs(args);
         }
         // 此处假设返回的是 long数组所有值
-        Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().toArray(Long[]::new);
+        Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().sorted(Comparator.reverseOrder()).toArray(Long[]::new);
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
             return new Page<>();
         }
@@ -185,6 +188,8 @@ public class ReporterFormServiceImpl implements ReporterFormService {
             Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIdLists.toArray(new Long[issueIdLists.size()]), false,organizationId);
             formES.forEach(v -> v.populateIssueInfo(map));
         }
+
+        formES = formES.stream().sorted(Comparator.comparing(DefectReporterFormE::getIssueId).reversed()).collect(Collectors.toList());
         return formES;
     }
 
