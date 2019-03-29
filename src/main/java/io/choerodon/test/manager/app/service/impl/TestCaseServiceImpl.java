@@ -101,7 +101,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         PageRequest pageRequest = new PageRequest();
         pageRequest.setSize(999999999);
         pageRequest.setPage(0);
-        pageRequest.setSort(new Sort(Sort.Direction.ASC, "issueId"));
+        pageRequest.setSort(new Sort(Sort.Direction.DESC, "issueId"));
         if (needDetail) {
             return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest,organizationId).getBody().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
         } else {
