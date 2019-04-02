@@ -8,7 +8,7 @@ build:
   stage: build
   script:
     - update_pom_version
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -Dmaven.test.failure.ignore=true -DskipTests=false -U
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -Dmaven.test.failure.ignore=false -DskipTests=false -U
     - >-
         mvn --batch-mode verify sonar:sonar
         -Dsonar.host.url=$SONAR_URL

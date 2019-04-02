@@ -8,7 +8,9 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
+
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,9 +39,9 @@ public class TestIssueFolderController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询version或所有的下文件夹，返回纯数据")
     @GetMapping("/query/all")
-    public ResponseEntity<List<TestIssueFolderDTO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
-                                         @RequestParam(name = "versionId",required = false) Long versionId) {
-        return Optional.ofNullable(testIssueFolderService.queryByParameter(projectId,versionId))
+    public ResponseEntity<List<TestIssueFolderWithVersionNameDTO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
+                                                                                    @RequestParam(name = "versionId", required = false) Long versionId) {
+        return Optional.ofNullable(testIssueFolderService.queryByParameterWithVersionName(projectId, versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
 
@@ -50,7 +52,7 @@ public class TestIssueFolderController {
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "folderId") Long folderId) {
-        testIssueFolderService.delete(projectId,folderId);
+        testIssueFolderService.delete(projectId, folderId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -81,7 +83,7 @@ public class TestIssueFolderController {
     public ResponseEntity copyFolder(@PathVariable(name = "project_id") Long projectId,
                                      @RequestParam(name = "versionId") Long versionId,
                                      @RequestBody Long[] folderIds) {
-        testIssueFolderService.copyFolder(projectId,versionId,folderIds);
+        testIssueFolderService.copyFolder(projectId, versionId, folderIds);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -89,8 +91,8 @@ public class TestIssueFolderController {
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestBody List<TestIssueFolderDTO> testIssueFolderDTOS){
-        testIssueFolderService.moveFolder(projectId,testIssueFolderDTOS);
+                                     @RequestBody List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        testIssueFolderService.moveFolder(projectId, testIssueFolderDTOS);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

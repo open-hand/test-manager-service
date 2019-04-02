@@ -6,6 +6,7 @@ import io.choerodon.agile.api.dto.ProductVersionDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
+import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
 import io.choerodon.test.manager.app.service.TestIssueFolderService
@@ -142,15 +143,25 @@ class TestIssueFolderControllerSpec extends Specification {
     }
 
     def "QueryByVersion"() {
+        given:
+        ProductVersionDTO productVersionDTO = new ProductVersionDTO()
+        productVersionDTO.setVersionId(versionId)
+        productVersionDTO.setProjectId(projectId)
+        productVersionDTO.setName("0.1.0")
+        productVersionDTO.setDescription("测试版本")
+        Map map = new HashMap<Long, ProductVersionDTO>()
+        map.put(versionId, productVersionDTO)
+
         when: '向查询issues的接口发请求'
-        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query/all', List, projectId, versionId)
+        def entity = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query/all?versionId={versionId}', List, projectId, versionId)
 
         then: '返回值'
+        1 * testCaseService.getVersionInfo(_) >> map
         entity.statusCode.is2xxSuccessful()
-        List<TestIssueFolderDTO> testIssueFolderDTOS = entity.body
+        List<TestIssueFolderWithVersionNameDTO> TestIssueFolderWithVersionNameDTOS = entity.body
 
         expect: "设置期望值"
-        testIssueFolderDTOS.size() > 0
+        TestIssueFolderWithVersionNameDTOS.size() > 0
 
     }
 

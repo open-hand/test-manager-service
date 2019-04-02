@@ -28,4 +28,5 @@ public interface ITestCycleService {
 
     List<String> queryUpdateRank(TestCycleE testCycleE);
 
+    void insertCaseToFolder(Long issueFolderId,Long cycleId);
 }

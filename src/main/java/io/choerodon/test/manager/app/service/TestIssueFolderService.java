@@ -1,9 +1,11 @@
 package io.choerodon.test.manager.app.service;
 
-import com.alibaba.fastjson.JSONObject;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
-
 import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -12,7 +14,7 @@ public interface TestIssueFolderService {
 
     TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO);
 
-    void delete(Long projectId,Long folderId);
+    void delete(Long projectId, Long folderId);
 
     TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO);
 
@@ -20,9 +22,11 @@ public interface TestIssueFolderService {
 
     Long getDefaultFolderId(Long projectId, Long versionId);
 
-    void copyFolder(Long projectId, Long versionId,Long[] folderIds);
+    void copyFolder(Long projectId, Long versionId, Long[] folderIds);
 
     void moveFolder(Long projectId, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
     List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId);
+
+    List<TestIssueFolderWithVersionNameDTO> queryByParameterWithVersionName(Long projectId, Long versionId);
 }

@@ -2,18 +2,17 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +45,29 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, null, null);
         return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
                 .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    }
+
+    @Override
+    public List<TestIssueFolderWithVersionNameDTO> queryByParameterWithVersionName(Long projectId, Long versionId) {
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, null, null);
+        List<TestIssueFolderDTO> resultTemp = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
+                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+        List<TestIssueFolderWithVersionNameDTO> result = new ArrayList<>();
+        String versionName = testCaseService.getVersionInfo(projectId).get(versionId).getName();
+
+        resultTemp.forEach(v -> {
+            TestIssueFolderWithVersionNameDTO t = new TestIssueFolderWithVersionNameDTO();
+            t.setFolderId(v.getFolderId());
+            t.setName(v.getName());
+            t.setVersionId(v.getVersionId());
+            t.setVersionName(versionName);
+            t.setProjectId(v.getProjectId());
+            t.setType(v.getType());
+            t.setObjectVersionNumber(v.getObjectVersionNumber());
+            result.add(t);
+        });
+
+        return result;
     }
 
     @Transactional(rollbackFor = Exception.class)
