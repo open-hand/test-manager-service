@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -19,6 +20,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -75,15 +77,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
         TestCycleDTO cycleDTO = ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
         if (testCycleDTO.getFolderId() != null) {
-            TestIssueFolderRelE folder = TestIssueFolderRelEFactory.create();
-            folder.setFolderId(testCycleDTO.getFolderId());
-            List<TestIssueFolderRelE> list = folder.queryAllUnderProject();
-            TestCycleCaseDTO dto = new TestCycleCaseDTO();
-            dto.setCycleId(cycleDTO.getCycleId());
-            list.forEach(v -> {
-                dto.setIssueId(v.getIssueId());
-                testCycleCaseService.create(dto, v.getProjectId());
-            });
+            iTestCycleService.insertCaseToFolder(testCycleDTO.getFolderId(), cycleDTO.getCycleId());
         }
         return cycleDTO;
     }
@@ -234,6 +228,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
             Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
+            Optional.ofNullable(testCycleDTO.getFolderId()).ifPresent(temp1::setFolderId);
             temp1.setObjectVersionNumber(objectVersionNumber);
             syncCycleDate(temp1);
         } else if (temp1.getType().equals(TestCycleE.CYCLE)) {
@@ -397,7 +392,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private void createCountColorJson(Map<Long, Object> cycle, JSONArray root, Long projectId) {
         cycle.forEach((k, v) -> {
             JSONObject object = new JSONObject();
-            TestCycleE.ProcessBarSection processBarSection = (TestCycleE.ProcessBarSection)v;
+            TestCycleE.ProcessBarSection processBarSection = (TestCycleE.ProcessBarSection) v;
             object.put("counts", processBarSection.getCounts());
             object.put("name", processBarSection.getStatusName());
             object.put("color", processBarSection.getColor());

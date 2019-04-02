@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
@@ -8,11 +10,14 @@ import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
 import io.choerodon.test.manager.infra.common.utils.TestDateUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -74,6 +79,12 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
     @Override
     public TestCycleE update(TestCycleE testCycleE) {
+        if (testCycleE.getFolderId() != null) {
+            TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
+            testCycleCaseE.setCycleId(testCycleE.getCycleId());
+            testCycleCaseE.querySelf().forEach(v -> testCycleCaseService.delete(v.getExecuteId(), 0L));
+            insertCaseToFolder(testCycleE.getFolderId(),testCycleE.getCycleId());
+        }
         return testCycleE.updateSelf();
     }
 
@@ -196,5 +207,18 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     @Override
     public List<String> queryUpdateRank(TestCycleE testCycleE) {
         return testCycleRepository.queryUpdateRank(testCycleE);
+    }
+
+    @Override
+    public void insertCaseToFolder(Long issueFolderId, Long cycleId) {
+        TestIssueFolderRelE folder = TestIssueFolderRelEFactory.create();
+        folder.setFolderId(issueFolderId);
+        List<TestIssueFolderRelE> list = folder.queryAllUnderProject();
+        TestCycleCaseDTO dto = new TestCycleCaseDTO();
+        dto.setCycleId(cycleId);
+        list.forEach(v -> {
+            dto.setIssueId(v.getIssueId());
+            testCycleCaseService.create(dto, v.getProjectId());
+        });
     }
 }
