@@ -424,6 +424,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Map<String, JSONObject> versionsMap = new HashMap<>(versionDTOList.size());
         Map<Long, String> versions = versionDTOList.stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
         Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
+        Map<Long, List<TestCycleDTO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
         Map<Long, List<TestCycleDTO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
         TestIssueFolderE foldE = TestIssueFolderEFactory.create();
         foldE.setProjectId(projectId);
@@ -444,7 +445,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             versionNames.add(versionName);
 
             Long versionId = versionDTO.getVersionId();
-            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versions, cycleVersionGroup.get(versionId), parentGroup, folderMap);
+            initCycleTree(versionName.getJSONArray(NODE_CHILDREN), versionName.get("key").toString(), versions, cycleVersionGroup.get(versionId), tempVersionGroup.get(versionId), parentGroup, folderMap);
         }
     }
 
@@ -525,12 +526,19 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
 
-    private void initCycleTree(JSONArray cycles, String height, Map<Long, String> versions, List<TestCycleDTO> cycleList, Map<Long, List<TestCycleDTO>> parentMap, Map<Long, TestIssueFolderDTO> folderMap) {
+    private void initCycleTree(JSONArray cycles, String height, Map<Long, String> versions, List<TestCycleDTO> cycleList, List<TestCycleDTO> tempList, Map<Long, List<TestCycleDTO>> parentMap, Map<Long, TestIssueFolderDTO> folderMap) {
         if (cycleList != null) {
             cycleList.stream().forEach(v -> {
                 JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions, folderMap);
                 cycles.add(cycle);
                 initCycleFolderTree(cycle.getJSONArray(NODE_CHILDREN), cycle.get("key").toString(), parentMap.get(v.getCycleId()), versions, folderMap);
+            });
+        }
+
+        if (tempList != null) {
+            tempList.stream().forEach(v -> {
+                JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions, folderMap);
+                cycles.add(cycle);
             });
         }
     }
