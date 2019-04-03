@@ -110,10 +110,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         testIssueFolderDTO.setProjectId(projectId);
         List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
                 .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
-        if (versions.isEmpty()) {
-            return new JSONObject();
-        }
+
         JSONObject root = new JSONObject();
+        if (versions.isEmpty()) {
+            root.put("versions", new ArrayList<>());
+            return root;
+        }
+
         JSONArray versionStatus = new JSONArray();
         root.put("versions", versionStatus);
         List<TestIssueFolderDTO> testIssueFolderDTOS = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper

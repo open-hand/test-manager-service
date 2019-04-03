@@ -272,6 +272,9 @@ class TestCycleControllerSpec extends Specification {
         userMap.put(20645L, new UserDO())
         userMap.put(20645L, new UserDO())
 
+        JSONObject result = new JSONObject()
+        result.put("versions", new ArrayList<>())
+
         when:
         def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
@@ -292,7 +295,7 @@ class TestCycleControllerSpec extends Specification {
         JSONObject jsonObject2 = entity.body
 
         expect:
-        jsonObject2.isEmpty()
+        jsonObject2 == result
     }
 
     def "getTestCycleCaseCountInVersion()"(){

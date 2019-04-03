@@ -343,10 +343,13 @@ public class TestCycleServiceImpl implements TestCycleService {
     public JSONObject getTestCycle(Long projectId, Long assignedTo) {
         List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
                 .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
-        if (versions.isEmpty()) {
-            return new JSONObject();
-        }
         JSONObject root = new JSONObject();
+
+        if (versions.isEmpty()) {
+            root.put("versions", new ArrayList<>());
+            return root;
+        }
+
         JSONArray versionStatus = new JSONArray();
         root.put("versions", versionStatus);
 
