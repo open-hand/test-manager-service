@@ -10,12 +10,13 @@ spring:
       charset: UTF-8
       force: true
       enabled: true
-    multipart:
-      max-file-size: 30MB
-      max-request-size: 30MB
   redis:
     host: localhost
     port: 6379
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
 choerodon:
   saga:
     consumer:
@@ -37,11 +38,6 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8000/eureka/
     registryFetchIntervalSeconds: 1
-security:
-  basic:
-    enabled: false
-  ignored:
-  - /v2/api-docs
 mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration:
