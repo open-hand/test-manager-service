@@ -122,6 +122,8 @@ class TestIssueFolderControllerSpec extends Specification {
         productVersionDTO.setDescription("测试版本")
         Map map = new HashMap<Long, ProductVersionDTO>()
         map.put(versionId, productVersionDTO)
+        JSONObject result = new JSONObject()
+        result.put("versions", new ArrayList<>())
 
         when: '向查询issues的接口发请求'
         def entity = restTemplate.getForEntity('/v1/projects/{project_id}/issueFolder/query', JSONObject.class, projectId)
@@ -139,7 +141,7 @@ class TestIssueFolderControllerSpec extends Specification {
         then: '返回值'
         1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
         resultNull.statusCode.is2xxSuccessful()
-        assert resultNull.body.isEmpty()
+        assert resultNull.body == result
     }
 
     def "QueryByVersion"() {
