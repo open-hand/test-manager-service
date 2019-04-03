@@ -5,7 +5,7 @@ import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiParam;
-import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
