@@ -1,18 +1,28 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class TestIssueFolderWithVersionNameDTO {
+
+    @ApiModelProperty(value = "文件夹ID")
     private Long folderId;
 
+    @ApiModelProperty(value = "文件夹名称")
     private String name;
 
+    @ApiModelProperty(value = "版本ID")
     private Long versionId;
 
+    @ApiModelProperty(value = "版本名称")
     private String versionName;
 
+    @ApiModelProperty(value = "项目ID")
     private Long projectId;
 
+    @ApiModelProperty(value = "类型")
     private String type;
 
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
     
     public Long getObjectVersionNumber() {

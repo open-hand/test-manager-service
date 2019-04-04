@@ -2,7 +2,7 @@ package io.choerodon.test.manager.api.dto.testng;
 
 import java.util.List;
 
-/**
+/*
  * @author shinan.chen
  * @since 2019/1/21
  */

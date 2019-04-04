@@ -11,7 +11,7 @@ import io.choerodon.agile.api.dto.VersionIssueRelDTO;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.agile.infra.common.utils.AgileUtil;
 import io.choerodon.test.manager.api.dto.ExcelReadMeOptionDTO;
-import io.choerodon.test.manager.api.dto.MultipartExcel;
+import io.choerodon.test.manager.infra.common.utils.MultipartExcel;
 import io.choerodon.test.manager.app.service.FileService;
 import io.choerodon.test.manager.app.service.NotifyService;
 import io.choerodon.test.manager.app.service.TestCaseService;

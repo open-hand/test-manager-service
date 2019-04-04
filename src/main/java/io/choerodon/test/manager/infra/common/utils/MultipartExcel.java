@@ -1,15 +1,14 @@
-package io.choerodon.test.manager.api.dto;
-
-import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.util.Assert;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.multipart.MultipartFile;
+package io.choerodon.test.manager.infra.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Created by zongw.lee@gmail.com on 25/10/2018
@@ -97,7 +96,7 @@ public class MultipartExcel implements MultipartFile {
     }
 
     @Override
-    public void transferTo(File dest) throws IOException{
+    public void transferTo(File dest) throws IOException {
         FileCopyUtils.copy(this.content, dest);
     }
 

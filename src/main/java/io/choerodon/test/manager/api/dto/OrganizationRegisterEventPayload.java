@@ -1,13 +1,25 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 注册组织dto
  */
 public class OrganizationRegisterEventPayload {
+
+    @ApiModelProperty(value = "组织信息")
     private Organization organization;
+
+    @ApiModelProperty(value = "管理员")
     private User user;
+
+    @ApiModelProperty(value = "用户A")
     private User userA;
+
+    @ApiModelProperty(value = "用户B")
     private User userB;
+
+    @ApiModelProperty(value = "项目信息")
     private Project project;
 
     public Organization getOrganization() {

@@ -18,6 +18,8 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
+import io.choerodon.test.manager.infra.common.utils.MultipartExcel;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

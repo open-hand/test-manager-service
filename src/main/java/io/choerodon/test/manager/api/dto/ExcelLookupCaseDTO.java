@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.agile.api.dto.*;
-
 import java.util.List;
+
+import io.choerodon.agile.api.dto.*;
 
 /**
  * Created by zongw.lee@gmail.com on 18/10/2018

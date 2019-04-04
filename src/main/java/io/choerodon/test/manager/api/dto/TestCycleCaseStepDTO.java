@@ -1,47 +1,71 @@
 package io.choerodon.test.manager.api.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 
 public class TestCycleCaseStepDTO {
+
+    @ApiModelProperty(value = "执行步骤ID")
     private Long executeStepId;
+
+    @ApiModelProperty(value = "测试执行ID")
     private Long executeId;
+
+    @ApiModelProperty(value = "测试步骤ID")
     private Long stepId;
+
+    @ApiModelProperty(value = "描述")
     private String comment;
+
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "循环ID")
     private Long cycleId;
 
-	private Long stepStatus;
+    @ApiModelProperty(value = "步骤状态ID")
+    private Long stepStatus;
 
+    @ApiModelProperty(value = "测试步骤")
     private String testStep;
 
+    @ApiModelProperty(value = "测试数据")
     private String testData;
 
+    @ApiModelProperty(value = "预期结果")
     private String expectedResult;
 
+    @ApiModelProperty(value = "关联issueDTOList")
     private List<IssueLinkDTO> issueLinkDTOS;
 
+    @ApiModelProperty(value = "步骤附件DTOList")
     private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
 
+    @ApiModelProperty(value = "用例issueID")
     private Long issueId;
 
+    @ApiModelProperty(value = "缺陷DTOList")
     private List<TestCycleCaseDefectRelDTO> defects;
 
+    @ApiModelProperty(value = "issue详情DTO")
     private IssueInfosDTO issueInfosDTO;
 
+    @ApiModelProperty(value = "状态名")
     private String statusName;
 
-	private String cycleName;
+    @ApiModelProperty(value = "循环名称")
+    private String cycleName;
 
     public IssueInfosDTO getIssueInfosDTO() {
         return issueInfosDTO;
@@ -102,10 +126,11 @@ public class TestCycleCaseStepDTO {
     public void setIssueLinkDTOS(List<IssueLinkDTO> issueLinkDTOS) {
         this.issueLinkDTOS = issueLinkDTOS;
     }
-    public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO){
-        if(this.issueLinkDTOS==null){
-            this.issueLinkDTOS=new ArrayList<>();
-            }
+
+    public void addIssueLinkDTOS(IssueLinkDTO issueLinkDTO) {
+        if (this.issueLinkDTOS == null) {
+            this.issueLinkDTOS = new ArrayList<>();
+        }
         this.issueLinkDTOS.add(issueLinkDTO);
     }
 
@@ -163,12 +188,12 @@ public class TestCycleCaseStepDTO {
     }
 
     public Long getStepStatus() {
-		return stepStatus;
-	}
+        return stepStatus;
+    }
 
-	public void setStepStatus(Long stepStatus) {
-		this.stepStatus = stepStatus;
-	}
+    public void setStepStatus(Long stepStatus) {
+        this.stepStatus = stepStatus;
+    }
 
     public String getStatusName() {
         return statusName;
@@ -178,11 +203,11 @@ public class TestCycleCaseStepDTO {
         this.statusName = statusName;
     }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 }

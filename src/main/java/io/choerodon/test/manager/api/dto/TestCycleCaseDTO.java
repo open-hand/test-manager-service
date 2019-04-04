@@ -1,5 +1,11 @@
 package io.choerodon.test.manager.api.dto;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -8,68 +14,93 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachm
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public class TestCycleCaseDTO {
+
+    @ApiModelProperty(value = "测试执行ID")
     private Long executeId;
 
+    @ApiModelProperty(value = "循环ID")
     private Long cycleId;
 
+    @ApiModelProperty(value = "用例issueID")
     private Long issueId;
 
+    @ApiModelProperty(value = "排序值")
     private String rank;
 
+    @ApiModelProperty(value = "执行状态")
     private Long executionStatus;
 
+    @ApiModelProperty(value = "执行状态名")
     private String executionStatusName;
 
+    @ApiModelProperty(value = "指派人")
     private Long assignedTo;
 
+    @ApiModelProperty(value = "描述")
     private String comment;
 
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "上一位排序值")
     private String lastRank;
 
+    @ApiModelProperty(value = "后一位排序值")
     private String nextRank;
 
+    @ApiModelProperty(value = "指派人详情")
     private UserDO assigneeUser;
 
+    @ApiModelProperty(value = "最后更新人详情")
     private UserDO lastUpdateUser;
 
+    @ApiModelProperty(value = "版本ID")
     private Long versionId;
 
+    @ApiModelProperty(value = "最后更新人ID")
     private Long lastUpdatedBy;
 
+    @ApiModelProperty(value = "最后更新日期")
     private Date lastUpdateDate;
 
+    @ApiModelProperty(value = "循环名")
     private String cycleName;
 
+    @ApiModelProperty(value = "issue详情DTO")
     private IssueInfosDTO issueInfosDTO;
 
+    @ApiModelProperty(value = "用例文件夹名")
     private String folderName;
 
+    @ApiModelProperty(value = "版本名")
     private String versionName;
 
+    @ApiModelProperty(value = "上一位执行ID")
     private Long lastExecuteId;
 
+    @ApiModelProperty(value = "后一位执行ID")
     private Long nextExecuteId;
 
+    @ApiModelProperty(value = "执行附件")
     private List<TestCycleCaseAttachmentRelDTO> caseAttachment;
 
+    @ApiModelProperty(value = "执行缺陷")
     private List<TestCycleCaseDefectRelDTO> caseDefect = new ArrayList<>();
 
+    @ApiModelProperty(value = "步骤缺陷")
     private List<TestCycleCaseDefectRelDTO> subStepDefects = new ArrayList<>();
 
+    @ApiModelProperty(value = "测试步骤DTOList")
     List<TestCycleCaseStepDTO> cycleCaseStep;
 
+    @ApiModelProperty(value = "关联issueDTOList")
     private List<IssueLinkDTO> issueLinkDTOS;
 
+    @ApiModelProperty(value = "searchDTO")
     private SearchDTO searchDTO;
 
     public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {

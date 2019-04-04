@@ -1,16 +1,22 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.agile.api.dto.IssueComponentDetailDTO;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
+
+import io.choerodon.agile.api.dto.IssueComponentDetailDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 09/05/2018
  */
 public class IssueComponentDetailFolderRelDTO extends IssueComponentDetailDTO {
+
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 
+    @ApiModelProperty(value = "文件夹id")
     private Long folderId;
 
     public String getFolderName() {
@@ -30,7 +36,7 @@ public class IssueComponentDetailFolderRelDTO extends IssueComponentDetailDTO {
     }
 
     public IssueComponentDetailFolderRelDTO(IssueInfosDTO issueComponentDetailDTO) {
-        BeanUtils.copyProperties(issueComponentDetailDTO,this);
+        BeanUtils.copyProperties(issueComponentDetailDTO, this);
     }
 
     public Long getObjectVersionNumber() {
