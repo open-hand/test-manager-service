@@ -3,7 +3,6 @@ package io.choerodon.test.manager.infra.feign.callback;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 
 import org.springframework.http.ResponseEntity;

@@ -2,28 +2,41 @@ package io.choerodon.test.manager.api.dto;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
 public class TestIssueFolderRelDTO {
+
+    @ApiModelProperty(value = "主键")
     private Long id;
 
+    @ApiModelProperty(value = "文件夹id")
     private Long folderId;
 
+    @ApiModelProperty(value = "版本id")
     private Long versionId;
 
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "issueID")
     private Long issueId;
 
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "issue信息DTO")
     private IssueInfosDTO issueInfosDTO;
 
+    @ApiModelProperty(value = "文件夹名")
     private String folderName;
 
+    @ApiModelProperty(value = "测试步骤DTO")
     private List<TestCaseStepDTO> testCaseStepDTOS;
 
+    @ApiModelProperty(value = "导出的报错信息")
     private String errorInfo;
 
     public TestIssueFolderRelDTO() {

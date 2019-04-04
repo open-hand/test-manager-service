@@ -1,24 +1,50 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
  */
 public class TestAppInstanceDTO {
+
+    @ApiModelProperty(value = "主键ID")
     private Long id;
+
+    @ApiModelProperty(value = "应用code")
     private String code;
+
+    @ApiModelProperty(value = "应用ID")
     private Long appId;
+
+    @ApiModelProperty(value = "应用版本ID")
     private Long appVersionId;
+
+    @ApiModelProperty(value = "项目版本ID")
     private Long projectVersionId;
+
+    @ApiModelProperty(value = "运行环境ID")
     private Long envId;
+
+    @ApiModelProperty(value = "运行配置ID")
     private Long commandId;
+
+    @ApiModelProperty(value = "pod状态")
     private Long podStatus;
+
+    @ApiModelProperty(value = "项目ID")
     private Long projectId;
+
+    @ApiModelProperty(value = "pod名")
     private String podName;
+
+    @ApiModelProperty(value = "容器名")
     private String containerName;
+
+    @ApiModelProperty(value = "日志id")
     private Long logId;
 
+    @ApiModelProperty(value = "应用版本名")
     private String appVersionName;
-
 
     public String getAppVersionName() {
         return appVersionName;

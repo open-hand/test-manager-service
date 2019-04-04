@@ -2,16 +2,23 @@ package io.choerodon.test.manager.api.dto;
 
 import java.util.Date;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class TestAutomationResultDTO {
 
+    @ApiModelProperty(value = "主键ID")
     private Long id;
 
+    @ApiModelProperty(value = "测试结果")
     private String result;
 
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "测试框架")
     private String framework;
 
+    @ApiModelProperty(value = "创建时间")
     private Date creationDate;
 
     public Date getCreationDate() {

@@ -10,7 +10,6 @@ import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;

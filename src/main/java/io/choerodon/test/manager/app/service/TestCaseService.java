@@ -8,7 +8,7 @@ import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-import io.choerodon.test.manager.api.dto.IssueProjectDTO;
+
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

@@ -1,9 +1,15 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import io.choerodon.agile.api.dto.SearchDTO;
 
 public class TestFolderRelQueryDTO {
+
+    @ApiModelProperty(value = "版本ids")
     private Long[] versionIds;
+
+    @ApiModelProperty(value = "searchDTO")
     private SearchDTO searchDTO;
 
     public Long[] getVersionIds() {

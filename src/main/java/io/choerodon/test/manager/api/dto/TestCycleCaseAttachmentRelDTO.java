@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -7,12 +8,25 @@ package io.choerodon.test.manager.api.dto;
 
 public class TestCycleCaseAttachmentRelDTO {
 
+    @ApiModelProperty(value = "主键id")
     private Long id;
+
+    @ApiModelProperty(value = "附件类型：测试执行附件，步骤附件")
     private String attachmentType;
+
+    @ApiModelProperty(value = "附件关联对象id")
     private Long attachmentLinkId;
+
+    @ApiModelProperty(value = "附件名")
     private String attachmentName;
+
+    @ApiModelProperty(value = "附件minioURL")
     private String url;
+
+    @ApiModelProperty(value = "描述")
     private String comment;
+
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
     public Long getId() {

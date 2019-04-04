@@ -1,34 +1,48 @@
 package io.choerodon.test.manager.api.dto;
 
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
-
 import java.util.List;
+
+import io.swagger.annotations.ApiModelProperty;
+
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public class TestCaseStepDTO {
+
+    @ApiModelProperty(value = "步骤id")
     private Long stepId;
 
+    @ApiModelProperty(value = "排序值")
     private String rank;
 
+    @ApiModelProperty(value = "用例issueID")
     private Long issueId;
 
+    @ApiModelProperty(value = "测试步骤")
     private String testStep;
 
+    @ApiModelProperty(value = "测试数据")
     private String testData;
 
+    @ApiModelProperty(value = "预期结果")
     private String expectedResult;
 
+    @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "上一位排序值")
     private String lastRank;
 
+    @ApiModelProperty(value = "后一位排序值")
     private String nextRank;
 
+    @ApiModelProperty(value = "issue详情DTO")
     private IssueInfosDTO issueInfosDTO;
 
-	private List<TestCycleCaseAttachmentRelDO> attachments;
+    @ApiModelProperty(value = "附件DTOList")
+    private List<TestCycleCaseAttachmentRelDO> attachments;
 
     public IssueInfosDTO getIssueInfosDTO() {
         return issueInfosDTO;
@@ -110,11 +124,11 @@ public class TestCaseStepDTO {
         this.nextRank = nextRank;
     }
 
-	public List<TestCycleCaseAttachmentRelDO> getAttachments() {
+    public List<TestCycleCaseAttachmentRelDO> getAttachments() {
         return attachments;
     }
 
     public void setAttachments(List<TestCycleCaseAttachmentRelDO> attachments) {
-		this.attachments = attachments;
+        this.attachments = attachments;
     }
 }

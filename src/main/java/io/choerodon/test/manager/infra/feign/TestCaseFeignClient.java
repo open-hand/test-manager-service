@@ -2,7 +2,6 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.dto.IssueProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;

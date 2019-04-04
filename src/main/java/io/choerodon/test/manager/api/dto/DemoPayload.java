@@ -3,17 +3,30 @@ package io.choerodon.test.manager.api.dto;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by HuangFuqiang@choerodon.io on 2019/2/27.
  * Email: fuqianghuang01@gmail.com
  */
 public class DemoPayload {
 
+    @ApiModelProperty(value = "组织信息")
     private Organization organization;
+
+    @ApiModelProperty(value = "管理员")
     private User user;
+
+    @ApiModelProperty(value = "用户A")
     private User userA;
+
+    @ApiModelProperty(value = "用户B")
     private User userB;
+
+    @ApiModelProperty(value = "项目信息")
     private Project project;
+
+    @ApiModelProperty(value = "测试模块数据")
     private TestData testData;
 
     public Organization getOrganization() {

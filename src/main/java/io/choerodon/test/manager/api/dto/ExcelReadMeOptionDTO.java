@@ -1,12 +1,16 @@
 package io.choerodon.test.manager.api.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Created by zongw.lee@gmail.com on 31/10/2018
  */
 public class ExcelReadMeOptionDTO {
-    //Key为字段名，Boolean为是否必填
+
+    @ApiModelProperty(value = "字段名称")
     private String filed;
 
+    @ApiModelProperty(value = "是否为必输")
     private Boolean required;
 
     public String getFiled() {
