@@ -9,6 +9,7 @@ import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.domain.service.ITestCaseStepService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseDefectRelService;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,12 +82,12 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
      * @param testCycleCaseE
      */
     @Override
-	public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE, Long projectId) {
+    public void createTestCycleCaseStep(TestCycleCaseE testCycleCaseE, Long projectId) {
         TestCaseStepE testCaseStepE = TestCaseStepEFactory.create();
         testCaseStepE.setIssueId(testCycleCaseE.getIssueId());
         List<TestCaseStepE> testCaseStepES = iTestCaseStepService.query(testCaseStepE);
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-		testCycleCaseStepE.setStepStatus(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP));
+        testCycleCaseStepE.setStepStatus(iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP));
         testCaseStepES.forEach(v -> {
             testCycleCaseStepE.setStepId(v.getStepId());
             testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());

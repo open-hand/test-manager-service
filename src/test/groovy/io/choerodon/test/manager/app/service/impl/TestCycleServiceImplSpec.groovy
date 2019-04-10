@@ -178,7 +178,7 @@ class TestCycleServiceImplSpec extends Specification {
         searchParamMap.put("cycleName", "发布11")
         ProductionVersionClient client = Mock(ProductionVersionClient)
         TestCycleService service = AopTestUtils.getTargetObject(testCycleService);
-        Field field = service.getClass().getDeclaredFields()[1]
+        Field field = service.getClass().getDeclaredFields()[2]
         field.setAccessible(true)
         field.set(service, client)
 

@@ -94,8 +94,9 @@ class ExcelImportServiceImplSpec extends Specification {
 
         when:
         testFileLoadHistoryE.setCreatedBy(resHistoryDO.getCreatedBy())
+        testFileLoadHistoryE.setActionType(TestFileLoadHistoryE.Action.UPLOAD_ISSUE)
 
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE)
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryE)
         then:
         with(testFileLoadHistoryE) {
             id == resHistoryDO.getId()

@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -9,19 +10,21 @@ import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.*;
+import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -40,6 +43,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class TestCycleServiceImpl implements TestCycleService {
+
+    private static final String NODE_CHILDREN = "children";
+
     @Autowired
     ITestCycleService iTestCycleService;
 
@@ -58,13 +64,14 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Autowired
     ITestStatusService iTestStatusService;
 
-    private static final String NODE_CHILDREN = "children";
-
     @Autowired
     ITestIssueFolderService folderService;
 
     @Autowired
     TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    ITestFileLoadHistoryService iTestFileLoadHistoryService;
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -468,6 +475,94 @@ public class TestCycleServiceImpl implements TestCycleService {
                 batchChangeCase(userId, cycle.getCycleId());
             }
         }
+    }
+
+    @Override
+    public void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleDTO> list) {
+        Boolean hasSameNameCycle = iTestCycleService.checkSameNameCycleForBatchClone(versionId, list);
+
+        if (!hasSameNameCycle) {
+            iTestCycleService.batchCloneCycleAndFolders(projectId, versionId, list,
+                    DetailsHelper.getUserDetails().getUserId());
+        }
+    }
+
+    @Override
+    public JSONObject getTestCycleInVersionForBatchClone(Long versionId, Long projectId) {
+        JSONObject root = new JSONObject();
+        Long[] versionIds = {versionId};
+
+        List<TestCycleDTO> cycles = ConvertHelper.convertList(
+                iTestCycleService.queryCycleWithBar(versionIds, null), TestCycleDTO.class);
+        populateUsers(cycles);
+
+        Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycles.stream()
+                .filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE))
+                .collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
+
+        Map<Long, List<TestCycleDTO>> parentGroup = cycles.stream()
+                .filter(x -> x.getParentCycleId() != null)
+                .collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+        if (ObjectUtils.isEmpty(cycleVersionGroup.get(versionId))) {
+            root.put("cycle", new ArrayList<>());
+        } else {
+            List<JSONObject> cycleList = new ArrayList<>();
+
+            for (TestCycleDTO testCycleDTO : cycleVersionGroup.get(versionId)) {
+                JSONObject cycle = new JSONObject();
+
+                cycle.put("cycleId", testCycleDTO.getCycleId());
+                cycle.put("type", testCycleDTO.getType());
+                cycle.put("cycleName", testCycleDTO.getCycleName());
+                cycle.put("rank", testCycleDTO.getRank());
+
+                List<JSONObject> childrenList = new ArrayList<>();
+
+                if (ObjectUtils.isEmpty(parentGroup.get(testCycleDTO.getCycleId()))) {
+                    cycle.put(NODE_CHILDREN, new ArrayList<>());
+                } else {
+                    for (TestCycleDTO folderCycleDTO : parentGroup.get(testCycleDTO.getCycleId())) {
+                        JSONObject children = new JSONObject();
+
+                        children.put("cycleId", folderCycleDTO.getCycleId());
+                        children.put("type", folderCycleDTO.getType());
+                        children.put("cycleName", folderCycleDTO.getCycleName());
+                        children.put("rank", folderCycleDTO.getRank());
+                        children.put("parentCycleId", folderCycleDTO.getParentCycleId());
+
+                        childrenList.add(children);
+                    }
+                    cycle.put(NODE_CHILDREN, childrenList);
+                }
+                cycleList.add(cycle);
+            }
+            root.put("cycle", cycleList);
+        }
+        return root;
+    }
+
+    @Override
+    public TestIssuesUploadHistoryDTO queryLatestBatchCloneHistory(Long projectId) {
+        TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
+        testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
+        testFileLoadHistoryE.setActionType(TestFileLoadHistoryE.Action.CLONE_CYCLES);
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryE);
+        if (testFileLoadHistoryE == null) {
+            return null;
+        }
+
+        TestIssuesUploadHistoryDTO testIssuesUploadHistoryDTO = ConvertHelper.convert(testFileLoadHistoryE, TestIssuesUploadHistoryDTO.class);
+
+        TestIssueFolderE testIssueFolderE = SpringUtil.getApplicationContext().getBean(TestIssueFolderE.class);
+        testIssueFolderE.setFolderId(testFileLoadHistoryE.getLinkedId());
+        testIssueFolderE = testIssueFolderE.queryByPrimaryKey();
+
+        if (!ObjectUtils.isEmpty(testIssueFolderE)) {
+            testIssuesUploadHistoryDTO.setVersionName(testCaseService.getVersionInfo(projectId)
+                    .get(testIssueFolderE.getVersionId()).getName());
+        }
+
+        return testIssuesUploadHistoryDTO;
     }
 
     private void batchChangeCase(Long userId, Long cycleId) {

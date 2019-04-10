@@ -78,7 +78,8 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     public TestIssuesUploadHistoryDTO queryLatestImportIssueHistory(Long projectId) {
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
         testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestImportIssueHistory(testFileLoadHistoryE);
+        testFileLoadHistoryE.setActionType(TestFileLoadHistoryE.Action.UPLOAD_ISSUE);
+        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryE);
         if (testFileLoadHistoryE == null) {
             return null;
         }

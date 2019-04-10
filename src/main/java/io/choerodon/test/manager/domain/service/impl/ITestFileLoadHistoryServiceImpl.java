@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import io.choerodon.test.manager.domain.repository.TestFileLoadHistoryRepository;
 import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +35,8 @@ public class ITestFileLoadHistoryServiceImpl implements ITestFileLoadHistoryServ
     }
 
     @Override
-    public TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
-        return testFileLoadHistoryRepository.queryLatestImportIssueHistory(testFileLoadHistoryE);
+    public TestFileLoadHistoryE queryLatestHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
+        return testFileLoadHistoryRepository.queryLatestHistory(testFileLoadHistoryE);
     }
 
     @Override

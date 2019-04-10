@@ -6,8 +6,11 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,6 @@ public class TestCycleController {
         return Optional.ofNullable(testCycleService.insert(testCycleDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.insert"));
-
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -87,9 +89,18 @@ public class TestCycleController {
                                                   @RequestParam(required = false, name = "cycleId") Long cycleId) {
         return Optional.ofNullable(testCycleService.getTestCycleCaseCountInVersion(versionId, projectId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleCaseCountInVerson"));
+                .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleCaseCountInVersion"));
     }
 
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询版本下的测试循环，批量克隆用")
+    @GetMapping("/batch/clone/query/{versionId}")
+    ResponseEntity getTestCycleInVersionForBatchClone(@PathVariable(name = "project_id") Long projectId,
+                                                      @PathVariable(name = "versionId") Long versionId) {
+        return Optional.ofNullable(testCycleService.getTestCycleInVersionForBatchClone(versionId, projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycle.query.getTestCycleInVersionForBatchClone"));
+    }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询项目下的计划")
@@ -108,7 +119,6 @@ public class TestCycleController {
         return Optional.ofNullable(testCycleService.cloneCycle(cycleId, testCycleDTO.getVersionId(), testCycleDTO.getCycleName(), projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.cloneCycle"));
-
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -122,7 +132,26 @@ public class TestCycleController {
         return Optional.ofNullable(testCycleService.cloneFolder(cycleId, testCycleDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycle.query.cloneFolder"));
+    }
 
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量克隆循环及选定的文件夹")
+    @PostMapping("/batch/clone/{versionId}")
+    ResponseEntity batchCloneCycles(
+            @PathVariable(name = "project_id") Long projectId,
+            @PathVariable(name = "versionId") Long versionId,
+            @RequestBody List<BatchCloneCycleDTO> list) {
+        testCycleService.batchCloneCycles(projectId, versionId, list);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询最近一次批量克隆记录")
+    @GetMapping("/batch/clone/latest")
+    public ResponseEntity<TestIssuesUploadHistoryDTO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
+        return Optional.ofNullable(testCycleService.queryLatestBatchCloneHistory(projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.OK));
     }
 
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -191,5 +220,4 @@ public class TestCycleController {
         testCycleService.batchChangeAssignedInOneCycle(userId, cycleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
