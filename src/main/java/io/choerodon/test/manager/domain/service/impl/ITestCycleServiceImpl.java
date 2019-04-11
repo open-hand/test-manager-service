@@ -1,26 +1,29 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.app.service.NotifyService;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
+import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
+import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
 import io.choerodon.test.manager.infra.common.utils.TestDateUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Date;
@@ -38,9 +41,11 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     ProductionVersionClient productionVersionClient;
 
     @Autowired
+    @Lazy
     TestCycleCaseService testCycleCaseService;
 
     @Autowired
+    @Lazy
     ITestCycleCaseService iTestCycleCaseService;
 
     @Autowired
@@ -48,6 +53,14 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
     @Autowired
     ITestStatusService iTestStatusService;
+
+    @Autowired
+    ITestFileLoadHistoryService iLoadHistoryService;
+
+    @Autowired
+    NotifyService notifyService;
+
+    private static final String NOTIFYCYCLECODE = "test-cycle-batch-clone";
 
     @Override
     public TestCycleE insert(TestCycleE testCycleE) {
@@ -83,7 +96,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
             TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
             testCycleCaseE.setCycleId(testCycleE.getCycleId());
             testCycleCaseE.querySelf().forEach(v -> testCycleCaseService.delete(v.getExecuteId(), 0L));
-            insertCaseToFolder(testCycleE.getFolderId(),testCycleE.getCycleId());
+            insertCaseToFolder(testCycleE.getFolderId(), testCycleE.getCycleId());
         }
         return testCycleE.updateSelf();
     }
@@ -220,5 +233,94 @@ public class ITestCycleServiceImpl implements ITestCycleService {
             dto.setIssueId(v.getIssueId());
             testCycleCaseService.create(dto, v.getProjectId());
         });
+    }
+
+    @Override
+    public Boolean checkSameNameCycleForBatchClone(Long versionId, List<BatchCloneCycleDTO> list) {
+        list.forEach(v -> {
+            TestCycleE oldTestCycleE = TestCycleEFactory.create();
+            oldTestCycleE.setCycleId(v.getCycleId());
+            TestCycleE protoTestCycleE = oldTestCycleE.queryOne();
+            protoTestCycleE.setVersionId(versionId);
+
+            testCycleRepository.validateCycle(protoTestCycleE);
+        });
+
+        return false;
+    }
+
+    @Override
+    @Async
+    @Transactional(rollbackFor = Exception.class)
+    public void batchCloneCycleAndFolders(Long projectId, Long versionId, List<BatchCloneCycleDTO> list, Long userId) {
+        TestFileLoadHistoryE testFileLoadHistoryE = initBatchCloneFileLoadHistory(projectId, versionId);
+
+        int sum = 0;
+        int offset = 0;
+
+        for (BatchCloneCycleDTO batchCloneCycleDTO : list) {
+            sum = sum + batchCloneCycleDTO.getFolderIds().length;
+        }
+
+        for (BatchCloneCycleDTO batchCloneCycleDTO : list) {
+            offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleDTO,
+                    testFileLoadHistoryE, sum, offset, userId);
+        }
+
+        testFileLoadHistoryE.setLastUpdateDate(new Date());
+        testFileLoadHistoryE.setFileStream(null);
+        testFileLoadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
+        testFileLoadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
+        testFileLoadHistoryE.setFileUrl(null);
+
+        iLoadHistoryService.update(testFileLoadHistoryE);
+    }
+
+    private int cloneCycleWithSomeFolder(Long projectId, Long versionId, BatchCloneCycleDTO batchCloneCycleDTO,
+                                         TestFileLoadHistoryE testFileLoadHistoryE, int sum, int offset, Long userId) {
+        TestCycleE oldTestCycleE = TestCycleEFactory.create();
+        oldTestCycleE.setCycleId(batchCloneCycleDTO.getCycleId());
+        TestCycleE protoTestCycleE = oldTestCycleE.queryOne();
+
+        TestCycleE newTestCycleE = TestCycleEFactory.create();
+        newTestCycleE.setCycleName(protoTestCycleE.getCycleName());
+        newTestCycleE.setVersionId(versionId);
+        newTestCycleE.setType(TestCycleE.CYCLE);
+
+        TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE, projectId);
+
+        if (sum == 0) {
+            testFileLoadHistoryE.setRate(1.0);
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+
+            return 0;
+        }
+
+        for (Long folderId : batchCloneCycleDTO.getFolderIds()) {
+            TestCycleE oldFolderTestCycleE = TestCycleEFactory.create();
+            oldFolderTestCycleE.setCycleId(folderId);
+            TestCycleE protoFolderTestCycleE = oldFolderTestCycleE.queryOne();
+
+            TestCycleE newFolderTestCycleE = TestCycleEFactory.create();
+            newFolderTestCycleE.setParentCycleId(parentCycle.getCycleId());
+            newFolderTestCycleE.setVersionId(versionId);
+            newFolderTestCycleE.setType(TestCycleE.FOLDER);
+
+            cloneFolder(protoFolderTestCycleE, newFolderTestCycleE, projectId);
+
+            offset++;
+            testFileLoadHistoryE.setRate(offset * 1.0 / sum);
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+        }
+        return offset;
+    }
+
+    private TestFileLoadHistoryE initBatchCloneFileLoadHistory(Long projectId, Long versionId) {
+        TestFileLoadHistoryE loadHistoryE = new TestFileLoadHistoryE(projectId,
+                TestFileLoadHistoryE.Action.CLONE_CYCLES, TestFileLoadHistoryE.Source.VERSION,
+                versionId, TestFileLoadHistoryE.Status.SUSPENDING);
+        return iLoadHistoryService.insertOne(loadHistoryE);
     }
 }

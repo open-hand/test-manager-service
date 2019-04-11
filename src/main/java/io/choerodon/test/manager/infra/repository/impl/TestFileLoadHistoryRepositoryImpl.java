@@ -5,6 +5,7 @@ import io.choerodon.test.manager.domain.repository.TestFileLoadHistoryRepository
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.infra.dataobject.TestFileLoadHistoryDO;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,9 +47,9 @@ public class TestFileLoadHistoryRepositoryImpl implements TestFileLoadHistoryRep
     }
 
     @Override
-    public TestFileLoadHistoryE queryLatestImportIssueHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
+    public TestFileLoadHistoryE queryLatestHistory(TestFileLoadHistoryE testFileLoadHistoryE) {
         TestFileLoadHistoryDO testFileLoadHistoryDO = ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDO.class);
-        List<TestFileLoadHistoryDO> testFileLoadHistoryDOs = testFileLoadHistoryMapper.queryLatestImportIssueHistory(testFileLoadHistoryDO);
+        List<TestFileLoadHistoryDO> testFileLoadHistoryDOs = testFileLoadHistoryMapper.queryLatestHistory(testFileLoadHistoryDO);
         if (testFileLoadHistoryDOs == null || testFileLoadHistoryDOs.isEmpty()) {
             return null;
         }

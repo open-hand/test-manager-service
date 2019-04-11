@@ -6,7 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
+import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 
 import org.springframework.http.ResponseEntity;
 
@@ -49,9 +52,15 @@ public interface TestCycleService {
 
     void populateUsers(List<TestCycleDTO> dtos);
 
-	void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
+    void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
 
     List<TestCycleDTO> getCyclesInVersion(Long versionId);
 
     void batchChangeAssignedInOneCycle(Long userId, Long cycleId);
+
+    void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleDTO> list);
+
+    JSONObject getTestCycleInVersionForBatchClone(Long versionId, Long projectId);
+
+    TestIssuesUploadHistoryDTO queryLatestBatchCloneHistory(Long projectId);
 }

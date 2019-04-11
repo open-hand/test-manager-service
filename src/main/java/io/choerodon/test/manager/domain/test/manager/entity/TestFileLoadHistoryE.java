@@ -11,7 +11,7 @@ import java.util.Objects;
 public class TestFileLoadHistoryE {
 
     public enum Action {
-        UPLOAD_ISSUE(1L), DOWNLOAD_ISSUE(2L), DOWNLOAD_CYCLE(3L);
+        UPLOAD_ISSUE(1L), DOWNLOAD_ISSUE(2L), DOWNLOAD_CYCLE(3L), CLONE_CYCLES(4L);
         private Long actionFlag;
 
         public Long getTypeValue() {

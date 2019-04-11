@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service;
 
+import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 
 import java.util.List;
@@ -28,5 +29,9 @@ public interface ITestCycleService {
 
     List<String> queryUpdateRank(TestCycleE testCycleE);
 
-    void insertCaseToFolder(Long issueFolderId,Long cycleId);
+    void insertCaseToFolder(Long issueFolderId, Long cycleId);
+
+    Boolean checkSameNameCycleForBatchClone(Long versionId, List<BatchCloneCycleDTO> list);
+
+    void batchCloneCycleAndFolders(Long projectId, Long versionId, List<BatchCloneCycleDTO> list, Long userId);
 }
