@@ -263,7 +263,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         }
 
         for (BatchCloneCycleDTO batchCloneCycleDTO : list) {
-            cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleDTO,
+            offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleDTO,
                     testFileLoadHistoryE, sum, offset, userId);
         }
 
@@ -276,8 +276,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         iLoadHistoryService.update(testFileLoadHistoryE);
     }
 
-    private void cloneCycleWithSomeFolder(Long projectId, Long versionId, BatchCloneCycleDTO batchCloneCycleDTO,
-                                          TestFileLoadHistoryE testFileLoadHistoryE, int sum, int offset, Long userId) {
+    private int cloneCycleWithSomeFolder(Long projectId, Long versionId, BatchCloneCycleDTO batchCloneCycleDTO,
+                                         TestFileLoadHistoryE testFileLoadHistoryE, int sum, int offset, Long userId) {
         TestCycleE oldTestCycleE = TestCycleEFactory.create();
         oldTestCycleE.setCycleId(batchCloneCycleDTO.getCycleId());
         TestCycleE protoTestCycleE = oldTestCycleE.queryOne();
@@ -288,6 +288,14 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         newTestCycleE.setType(TestCycleE.CYCLE);
 
         TestCycleE parentCycle = cloneFolder(protoTestCycleE, newTestCycleE, projectId);
+
+        if (sum == 0) {
+            testFileLoadHistoryE.setRate(1.0);
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+
+            return 0;
+        }
 
         for (Long folderId : batchCloneCycleDTO.getFolderIds()) {
             TestCycleE oldFolderTestCycleE = TestCycleEFactory.create();
@@ -302,10 +310,11 @@ public class ITestCycleServiceImpl implements ITestCycleService {
             cloneFolder(protoFolderTestCycleE, newFolderTestCycleE, projectId);
 
             offset++;
-            testFileLoadHistoryE.setRate((double) offset / (double) sum);
+            testFileLoadHistoryE.setRate(offset * 1.0 / sum);
             notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
                     JSON.toJSONString(testFileLoadHistoryE));
         }
+        return offset;
     }
 
     private TestFileLoadHistoryE initBatchCloneFileLoadHistory(Long projectId, Long versionId) {
