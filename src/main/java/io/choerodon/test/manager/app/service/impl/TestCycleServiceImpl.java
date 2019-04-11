@@ -42,9 +42,6 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 @Component
 public class TestCycleServiceImpl implements TestCycleService {
 
-    private static final String NODE_CHILDREN = "children";
-    private static final String CYCLE_ID = "cycleId";
-
     @Autowired
     ITestCycleService iTestCycleService;
 
@@ -71,6 +68,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Autowired
     ITestFileLoadHistoryService iTestFileLoadHistoryService;
+
+    private static final String NODE_CHILDREN = "children";
+    private static final String CYCLE_ID = "cycleId";
 
     /**
      * 新建cycle，folder 并同步folder下的执行
