@@ -1,6 +1,18 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.alibaba.fastjson.JSON;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -23,20 +35,6 @@ import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -45,6 +43,7 @@ import java.util.stream.Collectors;
 public class TestCycleServiceImpl implements TestCycleService {
 
     private static final String NODE_CHILDREN = "children";
+    private static final String CYCLE_ID = "cycleId";
 
     @Autowired
     ITestCycleService iTestCycleService;
@@ -511,7 +510,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             for (TestCycleDTO testCycleDTO : cycleVersionGroup.get(versionId)) {
                 JSONObject cycle = new JSONObject();
 
-                cycle.put("cycleId", testCycleDTO.getCycleId());
+                cycle.put(CYCLE_ID, testCycleDTO.getCycleId());
                 cycle.put("type", testCycleDTO.getType());
                 cycle.put("cycleName", testCycleDTO.getCycleName());
                 cycle.put("rank", testCycleDTO.getRank());
@@ -524,7 +523,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                     for (TestCycleDTO folderCycleDTO : parentGroup.get(testCycleDTO.getCycleId())) {
                         JSONObject children = new JSONObject();
 
-                        children.put("cycleId", folderCycleDTO.getCycleId());
+                        children.put(CYCLE_ID, folderCycleDTO.getCycleId());
                         children.put("type", folderCycleDTO.getType());
                         children.put("cycleName", folderCycleDTO.getCycleName());
                         children.put("rank", folderCycleDTO.getRank());
@@ -593,7 +592,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         version.put("type", testCycleDTO.getType());
         version.put("parentCycleId", testCycleDTO.getParentCycleId());
         version.put("versionId", testCycleDTO.getVersionId());
-        version.put("cycleId", testCycleDTO.getCycleId());
+        version.put(CYCLE_ID, testCycleDTO.getCycleId());
         Optional.ofNullable(testCycleDTO.getCreatedUser()).ifPresent(v ->
                 version.put("createdUser", JSONObject.toJSON(v))
         );
