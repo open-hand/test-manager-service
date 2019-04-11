@@ -19,6 +19,7 @@ import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.formula.functions.Now;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -61,6 +62,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     NotifyService notifyService;
 
     private static final String NOTIFYCYCLECODE = "test-cycle-batch-clone";
+    private static final String CYCLE_DATE_NULL_ERROR = "error.clone.cycle.date.not.be.null";
 
     @Override
     public TestCycleE insert(TestCycleE testCycleE) {
@@ -143,12 +145,18 @@ public class ITestCycleServiceImpl implements ITestCycleService {
         if (!protoTestCycleE.getType().equals(TestCycleE.CYCLE)) {
             List<TestCycleE> parentCycleES = parentCycleE.querySelf();
 
-            Date oldFolderFromDate = protoTestCycleE.getFromDate();
-            Date oldFolderToDate = protoTestCycleE.getToDate();
-            int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
-
             Date parentFromDate = parentCycleES.get(0).getFromDate();
             Date parentToDate = parentCycleES.get(0).getToDate();
+
+            Date oldFolderFromDate = protoTestCycleE.getFromDate();
+            Date oldFolderToDate = protoTestCycleE.getToDate();
+
+            Assert.notNull(parentFromDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(parentToDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(oldFolderFromDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(oldFolderToDate, CYCLE_DATE_NULL_ERROR);
+
+            int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
             int differentDaysParent = TestDateUtil.differentDaysByMillisecond(parentFromDate, parentToDate);
 
             protoTestCycleE.setFromDate(parentFromDate);
