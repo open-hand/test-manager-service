@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.NotifyService;
@@ -19,7 +20,8 @@ import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.formula.functions.Now;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -60,6 +62,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
     @Autowired
     NotifyService notifyService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ITestCycleServiceImpl.class);
+
 
     private static final String NOTIFYCYCLECODE = "test-cycle-batch-clone";
     private static final String CYCLE_DATE_NULL_ERROR = "error.clone.cycle.date.not.be.null";
@@ -270,16 +275,26 @@ public class ITestCycleServiceImpl implements ITestCycleService {
             sum = sum + batchCloneCycleDTO.getFolderIds().length;
         }
 
-        for (BatchCloneCycleDTO batchCloneCycleDTO : list) {
-            offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleDTO,
-                    testFileLoadHistoryE, sum, offset, userId);
-        }
+        try {
+            for (BatchCloneCycleDTO batchCloneCycleDTO : list) {
+                offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleDTO,
+                        testFileLoadHistoryE, sum, offset, userId);
+            }
 
-        testFileLoadHistoryE.setLastUpdateDate(new Date());
-        testFileLoadHistoryE.setFileStream(null);
-        testFileLoadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
-        testFileLoadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
-        testFileLoadHistoryE.setFileUrl(null);
+            testFileLoadHistoryE.setLastUpdateDate(new Date());
+            testFileLoadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryE.setStatus(TestFileLoadHistoryE.Status.SUCCESS);
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+
+            testFileLoadHistoryE.setLastUpdateDate(new Date());
+            testFileLoadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryE.setStatus(TestFileLoadHistoryE.Status.FAILURE);
+
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+            throw new CommonException(CYCLE_DATE_NULL_ERROR);
+        }
 
         iLoadHistoryService.update(testFileLoadHistoryE);
     }
