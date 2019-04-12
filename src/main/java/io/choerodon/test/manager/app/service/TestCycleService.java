@@ -8,8 +8,7 @@ import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
-import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
+import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 
 import org.springframework.http.ResponseEntity;
 
@@ -62,5 +61,5 @@ public interface TestCycleService {
 
     JSONObject getTestCycleInVersionForBatchClone(Long versionId, Long projectId);
 
-    TestIssuesUploadHistoryDTO queryLatestBatchCloneHistory(Long projectId);
+    TestFileLoadHistoryDTO queryLatestBatchCloneHistory(Long projectId);
 }

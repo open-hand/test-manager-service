@@ -8,7 +8,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestIssuesUploadHistoryDTO;
+import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
 
 import io.swagger.annotations.ApiOperation;
@@ -148,7 +148,7 @@ public class TestCycleController {
     @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询最近一次批量克隆记录")
     @GetMapping("/batch/clone/latest")
-    public ResponseEntity<TestIssuesUploadHistoryDTO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
+    public ResponseEntity<TestFileLoadHistoryDTO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
         return Optional.ofNullable(testCycleService.queryLatestBatchCloneHistory(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.OK));

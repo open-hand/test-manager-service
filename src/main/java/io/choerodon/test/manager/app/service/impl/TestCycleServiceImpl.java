@@ -541,27 +541,17 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public TestIssuesUploadHistoryDTO queryLatestBatchCloneHistory(Long projectId) {
+    public TestFileLoadHistoryDTO queryLatestBatchCloneHistory(Long projectId) {
         TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
         testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
         testFileLoadHistoryE.setActionType(TestFileLoadHistoryE.Action.CLONE_CYCLES);
         testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryE);
+
         if (testFileLoadHistoryE == null) {
             return null;
         }
 
-        TestIssuesUploadHistoryDTO testIssuesUploadHistoryDTO = ConvertHelper.convert(testFileLoadHistoryE, TestIssuesUploadHistoryDTO.class);
-
-        TestIssueFolderE testIssueFolderE = SpringUtil.getApplicationContext().getBean(TestIssueFolderE.class);
-        testIssueFolderE.setFolderId(testFileLoadHistoryE.getLinkedId());
-        testIssueFolderE = testIssueFolderE.queryByPrimaryKey();
-
-        if (!ObjectUtils.isEmpty(testIssueFolderE)) {
-            testIssuesUploadHistoryDTO.setVersionName(testCaseService.getVersionInfo(projectId)
-                    .get(testIssueFolderE.getVersionId()).getName());
-        }
-
-        return testIssuesUploadHistoryDTO;
+        return ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDTO.class);
     }
 
     private void batchChangeCase(Long userId, Long cycleId) {
