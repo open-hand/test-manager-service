@@ -216,3 +216,29 @@ All notable changes to choerodon-front-agile will be documented in this file.
 - Fix the problem in `Test Execution` details when page turning
 - Fix the problem in the `Test Plan` tree that is inconsistent with the detail progress bar on the right
 - Fix the problem of database errors caused by excessively long reports in `Automation Tests`
+
+## [0.16.0] - 2019-04-19
+
+### Add
+
+#### 0.16.0 Significantly added features
+
+- Add test plan for loop or phase cloning can be bulk operation.
+
+### Modify
+
+#### 0.16.0 Significantly modify the feature
+
+- Optimize test planning, test execution performance issues.
+- Optimize the test experience, create test cycles, and optimize the time selector.
+- Optimize the test experience. The test plan timeline can be dragged back and forth.
+- Optimize the test experience, the edit phase of the test plan allows you to change the associated folder.
+- Optimize the test experience, test defect report sort, from near to far according to creation time.
+- Optimize the test experience. During test execution, click the number in the use case details to open a new window when entering the use case.
+- Optimize the test experience, test reports, test cases in search number allowed with prefix.
+### Fix
+
+#### 0.16.0 Significant repair features
+
+- Fix tree empty data error.
+- Fix the test execution progress bar counting errors.
