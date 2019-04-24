@@ -96,6 +96,9 @@ public class IssueInfosDTO {
     @ApiModelProperty(value = "描述")
     private String description;
 
+    @ApiModelProperty(value = "issue关联的冲刺")
+    private List<IssueSprintDTO> sprintDTOList;
+
     @ApiModelProperty(value = "版本关联DTOList")
     private List<VersionIssueRelDTO> versionIssueRelDTOList;
 
@@ -144,6 +147,18 @@ public class IssueInfosDTO {
         statusMapDTO = issueListDTO.getStatusMapDTO();
         typeCode = issueListDTO.getTypeCode();
         issueTypeDTO = issueListDTO.getIssueTypeDTO();
+    }
+
+    public IssueInfosDTO(IssueListTestWithSprintVersionDTO listTestWithSprintVersionDTO) {
+        issueName = listTestWithSprintVersionDTO.getIssueNum();
+        issueId = listTestWithSprintVersionDTO.getIssueId();
+        summary = listTestWithSprintVersionDTO.getSummary();
+        projectId = listTestWithSprintVersionDTO.getProjectId();
+        statusMapDTO = listTestWithSprintVersionDTO.getStatusMapDTO();
+        typeCode = listTestWithSprintVersionDTO.getTypeCode();
+        issueTypeDTO = listTestWithSprintVersionDTO.getIssueTypeDTO();
+        versionIssueRelDTOList = listTestWithSprintVersionDTO.getVersionDTOList();
+        sprintDTOList = listTestWithSprintVersionDTO.getSprintDTOList();
     }
 
     public IssueInfosDTO(IssueDTO issueDTO) {
@@ -379,6 +394,14 @@ public class IssueInfosDTO {
 
     public void setStatusColor(String statusColor) {
         this.statusColor = statusColor;
+    }
+
+    public List<IssueSprintDTO> getSprintDTOList() {
+        return sprintDTOList;
+    }
+
+    public void setSprintDTOList(List<IssueSprintDTO> sprintDTOList) {
+        this.sprintDTOList = sprintDTOList;
     }
 
     public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {

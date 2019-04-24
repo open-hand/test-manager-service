@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCaseService {
-    //
+
     ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
     ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
@@ -77,7 +77,7 @@ public interface TestCaseService {
 
     List<ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionId);
 
-    ReplaceResult previewValues(Long projectId,ReplaceResult replaceResult, Long appVersionId);
+    ReplaceResult previewValues(Long projectId, ReplaceResult replaceResult, Long appVersionId);
 
-    void deployTestApp(Long projectId,DevopsApplicationDeployDTO applicationDeployDTO);
+    void deployTestApp(Long projectId, DevopsApplicationDeployDTO applicationDeployDTO);
 }

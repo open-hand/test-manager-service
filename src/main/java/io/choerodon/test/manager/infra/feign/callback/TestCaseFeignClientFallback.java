@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 
 import org.springframework.http.ResponseEntity;
@@ -76,7 +77,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 
