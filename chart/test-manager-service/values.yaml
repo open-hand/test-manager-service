@@ -8,6 +8,11 @@ image:
   repository: registry.cn-hangzhou.aliyuncs.com/choerodon-test-manager/test-manager-service
   pullPolicy: IfNotPresent
 
+service:
+  enabled: false
+  type: ClusterIP
+  port: 8093
+
 deployment:
   managementPort: 8094
 preJob:
