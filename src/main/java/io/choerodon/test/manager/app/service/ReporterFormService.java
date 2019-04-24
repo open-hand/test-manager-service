@@ -13,13 +13,13 @@ import java.util.List;
  */
 public interface ReporterFormService {
 
-	Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
+    Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-	List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds,Long organizationId);
-
-
-	List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds,Long organizationId);
+    List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds, Long organizationId);
 
 
-	Page createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest,Long organizationId);
+    List<DefectReporterFormE> createFormDefectFromIssue(Long projectId, Long[] issueIds, Long organizationId);
+
+
+    Page createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 }
