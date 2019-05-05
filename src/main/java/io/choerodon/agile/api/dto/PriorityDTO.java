@@ -1,10 +1,10 @@
 package io.choerodon.agile.api.dto;
 
-
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 
-public class PriorityDTO {
+public class PriorityDTO implements Serializable {
 
     private Long id;
     private String name;
