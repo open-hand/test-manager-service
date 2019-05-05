@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.agile.api.dto.*;
 import io.choerodon.core.domain.Page;
+import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -137,11 +138,11 @@ public interface TestCaseFeignClient {
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/filter_linked")
-    ResponseEntity<Page<IssueListDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-                                                                 @RequestParam(name = "orders") String orders,
-                                                                 @PathVariable(name = "project_id") Long projectId,
-                                                                 @RequestBody(required = false) SearchDTO searchDTO,
-                                                                 @RequestParam("organizationId")Long organizationId);
+    ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+                                                                                      @RequestParam(name = "orders") String orders,
+                                                                                      @PathVariable(name = "project_id") Long projectId,
+                                                                                      @RequestBody(required = false) SearchDTO searchDTO,
+                                                                                      @RequestParam("organizationId")Long organizationId);
 
     /**
      * 得到所有projectId各自的component

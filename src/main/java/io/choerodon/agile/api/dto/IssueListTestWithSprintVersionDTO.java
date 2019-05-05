@@ -1,58 +1,71 @@
 package io.choerodon.agile.api.dto;
 
-import io.choerodon.agile.infra.common.utils.StringUtil;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author dinghuang123@gmail.com
- */
-public class IssueListDTO implements Serializable {
+import io.swagger.annotations.ApiModelProperty;
 
+import io.choerodon.agile.infra.common.utils.StringUtil;
+
+public class IssueListTestWithSprintVersionDTO {
+
+    @ApiModelProperty(value = "问题主键id")
     private Long issueId;
 
+    @ApiModelProperty(value = "问题编号")
     private String issueNum;
 
+    @ApiModelProperty(value = "问题类型code")
     private String typeCode;
 
+    @ApiModelProperty(value = "问题概要")
     private String summary;
 
+    @ApiModelProperty(value = "经办人id")
     private Long assigneeId;
 
-    private Long reporterId;
-
+    @ApiModelProperty(value = "项目id")
     private Long projectId;
 
+    @ApiModelProperty(value = "问题类型id")
     private Long issueTypeId;
 
+    @ApiModelProperty(value = "经办人名称")
     private String assigneeName;
 
-    private String reporterName;
-
-    private String reporterImageUrl;
-
+    @ApiModelProperty(value = "经办人图标")
     private String assigneeImageUrl;
 
+    @ApiModelProperty(value = "史诗名称")
     private String epicName;
 
+    @ApiModelProperty(value = "issue关联的版本")
+    private List<VersionIssueRelDTO> versionDTOList;
+
+    @ApiModelProperty(value = "issue关联的冲刺")
+    private List<IssueSprintDTO> sprintDTOList;
+
+    @ApiModelProperty(value = "故事点")
     private BigDecimal storyPoints;
 
+    @ApiModelProperty(value = "冲刺进行期间是否有添加问题")
     private Boolean addIssue;
 
+    @ApiModelProperty(value = "剩余时间")
     private BigDecimal remainingTime;
 
+    @ApiModelProperty(value = "优先级DTO")
     private PriorityDTO priorityDTO;
 
+    @ApiModelProperty(value = "状态DTO")
     private StatusMapDTO statusMapDTO;
 
+    @ApiModelProperty(value = "问题类型DTO")
     private IssueTypeDTO issueTypeDTO;
 
+    @ApiModelProperty(value = "最后更新时间")
     private Date lastUpdateDate;
-
-    private List<VersionIssueRelDTO> versionIssueRelDTOS;
 
     public Long getIssueTypeId() {
         return issueTypeId;
@@ -69,30 +82,6 @@ public class IssueListDTO implements Serializable {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public Long getReporterId() {
-        return reporterId;
-    }
-
-    public void setReporterId(Long reporterId) {
-        this.reporterId = reporterId;
-    }
-
-    public String getReporterName() {
-        return reporterName;
-    }
-
-    public void setReporterName(String reporterName) {
-        this.reporterName = reporterName;
-    }
-
-    public List<VersionIssueRelDTO> getVersionIssueRelDTOS() {
-        return versionIssueRelDTOS;
-    }
-
-    public void setVersionIssueRelDTOS(List<VersionIssueRelDTO> versionIssueRelDTOS) {
-        this.versionIssueRelDTOS = versionIssueRelDTOS;
     }
 
     public Long getIssueId() {
@@ -151,20 +140,28 @@ public class IssueListDTO implements Serializable {
         this.assigneeName = assigneeName;
     }
 
-    public String getReporterImageUrl() {
-        return reporterImageUrl;
-    }
-
-    public void setReporterImageUrl(String reporterImageUrl) {
-        this.reporterImageUrl = reporterImageUrl;
-    }
-
     public String getAssigneeImageUrl() {
         return assigneeImageUrl;
     }
 
     public void setAssigneeImageUrl(String assigneeImageUrl) {
         this.assigneeImageUrl = assigneeImageUrl;
+    }
+
+    public List<VersionIssueRelDTO> getVersionDTOList() {
+        return versionDTOList;
+    }
+
+    public void setVersionDTOList(List<VersionIssueRelDTO> versionDTOList) {
+        this.versionDTOList = versionDTOList;
+    }
+
+    public List<IssueSprintDTO> getSprintDTOList() {
+        return sprintDTOList;
+    }
+
+    public void setSprintDTOList(List<IssueSprintDTO> sprintDTOList) {
+        this.sprintDTOList = sprintDTOList;
     }
 
     public BigDecimal getStoryPoints() {
@@ -227,4 +224,5 @@ public class IssueListDTO implements Serializable {
     public String toString() {
         return StringUtil.getToString(this);
     }
+
 }
