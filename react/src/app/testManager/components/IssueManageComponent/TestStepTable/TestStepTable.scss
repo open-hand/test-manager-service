@@ -1,0 +1,65 @@
+.c7ntest-TestStepTable {
+  tbody {
+    tr {
+      // align-items: flex-start !important;
+    }
+    td {
+      line-height: 20px;
+    }
+    .attachmentsColumn {
+      padding-left: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+    td .item-container {
+      .preWrapSpan{
+        white-space: pre-wrap;
+      }
+      padding: 5px;
+      min-height: 34px;
+      // .ant-input-focus {
+      //   padding: 0 3px;
+      //   border: 1px solid #3F51B5;
+      //   border-radius: 2px;
+      // }
+      .ant-input-wrapper {
+        margin: 0;
+        // margin-top: 5px;
+        textArea {
+          line-height: 20px;
+        }
+        div {
+          display: none; // .ant-input-border {
+          //   display: none;
+          // }
+        }
+      }
+    }
+    td .c7ntest-text-dot {
+      line-height: 19px;
+      min-height: 19px;
+    }
+    td .c7ntest-text-wrap {
+      min-height: 19px;
+      line-height: 19px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+  }
+}
+
+.attachmentsColumn {
+  .upload-button {
+    display: flex;
+    flex-direction: column-reverse;
+    button {
+      padding: 0 5px;
+      color: #3F51B5;
+    }
+    .ant-upload-list-item-name {
+      color: #3F51B5;
+    }
+  }
+}

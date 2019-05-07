@@ -1,0 +1,67 @@
+"test-manager":
+  icon: test
+  sort: 4
+  project:
+    - "summary":
+        icon: table_chart
+        Routes: /testManager/summary
+        sort: 1
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "manager":
+        icon: description
+        Routes: /testManager/IssueManage
+        sort: 2
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "TestPlan":
+        icon: test_planning
+        Routes: /testManager/TestPlan
+        sort: 3
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "TestExecute":
+        icon: test_execution
+        Routes: /testManager/TestExecute
+        sort: 4
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+
+    - "report":
+        icon: baseline-list_alt
+        Routes: /testManager/report
+        sort: 5
+        delete: true
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "status":
+        icon: filter_vintage
+        Routes: /testManager/status
+        sort: 6
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "cycle":
+        icon: repeat
+        Routes: /testManager/Cycle
+        sort: 3
+        delete: true
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+    - "autotest":
+        icon: auto_test
+        Routes: /testManager/AutoTest/list
+        sort: 8
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+"platform-reports":
+  icon: bar_chart
+  sort: 99
+  project:
+    - "testreport":
+        icon: baseline-list_alt
+        Routes: /testManager/report
+        sort: 5
+        permission:
+          - 'test-manager-service.test-cycle.getTestCycle'
+
+

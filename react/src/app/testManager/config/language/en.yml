@@ -1,0 +1,12 @@
+"test-manager": TestManager
+'test-manager.summary': summary
+'test-manager.manager': manager
+'test-manager.TestPlan': TestPlan
+'test-manager.TestExecute': TestExecute
+'test-manager.report':  test manager report
+'test-manager.status':  status
+'test-manager.cycle':  cycle
+'test-manager.autotest':  auto test
+
+"platform-reports": "Reports"
+"platform-reports.testreport": "test report"

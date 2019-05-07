@@ -1,0 +1,48 @@
+{
+  "name": "@choerodon/testManager",
+  "routeName": "testManager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./react/src/app/testManager/containers/TestManagerIndex.js",
+  "dependencies": {
+    "@choerodon/boot": "0.1.x",
+    "@choerodon/master": "0.1.x",
+    "echarts": "^4.1.0",
+    "echarts-for-react": "^2.0.14",
+    "file-saver": "^1.3.8",
+    "highlight.js": "^9.13.1",
+    "mobx-react-devtools": "^6.0.3",
+    "moment-range": "^4.0.1",
+    "quill-delta-to-html": "^0.8.4",
+    "react-beautiful-dnd": "^9.0.2",
+    "react-codemirror": "^1.0.0",
+    "react-color": "^2.14.1",
+    "react-fast-compare": "^2.0.4",
+    "react-image-lightbox": "^4.6.0",
+    "react-quill": "^1.3.0",
+    "shallowequal": "^1.1.0",
+    "timeago-react": "2.0.0",
+    "yamljs": "^0.3.0"
+  },
+  "scripts": {
+    "start": "choerodon-front-boot start --config ./react/config.js",
+    "dist": "choerodon-front-boot dist --config ./react/config.js",
+    "lint-staged": "lint-staged",
+    "lint-staged:es": "eslint",
+    "compile": "gulp compile"
+  },
+  "author": "",
+  "license": "ISC",
+  "lint-staged": {
+    "react/**/*.{js,jsx}": [
+      "npm run lint-staged:es"
+    ],
+    "react/**/*.scss": "stylelint --syntax scss"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "peerDependencies": {}
+}

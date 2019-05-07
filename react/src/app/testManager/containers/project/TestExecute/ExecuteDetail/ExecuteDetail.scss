@@ -1,0 +1,41 @@
+.c7ntest-ExecuteDetail {
+  .ant-spin-container {
+    height: 100%;
+  }
+  table {
+    table-layout: fixed
+  }
+  .c7ntest-upload-button {
+    position: relative;
+    cursor: pointer;
+    color: #6473c3;
+    font-weight: 500;
+  }
+  .c7ntest-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c5cbe8;
+    color: #6473c3;
+    margin-right: 5px;
+    text-align: center;
+    line-height: 18px;
+  }
+  .ant-upload-list-item-name {
+    margin-right: 5px;
+  }
+  .ant-upload-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .c7ntest-quick-pass:hover {
+    background: #00BF96;
+    color: white !important;
+    border-color: white;
+  }
+  .c7ntest-quick-fail:hover {
+    background: #F44336;
+    color: white !important;
+    border-color: white;
+  }
+}

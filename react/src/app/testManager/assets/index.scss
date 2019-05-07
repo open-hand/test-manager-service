@@ -1,0 +1,94 @@
+.c7ntest-text-dot {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+ul {
+  padding: 0;
+}
+
+.c7ntest-center {
+  display: flex;
+  align-items: center;
+}
+
+.c7ntest-pointer {
+  cursor: pointer;
+}
+
+.c7ntest-between {
+  display: flex;
+  justify-content: space-between;
+  &-center {
+    @extend .c7ntest-between;
+    align-items: center;
+  }
+}
+
+.c7ntest-flex-space {
+  flex: 1;
+  visibility: hidden;
+}
+.c7ntest-text-wrap {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.page-head-title {
+  width: auto;
+  padding-right: 50px;
+}
+
+.page-content-header .description>span {
+  color: black;
+}
+
+.c7ntest-icon-in-table {
+  cursor: pointer;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+}
+
+.c7ntest-icon-in-table:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.c7ntest-select {
+  height: 35px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 5px; // Select 下划线
+  .ant-select-underline {
+    display: none;
+  }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+  .ant-select-selection__placeholder {
+    color: #3f51b5;
+  }
+  .ant-select-selection-selected-value {
+    margin-top: 2px;
+  }
+  .ant-select-clear {
+    margin-top: 2px;
+  }
+}
+
+.c7ntest-select.ant-select-has-value {
+  .ant-select-arrow {
+    top: 2px;
+  }
+}
+
+.c7ntest-inline-flex-dropdown {
+  .ant-select-dropdown-menu-item {
+    // overflow: visible;
+    display: flex;
+  }
+}

@@ -1,0 +1,68 @@
+.c7ntest-dragtable {
+  // position: relative;
+  // padding-bottom: 36px;
+  // .ant-spin-blur {
+  //     overflow: initial;
+  // }
+  // .ant-table {
+  //     display: none;
+  // }
+  // .ant-table-wrapper {
+  //     position: static;
+  //     .ant-spin-container {
+  //         position: static;
+  //     }
+  //     .ant-spin-nested-loading {
+  //         position: static;
+  //     }
+  //     .ant-pagination {
+  //         position: absolute;
+  //         bottom: -36px;
+  //         right: 0;
+  //     }
+  // }
+  .ant-table-placeholder {
+    // display: none;
+  }
+  table {
+    table-layout: fixed;
+    border: none;
+    width: 100%;
+    thead {
+      tr {
+        height: 30px;
+        background: rgba(0, 0, 0, 0.04);
+        display: flex;
+        align-items: center;
+        th {
+          font-weight: normal; // width: 50px;
+          // flex: 1;
+          line-height: 20px;
+          padding-left: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: inline-block; //fix ie11
+        }
+      }
+    }
+    tbody {
+      tr {
+        display: flex;
+        align-items: center;
+        min-height: 34px; // border-bottom: 1px solid #e8e8e8;
+        // border-top: 1px solid #e8e8e8;
+        box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
+        background: #fff;
+        td {
+          // width: 50px;
+          // flex: 1;
+          // line-height: 20px;
+          overflow: hidden;
+          padding-left: 20px;
+          word-wrap: break-word;
+        }
+      }
+    }
+  }
+}

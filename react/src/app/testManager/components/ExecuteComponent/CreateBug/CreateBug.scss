@@ -1,0 +1,45 @@
+.c7n-createBug {
+    .page-content{
+      padding-left: 0;
+      padding-top: 0;
+    }
+    .ant-form-item {
+      margin-bottom: 12px !important;
+  
+      .ant-input-length-info {
+        margin-bottom: -18px !important;
+      }
+    }
+  
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    }
+  
+    .clear-p-mw {
+      margin-bottom: 20px;
+  
+      p {
+        max-width: inherit !important;
+      }
+    }
+  
+    .sign-upload {
+      .ant-upload {
+        display: flex !important;
+        margin-left: 40px;
+      }
+  
+      .ant-btn {
+        color: #3f51b5;
+      }
+    }
+  
+    .ant-upload-list-item {
+      display: inline-block;
+    }
+  
+    .ant-upload-list-item-info {
+      padding-right: 20px;
+      max-width: 100%;
+    }
+  }
