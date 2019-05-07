@@ -2,12 +2,13 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
@@ -38,7 +39,7 @@ public class TestAppInstanceController {
      * @param appVersionId 版本id
      * @return ReplaceResult
      */
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER,
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER,
             InitRoleCode.PROJECT_MEMBER})
     @ApiOperation(value = "查询value列表")
     @GetMapping("/value")
@@ -59,7 +60,7 @@ public class TestAppInstanceController {
      * @param applicationDeployDTO 部署信息
      * @return ApplicationInstanceDTO
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @PostMapping
@@ -78,7 +79,7 @@ public class TestAppInstanceController {
      * @param scheduleTaskDTO 定时信息
      * @return QuartzTask
      */
-    @Permission(level = ResourceLevel.PROJECT,
+    @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @PostMapping("/schedule")
