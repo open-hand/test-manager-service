@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import {
   Form, Input, Select, Modal,
 } from 'choerodon-ui';
-import { Content } from 'choerodon-front-boot';
+import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { ColorPicker } from '../../../../../components/CommonComponent';
 import './CreateStatus.scss';

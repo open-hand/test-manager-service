@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Menu, Dropdown, Icon, Spin, Tooltip,
 } from 'choerodon-ui';
-import { DashBoardNavBar, DashBoardToolBar } from 'choerodon-front-boot';
+import { DashBoardNavBar, DashBoardToolBar } from '@choerodon/boot';
 import ReactEcharts from 'echarts-for-react';
 import _ from 'lodash';
 import { getProjectVersion } from '../../api/agileApi';

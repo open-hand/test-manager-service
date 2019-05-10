@@ -4,7 +4,7 @@ import {
 } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import moment from 'moment';
-import { Content } from 'choerodon-front-boot';
+import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../api/cycleApi';
 import { SelectFolder, SelectFocusLoad } from '../../CommonComponent';

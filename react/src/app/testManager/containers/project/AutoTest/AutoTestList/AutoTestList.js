@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Page, Header, Content,
-} from 'choerodon-front-boot';
+} from '@choerodon/boot';
 import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown,

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import {
   Table, Icon, Tooltip, Menu, Button,
 } from 'choerodon-ui';
-import { stores, axios } from 'choerodon-front-boot';
+import { stores, axios } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';

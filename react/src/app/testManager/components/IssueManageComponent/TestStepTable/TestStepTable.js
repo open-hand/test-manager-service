@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Input, Icon, Modal, Tooltip, Button, 
 } from 'choerodon-ui';
-import { stores } from 'choerodon-front-boot';
+import { stores } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {

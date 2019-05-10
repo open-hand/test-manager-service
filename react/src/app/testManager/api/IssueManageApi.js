@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-11-01 15:25:27
  * @Feature:  
  */
-import { stores } from 'choerodon-front-boot';
+import { stores } from '@choerodon/boot';
 import { getProjectId, request } from '../common/utils';
 
 const { AppState } = stores;

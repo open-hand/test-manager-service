@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { DashBoardNavBar, stores } from 'choerodon-front-boot';
+import { DashBoardNavBar, stores } from '@choerodon/boot';
 import ReactEcharts from 'echarts-for-react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';

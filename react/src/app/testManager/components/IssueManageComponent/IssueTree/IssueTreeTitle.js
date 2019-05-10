@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { stores, axios, Permission } from 'choerodon-front-boot';
+import { stores, axios, Permission } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import {
   Menu, Input, Dropdown, Button, Tooltip, Icon, Modal,

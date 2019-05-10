@@ -1,4 +1,4 @@
-import { stores, axios } from 'choerodon-front-boot';
+import { stores, axios } from '@choerodon/boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import _ from 'lodash';
 import { uploadImage, uploadFileAgile } from '../api/FileApi';

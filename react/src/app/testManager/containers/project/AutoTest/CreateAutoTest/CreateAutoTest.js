@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Steps } from 'choerodon-ui';
 import {
   Content, Header, Page, stores, 
-} from 'choerodon-front-boot';
+} from '@choerodon/boot';
 import _ from 'lodash';
 import './CreateAutoTest.scss';
 import { commonLink } from '../../../../common/utils';

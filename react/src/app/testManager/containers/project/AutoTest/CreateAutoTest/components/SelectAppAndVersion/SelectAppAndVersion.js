@@ -14,7 +14,7 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import {
   Modal, Table, Select, Spin,
 } from 'choerodon-ui';
-import { stores, Content } from 'choerodon-front-boot';
+import { stores, Content } from '@choerodon/boot';
 import './SelectAppAndVersion.scss';
 import { getApps, getAppVersions } from '../../../../../../api/AutoTestApi';
 import CreateAutoTestStore from '../../../../../../store/project/AutoTest/CreateAutoTestStore';

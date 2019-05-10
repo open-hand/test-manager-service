@@ -1,9 +1,12 @@
 {
   "name": "@choerodon/testManager",
   "routeName": "testManager",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "./react/src/app/testManager/containers/TestManagerIndex.js",
+  "main": "./lib/src/app/testManager/containers/TestManagerIndex.js",
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@choerodon/boot": "0.1.x",
     "@choerodon/master": "0.1.x",
@@ -24,9 +27,16 @@
     "timeago-react": "2.0.0",
     "yamljs": "^0.3.0"
   },
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.1",
+    "through2": "^2.0.3"
+  },
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",
     "dist": "choerodon-front-boot dist --config ./react/config.js",
+    "compile": "gulp compile",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
     "compile": "gulp compile"

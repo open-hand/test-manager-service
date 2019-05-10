@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
-import { Content } from 'choerodon-front-boot';
+import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../api/agileApi';
 import { addCycle } from '../../../api/cycleApi';

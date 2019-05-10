@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Page, Header } from 'choerodon-front-boot';
+import { Page, Header } from '@choerodon/boot';
 import {
   Button, Card, Spin, Icon, Tooltip,
 } from 'choerodon-ui';

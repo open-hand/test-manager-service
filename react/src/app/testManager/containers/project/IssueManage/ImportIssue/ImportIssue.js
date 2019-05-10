@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Page, Header, Content, WSHandler, stores,
-} from 'choerodon-front-boot';
+} from '@choerodon/boot';
 import {
   Table, Button, Input, Dropdown, Menu, Pagination, Modal, Progress,
   Spin, Icon, Select, Divider, Tooltip,

@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import {
   Table, Button, Icon, Spin, Popover,
 } from 'choerodon-ui';
-import { Page, Header } from 'choerodon-front-boot';
+import { Page, Header } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import ReactEcharts from 'echarts-for-react';
