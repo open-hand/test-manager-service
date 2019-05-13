@@ -55,7 +55,8 @@ public class TestStatusServiceImpl implements TestStatusService {
 		TestStatusE statusE = TestStatusEFactory.create();
 		statusE.setStatusId(testCycleCaseDTO.getExecutionStatus());
 		TestStatusE testStatusE = statusE.queryOne();
-		testCycleCaseDTO.setExecutionStatusName(testStatusE.getStatusName());
+		if(testStatusE!=null)
+			testCycleCaseDTO.setExecutionStatusName(testStatusE.getStatusName());
 	}
 
 	@Override

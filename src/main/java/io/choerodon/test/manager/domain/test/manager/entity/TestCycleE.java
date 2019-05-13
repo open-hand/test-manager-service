@@ -59,6 +59,8 @@ public class TestCycleE {
 
     private String nextRank;
 
+    private Long projectId;
+
     @Autowired
     TestCycleRepository testCycleRepository;
 
@@ -91,6 +93,7 @@ public class TestCycleE {
         type = Optional.ofNullable(type).orElse(proto.getType());
         folderId = Optional.ofNullable(folderId).orElse(proto.getFolderId());
         rank = Optional.ofNullable(rank).orElse(proto.getRank());
+        projectId = Optional.ofNullable(projectId).orElse(proto.getProjectId());
         return addSelf();
     }
 
@@ -108,8 +111,8 @@ public class TestCycleE {
         return testCycleRepository.queryChildFolderByRank(testCycleE);
     }
 
-    public List<TestCycleE> querySelfWithBar(Long[] versionIds, Long assignedTo) {
-        return testCycleRepository.queryBar(versionIds, assignedTo);
+    public List<TestCycleE> querySelfWithBar(Long projectId,Long[] versionIds, Long assignedTo) {
+        return testCycleRepository.queryBar(projectId, versionIds, assignedTo);
     }
 
     public List<TestCycleE> querySelfWithBarOneCycle(Long cycleId) {
@@ -386,5 +389,13 @@ public class TestCycleE {
 
     public void setNextRank(String nextRank) {
         this.nextRank = nextRank;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

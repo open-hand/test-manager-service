@@ -115,9 +115,9 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 
     @Override
-    public List<TestCycleE> queryCycleWithBar(Long[] versionId, Long assignedTo) {
+    public List<TestCycleE> queryCycleWithBar(Long projectId,Long[] versionId, Long assignedTo) {
         TestCycleE testCycleE = TestCycleEFactory.create();
-        return countStatus(testCycleE.querySelfWithBar(versionId, assignedTo));
+        return countStatus(testCycleE.querySelfWithBar(projectId, versionId, assignedTo));
     }
 
     @Override
@@ -144,6 +144,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
      */
     @Override
     public TestCycleE cloneFolder(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId) {
+        protoTestCycleE.setProjectId(projectId);
         newTestCycleE.checkRank();
         TestCycleE parentCycleE = TestCycleEFactory.create();
         parentCycleE.setCycleId(newTestCycleE.getParentCycleId());

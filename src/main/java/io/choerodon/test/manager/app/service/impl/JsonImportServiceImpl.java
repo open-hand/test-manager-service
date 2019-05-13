@@ -113,7 +113,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
 
         // 创建循环
-        TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
+        TestCycleE testCycleE = iJsonImportService.getCycle(projectId, versionId, "自动化测试");
 
         // 创建阶段
         TestCycleDTO testStage = iJsonImportService.getStage(
@@ -268,7 +268,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
 
         // 创建测试循环
-        TestCycleE testCycleE = iJsonImportService.getCycle(versionId, "自动化测试");
+        TestCycleE testCycleE = iJsonImportService.getCycle(projectId, versionId, "自动化测试");
         //遍历suite
         for (TestNgSuite suite : result.getSuites()) {
             String folderName = folderBaseName + "-" + suite.getName();

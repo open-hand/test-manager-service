@@ -1,11 +1,5 @@
 package io.choerodon.test.manager.api.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import io.swagger.annotations.ApiModelProperty;
-
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -13,6 +7,11 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseAttachmentRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -102,6 +101,17 @@ public class TestCycleCaseDTO {
 
     @ApiModelProperty(value = "searchDTO")
     private SearchDTO searchDTO;
+
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public List<TestCycleCaseDefectRelDTO> getSubStepDefects() {
         return subStepDefects;

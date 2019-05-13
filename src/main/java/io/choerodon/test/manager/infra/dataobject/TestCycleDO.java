@@ -50,8 +50,18 @@ public class TestCycleDO extends AuditDomain {
 
     private String rank;
 
+    private Long projectId;
+
     @Transient
     private List<Map<Long, Object>> cycleCaseList;
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public Long getCycleId() {
         return cycleId;

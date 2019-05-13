@@ -16,16 +16,13 @@ import io.choerodon.test.manager.domain.service.ITestCycleCaseService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
-import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -33,7 +30,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -244,7 +240,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 PageRequest pageRequest = new PageRequest();
                 pageRequest.setPage(0);
                 pageRequest.setSize(400);
-                pageRequest.setSort(new Sort(Sort.Direction.DESC,"rank"));
+                pageRequest.setSort(new Sort(Sort.Direction.DESC, "rank"));
                 updateExecuteId(testCycleES, pageRequest, projectId, dto.getCycleId(), organizationId, dto, 0L);
             }
             if (dto.getNextExecuteId() == null) {
@@ -265,10 +261,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (stageId != 0) {
             tmpTestCycleCaseDTO.setCycleId(stageId);
             Page<TestCycleCaseDTO> testCycleCaseDTOPage = queryByCycle(tmpTestCycleCaseDTO, pageRequest, projectId, organizationId);
-            if (flag == 0){
+            if (flag == 0) {
                 targetExecuteId = testCycleCaseDTOPage.get(0).getExecuteId();
                 dto.setLastExecuteId(targetExecuteId);
-            }else {
+            } else {
                 targetExecuteId = testCycleCaseDTOPage.get(0).getExecuteId();
                 dto.setNextExecuteId(targetExecuteId);
             }
@@ -331,6 +327,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list, Long projectId) {
         TestCycleCaseRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseRepository.class);
+        for (TestCycleCaseDTO caseDTO : list) {
+            caseDTO.setProjectId(projectId);
+        }
         return repository.batchInsert(ConvertHelper.convertList(list, TestCycleCaseE.class));
     }
 

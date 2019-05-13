@@ -263,11 +263,12 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleE getCycle(Long versionId, String folderName) {
+    public TestCycleE getCycle(Long projectId, Long versionId, String folderName) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setCycleName(folderName);
         testCycleE.setType(TestCycleE.CYCLE);
+        testCycleE.setProjectId(projectId);
         TestCycleE targetCycle = testCycleE.queryOne();
         if (targetCycle == null) {
             logger.info("{} 循环不存在，创建", folderName);

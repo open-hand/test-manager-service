@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
 
-    List<TestCycleDO> query(@Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
+    List<TestCycleDO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
 
     List<TestCycleDO> queryOneCycleBar(@Param("cycleId") Long cycleId);
 

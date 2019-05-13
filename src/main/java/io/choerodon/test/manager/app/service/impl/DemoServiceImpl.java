@@ -120,8 +120,8 @@ public class DemoServiceImpl implements DemoService {
         List<Long> issueFolderIds = initIssueFolders(versionId, projectId, userId, dateOne);
         initIssueSteps(testIssueIds, projectId, userId, dateOne);
         initIssueFolderRels(issueFolderIds, testIssueIds, projectId, versionId, userId, dateOne);
-        List<Long> cycleIds = initCycles(versionId, dateOne, dateThree, dateFour, dateSix, userId);
-        Map<Long, List<Long>> phaseIdsMap = initCycleFolders(cycleIds, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
+        List<Long> cycleIds = initCycles(projectId, versionId, dateOne, dateThree, dateFour, dateSix, userId);
+        Map<Long, List<Long>> phaseIdsMap = initCycleFolders(projectId, cycleIds, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
         Long statusWIPId = initTestStatus(projectId, userId, dateOne);
         Long[] defectExecution = updateExecutionStatus(phaseIdsMap, testIssueIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
         initExecutionDefect(defectExecution, projectId, organizationId, userId, dateThree);
@@ -255,18 +255,18 @@ public class DemoServiceImpl implements DemoService {
         iTestIssueFolderRelService.insert(ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
     }
 
-    private List<Long> initCycles(Long versionId, Date dateOne, Date dateThree, Date dateFour, Date dateSix, Long userId) {
+    private List<Long> initCycles(Long projectId, Long versionId, Date dateOne, Date dateThree, Date dateFour, Date dateSix, Long userId) {
         List<Long> cycleIds = new ArrayList<>();
 
-        cycleIds.add(insertCycle("开发阶段测试", versionId, "开发环境", dateOne, dateThree));
-        cycleIds.add(insertCycle("回归测试-UAT", versionId, "UAT环境", dateFour, dateSix));
+        cycleIds.add(insertCycle(projectId, "开发阶段测试", versionId, "开发环境", dateOne, dateThree));
+        cycleIds.add(insertCycle(projectId, "回归测试-UAT", versionId, "UAT环境", dateFour, dateSix));
 
         testCycleMapper.updateAuditFields(cycleIds.toArray(new Long[cycleIds.size()]), userId, dateOne);
 
         return cycleIds;
     }
 
-    private Long insertCycle(String cycleName, Long versionId, String environment, Date fromDate, Date toDate) {
+    private Long insertCycle(Long projectId, String cycleName, Long versionId, String environment, Date fromDate, Date toDate) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
 
         testCycleDTO.setCycleName(cycleName);
@@ -275,21 +275,22 @@ public class DemoServiceImpl implements DemoService {
         testCycleDTO.setFromDate(fromDate);
         testCycleDTO.setToDate(toDate);
         testCycleDTO.setType("cycle");
+        testCycleDTO.setProjectId(projectId);
 
         return testCycleService.insert(testCycleDTO).getCycleId();
     }
 
-    private Map<Long, List<Long>> initCycleFolders(List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
+    private Map<Long, List<Long>> initCycleFolders(Long projectId, List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
         List<Long> cycleFolderIdsOne = new ArrayList<>();
         List<Long> cycleFolderIdsTwo = new ArrayList<>();
 
-        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4)));
-        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
-        cycleFolderIdsOne.add(insertCycleFolder(cycleIds.get(0), STRING_1, versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4)));
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), STRING_1, versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
 
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(0)));
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), STRING_1, versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
-        cycleFolderIdsTwo.add(insertCycleFolder(cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(4)));
+        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(0)));
+        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), STRING_1, versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
+        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(4)));
 
         testCycleMapper.updateAuditFields(cycleFolderIdsOne.toArray(new Long[cycleFolderIdsOne.size()]), userId, dateOne);
         testCycleMapper.updateAuditFields(cycleFolderIdsTwo.toArray(new Long[cycleFolderIdsTwo.size()]), userId, dateFour);
@@ -322,7 +323,7 @@ public class DemoServiceImpl implements DemoService {
         return newDate;
     }
 
-    private Long insertCycleFolder(Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId) {
+    private Long insertCycleFolder(Long projectId, Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
 
         testCycleDTO.setParentCycleId(parentCycleId);
@@ -332,6 +333,7 @@ public class DemoServiceImpl implements DemoService {
         testCycleDTO.setToDate(toDate);
         testCycleDTO.setType("folder");
         testCycleDTO.setFolderId(folderId);
+        testCycleDTO.setProjectId(projectId);
 
         return testCycleService.insert(testCycleDTO).getCycleId();
     }

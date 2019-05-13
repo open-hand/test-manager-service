@@ -10,11 +10,11 @@ import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class TestCycleCaseE {
 
     List<TestCycleCaseDefectRelE> caseDefect;
 
-    List<TestCycleCaseDefectRelE>subStepDefects;
+    List<TestCycleCaseDefectRelE> subStepDefects;
 
     List<TestCaseStepE> testCaseSteps;
 
@@ -63,7 +63,7 @@ public class TestCycleCaseE {
 
     private String folderName;
 
-	private Long versionId;
+    private Long versionId;
 
     private Long lastExecuteId;
 
@@ -73,12 +73,14 @@ public class TestCycleCaseE {
 
     private Date creationDate;
 
-	List<TestCycleCaseStepE> cycleCaseStep;
+    private Long projectId;
+
+    List<TestCycleCaseStepE> cycleCaseStep;
 
     @Autowired
     private TestCycleCaseRepository testCycleCaseRepository;
 
-    public static List<TestCycleCaseE> createCycleCases(List<TestCycleCaseE> testCycleCases,Long projectId) {
+    public static List<TestCycleCaseE> createCycleCases(List<TestCycleCaseE> testCycleCases, Long projectId) {
         TestCycleCaseE currentCycleCase = testCycleCases.get(0);
         currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(currentCycleCase.getLastedRank(currentCycleCase.getCycleId()), null));
         TestCycleCaseE prevCycleCase = currentCycleCase;
@@ -90,7 +92,7 @@ public class TestCycleCaseE {
         }
 
         TestCycleCaseService repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseService.class);
-        return repository.batchCreateForAutoTest(ConvertHelper.convertList(testCycleCases, TestCycleCaseDTO.class),projectId);
+        return repository.batchCreateForAutoTest(ConvertHelper.convertList(testCycleCases, TestCycleCaseDTO.class), projectId);
     }
 
     public List<TestCycleCaseE> queryByIssue(Long versionId) {
@@ -102,9 +104,9 @@ public class TestCycleCaseE {
         return testCycleCaseRepository.filter(map);
     }
 
-	public String getLastedRank(Long cycleId) {
+    public String getLastedRank(Long cycleId) {
         return testCycleCaseRepository.getLastedRank(cycleId);
-	}
+    }
 
 
     public TestCycleCaseE createOneCase() {
@@ -136,7 +138,7 @@ public class TestCycleCaseE {
         return testCycleCaseRepository.insert(this);
     }
 
-    public TestCycleCaseE getCloneCase(String rank,Long newCycleId,Long defaultStatus){
+    public TestCycleCaseE getCloneCase(String rank, Long newCycleId, Long defaultStatus) {
         setExecuteId(null);
         setRank(rank);
         setCycleId(newCycleId);
@@ -223,7 +225,7 @@ public class TestCycleCaseE {
     }
 
     public void setAssignedTo(Long assignedTo) {
-            this.assignedTo = assignedTo;
+        this.assignedTo = assignedTo;
     }
 
     public void setComment(String comment) {
@@ -306,17 +308,17 @@ public class TestCycleCaseE {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-	public Long getVersionId() {
-		return versionId;
-	}
+    public Long getVersionId() {
+        return versionId;
+    }
 
-	public void setVersionId(Long versionId) {
-		this.versionId = versionId;
-	}
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
-	public List<TestCycleCaseStepE> getCycleCaseStep() {
-		return cycleCaseStep;
-	}
+    public List<TestCycleCaseStepE> getCycleCaseStep() {
+        return cycleCaseStep;
+    }
 
     public Long getLastExecuteId() {
         return lastExecuteId;
@@ -368,5 +370,13 @@ public class TestCycleCaseE {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

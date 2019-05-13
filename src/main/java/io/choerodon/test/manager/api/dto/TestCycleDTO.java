@@ -1,11 +1,10 @@
 package io.choerodon.test.manager.api.dto;
 
-import java.util.Date;
-import java.util.List;
-
+import io.choerodon.agile.api.dto.UserDO;
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.dto.UserDO;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -71,6 +70,9 @@ public class TestCycleDTO {
 
     @ApiModelProperty(value = "后一个的rank值")
     private String nextRank;
+
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
 
     public Long getCycleId() {
         return cycleId;
@@ -230,5 +232,13 @@ public class TestCycleDTO {
 
     public void setNextRank(String nextRank) {
         this.nextRank = nextRank;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }
