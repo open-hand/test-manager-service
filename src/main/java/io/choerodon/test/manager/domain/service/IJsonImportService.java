@@ -14,7 +14,7 @@ public interface IJsonImportService {
 
     TestCycleCaseE processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, JSONObject issue, boolean newFolder);
 
-    TestCycleE getCycle(Long versionId, String folderName);
+    TestCycleE getCycle(Long projectId, Long versionId, String folderName);
 
     TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy);
 

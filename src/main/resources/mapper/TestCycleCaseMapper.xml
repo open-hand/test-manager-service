@@ -186,6 +186,9 @@
             <if test="dto!=null and dto.executeId != null">
                 AND execute_id = #{dto.executeId}
             </if>
+            <if test="dto!=null and dto.projectId != null">
+                AND project_id = #{dto.projectId}
+            </if>
             <if test="dto!=null and dto.executionStatus != null">
                 AND execution_status = #{dto.executionStatus}
             </if>

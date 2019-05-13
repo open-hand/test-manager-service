@@ -107,6 +107,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
      */
     @Override
     public TestCycleCaseE runTestCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
+        testCycleCaseE.setProjectId(projectId);
         TestCycleCaseE testCycleCase = testCycleCaseE.createOneCase();
         iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
         return testCycleCase;
@@ -114,6 +115,7 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
     @Override
     public TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId) {
+        testCycleCaseE.setProjectId(projectId);
         TestCycleCaseE testCycleCase = testCycleCaseE.addSelf();
         iTestCycleCaseStepService.createTestCycleCaseStep(testCycleCase, projectId);
         return testCycleCase;

@@ -1,19 +1,16 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONObject
-import io.choerodon.agile.api.dto.CopyConditionDTO
 import io.choerodon.agile.api.dto.IssueCreateDTO
 import io.choerodon.agile.api.dto.IssueDTO
 import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
-import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.api.dto.TestFolderRelQueryDTO
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestIssueFolderRelService
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
@@ -30,7 +27,6 @@ import spock.lang.Specification
 import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-
 
 /**
  * Created by zongw.lee@gmail.com
@@ -117,7 +113,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向issueFolderRel的插入创建接口发请求'
         def entity = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, TestIssueFolderRelDTO, projectId, resInsertDO.getFolderId(), versionId)
         then:
-        1 * testCaseService.createTest(_, _,_) >> issueDTO
+        1 * testCaseService.createTest(_, _, _) >> issueDTO
         entity.statusCode.is2xxSuccessful()
 
         and:
@@ -131,7 +127,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向issueFolderRel的插入创建接口发请求'
         def entity2 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO2, TestIssueFolderRelDTO, projectId, null, versionId)
         then:
-        1 * testCaseService.createTest(_, _,_) >> issueDTO2
+        1 * testCaseService.createTest(_, _, _) >> issueDTO2
         entity2.statusCode.is2xxSuccessful()
 
         and:
@@ -141,7 +137,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向testIssueFolderRel的插入接口发请求'
         def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, String.class, projectId, foldersId[0], versionId)
         then: '返回值'
-        1 * testCaseService.createTest(_, _,_) >> issueDTO
+        1 * testCaseService.createTest(_, _, _) >> issueDTO
         resultFailure.statusCode.is2xxSuccessful()
         JSONObject exceptionInfo = JSONObject.parse(resultFailure.body)
         assert exceptionInfo.get("failed").toString() == "true"
@@ -150,7 +146,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '覆盖testIssueFolder的getDefaultFolderId方法中resultTestIssueFolderDTO不为空的情况'
         def entity3 = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/testAndRelationship?folderId={folderId}&versionId={versionId}&applyType=test', issueCreateDTO, TestIssueFolderRelDTO, 444444444L, null, 444444444L)
         then:
-        1 * testCaseService.createTest(_, _,_) >> issueDTO3
+        1 * testCaseService.createTest(_, _, _) >> issueDTO3
         entity3.statusCode.is2xxSuccessful()
 
         and:
@@ -504,7 +500,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         issues.add(44L)
         issues.add(55L)
         when: '执行方法'
-        testIssueFolderRelService.delete(projectId,issues)
+        testIssueFolderRelService.delete(projectId, issues)
 
         then: '返回值'
         def result1 = testIssueFolderRelMapper.selectOne(testIssueFolderRelDO1)

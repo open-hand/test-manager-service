@@ -44,4 +44,19 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             createSequence(sequenceName: 'test_status_s', startValue: "1")
         }
     }
+
+    changeSet(id: '2019-05-10-fix-project-id', author: 'shinan.chenX@gmail') {
+        sql(stripComments: true, splitStatements: false, dbms:"mysql") {
+            "update test_cycle tc " +
+                    "LEFT JOIN  test_issue_folder tif " +
+                    "ON tif.version_id = tc.version_id " +
+                    "set tc.project_id = tif.project_id"
+        }
+        sql(stripComments: true, splitStatements: false, dbms:"mysql") {
+            "update test_cycle_case tcc " +
+                    "LEFT JOIN  test_cycle tc " +
+                    "ON tc.cycle_id = tcc.cycle_id " +
+                    "set tcc.project_id = tc.project_id"
+        }
+    }
 }

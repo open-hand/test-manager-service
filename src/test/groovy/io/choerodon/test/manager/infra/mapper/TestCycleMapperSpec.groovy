@@ -46,36 +46,43 @@ class TestCycleMapperSpec extends Specification {
         given:
         cycleDO1.setCycleName("循环1")
         cycleDO1.setVersionId(new Long(929))
+        cycleDO1.projectId = 1L
         cycleDO1.setType("cycle")
         mapper.insert(cycleDO1)
         cycleDO2.setCycleName("循环2")
         cycleDO2.setVersionId(new Long(929))
+        cycleDO2.projectId = 1L
         cycleDO2.setType("cycle")
         mapper.insert(cycleDO2)
         cycleDO3.setType("folder")
         cycleDO3.setCycleName("文件夹1-1")
         cycleDO3.setVersionId(new Long(929))
+        cycleDO3.projectId = 1L
         cycleDO3.setParentCycleId(cycleDO1.getCycleId())
         mapper.insert(cycleDO3)
         cycleDO4.setCycleName("文件夹1-2")
         cycleDO4.setType("folder")
         cycleDO4.setVersionId(new Long(929))
+        cycleDO4.projectId = 1L
         cycleDO4.setParentCycleId(cycleDO1.getCycleId())
         mapper.insert(cycleDO4)
 
         caseDO.setCycleId(cycleDO1.getCycleId())
         caseDO.setExecutionStatus(new Long(1))
         caseDO.setIssueId(new Long(999))
+        caseDO.projectId = 1L
         caseDO.setRank("0|c00000:")
 
         caseDO1.setCycleId(cycleDO1.getCycleId())
         caseDO1.setExecutionStatus(new Long(2))
         caseDO1.setIssueId(new Long(998))
+        caseDO1.projectId = 1L
         caseDO1.setRank("0|c00004:")
 
         caseDO2.setCycleId(cycleDO2.getCycleId())
         caseDO2.setExecutionStatus(new Long(2))
         caseDO2.setIssueId(new Long(999))
+        caseDO2.projectId = 1L
         caseDO2.setRank("0|c00000:")
         caseMapper.insert(caseDO)
         caseMapper.insert(caseDO1)
@@ -88,7 +95,7 @@ class TestCycleMapperSpec extends Specification {
         Long[] versions=new Long[1]
         versions[0] = new Long(929)
         when:
-        List<TestCycleDO> result=mapper.query(versions,null)
+        List<TestCycleDO> result=mapper.query(1L,versions,null)
         then:
         result.size()==4
 

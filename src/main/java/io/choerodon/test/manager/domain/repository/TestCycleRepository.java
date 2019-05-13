@@ -22,7 +22,7 @@ public interface TestCycleRepository {
 
     TestCycleE queryOne(TestCycleE testCycleE);
 
-    List<TestCycleE> queryBar(Long[] versionId, Long assignedTo);
+    List<TestCycleE> queryBar(Long projectId, Long[] versionId, Long assignedTo);
 
     List<TestCycleE> queryBarOneCycle(Long cycleId);
 

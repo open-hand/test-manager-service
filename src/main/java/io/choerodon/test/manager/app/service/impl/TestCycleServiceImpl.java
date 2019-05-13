@@ -1,21 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
@@ -24,7 +10,10 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.dto.*;
-import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.domain.service.ITestCycleService;
 import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
@@ -34,6 +23,19 @@ import io.choerodon.test.manager.domain.test.manager.factory.*;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 /**
@@ -359,7 +361,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         JSONArray versionStatus = new JSONArray();
         root.put("versions", versionStatus);
 
-        List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
+        List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(projectId, versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
         populateUsers(cycles);
 
         initVersionTree(projectId, versionStatus, versions, cycles);
@@ -383,7 +385,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 }
             });
         } else {
-            list = iTestCycleService.queryCycleWithBar(new Long[]{versionId}, null);
+            list = iTestCycleService.queryCycleWithBar(projectId, new Long[]{versionId}, null);
             list.forEach(v -> {
                 if (v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {
                     allCycle.add(v);
@@ -492,7 +494,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         Long[] versionIds = {versionId};
 
         List<TestCycleDTO> cycles = ConvertHelper.convertList(
-                iTestCycleService.queryCycleWithBar(versionIds, null), TestCycleDTO.class);
+                iTestCycleService.queryCycleWithBar(projectId, versionIds, null), TestCycleDTO.class);
         populateUsers(cycles);
 
         Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycles.stream()

@@ -4,26 +4,22 @@ import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
-import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
-
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -86,11 +82,11 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
     }
 
     @Override
-    public List<TestCycleE> queryBar(Long[] versionId, Long assignedTo) {
+    public List<TestCycleE> queryBar(Long projectId, Long[] versionId, Long assignedTo) {
         Assert.notNull(versionId, "error.query.cycle.versionIds.not.null");
         versionId = Stream.of(versionId).filter(Objects::nonNull).toArray(Long[]::new);
         if (versionId.length > 0) {
-            return ConvertHelper.convertList(cycleMapper.query(versionId, assignedTo), TestCycleE.class);
+            return ConvertHelper.convertList(cycleMapper.query(projectId, versionId, assignedTo), TestCycleE.class);
         }
         return new ArrayList<>();
     }

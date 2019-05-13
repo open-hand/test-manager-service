@@ -4,9 +4,7 @@ import io.choerodon.agile.api.dto.IssueDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.app.service.TestCaseService
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectRelE
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,8 +12,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.test.util.AopTestUtils
-import org.springframework.test.util.ReflectionTestUtils
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -42,24 +38,24 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
 
     def "Insert"() {
         given:
-        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
+        IssueDTO mockResult = new IssueDTO(issueNum: "name1")
         TestCycleCaseDefectRelDTO defect = new TestCycleCaseDefectRelDTO(issueId: 99L, defectType: TestCycleCaseDefectRelE.CASE_STEP, defectLinkId: 999L)
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect?organizationId=1", Lists.newArrayList(defect),List,144)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/defect?organizationId=1", Lists.newArrayList(defect), List, 144)
         defectId = result.getBody().get(0).getAt("id")
         then:
-        1*caseService.queryIssue(_,_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+        1 * caseService.queryIssue(_, _, _) >> new ResponseEntity<>(mockResult, HttpStatus.CREATED);
         result.getBody().get(0).getAt("id") != null
         result.statusCode.is2xxSuccessful()
     }
 
     def "RemoveDefect"() {
         given:
-        IssueDTO mockResult=new IssueDTO(issueNum: "name1")
+        IssueDTO mockResult = new IssueDTO(issueNum: "name1")
 //        TestCycleCaseDefectRelService serviceAOP = AopTestUtils.getTargetObject(testCycleCaseDefectRelService)
         when:
-        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}?organizationId=1",144L,defectId)
+        restTemplate.delete("/v1/projects/{project_id}/defect/delete/{defectId}?organizationId=1", 144L, defectId)
         then:
-        1*caseService.queryIssue(_,_,_)>>new ResponseEntity<>(mockResult, HttpStatus.CREATED);
+        1 * caseService.queryIssue(_, _, _) >> new ResponseEntity<>(mockResult, HttpStatus.CREATED);
     }
 }

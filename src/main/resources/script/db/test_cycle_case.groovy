@@ -49,4 +49,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-column-comment') {
         renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case")
     }
+
+    changeSet(id: '2019-05-10-add-column-test-cycle-case-project-id', author: 'shinan.chenX@gmail') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id')
+        }
+        createIndex(tableName: "test_cycle_case", indexName: "idx_cycle_case_project_id") {
+            column(name: "project_id")
+        }
+    }
 }

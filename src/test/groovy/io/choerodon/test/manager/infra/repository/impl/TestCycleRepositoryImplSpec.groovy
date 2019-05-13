@@ -70,15 +70,15 @@ class TestCycleRepositoryImplSpec extends Specification {
 
     def "QueryBar"() {
         when:
-        repository.queryBar([1,2,3]as Long[],null)
+        repository.queryBar(1L,[1,2,3]as Long[],null)
         then:
-        1*mapper.query(_,_)>>new ArrayList<>()
+        1*mapper.query(_,_,_)>>new ArrayList<>()
         when:
-        repository.queryBar(new Long[4],null)
+        repository.queryBar(1L,new Long[4],null)
         then:
-        0*mapper.query(_,_)
+        0*mapper.query(_,_,_)
         when:
-        repository.queryBar(null,null)
+        repository.queryBar(1L,null,null)
         then:
         thrown(IllegalArgumentException)
     }

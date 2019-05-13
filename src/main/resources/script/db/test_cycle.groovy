@@ -55,4 +55,13 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'rank', type: 'VARCHAR(25)', remarks: 'rank')
         }
     }
+
+    changeSet(id: '2019-05-10-add-column-test-cycle-project-id', author: 'shinan.chenX@gmail') {
+        addColumn(tableName: 'test_cycle') {
+            column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: '项目id')
+        }
+        createIndex(tableName: "test_cycle", indexName: "idx_cycle_project_id") {
+            column(name: "project_id")
+        }
+    }
 }

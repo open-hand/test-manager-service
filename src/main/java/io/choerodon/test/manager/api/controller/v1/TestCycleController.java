@@ -10,7 +10,6 @@ import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleService;
-
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +36,7 @@ public class TestCycleController {
     @PostMapping
     public ResponseEntity<TestCycleDTO> insert(@PathVariable(name = "project_id") Long projectId,
                                                @RequestBody TestCycleDTO testCycleDTO) {
+        testCycleDTO.setProjectId(projectId);
         return Optional.ofNullable(testCycleService.insert(testCycleDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.insert"));

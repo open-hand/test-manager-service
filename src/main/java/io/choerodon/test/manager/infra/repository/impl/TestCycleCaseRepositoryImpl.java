@@ -33,7 +33,6 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
     @Value("${spring.datasource.url}")
     private String dsUrl;
-    private Long total;
 
     @Override
     public TestCycleCaseE insert(TestCycleCaseE testCycleCaseE) {

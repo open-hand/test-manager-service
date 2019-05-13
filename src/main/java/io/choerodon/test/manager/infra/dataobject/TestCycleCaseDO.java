@@ -29,6 +29,8 @@ public class TestCycleCaseDO extends AuditDomain {
 
     private Long assignedTo;
 
+    private Long projectId;
+
     @Column(name = "description")
     private String comment;
 
@@ -89,6 +91,14 @@ public class TestCycleCaseDO extends AuditDomain {
 
     @Transient
     List<TestCycleCaseStepDO> cycleCaseStep;
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public void setId(Long id) {
         executeId = id;
