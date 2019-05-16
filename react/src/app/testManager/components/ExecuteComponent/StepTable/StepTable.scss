@@ -2,17 +2,17 @@
   position: relative;
     // overflow: hidden;
     padding: 0 20px;
-    .ant-table-thead>tr>th {
+    .c7n-table-thead>tr>th {
         padding: 5px;
     }
-    .ant-table-tbody>tr>td {
+    .c7n-table-tbody>tr>td {
         // vertical-align: top;
         padding: 5px;
     }
-    .ant-table-thead>tr>th:first-child {
+    .c7n-table-thead>tr>th:first-child {
         padding: 5px 12px;
     }
-    .ant-table-tbody>tr>td:first-child {
+    .c7n-table-tbody>tr>td:first-child {
         padding: 5px 12px;
     }
 }

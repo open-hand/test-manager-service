@@ -71,7 +71,7 @@ class CreateIssue extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          originUsers: res.content,
+          originUsers: res.list,
           selectLoading: false,
         });
       });
@@ -87,7 +87,7 @@ class CreateIssue extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        originUsers: res.content,
+        originUsers: res.list,
         selectLoading: false,
       });
     });

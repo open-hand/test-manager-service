@@ -74,13 +74,13 @@
       }
       
       .c7ntest-button-defect-select {
-        .ant-select-selection__rendered {
+        .c7n-select-selection__rendered {
           // display: none;
           width: 300px;
           height: 20px;
           visibility: hidden;
         }
-        .ant-select {
+        .c7n-select {
           visibility: hidden; // display: none;
         }
         .c7ntest-TextEditToggle-text {

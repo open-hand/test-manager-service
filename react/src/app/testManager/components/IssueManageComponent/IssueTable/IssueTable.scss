@@ -1,8 +1,8 @@
 .c7ntest-issueArea {
-  .ant-table-thead > tr > th:focus, .ant-table-tbody > tr > td:focus {
+  .c7n-table-thead > tr > th:focus, .c7n-table-tbody > tr > td:focus {
     background-color: transparent;
   }
-  .ant-pagination-options {
+  .c7n-pagination-options {
     margin-left: 0;
   }
 
@@ -29,21 +29,21 @@
   .c7ntest-table-item:hover {
     background: #eee;
   }
-  .ant-table-filter-bar {
+  .c7n-table-filter-bar {
     padding-right: 90px;
     padding-top: 8px;
     padding-bottom: 7px;
     border-top: none;
     // border-bottom: none;
   }
-  .ant-dropdown-trigger {
+  .c7n-dropdown-trigger {
     bottom: 30;
   }
-  .ant-select-selection__rendered {
+  .c7n-select-selection__rendered {
     margin-bottom: -4px !important;
   }
   .c7ntest-issuetable {
-    .ant-table-placeholder {
+    .c7n-table-placeholder {
       // display: none;
     }
     table {

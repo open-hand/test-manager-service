@@ -152,7 +152,7 @@ class ExecuteDetailStore {
   loadUserList = (value) => {
     this.selectEnterLoading();
     getUsers(value).then((userData) => {
-      this.setUserList(userData.content);
+      this.setUserList(userData.list);
       this.selectUnLoading();
     });
     getIssueList(value).then((issueData) => {

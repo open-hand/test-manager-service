@@ -3,10 +3,10 @@
       padding-left: 0;
       padding-top: 0;
     }
-    .ant-form-item {
+    .c7n-form-item {
       margin-bottom: 12px !important;
   
-      .ant-input-length-info {
+      .c7n-input-length-info {
         margin-bottom: -18px !important;
       }
     }
@@ -24,21 +24,21 @@
     }
   
     .sign-upload {
-      .ant-upload {
+      .c7n-upload {
         display: flex !important;
         margin-left: 40px;
       }
   
-      .ant-btn {
+      .c7n-btn {
         color: #3f51b5;
       }
     }
   
-    .ant-upload-list-item {
+    .c7n-upload-list-item {
       display: inline-block;
     }
   
-    .ant-upload-list-item-info {
+    .c7n-upload-list-item-info {
       padding-right: 20px;
       max-width: 100%;
     }

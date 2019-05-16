@@ -1,42 +1,42 @@
 .c7ntest-TestNGReport {
-  .ant-table {
+  .c7n-table {
     // font-size: 14px;
   }
   .c7ntest-table-total {
     background: #F5F5F5;
     font-weight: 500;
-    .ant-table-row-expand-icon-cell .ant-table-row-expand-icon {
+    .c7n-table-row-expand-icon-cell .c7n-table-row-expand-icon {
       display: none;
     }
   }
-  .ant-table-expanded-row>td:last-child {
+  .c7n-table-expanded-row>td:last-child {
     padding: 0 48px 0 16px;
   }
-  .ant-table-expanded-row>td:last-child .ant-table-thead th {
+  .c7n-table-expanded-row>td:last-child .c7n-table-thead th {
     border-bottom: 1px solid #e9e9e9;
     border-top: 1px solid #e9e9e9;
     text-align: left;
   }
-  .ant-table-expanded-row>td:last-child .ant-table-thead th:first-child {
+  .c7n-table-expanded-row>td:last-child .c7n-table-thead th:first-child {
     padding-left: 10px;
   }
-  .ant-table-expanded-row>td:last-child .ant-table-row td:first-child {
+  .c7n-table-expanded-row>td:last-child .c7n-table-row td:first-child {
     padding-left: 10px;
   }
-  .ant-table-expanded-row .ant-table-row:last-child td {
+  .c7n-table-expanded-row .c7n-table-row:last-child td {
     border: none;
   }
-  .ant-table-expanded-row .ant-table-thead>tr>th {
+  .c7n-table-expanded-row .c7n-table-thead>tr>th {
     // background: none;
   }
   .table-operation a:not(:last-child) {
     margin-right: 24px;
   }
-  .ant-table-expanded-row:hover>td {
+  .c7n-table-expanded-row:hover>td {
     background: #fbfbfb;
   }
-  .ant-table-thead>tr>th,
-  .ant-table-tbody>tr>td {
+  .c7n-table-thead>tr>th,
+  .c7n-table-tbody>tr>td {
     padding-top: 10px;
     padding-bottom: 10px;
     vertical-align: top;
@@ -45,12 +45,12 @@
     padding: 10px;
     background: #EBEBEB;
   }
-  .ant-table-title {
+  .c7n-table-title {
     border-bottom: none;
     padding: 10px;
     background: #EBEBEB;
   }
-  .ant-table-footer {
+  .c7n-table-footer {
     border-top: none;
     border-bottom: 1px solid #e8e8e8;
   }
@@ -72,20 +72,20 @@
     align-items: center;
     position: relative;
     overflow: hidden; // Select 下划线
-    .ant-select-underline {
+    .c7n-select-underline {
       display: none;
     } // DropDown 菜单容器
-    .ant-spin-container,
-    .ant-spin-nested-loading {
+    .c7n-spin-container,
+    .c7n-spin-nested-loading {
       min-width: 170px;
     } // antd Select 组件覆盖
-    .ant-select-dropdown {
+    .c7n-select-dropdown {
       box-shadow: none;
-      .ant-spin-container {
+      .c7n-spin-container {
         box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
       }
     }
-    .ant-select-selection__rendered {
+    .c7n-select-selection__rendered {
       padding: 0 !important;
     }
     &:hover {
@@ -112,27 +112,27 @@
       opacity: .3;
       transition: 0s;
     }
-    .ant-select-selection--multiple {
+    .c7n-select-selection--multiple {
       cursor: pointer;
       padding: 0 0 0 5px;
-      .ant-select-selection__rendered {
+      .c7n-select-selection__rendered {
         margin-bottom: 0;
         li {
           margin-bottom: 0;
         }
-        .ant-select-arrow {
+        .c7n-select-arrow {
           left: 64px;
           height: 26px;
           line-height: 26px;
         }
-        .ant-select-selection__choice__content {
+        .c7n-select-selection__choice__content {
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
           width: 64px;
           height: 24px;
         }
-        .ant-select-selection__placeholder {
+        .c7n-select-selection__placeholder {
           margin-top: 3px;
           color: #3f51b5;
         }
@@ -143,7 +143,7 @@
       min-width: 170px;
     }
     .quickSearchSelect-dropdown {
-      .ant-select-dropdown-select-all-none {
+      .c7n-select-dropdown-select-all-none {
         display: none;
       }
     }

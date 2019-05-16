@@ -2,8 +2,8 @@
   table {
     table-layout: fixed;
   }
-  .ant-table-tbody>tr>td,
-  .ant-table-thead>tr>th {
+  .c7n-table-tbody>tr>td,
+  .c7n-table-thead>tr>th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

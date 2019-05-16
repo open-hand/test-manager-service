@@ -123,7 +123,7 @@ export default class TestProgress extends Component {
       <DashBoardToolBar>                 
         <div className="switchVersion">
           <Dropdown overlay={menu} trigger={['click']} getPopupContainer={triggerNode => triggerNode.parentNode}>
-            <a className="ant-dropdown-link versionProgress-select">
+            <a className="c7n-dropdown-link versionProgress-select">
               {_.find(versionList, { versionId: currentVersion }) ? _.find(versionList, { versionId: currentVersion }).name : '切换版本'}
             
               <Icon type="arrow_drop_down" />
