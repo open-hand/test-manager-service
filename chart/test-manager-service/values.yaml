@@ -15,9 +15,10 @@ service:
 
 deployment:
   managementPort: 8094
+
 preJob:
   timeout: 300
-  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.6.2
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.6.4
   preConfig:
     enable: true
     configFile: application.yml
@@ -52,6 +53,17 @@ env:
     EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://register-server.c7n-system:8000/eureka/
     # 清理permission表中的旧接口和role_permission表中角色和权限层级不匹配的脏数据
     CHOERODON_CLEANPERMISSION: false
+    PRO_HTTP: http
+    PRO_COOKIE_SERVER: devops.choerodon.example.com
+    PRO_LOCAL: true
+    PRO_CLIENT_ID: devops
+    PRO_TITLE_NAME: Choerodon
+    PRO_API_HOST: api.staging.example.com
+    PRO_HEADER_TITLE_NAME: Choerodon
+    PRO_WEBSOCKET_SERVER: ws://ws.example.com
+    PRO_AGILE_HOST: http://minio.example.com
+    PRO_FILE_SERVICE: http://minio.example.com
+    PRO_DEVOPS_HOST: ws://ws.example.com
     # skywalking 代理端配置
 #    SKYWALKING_OPTS: >-
 #      -javaagent:/agent/skywalking-agent.jar

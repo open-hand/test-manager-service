@@ -1,13 +1,13 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestFolderRelQueryDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
@@ -31,7 +31,7 @@ public class TestIssueFolderRelController {
     @Autowired
     TestIssueFolderRelService testIssueFolderRelService;
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询issues")
     @PostMapping("/query")
     public ResponseEntity queryIssuesByParameter(@PathVariable(name = "project_id") Long projectId,
@@ -45,7 +45,7 @@ public class TestIssueFolderRelController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("通过issueIds查询issues")
     @PostMapping("/query/by/issueId")
     public ResponseEntity queryIssuesById(@PathVariable(name = "project_id") Long projectId,
@@ -58,7 +58,7 @@ public class TestIssueFolderRelController {
                 .orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试并建立测试和文件夹的关系")
     @PostMapping("/testAndRelationship")
     public ResponseEntity<TestIssueFolderRelDTO> insertTestAndRelationship(@PathVariable(name = "project_id") Long projectId,
@@ -71,7 +71,7 @@ public class TestIssueFolderRelController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试和文件夹的关系")
     @PostMapping
     public ResponseEntity<List<TestIssueFolderRelDTO>> insertRelationship(@PathVariable(name = "project_id") Long projectId,
@@ -81,7 +81,7 @@ public class TestIssueFolderRelController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹下issue")
     @PutMapping("/move")
     public ResponseEntity moveIssue(@PathVariable(name = "project_id") Long projectId,
@@ -92,7 +92,7 @@ public class TestIssueFolderRelController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("复制文件夹下issue")
     @PutMapping("/copy")
     public ResponseEntity copyIssue(@PathVariable(name = "project_id") Long projectId,
@@ -103,7 +103,7 @@ public class TestIssueFolderRelController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("克隆文件夹下的一个issue")
     @PutMapping("/copy/issue/{issueId}")
     public ResponseEntity<TestIssueFolderRelDTO> cloneOneIssue(@PathVariable(name = "project_id") Long projectId,

@@ -1,9 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestAutomationResultDTO;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
 import io.choerodon.test.manager.app.service.TestAutomationResultService;
@@ -27,7 +28,7 @@ public class TestAutomationResultController {
     @Autowired
     private TestAutomationHistoryService testAutomationHistoryService;
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询")
     @GetMapping("/query/{id}")
     public ResponseEntity<Map<String, Object>> query(@PathVariable("project_id") Long projectId,
@@ -45,7 +46,7 @@ public class TestAutomationResultController {
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("变动一个测试报告(增加|修改)")
     @PutMapping("/change")
     public ResponseEntity<TestAutomationResultDTO> changeOneAutomationResult(@PathVariable("project_id") Long projectId,
@@ -55,7 +56,7 @@ public class TestAutomationResultController {
                 .orElseThrow(() -> new CommonException("error.automationResult.update"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除一个测试报告")
     @DeleteMapping("/remove")
     public ResponseEntity removeAutomationResult(@PathVariable("project_id") Long projectId,

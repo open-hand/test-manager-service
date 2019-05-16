@@ -3,10 +3,10 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
@@ -27,7 +27,7 @@ public class TestIssueFolderController {
     @Autowired
     TestIssueFolderService testIssueFolderService;
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
     public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
@@ -36,7 +36,7 @@ public class TestIssueFolderController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询version或所有的下文件夹，返回纯数据")
     @GetMapping("/query/all")
     public ResponseEntity<List<TestIssueFolderWithVersionNameDTO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
@@ -47,7 +47,7 @@ public class TestIssueFolderController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -56,7 +56,7 @@ public class TestIssueFolderController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("插入文件夹")
     @PostMapping
     public ResponseEntity<TestIssueFolderDTO> insert(@PathVariable(name = "project_id") Long projectId,
@@ -67,7 +67,7 @@ public class TestIssueFolderController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新文件夹")
     @PutMapping("/update")
     public ResponseEntity<TestIssueFolderDTO> update(@PathVariable(name = "project_id") Long projectId,
@@ -77,7 +77,7 @@ public class TestIssueFolderController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("复制文件夹")
     @PutMapping("/copy")
     public ResponseEntity copyFolder(@PathVariable(name = "project_id") Long projectId,
@@ -87,7 +87,7 @@ public class TestIssueFolderController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,

@@ -1,0 +1,1 @@
+export const SERVICES_URL = 'SERVICES_URL_EXAMPLE';

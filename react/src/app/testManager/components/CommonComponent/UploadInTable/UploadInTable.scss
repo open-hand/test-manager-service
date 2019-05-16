@@ -1,0 +1,26 @@
+.c7ntest-upload-reverse {
+  display: flex;
+  flex-direction: column-reverse;
+  .ant-upload-select {
+    justify-content: flex-start !important;
+    .ant-upload {
+      justify-content: flex-start !important;
+      width: 100%;
+      .ant-btn {
+        color: #3F51B5;
+        width: 100%;
+        font-weight: 500;
+        text-align: left;
+        padding-left: 5px;       
+      }
+    }
+  }
+  .ant-upload-list {
+    display: flex;
+    flex-direction: column;
+    .ant-upload-list-item .icon-close {
+      transform: none;
+      font-size: 14px;
+    }
+  }
+}

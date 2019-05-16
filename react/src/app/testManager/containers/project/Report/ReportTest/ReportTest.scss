@@ -1,0 +1,109 @@
+.c7ntest-report-test {
+  .page-head-title {
+    width: auto;
+    padding-right: 50px;
+  } // .page-head .ant-btn:not(.back-btn) {
+  //     line-height: 10px;
+  // }
+  .ant-collapse-borderless>.ant-collapse-item {
+    border: none !important;
+  }
+  .ant-collapse>.ant-collapse-item>.ant-collapse-header {
+    font-size: 14px;
+    padding: 0;
+    display: flex;
+  }
+  .ant-collapse-content {
+    padding: 0;
+  }
+  .c7ntest-collapse-header-container {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    .c7ntest-collapse-header-icon {
+      span {
+        margin-left: 10px;
+        border: 1px solid; // color: #4D90FE;
+        font-size: 12px;
+        border-radius: 2px;
+        padding: 2px;
+        user-select: none;
+      }
+    }
+  }
+  .c7ntest-collapse-icon {
+    transition: all 0.3s ease-in-out;
+  }
+  .ant-collapse-item-active {
+    .c7ntest-collapse-icon {
+      transform: rotateZ(90deg);
+    }
+  }
+  .c7ntest-collapse-show-item {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    .c7ntest-collapse-header-icon {
+      span {
+        margin-left: 10px;
+        border: 1px solid; // color: #4D90FE;
+        font-size: 12px;
+        border-radius: 2px;
+        padding: 2px;
+        user-select: none;
+      }
+    }
+  }
+  td.c7ntest-table-white {
+    // padding-top: 0;
+    background: white !important;
+  }
+  .c7ntest-collapse-text-icon {
+    width: 60px;
+    height: 20px;
+    line-height: 20px;
+    margin-left: 5px;
+    border: 1px solid;
+    font-size: 13px;
+    border-radius: 2px;
+    user-select: none;
+    text-align: center;
+  }
+  .c7ntest-cycle-show-container {
+    height: 50px;
+    display: flex;
+    padding: 10px 0 20px 0;
+    align-items: flex-start;
+  }
+  .c7ntest-issue-show-container {
+    height: 50px;
+    padding: 6px 0 0 0;
+  }
+  .c7ntest-showId {
+    user-select: none;
+    font-size: 13px;
+    width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; // color: #303F9F;
+  }
+  .c7ntest-report-summary {
+    width: 160px;
+    margin-top: 5px;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  tr {
+    vertical-align: top;
+  }
+  &-filter-table {
+    .ant-table {
+      display: none;
+    }
+    .ant-table-columns-chooser {
+      display: none;
+    }
+  }
+}

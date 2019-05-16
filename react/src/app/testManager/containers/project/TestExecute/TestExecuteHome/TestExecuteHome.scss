@@ -1,0 +1,21 @@
+.c7ntest-TestExecuteHome {
+  overflow: hidden;
+  .ant-spin-nested-loading {
+    flex: 1;
+  }
+  .ant-spin-container {
+    height: 100%;
+  }
+  &-container {
+    height: 100%;
+    display: flex;
+  }
+  &-right {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 20px 30px 20px;
+  }
+
+
+}

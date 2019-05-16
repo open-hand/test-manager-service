@@ -1,0 +1,12 @@
+.c7ntest-TestExecuteTable {
+  table {
+    table-layout: fixed;
+  }
+  .ant-table-tbody>tr>td,
+  .ant-table-thead>tr>th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 0 5px 18px;
+  }
+}

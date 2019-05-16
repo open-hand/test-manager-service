@@ -1,11 +1,12 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.base.annotation.Permission;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class TestAttachmentController {
     @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加附件")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseAttachmentRelDTO>> uploadFile(@RequestParam("bucket_name") String bucketName,
@@ -43,7 +44,7 @@ public class TestAttachmentController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除附件")
     @DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,

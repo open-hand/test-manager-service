@@ -1,0 +1,28 @@
+.c7ntest-TestExecuteTree {
+  height: calc(100% - 75px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+    background: rgba(0, 0, 0, 0.04);
+  }
+  .ant-tree-switcher {
+    margin-top: 3px;
+  }
+  .ant-tree-icon__customize {
+    i.icon {
+      float: left;
+      line-height: 22px;
+      margin-right: 5px;
+    }
+  }
+  .ant-tree-title {
+    display: inline-block;
+    float: right;
+  }
+   li .ant-tree-node-content-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    line-height: 30px;
+  }
+}

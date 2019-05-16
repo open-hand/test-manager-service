@@ -1,0 +1,33 @@
+dashboard:
+  - code: "Test"
+    icon: test
+    title: "测试管理"
+    description: "测试服务的帮助文档"
+    level: project
+    sort: 1
+    enabled: false
+  - code: "TestSurvey"
+    icon: test_progress
+    title: "测试进度"
+    description: "版本测试的执行进度"
+    level: project
+    sort: 2
+    enabled: false
+  - code: "TestProgress"
+    icon: execution_schedule
+    title: "执行进度"
+    description: "版本中测试执行的进度"
+    level: project
+    sort: 3
+    enabled: false
+  - code: "IssueAndExecute"
+    icon: test_record
+    title: "测试记录"
+    description: "近一周的测试测试用例创建和执行数量"
+    level: project
+    sort: 4
+    position:
+      positionX: 4
+      positionY: 2
+      width: 4
+      height: 4
