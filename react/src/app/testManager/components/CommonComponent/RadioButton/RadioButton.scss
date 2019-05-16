@@ -1,5 +1,5 @@
 .c7ntest-radio-button {
-  .ant-radio-button-wrapper {
+  .c7n-radio-button-wrapper {
     padding: 0 9px;
     height: 26px;
     line-height: 26px;
@@ -7,12 +7,12 @@
     color: #3F51B5;
     margin: 0 5px;
   }
-  .ant-radio-button-wrapper:not(:first-child)::before {
+  .c7n-radio-button-wrapper:not(:first-child)::before {
     border: none;
     width: 0;
     display: none;
   }
-  .ant-radio-button-wrapper-checked {
+  .c7n-radio-button-wrapper-checked {
     color:white;
     background: #3F51B5;
     box-shadow: none;

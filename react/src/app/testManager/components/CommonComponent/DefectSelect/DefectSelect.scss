@@ -1,18 +1,18 @@
 .StepTable {
-  .ant-select-selection__choice {
+  .c7n-select-selection__choice {
     display: flex;
     overflow: visible;
   }
-  .ant-select-selection__choice__content {
+  .c7n-select-selection__choice__content {
     width: 70px;
   }
-  .ant-select-dropdown--multiple {
+  .c7n-select-dropdown--multiple {
     left: calc(100% - 300px)!important;
   }
 }
 
 .c7ntest-ExecuteDetail {
-  .ant-select-dropdown--multiple {
+  .c7n-select-dropdown--multiple {
     // left: calc(100% - 400px)!important;
   }
 }

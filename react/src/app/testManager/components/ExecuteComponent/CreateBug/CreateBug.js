@@ -56,7 +56,7 @@ class CreateBug extends Component {
     ]).then(([originIssueTypes, priorities, userData, epics, sprints, versionList, components, labels]) => {
       this.setState({
         priorities,
-        users: userData.content.filter(u => u.enabled),
+        users: userData.list.filter(u => u.enabled),
         epics,
         sprints,
         versionList,
@@ -71,7 +71,7 @@ class CreateBug extends Component {
   loadUsers = (value) => {
     getUsers(value).then((userData) => {
       this.setState({
-        users: userData.content.filter(u => u.enabled),
+        users: userData.list.filter(u => u.enabled),
       });
     });
   }

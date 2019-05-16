@@ -136,8 +136,8 @@ class EditStage extends Component {
                   )}
                 </FormItem>
                 <FormItem>
-                  <span className="ant-input-wrapper ant-input-has-value ant-input-has-label">
-                    <div className="ant-input-label"><span>持续时间</span></div> 
+                  <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
+                    <div className="c7n-input-label"><span>持续时间</span></div>
                     {getFieldDecorator('range', {
                       rules: [{
                         type: 'array',

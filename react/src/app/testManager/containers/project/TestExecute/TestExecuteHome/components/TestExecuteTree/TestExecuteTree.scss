@@ -2,24 +2,24 @@
   height: calc(100% - 75px);
   overflow-y: auto;
   overflow-x: hidden;
-  li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  li .c7n-tree-node-content-wrapper.c7n-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);
   }
-  .ant-tree-switcher {
+  .c7n-tree-switcher {
     margin-top: 3px;
   }
-  .ant-tree-icon__customize {
+  .c7n-tree-icon__customize {
     i.icon {
       float: left;
       line-height: 22px;
       margin-right: 5px;
     }
   }
-  .ant-tree-title {
+  .c7n-tree-title {
     display: inline-block;
     float: right;
   }
-   li .ant-tree-node-content-wrapper {
+   li .c7n-tree-node-content-wrapper {
     display: inline-flex;
     align-items: center;
     height: 30px;

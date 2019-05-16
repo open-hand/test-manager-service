@@ -13,7 +13,7 @@
   }
   .c7ntest-add {
     &-select-version {
-      .ant-select-underline {
+      .c7n-select-underline {
         display: none;
       }
       display: flex;
@@ -23,19 +23,19 @@
         margin-right: 6px;
       }
     }
-    .ant-input-length-info {
+    .c7n-input-length-info {
       display: none;
     }
-    .ant-input-underline {
+    .c7n-input-underline {
       display: none;
     }
   }
-  .ant-dropdown {
+  .c7n-dropdown {
     background: #fff;
     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
     border-radius: 2px;
   }
-  .ant-select .ant-select-underline {
+  .c7n-select .c7n-select-underline {
     // display: none;
   }
   .c7ntest-icon-disabled {
@@ -186,7 +186,7 @@
       white-space: nowrap;
     }
   }
-  .ant-spin-nested-loading {
+  .c7n-spin-nested-loading {
     width: 100% !important;
   }
 }

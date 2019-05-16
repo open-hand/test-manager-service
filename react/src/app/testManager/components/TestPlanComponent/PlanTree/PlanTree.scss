@@ -5,33 +5,33 @@
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(0, 0, 0, 0.12);
-  .ant-spin-nested-loading,
-  .ant-spin-container {
+  .c7n-spin-nested-loading,
+  .c7n-spin-container {
     height: 100%;
   }
-  .ant-tree-icon__customize {
+  .c7n-tree-icon__customize {
     i.icon {
       float: left;
       line-height: 22px;
       margin-right: 5px;
     }
   }
-  .ant-tree-title {
+  .c7n-tree-title {
     display: inline-block;
     // float: right;
     flex: 1
   }
-  .ant-tree li .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  .c7n-tree li .c7n-tree-node-content-wrapper.c7n-tree-node-selected {
     background: rgba(0, 0, 0, 0.04);
   }
-  .ant-tree li .ant-tree-node-content-wrapper {
+  .c7n-tree li .c7n-tree-node-content-wrapper {
     width: calc(100% - 22px);
     display: inline-flex;
     align-items: center;
     height: 30px;
     line-height: 30px;
   }
-  .ant-tree-switcher {
+  .c7n-tree-switcher {
     margin-top: 3px;
   }
   &-treeTop {

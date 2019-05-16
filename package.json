@@ -3,7 +3,7 @@
   "routeName": "testManager",
   "version": "0.1.0",
   "description": "",
-  "main": "./lib/src/app/testManager/containers/TestManagerIndex.js",
+  "main": "./react/src/app/testManager/containers/TestManagerIndex.js",
   "files": [
     "lib"
   ],
@@ -36,10 +36,11 @@
   "scripts": {
     "start": "choerodon-front-boot start --config ./react/config.js",
     "dist": "choerodon-front-boot dist --config ./react/config.js",
-    "compile": "gulp compile",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
-    "compile": "gulp compile"
+    "compile": "gulp compile",
+    "prepublish": "choerodon-front-boot prepublish",
+    "postpublish": "choerodon-front-boot postpublish"
   },
   "author": "",
   "license": "ISC",

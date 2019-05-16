@@ -63,31 +63,31 @@ ul {
   display: flex;
   align-items: center;
   padding: 0 5px; // Select 下划线
-  .ant-select-underline {
+  .c7n-select-underline {
     display: none;
   }
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  .ant-select-selection__placeholder {
+  .c7n-select-selection__placeholder {
     color: #3f51b5;
   }
-  .ant-select-selection-selected-value {
+  .c7n-select-selection-selected-value {
     margin-top: 2px;
   }
-  .ant-select-clear {
+  .c7n-select-clear {
     margin-top: 2px;
   }
 }
 
-.c7ntest-select.ant-select-has-value {
-  .ant-select-arrow {
+.c7ntest-select.c7n-select-has-value {
+  .c7n-select-arrow {
     top: 2px;
   }
 }
 
 .c7ntest-inline-flex-dropdown {
-  .ant-select-dropdown-menu-item {
+  .c7n-select-dropdown-menu-item {
     // overflow: visible;
     display: flex;
   }

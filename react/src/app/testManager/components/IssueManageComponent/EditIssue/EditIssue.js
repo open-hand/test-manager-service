@@ -177,7 +177,7 @@ class EditIssueNarrow extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          userList: res.content,
+          userList: res.list,
           selectLoading: false,
         });
       });
@@ -194,7 +194,7 @@ class EditIssueNarrow extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        userList: res.content,
+        userList: res.list,
         selectLoading: false,
       });
     });
@@ -966,7 +966,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.content,
+                  userList: res.list,
                   selectLoading: false,
                 });
               });
@@ -1043,7 +1043,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.content,
+                  userList: res.list,
                   selectLoading: false,
                 });
               });

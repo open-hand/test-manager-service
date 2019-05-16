@@ -10,7 +10,7 @@ const { Option } = Select;
 
 export default {
   user: {
-    request: (...args) => new Promise(resolve => getUsers(...args).then((UserData) => { resolve(UserData.content); })),
+    request: (...args) => new Promise(resolve => getUsers(...args).then((UserData) => { resolve(UserData.list); })),
     render: user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
@@ -22,8 +22,8 @@ export default {
 
       if (value && !find(UserList, { id: value })) {
         getUser(value).then((res) => {
-          if (res.content && res.content.length > 0) {
-            UserList.push(res.content[0]);
+          if (res.list && res.list.length > 0) {
+            UserList.push(res.list[0]);
             resolve(UserList);
           } else {
             resolve(null);
