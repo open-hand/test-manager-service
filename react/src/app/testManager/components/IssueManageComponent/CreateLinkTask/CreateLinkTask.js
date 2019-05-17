@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { stores, axios, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';

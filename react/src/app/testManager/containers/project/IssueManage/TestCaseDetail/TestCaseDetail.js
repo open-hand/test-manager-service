@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Page, Header } from '@choerodon/boot';
 import {
@@ -195,13 +196,13 @@ class TestCaseDetail extends Component {
                 >
                   <span>{issueInfo && issueInfo.summary}</span>
                   <div
-                    role="button"
+                    role="none"
                     style={{
                       display: 'flex', alignItems: 'center', marginLeft: 20, color: '#3F51B5', fontSize: 14, cursor: 'pointer',
                     }}
                     onClick={() => {
                       this.setState({
-                        isExpand: !this.state.isExpand,
+                        isExpand: !isExpand,
                       });
                     }}
                   >
@@ -271,7 +272,7 @@ class TestCaseDetail extends Component {
             </div>
             {
               isExpand && issueInfo && (
-                <div style={{ marginLeft: 20, height: '100%' }}>
+                <div style={{ height: '100%' }}>
                   <EditIssue
                     loading={loading}
                     issueId={testCaseId}

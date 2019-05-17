@@ -1,14 +1,16 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { stores, Permission } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
+import { throttle } from 'lodash';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
 } from 'choerodon-ui';
 import './EditIssue.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
-import { TextEditToggle, User } from '../../CommonComponent';
+import { TextEditToggle, User, ResizeAble } from '../../CommonComponent';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate,
   returnBeforeTextUpload, color2rgba, testCaseTableLink, commonLink, testCaseDetailLink,
@@ -46,7 +48,7 @@ const navs = [
   { code: 'attachment', tooltip: '附件', icon: 'attach_file' },
   { code: 'commit', tooltip: '评论', icon: 'sms_outline' },
   { code: 'data_log', tooltip: '活动日志', icon: 'insert_invitation' },
-  { code: 'link_task', tooltip: '问题链接', icon: 'link' },
+  { code: 'link_task', tooltip: '关联问题', icon: 'link' },
 ];
 const STATUS_ICON = {
   done: {
@@ -76,6 +78,11 @@ const STATUS = {
   done: '#00bfa5',
 };
 class EditIssueNarrow extends Component {
+  constructor() {
+    super();
+    this.container = React.createRef();
+  }
+
   state = {
     // 子组件显示控制
     issueLoading: false,
@@ -103,7 +110,7 @@ class EditIssueNarrow extends Component {
     getUpdateProjectInfoPermission().then((res) => {
       this.setState({
         hasDeletePermission: res[0].approve,
-      });  
+      });
     });
 
     document.getElementById('scroll-area').addEventListener('scroll', (e) => {
@@ -116,6 +123,7 @@ class EditIssueNarrow extends Component {
         }
       }
     });
+    this.setQuery();
   }
 
   /**
@@ -177,7 +185,7 @@ class EditIssueNarrow extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          userList: res.list,
+          userList: res.content,
           selectLoading: false,
         });
       });
@@ -194,7 +202,7 @@ class EditIssueNarrow extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        userList: res.list,
+        userList: res.content,
         selectLoading: false,
       });
     });
@@ -216,10 +224,6 @@ class EditIssueNarrow extends Component {
       return prepared;
     }
   })
-
-  setFileList=() => {
-    
-  }
 
   /**
    *更新用例信息
@@ -503,18 +507,11 @@ class EditIssueNarrow extends Component {
 
   renderLinkIssues() {
     const { linkIssues } = this.props;
-    const group = _.groupBy(linkIssues, 'ward');
+    // const group = _.groupBy(linkIssues, 'ward');
     return (
       <div className="c7ntest-tasks">
         {
-          _.map(group, (issues, ward) => (
-            <div key={ward}>
-              <div style={{ margin: '7px auto' }}>{ward}</div>
-              {
-                _.map(issues, (linkIssue, i) => this.renderLinkList(linkIssue, i))
-              }
-            </div>
-          ))
+          _.map(linkIssues, (linkIssue, i) => this.renderLinkList(linkIssue, i))
         }
       </div>
     );
@@ -970,7 +967,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.list,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1047,7 +1044,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.list,
+                  userList: res.content,
                   selectLoading: false,
                 });
               });
@@ -1065,9 +1062,26 @@ class EditIssueNarrow extends Component {
   checkDisabledModifyOrDelete = () => {
     const loginUserId = AppState.userInfo.id;
     const { issueInfo } = this.props;
-    const { hasDeletePermission } = this.state;    
+    const { hasDeletePermission } = this.state;
     return !(loginUserId === issueInfo.createdBy || hasDeletePermission);
   }
+
+  handleResizeEnd = ({ width }) => {
+    localStorage.setItem('agile.EditIssue.width', `${width}px`);
+  }
+
+  setQuery = (width = this.container.current.clientWidth) => {
+    if (width <= 600) {
+      this.container.current.setAttribute('max-width', '600px');
+    } else {
+      this.container.current.removeAttribute('max-width');
+    }
+  }
+
+  handleResize = throttle(({ width }) => {
+    this.setQuery(width);
+    // console.log(width, parseInt(width / 100) * 100);
+  }, 150)
 
   render() {
     const {
@@ -1075,7 +1089,7 @@ class EditIssueNarrow extends Component {
       currentNav,
     } = this.state;
     const {
-      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName, setFileList,
+      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,
     } = this.props;
     const {
       issueNum, summary, creationDate, lastUpdateDate, description,
@@ -1122,124 +1136,147 @@ class EditIssueNarrow extends Component {
       </Menu>
     );
     return (
-      <div className="c7ntest-editIssue">
-        {
-          issueLoading ? (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 0,
-                background: 'rgba(255, 255, 255, 0.65)',
-                zIndex: 9999,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Spin />
-            </div>
-          ) : null
-        }
-        <div className="c7ntest-nav">
-          <div>
-            <div style={{
-              height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
-            }}
-            >
-              <TypeTag type={issueTypeDTO} />
-            </div>
-          </div>
-          <ul className="c7ntest-nav-ul">
-            {this.renderNavs()}
-
-          </ul>
-        </div>
-
-        <div className="c7ntest-content">
-          <div className="c7ntest-content-top">
-            <div className="c7ntest-header-editIssue">
-              <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
+      <div style={{
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        height: '100%',
+        zIndex: 101,
+        overflowY: 'hidden',
+        overflowX: 'visible',
+      }}
+      >
+        <ResizeAble
+          modes={['left']}
+          size={{
+            // maxHeight: 500,
+            // minWidth: 100,
+            maxWidth: 800,
+            minWidth: 440,
+          }}
+          defaultSize={{
+            width: localStorage.getItem('agile.EditIssue.width') || 440,
+            height: '100%',
+          }}
+          onResizeEnd={this.handleResizeEnd}
+          onResize={this.handleResize}
+        >
+          <div className="c7ntest-editIssue" ref={this.container}>
+            <div className="c7ntest-editIssue-divider" />
+            {
+              issueLoading ? (
                 <div
-                  className="line-justify"
                   style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    background: 'rgba(255, 255, 255, 0.65)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    paddingLeft: '20px',
-                    paddingRight: '20px',
-                    marginLeft: '-20px',
-                    marginRight: '-20px',
-                    borderBottom: '1px solid rgba(0, 0, 0, 0.26)',
-                    height: 44,
                   }}
                 >
-                  {/* issueNum 用例编号 */}
-                  <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
-                    <span>{issueNum}</span>
-                  </div>
-                  <div
-                    style={{
-                      cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
-                    }}
-                    role="none"
-                    onClick={() => this.props.onClose()}
-                  >
-                    <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
-                    <FormattedMessage id="issue_edit_hide" />
-                  </div>
+                  <Spin />
                 </div>
-                <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
+              ) : null
+            }
+            <div className="c7ntest-nav">
+              <div>
+                <div style={{
+                  height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
+                }}
+                >
+                  <TypeTag type={issueTypeDTO} />
+                </div>
+              </div>
+              <ul className="c7ntest-nav-ul">
+                {this.renderNavs()}
 
-                  <TextEditToggle
-                    disabled={disabled}
-                    style={{ width: '100%' }}
-                    formKey="summary"
-                    onSubmit={(value, done) => { this.editIssue({ summary: value }, done); }}
-                    originData={summary}
-                  >
-                    <Text>
-                      {data => (
-                        <div className="c7ntest-summary">
-                          {data}
-                        </div>
-                      )}
-                    </Text>
-                    <Edit>
-                      <TextArea maxLength={44} size="small" autoFocus />
-                    </Edit>
-                  </TextEditToggle>
-                  <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
-                    {!disabled && (
-                      <Dropdown overlay={getMenu()} trigger={['click']}>
-                        <Button icon="more_vert" />
-                      </Dropdown>
-                    )}
+              </ul>
+            </div>
+
+            <div className="c7ntest-content">
+              <div className="c7ntest-content-top">
+                <div className="c7ntest-header-editIssue">
+                  <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
+                    <div
+                      className="line-justify"
+                      style={{
+                        alignItems: 'center',
+                        paddingLeft: '20px',
+                        paddingRight: '20px',
+                        marginLeft: '-20px',
+                        marginRight: '-20px',
+                        borderBottom: '1px solid rgba(0, 0, 0, 0.26)',
+                        height: 44,
+                      }}
+                    >
+                      {/* issueNum 用例编号 */}
+                      <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
+                        <span>{issueNum}</span>
+                      </div>
+                      <div
+                        style={{
+                          cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
+                        }}
+                        role="none"
+                        onClick={() => this.props.onClose()}
+                      >
+                        <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
+                        <FormattedMessage id="issue_edit_hide" />
+                      </div>
+                    </div>
+                    <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
+
+                      <TextEditToggle
+                        disabled={disabled}
+                        style={{ width: '100%' }}
+                        formKey="summary"
+                        onSubmit={(value, done) => { this.editIssue({ summary: value }, done); }}
+                        originData={summary}
+                      >
+                        <Text>
+                          {data => (
+                            <div className="c7ntest-summary">
+                              {data}
+                            </div>
+                          )}
+                        </Text>
+                        <Edit>
+                          <TextArea maxLength={44} size="small" autoFocus />
+                        </Edit>
+                      </TextEditToggle>
+                      <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
+                        {!disabled && (
+                          <Dropdown overlay={getMenu()} trigger={['click']}>
+                            <Button icon="more_vert" />
+                          </Dropdown>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
-            <section className="c7ntest-body-editIssue">
-              <div className="c7ntest-content-editIssue">
-                <div className="c7ntest-details">
-                  <div id="detail">
-                    <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
-                      <div className="c7ntest-title-left">
-                        <Icon type="error_outline c7ntest-icon-title" />
-                        <FormattedMessage id="detail" />
-                      </div>
-                      <div style={{
-                        flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                      }}
-                      />
-                    </div>
-                    <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexDirection: 'column' }}>
-                      {/* 状态 */}
-                      <div style={{ flex: 1 }}>
+              <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
+                <section className="c7ntest-body-editIssue">
+                  <div className="c7ntest-content-editIssue">
+                    <div className="c7ntest-details">
+                      <div id="detail">
+                        <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
+                          <div className="c7ntest-title-left">
+                            <Icon type="error_outline c7ntest-icon-title" />
+                            <FormattedMessage id="detail" />
+                          </div>
+                          <div style={{
+                            flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                          }}
+                          />
+                        </div>
+                        <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
 
-                        <div>
                           <div className="line-start mt-10">
                             <div className="c7ntest-property-wrapper">
                               <span className="c7ntest-property">
@@ -1299,49 +1336,72 @@ class EditIssueNarrow extends Component {
                               {folderName}
                             </div>
                           </div>
-
-
-                        </div>
-                        {/* 模块 */}
-                        {
-                          typeCode !== 'sub_task' ? (
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="summary_component" />
-                                  {'：'}
-                                </span>
+                          {/* 模块 */}
+                          {
+                            typeCode !== 'sub_task' ? (
+                              <div className="line-start mt-10">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">
+                                    <FormattedMessage id="summary_component" />
+                                    {'：'}
+                                  </span>
+                                </div>
+                                <div className="c7ntest-value-wrapper">
+                                  {this.renderSelectModule()}
+                                </div>
                               </div>
-                              <div className="c7ntest-value-wrapper">
-                                {this.renderSelectModule()}
-                              </div>
+                            ) : null
+                          }
+                          {/* 标签 */}
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="summary_label" />
+                                {'：'}
+                              </span>
                             </div>
-                          ) : null
-                        }
-                        {/* 标签 */}
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="summary_label" />
-                              {'：'}
-                            </span>
+                            <div className="c7ntest-value-wrapper">
+                              {this.renderSelectLabel()}
+                            </div>
                           </div>
-                          <div className="c7ntest-value-wrapper">
-                            {this.renderSelectLabel()}
-                          </div>
-                        </div>
 
-                        {/* 报告人 */}
-                        <div className="line-start mt-10 assignee">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="issue_edit_reporter" />
-                              {'：'}
-                            </span>
+                          {/* 报告人 */}
+                          <div className="line-start mt-10 assignee">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_edit_reporter" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                              {this.renderSelectPerson()}
+                              {!this.checkDisabledModifyOrDelete() && (
+                                <span
+                                  role="none"
+                                  style={{
+                                    color: '#3f51b5',
+                                    cursor: 'pointer',
+                                    marginTop: '-2px',
+                                    display: 'inline-block',
+                                  }}
+                                  onClick={() => {
+                                    this.editIssue({ reporterId: AppState.userInfo.id });
+                                  }}
+                                >
+                                  <FormattedMessage id="issue_edit_assignToMe" />
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {this.renderSelectPerson()}
-                            {!this.checkDisabledModifyOrDelete() && (
+                          <div className="line-start mt-10 assignee">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_edit_manager" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                              {this.renderSelectAssign()}
                               <span
                                 role="none"
                                 style={{
@@ -1351,217 +1411,179 @@ class EditIssueNarrow extends Component {
                                   display: 'inline-block',
                                 }}
                                 onClick={() => {
-                                  this.editIssue({ reporterId: AppState.userInfo.id });
+                                  this.editIssue({ assigneeId: AppState.userInfo.id });
                                 }}
                               >
                                 <FormattedMessage id="issue_edit_assignToMe" />
                               </span>
-                            )}
+                            </div>
                           </div>
-                        </div>
-                        <div className="line-start mt-10 assignee">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="issue_edit_manager" />
-                              {'：'}
-                            </span>
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_edit_createDate" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              {/* {formatDate(creationDate)} */}
+                              <Timeago date={creationDate} />
+                            </div>
                           </div>
-                          <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            {this.renderSelectAssign()}
-                            <span
-                              role="none"
-                              style={{
-                                color: '#3f51b5',
-                                cursor: 'pointer',
-                                marginTop: '-2px',
-                                display: 'inline-block',
-                              }}
-                              onClick={() => {
-                                this.editIssue({ assigneeId: AppState.userInfo.id });
-                              }}
-                            >
-                              <FormattedMessage id="issue_edit_assignToMe" />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      {/* --- */}
-                      <div style={{ flex: 1 }}>
-                        {/* 日期 */}
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-subtitle">
-                              <FormattedMessage id="issue_edit_date" />
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="issue_edit_createDate" />
-                              {'：'}
-                            </span>
-                          </div>
-                          <div className="c7ntest-value-wrapper">
-                            {/* {formatDate(creationDate)} */}
-                            <Timeago date={creationDate} />
-                          </div>
-                        </div>
-                        <div className="line-start mt-10">
-                          <div className="c7ntest-property-wrapper">
-                            <span className="c7ntest-property">
-                              <FormattedMessage id="issue_edit_updateDate" />
-                              {'：'}
-                            </span>
-                          </div>
-                          <div className="c7ntest-value-wrapper">
-                            {/* {formatDate(lastUpdateDate)} */}
-                            <Timeago date={lastUpdateDate} />
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_edit_updateDate" />
+                                {'：'}
+                              </span>
+                            </div>
+                            <div className="c7ntest-value-wrapper">
+                              {/* {formatDate(lastUpdateDate)} */}
+                              <Timeago date={lastUpdateDate} />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div id="des">
-                    <div className="c7ntest-title-wrapper">
-                      <div className="c7ntest-title-left">
-                        <Icon type="subject c7ntest-icon-title" />
-                        <span><FormattedMessage id="execute_description" /></span>
-                      </div>
-                      <div style={{
-                        flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                      }}
-                      />
-                      <div style={{ marginLeft: '14px', position: 'relative' }}>
-                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
-                          <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
-                          <span><FormattedMessage id="execute_edit_fullScreen" /></span>
-                        </Button>
-                        <Icon
-                          className="c7ntest-des-edit"
-                          style={{ position: 'absolute', top: 8, right: -20 }}
-                          role="none"
-                          type="mode_edit mlr-3 pointer"
-                          onClick={() => {
-                            this.setState({
-                              editDescriptionShow: true,
-                            });
+                      <div id="des">
+                        <div className="c7ntest-title-wrapper">
+                          <div className="c7ntest-title-left">
+                            <Icon type="subject c7ntest-icon-title" />
+                            <span><FormattedMessage id="execute_description" /></span>
+                          </div>
+                          <div style={{
+                            flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                           }}
+                          />
+                          <div style={{ marginLeft: '14px', position: 'relative' }}>
+                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
+                              <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
+                              <span><FormattedMessage id="execute_edit_fullScreen" /></span>
+                            </Button>
+                            <Icon
+                              className="c7ntest-des-edit"
+                              style={{ position: 'absolute', top: 8, right: -20 }}
+                              role="none"
+                              type="mode_edit mlr-3 pointer"
+                              onClick={() => {
+                                this.setState({
+                                  editDescriptionShow: true,
+                                });
+                              }}
+                            />
+                          </div>
+                        </div>
+                        {this.renderDescription()}
+                      </div>
+
+                    </div>
+
+                    {/* 附件 */}
+                    <div id="attachment">
+                      <div className="c7ntest-title-wrapper">
+                        <div className="c7ntest-title-left">
+                          <Icon type="attach_file c7ntest-icon-title" />
+                          <FormattedMessage id="attachment" />
+                        </div>
+                        <div style={{
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: '114.67px',
+                        }}
+                        />
+                      </div>
+                      <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
+                        <UploadButtonNow
+                          onRemove={this.setFileList}
+                          onBeforeUpload={this.setFileList}
+                          updateNow={this.onChangeFileList}
+                          fileList={fileList}
                         />
                       </div>
                     </div>
-                    {this.renderDescription()}
-                  </div>
+                    {/* 评论 */}
+                    <div id="commit">
+                      <div className="c7ntest-title-wrapper">
+                        <div className="c7ntest-title-left">
+                          <Icon type="sms_outline c7ntest-icon-title" />
+                          <FormattedMessage id="issue_edit_comment" />
+                        </div>
+                        <div style={{
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                        }}
+                        />
+                        <div style={{ marginLeft: '14px' }}>
+                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
+                            <Icon type="playlist_add icon" />
+                            <FormattedMessage id="issue_edit_addComment" />
+                          </Button>
+                        </div>
+                      </div>
+                      {this.renderCommits()}
+                    </div>
+                    {/* 修改日志 */}
+                    <div id="data_log">
+                      <div className="c7ntest-title-wrapper">
+                        <div className="c7ntest-title-left">
+                          <Icon type="insert_invitation c7ntest-icon-title" />
+                          <FormattedMessage id="issue_edit_activeLog" />
+                        </div>
+                        <div style={{
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                        }}
+                        />
+                      </div>
+                      {this.renderDataLogs()}
+                    </div>
 
-                </div>
+                    {/* 关联用例 */}
+                    <div id="link_task">
+                      <div className="c7ntest-title-wrapper">
+                        <div className="c7ntest-title-left">
+                          <Icon type="link c7ntest-icon-title" />
+                          关联问题
+                        </div>
+                        <div style={{
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                        }}
+                        />
+                        <div style={{ marginLeft: '14px' }}>
+                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
+                            <Icon type="playlist_add icon" />
+                            关联问题
+                          </Button>
+                        </div>
+                      </div>
+                      {this.renderLinkIssues()}
+                    </div>
 
-                {/* 附件 */}
-                <div id="attachment">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="attach_file c7ntest-icon-title" />
-                      <FormattedMessage id="attachment" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: '114.67px',
-                    }}
-                    />
                   </div>
-                  <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
-                    <UploadButtonNow
-                      onRemove={setFileList}
-                      onBeforeUpload={setFileList}
-                      updateNow={this.onChangeFileList}
-                      fileList={fileList}
-                    />
-                  </div>
-                </div>
-                {/* 评论 */}
-                <div id="commit">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="sms_outline c7ntest-icon-title" />
-                      <FormattedMessage id="issue_edit_comment" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                    <div style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
-                        <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_addComment" />
-                      </Button>
-                    </div>
-                  </div>
-                  {this.renderCommits()}
-                </div>
-                {/* 修改日志 */}
-                <div id="data_log">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="insert_invitation c7ntest-icon-title" />
-                      <FormattedMessage id="issue_edit_activeLog" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                  </div>
-                  {this.renderDataLogs()}
-                </div>
-
-                {/* 关联用例 */}
-                <div id="link_task">
-                  <div className="c7ntest-title-wrapper">
-                    <div className="c7ntest-title-left">
-                      <Icon type="link c7ntest-icon-title" />
-                      <FormattedMessage id="issue_edit_linkIssue" />
-                    </div>
-                    <div style={{
-                      flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                    }}
-                    />
-                    <div style={{ marginLeft: '14px' }}>
-                      <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                        <Icon type="playlist_add icon" />
-                        <FormattedMessage id="issue_edit_addLinkIssue" />
-                      </Button>
-                    </div>
-                  </div>
-                  {this.renderLinkIssues()}
-                </div>
-
+                </section>
               </div>
-            </section>
-          </div>
-        </div>
+            </div>
 
-        {
-          <FullEditor
-            initValue={description}
-            visible={FullEditorShow}
-            onCancel={() => this.setState({ FullEditorShow: false })}
-            onOk={(value) => {
-              this.setState({
-                FullEditorShow: false,
-              });
-              this.editIssue({ description: value });
-            }}
-          />
-        }
-        {
-          createLinkTaskShow ? (
-            <CreateLinkTask
-              issueId={issueId}
-              visible={createLinkTaskShow}
-              onCancel={() => this.setState({ createLinkTaskShow: false })}
-              onOk={this.handleCreateLinkIssue.bind(this)}
-            />
-          ) : null
-        }
+            {
+              <FullEditor
+                initValue={description}
+                visible={FullEditorShow}
+                onCancel={() => this.setState({ FullEditorShow: false })}
+                onOk={(value) => {
+                  this.setState({
+                    FullEditorShow: false,
+                  });
+                  this.editIssue({ description: value });
+                }}
+              />
+            }
+            {
+              createLinkTaskShow ? (
+                <CreateLinkTask
+                  issueId={issueId}
+                  visible={createLinkTaskShow}
+                  onCancel={() => this.setState({ createLinkTaskShow: false })}
+                  onOk={this.handleCreateLinkIssue.bind(this)}
+                />
+              ) : null
+            }
+          </div>
+        </ResizeAble>
       </div>
     );
   }
