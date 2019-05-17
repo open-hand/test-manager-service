@@ -112,7 +112,7 @@ class EditCycle extends Component {
               }}
               title={`在项目“${AppState.currentMenuType.name}”中修改测试循环`}
               description="您可以更改一个测试循环的具体信息。"
-              link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
+              link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
             >
               <Form>
                 <FormItem

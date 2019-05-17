@@ -97,7 +97,7 @@ class CreateStatus extends Component {
             }}
             title={<FormattedMessage id="status_side_content_title" values={{ name: getProjectName() }} />}
             description={<FormattedMessage id="status_side_content_description" />}
-            link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
+            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
           >
             <Form>
               <FormItem>

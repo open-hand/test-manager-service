@@ -278,7 +278,7 @@ class CreateIssue extends Component {
           }}
           title={<FormattedMessage id="issue_create_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="issue_create_content_description" />}
-          link="http://v0-8.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
+          link="http://v0-16.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >
           <Form layout="vertical">
             <FormItem style={{ width: 520 }}>

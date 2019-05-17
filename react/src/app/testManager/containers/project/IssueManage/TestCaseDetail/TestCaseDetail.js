@@ -111,6 +111,12 @@ class TestCaseDetail extends Component {
     });
   }
 
+  setFileList=(fileList) => {
+    this.setState({
+      fileList,
+    });
+  }
+
   goTestCase = (mode) => {
     const { lasttestCaseId, nexttestCaseId } = this.state;
     const { disabled, history } = this.props;
@@ -272,6 +278,7 @@ class TestCaseDetail extends Component {
                     folderName={folderName}
                     issueInfo={issueInfo}
                     fileList={fileList}
+                    setFileList={this.setFileList}
                     linkIssues={linkIssues}
                     datalogs={datalogs}
                     disabled={disabled}

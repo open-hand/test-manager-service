@@ -563,7 +563,7 @@ class ReportTest extends Component {
         <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
-          link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
+          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-test-filter-table">
