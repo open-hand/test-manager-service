@@ -151,7 +151,7 @@ class MochaReport extends Component {
       <Content 
         title={`项目“${getProjectName()}”的测试报告`}
         description="您可以在此页面一目了然地了解测试报告详情。"
-        link="http://v0-8.choerodon.io/zh/docs/user-guide/test-management"
+        link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management"
       >    
         <div className="c7ntest-mochaReport">
           <div style={{ display: 'flex' }}>

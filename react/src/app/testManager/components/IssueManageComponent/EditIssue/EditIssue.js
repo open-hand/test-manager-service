@@ -217,6 +217,10 @@ class EditIssueNarrow extends Component {
     }
   })
 
+  setFileList=() => {
+    
+  }
+
   /**
    *更新用例信息
    * @param newValue 例 { statusId: 1 }
@@ -1071,7 +1075,7 @@ class EditIssueNarrow extends Component {
       currentNav,
     } = this.state;
     const {
-      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,
+      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName, setFileList,
     } = this.props;
     const {
       issueNum, summary, creationDate, lastUpdateDate, description,
@@ -1467,8 +1471,8 @@ class EditIssueNarrow extends Component {
                   </div>
                   <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
                     <UploadButtonNow
-                      onRemove={this.setFileList}
-                      onBeforeUpload={this.setFileList}
+                      onRemove={setFileList}
+                      onBeforeUpload={setFileList}
                       updateNow={this.onChangeFileList}
                       fileList={fileList}
                     />

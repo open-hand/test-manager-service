@@ -77,7 +77,7 @@ class UploadButton extends React.Component {
         } else {
           const tmp = file;
           tmp.status = 'done';
-          if (this.props.onBeforeUpload) {
+          if (this.props.updateNow) {
             if (fileList.length > 0) {
               // this.props.onBeforeUpload(fileList.slice().concat(file));
               this.props.updateNow(fileList.slice().concat(file));
