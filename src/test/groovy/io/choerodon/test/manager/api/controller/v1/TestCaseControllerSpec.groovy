@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1
 
+import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.test.manager.IntegrationTestConfiguration
@@ -100,9 +101,9 @@ class TestCaseControllerSpec extends Specification {
         List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
         LookupTypeWithValuesDTO lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
         List<UserDTO> userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test", id: 1L))
-        Page page = new Page()
-        page.setContent(userDTOS)
-        ProductVersionDTO productVersionDTO = new ProductVersionDTO();
+        PageInfo pageInfo = new PageInfo<UserDTO>()
+        pageInfo.setList(userDTOS)
+        ProductVersionDTO productVersionDTO = new ProductVersionDTO()
         productVersionDTO.setName("CaseExcel测试版本")
         Map<Long, ProductVersionDTO> versionInfo = Maps.newHashMap(55555L, productVersionDTO)
         List<IssueStatusDTO> issueStatusDTOS = Lists.newArrayList(new IssueStatusDTO())
@@ -116,7 +117,7 @@ class TestCaseControllerSpec extends Specification {
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionIds(_) >> versionIds
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo<UserDTO>>(pageInfo, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
     }

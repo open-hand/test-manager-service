@@ -1,16 +1,14 @@
 package io.choerodon.test.manager.infra.feign;
 
-
-import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.agile.api.dto.UserDTO;
-import io.choerodon.core.domain.Page;
-import io.choerodon.test.manager.infra.feign.callback.UserFeignClientFallback;
-
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.UserDTO;
+import io.choerodon.test.manager.infra.feign.callback.UserFeignClientFallback;
 
 import java.util.List;
 

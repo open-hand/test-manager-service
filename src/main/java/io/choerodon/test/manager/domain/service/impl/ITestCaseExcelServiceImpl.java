@@ -239,7 +239,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         pageRequest.setSize(999999999);
         pageRequest.setSort(new Sort(Sort.Direction.ASC, "componentId"));
 
-        List<UserDTO> userDTOS = userService.list(pageRequest, projectId, null, null).getBody();
+        List<UserDTO> userDTOS = userService.list(pageRequest, projectId, null, null).getBody().getList();
 
         userDTOS.forEach(v -> v.setLoginName(v.getLoginName() + v.getRealName()));
 

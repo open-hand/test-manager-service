@@ -10,6 +10,8 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.common.utils.LongUtils;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
+
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
+    public ResponseEntity<PageInfo<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
         return userFeignClient.list(projectId, userId, pageRequest.getPage(), pageRequest.getSize(), param);
     }
 
