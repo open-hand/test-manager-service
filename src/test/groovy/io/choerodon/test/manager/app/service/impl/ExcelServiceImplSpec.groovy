@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl
 
+import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.dto.*
 import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
@@ -75,7 +76,7 @@ class ExcelServiceImplSpec extends Specification {
     @Shared
     List<UserDTO> userDTOS
     @Shared
-    Page page
+    PageInfo page
     @Shared
     Map<Long, ProductVersionDTO> versionInfo
     @Shared
@@ -107,8 +108,8 @@ class ExcelServiceImplSpec extends Specification {
         List<LookupValueDTO> lookupValueDTOS = Lists.newArrayList(new LookupValueDTO())
         lookupTypeWithValuesDTO = new LookupTypeWithValuesDTO(lookupValues: lookupValueDTOS)
         userDTOS = Lists.newArrayList(new UserDTO(loginName: "1", realName: "test", id: 1L))
-        page = new Page()
-        page.setContent(userDTOS)
+        page = new PageInfo<UserDTO>()
+        page.setList(userDTOS)
         ProductVersionDTO productVersionDTO = new ProductVersionDTO();
         productVersionDTO.setName("CaseExcel测试版本")
         versionInfo = Maps.newHashMap(versionId, productVersionDTO)
@@ -145,7 +146,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.getVersionIds(_) >> versionIds
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo<UserDTO>>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>("http://minio.staging.saas.hand-china.com/test/file_5bf86f5c8e384b66b64a51689a81d831_.xlsx", HttpStatus.OK)

@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.agile.api.dto.ProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProjectFeignClientFallback;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Component
 @FeignClient(value = "iam-service", fallback = ProjectFeignClientFallback.class)
 public interface ProjectFeignClient {
-	@GetMapping(value = "/v1/projects/{project_id}")
-	ResponseEntity<ProjectDTO> query(@PathVariable(name = "project_id") Long id);
+    @GetMapping(value = "/v1/projects/{project_id}")
+    ResponseEntity<ProjectDTO> query(@PathVariable(name = "project_id") Long id);
 }
