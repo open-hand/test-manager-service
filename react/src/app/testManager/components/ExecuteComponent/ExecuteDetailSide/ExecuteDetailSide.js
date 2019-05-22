@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+/* eslint-disable*/
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -82,6 +82,11 @@ class ExecuteDetailSide extends Component {
     }
   }
 
+
+  getCurrentNav(e) {
+    return find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
+  }
+
   handleScroll = (e) => {
     if (sign) {
       const currentNav = this.getCurrentNav(e);
@@ -91,10 +96,6 @@ class ExecuteDetailSide extends Component {
         });
       }
     }
-  }
-
-  getCurrentNav(e) {
-    return find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
   }
 
   isInLook(ele) {
@@ -205,7 +206,7 @@ class ExecuteDetailSide extends Component {
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const userList = ExecuteDetailStore.getUserList;
-    const selectLoading = ExecuteDetailStore.selectLoading;
+    const { selectLoading } = ExecuteDetailStore;
     const { FullEditorShow, editing } = this.state;
     const {
       issueNum, summary, issueId, issueTypeDTO: { typeCode },
