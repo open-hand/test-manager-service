@@ -14,7 +14,7 @@ import './StepTable.scss';
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 
 const { TextArea } = Input;
-const Option = Select.Option;
+const { Option } = Select;
 const { Text, Edit } = TextEditToggle;
 const propTypes = {
   disabled: PropTypes.bool,
@@ -35,16 +35,6 @@ class StepTable extends PureComponent {
     });
   };
 
-  quickPass(stepData, e) {
-    e.stopPropagation();
-    this.quickPassOrFail(stepData, '通过');
-  }
-
-  quickFail(stepData, e) {
-    e.stopPropagation();
-    this.quickPassOrFail(stepData, '失败');
-  }
-
   quickPassOrFail = (stepData, text) => {
     const { stepStatusList } = this.props;
     const data = { ...stepData };
@@ -64,6 +54,17 @@ class StepTable extends PureComponent {
       Choerodon.prompt('未找到对应状态');
     }
   };
+
+  quickPass(stepData, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(stepData, '通过');
+  }
+
+  quickFail(stepData, e) {
+    e.stopPropagation();
+    this.quickPassOrFail(stepData, '失败');
+  }
+
 
   render() {
     const that = this;

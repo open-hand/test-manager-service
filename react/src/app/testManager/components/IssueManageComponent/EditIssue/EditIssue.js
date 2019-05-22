@@ -185,7 +185,7 @@ class EditIssueNarrow extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          userList: res.content,
+          userList: res.list,
           selectLoading: false,
         });
       });
@@ -202,7 +202,7 @@ class EditIssueNarrow extends Component {
     });
     getUsers(input).then((res) => {
       this.setState({
-        userList: res.content,
+        userList: res.list,
         selectLoading: false,
       });
     });
@@ -914,7 +914,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { reporterId, reporterName, reporterImageUrl } = issueInfo;
+    const { reporterId, reporterRealName, reporterLoginName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
@@ -929,8 +929,8 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: reporterId,
-            loginName: '',
-            realName: reporterName,
+            loginName: reporterLoginName,
+            realName: reporterRealName,
             avatar: reporterImageUrl,
           }}
         />
@@ -967,7 +967,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.content,
+                  userList: res.list,
                   selectLoading: false,
                 });
               });
@@ -992,7 +992,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { assigneeId, assigneeName, assigneeImageUrl } = issueInfo;
+    const { assigneeId, assigneeRealName, assigneeLoginName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
@@ -1006,8 +1006,8 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: assigneeId,
-            loginName: '',
-            realName: assigneeName,
+            loginName: assigneeLoginName,
+            realName: assigneeRealName,
             avatar: assigneeImageUrl,
           }}
         />
@@ -1044,7 +1044,7 @@ class EditIssueNarrow extends Component {
               });
               getUsers(value).then((res) => {
                 this.setState({
-                  userList: res.content,
+                  userList: res.list,
                   selectLoading: false,
                 });
               });

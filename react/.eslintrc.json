@@ -54,6 +54,7 @@
     "no-unused-vars":"warn",
     "no-restricted-syntax":"off",
     "react/forbid-prop-types":"off",
+    "react/sort-comp":"off",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {
