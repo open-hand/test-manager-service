@@ -117,7 +117,8 @@ public class JsonImportServiceImpl implements JsonImportService {
 
         // 创建阶段
         TestCycleDTO testStage = iJsonImportService.getStage(
-                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+                versionId, folderName, testCycleE.getCycleId(),
+                targetFolderE.getFolderId(), createdBy, lastUpdatedBy, projectId);
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
@@ -276,7 +277,9 @@ public class JsonImportServiceImpl implements JsonImportService {
             TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
             // 创建阶段（应用名+镜像名+suite名+第几次）
             TestCycleDTO testStage = iJsonImportService.getStage(
-                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+                    versionId, folderName, testCycleE.getCycleId(),
+                    targetFolderE.getFolderId(), createdBy, lastUpdatedBy,
+                    projectId);
             cycleIds.add(testStage.getCycleId());
             //处理Case
             handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);

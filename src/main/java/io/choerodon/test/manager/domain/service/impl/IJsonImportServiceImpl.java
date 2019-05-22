@@ -286,12 +286,13 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
+    public TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy, Long projectId) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
         testCycleE.setParentCycleId(parentCycleId);
         testCycleE.setType(TestCycleE.FOLDER);
+        testCycleE.setProjectId(projectId);
 
         int lastTestStageNumber = 0;
         List<TestCycleE> childCycleEs = testCycleE.querySelf();
@@ -314,6 +315,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setToDate(testCycleE.getFromDate());
         testCycleE.setCreatedBy(createdBy);
         testCycleE.setLastUpdatedBy(lastUpdatedBy);
+        testCycleE.setProjectId(projectId);
         return testCycleService.insertWithoutSyncFolder(ConvertHelper.convert(testCycleE, TestCycleDTO.class));
     }
 
