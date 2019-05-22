@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
@@ -134,7 +135,9 @@ public class TestCycleCaseE {
         testCycleCase.setCycleId(cycleId);
         testCycleCase.setIssueId(issueId);
         testCycleCaseRepository.validateCycleCaseInCycle(testCycleCase);
-
+        if(projectId==null){
+            throw new CommonException("error.projectId.illegal");
+        }
         return testCycleCaseRepository.insert(this);
     }
 

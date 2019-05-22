@@ -80,7 +80,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     private IssueFeignClient issueFeignClient;
 
     @Autowired
-     private TestCycleRepository testCycleRepository;
+    private TestCycleRepository testCycleRepository;
 
     public void setIssueFeignClient(IssueFeignClient issueFeignClient) {
         this.issueFeignClient = issueFeignClient;
@@ -286,7 +286,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
 
     @Override
     @Transactional
-    public TestCycleDTO getStage(Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy, Long projectId) {
+    public TestCycleDTO getStage(Long projectId, Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
         TestCycleE testCycleE = SpringUtil.getApplicationContext().getBean(TestCycleE.class);
         testCycleE.setVersionId(versionId);
         testCycleE.setFolderId(folderId);
@@ -315,8 +315,7 @@ public class IJsonImportServiceImpl implements IJsonImportService {
         testCycleE.setToDate(testCycleE.getFromDate());
         testCycleE.setCreatedBy(createdBy);
         testCycleE.setLastUpdatedBy(lastUpdatedBy);
-        testCycleE.setProjectId(projectId);
-        return testCycleService.insertWithoutSyncFolder(ConvertHelper.convert(testCycleE, TestCycleDTO.class));
+        return testCycleService.insertWithoutSyncFolder(projectId, ConvertHelper.convert(testCycleE, TestCycleDTO.class));
     }
 
     @Override

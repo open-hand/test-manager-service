@@ -327,10 +327,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list, Long projectId) {
         TestCycleCaseRepository repository = SpringUtil.getApplicationContext().getBean(TestCycleCaseRepository.class);
-        for (TestCycleCaseDTO caseDTO : list) {
-            caseDTO.setProjectId(projectId);
-        }
-        return repository.batchInsert(ConvertHelper.convertList(list, TestCycleCaseE.class));
+        return repository.batchInsert(projectId, ConvertHelper.convertList(list, TestCycleCaseE.class));
     }
 
 
@@ -338,17 +335,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId) {
         testStatusService.populateStatus(testCycleCaseDTO);
-        TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+        TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.changeStep(projectId, ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
         userService.populateTestCycleCaseDTO(dto);
         return dto;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS) {
+    public void batchChangeCase(Long projectId, List<TestCycleCaseDTO> cycleCaseDTOS) {
         for (TestCycleCaseDTO cycleCaseDTO : cycleCaseDTOS) {
             testStatusService.populateStatus(cycleCaseDTO);
-            TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.changeStep(ConvertHelper.convert(cycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
+            TestCycleCaseDTO dto = ConvertHelper.convert(iTestCycleCaseService.changeStep(projectId, ConvertHelper.convert(cycleCaseDTO, TestCycleCaseE.class)), TestCycleCaseDTO.class);
             userService.populateTestCycleCaseDTO(dto);
         }
     }

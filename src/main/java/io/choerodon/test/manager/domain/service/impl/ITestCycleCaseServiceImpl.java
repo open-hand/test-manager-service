@@ -12,7 +12,6 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseDefectR
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseDefectRelEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseEFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -123,7 +122,8 @@ public class ITestCycleCaseServiceImpl implements ITestCycleCaseService {
 
 
     @Override
-    public TestCycleCaseE changeStep(TestCycleCaseE testCycleCaseE) {
+    public TestCycleCaseE changeStep(Long projectId, TestCycleCaseE testCycleCaseE) {
+        testCycleCaseE.setProjectId(projectId);
         return testCycleCaseE.changeOneCase();
     }
 

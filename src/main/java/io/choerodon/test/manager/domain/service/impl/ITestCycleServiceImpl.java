@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
@@ -17,8 +18,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderRelEFactory;
 import io.choerodon.test.manager.infra.common.utils.TestDateUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +69,8 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     private static final String CYCLE_DATE_NULL_ERROR = "error.clone.cycle.date.not.be.null";
 
     @Override
-    public TestCycleE insert(TestCycleE testCycleE) {
+    public TestCycleE insert(Long projectId, TestCycleE testCycleE) {
+        testCycleE.setProjectId(projectId);
         testCycleE.checkRank();
         testCycleE.setRank(RankUtil.Operation.INSERT.getRank(testCycleRepository.getLastedRank(testCycleE), null));
         return testCycleE.addSelf();
@@ -93,18 +93,21 @@ public class ITestCycleServiceImpl implements ITestCycleService {
     private void deleteCycleWithCase(TestCycleE testCycleE, Long projectId) {
         TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
         testCycleCaseE.setCycleId(testCycleE.getCycleId());
+        testCycleCaseE.setProjectId(projectId);
         testCycleCaseE.querySelf().forEach(v -> testCycleCaseService.delete(v.getExecuteId(), projectId));
         testCycleE.deleteSelf();
     }
 
     @Override
-    public TestCycleE update(TestCycleE testCycleE) {
+    public TestCycleE update(Long projectId, TestCycleE testCycleE) {
         if (testCycleE.getFolderId() != null) {
             TestCycleCaseE testCycleCaseE = TestCycleCaseEFactory.create();
             testCycleCaseE.setCycleId(testCycleE.getCycleId());
+            testCycleCaseE.setProjectId(projectId);
             testCycleCaseE.querySelf().forEach(v -> testCycleCaseService.delete(v.getExecuteId(), 0L));
             insertCaseToFolder(testCycleE.getFolderId(), testCycleE.getCycleId());
         }
+        testCycleE.setProjectId(projectId);
         return testCycleE.updateSelf();
     }
 
@@ -115,7 +118,7 @@ public class ITestCycleServiceImpl implements ITestCycleService {
 
 
     @Override
-    public List<TestCycleE> queryCycleWithBar(Long projectId,Long[] versionId, Long assignedTo) {
+    public List<TestCycleE> queryCycleWithBar(Long projectId, Long[] versionId, Long assignedTo) {
         TestCycleE testCycleE = TestCycleEFactory.create();
         return countStatus(testCycleE.querySelfWithBar(projectId, versionId, assignedTo));
     }

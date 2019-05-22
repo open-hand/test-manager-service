@@ -1,29 +1,19 @@
 package io.choerodon.test.manager.app.service.impl
 
-import com.alibaba.fastjson.JSONObject
-import io.choerodon.agile.api.dto.ProductVersionDTO
+
 import io.choerodon.agile.api.dto.ProductVersionPageDTO
 import io.choerodon.agile.api.dto.UserDO
-import io.choerodon.core.convertor.ConvertHelper
 import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
 import io.choerodon.mybatis.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.dto.IssueInfosDTO
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
-import io.choerodon.test.manager.app.service.TestCycleCaseService
 import io.choerodon.test.manager.app.service.TestCycleService
 import io.choerodon.test.manager.app.service.UserService
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
-import io.choerodon.test.manager.domain.test.manager.entity.TestStatusE
-import io.choerodon.test.manager.domain.test.manager.factory.TestStatusEFactory
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
-import junit.framework.TestCase
 import org.apache.commons.lang.StringUtils
-import org.assertj.core.util.Lists
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -62,12 +52,12 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setVersionId(226L)
         cycle.setType("cycle")
         when:
-        TestCycleDTO cycle1 = testCycleService.insert(cycle);
+        TestCycleDTO cycle1 = testCycleService.insert(11L, cycle);
         then:
         cycle1.getCycleId() != null
         StringUtils.equals(cycle1.getCycleName(), "发布")
         when:
-        testCycleService.insert(cycle);
+        testCycleService.insert(11L, cycle);
         then:
         thrown(CommonException)
     }
@@ -78,7 +68,7 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setCycleName("发布1")
         cycle.setVersionId(224L)
         cycle.setType("cycle")
-        TestCycleDTO cycle1 = testCycleService.insert(cycle);
+        TestCycleDTO cycle1 = testCycleService.insert(11L, cycle);
         TestCycleDTO cycle2 = new TestCycleDTO(cycleId: cycle1.getCycleId());
         expect:
         testCycleService.delete(cycle2, 11L)
@@ -90,14 +80,14 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setCycleName("发布2")
         cycle.setVersionId(226L)
         cycle.setType(TestCycleE.CYCLE)
-        TestCycleDTO cycle1 = testCycleService.insert(cycle);
+        TestCycleDTO cycle1 = testCycleService.insert(11L, cycle);
 
         when:
         cycle1.setCycleName("纠正")
         cycle1.setVersionId(167L)
         cycle1.setObjectVersionNumber(1l)
         cycle1.setRank(null)
-        TestCycleDTO cycle3 = testCycleService.update(cycle1);
+        TestCycleDTO cycle3 = testCycleService.update(11L, cycle1);
         then:
         cycle3 != null
         StringUtils.equals(cycle3.getCycleName(), "纠正")
@@ -109,7 +99,7 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setCycleName("发布3")
         cycle.setVersionId(226L)
         cycle.setType(TestCycleE.CYCLE)
-        TestCycleDTO cycle1 = testCycleService.insert(cycle)
+        TestCycleDTO cycle1 = testCycleService.insert(11L, cycle)
 
         when:
         TestCycleDTO cycle2 = testCycleService.getOneCycle(cycle1.getCycleId())
@@ -118,7 +108,6 @@ class TestCycleServiceImplSpec extends Specification {
         cycle2 != null
         StringUtils.equals(cycle2.getCycleName(), "发布3")
     }
-
 
 //    def "GetTestCycle"() {
 //        given:
@@ -196,7 +185,7 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setType(TestCycleE.CYCLE)
         cycle.setFromDate(new Date(1546272000000))
         cycle.setToDate(new Date(1548863999000))
-        TestCycleDTO cycle1 = testCycleService.insert(cycle)
+        TestCycleDTO cycle1 = testCycleService.insert(1L, cycle)
 
         TestCycleDTO folder = new TestCycleDTO()
         folder.setCycleName("发布1")
@@ -205,7 +194,7 @@ class TestCycleServiceImplSpec extends Specification {
         folder.setParentCycleId(cycle1.getCycleId())
         folder.setFromDate(new Date(1547481600000))
         folder.setToDate(new Date(1547567999000))
-        TestCycleDTO folder1 = testCycleService.insert(folder)
+        TestCycleDTO folder1 = testCycleService.insert(1L, folder)
 
 
         when:
@@ -223,7 +212,7 @@ class TestCycleServiceImplSpec extends Specification {
         folder.setVersionId(228L)
         folder.setType(TestCycleE.FOLDER)
         folder.setParentCycleId(222L)
-        testCycleService.insert(folder)
+        testCycleService.insert(2L, folder)
 
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("newFolder")
@@ -242,7 +231,7 @@ class TestCycleServiceImplSpec extends Specification {
         cycle.setCycleName("发布9")
         cycle.setVersionId(226L)
         cycle.setType(TestCycleE.CYCLE)
-        TestCycleDTO cycle1 = testCycleService.insert(cycle);
+        TestCycleDTO cycle1 = testCycleService.insert(2L, cycle);
 
         when:
         List<TestCycleDTO> cycles = testCycleService.getFolderByCycleId(1l)
@@ -272,13 +261,13 @@ class TestCycleServiceImplSpec extends Specification {
         when:
         testCycleService.populateUsers(dtos)
         then:
-        1 * userService.query(_)>> users
+        1 * userService.query(_) >> users
         and:
         dtos.add(testCycleDTO2)
 
         when:
         testCycleService.populateUsers(dtos)
         then:
-        1 * userService.query(_)>> users
+        1 * userService.query(_) >> users
     }
 }

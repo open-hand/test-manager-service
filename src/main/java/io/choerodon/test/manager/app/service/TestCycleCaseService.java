@@ -52,7 +52,7 @@ public interface TestCycleCaseService {
      *
      * @param cycleCaseDTOS
      */
-    void batchChangeCase(List<TestCycleCaseDTO> cycleCaseDTOS);
+    void batchChangeCase(Long projectId, List<TestCycleCaseDTO> cycleCaseDTOS);
 
 
     Long countCaseNotRun(Long projectId);

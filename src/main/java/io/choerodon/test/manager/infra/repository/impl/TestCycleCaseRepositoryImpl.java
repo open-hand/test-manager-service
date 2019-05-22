@@ -1,20 +1,19 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.domain.PageInfo;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
-import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -49,6 +48,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
 
     @Override
     public TestCycleCaseE update(TestCycleCaseE testCycleCaseE) {
+        if (testCycleCaseE.getProjectId() == null) {
+            throw new CommonException("error.projectId.illegal");
+        }
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::updateByPrimaryKey, convert, 1, "error.testCycleCase.update");
         return ConvertHelper.convert(testCycleCaseMapper.selectByPrimaryKey(convert.getExecuteId()), TestCycleCaseE.class);
@@ -88,9 +90,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
         switch (LiquibaseHelper.dbType(dsUrl)) {
             case MYSQL:
             case H2:
-                return PageHelper.doSort(pageRequest.getSort(),()-> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
             case ORACLE:
-                return PageHelper.doSort(pageRequest.getSort(),()->testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
             default:
                 throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
         }
@@ -194,7 +196,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     @Override
-    public List<TestCycleCaseE> batchInsert(List<TestCycleCaseE> testCycleCases) {
+    public List<TestCycleCaseE> batchInsert(Long projectId, List<TestCycleCaseE> testCycleCases) {
         if (testCycleCases == null || testCycleCases.isEmpty()) {
             throw new CommonException("error.cycle.case.list.empty");
         }
@@ -205,6 +207,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
             }
             testCycleCaseE.setCreationDate(now);
             testCycleCaseE.setLastUpdateDate(now);
+            testCycleCaseE.setProjectId(projectId);
         }
 
         List<TestCycleCaseDO> testCycleCaseDOs = ConvertHelper.convertList(testCycleCases, TestCycleCaseDO.class);

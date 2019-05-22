@@ -626,11 +626,11 @@ ORDER BY
     </select>
 
     <insert id="batchInsertTestCycleCases" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="executeId">
-        INSERT INTO test_cycle_case(cycle_id, issue_id, rank, execution_status, assigned_to, description, object_version_number,
+        INSERT INTO test_cycle_case(cycle_id, issue_id, rank, execution_status, assigned_to, description,project_id, object_version_number,
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="list" item="cycleCase" separator=",">
             (#{cycleCase.cycleId}, #{cycleCase.issueId}, #{cycleCase.rank}, #{cycleCase.executionStatus}, #{cycleCase.assignedTo},
-            #{cycleCase.description}, 1, #{cycleCase.createdBy}, #{cycleCase.creationDate}, #{cycleCase.lastUpdatedBy}, #{cycleCase.lastUpdateDate})
+            #{cycleCase.description},#{cycleCase.projectId}, 1, #{cycleCase.createdBy}, #{cycleCase.creationDate}, #{cycleCase.lastUpdatedBy}, #{cycleCase.lastUpdateDate})
         </foreach>
     </insert>
 
