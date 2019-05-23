@@ -89,9 +89,9 @@
     regenerator-runtime "^0.13.2"
 
 "@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2":
-  version "7.4.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime/-/runtime-7.4.4.tgz#dc2e34982eb236803aa27a07fea6857af1b9171d"
-  integrity sha1-3C40mC6yNoA6onoH/qaFevG5Fx0=
+  version "7.4.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime/-/runtime-7.4.5.tgz#582bb531f5f9dc67d2fcb682979894f75e253f12"
+  integrity sha1-WCu1MfX53GfS/LaCl5iU914lPxI=
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -140,9 +140,9 @@
     to-fast-properties "^2.0.0"
 
 "@choerodon/boot@0.1.x", "@choerodon/boot@^0.1.7":
-  version "0.1.8"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.1.8.tgz#554915fd8811c177dce4480277b414fe4e89ea04"
-  integrity sha512-5+PPNt74ESywl5C3qCdYVr9UWKylTGo1Wq5V2WnLhoxPOkgjOoCWEYvpL5PdlldxntjNaZTMXiTaLjp0qLJU/A==
+  version "0.1.9"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.1.9.tgz#3932e9a33e52d7db4808be25798fe345f645bb21"
+  integrity sha512-kJZTI5JFRj04s14u8lefzphPagM/1P3GMSNUG4jGAhEN5kTWkAQ502KMb7s0Xhzk6qlU21WQwOoPYRq0FWQqUw==
   dependencies:
     "@babel/parser" "^7.4.3"
     add-asset-html-webpack-plugin "^2.1.2"
@@ -243,9 +243,9 @@
     webpack-dev-server "^2.11.3"
 
 "@choerodon/master@0.1.x":
-  version "0.1.5"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.1.5.tgz#78fe0734624001264d7740d682bbd218191dc364"
-  integrity sha512-JyaVem+kBC1bTafYxtEd1pfKsVzUqGjQpTS3mxYeSh/UH9/TvfxDWhb864Gc5SjVyuOxTzMU1VWOx+qJ9vyk2Q==
+  version "0.1.6"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.1.6.tgz#61226b452eafa08f048d69d0c51065aef292270b"
+  integrity sha512-g98SFAPj2UquGfvLUO5JN4/cqwvNWR91he+C4ImuVc9WqYKHvEFK69TDNLO1Q5kJFlSnhHu4Es11RX7IoZZGdg==
   dependencies:
     "@choerodon/boot" "^0.1.7"
 
@@ -2243,9 +2243,9 @@ choerodon-ui-font@~0.1.1:
   integrity sha512-xfuJroy7T5qYbVxPiDOOcq4+eS6anEDXMBNQaR4p23i6gPjijbALl5oQvx3uO2dj3aexNcoCGF0gCZ6os9fcMw==
 
 choerodon-ui@0.6.x:
-  version "0.6.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui/-/choerodon-ui-0.6.2.tgz#676637bb6ba8b5f8580d6e5fece7804822b9aa13"
-  integrity sha1-Z2Y3u2uotfhYDW5f7OeASCK5qhM=
+  version "0.6.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui/-/choerodon-ui-0.6.3.tgz#e8b77c0a51e455a0d633741081c1b8bc7b897697"
+  integrity sha512-3NNZP2U3ltEKAqlj+aDqBL8DB8hexHHq4bQbCMQFmgdXHCOtVNIZhRTDaaMBf/qQF0WFzl0rLhdsKRxNSY5nZw==
   dependencies:
     add-dom-event-listener "1.x"
     array-tree-filter "^2.0.0"
@@ -2721,9 +2721,9 @@ core-js@^1.0.0:
   integrity sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=
 
 core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.1, core-js@^2.6.5:
-  version "2.6.7"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/core-js/-/core-js-2.6.7.tgz#c2b19af9b50ec49c356ee087d6155632a889e968"
-  integrity sha1-wrGa+bUOxJw1buCH1hVWMqiJ6Wg=
+  version "2.6.8"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/core-js/-/core-js-2.6.8.tgz#dc3a1e633a04267944e0cb850d3880f340248139"
+  integrity sha1-3DoeYzoEJnlE4MuFDTiA80AkgTk=
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -3435,9 +3435,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.47:
-  version "1.3.135"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/electron-to-chromium/-/electron-to-chromium-1.3.135.tgz#f5799b95f2bcd8de17cde47d63392d83a4477041"
-  integrity sha1-9XmblfK82N4XzeR9Yzktg6RHcEE=
+  version "1.3.136"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/electron-to-chromium/-/electron-to-chromium-1.3.136.tgz#758a156109077536780cfa8207b1aeaa99843e33"
+  integrity sha1-dYoVYQkHdTZ4DPqCB7GuqpmEPjM=
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -9648,7 +9648,7 @@ rx-lite@*, rx-lite@^4.0.8:
 
 rxjs-compat@^6.5.2:
   version "6.5.2"
-  resolved "https://registry.npm.taobao.org/rxjs-compat/download/rxjs-compat-6.5.2.tgz#e469070adf6260bdad195e9d4a39f444ae28b458"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/rxjs-compat/-/rxjs-compat-6.5.2.tgz#e469070adf6260bdad195e9d4a39f444ae28b458"
   integrity sha1-5GkHCt9iYL2tGV6dSjn0RK4otFg=
 
 rxjs@^5.5.12:

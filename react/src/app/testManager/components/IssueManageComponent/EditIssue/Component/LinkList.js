@@ -91,7 +91,7 @@ class LinkList extends Component {
           }}
         >
           <Popconfirm
-            title="确认要删除该问题链接吗?"
+            title="确认要删除吗?"
             placement="left"
             onConfirm={this.confirm.bind(this, linkId)}
             onCancel={this.cancel}
