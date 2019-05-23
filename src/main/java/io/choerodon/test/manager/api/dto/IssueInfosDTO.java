@@ -51,8 +51,14 @@ public class IssueInfosDTO {
     @ApiModelProperty(value = "指派人id")
     private Long assigneeId;
 
-    @ApiModelProperty(value = "指派人名字")
+    @ApiModelProperty(value = "指派人工号+名字")
     private String assigneeName;
+
+    @ApiModelProperty(value = "指派人工号")
+    private String assigneeLoginName;
+
+    @ApiModelProperty(value = "指派人名字")
+    private String assigneeRealName;
 
     @ApiModelProperty(value = "指派人头像url")
     private String assigneeImageUrl;
@@ -72,8 +78,14 @@ public class IssueInfosDTO {
     @ApiModelProperty(value = "报告人id")
     private Long reporterId;
 
-    @ApiModelProperty(value = "报告人名字")
+    @ApiModelProperty(value = "报告人工号+名字")
     private String reporterName;
+
+    @ApiModelProperty(value = "报告人工号")
+    private String reporterLoginName;
+
+    @ApiModelProperty(value = "报告人名字")
+    private String reporterRealName;
 
     @ApiModelProperty(value = "报告人头像url")
     private String reporterImageUrl;
@@ -122,12 +134,16 @@ public class IssueInfosDTO {
         this.statusId = issueComponentDetailDTO.getStatusId();
         this.assigneeId = issueComponentDetailDTO.getAssigneeId();
         this.assigneeName = issueComponentDetailDTO.getAssigneeName();
+        this.assigneeLoginName = issueComponentDetailDTO.getAssigneeLoginName();
+        this.assigneeRealName = issueComponentDetailDTO.getAssigneeRealName();
         this.assigneeImageUrl = issueComponentDetailDTO.getAssigneeImageUrl();
         priorityDTO = issueComponentDetailDTO.getPriorityDTO();
         this.statusName = issueComponentDetailDTO.getStatusMapDTO().getName();
         this.issueNum = issueComponentDetailDTO.getIssueNum();
         this.reporterId = issueComponentDetailDTO.getReporterId();
         this.reporterName = issueComponentDetailDTO.getReporterName();
+        this.reporterLoginName = issueComponentDetailDTO.getReporterLoginName();
+        this.reporterRealName = issueComponentDetailDTO.getReporterRealName();
         this.reporterImageUrl = issueComponentDetailDTO.getReporterImageUrl();
         this.lastUpdateDate = issueComponentDetailDTO.getLastUpdateDate();
         this.creationDate = issueComponentDetailDTO.getCreationDate();
@@ -426,5 +442,37 @@ public class IssueInfosDTO {
 
     public void setIssueTypeDTO(IssueTypeDTO issueTypeDTO) {
         this.issueTypeDTO = issueTypeDTO;
+    }
+
+    public String getAssigneeLoginName() {
+        return assigneeLoginName;
+    }
+
+    public void setAssigneeLoginName(String assigneeLoginName) {
+        this.assigneeLoginName = assigneeLoginName;
+    }
+
+    public String getAssigneeRealName() {
+        return assigneeRealName;
+    }
+
+    public void setAssigneeRealName(String assigneeRealName) {
+        this.assigneeRealName = assigneeRealName;
+    }
+
+    public String getReporterLoginName() {
+        return reporterLoginName;
+    }
+
+    public void setReporterLoginName(String reporterLoginName) {
+        this.reporterLoginName = reporterLoginName;
+    }
+
+    public String getReporterRealName() {
+        return reporterRealName;
+    }
+
+    public void setReporterRealName(String reporterRealName) {
+        this.reporterRealName = reporterRealName;
     }
 }

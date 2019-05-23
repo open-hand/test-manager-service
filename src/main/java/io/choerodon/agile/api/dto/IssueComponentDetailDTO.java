@@ -25,6 +25,10 @@ public class IssueComponentDetailDTO {
 
     private String assigneeImageUrl;
 
+    private String assigneeLoginName;
+
+    private String assigneeRealName;
+
     private Long projectId;
 
     private String issueNum;
@@ -32,6 +36,10 @@ public class IssueComponentDetailDTO {
     private Long reporterId;
 
     private String reporterName;
+
+    private String reporterLoginName;
+
+    private String reporterRealName;
 
     private String reporterImageUrl;
 
@@ -241,6 +249,38 @@ public class IssueComponentDetailDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getAssigneeLoginName() {
+        return assigneeLoginName;
+    }
+
+    public void setAssigneeLoginName(String assigneeLoginName) {
+        this.assigneeLoginName = assigneeLoginName;
+    }
+
+    public String getAssigneeRealName() {
+        return assigneeRealName;
+    }
+
+    public void setAssigneeRealName(String assigneeRealName) {
+        this.assigneeRealName = assigneeRealName;
+    }
+
+    public String getReporterLoginName() {
+        return reporterLoginName;
+    }
+
+    public void setReporterLoginName(String reporterLoginName) {
+        this.reporterLoginName = reporterLoginName;
+    }
+
+    public String getReporterRealName() {
+        return reporterRealName;
+    }
+
+    public void setReporterRealName(String reporterRealName) {
+        this.reporterRealName = reporterRealName;
     }
 
     @Override
