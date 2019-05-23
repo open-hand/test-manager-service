@@ -66,32 +66,28 @@ export function renderPriority(priorityDTO) {
     </Tooltip>
   );
 }
-export function renderVersions(versions, priorityName) {
-  return (
-    <Tooltip mouseEnterDelay={0.5} title={`版本： ${versions.map(version => version.name).join(',')}`}>
-      {versions.map(version => (
-        <div
+export function renderVersions(versions) {
+  if (versions.length > 0) {
+    return (
+      <Tooltip title={versions.map(version => version.name).join(',')}>
+        <Tag
+          color="blue"
           style={{
-            display: 'inline-block',
-            maxWidth: 'calc(100% - 10px)',
-            color: 'rgba(0,0,0,0.36)',
-            height: 22,
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            borderColor: 'rgba(0,0,0,0.36)',
-            borderRadius: '2px',
-            fontSize: '13px',
-            lineHeight: '20px',
-            padding: '0 8px',
-            margin: '0 5px',
+            maxWidth: 160,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            verticalAlign: 'bottom',
           }}
-          className="c7ntest-text-dot"
         >
-          {version.name}
-        </div>
-      ))}
-    </Tooltip>
-  );
+          {versions[0].name}
+        </Tag>
+        {versions.length > 1 && <Tag color="blue">...</Tag>}
+      </Tooltip>
+    );
+  } else {
+    return null;
+  }
 }
 export function renderEpic(epicName, epicColor) {
   return (
@@ -176,41 +172,37 @@ export function renderLabels(labels) {
     return null;
   }
 }
-export function renderAssigned(assigneeId, assigneeName, imageUrl, hiddenText) {
+export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, imageUrl, hiddenText) {
   return (
-    assigneeId ? (
-      <Tooltip mouseEnterDelay={0.5} title={`任务经办人： ${assigneeName}`}>
-        <div>
-          <UserHead
-            hiddenText={hiddenText}
-            user={{
-              id: assigneeId,
-              loginName: '',
-              realName: assigneeName,
-              avatar: imageUrl,
-            }}
-          />
-        </div>
-      </Tooltip>
+    assigneeId ? (      
+      <div>
+        <UserHead
+          hiddenText={hiddenText}
+          user={{
+            id: assigneeId,
+            loginName: assigneeLoginName,
+            realName: assigneeRealName,
+            avatar: imageUrl,
+          }}
+        />
+      </div>   
     ) : null
   );
 }
-export function renderReporter(reporterId, reporterName, reporterImageUrl, hiddenText) {
+export function renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl, hiddenText) {
   return (
-    reporterId ? (
-      <Tooltip mouseEnterDelay={0.5} title={`任务报告人： ${reporterName}`}>
-        <div>
-          <UserHead
-            hiddenText={hiddenText}
-            user={{
-              id: reporterId,
-              loginName: '',
-              realName: reporterName,
-              avatar: reporterImageUrl,
-            }}
-          />
-        </div>
-      </Tooltip>
+    reporterId ? (      
+      <div>
+        <UserHead
+          hiddenText={hiddenText}
+          user={{
+            id: reporterId,
+            loginName: reporterLoginName,
+            realName: reporterRealName,
+            avatar: reporterImageUrl,
+          }}
+        />
+      </div>     
     ) : null
   );
 }

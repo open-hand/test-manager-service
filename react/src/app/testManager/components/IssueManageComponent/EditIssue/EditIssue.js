@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withRouter } from 'react-router-dom';
 import { stores, Permission } from '@choerodon/boot';
 import _ from 'lodash';
@@ -90,6 +90,7 @@ class EditIssueNarrow extends Component {
     FullEditorShow: false,
     createLinkTaskShow: false,
     editDescriptionShow: false,
+    showMore: false,
     addingComment: false,
     currentNav: 'detail',
     StatusList: [],
@@ -558,7 +559,7 @@ class EditIssueNarrow extends Component {
     if (!description || editDescriptionShow) {
       delta = text2Delta(description);
       return (
-        <div className="line-start mt-10">
+        editDescriptionShow && <div className="line-start mt-10">
           <WYSIWYGEditor
             bottomBar
             value={text2Delta(description)}
@@ -1086,7 +1087,7 @@ class EditIssueNarrow extends Component {
   render() {
     const {
       issueLoading, FullEditorShow, createLinkTaskShow,
-      currentNav,
+      currentNav, showMore
     } = this.state;
     const {
       loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,
@@ -1274,6 +1275,12 @@ class EditIssueNarrow extends Component {
                             flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                           }}
                           />
+                          <div style={{ marginLeft: '14px', position: 'relative' }}>
+                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
+                              <Icon type={showMore ? 'arrow_drop_down' : 'baseline-arrow_left'} style={{ marginRight: 2 }} />
+                              <span>{showMore ? '隐藏更多' : '显示更多'}</span>
+                            </Button>
+                          </div>
                         </div>
                         <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
 
@@ -1323,59 +1330,82 @@ class EditIssueNarrow extends Component {
                               </div>
                             </div>
                           </div>
-
                           {/* 文件夹名称 */}
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_create_content_folder" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {folderName}
-                            </div>
-                          </div>
-                          {/* 模块 */}
-                          {
-                            typeCode !== 'sub_task' ? (
-                              <div className="line-start mt-10">
-                                <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">
-                                    <FormattedMessage id="summary_component" />
-                                    {'：'}
-                                  </span>
-                                </div>
-                                <div className="c7ntest-value-wrapper">
-                                  {this.renderSelectModule()}
-                                </div>
+                          {showMore ? <Fragment>
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="issue_create_content_folder" />
+                                  {'：'}
+                                </span>
                               </div>
-                            ) : null
-                          }
-                          {/* 标签 */}
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="summary_label" />
-                                {'：'}
-                              </span>
+                              <div className="c7ntest-value-wrapper">
+                                {folderName}
+                              </div>
                             </div>
-                            <div className="c7ntest-value-wrapper">
-                              {this.renderSelectLabel()}
+                            {/* 模块 */}
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="summary_component" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper">
+                                {this.renderSelectModule()}
+                              </div>
                             </div>
-                          </div>
 
-                          {/* 报告人 */}
-                          <div className="line-start mt-10 assignee">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_edit_reporter" />
-                                {'：'}
-                              </span>
+                            {/* 标签 */}
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="summary_label" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper">
+                                {this.renderSelectLabel()}
+                              </div>
                             </div>
-                            <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                              {this.renderSelectPerson()}
-                              {!this.checkDisabledModifyOrDelete() && (
+
+                            {/* 报告人 */}
+                            <div className="line-start mt-10 assignee">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="issue_edit_reporter" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                {this.renderSelectPerson()}
+                                {!this.checkDisabledModifyOrDelete() && (
+                                  <span
+                                    role="none"
+                                    style={{
+                                      color: '#3f51b5',
+                                      cursor: 'pointer',
+                                      marginTop: '-2px',
+                                      display: 'inline-block',
+                                    }}
+                                    onClick={() => {
+                                      this.editIssue({ reporterId: AppState.userInfo.id });
+                                    }}
+                                  >
+                                    <FormattedMessage id="issue_edit_assignToMe" />
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="line-start mt-10 assignee">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="issue_edit_manager" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                {this.renderSelectAssign()}
                                 <span
                                   role="none"
                                   style={{
@@ -1385,63 +1415,36 @@ class EditIssueNarrow extends Component {
                                     display: 'inline-block',
                                   }}
                                   onClick={() => {
-                                    this.editIssue({ reporterId: AppState.userInfo.id });
+                                    this.editIssue({ assigneeId: AppState.userInfo.id });
                                   }}
                                 >
                                   <FormattedMessage id="issue_edit_assignToMe" />
                                 </span>
-                              )}
+                              </div>
                             </div>
-                          </div>
-                          <div className="line-start mt-10 assignee">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_edit_manager" />
-                                {'：'}
-                              </span>
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="issue_edit_createDate" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper">
+                                <Timeago date={creationDate} />
+                              </div>
                             </div>
-                            <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                              {this.renderSelectAssign()}
-                              <span
-                                role="none"
-                                style={{
-                                  color: '#3f51b5',
-                                  cursor: 'pointer',
-                                  marginTop: '-2px',
-                                  display: 'inline-block',
-                                }}
-                                onClick={() => {
-                                  this.editIssue({ assigneeId: AppState.userInfo.id });
-                                }}
-                              >
-                                <FormattedMessage id="issue_edit_assignToMe" />
-                              </span>
+                            <div className="line-start mt-10">
+                              <div className="c7ntest-property-wrapper">
+                                <span className="c7ntest-property">
+                                  <FormattedMessage id="issue_edit_updateDate" />
+                                  {'：'}
+                                </span>
+                              </div>
+                              <div className="c7ntest-value-wrapper">
+                                <Timeago date={lastUpdateDate} />
+                              </div>
                             </div>
-                          </div>
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_edit_createDate" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {/* {formatDate(creationDate)} */}
-                              <Timeago date={creationDate} />
-                            </div>
-                          </div>
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_edit_updateDate" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {/* {formatDate(lastUpdateDate)} */}
-                              <Timeago date={lastUpdateDate} />
-                            </div>
-                          </div>
+                          </Fragment> : null}
                         </div>
                       </div>
                       <div id="des">
