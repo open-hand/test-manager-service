@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
@@ -63,7 +64,7 @@ class LinkList extends Component {
             </p>
           </div>
         </Tooltip>
-        <div style={{ width: '34px', marginRight: '15px', overflow: 'hidden' }}>
+        <div style={{ marginRight: '15px', overflow: 'hidden' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
             <div style={{ marginRight: 12 }}>
               <PriorityTag priority={priorityDTO} />
@@ -90,7 +91,7 @@ class LinkList extends Component {
           }}
         >
           <Popconfirm
-            title="确认要删除该问题链接吗?"
+            title="确认要删除吗?"
             placement="left"
             onConfirm={this.confirm.bind(this, linkId)}
             onCancel={this.cancel}

@@ -152,7 +152,7 @@ class IssueTable extends Component {
   onDragStart = (monitor) => {
     const draggingTableItems = IssueStore.getDraggingTableItems;
     if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
-      const index = monitor.source.index;
+      const { index } = monitor.source;
       this.setState({
         firstIndex: index,
       });

@@ -9,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { StatusTags } from '../../../../components/CommonComponent';
 import {
-  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams,  TestExecuteLink, TestPlanLink, 
+  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink, 
 } from '../../../../common/utils';
 import {
   editCycle, removeDefect,
@@ -57,6 +57,7 @@ const CardWrapper = ({ children, title, style }) => (
 @observer
 class ExecuteDetail extends Component {
   componentDidMount() {
+    // eslint-disable-next-line react/destructuring-assignment
     const { id } = this.props.match.params;
     ExecuteDetailStore.clearPagination();
     ExecuteDetailStore.getInfo(id);
@@ -138,7 +139,7 @@ class ExecuteDetail extends Component {
       }      
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
-      console.log(error);
+      // console.log(error);
       Choerodon.prompt('网络异常');
     });
   }
@@ -155,7 +156,7 @@ class ExecuteDetail extends Component {
 
   quickPassOrFail = (text) => {
     const cycleData = { ...ExecuteDetailStore.getCycleData };
-    const statusList = ExecuteDetailStore.statusList;
+    const { statusList } = ExecuteDetailStore;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
       cycleData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
       delete cycleData.defects;
@@ -197,7 +198,7 @@ class ExecuteDetail extends Component {
 
   render() {
     const { disabled } = this.props;
-    const loading = ExecuteDetailStore.loading;
+    const { loading } = ExecuteDetailStore;
     const detailList = ExecuteDetailStore.getDetailList;
     const historyList = ExecuteDetailStore.getHistoryList;
     const historyPagination = ExecuteDetailStore.getHistoryPagination;
@@ -218,7 +219,7 @@ class ExecuteDetail extends Component {
       <Page className="c7ntest-ExecuteDetail">
         <Header
           title={<FormattedMessage id="execute_detail" />}
-          backPath={disabled?TestPlanLink(): TestExecuteLink()}
+          backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
           <Button
             disabled={lastExecuteId === null}

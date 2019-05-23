@@ -29,8 +29,8 @@ class SmartTooltip extends Component {
     if (this.container) {
       const { scrollWidth, clientWidth } = this.container;
       const isOverflow = scrollWidth > clientWidth;
-      // console.log(scrollWidth, clientWidth);     
-      if (this.state.overflow !== isOverflow) {
+      const { overflow } = this.state;
+      if (overflow !== isOverflow) {
         this.setState({
           overflow: isOverflow,
         });

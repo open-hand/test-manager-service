@@ -163,6 +163,10 @@
                      open="(" separator="," close=")">
                 #{item}
             </foreach>
+        ORDER BY
+            cycle1.rank,
+            cycle1.cycle_id,
+            color1.statusId
     </select>
 
     <select id="validateCycle" resultType="java.lang.Long">

@@ -8,6 +8,10 @@ const PriorityTag = ({ style, priority }) => {
     <div
       style={{
         ...style,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxWidth: 100,
         backgroundColor: color2rgba(colour, 0.18),
         color: colour,
         borderRadius: '2px',
