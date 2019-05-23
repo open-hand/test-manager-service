@@ -58,7 +58,7 @@ export function renderPriority(priorityDTO) {
   const { name } = priorityDTO;
   return ( 
     <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
-      <div style={{ display: 'inline-block', margin: '0 5px' }}>
+      <div>
         <PriorityTag
           priority={priorityDTO}
         />

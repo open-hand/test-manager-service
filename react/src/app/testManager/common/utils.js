@@ -1,6 +1,7 @@
 import { stores, axios } from '@choerodon/boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import _ from 'lodash';
+// eslint-disable-next-line import/no-cycle
 import { uploadImage, uploadFileAgile } from '../api/FileApi';
 import { SERVICES_URL } from './Constant';
 import humanize from './humanizeDuration';
@@ -272,7 +273,7 @@ export function TestExecuteLink(cycleId) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `${cycleId}` : ''}`}`);
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
 export function TestPlanLink(cycleId) {
   const menu = AppState.currentMenuType;
@@ -280,7 +281,7 @@ export function TestPlanLink(cycleId) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `${cycleId}` : ''}`}`);
+  return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
 export function executeDetailLink(executeId, cycleId) {
   const menu = AppState.currentMenuType;

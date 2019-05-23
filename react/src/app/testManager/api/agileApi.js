@@ -55,7 +55,7 @@ export function getIssuesForDefects(summary) {
   return new Promise(((resolve) => {
     getIssueTypes('agile').then((types) => {
       const advancedSearchArgs = {
-        issueTypeId: types.map(type => type.id),
+        issueTypeId: types.filter(type => type.typeCode === 'bug').map(type => type.id),
       };
       const searchArgs = {};
       if (summary) {

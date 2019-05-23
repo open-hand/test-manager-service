@@ -112,7 +112,7 @@ class PlanTree extends Component {
       children, key, cycleCaseList, type, cycleId,
     } = item;
     // debugger;
-    const { searchValue } = this.state;
+    const { searchValue, statusList } = this.state;
     const expandedKeys = TestPlanStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);
     const beforeStr = item.title.substr(0, index);
@@ -152,7 +152,7 @@ class PlanTree extends Component {
         title={(
           <PlanTreeTitle
             index={i}
-            statusList={this.state.statusList}
+            statusList={statusList}
             refresh={this.refresh}
             callback={this.callback}
             text={item.title}

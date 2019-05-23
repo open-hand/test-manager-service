@@ -1,4 +1,4 @@
-/* eslint-disable */
+/*eslint-disable */
 import React, { Component } from 'react';
 import { stores, axios, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
@@ -108,23 +108,22 @@ class CreateLinkTask extends Component {
 
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        const { linkTypeId, issues } = values;
+      if (!err) {        
         const labelIssueRelDTOList = _.map(this.state.selected, (issue) => {
-          const currentLinkType = _.find(this.state.originLinks, { linkTypeId: linkTypeId.split('+')[0] * 1 });
-          if (currentLinkType.outWard === linkTypeId.split('+')[1]) {
-            return ({
-              linkTypeId: linkTypeId.split('+')[0] * 1,
-              linkedIssueId: issue * 1,
-              issueId: this.props.issueId,
-            });
-          } else {
-            return ({
-              linkTypeId: linkTypeId.split('+')[0] * 1,
-              issueId: issue * 1,
-              linkedIssueId: this.props.issueId,
-            });
-          }
+          const currentLinkType = this.state.originLinks[0];
+          // if (currentLinkType.outWard === linkTypeId.split('+')[1]) {
+          return ({
+            linkTypeId: currentLinkType.linkTypeId,
+            linkedIssueId: issue * 1,
+            issueId: this.props.issueId,
+          });
+          // } else {
+          //   return ({
+          //     linkTypeId: linkTypeId.split('+')[0] * 1,
+          //     issueId: issue * 1,
+          //     linkedIssueId: this.props.issueId,
+          //   });
+          // }
         });
         this.setState({ createLoading: true });
         createLink(this.props.issueId, labelIssueRelDTOList)
@@ -145,7 +144,7 @@ class CreateLinkTask extends Component {
     return (
       <Sidebar
         className="c7ntest-newLink"
-        title={<FormattedMessage id="issue_create_link_title" />}
+        title="关联问题"
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
@@ -157,11 +156,11 @@ class CreateLinkTask extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="issue_create_link_content_title" />}
-          description={<FormattedMessage id="issue_create_link_content_description" />}
+          title="对用例进行问题关联"
+          description="请在下面选中要关联的问题"
         >
           <Form layout="vertical">
-            <FormItem style={{ width: 520 }}>
+            {/* <FormItem style={{ width: 520 }}>
               {getFieldDecorator('linkTypeId', {
                 rules: [{
                   required: true, message: '请选择类型!',
@@ -179,7 +178,7 @@ class CreateLinkTask extends Component {
                   ))}
                 </Select>,
               )}
-            </FormItem>
+            </FormItem> */}
 
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('issues', {
@@ -203,7 +202,7 @@ class CreateLinkTask extends Component {
                       key={issue.issueId}
                       value={issue.issueNum}
                     >
-                      <div style={{ display: 'inline-block' }}>
+                      <div style={{ display: 'inline-block', width: '100%' }}>
                         <div className="c7ntest-link-select-item">
                           <div>
                             <TypeTag
