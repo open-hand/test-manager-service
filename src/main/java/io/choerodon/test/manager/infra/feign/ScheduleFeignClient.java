@@ -5,6 +5,7 @@ import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
+
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,5 @@ public interface ScheduleFeignClient {
     @GetMapping("/v1/schedules/projects/{project_id}/methods/service")
     ResponseEntity<List<ScheduleMethodDTO>> getMethodByService(@PathVariable("project_id") long projectId,
                                                                @RequestParam(name = "service") String service);
-    }
+}
 
