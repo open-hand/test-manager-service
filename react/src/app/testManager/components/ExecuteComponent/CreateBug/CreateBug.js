@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { stores, Content } from '@choerodon/boot';
 import _ from 'lodash';
@@ -9,7 +10,7 @@ import {
   handleFileUpload, beforeTextUpload, getProjectName, randomString,
 } from '../../../common/utils';
 import {
-  getIssueTypes, getPrioritys, getEpics, getSprintsUnClosed, getProjectVersion, getModules, getLabels,
+  getIssueTypes, getPrioritys, getEpics, getSprints, getProjectVersion, getModules, getLabels,
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
 import { addBugForExecuteOrStep, getIssueLinkTypes } from '../../../api/ExecuteDetailApi';
@@ -47,12 +48,13 @@ class CreateBug extends Component {
     issueLinkTypes: [],
     issues: [],
     defaultPriority: false,
+    defaultSprint: undefined,
     bugType: undefined,
   }
 
   componentDidMount() {
     Promise.all([
-      getIssueTypes('agile'), getPrioritys(), getUsers(), getEpics(), getSprintsUnClosed(), getProjectVersion(), getModules(), getLabels(),
+      getIssueTypes('agile'), getPrioritys(), getUsers(), getEpics(), getSprints(), getProjectVersion(), getModules(), getLabels(),
     ]).then(([originIssueTypes, priorities, userData, epics, sprints, versionList, components, labels]) => {
       this.setState({
         priorities,
@@ -62,6 +64,7 @@ class CreateBug extends Component {
         versionList,
         components,
         defaultPriority: priorities.find(item => item.default),
+        defaultSprint: sprints.find(sprint => sprint.statusCode === 'started'),
         labels,
         bugType: originIssueTypes.find(item => item.typeCode === 'bug'),
       });
@@ -295,7 +298,7 @@ class CreateBug extends Component {
     } = this.props;
     const { getFieldDecorator } = form;
     const {
-      priorities, defaultPriority, createLoading,
+      priorities, defaultPriority, defaultSprint, createLoading,
       fullEdit, delta, users,
       epics, sprints, versionList, components,
       labels, fileList, selectLoading, bugType, issueLinkArr, issues, links,
@@ -456,7 +459,9 @@ class CreateBug extends Component {
               }
 
               <FormItem label={<FormattedMessage id="createBug_field_sprint" />} style={{ width: 520 }}>
-                {getFieldDecorator('sprintId', {})(
+                {getFieldDecorator('sprintId', {
+                  initialValue: defaultSprint ? defaultSprint.sprintId : undefined,
+                })(
                   <Select
                     label={<FormattedMessage id="createBug_field_sprint" />}
                     allowClear

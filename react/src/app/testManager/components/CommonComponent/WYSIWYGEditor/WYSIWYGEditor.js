@@ -1,11 +1,14 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import { Button } from 'choerodon-ui';
 import 'react-quill/dist/quill.snow.css';
 import ImageDrop from './ImageDrop';
+import Link from './Link';
 import './WYSIWYGEditor.scss';
 
 Quill.register('modules/imageDrop', ImageDrop);
+Quill.register('formats/link', Link);
 
 class WYSIWYGEditor extends Component {
   state = {
@@ -67,7 +70,7 @@ class WYSIWYGEditor extends Component {
     const editHeight = style.height - (this.props.toolbarHeight || 42);
     return (
       <div style={{ width: '100%' }}>
-        <div style={style} className="react-quill-editor">
+        <div style={style} className="react-quill-editor" ref={container => this.container = container}>
           <ReactQuill
             ref={(editor) => { this.editor = editor; }}
             theme="snow"
@@ -77,6 +80,7 @@ class WYSIWYGEditor extends Component {
             placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}            
             defaultValue={defaultValue}
             onChange={this.handleChange}
+            bounds={this.container}
           />
         </div>
         {
