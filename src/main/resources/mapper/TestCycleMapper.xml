@@ -135,7 +135,8 @@
                 count( 1 ) counts,
                 temp1.cycle_id,
                 statusId,
-                statusName
+                statusName,
+                projectId
             FROM
                 (
                 SELECT
@@ -143,7 +144,8 @@
                     cycle.cycle_id,
                     status1.status_id statusId,
                     status1.status_color color,
-                    status1.status_name statusName
+                    status1.status_name statusName,
+                    status1.project_id projectId
                 FROM
                     test_cycle_case cycle
                     LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
