@@ -37,22 +37,22 @@ const Section = ({
   children,
   style,
 }) => (
-  <section id={id}>
-    <div className="c7ntest-side-item-header">
-      <div className="c7ntest-side-item-header-left">
-        <Icon type={icon} />
-        <span>{title}</span>
+    <section id={id}>
+      <div className="c7ntest-side-item-header">
+        <div className="c7ntest-side-item-header-left">
+          <Icon type={icon} />
+          <span>{title}</span>
+        </div>
+        <div className="c7ntest-side-item-header-line" />
+        <div className="c7ntest-side-item-header-right">
+          {action}
+        </div>
       </div>
-      <div className="c7ntest-side-item-header-line" />
-      <div className="c7ntest-side-item-header-right">
-        {action}
+      <div className="c7ntest-side-item-content" style={style}>
+        {children}
       </div>
-    </div>
-    <div className="c7ntest-side-item-content" style={style}>
-      {children}
-    </div>
-  </section>
-);
+    </section>
+  );
 const defaultProps = {
   issueInfosDTO: { issueTypeDTO: {} },
 };
@@ -232,12 +232,12 @@ class ExecuteDetailSide extends Component {
     ));
     return (
       <div className="c7ntest-ExecuteDetailSide">
-        <FullEditor
+        {FullEditorShow && <FullEditor
           initValue={comment}
           visible={FullEditorShow}
           onCancel={this.HideFullEditor}
           onOk={onCommentSave}
-        />
+        />}
         <div className="c7ntest-nav">
           {/* 左上角类型图标 */}
           <div style={{
@@ -257,7 +257,7 @@ class ExecuteDetailSide extends Component {
               <div style={{ fontSize: '16px', fontWeight: 500 }}>
                 相关用例:
                 <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
-              </div>  
+              </div>
               <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
                 <span>隐藏详情</span>
               </Button>

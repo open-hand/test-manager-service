@@ -22,7 +22,7 @@ class WYSIWYGEditor extends Component {
     ],
     imageDrop: true,
   };
-  
+
   formats = [
     'bold',
     'italic',
@@ -42,15 +42,20 @@ class WYSIWYGEditor extends Component {
     borderRight: 'none',
   };
 
-  handleChange = (content, delta, source, editor) => {   
+  handleChange = (content, delta, source, editor) => {
     const value = editor.getContents();
-    this.setState({
-      value: value.ops,
-    });
+    this.value = value.ops;
+    // this.setState({
+    //   value: value.ops,
+    // });
     if (this.props.onChange && value && value.ops) {
       this.props.onChange(value.ops);
     }
   };
+  componentDidMount() {
+    console.log(this.editor)
+    // this.editor.setBounds(this.container)
+  }
 
   // componentWillReceiveProps(nextProps) {       
   //   if (this.props.value !== nextProps.value) {
@@ -77,10 +82,10 @@ class WYSIWYGEditor extends Component {
             modules={this.modules}
             formats={this.formats}
             style={{ height: editHeight }}
-            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}            
+            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}
             defaultValue={defaultValue}
             onChange={this.handleChange}
-            bounds={this.container}
+            bounds=".react-quill-editor"
           />
         </div>
         {
@@ -102,7 +107,7 @@ class WYSIWYGEditor extends Component {
               </Button>
               <Button
                 type="primary"
-                onClick={() => this.props.handleSave(this.state.value)}
+                onClick={() => this.props.handleSave(this.value)}
               >
                 {Choerodon.getMessage('保存', 'Save')}
               </Button>

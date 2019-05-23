@@ -1563,7 +1563,7 @@ class EditIssueNarrow extends Component {
             </div>
 
             {
-              <FullEditor
+              FullEditorShow && <FullEditor
                 initValue={description}
                 visible={FullEditorShow}
                 onCancel={() => this.setState({ FullEditorShow: false })}
