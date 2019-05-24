@@ -58,7 +58,7 @@ export function renderPriority(priorityDTO) {
   const { name } = priorityDTO;
   return ( 
     <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
-      <div>
+      <div style={{ marginTop: 4 }}>
         <PriorityTag
           priority={priorityDTO}
         />
@@ -128,7 +128,7 @@ export function renderFolder(folderName) {
             fontSize: '13px',
             lineHeight: '20px',
             padding: '0 8px',  
-            margin: '0 5px',   
+            margin: '4px 5px 0px',
           }}
           className="c7ntest-text-dot"
         >
