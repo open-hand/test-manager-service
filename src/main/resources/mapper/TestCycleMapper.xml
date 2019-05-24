@@ -23,7 +23,6 @@
         <id column="description" property="description"/>
         <id column="build" property="build"/>
         <id column="folder_id" property="folderId"/>
-        <id column="project_id" property="projectId"/>
         <id column="environment" property="environment"/>
         <id column="from_date" property="fromDate"/>
         <id column="to_date" property="toDate"/>
@@ -122,7 +121,7 @@
             cycle1.object_version_number,
             cycle1.created_by,
             cycle1.rank,
-            cycle1.project_id,
+            color1.projectId,
             color1.color,
             color1.counts,
             color1.statusName,
