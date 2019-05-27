@@ -19,3 +19,7 @@ spring:
 management:
   server:
     port: 8094
+  endpoints:
+    web:
+      exposure:
+        include: '*'
