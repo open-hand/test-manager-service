@@ -340,8 +340,10 @@ class IssueTable extends Component {
         dataIndex: 'reporter',
         key: 'reporter',
         render: (assign, record) => {
-          const { reporterId, reporterName, reporterImageUrl } = record;
-          return renderReporter(reporterId, reporterName, reporterImageUrl);
+          const {
+            reporterId, reporterLoginName, reporterRealName, reporterImageUrl, 
+          } = record;
+          return renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl);
         },
       },
       {
@@ -357,8 +359,10 @@ class IssueTable extends Component {
         dataIndex: 'assign',
         key: 'assign',
         render: (assign, record) => {
-          const { assigneeId, assigneeName, assigneeImageUrl } = record;
-          return renderAssigned(assigneeId, assigneeName, assigneeImageUrl);
+          const {
+            assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl, 
+          } = record;
+          return renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl);
         },
       },
       {

@@ -82,8 +82,8 @@ public class TestCycleServiceImpl implements TestCycleService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO insert(TestCycleDTO testCycleDTO) {
-        TestCycleDTO cycleDTO = ConvertHelper.convert(iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
+    public TestCycleDTO insert(Long projectId,TestCycleDTO testCycleDTO) {
+        TestCycleDTO cycleDTO = ConvertHelper.convert(iTestCycleService.insert(projectId,ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
         if (testCycleDTO.getFolderId() != null) {
             iTestCycleService.insertCaseToFolder(testCycleDTO.getFolderId(), cycleDTO.getCycleId());
         }
@@ -92,10 +92,11 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO) {
-        TestCycleE cycleE = iTestCycleService.insert(ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+    public TestCycleDTO insertWithoutSyncFolder(Long projectId, TestCycleDTO testCycleDTO) {
+        TestCycleE cycleE = iTestCycleService.insert(projectId, ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+        cycleE.setProjectId(projectId);
         if (StringUtils.equals(cycleE.getType(), TestCycleE.FOLDER)) {
-            syncCycleDate(cycleE);
+            syncCycleDate(projectId, cycleE);
         }
         return ConvertHelper.convert(cycleE, TestCycleDTO.class);
     }
@@ -218,7 +219,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO update(TestCycleDTO testCycleDTO) {
+    public TestCycleDTO update(Long projectId, TestCycleDTO testCycleDTO) {
         TestCycleE temp = TestCycleEFactory.create();
         temp.setCycleId(testCycleDTO.getCycleId());
         TestCycleE temp1 = temp.queryOne();
@@ -238,7 +239,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
             Optional.ofNullable(testCycleDTO.getFolderId()).ifPresent(temp1::setFolderId);
             temp1.setObjectVersionNumber(objectVersionNumber);
-            syncCycleDate(temp1);
+            syncCycleDate(projectId, temp1);
         } else if (temp1.getType().equals(TestCycleE.CYCLE)) {
             Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(temp1::setBuild);
             Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(temp1::setCycleName);
@@ -247,32 +248,33 @@ public class TestCycleServiceImpl implements TestCycleService {
             Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
             Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
             temp1.setObjectVersionNumber(objectVersionNumber);
-            syncFolderDate(temp1);
+            syncFolderDate(projectId, temp1);
         }
         if (!StringUtils.isEmpty(testCycleDTO.getLastRank()) || !StringUtils.isEmpty(testCycleDTO.getNextRank())) {
             temp1.setRank(RankUtil.Operation.UPDATE.getRank(testCycleDTO.getLastRank(), testCycleDTO.getNextRank()));
             temp1.setObjectVersionNumber(objectVersionNumber);
         }
-        return ConvertHelper.convert(iTestCycleService.update(temp1), TestCycleDTO.class);
+        return ConvertHelper.convert(iTestCycleService.update(projectId, temp1), TestCycleDTO.class);
     }
 
     /**
      * 修改cycle时间后同步子folder的时间跨度
      *
+     * @param projectId
      * @param cycleE
      */
-    private void syncFolderDate(TestCycleE cycleE) {
+    private void syncFolderDate(Long projectId, TestCycleE cycleE) {
         List<TestCycleE> folders = cycleE.getChildFolder();
-        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> iTestCycleService.update(v));
+        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> iTestCycleService.update(projectId, v));
     }
 
-    private void syncCycleDate(TestCycleE cycleE) {
+    private void syncCycleDate(Long projectId, TestCycleE cycleE) {
         Long parentCycleId = cycleE.getParentCycleId();
         TestCycleE parentCycle = TestCycleEFactory.create();
         parentCycle.setCycleId(parentCycleId);
         TestCycleE cycle = parentCycle.queryOne();
         if (ifSyncNeed(cycle, cycleE.getFromDate(), cycleE.getToDate())) {
-            iTestCycleService.update(cycle);
+            iTestCycleService.update(projectId, cycle);
         }
     }
 
@@ -465,15 +467,15 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public void batchChangeAssignedInOneCycle(Long userId, Long cycleId) {
+    public void batchChangeAssignedInOneCycle(Long projectId, Long userId, Long cycleId) {
         TestCycleE cycleE = TestCycleEFactory.create();
         cycleE.setParentCycleId(cycleId);
         List<TestCycleE> cycleES = cycleE.querySelf();
         if (ObjectUtils.isEmpty(cycleES)) {
-            batchChangeCase(userId, cycleId);
+            batchChangeCase(projectId, userId, cycleId);
         } else {
             for (TestCycleE cycle : cycleES) {
-                batchChangeCase(userId, cycle.getCycleId());
+                batchChangeCase(projectId, userId, cycle.getCycleId());
             }
         }
     }
@@ -556,12 +558,12 @@ public class TestCycleServiceImpl implements TestCycleService {
         return ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDTO.class);
     }
 
-    private void batchChangeCase(Long userId, Long cycleId) {
+    private void batchChangeCase(Long projectId, Long userId, Long cycleId) {
         TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseDTO> caseDTOS = ConvertHelper.convertList(cycleCaseE.querySelf(), TestCycleCaseDTO.class);
         caseDTOS.forEach(v -> v.setAssignedTo(userId));
-        testCycleCaseService.batchChangeCase(caseDTOS);
+        testCycleCaseService.batchChangeCase(projectId, caseDTOS);
     }
 
 

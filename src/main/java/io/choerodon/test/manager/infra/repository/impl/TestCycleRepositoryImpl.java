@@ -116,6 +116,7 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
      */
     @Override
     public void validateCycle(TestCycleE testCycleE) {
+        Assert.notNull(testCycleE.getProjectId(), "error.cycle.projectId.not.be.null");
         Assert.notNull(testCycleE.getVersionId(), "error.cycle.versionId.not.be.null");
         Assert.notNull(testCycleE.getCycleName(), "error.cycle.name.not.be.null");
         TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);

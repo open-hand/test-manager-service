@@ -1,3 +1,4 @@
+/*eslint-disable */
 import React, { Component } from 'react';
 import {
   Button, Input, Icon, Select, 
@@ -62,7 +63,7 @@ class CreateIssueTiny extends Component {
           if (folderId) {
             targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
           } else {
-            const versionId = data.versionIssueRelDTOList[0].versionId;
+            const {versionId} = data.versionIssueRelDTOList[0];
             targetCycle = _.find(IssueTreeStore.dataList, { versionId });
           }    
           if (targetCycle) {      
@@ -107,7 +108,7 @@ class CreateIssueTiny extends Component {
                       IssueStore.selectVersion(value);
                     }}
                     value={selectedVersion}
-                    style={{ width: 50 }}
+                    style={{ minWidth: 50 }}
                     dropdownMatchSelectWidth={false}
                   >
                     {

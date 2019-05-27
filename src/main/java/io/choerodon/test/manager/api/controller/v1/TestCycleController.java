@@ -1,11 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
+import io.choerodon.base.annotation.Permission;
 import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
@@ -36,8 +36,7 @@ public class TestCycleController {
     @PostMapping
     public ResponseEntity<TestCycleDTO> insert(@PathVariable(name = "project_id") Long projectId,
                                                @RequestBody TestCycleDTO testCycleDTO) {
-        testCycleDTO.setProjectId(projectId);
-        return Optional.ofNullable(testCycleService.insert(testCycleDTO))
+        return Optional.ofNullable(testCycleService.insert(projectId, testCycleDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycle.insert"));
     }
@@ -58,7 +57,7 @@ public class TestCycleController {
     @PutMapping
     ResponseEntity<TestCycleDTO> update(@PathVariable(name = "project_id") Long projectId,
                                         @RequestBody TestCycleDTO testCycleDTO) {
-        return Optional.ofNullable(testCycleService.update(testCycleDTO))
+        return Optional.ofNullable(testCycleService.update(projectId, testCycleDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.error.testCycle.update"));
     }
@@ -217,7 +216,7 @@ public class TestCycleController {
     ResponseEntity batchChangeAssignedInOneCycle(@PathVariable(name = "project_id") Long projectId,
                                                  @PathVariable(name = "userId") Long userId,
                                                  @PathVariable(name = "cycleId") Long cycleId) {
-        testCycleService.batchChangeAssignedInOneCycle(userId, cycleId);
+        testCycleService.batchChangeAssignedInOneCycle(projectId, userId, cycleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

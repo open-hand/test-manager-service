@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.base.annotation.Permission;
 import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
@@ -7,7 +8,6 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;

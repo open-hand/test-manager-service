@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.domain.repository;
 
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public interface TestCycleCaseRepository {
 
     List<TestCycleCaseE> filter(Map map);
 
-	List<TestCycleCaseE> queryByIssue(Long issueId);
+    List<TestCycleCaseE> queryByIssue(Long issueId);
 
     List<TestCycleCaseE> queryInIssue(Long[] issueId);
 
@@ -46,5 +46,5 @@ public interface TestCycleCaseRepository {
 
     String getLastedRank(Long cycleId);
 
-    List<TestCycleCaseE> batchInsert(List<TestCycleCaseE> testCycleCases);
+    List<TestCycleCaseE> batchInsert(Long projectId, List<TestCycleCaseE> testCycleCases);
 }

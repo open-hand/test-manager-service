@@ -32,7 +32,7 @@ public interface ITestCycleCaseService {
 
     TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE);
 
-	TestCycleCaseE changeStep(TestCycleCaseE currentStepE);
+	TestCycleCaseE changeStep( Long projectId, TestCycleCaseE currentStepE);
 
 	List<Long> getActiveCase(Long range, Long projectId, String day);
 

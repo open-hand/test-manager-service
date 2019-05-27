@@ -9,11 +9,11 @@ import java.util.List;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface ITestCycleService {
-    TestCycleE insert(TestCycleE testCycleE);
+    TestCycleE insert(Long projectId, TestCycleE testCycleE);
 
     void delete(TestCycleE testCycleE, Long projectId);
 
-    TestCycleE update(TestCycleE testCycleE);
+    TestCycleE update(Long projectId, TestCycleE testCycleE);
 
     List<TestCycleE> queryChildCycle(TestCycleE testCycleE);
 
@@ -21,7 +21,7 @@ public interface ITestCycleService {
 
     TestCycleE cloneCycle(TestCycleE protoTestCycleE, TestCycleE newTestCycleE, Long projectId);
 
-    List<TestCycleE> queryCycleWithBar(Long projectId,Long[] versionId, Long assignedTo);
+    List<TestCycleE> queryCycleWithBar(Long projectId, Long[] versionId, Long assignedTo);
 
     List<TestCycleE> queryCycleWithBarOneCycle(Long cycleId);
 

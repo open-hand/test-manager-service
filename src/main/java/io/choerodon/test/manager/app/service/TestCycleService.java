@@ -2,14 +2,12 @@ package io.choerodon.test.manager.app.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
-
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -19,9 +17,9 @@ import java.util.Map;
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleService {
-    TestCycleDTO insert(TestCycleDTO testCycleDTO);
+    TestCycleDTO insert(Long projectId,TestCycleDTO testCycleDTO);
 
-    TestCycleDTO insertWithoutSyncFolder(TestCycleDTO testCycleDTO);
+    TestCycleDTO insertWithoutSyncFolder(Long projectId, TestCycleDTO testCycleDTO);
 
     boolean synchroFolder(Long cycleId, Long folderId, Long projectId);
 
@@ -31,7 +29,7 @@ public interface TestCycleService {
 
     void delete(TestCycleDTO testCycleDTO, Long projectId);
 
-    TestCycleDTO update(TestCycleDTO testCycleDTO);
+    TestCycleDTO update(Long projectId, TestCycleDTO testCycleDTO);
 
     TestCycleDTO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId);
 
@@ -55,7 +53,7 @@ public interface TestCycleService {
 
     List<TestCycleDTO> getCyclesInVersion(Long versionId);
 
-    void batchChangeAssignedInOneCycle(Long userId, Long cycleId);
+    void batchChangeAssignedInOneCycle(Long projectId, Long userId, Long cycleId);
 
     void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleDTO> list);
 

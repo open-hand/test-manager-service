@@ -277,7 +277,7 @@ public class DemoServiceImpl implements DemoService {
         testCycleDTO.setType("cycle");
         testCycleDTO.setProjectId(projectId);
 
-        return testCycleService.insert(testCycleDTO).getCycleId();
+        return testCycleService.insert(projectId, testCycleDTO).getCycleId();
     }
 
     private Map<Long, List<Long>> initCycleFolders(Long projectId, List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
@@ -335,7 +335,7 @@ public class DemoServiceImpl implements DemoService {
         testCycleDTO.setFolderId(folderId);
         testCycleDTO.setProjectId(projectId);
 
-        return testCycleService.insert(testCycleDTO).getCycleId();
+        return testCycleService.insert(projectId, testCycleDTO).getCycleId();
     }
 
     private long initTestStatus(Long projectId, Long userId, Date date) {

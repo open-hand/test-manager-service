@@ -116,7 +116,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestCycleE testCycleE = iJsonImportService.getCycle(projectId, versionId, "自动化测试");
 
         // 创建阶段
-        TestCycleDTO testStage = iJsonImportService.getStage(
+        TestCycleDTO testStage = iJsonImportService.getStage(projectId,
                 versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器
@@ -275,7 +275,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
             TestIssueFolderE targetFolderE = iJsonImportService.getFolder(projectId, versionId, folderName);
             // 创建阶段（应用名+镜像名+suite名+第几次）
-            TestCycleDTO testStage = iJsonImportService.getStage(
+            TestCycleDTO testStage = iJsonImportService.getStage(projectId,
                     versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
             cycleIds.add(testStage.getCycleId());
             //处理Case

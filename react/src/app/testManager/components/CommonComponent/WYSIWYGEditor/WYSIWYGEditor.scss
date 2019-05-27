@@ -11,6 +11,7 @@
 
   /* link start */
   .ql-snow .ql-tooltip {
+    white-space: nowrap;
     &[data-mode=link]::before {
       content: "输入链接:";
     }

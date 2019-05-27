@@ -31,6 +31,7 @@ class TestCycleRepositoryImplSpec extends Specification {
     def "Insert"() {
         given:
         TestCycleE cycleE = new TestCycleE(cycleId: new Long(1), versionId: 12L, cycleName: "name")
+        cycleE.projectId=1L
         when:
         repository.insert(cycleE)
         then:

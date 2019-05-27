@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+/* eslint-disable */
 
 import React, { Component } from 'react';
 import {
@@ -13,7 +13,9 @@ import { FormattedMessage } from 'react-intl';
 import { Tags } from '../../../../components/CommonComponent';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
-import { getIssueTypes, getIssueStatus } from '../../../../api/agileApi';
+import {
+  getIssueTypes, getIssueStatus, getProjectVersion, getSprints, 
+} from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
   issueLink, TestExecuteLink, executeDetailLink, getProjectName,
@@ -26,7 +28,7 @@ export const STATUS = {
   done: '#00bfa5',
 };
 const { AppState } = stores;
-const Panel = Collapse.Panel;
+const { Panel } = Collapse;
 
 class ReportStory extends Component {
   state = {
@@ -34,6 +36,8 @@ class ReportStory extends Component {
     reportList: [],
     statusList: [],
     issueTypes: [],
+    versionList: [], 
+    sprintList: [],
     issueStatusList: [],
     pagination: {
       current: 1,
@@ -69,14 +73,18 @@ class ReportStory extends Component {
       getIssueTypes(),
       getIssueTypes('agile'),
       getIssueStatus('agile'),
+      getProjectVersion(),
+      getSprints(),
     ])
-      .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList]) => {
+      .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList, versionList, sprintList]) => {
         if (reportData.totalElements !== undefined) {
           this.setState({
             loading: false,
             statusList,
             issueTypes: issueTypes.concat(agileTypeList),
             issueStatusList,
+            versionList,
+            sprintList,
             openId: {},
             reportList: reportData.content,
             pagination: {
@@ -111,7 +119,7 @@ class ReportStory extends Component {
     const {
       issueNum, summary, assignee, sprint, version, component, epic, 
     } = filters;
-    console.log(barFilters);
+    // console.log(barFilters);
     const search = {
       contents: barFilters,
       advancedSearchArgs: {
@@ -124,7 +132,8 @@ class ReportStory extends Component {
         summary: summary ? summary[0] : '',
       },
       otherArgs: {
-        
+        sprint: sprint || [],
+        version: version || [],
         // assignee: assignee ? assignee[0] : '',
         // sprint: sprint ? sprint[0] : '',
         // version: version ? version[0] : '',
@@ -144,6 +153,7 @@ class ReportStory extends Component {
     const {
       reportList, loading, pagination,
       statusList, openId, issueTypes, issueStatusList,
+      versionList, sprintList,
     } = this.state;
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
@@ -155,6 +165,20 @@ class ReportStory extends Component {
         key: 'typeId',
         filters: issueTypes.map(type => ({ text: type.name, value: type.id.toString() })),
         filterMultiple: true,
+      },
+      {
+        title: '版本',
+        dataIndex: 'version',
+        key: 'version',
+        filters: versionList.map(version => ({ text: version.name, value: version.versionId.toString() })),
+        filterMultiple: true,        
+      },
+      {
+        title: '冲刺',
+        dataIndex: 'sprint',
+        key: 'sprint',
+        filters: sprintList.map(sprint => ({ text: sprint.sprintName, value: sprint.sprintId.toString() })),
+        filterMultiple: true,        
       },
       // {
       //   title: '经办人',

@@ -55,6 +55,7 @@
     "no-restricted-syntax":"off",
     "react/forbid-prop-types":"off",
     "react/sort-comp":"off",
+    "react/destructuring-assignment":"warn",
     "jsx-a11y/anchor-is-valid": [
       "warn",
       {

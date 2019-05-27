@@ -15,7 +15,7 @@ const PriorityTag = ({ style, priority }) => {
         backgroundColor: color2rgba(colour, 0.18),
         color: colour,
         borderRadius: '2px',
-        padding: '0 8px',
+        padding: '0 3px',
         display: 'inline-block',
         lineHeight: '20px',
         fontSize: '13px',
