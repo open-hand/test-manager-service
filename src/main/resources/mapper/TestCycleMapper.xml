@@ -90,14 +90,12 @@
                 FROM
                     test_cycle_case cycle
                     LEFT JOIN test_status status1 ON cycle.execution_status = status1.status_id
-                    where cycle.project_id = #{projectId}
                 ) temp1
             GROUP BY
                 temp1.statusId,
                 temp1.cycle_id
             ) color1 ON color1.cycle_id = cycle1.cycle_id
         WHERE
-            cycle1.project_id = #{projectId} AND
             cycle1.parent_cycle_id = #{cycleId}
         ORDER BY
             cycle1.cycle_id,
