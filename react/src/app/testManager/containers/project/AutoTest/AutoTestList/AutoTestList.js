@@ -5,7 +5,7 @@ import {
 } from '@choerodon/boot';
 import moment from 'moment';
 import {
-  Icon, Button, Table, Select, Menu, Dropdown,
+  Icon, Button, Table, Select, Menu, Dropdown, Switch,
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
@@ -26,6 +26,7 @@ const AutoTestList = ({
   loading, 
   appList, 
   selectLoading, 
+  autoRefresh,
   currentApp, 
   historyList,   
   envList,
@@ -37,6 +38,7 @@ const AutoTestList = ({
   onFilterChange,
   onTableChange,
   onSaveLogRef,
+  onAutoRefreshChange,
 }) => {
   const getMenu = record => (
     <Menu onClick={({ item, key, keyPath }) => { onItemClick(record, { item, key, keyPath }); }} style={{ margin: '10px 0 0 28px' }}>
@@ -161,6 +163,10 @@ const AutoTestList = ({
           <Icon type="autorenew icon" />
           <span><FormattedMessage id="refresh" /></span>
         </Button>
+        <div style={{ color: 'rgba(0,0,0,.65)', margin: '0 5px' }}>
+        自动刷新
+        </div>        
+        <Switch checked={autoRefresh} onChange={onAutoRefreshChange} />
       </Header>
       <Content
         title={<FormattedMessage id="autotestlist_content_title" values={{ name: getProjectName() }} />}

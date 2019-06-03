@@ -17,6 +17,12 @@ class AutoTestListContainer extends Component {
     this.loadApps();
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+  }
+  
+  requestQueue=[]
+
   loadApps = (value = '') => {
     const { currentApp } = store;
     let searchParam = {};
@@ -72,6 +78,26 @@ class AutoTestListContainer extends Component {
     }).finally(() => {
       store.unLoading();
       store.setSelectLoading(false);     
+      setTimeout(() => {
+        this.handleAutoRefresh();
+      }, 3000);
+    });
+  }
+
+  handleAutoRefresh = ({ appId = store.currentApp, pagination = store.pagination, filter = store.filter } = {}) => {
+    if (store.autoRefresh) {  
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        this.handleAutoRefresh();
+      }, 3000);
+    }
+    getTestHistoryByApp(appId, pagination, filter).then((history) => {
+      store.setHistoryList(history.content);
+      store.setPagination({
+        current: history.number + 1,
+        total: history.totalElements,
+        pageSize: history.size,
+      });      
     });
   }
 
@@ -88,6 +114,14 @@ class AutoTestListContainer extends Component {
       store.unLoading();
       Choerodon.prompt('网络出错');
     });
+  }
+
+  handleAutoRefreshChange=(checked) => {
+    localStorage.setItem('testManager.AutoList.autoRefresh', checked);
+    store.setAutoRefresh(checked);
+    if (checked) {
+      this.handleAutoRefresh();
+    }
   }
 
   toCreateAutoTest = () => {
@@ -133,6 +167,7 @@ class AutoTestListContainer extends Component {
     const { 
       loading, appList, 
       selectLoading, 
+      autoRefresh,
       currentApp, 
       historyList,   
       envList,
@@ -143,6 +178,7 @@ class AutoTestListContainer extends Component {
         loading={loading}
         appList={appList} 
         selectLoading={selectLoading}
+        autoRefresh={autoRefresh}
         currentApp={currentApp}
         historyList={historyList}   
         envList={envList}
@@ -153,6 +189,7 @@ class AutoTestListContainer extends Component {
         onAppChange={this.handleAppChange}
         onFilterChange={this.loadApps}
         onTableChange={this.handleTableChange}
+        onAutoRefreshChange={this.handleAutoRefreshChange}
         onSaveLogRef={this.saveRef}
       />
     );

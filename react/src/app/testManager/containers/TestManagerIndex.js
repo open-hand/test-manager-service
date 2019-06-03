@@ -7,11 +7,7 @@ import 'moment/locale/en-nz';
 import moment from 'moment';
 import '../assets/index.scss';
 
-const isDev = process.env.NODE_ENV === 'development';
-let DevTools = () => null;
-if (isDev) {
-  DevTools = require('mobx-react-devtools').default;
-}
+
 const TestExecuteIndex = asyncRouter(() => import('./project/TestExecute'));
 const TestPlanIndex = asyncRouter(() => import('./project/TestPlan'));
 const CustomStatusIndex = asyncRouter(() => import('./project/CustomStatus'));
@@ -43,7 +39,6 @@ class TestManagerIndex extends React.Component {
             <Route path="*" component={nomatch} />
           </Switch>        
         </IntlProviderAsync>
-        {process.env.NODE_ENV === 'development' && <DevTools />}
       </div>
       
     );
