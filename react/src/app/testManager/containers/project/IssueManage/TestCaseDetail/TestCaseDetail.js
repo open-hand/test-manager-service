@@ -43,7 +43,7 @@ class TestCaseDetail extends Component {
     loading: true,
     lasttestCaseId: null,
     nexttestCaseId: null,
-    isExpand: true,
+    isExpand: false,
     folderName: '',
   }
 

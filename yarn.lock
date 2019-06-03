@@ -139,10 +139,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@choerodon/boot@0.1.x", "@choerodon/boot@^0.1.7":
-  version "0.1.9"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.1.9.tgz#3932e9a33e52d7db4808be25798fe345f645bb21"
-  integrity sha512-kJZTI5JFRj04s14u8lefzphPagM/1P3GMSNUG4jGAhEN5kTWkAQ502KMb7s0Xhzk6qlU21WQwOoPYRq0FWQqUw==
+"@choerodon/boot@0.17.x":
+  version "0.17.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.17.0.tgz#42b9d1648f27bb8e42b6ec1d1ea931d9c990bf0d"
+  integrity sha512-VMIDODAGF5pSAu5StF33CDES7g2TYNi8QexcVrSqMzrvHmYTF6AZzTp//L1vPVIwhmzwlujBarzyRkY5QwTtbQ==
   dependencies:
     "@babel/parser" "^7.4.3"
     add-asset-html-webpack-plugin "^2.1.2"
@@ -242,12 +242,12 @@
     webpack "^3.12.0"
     webpack-dev-server "^2.11.3"
 
-"@choerodon/master@0.1.x":
-  version "0.1.6"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.1.6.tgz#61226b452eafa08f048d69d0c51065aef292270b"
-  integrity sha512-g98SFAPj2UquGfvLUO5JN4/cqwvNWR91he+C4ImuVc9WqYKHvEFK69TDNLO1Q5kJFlSnhHu4Es11RX7IoZZGdg==
+"@choerodon/master@0.17.x":
+  version "0.17.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.17.1.tgz#a970019c8da0803d85635ffc7709bf74028f8fc1"
+  integrity sha512-lZzrdhYn36kbu0jrWFg4jc7O/79Zy2yaLcfvezc1vPcKEWx42FSt1CVZ+mHisdd5heax1fd10QysSrH33zT79w==
   dependencies:
-    "@choerodon/boot" "^0.1.7"
+    react-onclickoutside "^6.8.0"
 
 "@icons/material@^0.2.4":
   version "0.2.4"
@@ -8968,6 +8968,11 @@ react-motion@^0.5.2:
     performance-now "^0.2.0"
     prop-types "^15.5.8"
     raf "^3.1.0"
+
+react-onclickoutside@^6.8.0:
+  version "6.8.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/react-onclickoutside/-/react-onclickoutside-6.8.0.tgz#9f91b5b3ed59f4d9e43fd71620dc200773a4d569"
+  integrity sha1-n5G1s+1Z9NnkP9cWINwgB3Ok1Wk=
 
 react-proxy@^3.0.0-alpha.0:
   version "3.0.0-alpha.1"

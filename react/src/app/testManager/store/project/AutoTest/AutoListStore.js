@@ -5,59 +5,65 @@ import {
 class AutoListStore {
   @observable loading = true;
 
-  @observable appList= [];
+  @observable autoRefresh = localStorage.getItem('testManager.AutoList.autoRefresh') || false;
 
-  @observable historyList= [];
+  @observable appList = [];
 
-  @observable envList=[];
+  @observable historyList = [];
 
-  @observable currentApp= null;
+  @observable envList = [];
 
-  @observable selectLoading=false;
+  @observable currentApp = null;
 
-  @observable pagination={
+  @observable selectLoading = false;
+
+  @observable pagination = {
     current: 1,
     total: 0,
     pageSize: 10,
   };
 
-  @observable filter={};
+  @observable filter = {};
 
   @action
-  Loading=() => {
+  Loading = () => {
     this.loading = true;
   }
 
   @action
-  unLoading=() => {
+  unLoading = () => {
     this.loading = false;
   }
 
-  @action setAppList=(appList) => {
+  @action setAutoRefresh(autoRefresh) {
+    this.autoRefresh = autoRefresh;
+  }
+
+  @action setAppList = (appList) => {
     this.appList = appList;
   }
- 
-  @action setHistoryList=(historyList) => {
+
+  @action setHistoryList = (historyList) => {
     this.historyList = historyList;
   }
 
-  @action setEnvList=(envList) => {
+  @action setEnvList = (envList) => {
     this.envList = envList;
   }
 
-  @action setCurrentApp=(currentApp) => {
+  @action setCurrentApp = (currentApp) => {
     this.currentApp = currentApp;
   }
 
-  @action setSelectLoading=(selectLoading) => {
+  @action setSelectLoading = (selectLoading) => {
     this.selectLoading = selectLoading;
   }
 
-  @action setPagination=(pagination) => {
+  @action setPagination = (pagination) => {
     this.pagination = pagination;
   }
 
-  @action setFilter=(filter) => {
+  @action setFilter = (filter) => {
     this.filter = filter;
   }
 }
