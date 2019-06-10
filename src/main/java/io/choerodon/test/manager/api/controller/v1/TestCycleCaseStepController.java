@@ -36,7 +36,7 @@ public class TestCycleCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新一个循环步骤")
     @PutMapping
-    ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+    public ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
         return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
@@ -53,7 +53,7 @@ public class TestCycleCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
-    ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
                                                             @ApiParam(value = "cycleCaseId", required = true)
                                                             @PathVariable(name = "cycleCaseId") Long cycleCaseId,
                                                             @RequestParam Long organizationId) {
