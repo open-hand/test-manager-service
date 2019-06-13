@@ -93,7 +93,7 @@ class CreateCycle extends Component {
               }}
               title={<FormattedMessage id="cycle_create_content_title" values={{ name: getProjectName() }} />}
               description={<FormattedMessage id="cycle_create_content_description" />}
-              link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
+              link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-plan/create-cycle/"
             >
               <Form>
                 <FormItem
