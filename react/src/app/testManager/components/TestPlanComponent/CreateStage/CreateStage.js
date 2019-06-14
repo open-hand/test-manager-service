@@ -101,7 +101,7 @@ class CreateStage extends Component {
             }}
             title={<FormattedMessage id="testPlan_createStage" />}
             description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName: title }} />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-cycle/create-cycle/"
+            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-plan/create-cycle/"
           >
             <Spin spinning={loading}>
               <Form>                
