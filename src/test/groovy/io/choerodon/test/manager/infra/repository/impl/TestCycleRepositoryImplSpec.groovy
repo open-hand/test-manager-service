@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.infra.repository.impl
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.core.exception.CommonException
-import io.choerodon.mybatis.pagehelper.domain.PageRequest
+import io.choerodon.base.domain.PageRequest
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper
@@ -62,7 +62,7 @@ class TestCycleRepositoryImplSpec extends Specification {
         when:
         repository.query(cycleE,new PageRequest())
         then:
-        1*mapper.select(_)>>new Page<>()
+        1*mapper.select(_)>>new PageInfo<>()
         when:
         repository.queryOne()
         then:

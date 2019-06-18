@@ -2,7 +2,7 @@ package io.choerodon.test.manager.api.controller.v1
 
 import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.dto.*
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelImportService

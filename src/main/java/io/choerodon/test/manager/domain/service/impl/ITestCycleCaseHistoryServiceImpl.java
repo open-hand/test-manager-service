@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class ITestCycleCaseHistoryServiceImpl implements ITestCycleCaseHistorySe
 
 
     @Override
-    public Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
         return testCycleCaseHistoryE.querySelf(pageRequest);
     }
 }

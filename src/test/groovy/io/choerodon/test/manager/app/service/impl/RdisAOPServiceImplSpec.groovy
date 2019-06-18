@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.app.service.impl
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.domain.aop.TestCaseCountRecordAOP
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE
@@ -52,7 +52,7 @@ class RdisAOPServiceImplSpec extends Specification {
         then:
         1*redisAtomicLong.decrementAndGet()
         1*redisTemplateUtil.getRedisAtomicLong(_,_)>>redisAtomicLong
-        1*historyE.querySelf(_)>>new Page(content: Lists.newArrayList(new TestCycleCaseHistoryE(lastUpdateDate:new Date() )))
+        1*historyE.querySelf(_)>>new PageInfo(content: Lists.newArrayList(new TestCycleCaseHistoryE(lastUpdateDate:new Date() )))
     }
 
     def "dbValidateUtil"(){

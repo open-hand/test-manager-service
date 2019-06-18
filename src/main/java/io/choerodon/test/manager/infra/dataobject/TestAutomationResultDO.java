@@ -2,20 +2,17 @@ package io.choerodon.test.manager.infra.dataobject;
 
 import java.util.Date;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.entity.BaseDTO;
 
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_automation_result")
-public class TestAutomationResultDO extends AuditDomain {
+public class TestAutomationResultDO extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String result;

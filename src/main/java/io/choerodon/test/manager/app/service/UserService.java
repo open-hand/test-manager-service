@@ -2,8 +2,8 @@ package io.choerodon.test.manager.app.service;
 
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
@@ -26,6 +26,6 @@ public interface UserService {
 
     void populateTestCycleCaseDTO(TestCycleCaseDTO dto);
 
-    void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto);
+    void populateTestAutomationHistory(PageInfo<TestAutomationHistoryDTO> dto);
 
 }

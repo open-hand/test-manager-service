@@ -3,7 +3,7 @@ package io.choerodon.test.manager.infra.feign;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProductionVersionClientFallback;
 import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ import java.util.Map;
 public interface ProductionVersionClient {
 
     @PostMapping(value = "/v1/projects/{project_id}/product_version/versions")
-    ResponseEntity<Page<ProductVersionPageDTO>> listByOptions(@PathVariable(name = "project_id") Long projectId,
+    ResponseEntity<PageInfo<ProductVersionPageDTO>> listByOptions(@PathVariable(name = "project_id") Long projectId,
                                                                      @RequestBody(required = false) Map<String, Object> searchParamMap);
 
     @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")

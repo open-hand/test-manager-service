@@ -1,29 +1,26 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_cycle_case_history")
-public class TestCycleCaseHistoryDO extends AuditDomain {
+public class TestCycleCaseHistoryDO extends BaseDTO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long executeId;
     private String oldValue;
     private String newValue;
-	private String field;
+    private String field;
 
-	private Long lastUpdatedBy;
+    private Long lastUpdatedBy;
 
     @Override
     public Long getLastUpdatedBy() {
@@ -36,12 +33,12 @@ public class TestCycleCaseHistoryDO extends AuditDomain {
     }
 
     public String getField() {
-		return field;
-	}
+        return field;
+    }
 
-	public void setField(String field) {
-		this.field = field;
-	}
+    public void setField(String field) {
+        this.field = field;
+    }
 
     public Long getExecuteId() {
         return executeId;

@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 
@@ -21,7 +21,7 @@ public interface ITestCycleCaseStepService {
      * @param testCycleCaseE
      * @return
      */
-	Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId);
+	PageInfo<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId);
 
     /**
      * 启动循环测试下所有步骤

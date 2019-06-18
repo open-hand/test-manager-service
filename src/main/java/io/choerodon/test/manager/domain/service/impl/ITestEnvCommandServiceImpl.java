@@ -1,16 +1,18 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.test.manager.domain.service.ITestEnvCommandService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommand;
-import io.choerodon.test.manager.infra.mapper.TestEnvCommandMapper;
+import java.util.List;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import io.choerodon.base.domain.Sort;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.domain.service.ITestEnvCommandService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommand;
+import io.choerodon.test.manager.infra.mapper.TestEnvCommandMapper;
 
 /**
  * Created by zongw.lee@gmail.com on 20/11/2018
@@ -27,7 +29,10 @@ public class ITestEnvCommandServiceImpl implements ITestEnvCommandService {
         pageRequest.setPage(0);
         pageRequest.setSize(99999999);
         pageRequest.setSort(new Sort(Sort.Direction.DESC, "creation_date"));
-        return PageHelper.doPageAndSort(pageRequest, () -> envCommandMapper.select(envCommand));
+        PageInfo<TestEnvCommand> pageInfo = PageHelper.startPage(pageRequest.getPage(),
+                pageRequest.getSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
+
+        return pageInfo.getList();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.repository;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 
@@ -18,9 +18,9 @@ public interface TestCycleCaseRepository {
 
     TestCycleCaseE update(TestCycleCaseE testCycleCaseE);
 
-    Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
+    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
 
-    Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
+    PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
 
     List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 

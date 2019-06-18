@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestCycleDTO;
 import io.choerodon.test.manager.app.service.DevopsService;
@@ -40,39 +40,39 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     private ModelMapper modelMapper = new ModelMapper();
 
     @Override
-    public Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
+    public PageInfo<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
         map.put("projectId", projectId);
         if (map.containsKey("filter")) {
             List<Long> versionId = devopsService.getAppVersionId(map.get("filter").toString(), projectId, Long.valueOf(map.get("appId").toString()));
             if (versionId.isEmpty()) {
-                return new Page<>();
+                return new PageInfo<>();
             }
             map.put("appVersionId", versionId);
         }
-        Page<TestAutomationHistoryDTO> list = iTestAutomationHistoryService.queryWithInstance(map, pageRequest);
+        PageInfo<TestAutomationHistoryDTO> list = iTestAutomationHistoryService.queryWithInstance(map, pageRequest);
         populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
         populateCycles(list);
         return list;
     }
 
-    public void populateAPPVersion(Long projectId, Page<TestAutomationHistoryDTO> page) {
+    public void populateAPPVersion(Long projectId, PageInfo<TestAutomationHistoryDTO> page) {
         if (ObjectUtils.isEmpty(page))
             return;
         Map<Long, ApplicationVersionRepDTO> map =
-                devopsService.getAppversion(projectId, page.stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))
+                devopsService.getAppversion(projectId, page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))
                         .map(v -> v.getTestAppInstanceDTO().getAppVersionId()).distinct().collect(Collectors.toList()));
 
-        page.stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO())).forEach(v ->
+        page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO())).forEach(v ->
 
                 v.getTestAppInstanceDTO().setAppVersionName(map.get(v.getTestAppInstanceDTO().getAppVersionId()).getVersion()));
     }
 
-    private void populateCycles(Page<TestAutomationHistoryDTO> page) {
+    private void populateCycles(PageInfo<TestAutomationHistoryDTO> page) {
         //填充cycleDTO
         Map<Long, String[]> map = new HashMap<>(page.getSize());
         List<String> cycleStrIds = new ArrayList<>();
-        page.getContent().forEach(x -> {
+        page.getList().forEach(x -> {
             String cycleIdsStr = x.getCycleIds();
             if (cycleIdsStr != null && !cycleIdsStr.equals("")) {
                 String[] cycleIds = x.getCycleIds().split(",");
@@ -90,7 +90,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
             List<TestCycleDTO> list = modelMapper.map(cycleDTOS, new TypeToken<List<TestCycleDTO>>() {
             }.getType());
             Map<Long, TestCycleDTO> cycleMap = list.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, x -> x));
-            page.getContent().forEach(x -> {
+            page.getList().forEach(x -> {
                 String[] ids = map.get(x.getId());
                 List<TestCycleDTO> dtos = new ArrayList<>();
                 if (ids != null) {

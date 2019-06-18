@@ -10,8 +10,8 @@ import io.choerodon.agile.api.dto.ProductVersionPageDTO
 import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.agile.api.dto.StatusMapDTO
 import io.choerodon.agile.api.dto.UserDO
-import io.choerodon.core.domain.Page
-import io.choerodon.mybatis.pagehelper.PageHelper
+import com.github.pagehelper.PageInfo
+import com.github.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCycleDTO
@@ -312,9 +312,9 @@ class TestCycleControllerSpec extends Specification {
         searchParamMap.put("cycleName", "发布11")
 
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/version', searchParamMap, Page.class, 12L)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/cycle/query/version', searchParamMap, PageInfo.class, 12L)
         then: '返回值'
-        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(HttpStatus.OK)
+        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<PageInfo<ProductVersionPageDTO>>(HttpStatus.OK)
     }
 
     def "CloneCycle"() {
@@ -453,21 +453,21 @@ class TestCycleControllerSpec extends Specification {
         map.put(888L,new IssueInfosDTO(issueId: 888L,issueNum: "num1",statusMapDTO: new StatusMapDTO(code: "code")))
         map.put(44444442L,new IssueInfosDTO(issueId: 44444442L,issueNum: "num2",statusMapDTO: new StatusMapDTO(code: "code")))
         when:
-        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        def entity = restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), PageInfo, projectId)
         then:
         1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
         1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 888L,issueId: 4444444L),new IssueLinkDTO(linkedIssueId: 24444444L,issueId: 888L))
         1*testCaseService.getIssueInfoMap(_, _, _,_)>>map
 
         when:
-        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), PageInfo, projectId)
         then:
         1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> new HashMap<>()
         0*testCaseService.getLinkIssueFromIssueToTest(_, _)>> Lists.newArrayList(new IssueInfosDTO(issueId: 4443L))
         0*testCaseService.getIssueInfoMap(_, _, _,_)>>map
 
         when:
-        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), Page, projectId)
+        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/issue?page=1&size=10&organizationId=1',new SearchDTO(), PageInfo, projectId)
         then:
         1*testCaseService.getIssueInfoMapAndPopulatePageInfo(_,_,_,_,_)>> map
         1*testCaseService.getLinkIssueFromIssueToTest(_, _)>> new ArrayList<>()
@@ -542,25 +542,25 @@ class TestCycleControllerSpec extends Specification {
 //        defectRelDO1.setDefectLinkId(testCaseStepDO1.getStepId())
 //        defectRelMapper.insert(defectRelDO1)
 //        when:
-//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), Page, projectId)
+//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), PageInfo, projectId)
 //        then:
 //        1*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(884L)
 //        2*testCaseService.getIssueInfoMap(_,_,_,_)>> map
 //        1*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 889L,issueId: 889L))
 //        when:
-//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), Page, -1)
+//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(), PageInfo, -1)
 //        then:
 //        0*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(884L)
 //        0*testCaseService.getIssueInfoMap(_,_,_,_)>> map
 //        0*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 889L,issueId: 889L))
 //        when:
-//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(otherArgs:new HashMap<String, Object>()), Page, projectId)
+//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=0&size=1&organizationId=1',new SearchDTO(otherArgs:new HashMap<String, Object>()), PageInfo, projectId)
 //        then:
 //        1*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList()
 //        0*testCaseService.getIssueInfoMap(_,_,_,_)>> map
 //        0*testCaseService.getLinkIssueFromTestToIssue(_, _)>>Lists.newArrayList(new IssueLinkDTO(linkedIssueId: 889L,issueId: 889L))
 //        when:
-//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=3&size=3&organizationId=1',new SearchDTO(), Page, projectId)
+//        restTemplate.postForEntity('/v1/projects/{project_id}/case/get/reporter/from/defect?page=3&size=3&organizationId=1',new SearchDTO(), PageInfo, projectId)
 //        then:
 //        1*testCaseService.queryIssueIdsByOptions(_, _)>>Lists.newArrayList(889L,887L,886L,885L,884L,884L,884L,884L,884L,884L)
 //        2*testCaseService.getIssueInfoMap(_,_,_,_)>> map

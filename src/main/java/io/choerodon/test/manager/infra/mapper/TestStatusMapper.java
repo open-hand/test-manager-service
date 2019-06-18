@@ -1,24 +1,25 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.Date;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
-public interface TestStatusMapper extends BaseMapper<TestStatusDO> {
+public interface TestStatusMapper extends Mapper<TestStatusDO> {
 
-	List<TestStatusDO> queryAllUnderProject(@Param("dto") TestStatusDO testStatusDO);
+    List<TestStatusDO> queryAllUnderProject(@Param("dto") TestStatusDO testStatusDO);
 
-	Long ifDeleteCycleCaseAllow(@Param("statusId") Long statusId);
+    Long ifDeleteCycleCaseAllow(@Param("statusId") Long statusId);
 
-	Long ifDeleteCaseStepAllow(@Param("statusId") Long statusId);
+    Long ifDeleteCaseStepAllow(@Param("statusId") Long statusId);
 
-	Long getDefaultStatus(@Param("statusType") String statusType);
+    Long getDefaultStatus(@Param("statusType") String statusType);
 
-	void updateAuditFields(@Param("statusId") Long statusId, @Param("userId") Long userId, @Param("date") Date date);
+    void updateAuditFields(@Param("statusId") Long statusId, @Param("userId") Long userId, @Param("date") Date date);
 }

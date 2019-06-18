@@ -1,20 +1,17 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@ModifyAudit
-@VersionAudit
+import io.choerodon.mybatis.entity.BaseDTO;
+
 @Table(name = "test_fileload_history")
-public class TestFileLoadHistoryDO extends AuditDomain {
+public class TestFileLoadHistoryDO extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long projectId;

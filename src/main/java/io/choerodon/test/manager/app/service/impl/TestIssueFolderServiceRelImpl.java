@@ -1,24 +1,25 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.dto.IssueCreateDTO;
 import io.choerodon.agile.api.dto.IssueDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
@@ -45,7 +46,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     TestCaseStepService testCaseStepService;
 
     @Override
-    public Page<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId) {
+    public PageInfo<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
         for (Long issueId : issueIds) {
@@ -54,12 +55,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
         }
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
-            return new Page<>();
+            return new PageInfo<>();
         }
         List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
         Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true, organizationId);
         if (ObjectUtils.isEmpty(map)) {
-            return new Page<>();
+            return new PageInfo<>();
         }
 
         TestIssueFolderE testIssueFolderE = TestIssueFolderEFactory.create();
@@ -75,8 +76,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }
-        Page page = new Page();
-        page.setContent(issueComponentDetailFolderRelDTOS);
+        PageInfo page = new PageInfo();
+        page.setList(issueComponentDetailFolderRelDTOS);
         return page;
     }
 
@@ -90,7 +91,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     }
 
     @Override
-    public Page<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest, Long organizationId) {
+    public PageInfo<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest, Long organizationId) {
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
         List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
@@ -116,13 +117,13 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         }
 
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
-            return new Page<>();
+            return new PageInfo<>();
         }
 
         Long[] allIssuesArray = getFilterIssues(projectId, searchDTO, resultRelDTOS);
 
         if (ObjectUtils.isEmpty(allIssuesArray)) {
-            return new Page<>();
+            return new PageInfo<>();
         }
 
         //进行分页
@@ -134,7 +135,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         int size = highPage >= allIssuesArray.length ? allIssuesArray.length - lowPage : pageSize;
         Long[] pagedIssues = new Long[size];
         System.arraycopy(allIssuesArray, lowPage, pagedIssues, 0, size);
-        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues, organizationId).stream().collect(Collectors.toList()), allIssuesArray);
+        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues, organizationId).getList().stream().collect(Collectors.toList()), allIssuesArray);
     }
 
     private Long[] getFilterIssues(Long projectId, SearchDTO searchDTO, List<TestIssueFolderRelDTO> resultRelDTOS) {

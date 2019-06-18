@@ -1,22 +1,15 @@
 package io.choerodon.asgard.api.dto;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
-@ModifyAudit
-@VersionAudit
+import io.choerodon.mybatis.entity.BaseDTO;
+
 @Table(name = "ASGARD_QUARTZ_TASK")
-public class QuartzTask extends AuditDomain {
+public class QuartzTask extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

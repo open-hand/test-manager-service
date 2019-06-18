@@ -2,9 +2,8 @@ package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.dto.*
-import io.choerodon.core.domain.Page
 import io.choerodon.core.exception.CommonException
-import io.choerodon.mybatis.pagehelper.PageHelper
+import com.github.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.app.service.ExcelService
@@ -161,7 +160,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo>(page, HttpStatus.OK)
         2 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
@@ -174,7 +173,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> issueInfosDTOMap
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo>(page, HttpStatus.OK)
         2 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileService.uploadFile(_, _, _) >> new CommonException("error.file.upload")
@@ -191,7 +190,7 @@ class ExcelServiceImplSpec extends Specification {
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
         1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>("error.file.upload", HttpStatus.INTERNAL_SERVER_ERROR)
@@ -255,7 +254,7 @@ class ExcelServiceImplSpec extends Specification {
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionIds(_) >> versionIds
         1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
-        1 * userService.list(_, _, _, _) >> new ResponseEntity<Page>(page, HttpStatus.OK)
+        1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo>(page, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS
 

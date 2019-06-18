@@ -3,9 +3,9 @@ package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.agile.api.dto.ProductVersionPageDTO
 import io.choerodon.agile.api.dto.UserDO
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.core.exception.CommonException
-import io.choerodon.mybatis.pagehelper.PageHelper
+import com.github.pagehelper.PageHelper
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleDTO
 import io.choerodon.test.manager.app.service.TestCaseService
@@ -174,7 +174,7 @@ class TestCycleServiceImplSpec extends Specification {
         when:
         service.getTestCycleVersion(12L, searchParamMap)
         then:
-        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<Page<ProductVersionPageDTO>>(new ArrayList<>(), HttpStatus.OK)
+        1 * testCaseService.getTestCycleVersionInfo(_, _) >> new ResponseEntity<PageInfo<ProductVersionPageDTO>>(new ArrayList<>(), HttpStatus.OK)
     }
 
     def "CloneCycle"() {

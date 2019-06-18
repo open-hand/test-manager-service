@@ -1,22 +1,19 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_cycle_case_defect_rel")
-public class TestCycleCaseDefectRelDO extends AuditDomain {
+public class TestCycleCaseDefectRelDO extends BaseDTO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String defectType;
     private Long defectLinkId;

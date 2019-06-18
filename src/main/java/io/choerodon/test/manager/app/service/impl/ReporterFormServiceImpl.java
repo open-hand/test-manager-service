@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -11,9 +12,8 @@ import com.google.common.collect.Lists;
 
 import io.choerodon.agile.api.dto.IssueLinkDTO;
 import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.CustomPage;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
@@ -51,14 +51,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
     @Autowired
     TestCycleCaseStepRepository testCycleCaseStepRepository;
 
-    public Page<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
-        Page page = new Page();
-        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page, organizationId);
+    public PageInfo<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, organizationId);
         List<ReporterFormE> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
 
-        page.setContent(reporterFormES);
-        page.setNumberOfElements(reporterFormES.size());
-        return page;
+        return new PageInfo(reporterFormES);
     }
 
     public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds, Long organizationId) {
@@ -95,11 +92,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
     @Override
-    public Page<ReporterFormE> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    public PageInfo<ReporterFormE> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
         List<Long> issueIdsList = testCycleCaseDefectRelE.queryIssueIdAndDefectId(projectId);
         if (ObjectUtils.isEmpty(issueIdsList)) {
-            return new Page();
+            return new PageInfo();
         }
         Long[] issueIds = issueIdsList.stream().toArray(Long[]::new);
         Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
@@ -111,7 +108,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         // 此处假设返回的是 long数组所有值
         Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().sorted(Comparator.reverseOrder()).toArray(Long[]::new);
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
-            return new Page<>();
+            return new PageInfo<>();
         }
         int pageNum = pageRequest.getPage();
         int pageSize = pageRequest.getSize();

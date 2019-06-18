@@ -1,24 +1,21 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_status")
-public class TestStatusDO extends AuditDomain {
+public class TestStatusDO extends BaseDTO {
 
-	@Id
-	@GeneratedValue
-	private Long statusId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long statusId;
 
     private String statusName;
 
@@ -28,7 +25,7 @@ public class TestStatusDO extends AuditDomain {
 
     private String statusType;
 
-	private Long projectId;
+    private Long projectId;
 
     public Long getStatusId() {
         return statusId;
@@ -70,11 +67,11 @@ public class TestStatusDO extends AuditDomain {
         this.statusType = statusType;
     }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+    public Long getProjectId() {
+        return projectId;
+    }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 }

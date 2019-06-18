@@ -1,15 +1,16 @@
 package io.choerodon.test.manager.api.dto;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.entity.BaseDTO;
 
-public class TestAutomationHistoryDTO extends AuditDomain {
+public class TestAutomationHistoryDTO extends BaseDTO {
 
     public enum Status {
         NONEXECUTION(0L), COMPLETE(1L), PARTIALEXECUTION(2L);
@@ -25,7 +26,7 @@ public class TestAutomationHistoryDTO extends AuditDomain {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(value = "主键id")
     private Long id;
 

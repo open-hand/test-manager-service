@@ -1,24 +1,24 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.iam.ResourceLevel;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
-import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
+import java.util.Optional;
+
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import io.choerodon.asgard.api.dto.QuartzTask;
+import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.devops.api.dto.ReplaceResult;
+import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
+import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
+import io.choerodon.test.manager.app.service.TestAppInstanceService;
 
 /**
  * Created by zongw.lee@gmail.com on 23/11/2018.

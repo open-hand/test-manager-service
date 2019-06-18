@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 
@@ -14,9 +14,9 @@ public interface TestCycleCaseService {
 
     void delete(Long cycleCaseId, Long projectId);
 
-    Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId);
+    PageInfo<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId);
 
-    Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
+    PageInfo<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
 
     TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
 

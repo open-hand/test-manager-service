@@ -1,14 +1,15 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-
 import java.util.Date;
 import java.util.List;
 
-public interface TestAppInstanceMapper extends BaseMapper<TestAppInstanceE> {
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
+
+import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
+
+public interface TestAppInstanceMapper extends Mapper<TestAppInstanceE> {
     String queryValueByEnvIdAndAppId(@Param("envId") Long envId, @Param("appId") Long appId);
 
     List<TestAppInstanceE> queryDelayInstance(@Param("delayTiming") Date time);

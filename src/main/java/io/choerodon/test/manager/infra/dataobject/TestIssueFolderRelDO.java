@@ -1,23 +1,20 @@
 package io.choerodon.test.manager.infra.dataobject;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_issue_folder_rel")
-public class TestIssueFolderRelDO extends AuditDomain {
+public class TestIssueFolderRelDO extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long folderId;

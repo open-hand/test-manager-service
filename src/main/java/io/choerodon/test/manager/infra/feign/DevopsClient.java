@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign;
 
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.test.manager.infra.feign.callback.DevopsClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -24,7 +24,7 @@ public interface DevopsClient {
             @RequestBody Map<Long,List<String>> releaseName);
 
     @PostMapping(value = "/v1/projects/{project_id}/app_versions/list_by_options")
-    ResponseEntity<Page<ApplicationVersionRepDTO>> pageByOptions(
+    ResponseEntity<PageInfo<ApplicationVersionRepDTO>> pageByOptions(
             @PathVariable(value = "project_id") Long projectId,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
             @RequestParam(name = "orders") String orders,

@@ -3,9 +3,8 @@ package io.choerodon.test.manager.app.service.impl
 
 import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.agile.api.dto.UserDTO
-import io.choerodon.core.domain.Page
-import io.choerodon.core.domain.PageInfo
-import io.choerodon.mybatis.pagehelper.domain.PageRequest
+import com.github.pagehelper.PageInfo
+import io.choerodon.base.domain.PageRequest
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
@@ -44,7 +43,7 @@ class UserServiceImplSpec extends Specification {
         UserDTO user = new UserDTO(id: 1L)
         PageInfo info = new PageInfo(1, 1)
 
-        Page<UserDTO> page1 = new Page<>(Lists.newArrayList(user), info, 1)
+        PageInfo<UserDTO> page1 = new PageInfo<>(Lists.newArrayList(user), info, 1)
 
         when:
         userService.list(pr, 1l, "参数", 2l)
@@ -85,7 +84,7 @@ class UserServiceImplSpec extends Specification {
 
     def "populateTestAutomationHistory"() {
         given:
-        Page page = new Page()
+        PageInfo page = new PageInfo()
         page.setContent(Lists.newArrayList(new TestAutomationHistoryDTO(createdBy: 11L)))
         when:
         userService.populateTestAutomationHistory(page);

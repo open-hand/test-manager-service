@@ -1,26 +1,25 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+import com.github.pagehelper.PageInfo;
+
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.common.utils.LongUtils;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
-
-import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 7/2/18.
@@ -65,18 +64,16 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v -> dto.setLastUpdateUser(user.get(v)));
     }
 
-    public void populateTestAutomationHistory(Page<TestAutomationHistoryDTO> dto) {
-        Long[] users = dto.stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+    public void populateTestAutomationHistory(PageInfo<TestAutomationHistoryDTO> dto) {
+        Long[] users = dto.getList().stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
         if (ObjectUtils.isEmpty(users)) {
             return;
         }
         Map<Long, UserDO> user = query(users);
-        dto.forEach(v -> {
+        dto.getList().forEach(v -> {
             if (LongUtils.isUserId(v.getCreatedBy())) {
                 v.setCreateUser(user.get(v.getCreatedBy()));
             }
         });
     }
-
-
 }
