@@ -111,7 +111,7 @@ class PlanTree extends Component {
     const {
       children, key, cycleCaseList, type, cycleId,
     } = item;
-    // debugger;
+    //
     const { searchValue, statusList } = this.state;
     const expandedKeys = TestPlanStore.getExpandedKeys;
     const index = item.title.indexOf(searchValue);

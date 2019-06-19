@@ -117,7 +117,7 @@ class IssueStore {
     this.setFilter({
       advancedSearchArgs: {
         // issueTypeId: [18],
-        // typeCode: ['issue_test'] 
+        // typeCode: ['issue_test']
       },
       searchArgs: {},
     });
@@ -126,7 +126,7 @@ class IssueStore {
   }
 
   loadIssues = (page, size = this.pagination.pageSize) => {
-    const Page = page === undefined ? this.pagination.current - 1 : Math.max(page, 0);
+    const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     return new Promise((resolve) => {
@@ -141,16 +141,15 @@ class IssueStore {
         funcArr.push(getPrioritys());
         funcArr.push(getIssueStatus());
         funcArr.push(getLabels());
-        const currentCycle = IssueTreeStore.currentCycle;
+        const { currentCycle } = IssueTreeStore;
         // 树的每一层的类型
         const types = ['all', 'topversion', 'version', 'folder'];
         const type = currentCycle.key ? types[currentCycle.key.split('-').length - 1] : 'allissue';
         const { versionId, cycleId, children } = currentCycle;
         // 不是第一页情况
-        if (Page > 0) {
+        if (Page > 1) {
           // 调用
-          funcArr.push(getIssuesByIds(versionId, cycleId,
-            this.issueIds.slice(size * Page, size * (Page + 1))));
+          funcArr.push(getIssuesByIds(versionId, cycleId, this.issueIds.slice(size * (Page - 1), size * Page)));
         } else {
           // 第一页 五种情况 地址栏有参数时的优先级为最低
           /**
@@ -159,7 +158,7 @@ class IssueStore {
            * 3.加载某个版本的issue
            * 4.加载某个文件夹下的issue
            * 5.地址栏有paramIssueId时只取单个issue并打开侧边
-           * 
+           *
            */
           // 1.加载全部数据
           if ((type === 'all' || type === 'allissue') && !this.paramIssueId) {
@@ -191,26 +190,27 @@ class IssueStore {
           if (versions && versions.length > 0) {
             this.selectVersion(versions[0].versionId);
           }
-          this.setIssues(res.content);
-          this.setIssueForderNames(_.map(res.content, 'folderName'));
-          if (Page === 0) {
+          this.setIssues(res.list);
+          this.setIssueForderNames(_.map(res.list, 'folderName'));
+          if (Page === 1) {
             this.setIssueIds(res.allIdValues || []);
             if (window.sessionStorage) {
               sessionStorage.allIdValues = res.allIdValues || [];
             }
           }
           // 调用ids接口不返回总数
-          if (Page > 0) {
+
+          if (Page > 1) {
             this.setPagination({
-              current: Page + 1,
+              current: Page,
               pageSize: size,
               total: this.pagination.total,
             });
           } else {
             this.setPagination({
-              current: res.number + 1,
+              current: res.pageNum,
               pageSize: size,
-              total: res.totalElements,
+              total: res.total,
             });
           }
           resolve(res);
@@ -227,7 +227,7 @@ class IssueStore {
 
   /**
    * 当issue更新时,本地更新单个issue
-   * @param {*} data 
+   * @param {*} data
    */
   @action updateSingleIssue(data) {
     const originIssues = this.issues;
@@ -364,7 +364,7 @@ class IssueStore {
   }
 
   @computed get getFilter() {
-    const filter = this.filter;   
+    const { filter } = this;
     return {
       ...filter,
       contents: this.barFilters,

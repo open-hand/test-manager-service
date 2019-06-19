@@ -94,14 +94,15 @@ class ReportTest extends Component {
   getReportsFromDefect = (pagination, search) => {
     const Pagination = pagination || this.state.pagination;
     const Search = search || this.state.search;
+
     getReportsFromDefect({
-      page: Pagination.current - 1,
+      page: Pagination.current,
       size: Pagination.pageSize,
     }, Search).then((reportData) => {
       if (!reportData.failed) {
         this.setState({
           loading: false,
-          reportList: reportData.content,
+          reportList: reportData.list,
           issueIds: reportData.allIdValues || [],
           pagination: {
             current: Pagination.current,

@@ -1,9 +1,9 @@
 /*
- * @Author: LainCarl 
- * @Date: 2018-11-01 14:56:06 
+ * @Author: LainCarl
+ * @Date: 2018-11-01 14:56:06
  * @Last Modified by: LainCarl
  * @Last Modified time: 2018-11-01 15:25:27
- * @Feature:  
+ * @Feature:
  */
 import { stores } from '@choerodon/boot';
 import { getProjectId, request } from '../common/utils';
@@ -22,7 +22,7 @@ export function createIssue(issueObj, folderId) {
   const issue = {
     ...issueObj,
   };
-  const versionId = issue.versionIssueRelDTOList[0].versionId;
+  const { versionId } = issue.versionIssueRelDTOList[0];
   return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}&applyType=test`, issue);
 }
 /**
@@ -255,7 +255,7 @@ export function getIssueExecutes(issueId) {
  * @param {*} orderType
  * @returns
  */
-export function getSingleIssues(page = 0, size = 10, search, orderField, orderType) {
+export function getSingleIssues(page = 1, size = 10, search, orderField, orderType) {
   // console.log(search);
   const searchDTO = { ...search };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
@@ -277,7 +277,7 @@ export function getSingleIssues(page = 0, size = 10, search, orderField, orderTy
  * @param {*} orderType
  * @returns
  */
-export function getAllIssues(page = 0, size = 10, search, orderField, orderType) {
+export function getAllIssues(page = 1, size = 10, search, orderField, orderType) {
   // console.log(search);
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
@@ -300,7 +300,7 @@ export function getAllIssues(page = 0, size = 10, search, orderField, orderType)
  * @param {*} orderType
  * @returns
  */
-export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orderField, orderType) {
+export function getIssuesByVersion(versionIds, page = 1, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 
@@ -322,7 +322,7 @@ export function getIssuesByVersion(versionIds, page = 0, size = 10, search, orde
  * @param {*} orderType
  * @returns
  */
-export function getIssuesByFolder(folderId, page = 0, size = 10, search, orderField, orderType) {
+export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search, otherArgs: search.searchArgs };
   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
 

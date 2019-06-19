@@ -1,6 +1,6 @@
 /*
- * @Author: LainCarl 
- * @Date: 2019-01-25 14:53:51 
+ * @Author: LainCarl
+ * @Date: 2019-01-25 14:53:51
  * @Last Modified by: LainCarl
  * @Last Modified time: 2019-01-25 15:04:00
  * @Feature: 测试摘要
@@ -48,9 +48,9 @@ class SummaryHomeContainer extends Component {
       .then(([totalData, notPlan, notRun, caseNum, excuteList,
         createList, versionList, componentList, labelList]) => {
         this.setState({
-          
+
           // totalIssue: totalIssueData.totalElements,
-          totalTest: totalData.totalElements,
+          totalTest: totalData.total,
           notPlan,
           notRun,
           caseNum,
@@ -179,7 +179,7 @@ class SummaryHomeContainer extends Component {
     this.getInfo();
   }
 
-  render() {    
+  render() {
     return (<SummaryHome {...this.state} onRefreshClick={this.handleRefreshClick} onRangeChange={this.handleRangeChange} />);
   }
 }

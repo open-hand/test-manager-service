@@ -20,7 +20,7 @@ class AutoTestListContainer extends Component {
   componentWillUnmount() {
     clearTimeout(this.timer);
   }
-  
+
   requestQueue=[]
 
   loadApps = (value = '') => {
@@ -30,10 +30,10 @@ class AutoTestListContainer extends Component {
       searchParam = { name: [value] };
     }
     store.Loading();
-    store.setSelectLoading(true);    
+    store.setSelectLoading(true);
     Promise.all([
       getApps({
-        page: 0,
+        page: 1,
         size: 10,
         sort: { field: 'id', order: 'desc' },
         postData: { searchParam, param: '' },
@@ -41,43 +41,44 @@ class AutoTestListContainer extends Component {
       getAllEnvs(),
     ]).then(([data, envs]) => {
       // 默认取第一个
+
       if (data.failed) {
         Choerodon.prompt(data.failed);
         return;
       }
-      if (!currentApp && !value && data.content.length > 0) {
-        this.loadTestHistoryByApp({ appId: data.content[0].id });
+      if (!currentApp && !value && data.list.length > 0) {
+        this.loadTestHistoryByApp({ appId: data.list[0].id });
         store.setEnvList(envs);
-        store.setCurrentApp(data.content[0].id);
-        store.setAppList(data.content);
-        store.setSelectLoading(false);        
+        store.setCurrentApp(data.list[0].id);
+        store.setAppList(data.list);
+        store.setSelectLoading(false);
       } else {
-        store.setEnvList(envs);        
-        store.setAppList(data.content);
-        store.setSelectLoading(false);   
-        store.unLoading(); 
+        store.setEnvList(envs);
+        store.setAppList(data.list);
+        store.setSelectLoading(false);
+        store.unLoading();
       }
     });
   }
 
   handleAppChange = (appId) => {
     this.loadTestHistoryByApp({ appId });
-    store.setCurrentApp(appId);    
+    store.setCurrentApp(appId);
   }
 
   loadTestHistoryByApp = ({ appId = store.currentApp, pagination = store.pagination, filter = store.filter } = {}) => {
     store.Loading();
-    store.setFilter(filter);    
+    store.setFilter(filter);
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
       store.setHistoryList(history.content);
       store.setPagination({
-        current: history.number + 1,
-        total: history.totalElements,
-        pageSize: history.size,
-      });      
+        current: history.number,
+        total: history.total,
+        pageSize: history.pageSize,
+      });
     }).finally(() => {
       store.unLoading();
-      store.setSelectLoading(false);     
+      store.setSelectLoading(false);
       setTimeout(() => {
         this.handleAutoRefresh();
       }, 3000);
@@ -85,7 +86,7 @@ class AutoTestListContainer extends Component {
   }
 
   handleAutoRefresh = ({ appId = store.currentApp, pagination = store.pagination, filter = store.filter } = {}) => {
-    if (store.autoRefresh) {  
+    if (store.autoRefresh) {
       clearTimeout(this.timer);
       this.timer = setTimeout(() => {
         this.handleAutoRefresh();
@@ -93,11 +94,12 @@ class AutoTestListContainer extends Component {
     }
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
       store.setHistoryList(history.content);
+
       store.setPagination({
-        current: history.number + 1,
-        total: history.totalElements,
-        pageSize: history.size,
-      });      
+        current: history.number,
+        total: history.total,
+        pageSize: history.pageSize,
+      });
     });
   }
 
@@ -143,14 +145,14 @@ class AutoTestListContainer extends Component {
     // console.log(key, record);
     switch (key) {
       case 'log': {
-        this.ContainerLog.open(record);       
+        this.ContainerLog.open(record);
         break;
       }
 
       case 'retry': {
         this.handleRerunTest(record);
         break;
-      }     
+      }
       case 'report': {
         this.toReport(resultId);
         break;
@@ -164,23 +166,23 @@ class AutoTestListContainer extends Component {
   }
 
   render() {
-    const { 
-      loading, appList, 
-      selectLoading, 
+    const {
+      loading, appList,
+      selectLoading,
       autoRefresh,
-      currentApp, 
-      historyList,   
+      currentApp,
+      historyList,
       envList,
       pagination,
     } = store;
     return (
       <AutoTestList
         loading={loading}
-        appList={appList} 
+        appList={appList}
         selectLoading={selectLoading}
         autoRefresh={autoRefresh}
         currentApp={currentApp}
-        historyList={historyList}   
+        historyList={historyList}
         envList={envList}
         pagination={pagination}
         toCreateAutoTest={this.toCreateAutoTest}

@@ -151,7 +151,6 @@ class TestPlanStore extends BaseTreeProto {
       this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
       resolve();
     }).catch((err) => {
-      console.log(err);
       Choerodon.prompt('网络错误');
     }).finally(() => {
       this.leaveLoading();
@@ -171,7 +170,7 @@ class TestPlanStore extends BaseTreeProto {
   }
 
   selectDefaultVersion = (versionId) => {
-    const targetVersion = this.dataList.find((item => item.versionId === versionId && item.key.split('-').length === 3)); 
+    const targetVersion = this.dataList.find((item => item.versionId === versionId && item.key.split('-').length === 3));
     if (targetVersion) {
       this.setCurrentCycle(targetVersion);
       this.setExpandedKeys([...this.expandedKeys, targetVersion.key]);
@@ -184,7 +183,7 @@ class TestPlanStore extends BaseTreeProto {
     const { executePagination, filters } = this;
     if (data.type === 'folder') {
       getExecutesByCycleId({
-        page: executePagination.current - 1,
+        page: executePagination.current,
         size: executePagination.pageSize,
       }, data.cycleId,
       {
@@ -193,11 +192,11 @@ class TestPlanStore extends BaseTreeProto {
         assignedTo: [Number(this.assignedTo) || null],
       }).then((cycle) => {
         this.rightLeaveLoading();
-        this.setTestList(cycle.content);
+        this.setTestList(cycle.list);
         this.setExecutePagination({
           current: executePagination.current,
           pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+          total: cycle.total,
         });
       });
     }
@@ -209,7 +208,7 @@ class TestPlanStore extends BaseTreeProto {
   } = {}) => {
     const { executePagination, filters } = this;
     const data = node ? node.props.data : this.getCurrentCycle;
-    // 点所有的都生成事件日历  
+    // 点所有的都生成事件日历
     this.updateTimes([data]);
     if (data.type === 'folder') {
       this.setCalendarShowMode('single');
@@ -243,7 +242,7 @@ class TestPlanStore extends BaseTreeProto {
     // window.console.log(data);
     if (data.type === 'folder') {
       getExecutesByCycleId({
-        page: 0,
+        page: 1,
         size: executePagination.pageSize,
       }, data.cycleId,
       {
@@ -252,11 +251,11 @@ class TestPlanStore extends BaseTreeProto {
         assignedTo: [Number(this.assignedTo) || null],
       }).then((cycle) => {
         this.rightLeaveLoading();
-        this.setTestList(cycle.content);
+        this.setTestList(cycle.list);
         this.setExecutePagination({
           current: 1,
           pageSize: executePagination.pageSize,
-          total: cycle.totalElements,
+          total: cycle.total,
         });
       });
     }
@@ -292,7 +291,7 @@ class TestPlanStore extends BaseTreeProto {
       // } else
       // 两种情况，version或者cycle和文件夹，version没有type
       if (currentCycle.key === node.key) {
-        // debugger;
+        //
         this.updateTimes([node]);
         this.setCurrentCycle(node);
       }

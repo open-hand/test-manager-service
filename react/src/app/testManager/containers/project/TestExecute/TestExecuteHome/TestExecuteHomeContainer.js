@@ -101,10 +101,10 @@ class TestExecuteHomeContainer extends Component {
   loadExecutes = () => {
     const currentCycle = TestExecuteStore.getCurrentCycle;
     const { cycleId, type } = currentCycle;
-    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const { treeAssignedTo } = TestExecuteStore;
     const executePagination = TestExecuteStore.getExecutePagination;
     const { filters } = this.state;
-    const targetPage = executePagination.current - 1;
+    const targetPage = executePagination.current;
     getExecutesByCycleId({
       page: targetPage,
       size: executePagination.pageSize,
@@ -115,13 +115,13 @@ class TestExecuteHomeContainer extends Component {
       assignedTo: [treeAssignedTo || Number(this.assignedTo)],
     }, type).then((res) => {
       TestExecuteStore.setExecutePagination({
-        current: res.number + 1,
-        pageSize: res.size,
-        total: res.totalElements,
+        current: res.pageNum,
+        pageSize: res.pageSize,
+        total: res.total,
       });
       this.setState({
         tableLoading: false,
-        testList: res.content,
+        testList: res.list,
       });
     });
   }
@@ -287,8 +287,7 @@ class TestExecuteHomeContainer extends Component {
     const expandedKeys = TestExecuteStore.getExpandedKeys;
     const selectedKeys = TestExecuteStore.getSelectedKeys;
     const currentCycle = TestExecuteStore.getCurrentCycle;
-    const leftVisible = TestExecuteStore.leftVisible;
-    const treeAssignedTo = TestExecuteStore.treeAssignedTo;
+    const { leftVisible, treeAssignedTo } = TestExecuteStore;
     const executePagination = TestExecuteStore.getExecutePagination;
 
     return (

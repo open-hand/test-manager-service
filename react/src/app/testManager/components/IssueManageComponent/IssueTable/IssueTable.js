@@ -23,7 +23,7 @@ class IssueTable extends Component {
     filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
   };
 
-  
+
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
@@ -78,7 +78,7 @@ class IssueTable extends Component {
 
   renderTbody(data, columns) {
     const {
-      disabled, onRow, 
+      disabled, onRow,
     } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
@@ -101,7 +101,7 @@ class IssueTable extends Component {
       if (disabled) {
         return tds(index);
       } else {
-        return ( 
+        return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
           <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
@@ -143,7 +143,7 @@ class IssueTable extends Component {
     );
   }
 
-  onDragEnd = (result) => { 
+  onDragEnd = (result) => {
     IssueStore.setTableDraging(false);
     document.removeEventListener('keydown', this.enterCopy);
     document.removeEventListener('keyup', this.leaveCopy);
@@ -169,12 +169,12 @@ class IssueTable extends Component {
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-      
+
       if (this.instance.firstElementChild) {
         this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
       } else {
         this.instance.appendChild(templateCopy);
-      }     
+      }
     }
   }
 
@@ -183,7 +183,7 @@ class IssueTable extends Component {
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_move').cloneNode(true);
     templateMove.style.display = 'block';
- 
+
     if (this.instance.firstElementChild) {
       this.instance.replaceChild(templateMove, this.instance.firstElementChild);
     } else {
@@ -200,7 +200,7 @@ class IssueTable extends Component {
         if (firstIndex !== null) {
           const start = Math.min(firstIndex, index);
           const end = Math.max(firstIndex, index);
-          // debugger;
+          //
           const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
           // console.log(draggingTableItems);
           IssueStore.setDraggingTableItems(draggingTableItems);
@@ -220,7 +220,7 @@ class IssueTable extends Component {
         IssueStore.setDraggingTableItems(old);
       }
     } else {
-      IssueStore.setDraggingTableItems([]);  
+      IssueStore.setDraggingTableItems([]);
       onRow(issue).onClick();
     }
     this.setState({
@@ -269,9 +269,9 @@ class IssueTable extends Component {
     }
 
     const {
-      statusId, priorityId, issueNum, summary, labelIssueRelDTOList, 
-    } = filters;   
-    const search = {      
+      statusId, priorityId, issueNum, summary, labelIssueRelDTOList,
+    } = filters;
+    const search = {
       advancedSearchArgs: {
         statusId: statusId || [],
         priorityId: priorityId || [],
@@ -280,7 +280,7 @@ class IssueTable extends Component {
         label: labelIssueRelDTOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
-      },     
+      },
     };
     IssueStore.setFilter(search);
     const { current, pageSize } = IssueStore.pagination;
@@ -288,11 +288,11 @@ class IssueTable extends Component {
   }
 
   handlePaginationChange(page, pageSize) {
-    IssueStore.loadIssues(page - 1, pageSize);
+    IssueStore.loadIssues(page, pageSize);
   }
 
   handlePaginationShowSizeChange(current, size) {
-    IssueStore.loadIssues(current - 1, size);
+    IssueStore.loadIssues(current, size);
   }
 
   manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
@@ -315,7 +315,7 @@ class IssueTable extends Component {
         dataIndex: 'issueTypeDTO',
         key: 'issueTypeDTO',
         render: (issueTypeDTO, record) => renderType(issueTypeDTO, true),
-      },      
+      },
       {
         title: '概要',
         dataIndex: 'summary',
@@ -341,7 +341,7 @@ class IssueTable extends Component {
         key: 'reporter',
         render: (assign, record) => {
           const {
-            reporterId, reporterLoginName, reporterRealName, reporterImageUrl, 
+            reporterId, reporterLoginName, reporterRealName, reporterImageUrl,
           } = record;
           return renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl);
         },
@@ -360,7 +360,7 @@ class IssueTable extends Component {
         key: 'assign',
         render: (assign, record) => {
           const {
-            assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl, 
+            assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl,
           } = record;
           return renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl);
         },

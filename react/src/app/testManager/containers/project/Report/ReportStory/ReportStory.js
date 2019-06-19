@@ -14,7 +14,7 @@ import { Tags } from '../../../../components/CommonComponent';
 import { ReporterSwitcher } from '../../../../components/ReportComponent';
 import { getReportsFromStory } from '../../../../api/reportApi';
 import {
-  getIssueTypes, getIssueStatus, getProjectVersion, getSprints, 
+  getIssueTypes, getIssueStatus, getProjectVersion, getSprints,
 } from '../../../../api/agileApi';
 import { getStatusList } from '../../../../api/TestStatusApi';
 import {
@@ -36,7 +36,7 @@ class ReportStory extends Component {
     reportList: [],
     statusList: [],
     issueTypes: [],
-    versionList: [], 
+    versionList: [],
     sprintList: [],
     issueStatusList: [],
     pagination: {
@@ -66,7 +66,7 @@ class ReportStory extends Component {
     this.setState({ loading: true });
     Promise.all([
       getReportsFromStory({
-        page: Pagination.current - 1,
+        page: Pagination.current,
         size: Pagination.pageSize,
       }, Search),
       getStatusList('CYCLE_CASE'),
@@ -77,7 +77,7 @@ class ReportStory extends Component {
       getSprints(),
     ])
       .then(([reportData, statusList, issueTypes, agileTypeList, issueStatusList, versionList, sprintList]) => {
-        if (reportData.totalElements !== undefined) {
+        if (reportData.total !== undefined) {
           this.setState({
             loading: false,
             statusList,
@@ -86,11 +86,11 @@ class ReportStory extends Component {
             versionList,
             sprintList,
             openId: {},
-            reportList: reportData.content,
+            reportList: reportData.list,
             pagination: {
               current: Pagination.current,
-              pageSize: Pagination.pageSize,            
-              total: reportData.totalElements,
+              pageSize: Pagination.pageSize,
+              total: reportData.total,
             },
           });
         }
@@ -117,7 +117,7 @@ class ReportStory extends Component {
   handleFilterChange = (pagination, filters, sorter, barFilters) => {
     const { statusId, priorityCode, typeId } = filters;
     const {
-      issueNum, summary, assignee, sprint, version, component, epic, 
+      issueNum, summary, assignee, sprint, version, component, epic,
     } = filters;
     // console.log(barFilters);
     const search = {
@@ -171,14 +171,14 @@ class ReportStory extends Component {
         dataIndex: 'version',
         key: 'version',
         filters: versionList.map(version => ({ text: version.name, value: version.versionId.toString() })),
-        filterMultiple: true,        
+        filterMultiple: true,
       },
       {
         title: '冲刺',
         dataIndex: 'sprint',
         key: 'sprint',
         filters: sprintList.map(sprint => ({ text: sprint.sprintName, value: sprint.sprintId.toString() })),
-        filterMultiple: true,        
+        filterMultiple: true,
       },
       // {
       //   title: '经办人',
@@ -360,7 +360,7 @@ class ReportStory extends Component {
           <div>
             {linkedTestIssues.map((testIssue, i) => {
               const { testCycleCaseES, issueId } = testIssue;
-              const totalExecute = testCycleCaseES.length;           
+              const totalExecute = testCycleCaseES.length;
               const executeStatus = {};
               const caseShow = testCycleCaseES.map((execute) => {
                 // 执行的颜色
@@ -368,7 +368,7 @@ class ReportStory extends Component {
                 const statusColor = _.find(statusList, { statusId: executionStatus })
                   ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
                 const statusName = _.find(statusList, { statusId: executionStatus })
-                  && _.find(statusList, { statusId: executionStatus }).statusName;                
+                  && _.find(statusList, { statusId: executionStatus }).statusName;
                 if (!executeStatus[statusName]) {
                   executeStatus[statusName] = 1;
                 } else {
@@ -403,7 +403,7 @@ class ReportStory extends Component {
                     </Link>
                   </div>
                 );
-              });             
+              });
               return openId[record.defectInfo.issueId] && openId[record.defectInfo.issueId]
                 .includes(`${issueId}-${i}`) ? (
                   <div
@@ -557,7 +557,7 @@ class ReportStory extends Component {
             </span>
           </Button>
         </Header>
-        <Content        
+        <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
           description={<FormattedMessage id="report_content_description" />}
           link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"

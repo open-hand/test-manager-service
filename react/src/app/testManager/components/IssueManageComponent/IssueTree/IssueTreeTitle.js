@@ -8,7 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
-import { SmartTooltip } from '../../CommonComponent'; 
+import { SmartTooltip } from '../../CommonComponent';
 import IssueTreeStore from '../../../store/project/IssueManage/IssueTreeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
@@ -17,7 +17,7 @@ import IssueStore from '../../../store/project/IssueManage/IssueStore';
 import './IssueTreeTitle.scss';
 
 const { AppState } = stores;
-const confirm = Modal.confirm;
+const { confirm } = Modal;
 @observer
 class IssueTreeTitle extends Component {
   state = {
@@ -39,7 +39,7 @@ class IssueTreeTitle extends Component {
         });
         break;
       }
-      case 'item_1': {    
+      case 'item_1': {
         confirm({
           title: '确定删除文件夹?',
           content: '删除文件夹后将删除文件夹内所有测试用例，以及相关的测试阶段和执行',
@@ -64,8 +64,8 @@ class IssueTreeTitle extends Component {
           onCancel() {
             // console.log('Cancel');
           },
-        });   
-        
+        });
+
         break;
       }
       case 'copy': {
@@ -155,7 +155,7 @@ class IssueTreeTitle extends Component {
       summary: issue.summary,
       objectVersionNumber: issue.objectVersionNumber,
     }));
-    // debugger;
+    //
     if (!isCopy) {
       IssueStore.setLoading(true);
       moveIssues(versionId, cycleId, issueLinks).then((res) => {
@@ -192,9 +192,9 @@ class IssueTreeTitle extends Component {
     const menu = AppState.currentMenuType;
     const {
       type: Menutype, id: projectId, organizationId: orgId, name,
-    } = menu;   
+    } = menu;
     const draggingItems = IssueTreeStore.getDraggingFolders;
-    
+
     // 过滤，这里只要文件夹,显示时可以显示和当前版本一样的，但最终处理时过滤掉
     const filteredItems = draggingItems.filter(item => item && item.cycleId);
     const getMenu = () => {
@@ -206,12 +206,12 @@ class IssueTreeTitle extends Component {
         </Menu.Item>,
       );
       // } else {
-      // if (type === 'cycle') {         
+      // if (type === 'cycle') {
       items = items.concat([
         <Permission
           type={Menutype}
           projectId={projectId}
-          organizationId={orgId}         
+          organizationId={orgId}
           service={['agile-service.project-info.updateProjectInfo']}
           noAccessChildren={(
             <Menu.Item
@@ -252,7 +252,7 @@ class IssueTreeTitle extends Component {
     const treeTitle = (
       <div
         className="c7ntest-issue-tree-title"
-      >        
+      >
         {editing
           ? (
             <Input
@@ -261,10 +261,10 @@ class IssueTreeTitle extends Component {
               autoFocus
               onBlur={(e) => {
                 if (e.target.value === '') {
-                  Choerodon.prompt('文件夹名不能为空');  
+                  Choerodon.prompt('文件夹名不能为空');
                   this.setState({
                     editing: false,
-                  });               
+                  });
                   return;
                 }
                 if (e.target.value === data.title) {
@@ -294,8 +294,8 @@ class IssueTreeTitle extends Component {
         ? null : */}
           {
             type === 'version'
-              ? (                
-                <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>                
+              ? (
+                <Tooltip title="添加文件夹"><Icon type="create_new_folder" className="c7ntest-add-folder" onClick={this.addFolder.bind(this, data)} /></Tooltip>
               )
               : null
           }
@@ -357,14 +357,14 @@ class IssueTreeTitle extends Component {
                     document.removeEventListener('keyup', this.leaveCopy);
                   }
                   return (
-                    <div                      
+                    <div
                       ref={providedinner.innerRef}
                       {...providedinner.draggableProps}
-                      {...providedinner.dragHandleProps}                      
+                      {...providedinner.dragHandleProps}
                     >
                       <div
                         style={{
-                          position: 'relative',                          
+                          position: 'relative',
                           // background: snapshotinner.isDragging && 'white',
                         }}
                       >
