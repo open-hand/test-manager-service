@@ -87,6 +87,7 @@ public class TestCaseServiceImpl implements TestCaseService {
      */
     public <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId) {
         PageInfo<IssueListTestWithSprintVersionDTO> returnDto = listIssueWithLinkedIssues(projectId, searchDTO, pageRequest, organizationId).getBody();
+        Assert.notNull(returnDto, "error.TestCaseService.getIssueInfoMapAndPopulatePageInfo.param.page.not.be.null");
         page.setPageNum(returnDto.getPageNum());
         page.setPageSize(returnDto.getPageSize());
         page.setTotal(returnDto.getTotal());
