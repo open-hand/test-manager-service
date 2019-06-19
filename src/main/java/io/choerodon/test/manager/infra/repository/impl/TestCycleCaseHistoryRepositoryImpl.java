@@ -35,7 +35,7 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
         TestCycleCaseHistoryDO convert = ConvertHelper.convert(testCycleCaseHistoryE, TestCycleCaseHistoryDO.class);
 
         PageInfo<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(),pageRequest.getSort().toString()).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
+                pageRequest.getSize(),pageRequest.getSort().toSql()).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
 
         return ConvertPageHelper.convertPageInfo(serviceDOPage, TestCycleCaseHistoryE.class);
     }

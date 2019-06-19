@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.app.service;
 
 import io.choerodon.agile.api.dto.*;
+
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
@@ -27,7 +29,7 @@ public interface TestCaseService {
 
     Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId);
 
     Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId);
 

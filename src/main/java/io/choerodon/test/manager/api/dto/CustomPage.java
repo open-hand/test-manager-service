@@ -8,7 +8,7 @@ public class CustomPage<E> extends PageInfo<E> {
     private Long[] allIdValues;
 
     public CustomPage(List<E> content, Long[] allNumber) {
-        this.setList(content);
+        super(content);
         this.setTotal(allNumber.length);
         allIdValues = allNumber;
     }

@@ -20,6 +20,7 @@ import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
@@ -76,9 +77,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                 issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }
-        PageInfo page = new PageInfo();
-        page.setList(issueComponentDetailFolderRelDTOS);
-        return page;
+        return new PageInfo<>(issueComponentDetailFolderRelDTOS);
     }
 
     private void loadResultRelDTOS(Long projectId, Long versionId, Long folderId, Long issueId, List<TestIssueFolderRelDTO> resultRelDTOS) {
@@ -117,17 +116,17 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         }
 
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
 
         Long[] allIssuesArray = getFilterIssues(projectId, searchDTO, resultRelDTOS);
 
         if (ObjectUtils.isEmpty(allIssuesArray)) {
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
 
         //进行分页
-        int pageNum = pageRequest.getPage();
+        int pageNum = pageRequest.getPage() - 1;
         int pageSize = pageRequest.getSize();
         int highPage = (pageNum + 1) * pageSize;
         int lowPage = pageNum * pageSize;
@@ -135,7 +134,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         int size = highPage >= allIssuesArray.length ? allIssuesArray.length - lowPage : pageSize;
         Long[] pagedIssues = new Long[size];
         System.arraycopy(allIssuesArray, lowPage, pagedIssues, 0, size);
-        return new CustomPage(queryIssuesById(projectId, null, folderId, pagedIssues, organizationId).getList().stream().collect(Collectors.toList()), allIssuesArray);
+        return new CustomPage<>(queryIssuesById(projectId, null, folderId, pagedIssues, organizationId).getList(), allIssuesArray);
     }
 
     private Long[] getFilterIssues(Long projectId, SearchDTO searchDTO, List<TestIssueFolderRelDTO> resultRelDTOS) {

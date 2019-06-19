@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,10 +53,11 @@ public class ReporterFormServiceImpl implements ReporterFormService {
     TestCycleCaseStepRepository testCycleCaseStepRepository;
 
     public PageInfo<ReporterFormE> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
-        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, organizationId);
+        Page page = new Page();
+        Map<Long, IssueInfosDTO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page, organizationId);
         List<ReporterFormE> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
-
-        return new PageInfo(reporterFormES);
+        page.addAll(reporterFormES);
+        return page.toPageInfo();
     }
 
     public List<ReporterFormE> createFromIssueToDefect(Long projectId, Long[] issueIds, Long organizationId) {
@@ -110,7 +112,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
             return new PageInfo<>();
         }
-        int pageNum = pageRequest.getPage();
+        int pageNum = pageRequest.getPage() - 1;
         int pageSize = pageRequest.getSize();
         int highPage = (pageNum + 1) * pageSize - 1;
         int lowPage = pageNum * pageSize;

@@ -2,6 +2,8 @@ package io.choerodon.test.manager.infra.repository.impl;
 
 import java.util.*;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -81,20 +83,25 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
             dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
         }
 //        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-        PageInfo<TestCycleCaseDO> page = new PageInfo<>(dtos);
-        return ConvertPageHelper.convertPageInfo(page, TestCycleCaseE.class);
+        Page page = new Page<>(pageRequest.getPage(), pageRequest.getSize());
+        page.setTotal(total);
+        page.addAll(dtos);
+        return ConvertPageHelper.convertPageInfo(page.toPageInfo(), TestCycleCaseE.class);
     }
 
     private List<TestCycleCaseDO> queryByFatherCycleWithDataBase(List<TestCycleCaseDO> converts, PageRequest pageRequest) {
-        switch (LiquibaseHelper.dbType(dsUrl)) {
-            case MYSQL:
+//        switch (LiquibaseHelper.dbType(dsUrl)) {
+//            case MYSQL:
 //            case H2:
 //                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
 //            case ORACLE:
 //                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-            default:
-                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-        }
+//            default:
+//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
+//        }
+//        PageInfo p = PageHelper.startPage(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toSql()).doSelectPageInfo(() -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+        List a = testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
+        return a;
     }
 
     @Override
@@ -104,15 +111,16 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     private List<TestCycleCaseDO> queryWithAttachAndDefect(TestCycleCaseDO convert, PageRequest pageRequest) {
-        switch (LiquibaseHelper.dbType(dsUrl)) {
-            case MYSQL:
-            case H2:
-                return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-            case ORACLE:
-                return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-            default:
-                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-        }
+//        switch (LiquibaseHelper.dbType(dsUrl)) {
+//            case MYSQL:
+//            case H2:
+//                return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//            case ORACLE:
+//                return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//            default:
+//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
+//        }
+        return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
     }
 
     @Override

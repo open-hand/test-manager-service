@@ -31,7 +31,7 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
     @Override
     public PageInfo<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest) {
         PageInfo<TestAutomationHistoryE> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(),pageRequest.getSort().toString()).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
+                pageRequest.getSize(),pageRequest.getSort().toSql()).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
         return ConvertPageHelper.convertPageInfo(serviceDOPage, TestAutomationHistoryDTO.class);
     }
 
