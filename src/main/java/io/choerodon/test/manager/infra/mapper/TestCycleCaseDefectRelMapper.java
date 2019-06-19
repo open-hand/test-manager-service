@@ -1,23 +1,24 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
-import io.choerodon.mybatis.common.BaseMapper;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.Date;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleCaseDefectRelMapper extends BaseMapper<TestCycleCaseDefectRelDO> {
-	List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues,@Param("projectId") Long projectId);
+public interface TestCycleCaseDefectRelMapper extends Mapper<TestCycleCaseDefectRelDO> {
+    List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues, @Param("projectId") Long projectId);
 
-	List<Long> queryAllIssueIds();
+    List<Long> queryAllIssueIds();
 
-	int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
+    int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
 
-	List<Long> queryIssueIdAndDefectId(Long projectId);
+    List<Long> queryIssueIdAndDefectId(Long projectId);
 
-	void updateAuditFields(@Param("defectId") Long defectId, @Param("userId") Long userId, @Param("date") Date date);
+    void updateAuditFields(@Param("defectId") Long defectId, @Param("userId") Long userId, @Param("date") Date date);
 }

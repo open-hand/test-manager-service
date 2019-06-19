@@ -6,7 +6,7 @@ import io.choerodon.agile.api.dto.ProjectDTO
 import io.choerodon.agile.api.dto.SearchDTO
 import io.choerodon.agile.api.dto.UserDO
 import io.choerodon.core.convertor.ConvertHelper
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.IssueInfosDTO
 import io.choerodon.test.manager.api.dto.TestCaseStepDTO
@@ -251,7 +251,7 @@ class TestCycleCaseControllerSpec extends Specification {
         given:
         TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0), searchDTO: new SearchDTO(content: "test"))
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 10)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, PageInfo.class, 142, 0, 10)
         then:
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         0 * userService.query(_) >> new HashMap<>()
@@ -259,7 +259,7 @@ class TestCycleCaseControllerSpec extends Specification {
         result.body.size() == 0
 
         when:
-        result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, Page.class, 142, 0, 1)
+        result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, PageInfo.class, 142, 0, 1)
         then:
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         0 * userService.query(_) >> new HashMap<>()
@@ -360,7 +360,7 @@ class TestCycleCaseControllerSpec extends Specification {
         TestCycleCaseDTO searchDto = new TestCycleCaseDTO(cycleId: cycleIds.get(0))
 
         when:
-        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, Page.class, 142, cycleIds.get(0), 0, 10)
+        def result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/filtered/{cycleId}?page={page}&size={size}", searchDto, PageInfo.class, 142, cycleIds.get(0), 0, 10)
         then:
         1 * userService.query(_) >> new HashMap<>()
         and:

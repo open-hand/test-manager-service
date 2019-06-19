@@ -7,7 +7,7 @@ import io.choerodon.agile.api.dto.ProductVersionPageDTO;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -638,7 +638,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
+    public ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap) {
         return testCaseService.getTestCycleVersionInfo(projectId, searchParamMap);
     }
 

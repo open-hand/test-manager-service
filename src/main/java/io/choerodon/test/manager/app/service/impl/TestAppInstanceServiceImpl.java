@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
@@ -13,7 +14,6 @@ import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ErrorLineDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
-import io.choerodon.mybatis.helper.AuditHelper;
 import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
@@ -23,6 +23,7 @@ import io.choerodon.test.manager.domain.service.*;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
 import io.choerodon.test.manager.infra.common.utils.FileUtil;
 import io.choerodon.test.manager.infra.common.utils.GenerateUUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,7 +160,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
      */
     @Override
     public TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId, Long userId) {
-        AuditHelper.audit().setUser(userId);
+        DetailsHelper.setCustomUserDetails(userId, "zh_CN");
 
         Yaml yaml = new Yaml();
         TestEnvCommand envCommand;

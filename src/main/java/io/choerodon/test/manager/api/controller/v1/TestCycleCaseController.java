@@ -1,16 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.app.service.ExcelServiceHandler;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Optional;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import com.github.pagehelper.PageInfo;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Optional;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.domain.Sort;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.mybatis.annotation.SortDefault;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.app.service.ExcelServiceHandler;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -59,7 +60,7 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试用例下循环case")
     @PostMapping("/query/cycleId")
-    public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<PageInfo<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
                                                                @ApiIgnore
                                                                @ApiParam(value = "分页信息", required = true)
                                                                @SortDefault(value = "cycle_id", direction = Sort.Direction.ASC)
@@ -75,7 +76,7 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("过滤查询测试用例下循环case")
     @PostMapping("/query/filtered/{cycleId}")
-    public ResponseEntity<Page<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<PageInfo<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
                                                                              @PathVariable(name = "cycleId") Long cycleId,
                                                                              @RequestBody TestCycleCaseDTO searchDTO,
                                                                              @ApiIgnore

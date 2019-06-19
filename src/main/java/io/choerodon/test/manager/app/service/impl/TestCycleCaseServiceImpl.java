@@ -1,12 +1,22 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.dto.ProductVersionDTO;
 import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.base.domain.Sort;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
@@ -22,15 +32,6 @@ import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -80,7 +81,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public Page<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId) {
+    public PageInfo<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId) {
 
         TestCycleE testCycleE = TestCycleEFactory.create();
         testCycleE.setCycleId(dto.getCycleId());
@@ -99,10 +100,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 }
         );
 
-        Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.queryByFatherCycle(ConvertHelper.convertList(testCycleCaseDTOS, TestCycleCaseE.class), pageRequest);
-
-        Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
-        List<TestCycleCaseDTO> cycleCaseDTOS = dots.getContent();
+        PageInfo<TestCycleCaseE> serviceEPage = iTestCycleCaseService.queryByFatherCycle(ConvertHelper.convertList(testCycleCaseDTOS, TestCycleCaseE.class), pageRequest);
+        PageInfo<TestCycleCaseDTO> dots = ConvertPageHelper.convertPageInfo(serviceEPage, TestCycleCaseDTO.class);
+        List<TestCycleCaseDTO> cycleCaseDTOS = dots.getList();
         Long[] issues = cycleCaseDTOS.stream().map(TestCycleCaseDTO::getIssueId).toArray(Long[]::new);
 
         if (!ObjectUtils.isEmpty(dto.getSearchDTO())) {
@@ -118,22 +118,22 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                     filterCase.add(caseDTO);
                 }
             }
-            dots.setContent(filterCase);
+            dots.setList(filterCase);
         }
 
-        populateCycleCaseWithDefect(dots, projectId, organizationId, true);
-        populateUsers(dots);
+        populateCycleCaseWithDefect(dots.getList(), projectId, organizationId, true);
+        populateUsers(dots.getList());
         return dots;
     }
 
     @Override
-    public Page<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
+    public PageInfo<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO) {
         searchDTO = Optional.ofNullable(searchDTO).orElseGet(TestCycleCaseDTO::new);
         searchDTO.setCycleId(cycleId);
-        Page<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(searchDTO, TestCycleCaseE.class), pageRequest);
-        Page<TestCycleCaseDTO> dots = ConvertPageHelper.convertPage(serviceEPage, TestCycleCaseDTO.class);
+        PageInfo<TestCycleCaseE> serviceEPage = iTestCycleCaseService.query(ConvertHelper.convert(searchDTO, TestCycleCaseE.class), pageRequest);
+        PageInfo<TestCycleCaseDTO> dots = ConvertPageHelper.convertPageInfo(serviceEPage, TestCycleCaseDTO.class);
 
-        populateUsers(dots);
+        populateUsers(dots.getList());
         return dots;
     }
 
@@ -260,12 +260,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
         if (stageId != 0) {
             tmpTestCycleCaseDTO.setCycleId(stageId);
-            Page<TestCycleCaseDTO> testCycleCaseDTOPage = queryByCycle(tmpTestCycleCaseDTO, pageRequest, projectId, organizationId);
+            PageInfo<TestCycleCaseDTO> testCycleCaseDTOPage = queryByCycle(tmpTestCycleCaseDTO, pageRequest, projectId, organizationId);
             if (flag == 0) {
-                targetExecuteId = testCycleCaseDTOPage.get(0).getExecuteId();
+                targetExecuteId = testCycleCaseDTOPage.getList().get(0).getExecuteId();
                 dto.setLastExecuteId(targetExecuteId);
             } else {
-                targetExecuteId = testCycleCaseDTOPage.get(0).getExecuteId();
+                targetExecuteId = testCycleCaseDTOPage.getList().get(0).getExecuteId();
                 dto.setNextExecuteId(targetExecuteId);
             }
         }

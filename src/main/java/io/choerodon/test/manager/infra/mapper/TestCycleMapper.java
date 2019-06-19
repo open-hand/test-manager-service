@@ -1,16 +1,17 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import io.choerodon.mybatis.common.BaseMapper;
-import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.Date;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleMapper extends BaseMapper<TestCycleDO> {
+public interface TestCycleMapper extends Mapper<TestCycleDO> {
 
     List<TestCycleDO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
 

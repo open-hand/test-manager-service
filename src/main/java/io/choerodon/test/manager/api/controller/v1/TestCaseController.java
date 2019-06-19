@@ -1,14 +1,14 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.base.domain.Sort;
 import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.annotation.Permission;
+import io.choerodon.mybatis.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
@@ -96,7 +96,8 @@ public class TestCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect")
-    public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO, @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
+    public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO,
+                                                    @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
                                                     @RequestParam Long organizationId) {
 
         return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest, organizationId))

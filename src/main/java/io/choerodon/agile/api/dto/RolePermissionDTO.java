@@ -1,37 +1,37 @@
 package io.choerodon.agile.api.dto;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * @author wuguokai
  */
 public class RolePermissionDTO {
-	private Long id;
-	private Long roleId;
-	@NotEmpty(message = "errpr.rolePermission.permissionId.empty")
-	private Long permissionId;
+    private Long id;
+    private Long roleId;
+    @NotEmpty(message = "errpr.rolePermission.permissionId.empty")
+    private Long permissionId;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Long getRoleId() {
-		return roleId;
-	}
+    public Long getRoleId() {
+        return roleId;
+    }
 
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
 
-	public Long getPermissionId() {
-		return permissionId;
-	}
+    public Long getPermissionId() {
+        return permissionId;
+    }
 
-	public void setPermissionId(Long permissionId) {
-		this.permissionId = permissionId;
-	}
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
+    }
 }

@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
@@ -371,9 +371,9 @@ public class DemoServiceImpl implements DemoService {
 
         for (Long phaseId : phaseIdsOne) {
             testCycleCaseDTO.setCycleId(phaseId);
-            Page<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
+            PageInfo<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
 
-            for (TestCycleCaseDTO executionDTO : executionDTOs) {
+            for (TestCycleCaseDTO executionDTO : executionDTOs.getList()) {
                 if (executionDTO.getIssueId().equals(testIssueIds.get(2))) {
                     updateExecutionStepStatus(executionDTO.getExecuteId(), 2, projectId, organizationId);
                     executionDTO.setExecutionStatus(statusWIPId);
@@ -396,9 +396,9 @@ public class DemoServiceImpl implements DemoService {
 
         for (Long phaseId : phaseIdsTwo) {
             testCycleCaseDTO.setCycleId(phaseId);
-            Page<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
+            PageInfo<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
 
-            for (TestCycleCaseDTO executionDTO : executionDTOs) {
+            for (TestCycleCaseDTO executionDTO : executionDTOs.getList()) {
                 executionIdsThree.add(executionDTO.getExecuteId());
             }
         }

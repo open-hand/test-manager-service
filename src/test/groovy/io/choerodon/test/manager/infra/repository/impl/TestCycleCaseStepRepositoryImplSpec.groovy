@@ -3,7 +3,7 @@ package io.choerodon.test.manager.infra.repository.impl
 import io.choerodon.agile.infra.common.utils.RankUtil
 import io.choerodon.agile.infra.common.utils.arilerank.AgileRank
 import io.choerodon.core.exception.CommonException
-import io.choerodon.mybatis.pagehelper.domain.PageRequest
+import io.choerodon.base.domain.PageRequest
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE

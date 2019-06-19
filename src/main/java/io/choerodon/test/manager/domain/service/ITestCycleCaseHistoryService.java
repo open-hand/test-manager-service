@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 
 /**
@@ -10,5 +10,5 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistory
 public interface ITestCycleCaseHistoryService {
     TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 
-    Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
+    PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
 }

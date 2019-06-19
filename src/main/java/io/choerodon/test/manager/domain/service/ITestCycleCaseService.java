@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.domain.service;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ public interface ITestCycleCaseService {
 	void delete(TestCycleCaseE testCycleCaseE);
 
 
-    Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseES, PageRequest pageRequest);
+    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseES, PageRequest pageRequest);
 
-	Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
+	PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
 
 	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 

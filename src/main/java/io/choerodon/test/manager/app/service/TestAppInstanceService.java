@@ -8,6 +8,8 @@ import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
  */

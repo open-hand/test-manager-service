@@ -1,12 +1,20 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import java.util.*;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+import com.github.pagehelper.PageInfo;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.domain.PageInfo;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
@@ -14,13 +22,6 @@ import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-
-import java.util.*;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -57,20 +58,20 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     @Override
-    public Page<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
         List<TestCycleCaseDO> dto = queryWithAttachAndDefect(convert, pageRequest);
-        Long total = 0L;
-        if (dto != null && !dto.isEmpty()) {
-            total = testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
-        }
-        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-        Page<TestCycleCaseDO> page = new Page<>(Optional.ofNullable(dto).orElseGet(ArrayList::new), info, total);
-        return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
+//        Long total = 0L;
+//        if (dto != null && !dto.isEmpty()) {
+//            total = testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
+//        }
+//        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+        PageInfo<TestCycleCaseDO> page = new PageInfo<>(Optional.ofNullable(dto).orElseGet(ArrayList::new));
+        return ConvertPageHelper.convertPageInfo(page, TestCycleCaseE.class);
     }
 
     @Override
-    public Page<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
         List<TestCycleCaseDO> converts = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDO.class);
         List<TestCycleCaseDO> dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
         Long total = 0L;
@@ -81,21 +82,26 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
             pageRequest.setPage((total.intValue() / pageRequest.getSize()) - 1);
             dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
         }
-        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-        Page<TestCycleCaseDO> page = new Page<>(dtos, info, total);
-        return ConvertPageHelper.convertPage(page, TestCycleCaseE.class);
+//        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+        Page page = new Page<>(pageRequest.getPage(), pageRequest.getSize());
+        page.setTotal(total);
+        page.addAll(dtos);
+        return ConvertPageHelper.convertPageInfo(page.toPageInfo(), TestCycleCaseE.class);
     }
 
     private List<TestCycleCaseDO> queryByFatherCycleWithDataBase(List<TestCycleCaseDO> converts, PageRequest pageRequest) {
-        switch (LiquibaseHelper.dbType(dsUrl)) {
-            case MYSQL:
-            case H2:
-                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-            case ORACLE:
-                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-            default:
-                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-        }
+//        switch (LiquibaseHelper.dbType(dsUrl)) {
+//            case MYSQL:
+//            case H2:
+//                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+//            case ORACLE:
+//                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+//            default:
+//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
+//        }
+//        PageInfo p = PageHelper.startPage(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toSql()).doSelectPageInfo(() -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
+        List a = testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
+        return a;
     }
 
     @Override
@@ -105,15 +111,16 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     private List<TestCycleCaseDO> queryWithAttachAndDefect(TestCycleCaseDO convert, PageRequest pageRequest) {
-        switch (LiquibaseHelper.dbType(dsUrl)) {
-            case MYSQL:
-            case H2:
-                return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-            case ORACLE:
-                return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-            default:
-                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-        }
+//        switch (LiquibaseHelper.dbType(dsUrl)) {
+//            case MYSQL:
+//            case H2:
+//                return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//            case ORACLE:
+//                return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//            default:
+//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
+//        }
+        return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
     }
 
     @Override

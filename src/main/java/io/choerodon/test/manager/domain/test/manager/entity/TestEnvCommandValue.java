@@ -1,20 +1,17 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Table(name ="test_env_command_value")
-@ModifyAudit
-@VersionAudit
-public class TestEnvCommandValue extends AuditDomain {
+import io.choerodon.mybatis.entity.BaseDTO;
+
+@Table(name = "test_env_command_value")
+public class TestEnvCommandValue extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String value;

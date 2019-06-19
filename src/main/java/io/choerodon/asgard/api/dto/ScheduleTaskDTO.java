@@ -2,7 +2,7 @@ package io.choerodon.asgard.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;

@@ -1,12 +1,14 @@
 package io.choerodon.test.manager.app.service;
 
 import io.choerodon.agile.api.dto.*;
-import io.choerodon.core.domain.Page;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
 
 import org.springframework.http.ResponseEntity;
@@ -19,15 +21,15 @@ import java.util.Map;
  */
 public interface TestCaseService {
 
-    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    ResponseEntity<PageInfo<IssueListDTO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    ResponseEntity<PageInfo<IssueComponentDetailDTO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
     ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId);
 
     Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
-    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page<T> page, Long organizationId);
+    <T> Map<Long, IssueInfosDTO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId);
 
     Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId);
 
@@ -43,7 +45,7 @@ public interface TestCaseService {
 
     Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
-    ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap);
+    ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap);
 
     Long[] getVersionIds(Long projectId);
 
@@ -63,7 +65,7 @@ public interface TestCaseService {
 
     List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds);
 
-    Page<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest);
+    PageInfo<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest);
 
     List<IssueLabelDTO> listIssueLabel(Long projectId);
 

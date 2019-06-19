@@ -2,15 +2,14 @@ package io.choerodon.test.manager.api.dto;
 
 import java.util.List;
 
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 
-public class CustomPage<E> extends Page<E> {
+public class CustomPage<E> extends PageInfo<E> {
     private Long[] allIdValues;
 
     public CustomPage(List<E> content, Long[] allNumber) {
-        this.setContent(content);
-        this.setNumberOfElements(allNumber.length);
-        this.setTotalElements(allNumber.length);
+        super(content);
+        this.setTotal(allNumber.length);
         allIdValues = allNumber;
     }
 

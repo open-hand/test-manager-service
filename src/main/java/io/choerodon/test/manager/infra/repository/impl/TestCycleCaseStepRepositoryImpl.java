@@ -1,24 +1,24 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import java.util.*;
+import java.util.stream.Stream;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import com.github.pagehelper.PageInfo;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.domain.PageInfo;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
-import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -58,7 +58,7 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
     }
 
     @Override
-    public Page<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
         if (!(testCycleCaseStepE != null && testCycleCaseStepE.getExecuteId() != null)) {
             throw new CommonException("error.test.cycle.case.step.caseId.not.null");
         }
@@ -69,10 +69,10 @@ public class TestCycleCaseStepRepositoryImpl implements TestCycleCaseStepReposit
         if (dto != null && !dto.isEmpty()) {
             total = testCycleCaseStepMapper.queryWithTestCaseStep_count(testCycleCaseStepE.getExecuteId());
         }
-        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-        Page<TestCycleCaseStepDO> page = new Page<>(Optional.ofNullable(dto).orElseGet(ArrayList::new), info, total);
+//        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+        PageInfo<TestCycleCaseStepDO> page = new PageInfo<>(Optional.ofNullable(dto).orElseGet(ArrayList::new));
 
-        return ConvertPageHelper.convertPage(page, TestCycleCaseStepE.class);
+        return ConvertPageHelper.convertPageInfo(page, TestCycleCaseStepE.class);
     }
 
     private List<TestCycleCaseStepDO> queryWithTestCaseStep_mysql(TestCycleCaseStepDO convert, PageRequest pageRequest) {

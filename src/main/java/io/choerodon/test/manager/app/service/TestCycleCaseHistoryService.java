@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 
@@ -11,7 +11,7 @@ import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 public interface TestCycleCaseHistoryService {
     TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO);
 
-    Page<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest);
+    PageInfo<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest);
 
     void createAssignedHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase);
 

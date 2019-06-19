@@ -1,33 +1,29 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.mybatis.entity.BaseDTO;
+
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_cycle_case_step")
-public class TestCycleCaseStepDO extends AuditDomain {
+public class TestCycleCaseStepDO extends BaseDTO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long executeStepId;
     private Long executeId;
     private Long stepId;
 
     @Column(name = "description")
     private String comment;
-	private Long stepStatus;
+    private Long stepStatus;
 
-	private Long createdBy;
+    private Long createdBy;
 
-	private Long lastUpdatedBy;
+    private Long lastUpdatedBy;
 
     private Date creationDate;
 
@@ -48,8 +44,8 @@ public class TestCycleCaseStepDO extends AuditDomain {
     @Transient
     private Long issueId;
 
-	@Transient
-	private String statusName;
+    @Transient
+    private String statusName;
 
     @Transient
     private List<TestCycleCaseAttachmentRelDO> stepAttachment;
@@ -145,37 +141,37 @@ public class TestCycleCaseStepDO extends AuditDomain {
         this.defects = defects;
     }
 
-	public Long getStepStatus() {
-		return stepStatus;
-	}
+    public Long getStepStatus() {
+        return stepStatus;
+    }
 
-	public void setStepStatus(Long stepStatus) {
-		this.stepStatus = stepStatus;
-	}
+    public void setStepStatus(Long stepStatus) {
+        this.stepStatus = stepStatus;
+    }
 
-	public String getCycleName() {
-		return cycleName;
-	}
+    public String getCycleName() {
+        return cycleName;
+    }
 
-	public void setCycleName(String cycleName) {
-		this.cycleName = cycleName;
-	}
+    public void setCycleName(String cycleName) {
+        this.cycleName = cycleName;
+    }
 
-	public Long getIssueId() {
-		return issueId;
-	}
+    public Long getIssueId() {
+        return issueId;
+    }
 
-	public void setIssueId(Long issueId) {
-		this.issueId = issueId;
-	}
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
+    }
 
-	public String getStatusName() {
-		return statusName;
-	}
+    public String getStatusName() {
+        return statusName;
+    }
 
-	public void setStatusName(String statusName) {
-		this.statusName = statusName;
-	}
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 
     @Override
     public Long getCreatedBy() {

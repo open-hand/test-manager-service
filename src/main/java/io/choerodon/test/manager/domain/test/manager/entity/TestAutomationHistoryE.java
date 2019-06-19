@@ -2,19 +2,12 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import java.util.Date;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
+import javax.persistence.*;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import io.choerodon.mybatis.entity.BaseDTO;
 
 @Table(name = "test_automation_history")
-@ModifyAudit
-@VersionAudit
-public class TestAutomationHistoryE extends AuditDomain {
+public class TestAutomationHistoryE extends BaseDTO {
 
     public enum Status {
         NONEXECUTION(0L), COMPLETE(1L), PARTIALEXECUTION(2L);
@@ -30,7 +23,7 @@ public class TestAutomationHistoryE extends AuditDomain {
     }
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String framework;

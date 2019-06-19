@@ -1,15 +1,9 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
-import io.choerodon.test.manager.app.service.TestCycleService;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import com.github.pagehelper.PageInfo;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import io.choerodon.agile.api.dto.ProductVersionPageDTO;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
+import io.choerodon.test.manager.api.dto.TestCycleDTO;
+import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCycleService;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -104,7 +105,7 @@ public class TestCycleController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询项目下的计划")
     @PostMapping("/query/version")
-    public ResponseEntity<Page<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
+    ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
         return testCycleService.getTestCycleVersion(projectId, searchParamMap);
     }
 

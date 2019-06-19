@@ -1,15 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.domain.Page;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import io.choerodon.mybatis.pagehelper.domain.Sort;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import java.util.Optional;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,8 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+import com.github.pagehelper.PageInfo;
 
-import java.util.Optional;
+import io.choerodon.base.domain.Sort;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.mybatis.annotation.SortDefault;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 
 /**
  * Created by 842767365@qq.com on 6/28/18.
@@ -37,7 +37,7 @@ public class TestCycleCaseHistoryController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询循环历史")
     @GetMapping
-    public ResponseEntity<Page<TestCycleCaseHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<PageInfo<TestCycleCaseHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId,
                                                                @ApiIgnore
                                                                @ApiParam(value = "分页信息", required = true)
                                                                @SortDefault(value = "id", direction = Sort.Direction.DESC)

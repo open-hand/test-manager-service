@@ -1,26 +1,26 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.convertor.ConvertPageHelper;
-import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.mybatis.pagehelper.PageHelper;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -58,13 +58,13 @@ public class TestCycleRepositoryImpl implements TestCycleRepository {
 
 
     @Override
-    public Page<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
+    public PageInfo<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
         TestCycleDO convert = ConvertHelper.convert(testCycleE, TestCycleDO.class);
 
-        Page<TestCycleDO> serviceDOPage = PageHelper.doPageAndSort(pageRequest,
-                () -> cycleMapper.select(convert));
+        PageInfo<TestCycleDO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
+                pageRequest.getSize()).doSelectPageInfo(() -> cycleMapper.select(convert));
 
-        return ConvertPageHelper.convertPage(serviceDOPage, TestCycleE.class);
+        return ConvertPageHelper.convertPageInfo(serviceDOPage, TestCycleE.class);
     }
 
     @Override

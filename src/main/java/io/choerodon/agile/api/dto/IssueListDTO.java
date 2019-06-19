@@ -1,11 +1,11 @@
 package io.choerodon.agile.api.dto;
 
-import io.choerodon.agile.infra.common.utils.StringUtil;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import io.choerodon.agile.infra.common.utils.StringUtil;
 
 /**
  * @author dinghuang123@gmail.com

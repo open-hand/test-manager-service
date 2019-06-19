@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.domain.service.ITestStatusService;
 import io.choerodon.test.manager.domain.test.manager.entity.*;
@@ -69,7 +69,7 @@ public class ITestCycleCaseStepServiceImpl implements ITestCycleCaseStepService 
 
 
     @Override
-    public Page<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId) {
+    public PageInfo<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId) {
         TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
         testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
         return testCycleCaseStepE.querySelf(pageRequest);

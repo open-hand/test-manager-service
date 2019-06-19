@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.infra.feign;
 
 import io.choerodon.agile.api.dto.*;
-import io.choerodon.core.domain.Page;
+import com.github.pagehelper.PageInfo;
 import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
 import io.swagger.annotations.ApiParam;
@@ -32,7 +32,7 @@ public interface TestCaseFeignClient {
 
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub")
-    ResponseEntity<Page<IssueListDTO>> listIssueWithoutSubToTestComponent(
+    ResponseEntity<PageInfo<IssueListDTO>> listIssueWithoutSubToTestComponent(
             @PathVariable(name = "project_id") Long projectId,
             @RequestBody(required = false) SearchDTO searchDTO,
             @RequestParam("organizationId")Long organizationId,
@@ -53,7 +53,7 @@ public interface TestCaseFeignClient {
                                                             @RequestBody List<Long> issueIds);
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub_detail")
-    ResponseEntity<Page<IssueComponentDetailDTO>> listIssueWithoutSubDetail(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+    ResponseEntity<PageInfo<IssueComponentDetailDTO>> listIssueWithoutSubDetail(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
                                                                             @RequestParam(name = "orders") String orders,
                                                                             @ApiParam(value = "项目id", required = true)
                                                                             @PathVariable(name = "project_id") Long projectId,
@@ -138,7 +138,7 @@ public interface TestCaseFeignClient {
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/filter_linked")
-    ResponseEntity<Page<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+    ResponseEntity<PageInfo<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
                                                                                       @RequestParam(name = "orders") String orders,
                                                                                       @PathVariable(name = "project_id") Long projectId,
                                                                                       @RequestBody(required = false) SearchDTO searchDTO,
@@ -151,7 +151,7 @@ public interface TestCaseFeignClient {
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/component/query_all")
-    ResponseEntity<Page<ComponentForListDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId,
+    ResponseEntity<PageInfo<ComponentForListDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId,
                                                               @RequestParam(name = "componentId",required = false) Long componentId,
                                                               @RequestParam(required = false, name = "no_issue_test", defaultValue = "false") Boolean noIssueTest,
                                                               @RequestBody(required = false) SearchDTO searchDTO,

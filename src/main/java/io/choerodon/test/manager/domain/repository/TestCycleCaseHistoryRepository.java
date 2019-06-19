@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.domain.repository;
 
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 
 import java.util.List;
 
@@ -12,6 +12,6 @@ import java.util.List;
 public interface TestCycleCaseHistoryRepository {
     TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 
-    Page<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
+    PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
 
 }

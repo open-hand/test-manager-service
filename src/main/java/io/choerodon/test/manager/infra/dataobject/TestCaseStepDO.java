@@ -1,26 +1,19 @@
 package io.choerodon.test.manager.infra.dataobject;
 
-import io.choerodon.mybatis.annotation.ModifyAudit;
-import io.choerodon.mybatis.annotation.VersionAudit;
-import io.choerodon.mybatis.domain.AuditDomain;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+
+import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@ModifyAudit
-@VersionAudit
 @Table(name = "test_case_step")
-public class TestCaseStepDO extends AuditDomain {
+public class TestCaseStepDO extends BaseDTO {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long stepId;
 
     private String rank;

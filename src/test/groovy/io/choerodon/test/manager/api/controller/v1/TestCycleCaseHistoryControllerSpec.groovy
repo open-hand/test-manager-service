@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
 
-import io.choerodon.core.domain.Page
+import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService
@@ -41,7 +41,7 @@ class TestCycleCaseHistoryControllerSpec extends Specification {
 
     def "Query"() {
         when:
-        def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}?page={page}&size={size}", Page,144,1,0,5)
+        def result=restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}?page={page}&size={size}", PageInfo,144,1,0,5)
         then:
         1 * userService.populateUsersInHistory(_)
         result.statusCode.is2xxSuccessful()

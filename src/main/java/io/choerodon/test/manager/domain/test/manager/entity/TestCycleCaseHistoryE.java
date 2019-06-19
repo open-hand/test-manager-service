@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestCycleCaseHistoryRepository;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class TestCycleCaseHistoryE {
     @Autowired
     private TestCycleCaseHistoryRepository testCycleCaseHistoryRepository;
 
-    public Page<TestCycleCaseHistoryE> querySelf(PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseHistoryE> querySelf(PageRequest pageRequest) {
         return testCycleCaseHistoryRepository.query(this, pageRequest);
     }
 

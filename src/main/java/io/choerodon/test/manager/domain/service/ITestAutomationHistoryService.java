@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.domain.service;
 
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
 
@@ -22,5 +22,5 @@ public interface ITestAutomationHistoryService {
 
     void shutdownInstance(Long instanceId,Long status);
 
-    Page<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest);
+    PageInfo<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest);
 }

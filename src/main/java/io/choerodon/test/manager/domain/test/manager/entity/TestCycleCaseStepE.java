@@ -2,8 +2,8 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
-import io.choerodon.core.domain.Page;
-import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
@@ -78,7 +78,7 @@ public class TestCycleCaseStepE {
     @Autowired
     private TestCycleCaseStepRepository testCycleCaseStepRepository;
 
-    public Page<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
         return testCycleCaseStepRepository.query(this, pageRequest);
     }
 
