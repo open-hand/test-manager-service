@@ -362,7 +362,7 @@ public class DemoServiceImpl implements DemoService {
         List<Long> executionIdsThree = new ArrayList<>();
 
         PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(0);
+        pageRequest.setPage(1);
         pageRequest.setSize(30);
 
         List<Long> phaseIdsOne = phaseIdsMap.get(0L);

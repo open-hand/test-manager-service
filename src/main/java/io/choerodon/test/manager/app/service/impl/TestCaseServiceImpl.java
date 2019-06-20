@@ -99,13 +99,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     public Map<Long, IssueInfosDTO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId) {
         PageRequest pageRequest = new PageRequest();
         pageRequest.setSize(999999999);
-        pageRequest.setPage(0);
+        pageRequest.setPage(1);
         pageRequest.setSort(new Sort(Sort.Direction.DESC, "issueId"));
         if (needDetail) {
             return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueComponentDetailDTO::getIssueId, IssueInfosDTO::new));
         } else {
-            Map m = listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
-            return m;
+            return listIssueWithoutSub(projectId, searchDTO, pageRequest, organizationId).getBody().getList().stream().collect(Collectors.toMap(IssueListDTO::getIssueId, IssueInfosDTO::new));
         }
     }
 

@@ -127,7 +127,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-        List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert, new PageRequest(0, 1));
+        List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert, new PageRequest(1, 1));
         DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
         return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
     }
