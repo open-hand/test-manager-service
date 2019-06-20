@@ -1280,12 +1280,6 @@ class EditIssueNarrow extends Component {
                             flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                           }}
                           />
-                          <div style={{ marginLeft: '14px', position: 'relative' }}>
-                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
-                              <Icon type={showMore ? 'arrow_drop_down' : 'baseline-arrow_left'} style={{ marginRight: 2 }} />
-                              <span>{showMore ? '隐藏更多' : '显示更多'}</span>
-                            </Button>
-                          </div>
                         </div>
                         <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
 
@@ -1451,6 +1445,10 @@ class EditIssueNarrow extends Component {
                             </div>
                           </Fragment> : null}
                         </div>
+                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
+                          <span>{showMore ? '展开' : '收起'}</span>
+                          <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
+                        </Button>
                       </div>
                       <div id="des">
                         <div className="c7ntest-title-wrapper">
@@ -1467,7 +1465,7 @@ class EditIssueNarrow extends Component {
                               <Button icon="zoom_out_map" onClick={() => this.setState({ FullEditorShow: true })} />
                             </Tooltip>
                             <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
-                              <Button                               
+                              <Button
                                 icon="mode_edit mlr-3"
                                 onClick={() => {
                                   this.setState({
