@@ -1378,22 +1378,6 @@ class EditIssueNarrow extends Component {
                               </div>
                               <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                                 {this.renderSelectPerson()}
-                                {!this.checkDisabledModifyOrDelete() && (
-                                  <span
-                                    role="none"
-                                    style={{
-                                      color: '#3f51b5',
-                                      cursor: 'pointer',
-                                      marginTop: '-2px',
-                                      display: 'inline-block',
-                                    }}
-                                    onClick={() => {
-                                      this.editIssue({ reporterId: AppState.userInfo.id });
-                                    }}
-                                  >
-                                    <FormattedMessage id="issue_edit_assignToMe" />
-                                  </span>
-                                )}
                               </div>
                             </div>
                             <div className="line-start mt-10 assignee">
