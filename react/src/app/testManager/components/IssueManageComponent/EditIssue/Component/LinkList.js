@@ -24,7 +24,7 @@ class LinkList extends Component {
   render() {
     const { issue, i } = this.props;
     const {
-      priorityDTO, issueTypeDTO, issueNum, summary, issueId, linkedIssueId, 
+      priorityDTO, issueTypeDTO, issueNum, summary, issueId, linkedIssueId,
       linkId, ward, statusMapDTO,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityDTO || {};
@@ -88,6 +88,7 @@ class LinkList extends Component {
             display: 'flex',
             alignItems: 'center',
             fontSize: '16px',
+            marginBottom: '5px',
           }}
         >
           <Popconfirm
