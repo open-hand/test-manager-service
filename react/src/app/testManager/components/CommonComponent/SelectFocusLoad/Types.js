@@ -29,7 +29,7 @@ export default {
             resolve(null);
           }
         }).catch((err) => {
-          console.log(err);
+          // console.log(err);
           resolve(null);
         });
       } else {
@@ -49,14 +49,14 @@ export default {
     propArg: 'versionId',
     request: (value, ...args) => getFoldersByVersion(...args),
     render: folder => (
-      <Option value={folder.folderId} key={folder.folderId}>
+      <Option value={folder.folderId} key={folder.folderId} name={`${folder.versionName}-${folder.name}`}>
         {folder.versionName}
         -
         {folder.name}
       </Option>
     ),
     props: {
-      filterOption: (input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0,
+      filterOption: (input, option) => option.props.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
     },
   },
 };
