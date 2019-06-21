@@ -483,6 +483,28 @@
   .c7n-upload-list-item {
     display: inline-block;
     max-width: 100%;
+    height: 32px;
+    line-height: 32px;
+
+    .icon {
+      height: 32px;
+      line-height: 24px;
+      top: 5px;
+      padding-left: 6.4px;
+    }
+
+    a {
+      padding-left: 20px;
+    }
+
+    margin-right: 2.4px;
+    background: #f3f3f3;
+    border-radius: 2px;
+
+    .icon-close {
+      transform: none;
+      font-size: 14px;
+    }
   }
 
   .c7n-upload-list-item-info {
