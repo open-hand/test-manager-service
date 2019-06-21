@@ -108,7 +108,7 @@ class CreateLinkTask extends Component {
 
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
-      if (!err) {        
+      if (!err) {
         const labelIssueRelDTOList = _.map(this.state.selected, (issue) => {
           const currentLinkType = this.state.originLinks[0];
           // if (currentLinkType.outWard === linkTypeId.split('+')[1]) {
@@ -138,7 +138,7 @@ class CreateLinkTask extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const {
-      initValue, visible, onCancel, onOk, 
+      initValue, visible, onCancel, onOk,
     } = this.props;
 
     return (
@@ -183,8 +183,8 @@ class CreateLinkTask extends Component {
             <FormItem style={{ width: 520 }}>
               {getFieldDecorator('issues', {
                 rules: [{
-                  required: true, message: '请选择用例!',
-                }],  
+                  required: true, message: '请选择问题!',
+                }],
               })(
                 <Select
                   label={<FormattedMessage id="issue_create_link_content_create_question" />}
@@ -210,14 +210,14 @@ class CreateLinkTask extends Component {
                             />
                           </div>
                           <div style={{
-                            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', 
+                            paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                           }}
                           >
                             {issue.issueNum}
                           </div>
                           <div style={{ overflow: 'hidden', flex: 1 }}>
                             <p style={{
-                              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', 
+                              paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
                             }}
                             >
                               {issue.summary}
