@@ -1338,7 +1338,7 @@ class EditIssueNarrow extends Component {
                               </span>
                             </div>
                             <div className="c7ntest-value-wrapper">
-                              {folderName}
+                              {folderName || '无'}
                             </div>
                           </div>
                           {showMore ? <Fragment>
