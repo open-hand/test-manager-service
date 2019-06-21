@@ -31,7 +31,7 @@ class DefectSelect extends Component {
     });
     getIssuesForDefects().then((issueData) => {
       this.setState({
-        issueList: issueData.content,
+        issueList: issueData.list,
         selectLoading: false,
       });
     });
@@ -126,7 +126,7 @@ class DefectSelect extends Component {
             });
             getIssuesForDefects(value).then((issueData) => {
               this.setState({
-                issueList: issueData.content,
+                issueList: issueData.list,
                 selectLoading: false,
               });
             });

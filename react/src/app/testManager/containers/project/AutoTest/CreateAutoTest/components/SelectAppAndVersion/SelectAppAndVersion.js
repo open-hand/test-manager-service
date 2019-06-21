@@ -55,13 +55,13 @@ class SelectAppAndVersion extends Component {
         Choerodon.prompt(data.failed);
         return;
       }
-      CreateAutoTestStore.setAppList(data.content);
-      const appList = data.content;
+      CreateAutoTestStore.setAppList(data.list);
+      const appList = data.list;
       let targetApp = app;
       // 查看store中的app是否存在且合法
       if (!app.id || !_.find(appList, { id: app.id })) {
-        if (data.content[0].id) {
-          targetApp = data.content[0];
+        if (data.list[0].id) {
+          targetApp = data.list[0];
         }
       }
       // 是否有app
@@ -95,7 +95,7 @@ class SelectAppAndVersion extends Component {
         Choerodon.prompt(data.failed);
         return;
       }
-      CreateAutoTestStore.setAppList(data.content);
+      CreateAutoTestStore.setAppList(data.list);
     });
   }
 
@@ -104,7 +104,7 @@ class SelectAppAndVersion extends Component {
       loading: true,
     });
     getAppVersions(appId, pagination, filters).then((data) => {
-      CreateAutoTestStore.setAppVersionList(data.content);
+      CreateAutoTestStore.setAppVersionList(data.list);
       CreateAutoTestStore.setAppVersionPagination({
         current: data.number + 1,
         pageSize: data.size,
@@ -319,7 +319,7 @@ class SelectAppAndVersion extends Component {
           </Spin>
         </Content>
       </SideBar>
-);
+    );
   }
 }
 

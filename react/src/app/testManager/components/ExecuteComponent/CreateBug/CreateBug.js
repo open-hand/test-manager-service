@@ -85,7 +85,7 @@ class CreateBug extends Component {
     });
     loadIssuesInLink(0, 20, undefined, input).then((res) => {
       this.setState({
-        issues: res.content,
+        issues: res.list,
         selectLoading: false,
       });
     });
@@ -98,10 +98,10 @@ class CreateBug extends Component {
     getIssueLinkTypes().then((res) => {
       this.setState({
         selectLoading: false,
-        links: res.content,
-        issueLinkTypes: res.content,
+        links: res.list,
+        issueLinkTypes: res.list,
       });
-      this.transform(res.content);
+      this.transform(res.list);
     });
   }
 
@@ -279,7 +279,7 @@ class CreateBug extends Component {
     });
     loadIssuesInLink(0, 20, undefined, input).then((res) => {
       this.setState({
-        issues: res.content,
+        issues: res.list,
         selectLoading: false,
       });
     });
