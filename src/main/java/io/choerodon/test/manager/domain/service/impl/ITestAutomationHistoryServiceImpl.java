@@ -43,7 +43,7 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
 
     @Override
     public TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory) {
-        if(testAutomationHistoryMapper.updateByPrimaryKeySelective(testAutomationHistory)==0){
+        if (testAutomationHistoryMapper.updateByPrimaryKeySelective(testAutomationHistory) == 0) {
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.update");
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
@@ -56,14 +56,14 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
 
     @Override
     public TestAutomationHistoryE insert(TestAutomationHistoryE testAutomationHistory) {
-        if(testAutomationHistoryMapper.insert(testAutomationHistory)==0){
+        if (testAutomationHistoryMapper.insert(testAutomationHistory) == 0) {
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.insert");
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
     }
 
-    public void shutdownInstance(Long instanceId,Long status){
-        TestAutomationHistoryE historyE=new TestAutomationHistoryE();
+    public void shutdownInstance(Long instanceId, Long status) {
+        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setInstanceId(instanceId);
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
         historyE.setLastUpdateDate(new Date());
