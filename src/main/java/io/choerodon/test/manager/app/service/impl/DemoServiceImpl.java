@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import io.choerodon.base.domain.Sort;
 import io.choerodon.core.convertor.ConvertHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.base.domain.PageRequest;
@@ -364,6 +365,9 @@ public class DemoServiceImpl implements DemoService {
         PageRequest pageRequest = new PageRequest();
         pageRequest.setPage(1);
         pageRequest.setSize(30);
+        List<Sort.Order> sort = new ArrayList<>();
+        sort.add(new Sort.Order(Sort.Direction.ASC,"cycle_id"));
+        pageRequest.setSort(new Sort(sort));
 
         List<Long> phaseIdsOne = phaseIdsMap.get(0L);
         List<Long> phaseIdsTwo = phaseIdsMap.get(1L);

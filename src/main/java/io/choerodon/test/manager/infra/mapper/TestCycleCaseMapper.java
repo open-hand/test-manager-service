@@ -23,7 +23,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDO> {
      * @param pageSize
      * @return
      */
-    List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect(@Param("dtos") List<TestCycleCaseDO> testCycleCaseDOS, @Param("page") int page, @Param("pageSize") int pageSize);
+    List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect(@Param("dtos") List<TestCycleCaseDO> testCycleCaseDOS, @Param("page") int page, @Param("pageSize") int pageSize, @Param("sort") String sort);
 
     List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect_oracle(@Param("dtos") List<TestCycleCaseDO> testCycleCaseDOS, @Param("page") int page, @Param("pageSize") int pageSize);
 

@@ -258,7 +258,9 @@
                 AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
             </if>
         </where>
-        order by cycle_id,rank
+        <if test="sort != null">
+            order by ${sort}
+        </if>
         <if test="pageSize !=0">
             limit #{page} , #{pageSize}
         </if>

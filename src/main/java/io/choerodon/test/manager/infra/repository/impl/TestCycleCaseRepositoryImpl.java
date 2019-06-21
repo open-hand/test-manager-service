@@ -19,6 +19,7 @@ import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
@@ -90,7 +91,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     private List<TestCycleCaseDO> queryByFatherCycleWithDataBase(List<TestCycleCaseDO> converts, PageRequest pageRequest) {
-        return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
+        return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,
+                (pageRequest.getPage() - 1) * pageRequest.getSize(),
+                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()));
     }
 
     @Override
