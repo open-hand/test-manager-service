@@ -3,6 +3,7 @@ package io.choerodon.test.manager.api.dto;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -59,6 +60,18 @@ public class TestAutomationHistoryDTO extends BaseDTO {
 
     @ApiModelProperty(value = "循环详情DTOList")
     private List<TestCycleDTO> cycleDTOS;
+
+    @Override
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    private Date creationDate;
 
     public Boolean getMoreCycle() {
         return isMoreCycle;
