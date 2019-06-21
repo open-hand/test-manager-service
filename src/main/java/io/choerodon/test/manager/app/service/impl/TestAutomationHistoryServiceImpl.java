@@ -45,7 +45,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         if (map.containsKey("filter")) {
             List<Long> versionId = devopsService.getAppVersionId(map.get("filter").toString(), projectId, Long.valueOf(map.get("appId").toString()));
             if (versionId.isEmpty()) {
-                return new PageInfo<>();
+                return new PageInfo<>(new ArrayList<>());
             }
             map.put("appVersionId", versionId);
         }

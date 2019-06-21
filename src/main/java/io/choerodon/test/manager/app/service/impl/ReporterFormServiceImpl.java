@@ -98,7 +98,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         TestCycleCaseDefectRelE testCycleCaseDefectRelE = TestCycleCaseDefectRelEFactory.create();
         List<Long> issueIdsList = testCycleCaseDefectRelE.queryIssueIdAndDefectId(projectId);
         if (ObjectUtils.isEmpty(issueIdsList)) {
-            return new PageInfo();
+            return new PageInfo<>(new ArrayList<>());
         }
         Long[] issueIds = issueIdsList.stream().toArray(Long[]::new);
         Map args = Optional.ofNullable(searchDTO.getOtherArgs()).orElseGet(HashMap::new);
@@ -110,7 +110,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         // 此处假设返回的是 long数组所有值
         Long[] allFilteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId).stream().sorted(Comparator.reverseOrder()).toArray(Long[]::new);
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
         int pageNum = pageRequest.getPage() - 1;
         int pageSize = pageRequest.getSize();
