@@ -1446,7 +1446,7 @@ class EditIssueNarrow extends Component {
                           </Fragment> : null}
                         </div>
                         <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
-                          <span>{showMore ? '展开' : '收起'}</span>
+                          <span>{showMore ? '收起' : '展开'}</span>
                           <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
                         </Button>
                       </div>
