@@ -11,7 +11,7 @@ class BaseTreeProto {
     },
   ]
 
-  @observable expandedKeys = ['0'];
+  @observable expandedKeys = ['0', '0-0'];
 
   @observable selectedKeys = [];
 
