@@ -25,7 +25,7 @@ public class DevopsClientFallback implements DevopsClient {
     }
 
     @Override
-    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, List<Long> appVersionIds) {
+    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, Long[] appVersionIds) {
         throw new CommonException(QUERY_ERROR);
     }
 }

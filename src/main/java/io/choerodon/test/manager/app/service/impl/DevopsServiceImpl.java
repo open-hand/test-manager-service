@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageInfo;
+import com.google.common.primitives.Longs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,14 @@ public class DevopsServiceImpl implements DevopsService {
 
     @Override
     public Map<Long, ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionIds) {
-        return devopsClient.getAppversion(projectId, appVersionIds).getBody().stream().collect(Collectors.toMap(ApplicationVersionRepDTO::getId, Function.identity()));
+        return devopsClient.getAppversion(projectId, toArray(appVersionIds)).getBody().stream().collect(Collectors.toMap(ApplicationVersionRepDTO::getId, Function.identity()));
+    }
+
+    private Long[] toArray(List<Long> values) {
+        Long[] result = new Long[values.size()];
+        int i = 0;
+        for (Long l : values)
+            result[i++] = l;
+        return result;
     }
 }

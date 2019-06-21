@@ -57,7 +57,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     }
 
     public void populateAPPVersion(Long projectId, PageInfo<TestAutomationHistoryDTO> page) {
-        if (ObjectUtils.isEmpty(page))
+        if (ObjectUtils.isEmpty(page.getList()))
             return;
         Map<Long, ApplicationVersionRepDTO> map =
                 devopsService.getAppversion(projectId, page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))
