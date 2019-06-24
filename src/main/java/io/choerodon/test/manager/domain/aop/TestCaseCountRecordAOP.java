@@ -136,7 +136,7 @@ public class TestCaseCountRecordAOP {
         e.setOldValue(TestStatusE.STATUS_UN_EXECUTED);
         e.setField(FIELD_STATUS);
         PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(0);
+        pageRequest.setPage(1);
         pageRequest.setSize(1);
         pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
         PageInfo<TestCycleCaseHistoryE> page = e.querySelf(pageRequest);

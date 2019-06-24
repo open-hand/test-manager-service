@@ -63,7 +63,7 @@ public class TestCycleCaseController {
     public ResponseEntity<PageInfo<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
                                                                @ApiIgnore
                                                                @ApiParam(value = "分页信息", required = true)
-                                                               @SortDefault(value = "cycle_id", direction = Sort.Direction.ASC)
+                                                               @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
                                                                        PageRequest pageRequest,
                                                                @RequestBody TestCycleCaseDTO dto,
                                                                @RequestParam Long organizationId) {

@@ -70,9 +70,9 @@ class AutoTestListContainer extends Component {
     store.Loading();
     store.setFilter(filter);
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
-      store.setHistoryList(history.content);
+      store.setHistoryList(history.list);
       store.setPagination({
-        current: history.number,
+        current: history.pageNum,
         total: history.total,
         pageSize: history.pageSize,
       });
@@ -93,10 +93,10 @@ class AutoTestListContainer extends Component {
       }, 3000);
     }
     getTestHistoryByApp(appId, pagination, filter).then((history) => {
-      store.setHistoryList(history.content);
+      store.setHistoryList(history.list);
 
       store.setPagination({
-        current: history.number,
+        current: history.pageNum,
         total: history.total,
         pageSize: history.pageSize,
       });

@@ -235,7 +235,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
         List<LookupValueDTO> lookupValueDTOS = testCaseService.queryLookupValueByCode(projectId, "priority").getLookupValues();
 
         PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(0);
+        pageRequest.setPage(1);
         pageRequest.setSize(999999999);
         pageRequest.setSort(new Sort(Sort.Direction.ASC, "componentId"));
 

@@ -42,6 +42,18 @@ public class TestAutomationHistoryE extends BaseDTO {
 
     private Date lastUpdateDate;
 
+    private Date creationDate;
+
+    @Override
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public Date getLastUpdateDate() {
         return lastUpdateDate;

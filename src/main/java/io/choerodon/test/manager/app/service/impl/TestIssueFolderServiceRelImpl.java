@@ -56,12 +56,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                     .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
         }
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
         List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
         Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true, organizationId);
         if (ObjectUtils.isEmpty(map)) {
-            return new PageInfo<>();
+            return new PageInfo<>(new ArrayList<>());
         }
 
         TestIssueFolderE testIssueFolderE = TestIssueFolderEFactory.create();

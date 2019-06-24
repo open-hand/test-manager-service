@@ -87,7 +87,7 @@ export function getImgInDelta(deltaOps) {
       }
     });
   }
- 
+
   return { imgBase, formData };
 }
 
@@ -298,7 +298,7 @@ export function testCaseDetailLink(testCaseId, folderName) {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName}`);
+  return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName || ''}`);
 }
 export function testCaseTableLink(params) {
   return commonLink('/IssueManage');
@@ -358,7 +358,7 @@ class Request {
         // const CancelToken = axios.CancelToken;
         // const source = CancelToken.source();       
         let url = args[0];
-        
+
         // const preSameRequest = _.find(this.requestQueue, { url, type });       
         // if (preSameRequest) {
         //   this.requestQueue.splice(_.findIndex(this.requestQueue, { url, type }), 1);
@@ -400,14 +400,14 @@ class Request {
           //   url,
           //   type,  
           // }), 1);
-        });      
+        });
       });
     });
   }
 }
 export const request = new Request();
 export function getDragRank(sourceIndex, targetIndex, List) {
-  let lastRank; 
+  let lastRank;
   let nextRank;
   if (sourceIndex < targetIndex) {
     lastRank = List[targetIndex].rank;

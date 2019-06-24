@@ -15,6 +15,7 @@ import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 
 @Component
@@ -31,7 +32,7 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
     @Override
     public PageInfo<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest) {
         PageInfo<TestAutomationHistoryE> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(),pageRequest.getSort().toSql()).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
+                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
         return ConvertPageHelper.convertPageInfo(serviceDOPage, TestAutomationHistoryDTO.class);
     }
 
@@ -42,7 +43,7 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
 
     @Override
     public TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory) {
-        if(testAutomationHistoryMapper.updateByPrimaryKeySelective(testAutomationHistory)==0){
+        if (testAutomationHistoryMapper.updateByPrimaryKeySelective(testAutomationHistory) == 0) {
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.update");
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
@@ -55,14 +56,14 @@ public class ITestAutomationHistoryServiceImpl implements ITestAutomationHistory
 
     @Override
     public TestAutomationHistoryE insert(TestAutomationHistoryE testAutomationHistory) {
-        if(testAutomationHistoryMapper.insert(testAutomationHistory)==0){
+        if (testAutomationHistoryMapper.insert(testAutomationHistory) == 0) {
             throw new CommonException("error.ITestAutomationHistoryServiceImpl.insert");
         }
         return testAutomationHistoryMapper.selectByPrimaryKey(testAutomationHistory.getId());
     }
 
-    public void shutdownInstance(Long instanceId,Long status){
-        TestAutomationHistoryE historyE=new TestAutomationHistoryE();
+    public void shutdownInstance(Long instanceId, Long status) {
+        TestAutomationHistoryE historyE = new TestAutomationHistoryE();
         historyE.setInstanceId(instanceId);
         historyE.setTestStatus(TestAutomationHistoryE.Status.NONEXECUTION);
         historyE.setLastUpdateDate(new Date());

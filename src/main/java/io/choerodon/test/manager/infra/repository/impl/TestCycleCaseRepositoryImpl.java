@@ -19,6 +19,7 @@ import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
 import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
@@ -90,18 +91,9 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     private List<TestCycleCaseDO> queryByFatherCycleWithDataBase(List<TestCycleCaseDO> converts, PageRequest pageRequest) {
-//        switch (LiquibaseHelper.dbType(dsUrl)) {
-//            case MYSQL:
-//            case H2:
-//                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-//            case ORACLE:
-//                return PageHelper.doSort(pageRequest.getSort(), () -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect_oracle(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-//            default:
-//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-//        }
-//        PageInfo p = PageHelper.startPage(pageRequest.getPage(), pageRequest.getSize(), pageRequest.getSort().toSql()).doSelectPageInfo(() -> testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize()));
-        List a = testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
-        return a;
+        return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,
+                (pageRequest.getPage() - 1) * pageRequest.getSize(),
+                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()));
     }
 
     @Override
@@ -111,15 +103,6 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     }
 
     private List<TestCycleCaseDO> queryWithAttachAndDefect(TestCycleCaseDO convert, PageRequest pageRequest) {
-//        switch (LiquibaseHelper.dbType(dsUrl)) {
-//            case MYSQL:
-//            case H2:
-//                return testCycleCaseMapper.queryWithAttachAndDefect(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-//            case ORACLE:
-//                return testCycleCaseMapper.queryWithAttachAndDefect_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
-//            default:
-//                throw new TestCycleCaseException(TestCycleCaseException.ERROR_UN_SUPPORT_DB_TYPE + ",need mysql or oracle but now is:" + dsUrl);
-//        }
         return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
     }
 
@@ -127,7 +110,7 @@ public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
     public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
         TestCycleCaseDO convert = ConvertHelper.convert(testCycleCaseE, TestCycleCaseDO.class);
 
-        List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert, new PageRequest(0, 1));
+        List<TestCycleCaseDO> list = queryWithAttachAndDefect(convert, new PageRequest(1, 1));
         DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
         return ConvertHelper.convert(list.get(0), TestCycleCaseE.class);
     }

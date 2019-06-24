@@ -45,7 +45,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         if (map.containsKey("filter")) {
             List<Long> versionId = devopsService.getAppVersionId(map.get("filter").toString(), projectId, Long.valueOf(map.get("appId").toString()));
             if (versionId.isEmpty()) {
-                return new PageInfo<>();
+                return new PageInfo<>(new ArrayList<>());
             }
             map.put("appVersionId", versionId);
         }
@@ -57,7 +57,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     }
 
     public void populateAPPVersion(Long projectId, PageInfo<TestAutomationHistoryDTO> page) {
-        if (ObjectUtils.isEmpty(page))
+        if (ObjectUtils.isEmpty(page.getList()))
             return;
         Map<Long, ApplicationVersionRepDTO> map =
                 devopsService.getAppversion(projectId, page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceDTO()))

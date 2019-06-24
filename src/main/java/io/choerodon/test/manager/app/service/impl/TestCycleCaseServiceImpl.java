@@ -238,15 +238,22 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (!testCycleES.isEmpty()) {
             if (dto.getLastExecuteId() == null) {
                 PageRequest pageRequest = new PageRequest();
-                pageRequest.setPage(0);
+                pageRequest.setPage(1);
                 pageRequest.setSize(400);
-                pageRequest.setSort(new Sort(Sort.Direction.DESC, "rank"));
+                List<Sort.Order> sort = new ArrayList<>();
+                sort.add(new Sort.Order(Sort.Direction.ASC,"cycle_id"));
+                sort.add(new Sort.Order(Sort.Direction.DESC, "rank"));
+                pageRequest.setSort(new Sort(sort));
                 updateExecuteId(testCycleES, pageRequest, projectId, dto.getCycleId(), organizationId, dto, 0L);
             }
             if (dto.getNextExecuteId() == null) {
                 PageRequest pageRequest = new PageRequest();
-                pageRequest.setPage(0);
+                pageRequest.setPage(1);
                 pageRequest.setSize(400);
+                List<Sort.Order> sort = new ArrayList<>();
+                sort.add(new Sort.Order(Sort.Direction.ASC,"cycle_id"));
+                sort.add(new Sort.Order(Sort.Direction.ASC, "rank"));
+                pageRequest.setSort(new Sort(sort));
                 updateExecuteId(testCycleES, pageRequest, projectId, dto.getCycleId(), organizationId, dto, 1L);
             }
         }

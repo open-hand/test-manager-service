@@ -459,6 +459,11 @@ class EditIssueNarrow extends Component {
               <WYSIWYGEditor
                 bottomBar
                 style={{ height: 200, width: '100%' }}
+                handleDelete={() => {
+                  this.setState({
+                    addingComment: false
+                  })
+                }}
                 handleSave={value => this.handleCreateCommit(value)}
               />
             </div>
@@ -1275,12 +1280,6 @@ class EditIssueNarrow extends Component {
                             flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                           }}
                           />
-                          <div style={{ marginLeft: '14px', position: 'relative' }}>
-                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
-                              <Icon type={showMore ? 'arrow_drop_down' : 'baseline-arrow_left'} style={{ marginRight: 2 }} />
-                              <span>{showMore ? '隐藏更多' : '显示更多'}</span>
-                            </Button>
-                          </div>
                         </div>
                         <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
 
@@ -1331,18 +1330,18 @@ class EditIssueNarrow extends Component {
                             </div>
                           </div>
                           {/* 文件夹名称 */}
-                          {showMore ? <Fragment>
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="issue_create_content_folder" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper">
-                                {folderName}
-                              </div>
+                          <div className="line-start mt-10">
+                            <div className="c7ntest-property-wrapper">
+                              <span className="c7ntest-property">
+                                <FormattedMessage id="issue_create_content_folder" />
+                                {'：'}
+                              </span>
                             </div>
+                            <div className="c7ntest-value-wrapper">
+                              {folderName || '无'}
+                            </div>
+                          </div>
+                          {showMore ? <Fragment>
                             {/* 模块 */}
                             <div className="line-start mt-10">
                               <div className="c7ntest-property-wrapper">
@@ -1379,22 +1378,6 @@ class EditIssueNarrow extends Component {
                               </div>
                               <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                                 {this.renderSelectPerson()}
-                                {!this.checkDisabledModifyOrDelete() && (
-                                  <span
-                                    role="none"
-                                    style={{
-                                      color: '#3f51b5',
-                                      cursor: 'pointer',
-                                      marginTop: '-2px',
-                                      display: 'inline-block',
-                                    }}
-                                    onClick={() => {
-                                      this.editIssue({ reporterId: AppState.userInfo.id });
-                                    }}
-                                  >
-                                    <FormattedMessage id="issue_edit_assignToMe" />
-                                  </span>
-                                )}
                               </div>
                             </div>
                             <div className="line-start mt-10 assignee">
@@ -1446,6 +1429,10 @@ class EditIssueNarrow extends Component {
                             </div>
                           </Fragment> : null}
                         </div>
+                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
+                          <span>{showMore ? '收起' : '展开'}</span>
+                          <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
+                        </Button>
                       </div>
                       <div id="des">
                         <div className="c7ntest-title-wrapper">
@@ -1457,27 +1444,24 @@ class EditIssueNarrow extends Component {
                             flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
                           }}
                           />
-                          <div style={{ marginLeft: '14px', position: 'relative' }}>
-                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ FullEditorShow: true })}>
-                              <Icon type="zoom_out_map icon" style={{ marginRight: 2 }} />
-                              <span><FormattedMessage id="execute_edit_fullScreen" /></span>
-                            </Button>
-                            <Icon
-                              className="c7ntest-des-edit"
-                              style={{ position: 'absolute', top: 8, right: -20 }}
-                              role="none"
-                              type="mode_edit mlr-3 pointer"
-                              onClick={() => {
-                                this.setState({
-                                  editDescriptionShow: true,
-                                });
-                              }}
-                            />
+                          <div style={{ marginLeft: '14px', display: "flex" }}>
+                            <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <Button icon="zoom_out_map" onClick={() => this.setState({ FullEditorShow: true })} />
+                            </Tooltip>
+                            <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
+                              <Button
+                                icon="mode_edit mlr-3"
+                                onClick={() => {
+                                  this.setState({
+                                    editDescriptionShow: true,
+                                  });
+                                }}
+                              />
+                            </Tooltip>
                           </div>
                         </div>
                         {this.renderDescription()}
                       </div>
-
                     </div>
 
                     {/* 附件 */}
@@ -1488,7 +1472,7 @@ class EditIssueNarrow extends Component {
                           <FormattedMessage id="attachment" />
                         </div>
                         <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: '114.67px',
+                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: 50,
                         }}
                         />
                       </div>
@@ -1513,10 +1497,9 @@ class EditIssueNarrow extends Component {
                         }}
                         />
                         <div style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ addingComment: true })}>
-                            <Icon type="playlist_add icon" />
-                            <FormattedMessage id="issue_edit_addComment" />
-                          </Button>
+                          <Tooltip title="添加评论" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <Button icon="playlist_add" onClick={() => this.setState({ addingComment: true })} />
+                          </Tooltip>
                         </div>
                       </div>
                       {this.renderCommits()}
@@ -1548,15 +1531,13 @@ class EditIssueNarrow extends Component {
                         }}
                         />
                         <div style={{ marginLeft: '14px' }}>
-                          <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ createLinkTaskShow: true })}>
-                            <Icon type="playlist_add icon" />
-                            关联问题
-                          </Button>
+                          <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                            <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
+                          </Tooltip>
                         </div>
                       </div>
                       {this.renderLinkIssues()}
                     </div>
-
                   </div>
                 </section>
               </div>

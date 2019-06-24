@@ -53,7 +53,7 @@ class WYSIWYGEditor extends Component {
     }
   };
   componentDidMount() {
-    console.log(this.editor)
+    // console.log(this.editor)
     // this.editor.setBounds(this.container)
   }
 

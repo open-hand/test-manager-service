@@ -11,6 +11,7 @@ import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.domain.repository.TestCycleCaseHistoryRepository;
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 import io.choerodon.test.manager.infra.common.utils.DBValidateUtil;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO;
 import io.choerodon.test.manager.infra.dataobject.TestCycleCaseHistoryDO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
@@ -35,7 +36,7 @@ public class TestCycleCaseHistoryRepositoryImpl implements TestCycleCaseHistoryR
         TestCycleCaseHistoryDO convert = ConvertHelper.convert(testCycleCaseHistoryE, TestCycleCaseHistoryDO.class);
 
         PageInfo<TestCycleCaseAttachmentRelDO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(),pageRequest.getSort().toSql()).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
+                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
 
         return ConvertPageHelper.convertPageInfo(serviceDOPage, TestCycleCaseHistoryE.class);
     }

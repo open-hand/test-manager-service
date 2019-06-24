@@ -83,14 +83,14 @@ class ExecuteDetailStore {
     const { cycleId } = getParams(window.location.href);
     this.enterloading();
     this.setId(id);
-    const historyPagination = this.historyPagination;
+    const { historyPagination } = this;
     Promise.all([
       getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
       getCycleDetails(id),
       getStatusList('CASE_STEP'),
       getCycleHistiorys({
-        page: historyPagination.current - 1,
+        page: historyPagination.current,
         size: historyPagination.pageSize,
       }, id),
       getIssuesForDefects(),
@@ -103,10 +103,10 @@ class ExecuteDetailStore {
         this.setHistoryPagination({
           current: historyPagination.current,
           pageSize: historyPagination.pageSize,
-          total: historyData.totalElements,
+          total: historyData.total,
         });
-        this.setHistoryList(historyData.content);
-        this.setIssueList(issueData.content);
+        this.setHistoryList(historyData.list);
+        this.setIssueList(issueData.list);
         this.unloading();
       }).catch((error) => {
         Choerodon.prompt('网络异常');
@@ -115,7 +115,7 @@ class ExecuteDetailStore {
   }
 
   loadHistoryList = (pagination = this.historyPagination) => {
-    const id = this.id;
+    const { id } = this;
     this.enterloading();
     getCycleHistiorys({
       page: pagination.current - 1,
@@ -124,15 +124,15 @@ class ExecuteDetailStore {
       this.setHistoryPagination({
         current: pagination.current,
         pageSize: pagination.pageSize,
-        total: history.totalElements,
+        total: history.total,
       });
-      this.setHistoryList(history.content);
+      this.setHistoryList(history.list);
       this.unloading();
     });
   }
 
   loadDetailList = () => {
-    const id = this.id;
+    const { id } = this;
     this.enterloading();
     getCycleDetails(id).then((detail) => {
       this.setDetailList(detail);
@@ -144,7 +144,7 @@ class ExecuteDetailStore {
     this.selectEnterLoading();
     // 加载不含测试类型的issue
     getIssuesForDefects(value).then((issueData) => {
-      this.setIssueList(issueData.content);
+      this.setIssueList(issueData.list);
       this.selectUnLoading();
     });
   }
@@ -156,7 +156,7 @@ class ExecuteDetailStore {
       this.selectUnLoading();
     });
     getIssueList(value).then((issueData) => {
-      this.setIssueList(issueData.content);
+      this.setIssueList(issueData.list);
       this.selectUnLoading();
     });
   }
