@@ -52,7 +52,7 @@ class RdisAOPServiceImplSpec extends Specification {
         then:
         1*redisAtomicLong.decrementAndGet()
         1*redisTemplateUtil.getRedisAtomicLong(_,_)>>redisAtomicLong
-        1*historyE.querySelf(_)>>new PageInfo(content: Lists.newArrayList(new TestCycleCaseHistoryE(lastUpdateDate:new Date() )))
+        1*historyE.querySelf(_)>>new PageInfo(Lists.newArrayList(new TestCycleCaseHistoryE(lastUpdateDate:new Date() )))
     }
 
     def "dbValidateUtil"(){

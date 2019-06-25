@@ -119,8 +119,6 @@ class ExcelServiceImplSpec extends Specification {
 
     def "exportCaseProjectByTransaction"() {
         given:
-        PageHelper.clearSort();
-        PageHelper.clearPage();
         //将被spring代理的对象取出来
         Field h = excelService.getClass().getDeclaredField("CGLIB\$CALLBACK_0")
         h.setAccessible(true)

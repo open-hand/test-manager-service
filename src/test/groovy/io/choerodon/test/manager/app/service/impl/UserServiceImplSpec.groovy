@@ -41,9 +41,8 @@ class UserServiceImplSpec extends Specification {
         given:
         PageRequest pr = new PageRequest()
         UserDTO user = new UserDTO(id: 1L)
-        PageInfo info = new PageInfo(1, 1)
 
-        PageInfo<UserDTO> page1 = new PageInfo<>(Lists.newArrayList(user), info, 1)
+        PageInfo<UserDTO> page1 = new PageInfo<>(Lists.newArrayList(user))
 
         when:
         userService.list(pr, 1l, "参数", 2l)
@@ -84,14 +83,13 @@ class UserServiceImplSpec extends Specification {
 
     def "populateTestAutomationHistory"() {
         given:
-        PageInfo page = new PageInfo()
-        page.setContent(Lists.newArrayList(new TestAutomationHistoryDTO(createdBy: 11L)))
+        PageInfo page = new PageInfo(Lists.newArrayList(new TestAutomationHistoryDTO(createdBy: 11L)))
         when:
         userService.populateTestAutomationHistory(page);
         then:
         1 * client.listUsersByIds(_, false) >> new ResponseEntity(Lists.newArrayList(new UserDO(id: 11)), HttpStatus.OK)
         when:
-        page.setContent([])
+        page.setList([])
         userService.populateTestAutomationHistory(page);
         then:
         0 * client.listUsersByIds(_, false)
