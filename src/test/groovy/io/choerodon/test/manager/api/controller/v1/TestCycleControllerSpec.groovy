@@ -275,19 +275,19 @@ class TestCycleControllerSpec extends Specification {
         JSONObject result = new JSONObject()
         result.put("versions", new ArrayList<>())
 
+//        when:
+//        def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
+//        then:
+//        1 * testCaseService.getVersionInfo(_) >> map
+//        then:
+//        entity.statusCode.is2xxSuccessful()
+//        JSONObject jsonObject = entity.body
+//
+//        expect:
+//        !jsonObject.isEmpty()
+
         when:
         def entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
-        then:
-        1 * testCaseService.getVersionInfo(_) >> map
-        then:
-        entity.statusCode.is2xxSuccessful()
-        JSONObject jsonObject = entity.body
-
-        expect:
-        !jsonObject.isEmpty()
-
-        when:
-        entity = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/query", JSONObject.class, projectId, 20645L)
         then:
         1 * testCaseService.getVersionInfo(_) >> new HashMap<>()
         then:
