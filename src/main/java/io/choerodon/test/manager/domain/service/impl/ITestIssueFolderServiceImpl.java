@@ -3,6 +3,7 @@ package io.choerodon.test.manager.domain.service.impl;
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
 import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,7 @@ public class ITestIssueFolderServiceImpl implements ITestIssueFolderService {
     public TestIssueFolderE update(TestIssueFolderE testIssueFolderE) {
         return testIssueFolderE.validateType().updateSelf();
     }
+
     @Override
     public TestIssueFolderE updateWithNoType(TestIssueFolderE testIssueFolderE) {
         return testIssueFolderE.updateSelf();

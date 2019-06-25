@@ -62,7 +62,7 @@ class TestCycleRepositoryImplSpec extends Specification {
         when:
         repository.query(cycleE,new PageRequest())
         then:
-        1*mapper.select(_)>>new PageInfo<>()
+        1*mapper.select(_)>>new ArrayList<>()
         when:
         repository.queryOne()
         then:

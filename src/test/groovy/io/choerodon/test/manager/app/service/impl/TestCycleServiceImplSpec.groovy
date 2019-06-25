@@ -14,6 +14,7 @@ import io.choerodon.test.manager.app.service.UserService
 import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
 import org.apache.commons.lang.StringUtils
+import org.apache.poi.ss.formula.functions.Now
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
@@ -45,8 +46,6 @@ class TestCycleServiceImplSpec extends Specification {
 
     def "Insert"() {
         given:
-        PageHelper.clearSort()
-        PageHelper.clearPage()
         TestCycleDTO cycle = new TestCycleDTO()
         cycle.setCycleName("发布")
         cycle.setVersionId(226L)
@@ -207,18 +206,29 @@ class TestCycleServiceImplSpec extends Specification {
 
     def "CloneFolder"() {
         given:
+        TestCycleDTO cycle = new TestCycleDTO()
+        cycle.setCycleName("发布7")
+        cycle.setVersionId(226L)
+        cycle.setType(TestCycleE.CYCLE)
+        cycle.setFromDate(new Date(1546272000000))
+        cycle.setToDate(new Date(1548863999000))
+        TestCycleDTO cycle1 = testCycleService.insert(2L, cycle)
+
         TestCycleDTO folder = new TestCycleDTO()
-        folder.setCycleName("发布7")
+        folder.setCycleName("发布8")
         folder.setVersionId(228L)
         folder.setType(TestCycleE.FOLDER)
-        folder.setParentCycleId(222L)
-        testCycleService.insert(2L, folder)
+        folder.setFromDate(new Date(1546272000000))
+        folder.setToDate(new Date(1548863999000))
+        folder.setParentCycleId(cycle1.getCycleId())
+        folder = testCycleService.insert(2L, folder)
 
-        TestCycleDTO cycle = new TestCycleDTO()
-        cycle.setCycleName("newFolder")
+        TestCycleDTO newFolder = new TestCycleDTO()
+        newFolder.setParentCycleId(cycle1.getCycleId())
+        newFolder.setCycleName("newFolder")
 
         when:
-        TestCycleDTO folder2 = testCycleService.cloneFolder(folder.getCycleId(), cycle, 2l)
+        TestCycleDTO folder2 = testCycleService.cloneFolder(folder.getCycleId(), newFolder, 2l)
 
         then:
         folder2.getCycleId() != null

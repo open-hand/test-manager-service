@@ -81,8 +81,6 @@ class JsonImportServiceImplSpec extends Specification {
 
     def "importMochaReport"() {
         given:
-        PageHelper.clearPage();
-        PageHelper.clearSort();
         RedisAtomicLong RAL = Mock(RedisAtomicLong)
         redisTemplateUtil.getRedisAtomicLong(_, _) >> RAL
         TestAppInstanceE instanceE = new TestAppInstanceE(

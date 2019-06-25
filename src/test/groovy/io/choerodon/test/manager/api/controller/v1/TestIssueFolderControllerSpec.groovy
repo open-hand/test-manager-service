@@ -12,6 +12,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderRelService
 import io.choerodon.test.manager.app.service.TestIssueFolderService
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE
 import io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO
+import io.choerodon.test.manager.infra.dataobject.TestIssueFolderRelDO
 import io.choerodon.test.manager.infra.exception.IssueFolderException
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper
@@ -212,25 +213,17 @@ class TestIssueFolderControllerSpec extends Specification {
         JSONObject idExceptionInfo = JSONObject.parse(resultFailure.body)
         idExceptionInfo.get("failed").toString() == "true"
         idExceptionInfo.get("code").toString() == IssueFolderException.ERROR_FOLDER_TYPE
-
-        when: '向testIssueFolder的修改接口发请求'
-        jsonObjectHttpEntity = new HttpEntity<>(testIssueFolderIdException)
-        resultFailure = restTemplate.exchange("/v1/projects/{project_id}/issueFolder/update",
-                HttpMethod.PUT,
-                jsonObjectHttpEntity,
-                String.class,
-                projectId)
-        then:
-        resultFailure.statusCode.is2xxSuccessful()
-        JSONObject paramExceptionInfo = JSONObject.parse(resultFailure.body)
-        paramExceptionInfo.get("failed").toString() == "true"
-        paramExceptionInfo.get("code").toString() == "error.update.param"
     }
 
     def "MoveFolder"() {
         given:
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(foldersId[0],99999L,99999L,99999L,1L)
-        testIssueFolderRelMapper.insert(testIssueFolderRelDTO)
+        TestIssueFolderRelDO testIssueFolderRelDO = new TestIssueFolderRelDO();
+        testIssueFolderRelDO.setFolderId(foldersId[0])
+        testIssueFolderRelDO.setVersionId(99999L)
+        testIssueFolderRelDO.setProjectId(99999L)
+        testIssueFolderRelDO.setIssueId(99999L)
+        testIssueFolderRelDO.setObjectVersionNumber(1L)
+        testIssueFolderRelMapper.insert(testIssueFolderRelDO)
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO()
         testIssueFolderDTO.setName("修改名字")
@@ -260,19 +253,6 @@ class TestIssueFolderControllerSpec extends Specification {
         expect: '验证移动是否成功'
         changedIssueFolder.versionId == 2L
         changedIssueFolder.objectVersionNumber == 3L
-
-        when: '向testIssueFolder的修改接口发请求'
-        HttpEntity<JSONObject> jsonObjectHttpEntity = new HttpEntity<>(testIssueFolderDTOSException)
-        def resultFailure = restTemplate.exchange('/v1/projects/{project_id}/issueFolder/move',
-                HttpMethod.PUT,
-                jsonObjectHttpEntity,
-                String.class,
-                projectId)
-        then:
-        resultFailure.statusCode.is2xxSuccessful()
-        JSONObject paramExceptionInfo = JSONObject.parse(resultFailure.body)
-        paramExceptionInfo.get("failed").toString() == "true"
-        paramExceptionInfo.get("code").toString() == "error.update.param"
     }
 
     def "CopyFolder"() {

@@ -215,8 +215,8 @@ class TestCycleControllerSpec extends Specification {
         entity.statusCode.is2xxSuccessful()
         entity.body.getCycleName() == "testTemp"
         entity.body.type == "temp"
-        and:'清理值'
-        testCycleMapper.delete(cycleDO)
+//        and:'清理值'
+//        testCycleMapper.delete(cycleDO)
     }
 
     def "testUpdateDate"(){

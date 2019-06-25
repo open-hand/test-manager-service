@@ -256,7 +256,7 @@ class TestCycleCaseControllerSpec extends Specification {
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         0 * userService.query(_) >> new HashMap<>()
         and:
-        result.body.size() == 0
+        result.body.getList().size() == 0
 
         when:
         result = restTemplate.postForEntity("/v1/projects/{project_id}/cycle/case/query/cycleId?page={page}&size={size}&organizationId=1", searchDto, PageInfo.class, 142, 0, 1)
@@ -264,7 +264,7 @@ class TestCycleCaseControllerSpec extends Specification {
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> new HashMap<>()
         0 * userService.query(_) >> new HashMap<>()
         and:
-        result.body.size() == 0
+        result.body.getList().size() == 0
     }
 
     def "validateReturn"() {
@@ -364,7 +364,7 @@ class TestCycleCaseControllerSpec extends Specification {
         then:
         1 * userService.query(_) >> new HashMap<>()
         and:
-        result.body.size() == 3
+        result.body.getList().size() == 3
     }
 
     def "exportExcle"() {

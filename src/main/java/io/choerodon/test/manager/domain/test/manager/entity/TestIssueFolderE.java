@@ -2,6 +2,7 @@ package io.choerodon.test.manager.domain.test.manager.entity;
 
 import io.choerodon.test.manager.domain.repository.TestIssueFolderRepository;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -16,8 +17,8 @@ import java.util.List;
 @Scope("prototype")
 public class TestIssueFolderE {
 
-    public static final String TYPE_CYCLE="cycle";
-    public static final String TYPE_TEMP="temp";
+    public static final String TYPE_CYCLE = "cycle";
+    public static final String TYPE_TEMP = "temp";
 
     private Long folderId;
 
@@ -40,7 +41,7 @@ public class TestIssueFolderE {
         return testIssueFolderRepository.queryOne(testIssueFolderE);
     }
 
-    public TestIssueFolderE queryByPrimaryKey(){
+    public TestIssueFolderE queryByPrimaryKey() {
         return testIssueFolderRepository.queryByPrimaryKey(this.folderId);
     }
 
@@ -109,8 +110,8 @@ public class TestIssueFolderE {
         this.type = type;
     }
 
-   public TestIssueFolderE validateType(){
-        if(!(StringUtils.equals(type,TYPE_CYCLE)|| StringUtils.equals(type,TYPE_TEMP))){
+    public TestIssueFolderE validateType() {
+        if (!(StringUtils.equals(type, TYPE_CYCLE) || StringUtils.equals(type, TYPE_TEMP))) {
             throw new IssueFolderException(IssueFolderException.ERROR_FOLDER_TYPE);
         }
         return this;
