@@ -1,9 +1,12 @@
 package io.choerodon.test.manager.infra.repository.impl;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,6 +32,8 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
  */
 @Component
 public class TestCycleCaseRepositoryImpl implements TestCycleCaseRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TestCycleCaseRepositoryImpl.class);
+
     @Autowired
     TestCycleCaseMapper testCycleCaseMapper;
 
