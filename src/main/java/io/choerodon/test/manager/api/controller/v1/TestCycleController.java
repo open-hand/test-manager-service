@@ -66,7 +66,7 @@ public class TestCycleController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试循环")
     @GetMapping("/query/one/{cycleId}")
-    TestCycleDTO queryOne(@PathVariable(name = "project_id") Long projectId,
+    public TestCycleDTO queryOne(@PathVariable(name = "project_id") Long projectId,
                           @PathVariable(name = "cycleId") Long cycleId) {
         return testCycleService.getOneCycle(cycleId);
     }
@@ -105,7 +105,7 @@ public class TestCycleController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询项目下的计划")
     @PostMapping("/query/version")
-    ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
+    public ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersion(@PathVariable(name = "project_id") Long projectId, @RequestBody Map<String, Object> searchParamMap) {
         return testCycleService.getTestCycleVersion(projectId, searchParamMap);
     }
 
