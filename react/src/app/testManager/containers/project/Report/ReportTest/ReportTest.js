@@ -563,7 +563,7 @@ class ReportTest extends Component {
         </Header>
         <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="report_content_description" />}
+          description="可跟踪性报告：缺陷 -> 执行 -> 测试 -> 要求，是针对出现的缺陷追溯缺陷的测试情况和需求点。"
           link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
