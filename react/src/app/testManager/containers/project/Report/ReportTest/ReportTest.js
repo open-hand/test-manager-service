@@ -60,21 +60,21 @@ class ReportTest extends Component {
       getStatusList('CYCLE_CASE'),
       getStatusList('CASE_STEP'),
       this.getReportsFromDefect(),
-      getIssueTypes(),
-      getIssueTypes('agile'),
+      // getIssueTypes(),
+      // getIssueTypes('agile'),
       getIssueStatus('agile'),
     ]).then(([
       statusList,
       stepStatusList,
       any,
-      issueTypes,
-      agileTypeList,
+      // issueTypes,
+      // agileTypeList,
       issueStatusList,
     ]) => {
       this.setState({
         statusList,
         stepStatusList,
-        issueTypes: issueTypes.concat(agileTypeList),
+        // issueTypes: issueTypes.concat(agileTypeList),
         issueStatusList,
         openId: [],
       });
@@ -473,8 +473,8 @@ class ReportTest extends Component {
         title: '类型',
         dataIndex: 'issueTypeId',
         key: 'issueTypeId',
-        filters: issueTypes.map(type => ({ text: type.name, value: type.id.toString() })),
-        filterMultiple: true,
+        // filters: issueTypes.map(type => ({ text: type.name, value: type.id.toString() })),
+        // filterMultiple: true,
       },
       // {
       //   title: '经办人',
