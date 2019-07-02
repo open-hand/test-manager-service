@@ -118,7 +118,7 @@ class ExecuteDetailStore {
     const { id } = this;
     this.enterloading();
     getCycleHistiorys({
-      page: pagination.current - 1,
+      page: pagination.current,
       size: pagination.pageSize,
     }, id).then((history) => {
       this.setHistoryPagination({
