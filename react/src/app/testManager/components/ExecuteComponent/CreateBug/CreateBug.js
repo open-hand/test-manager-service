@@ -1,16 +1,19 @@
-/* eslint-disable */
+
 import React, { Component } from 'react';
-import { stores, Content } from '@choerodon/boot';
+import { stores, Content, axios } from '@choerodon/boot';
 import _ from 'lodash';
 import {
-  Select, Form, Input, Button, Modal, Icon,
+  Select, Form, Input, Button, Modal, Icon, Radio, Checkbox, Row, Col, 
+  TimePicker, DatePicker, InputNumber, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import moment from 'moment';
 import {
   handleFileUpload, beforeTextUpload, getProjectName, randomString,
 } from '../../../common/utils';
 import {
-  getIssueTypes, getPrioritys, getEpics, getSprints, getProjectVersion, getModules, getLabels,
+  getIssueTypes, getPrioritys, getEpics, getSprints,
+  getProjectVersion, getModules, getLabels, createFieldValue, getFields,
 } from '../../../api/agileApi';
 import { getUsers } from '../../../api/IamApi';
 import { addBugForExecuteOrStep, getIssueLinkTypes } from '../../../api/ExecuteDetailApi';
@@ -22,101 +25,260 @@ import UploadButton from '../../IssueManageComponent/CommonComponent/UploadButto
 import ExecuteDetailStore from '../../../store/project/TestExecute/ExecuteDetailStore';
 import './CreateBug.scss';
 
-const sign = false;
+
 const { AppState } = stores;
 const { Sidebar } = Modal;
 const { Option } = Select;
+const { TextArea } = Input;
 const FormItem = Form.Item;
+let sign = false;
 
-@injectIntl
-class CreateBug extends Component {
-  state = {
-    delta: '',
-    fullEdit: false,
-    selectLoading: false,
-    createLoading: false,
-    fileList: [],
-    priorities: [],
-    users: [],
-    epics: [],
-    sprints: [],
-    versionList: [],
-    components: [],
-    labels: [],
-    issueLinkArr: [randomString(5)],
-    links: [],
-    issueLinkTypes: [],
-    issues: [],
-    defaultPriority: false,
-    defaultSprint: undefined,
-    bugType: undefined,
-  }
+const storyPointList = ['0.5', '1', '2', '3', '4', '5', '8', '13'];
 
-  componentDidMount() {
-    Promise.all([
-      getIssueTypes('agile'), getPrioritys(), getUsers(), getEpics(), getSprints(), getProjectVersion(), getModules(), getLabels(),
-    ]).then(([originIssueTypes, priorities, userData, epics, sprints, versionList, components, labels]) => {
+class CreateIssue extends Component {
+  debounceFilterUsers = _.debounce((input) => {
+    this.setState({ selectLoading: true });
+    getUsers(input).then((res) => {
       this.setState({
-        priorities,
-        users: userData.list.filter(u => u.enabled),
-        epics,
-        sprints,
-        versionList,
-        components,
-        defaultPriority: priorities.find(item => item.default),
-        defaultSprint: sprints.find(sprint => sprint.statusCode === 'started'),
-        labels,
-        bugType: originIssueTypes.find(item => item.typeCode === 'bug'),
-      });
-    });
-  }
-
-  loadUsers = (value) => {
-    getUsers(value).then((userData) => {
-      this.setState({
-        users: userData.list.filter(u => u.enabled),
-      });
-    });
-  }
-
-  debounceFilterIssues = _.debounce((input) => {
-    this.setState({
-      selectLoading: true,
-    });
-    loadIssuesInLink(0, 20, undefined, input).then((res) => {
-      this.setState({
-        issues: res.list,
+        originUsers: res.list.filter(u => u.enabled),
         selectLoading: false,
       });
     });
   }, 500);
 
+  debounceFilterIssues = _.debounce((input) => {
+    this.setState({
+      selectLoading: true,
+    });
+    loadIssuesInLink(1, 20, undefined, input).then((res) => {
+      this.setState({
+        originIssues: res.list,
+        selectLoading: false,
+      });
+    });
+  }, 500);
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      delta: '',
+      edit: false,
+      createLoading: false,
+      fileList: [],
+      selectLoading: true,
+      loading: true,
+
+      originLabels: [],
+      originComponents: [],
+      originEpics: [],
+      originPriorities: [],
+      originFixVersions: [],
+      originSprints: [],
+      originUsers: [],
+      originIssueTypes: [],
+
+      defaultPriority: false,
+      defaultTypeId: false,
+
+      newIssueTypeCode: '',
+      storyPoints: '',
+      estimatedTime: '',
+      issueLinkArr: [randomString(5)],
+      links: [],
+      originLinks: [],
+      originIssues: [],
+    };
+  }
+
+  componentDidMount() {
+    this.loadPriorities();
+    this.loadIssueTypes();
+  }
+
+  onFilterChangeAssignee(input) {
+    if (!sign) {
+      this.setState({
+        selectLoading: true,
+      });
+      getUsers(input).then((res) => {
+        this.setState({
+          originUsers: res.list.filter(u => u.enabled),
+          selectLoading: false,
+        });
+      });
+      sign = true;
+    } else {
+      this.debounceFilterUsers(input);
+    }
+  }
+
+  onIssueSelectFilterChange(input) {
+    if (!sign) {
+      this.setState({
+        selectLoading: true,
+      });
+      loadIssuesInLink(1, 20, undefined, input).then((res) => {
+        this.setState({
+          originIssues: res.list,
+          selectLoading: false,
+        });
+      });
+      sign = true;
+    } else {
+      this.debounceFilterIssues(input);
+    }
+  }
+
   getLinks() {
     this.setState({
       selectLoading: true,
     });
-    getIssueLinkTypes().then((res) => {
-      this.setState({
-        selectLoading: false,
-        links: res.list,
-        issueLinkTypes: res.list,
+    axios.post(`/agile/v1/projects/${AppState.currentMenuType.id}/issue_link_types/query_all`, {
+      contents: [],
+      linkName: '',
+    })
+      .then((res) => {
+        this.setState({
+          selectLoading: false,
+          links: res.list,
+          originLinks: res.list,
+        });
+        this.transform(res.list);
       });
-      this.transform(res.list);
-    });
-  }
-
-  handleUserSelectChange = (value) => {
-    const { users } = this.state;
-    if (!users.length) {
-      this.props.form.setFieldsValue({
-        assigneeId: undefined,
-      });
-    }
   }
 
   setFileList = (data) => {
     this.setState({ fileList: data });
-  }
+  };
+
+  handleSave = (data) => {
+    const { fileList, fields } = this.state;
+    const {
+      onOk, form, defectType, id,
+    } = this.props;
+    const callback = (newFileList) => {
+      this.setState({ fileList: newFileList });
+    };
+    addBugForExecuteOrStep(defectType, id, data)
+      .then((res) => {
+        const fieldList = [];
+        fields.forEach((item) => {
+          if (!item.system) {
+            let value = form.getFieldValue(item.fieldCode);
+            if (item.fieldType === 'time' || item.fieldType === 'datetime' || item.fieldType === 'date') {
+              value = value && value.format('YYYY-MM-DD HH:mm:ss');
+            }
+            fieldList.push({
+              fieldType: item.fieldType,
+              value,
+              fieldId: item.fieldId,
+            });
+          }
+        });
+        createFieldValue(res.issueId, 'agile_issue', fieldList);
+        if (fileList.length > 0) {
+          const config = {
+            issueType: res.statusId,
+            issueId: res.issueId,
+            fileName: fileList[0].name,
+            projectId: AppState.currentMenuType.id,
+          };
+          if (fileList.some(one => !one.url)) {
+            handleFileUpload(fileList, callback, config);
+          }
+        }
+        form.resetFields();
+        this.setState({
+          createLoading: false,
+        });
+        onOk(res);
+      })
+      .catch(() => {     
+        form.resetFields();
+        this.setState({
+          createLoading: false,
+        });
+        onOk();
+      });
+  };
+
+  loadPriorities = () => {
+    getPrioritys().then((res) => {
+      const defaultPriorities = res.filter(p => p.default);
+      this.setState({
+        originPriorities: res,
+        defaultPriority: defaultPriorities.length ? defaultPriorities[0] : '',
+      });
+    });
+  };
+
+  loadIssueTypes = () => {
+    axios.get(`/issue/v1/projects/${AppState.currentMenuType.projectId}/schemes/query_issue_types_with_sm_id?apply_type=agile`)
+      .then((res) => {
+        if (res && res.length) {
+          const story = res.filter(item => item.typeCode === 'bug');
+          const defaultType = (story && story.length) ? story[0] : res[0];
+          const param = {
+            schemeCode: 'agile_issue',
+            context: defaultType.typeCode,
+            pageCode: 'agile_issue_create',
+          };
+          getFields(param).then((fields) => {
+            this.setState({
+              fields,
+              originIssueTypes: res,
+              defaultTypeId: defaultType.id,
+              loading: false,
+              newIssueTypeCode: defaultType.typeCode,
+            });
+          });
+        }
+      });
+  };
+
+  handleChangeStoryPoint = (value) => {
+    const { storyPoints } = this.state;
+    // 只允许输入整数，选择时可选0.5
+    if (value === '0.5') {
+      this.setState({
+        storyPoints: '0.5',
+      });
+    } else if (/^(0|[1-9][0-9]*)(\[0-9]*)?$/.test(value) || value === '') {
+      this.setState({
+        storyPoints: String(value).slice(0, 3),
+      });
+    } else if (value.toString().charAt(value.length - 1) === '.') {
+      this.setState({
+        storyPoints: value.slice(0, -1),
+      });
+    } else {
+      this.setState({
+        storyPoints,
+      });
+    }
+  };
+
+  handleChangeEstimatedTime = (value) => {
+    const { estimatedTime } = this.state;
+    // 只允许输入整数，选择时可选0.5
+    if (value === '0.5') {
+      this.setState({
+        estimatedTime: '0.5',
+      });
+    } else if (/^(0|[1-9][0-9]*)(\[0-9]*)?$/.test(value) || value === '') {
+      this.setState({
+        estimatedTime: String(value).slice(0, 3), // 限制最长三位
+      });
+    } else if (value.toString().charAt(value.length - 1) === '.') {
+      this.setState({
+        estimatedTime: value.slice(0, -1),
+      });
+    } else {
+      this.setState({
+        estimatedTime,
+      });
+    }
+  };
 
   transform = (links) => {
     // split active and passive
@@ -141,31 +303,33 @@ class CreateBug extends Component {
   handleCreateIssue = () => {
     const { form } = this.props;
     const {
-      components,
-      labels,
-      versionList,
+      originComponents,
+      originLabels,
+      originFixVersions,
+      originIssueTypes,
       delta,
-      bugType,
-      issueLinkTypes,
-      issues,
+      storyPoints,
+      estimatedTime,
+      originLinks,
     } = this.state;
-
-    form.validateFields((err, values) => {
+    form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const exitComponents = components;
-        const componentIssueRelDTOList = _.map(values.componentIssueRel, (component) => {
-          const target = _.find(exitComponents, { name: component });
+        const { typeCode } = originIssueTypes.find(t => t.id === values.typeId);
+        const exitComponents = originComponents;
+        const componentIssueRelDTOList = _.map(values.componentIssueRel
+          && values.componentIssueRel.filter(v => v && v.trim()), (component) => {
+          const target = _.find(exitComponents, { name: component.trim() });
           if (target) {
             return target;
           } else {
             return ({
-              name: component,
+              name: component.trim(),
               projectId: AppState.currentMenuType.id,
             });
           }
         });
-        const exitLabels = labels;
-        const labelIssueRelDTOList = _.map(values.issueLink, (label) => {
+        const exitLabels = originLabels;
+        const labelIssueRelDTOList = _.map(values.issueLabel, (label) => {
           const target = _.find(exitLabels, { labelName: label });
           if (target) {
             return target;
@@ -176,9 +340,10 @@ class CreateBug extends Component {
             });
           }
         });
-        const exitFixVersions = versionList;
-        const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel, (version) => {
-          const target = _.find(exitFixVersions, { name: version });
+        const exitFixVersions = originFixVersions;
+        const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel
+          && values.fixVersionIssueRel.filter(v => v && v.trim()), (version) => {
+          const target = _.find(exitFixVersions, { name: version.trim() });
           if (target) {
             return {
               ...target,
@@ -186,7 +351,7 @@ class CreateBug extends Component {
             };
           } else {
             return ({
-              name: version,
+              name: version.trim(),
               relationType: 'fix',
               projectId: AppState.currentMenuType.id,
             });
@@ -194,20 +359,20 @@ class CreateBug extends Component {
         });
         const issueLinkCreateDTOList = [];
         if (values.linkTypeId) {
-          Object.keys(values.linkTypeId).forEach((link, index) => {
+          Object.keys(values.linkTypeId).forEach((link) => {
             if (values.linkTypeId[link] && values.linkIssues[link]) {
-              const currentLinkType = _.find(issueLinkTypes, { linkTypeId: values.linkTypeId[link].split('+')[0] * 1 });
+              const currentLinkType = _.find(originLinks, { linkTypeId: values.linkTypeId[link].split('+')[0] * 1 });
               values.linkIssues[link].forEach((issueId) => {
                 if (currentLinkType.inWard === values.linkTypeId[link].split('+')[1]) {
                   issueLinkCreateDTOList.push({
                     linkTypeId: values.linkTypeId[link].split('+')[0] * 1,
-                    linkedIssueId: Number(issueId),
+                    linkedIssueId: issueId * 1,
                     in: false,
                   });
                 } else {
                   issueLinkCreateDTOList.push({
                     linkTypeId: values.linkTypeId[link].split('+')[0] * 1,
-                    linkedIssueId: Number(issueId),
+                    linkedIssueId: issueId * 1,
                     in: true,
                   });
                 }
@@ -215,10 +380,11 @@ class CreateBug extends Component {
             }
           });
         }
-        const issue = {
-          issueTypeId: bugType.id,
-          typeCode: bugType.typeCode,
-          summary: values.summary,
+
+        const extra = {
+          issueTypeId: values.typeId,
+          typeCode,
+          summary: values.summary.trim(),
           priorityId: values.priorityId,
           priorityCode: `priority-${values.priorityId}`,
           sprintId: values.sprintId || 0,
@@ -229,444 +395,885 @@ class CreateBug extends Component {
           labelIssueRelDTOList,
           versionIssueRelDTOList: fixVersionIssueRelDTOList,
           componentIssueRelDTOList,
-          storyPoints: values.storyPoints,
-          remainingTime: values.estimatedTime,
+          storyPoints,
+          remainingTime: estimatedTime,
           issueLinkCreateDTOList,
+          featureDTO: {
+            benfitHypothesis: values.benfitHypothesis,
+            acceptanceCritera: values.acceptanceCritera,
+            featureType: values.featureType,
+          },
         };
         this.setState({ createLoading: true });
         const deltaOps = delta;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, issue, this.handleSave);
+          beforeTextUpload(deltaOps, extra, this.handleSave);
         } else {
-          issue.description = '';
-          this.handleSave(issue);
+          extra.description = '';
+          this.handleSave(extra);
         }
+        // this.props.onOk(extra);
       }
     });
   };
 
-  handleSave = (data) => {
-    const { fileList } = this.state;
-    const { onOk, defectType, id } = this.props;
-    const callback = (newFileList) => {
-      this.setState({ fileList: newFileList });
-    };
-    addBugForExecuteOrStep(defectType, id, data)
-      .then((res) => {
-        if (fileList.length > 0) {
-          const config = {
-            issueType: res.statusId,
-            issueId: res.issueId,
-            fileName: fileList[0].name,
-            projectId: AppState.currentMenuType.id,
-          };
-          if (fileList.some(one => !one.url)) {
-            handleFileUpload(fileList, callback, config);
-          }
-        }
-        onOk(res);
-        ExecuteDetailStore.getInfo();
-      })
-      .catch(() => {
-        onOk();
-      });
+  handleCancel = () => {
+    const { onCancel, form } = this.props;
+    form.resetFields();
+    this.setState({
+      createLoading: false,
+    });
+    if (onCancel) {
+      onCancel();
+    }
   };
 
-  onIssueSelectFilterChange(input) {
-    // if (!sign) {
+  // 分派给我
+  assigneeMe = () => {
+    const {
+      id, imageUrl, loginName, realName,
+    } = AppState.userInfo;
+    const { originUsers } = this.state;
+    const { form } = this.props;
+    const newUsers = originUsers.filter(user => user.id !== id);
     this.setState({
-      selectLoading: true,
-    });
-    loadIssuesInLink(0, 20, undefined, input).then((res) => {
-      this.setState({
-        issues: res.list,
-        selectLoading: false,
+      originUsers: [
+        ...newUsers,
+        {
+          id,
+          imageUrl,
+          loginName,
+          realName,
+          enabled: true,
+        },
+      ],
+    }, () => {
+      form.setFieldsValue({
+        assigneedId: id,
       });
     });
-    //   sign = true;
-    // } else {
-    //   this.debounceFilterIssues(input);
-    // }
+  };
+
+  renderField = (field) => {
+    const { selectLoading, originUsers } = this.state;
+    const {
+      fieldOptions, fieldType, required, fieldName,
+    } = field;
+    if (fieldType === 'radio') {
+      if (fieldOptions && fieldOptions.length > 0) {
+        return (
+          <Radio.Group
+            label={fieldName}
+            className="fieldWith"
+          >
+            {fieldOptions && fieldOptions.length > 0
+              && fieldOptions.filter(option => option.enabled).map(item => (
+                <Radio
+                  className="radioStyle"
+                  value={item.id}
+                  key={item.id}
+                >
+                  {item.value}
+                </Radio>
+              ))}
+          </Radio.Group>
+        );
+      } else {
+        return (
+          <Radio.Group
+            label={fieldName}
+            className="fieldWith"
+          >
+            <span style={{ color: '#D50000' }}>暂无选项，请联系管理员</span>
+          </Radio.Group>
+        );
+      }
+    } else if (field.fieldType === 'checkbox') {
+      if (fieldOptions && fieldOptions.length > 0) {
+        return (
+          <Checkbox.Group
+            label={fieldName}
+            className="fieldWith"
+          >
+            <Row>
+              {fieldOptions && fieldOptions.length > 0
+                && fieldOptions.filter(option => option.enabled).map(item => (
+                  <Col
+                    span={24}
+                    key={item.id}
+                  >
+                    <Checkbox
+                      value={item.id}
+                      key={item.id}
+                      className="checkboxStyle"
+                    >
+                      {item.value}
+                    </Checkbox>
+                  </Col>
+                ))}
+            </Row>
+          </Checkbox.Group>
+        );
+      } else {
+        return (
+          <Checkbox.Group
+            label={fieldName}
+            className="fieldWith"
+          >
+            <span style={{ color: '#D50000' }}>暂无选项，请联系管理员</span>
+          </Checkbox.Group>
+        );
+      }
+    } else if (field.fieldType === 'time') {
+      return (
+        <TimePicker
+          label={fieldName}
+          className="fieldWith"
+          defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+          allowEmpty={!required}
+        />
+      );
+    } else if (field.fieldType === 'datetime') {
+      return (
+        <DatePicker
+          showTime
+          label={fieldName}
+          format="YYYY-MM-DD HH:mm:ss"
+          className="fieldWith"
+          allowClear={!required}
+        />
+      );
+    } else if (field.fieldType === 'date') {
+      return (
+        <DatePicker
+          label={fieldName}
+          format="YYYY-MM-DD"
+          className="fieldWith"
+          allowClear={!required}
+        />
+      );
+    } else if (field.fieldType === 'single') {
+      return (
+        <Select
+          label={fieldName}
+          dropdownMatchSelectWidth
+          className="fieldWith"
+          allowClear={!required}
+        >
+          {field.fieldOptions && field.fieldOptions.length > 0
+            && field.fieldOptions.filter(option => option.enabled).map(item => (
+              <Option
+                value={item.id}
+                key={item.id}
+              >
+                {item.value}
+              </Option>
+            ))}
+        </Select>
+      );
+    } else if (field.fieldType === 'multiple') {
+      return (
+        <Select
+          label={fieldName}
+          dropdownMatchSelectWidth
+          mode="multiple"
+          className="fieldWith"
+        >
+          {field.fieldOptions && field.fieldOptions.length > 0
+            && field.fieldOptions.filter(option => option.enabled).map(item => (
+              <Option
+                value={item.id}
+                key={item.id}
+              >
+                {item.value}
+              </Option>
+            ))}
+        </Select>
+      );
+    } else if (field.fieldType === 'number') {
+      return (
+        <InputNumber
+          label={fieldName}
+          className="fieldWith"
+          step={field.extraConfig === '1' ? 0.1 : 1}
+          maxLength={8}
+        />
+      );
+    } else if (field.fieldType === 'text') {
+      return (
+        <TextArea
+          autosize
+          label={fieldName}
+          className="fieldWith"
+          maxLength={255}
+        />
+      );
+    } else if (field.fieldType === 'member') {
+      return (
+        <Select
+          label={fieldName}
+          loading={selectLoading}
+          filter
+          filterOption={false}
+          allowClear
+          onFilterChange={this.onFilterChangeAssignee.bind(this)}
+        >
+          {originUsers.filter(user => (field.defaultValueObj ? user.id !== field.defaultValueObj.id : true) && user.enabled).concat(field.defaultValueObj || []).map(user => (
+            <Option key={user.id} value={user.id}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
+                <UserHead
+                  user={{
+                    id: user.id,
+                    loginName: user.loginName,
+                    realName: user.realName,
+                    avatar: user.imageUrl,
+                  }}
+                />
+              </div>
+            </Option>
+          ))}
+        </Select>
+      );
+    } else {
+      return (
+        <Input
+          label={fieldName}
+          className="fieldWith"
+          maxLength={100}
+        />
+      );
+    }
+  };
+
+  getIssueTypes = () => {
+    const createTypes = [];
+    const { originIssueTypes } = this.state;
+    return false
+      ? originIssueTypes.filter(type => (!['issue_epic', 'feature', 'sub_task'].includes(type.typeCode)))
+      : originIssueTypes.filter(type => (!['feature', 'sub_task'].includes(type.typeCode)));
   }
+
+  getFieldComponent = (field) => {
+    const { form } = this.props;
+    const { getFieldDecorator } = form;
+    const {
+      defaultValue, fieldName, fieldCode, fieldType, required,
+    } = field;
+    const {
+      originIssueTypes, originPriorities, defaultPriority, storyPoints,
+      edit, delta, originUsers, selectLoading, estimatedTime,
+      originEpics, originSprints, originFixVersions, originComponents,
+      originLabels, newIssueTypeCode, defaultTypeId,
+    } = this.state;
+    switch (field.fieldCode) {
+      case 'issueType':
+        return (
+          [
+            <FormItem label="问题类型" style={{ width: 520 }}>
+              {getFieldDecorator('typeId', {
+                rules: [{ required: true, message: '问题类型为必输项' }],
+                initialValue: defaultTypeId || '',
+              })(
+                <Select
+                  disabled
+                  label="问题类型"
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  onChange={((value) => {
+                    const { typeCode } = originIssueTypes.find(item => item.id === value);
+                    this.setState({
+                      newIssueTypeCode: typeCode,
+                    });
+                    const param = {
+                      schemeCode: 'agile_issue',
+                      context: typeCode,
+                      pageCode: 'agile_issue_create',
+                    };
+                    getFields(param).then((res) => {
+                      this.setState({
+                        fields: res,
+                      });
+                    });
+                  })}
+                >
+                  {this.getIssueTypes().map(type => (
+                    <Option key={type.id} value={type.id}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
+                        <TypeTag
+                          type={type}
+                          showName
+                        />
+                      </div>
+                    </Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>,
+            newIssueTypeCode === 'feature' ? (
+              <FormItem style={{ width: 520 }}>
+                {getFieldDecorator('featureType', {
+                  rules: [{ required: true, message: '特性类型为必输项' }],
+                  initialValue: 'business',
+                })(
+                  <Select
+                    label="特性类型"
+                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                  >
+                    <Option key="business" value="business">
+                      特性
+                    </Option>
+                    <Option key="enabler" value="enabler">
+                      使能
+                    </Option>
+                  </Select>,
+                )}
+              </FormItem>
+            ) : null]
+        );
+      case 'assignee':
+        return (
+          <React.Fragment>
+            <FormItem label="经办人" style={{ width: 520, display: 'inline-block' }}>
+              {getFieldDecorator('assigneedId', {})(
+                <Select
+                  label="经办人"
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  loading={selectLoading}
+                  filter
+                  filterOption={false}
+                  allowClear
+                  onFilterChange={this.onFilterChangeAssignee.bind(this)}
+                >
+                  {originUsers.map(user => (
+                    <Option key={user.id} value={user.id}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
+                        <UserHead
+                          user={{
+                            id: user.id,
+                            loginName: user.loginName,
+                            realName: user.realName,
+                            avatar: user.imageUrl,
+                          }}
+                        />
+                      </div>
+                    </Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>
+            <span
+              onClick={this.assigneeMe}
+              role="none"
+              style={{
+                display: 'inline-block',
+                color: 'rgba(63, 81, 181)',
+                marginLeft: 10,
+                marginTop: 20,
+                cursor: 'pointer',
+              }}
+            >
+              {'分派给我'}
+            </span>
+          </React.Fragment>
+        );
+      case 'sprint':
+        return (
+          <FormItem label="冲刺" style={{ width: 520 }}>
+            {getFieldDecorator('sprintId', {})(
+              <Select
+                label="冲刺"
+                allowClear
+                filter
+                filterOption={
+                  (input, option) => option.props.children && option.props.children.toLowerCase().indexOf(
+                    input.toLowerCase(),
+                  ) >= 0
+                }
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                loading={selectLoading}
+                onFilterChange={() => {
+                  this.setState({
+                    selectLoading: true,
+                  });
+                  getSprints(['sprint_planning', 'started']).then((res) => {
+                    this.setState({
+                      originSprints: res,
+                      selectLoading: false,
+                    });
+                  });
+                }}
+              >
+                {originSprints.map(sprint => (
+                  <Option key={sprint.sprintId} value={sprint.sprintId}>
+                    {sprint.sprintName}
+                  </Option>
+                ))}
+              </Select>,
+            )}
+          </FormItem>
+        );
+      case 'priority':
+        return (
+          <FormItem label="优先级" style={{ width: 520 }}>
+            {getFieldDecorator('priorityId', {
+              rules: [{ required: true, message: '优先级为必选项' }],
+              initialValue: defaultPriority ? defaultPriority.id : '',
+            })(
+              <Select
+                label="优先级"
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+              >
+                {originPriorities.filter(p => p.enable).map(priority => (
+                  <Option key={priority.id} value={priority.id}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
+                      <span>{priority.name}</span>
+                    </div>
+                  </Option>
+                ))}
+              </Select>,
+            )}
+          </FormItem>
+        );
+      case 'label':
+        return (
+          <FormItem label="标签" style={{ width: 520 }}>
+            {getFieldDecorator('issueLabel', {
+              rules: [{ transform: value => (value ? value.toString() : value) }],
+              normalize: value => (value ? value.map(s => s.toString().substr(0, 10)) : value), // 限制最长10位
+            })(
+              <Select
+                label="标签"
+                mode="tags"
+                loading={selectLoading}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                tokenSeparators={[',']}
+                onFocus={() => {
+                  this.setState({
+                    selectLoading: true,
+                  });
+                  getLabels().then((res) => {
+                    this.setState({
+                      originLabels: res,
+                      selectLoading: false,
+                    });
+                  });
+                }}
+              >
+                {originLabels.map(label => (
+                  <Option key={label.labelName} value={label.labelName}>
+                    {label.labelName}
+                  </Option>
+                ))}
+              </Select>,
+            )}
+          </FormItem>
+        );
+      case 'fixVersion':
+        return (
+          <FormItem label="版本" style={{ width: 520 }}>
+            {getFieldDecorator('fixVersionIssueRel', {
+              rules: [{ transform: value => (value ? value.toString() : value) }],
+            })(
+              <Select
+                label="版本"
+                mode="multiple"
+                loading={selectLoading}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                tokenSeparators={[',']}
+                onFocus={() => {
+                  this.setState({
+                    selectLoading: true,
+                  });
+                  getProjectVersion(['version_planning', 'released']).then((res) => {
+                    this.setState({
+                      originFixVersions: res,
+                      selectLoading: false,
+                    });
+                  });
+                }}
+              >
+                {
+                  originFixVersions.map(
+                    version => (
+                      <Option
+                        key={version.name}
+                        value={version.name}
+                      >
+                        {version.name}
+                      </Option>
+                    ),
+                  )}
+              </Select>,
+            )}
+          </FormItem>
+        );
+      case 'epic':
+        return (
+          newIssueTypeCode !== 'issue_epic' && (
+            <FormItem label="史诗" style={{ width: 520 }}>
+              {getFieldDecorator('epicId', {})(
+                <Select
+                  label="史诗"
+                  allowClear
+                  filter
+                  filterOption={
+                    (input, option) => option.props.children && option.props.children.toLowerCase().indexOf(
+                      input.toLowerCase(),
+                    ) >= 0
+                  }
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  loading={selectLoading}
+                  onFilterChange={() => {
+                    this.setState({
+                      selectLoading: true,
+                    });
+                    getEpics().then((res) => {
+                      this.setState({
+                        originEpics: res,
+                        selectLoading: false,
+                      });
+                    });
+                  }}
+                >
+                  {originEpics.map(
+                    epic => (
+                      <Option
+                        key={epic.issueId}
+                        value={epic.issueId}
+                      >
+                        {epic.epicName}
+                      </Option>
+                    ),
+                  )}
+                </Select>,
+              )}
+            </FormItem>
+          )
+        );
+      case 'component':
+        return (
+          <FormItem label="模块" style={{ width: 520 }}>
+            {getFieldDecorator('componentIssueRel', {
+              rules: [{ transform: value => (value ? value.toString() : value) }],
+            })(
+              <Select
+                label="模块"
+                mode="multiple"
+                loading={selectLoading}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                tokenSeparators={[',']}
+                onFocus={() => {
+                  this.setState({
+                    selectLoading: true,
+                  });
+                  getModules().then((res) => {
+                    this.setState({
+                      originComponents: res.list,
+                      selectLoading: false,
+                    });
+                  });
+                }}
+              >
+                {
+                  originComponents.map(
+                    component => (
+                      <Option
+                        key={component.name}
+                        value={component.name}
+                      >
+                        {component.name}
+                      </Option>
+                    ),
+                  )}
+              </Select>,
+            )}
+          </FormItem>
+        );
+      case 'summary':
+        return (
+          <FormItem label="概要" style={{ width: 520 }}>
+            {getFieldDecorator('summary', {
+              rules: [{ required: true, message: '概要为必输项', whitespace: true }],
+            })(
+              <Input autoFocus label="概要" maxLength={44} />,
+            )}
+          </FormItem>
+        );
+      case 'epicName':
+        return (
+          newIssueTypeCode === 'issue_epic' && (
+            <FormItem label="史诗名称" style={{ width: 520 }}>
+              {getFieldDecorator('epicName', {
+                rules: [{ required: true, message: '史诗名称为必输项' }, {
+                  validator: this.checkEpicNameRepeat,
+                }],
+              })(
+                <Input label="史诗名称" maxLength={20} />,
+              )}
+            </FormItem>
+          )
+        );
+      case 'remainingTime':
+        return (
+          newIssueTypeCode !== 'issue_epic' && (
+            <div style={{ width: 520, paddingBottom: 8, marginBottom: 12 }}>
+              <Select
+                label="预估时间"
+                value={estimatedTime && estimatedTime.toString()}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                mode="combobox"
+                ref={(e) => {
+                  this.componentRef = e;
+                }}
+                onPopupFocus={() => {
+                  this.componentRef.rcSelect.focus();
+                }}
+                tokenSeparators={[',']}
+                style={{ marginTop: 0, paddingTop: 0 }}
+                onChange={value => this.handleChangeEstimatedTime(value)}
+              >
+                {storyPointList.map(sp => (
+                  <Option key={sp.toString()} value={sp}>
+                    {sp}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          )
+        );
+      case 'storyPoints':
+        return (
+          newIssueTypeCode === 'story' && (
+            <div style={{ width: 520, paddingBottom: 8, marginBottom: 12 }}>
+              <Select
+                label="故事点"
+                value={storyPoints && storyPoints.toString()}
+                getPopupContainer={triggerNode => triggerNode.parentNode}
+                mode="combobox"
+                ref={(e) => {
+                  this.componentRef = e;
+                }}
+                onPopupFocus={() => {
+                  this.componentRef.rcSelect.focus();
+                }}
+                tokenSeparators={[',']}
+                style={{ marginTop: 0, paddingTop: 0 }}
+                onChange={value => this.handleChangeStoryPoint(value)}
+              >
+                {storyPointList.map(sp => (
+                  <Option key={sp.toString()} value={sp}>
+                    {sp}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          )
+        );
+      case 'description':
+        return (
+          <div style={{ width: 520 }}>
+            <div style={{ display: 'flex', marginBottom: 3, alignItems: 'center' }}>
+              <div style={{ fontWeight: 'bold' }}>描述</div>
+              <div style={{ marginLeft: 80 }}>
+                <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
+                  <span style={{ color: '#3f51b5' }}>全屏编辑</span>
+                </Button>
+              </div>
+            </div>
+            {
+              !edit && (
+                <div className="clear-p-mw">
+                  <WYSIWYGEditor
+                    value={delta}
+                    style={{ height: 200, width: '100%' }}
+                    onChange={(value) => {
+                      this.setState({ delta: value });
+                    }}
+                  />
+                </div>
+              )
+            }
+          </div>
+        );
+      default:
+        return (
+          <FormItem label={fieldName} style={{ width: 520 }}>
+            {getFieldDecorator(fieldCode, {
+              rules: [{ required, message: `${fieldName}为必填项` }],
+              initialValue: this.transformValue(fieldType, defaultValue),
+            })(
+              this.renderField(field),
+            )}
+          </FormItem>
+        );
+    }
+  };
+
+  transformValue = (fieldType, value) => {
+    if (value) {
+      if (fieldType === 'time' || fieldType === 'datetime' || fieldType === 'date') {
+        return value ? moment(value) : undefined;
+      } else if (value instanceof Array) {
+        return value.slice();
+      } else {
+        return value;
+      }
+    } else {
+      return undefined;
+    }
+  };
 
   render() {
     const {
       visible,
-      onCancel,
       form,
-      intl,
     } = this.props;
     const { getFieldDecorator } = form;
     const {
-      priorities, defaultPriority, defaultSprint, createLoading,
-      fullEdit, delta, users,
-      epics, sprints, versionList, components,
-      labels, fileList, selectLoading, bugType, issueLinkArr, issues, links,
+      createLoading, edit, delta, selectLoading, fields, loading,
+      fileList, newIssueTypeCode, issueLinkArr, originIssues, links,
     } = this.state;
     const callback = (value) => {
       this.setState({
         delta: value,
-        fullEdit: false,
+        edit: false,
       });
     };
     return (
       <Sidebar
-        className="c7n-createBug"
-        title={<FormattedMessage id="createBug_title" />}
-        visible={visible || false}
+        className="c7n-createIssue"
+        title="创建问题"
+        visible={visible}
         onOk={this.handleCreateIssue}
-        onCancel={onCancel}
-        okText={<FormattedMessage id="createBug_okText" />}
-        cancelText={<FormattedMessage id="createBug_cancelText" />}
+        onCancel={this.handleCancel}
+        okText="创建"
+        cancelText="取消"
         confirmLoading={createLoading}
       >
         <Content
-          title={<FormattedMessage id="createBug_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="createBug_content_description" />}
-          link="http://v0-10.choerodon.io/zh/docs/user-guide/test-management/execution-test/execution"
+          title={`在项目“${AppState.currentMenuType.name}”中创建问题`}
+          description="请在下面输入问题的详细信息，包含详细描述、人员信息、版本信息、进度预估、优先级等等。您可以通过丰富的任务描述帮助相关人员更快更全面的理解任务，同时更好的把控问题进度。"
+          link="http://v0-16.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >
-          <div>
+          <Spin spinning={loading}>
             <Form layout="vertical">
-              <Select
-                style={{ width: 520, marginBottom: 20 }}
-                label={<FormattedMessage id="createBug_field_issueType" />}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                disabled
-                value={bugType && bugType.id}
-              >
-                {bugType && (
-                  <Option key={bugType.id} value={bugType.id}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-                      <TypeTag
-                        type={bugType}
-                        showName
-                      />
-                    </div>
-                  </Option>
-                )}
-              </Select>
-              <FormItem label={<FormattedMessage id="createBug_field_summary" />} style={{ width: 520 }}>
-                {getFieldDecorator('summary', {
-                  rules: [{ required: true, message: intl.formatMessage({ id: 'createBug_field_summaryRequire' }) }],
-                })(
-                  <Input label={<FormattedMessage id="createBug_field_summary" />} maxLength={44} placeholder={<FormattedMessage id="createBug_fielf_summaryPlaceHolder" />} />,
-                )}
-              </FormItem>
-              <FormItem label={<FormattedMessage id="createBug_field_priority" />} style={{ width: 520 }}>
-                {getFieldDecorator('priorityId', {
-                  rules: [{ required: true, message: intl.formatMessage({ id: 'createBug_field_priorityRequire' }) }],
-                  initialValue: defaultPriority ? defaultPriority.id : '',
-                })(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_priority" />}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                  >
-                    {priorities && priorities.length && priorities.map(priority => (
-                      <Option key={priority.id} value={priority.id}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
-                          <span>{priority.name}</span>
-                        </div>
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-              <div style={{ width: 520 }}>
-                <div style={{ display: 'flex', marginBottom: 3, alignItems: 'center' }}>
-                  <div style={{ fontWeight: 'bold' }}>{<FormattedMessage id="createBug_field_description" />}</div>
-                  <div style={{ marginLeft: 80 }}>
-                    <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ fullEdit: true })} style={{ display: 'flex', alignItems: 'center' }}>
-                      <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
-                      <span style={{ color: '#3f51b5' }}>{<FormattedMessage id="createBug_field_descriptionFullEdit" />}</span>
-                    </Button>
-                  </div>
-                </div>
-                {
-                  !fullEdit && (
-                    <div className="clear-p-mw">
-                      <WYSIWYGEditor
-                        value={delta}
-                        style={{ height: 200, width: '100%' }}
-                        onChange={(value) => {
-                          this.setState({ delta: value });
-                        }}
-                      />
-                    </div>
-                  )
-                }
-              </div>
-
-              <FormItem label={<FormattedMessage id="createBug_field_assignee" />} style={{ width: 520, display: 'inline-block' }}>
-                {getFieldDecorator('assigneedId', {})(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_assignee" />}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    filter
-                    filterOption={false}
-                    allowClear
-                    loading={selectLoading}
-                    onFilterChange={this.loadUsers}
-                    onChange={this.handleUserSelectChange}
-                  >
-                    {users && users.length && users.map(user => (
-                      <Option key={user.id} value={user.id}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
-                          <UserHead
-                            user={{
-                              id: user.id,
-                              loginName: user.loginName,
-                              realName: user.realName,
-                              avatar: user.imageUrl,
-                            }}
-                          />
-                        </div>
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-
+              {fields && fields.map(field => this.getFieldComponent(field))}
               {
-                form.getFieldValue('typeCode') !== 'issue_epic' && (
-                  <FormItem label={<FormattedMessage id="createBug_field_epic" />} style={{ width: 520 }}>
-                    {getFieldDecorator('epicId', {})(
-                      <Select
-                        label={<FormattedMessage id="createBug_field_epic" />}
-                        allowClear
-                        filter
-                        loading={selectLoading}
-                        filterOption={
-                          (input, option) => option.props.children && option.props.children.toLowerCase().indexOf(
-                            input.toLowerCase(),
-                          ) >= 0
-                        }
-                        getPopupContainer={triggerNode => triggerNode.parentNode}
+                newIssueTypeCode !== 'issue_epic' && (
+                  issueLinkArr && issueLinkArr.length > 0 && (
+                    issueLinkArr.map((item, index, arr) => (
+                      <div
+                        key={item}
+                        style={{
+                          display: 'flex', width: 520, justifyContent: 'flex-start', alignItems: 'flex-end',
+                        }}
                       >
-                        {epics && epics.length && epics.map(
-                          epic => (
-                            <Option
-                              key={epic.issueId}
-                              value={epic.issueId}
-                            >
-                              {epic.epicName}
-                            </Option>
-                          ),
-                        )}
-                      </Select>,
-                    )}
-                  </FormItem>
-                )
-              }
-
-              <FormItem label={<FormattedMessage id="createBug_field_sprint" />} style={{ width: 520 }}>
-                {getFieldDecorator('sprintId', {
-                  initialValue: defaultSprint ? defaultSprint.sprintId : undefined,
-                })(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_sprint" />}
-                    allowClear
-                    filter
-                    loading={selectLoading}
-                    filterOption={
-                      (input, option) => option.props.children.toLowerCase().indexOf(
-                        input.toLowerCase(),
-                      ) >= 0
-                    }
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                  >
-                    {sprints && sprints.length && sprints.map(sprint => (
-                      <Option key={sprint.sprintId} value={sprint.sprintId}>
-                        {sprint.sprintName}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-
-              <FormItem label={<FormattedMessage id="createBug_field_version" />} style={{ width: 520 }}>
-                {getFieldDecorator('fixVersionIssueRel', {
-                  rules: [{ transform: value => (value ? value.toString() : value) }],
-                })(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_version" />}
-                    mode="tags"
-                    loading={selectLoading}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    tokenSeparators={[',']}
-                  >
-                    {
-                      versionList && versionList.length && versionList.map(
-                        version => (
-                          <Option
-                            key={version.name}
-                            value={version.name}
-                          >
-                            {version.name}
-                          </Option>
-                        ),
-                      )}
-                  </Select>,
-                )}
-              </FormItem>
-
-              <FormItem label={<FormattedMessage id="createBug_field_component" />} style={{ width: 520 }}>
-                {getFieldDecorator('componentIssueRel', {
-                  rules: [{ transform: value => (value ? value.toString() : value) }],
-                })(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_component" />}
-                    mode="tags"
-                    loading={selectLoading}
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    tokenSeparators={[',']}
-                  >
-                    {
-                      components && components.length && components.map(
-                        component => (
-                          <Option
-                            key={component.name}
-                            value={component.name}
-                          >
-                            {component.name}
-                          </Option>
-                        ),
-                      )}
-                  </Select>,
-                )}
-              </FormItem>
-
-              <FormItem label={<FormattedMessage id="createBug_field_label" />} style={{ width: 520 }}>
-                {getFieldDecorator('issueLink', {
-                  rules: [{ transform: value => (value ? value.toString() : value) }],
-                })(
-                  <Select
-                    label={<FormattedMessage id="createBug_field_label" />}
-                    mode="tags"
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
-                    tokenSeparators={[',']}
-                  >
-                    {labels && labels.length && labels.map(label => (
-                      <Option key={label.labelName} value={label.labelName}>
-                        {label.labelName}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-              {issueLinkArr && issueLinkArr.length > 0 && (
-                issueLinkArr.map((item, index, arr) => (
-                  <div
-                    key={item}
-                    style={{
-                      display: 'flex', width: 520, justifyContent: 'flex-start', alignItems: 'flex-end',
-                    }}
-                  >
-                    <FormItem label="关系" style={{ width: 110, marginRight: 20 }}>
-                      {getFieldDecorator(`linkTypeId[${item}]`, {
-                      })(
-                        <Select
-                          label="关系"
-                          loading={selectLoading}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                          tokenSeparators={[',']}
-                          onFocus={() => {
-                            this.getLinks();
-                          }}
-                        >
-                          {links.map(link => (
-                            <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
-                              {link.name}
-                            </Option>
-                          ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                    <FormItem label="问题" style={{ width: 290, marginRight: 20 }}>
-                      {getFieldDecorator(`linkIssues[${item}]`, {
-                      })(
-                        <Select
-                          label="问题"
-                          mode="multiple"
-                          loading={selectLoading}
-                          dropdownClassName="c7ntest-inline-flex-dropdown"
-                          optionLabelProp="showName"
-                          filter
-                          filterOption={false}
-                          onFilterChange={this.onIssueSelectFilterChange.bind(this)}
-                          getPopupContainer={triggerNode => triggerNode.parentNode}
-                        >
-                          {issues.map(issue => (
-                            <Option
-                              key={issue.issueId}
-                              value={issue.issueId}
-                              showName={issue.issueNum}
-                            >
-                              <div style={{
-                                display: 'inline-flex',
-                                overflow: 'hidden',
-                                flex: 1,
-                                alignItems: 'center',
-                                verticalAlign: 'bottom',
+                        <FormItem label="关系" style={{ width: 110, marginRight: 20 }}>
+                          {getFieldDecorator(`linkTypeId[${item}]`, {
+                          })(
+                            <Select
+                              label="关系"
+                              loading={selectLoading}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                              tokenSeparators={[',']}
+                              onFocus={() => {
+                                this.getLinks();
                               }}
-                              >
-                                <TypeTag
-                                  type={issue.issueTypeDTO}
-                                />
-                                <span style={{
-                                  paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                }}
+                            >
+                              {links.map(link => (
+                                <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
+                                  {link.name}
+                                </Option>
+                              ))}
+                            </Select>,
+                          )}
+                        </FormItem>
+                        <FormItem label="问题" style={{ width: 290, marginRight: 20 }}>
+                          {getFieldDecorator(`linkIssues[${item}]`, {
+                          })(
+                            <Select
+                              label="问题"
+                              mode="multiple"
+                              loading={selectLoading}
+                              optionLabelProp="showName"
+                              filter
+                              filterOption={false}
+                              onFilterChange={this.onIssueSelectFilterChange.bind(this)}
+                              getPopupContainer={triggerNode => triggerNode.parentNode}
+                            >
+                              {originIssues.map(issue => (
+                                <Option
+                                  key={issue.issueId}
+                                  value={issue.issueId}
+                                  showName={issue.issueNum}
                                 >
-                                  {issue.issueNum}
-                                </span>
-                                <div style={{ overflow: 'hidden', flex: 1 }}>
-                                  <p style={{
-                                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+                                  <div style={{
+                                    display: 'inline-flex',
+                                    flex: 1,
+                                    width: 'calc(100% - 30px)',
+                                    alignItems: 'center',
+                                    verticalAlign: 'bottom',
                                   }}
                                   >
-                                    {issue.summary}
-                                  </p>
-                                </div>
-                              </div>
-                            </Option>
-                          ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                    <Button
-                      shape="circle"
-                      style={{ marginBottom: 10, marginRight: 10 }}
-                      onClick={() => {
-                        arr.splice(index + 1, 0, randomString(5));
-                        this.setState({
-                          issueLinkArr: arr,
-                        });
-                      }}
-                    >
-                      <Icon type="add icon" />
-                    </Button>
-                    {
-                      issueLinkArr.length > 1 ? (
+                                    <TypeTag
+                                      type={issue.issueTypeDTO}
+                                    />
+                                    <span style={{
+                                      paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                    }}
+                                    >
+                                      {issue.issueNum}
+                                    </span>
+                                    <div style={{ overflow: 'hidden', flex: 1 }}>
+                                      <p style={{
+                                        paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+                                      }}
+                                      >
+                                        {issue.summary}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Option>
+                              ))}
+                            </Select>,
+                          )}
+                        </FormItem>
                         <Button
                           shape="circle"
-                          style={{ marginBottom: 10 }}
+                          style={{ marginBottom: 10, marginRight: 10 }}
                           onClick={() => {
-                            arr.splice(index, 1);
+                            arr.splice(index + 1, 0, randomString(5));
                             this.setState({
                               issueLinkArr: arr,
                             });
                           }}
                         >
-                          <Icon type="delete" />
+                          <Icon type="add icon" />
                         </Button>
-                      ) : null
-                    }
-                  </div>
-                )))}
+                        {
+                          issueLinkArr.length > 1 ? (
+                            <Button
+                              shape="circle"
+                              style={{ marginBottom: 10 }}
+                              onClick={() => {
+                                arr.splice(index, 1);
+                                this.setState({
+                                  issueLinkArr: arr,
+                                });
+                              }}
+                            >
+                              <Icon type="delete" />
+                            </Button>
+                          ) : null
+                        }
+                      </div>
+                    )))
+                )
+              }
             </Form>
-
             <div className="sign-upload" style={{ marginTop: 20 }}>
               <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-                <div style={{ fontWeight: 'bold' }}>{<FormattedMessage id="createBug_field_annex" />}</div>
+                <div style={{ fontWeight: 'bold' }}>附件</div>
               </div>
               <div style={{ marginTop: -38 }}>
                 <UploadButton
@@ -676,14 +1283,13 @@ class CreateBug extends Component {
                 />
               </div>
             </div>
-          </div>
-
+          </Spin>
           {
-            fullEdit ? (
+            edit ? (
               <FullEditor
                 initValue={delta}
-                visible={fullEdit}
-                onCancel={() => this.setState({ fullEdit: false })}
+                visible={edit}
+                onCancel={() => this.setState({ edit: false })}
                 onOk={callback}
               />
             ) : null
@@ -693,4 +1299,4 @@ class CreateBug extends Component {
     );
   }
 }
-export default Form.create({})(CreateBug);
+export default Form.create({})(CreateIssue);

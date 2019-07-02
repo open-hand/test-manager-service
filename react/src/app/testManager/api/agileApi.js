@@ -1,4 +1,4 @@
-import { getProjectId, request } from '../common/utils';
+import { getProjectId, request, getOrganizationId } from '../common/utils';
 
 /**
  *获取当前项目的所有版本
@@ -166,4 +166,18 @@ export function createIssue(issueObj, projectId = getProjectId()) {
     ...issueObj,
   };
   return request.post(`/agile/v1/projects/${projectId}/issues?applyType=agile`, issue);
+}
+/**
+ * 新增Issue字段值
+ * @returns {V|*}
+ */
+export function createFieldValue(id, code, dto) {  
+  return request.post(`/foundation/v1/projects/${getProjectId()}/field_value/${id}?organizationId=${getOrganizationId()}&schemeCode=${code}`, dto);
+}
+/**
+ * 加载字段配置
+ * @returns {V|*}
+ */
+export function getFields(dto) {  
+  return request.post(`/foundation/v1/projects/${getProjectId()}/field_value/list?organizationId=${getOrganizationId()}`, dto);
 }
