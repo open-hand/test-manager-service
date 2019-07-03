@@ -3,7 +3,6 @@ import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import _ from 'lodash';
 // eslint-disable-next-line import/no-cycle
 import { uploadImage, uploadFileAgile } from '../api/FileApi';
-import { SERVICES_URL } from './Constant';
 import humanize from './humanizeDuration';
 
 const { AppState } = stores;
@@ -101,7 +100,7 @@ export function replaceBase64ToUrl(imgUrlList, imgBase, text) {
   const deltaOps = text;
   const imgMap = {};
   imgUrlList.forEach((imgUrl, index) => {
-    imgMap[imgBase[index]] = `${SERVICES_URL}${imgUrl}`;
+    imgMap[imgBase[index]] = `${imgUrl}`;
   });
   deltaOps.forEach((item, index) => {
     if (item.insert && item.insert.image && imgBase.indexOf(item.insert.image) !== -1) {

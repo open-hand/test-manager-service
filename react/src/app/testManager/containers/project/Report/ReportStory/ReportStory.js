@@ -559,7 +559,7 @@ class ReportStory extends Component {
         </Header>
         <Content
           title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-          description="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷，是针对需求追溯测试用例和执行情况，再到最后的执行结果。"
+          description="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷，根据需求追溯测试用例、执行情况和执行结果。"
           link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
         >
           <div style={{ display: 'flex' }} />
