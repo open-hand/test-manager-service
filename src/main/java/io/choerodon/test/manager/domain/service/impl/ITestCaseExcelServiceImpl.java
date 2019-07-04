@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
+
 import io.choerodon.agile.api.dto.IssueStatusDTO;
 import io.choerodon.agile.api.dto.LookupValueDTO;
 import io.choerodon.agile.api.dto.ProductVersionDTO;
@@ -18,6 +19,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 import io.choerodon.test.manager.infra.common.utils.SpringUtil;
+
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -95,7 +97,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
             versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
             versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
             sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
-                    WorkbookUtil.createSafeSheetName(versionName.replace('-','_').replace(' ','_'),'_'));
+                    WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
         }
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
         ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
@@ -180,14 +182,14 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
     private int populateCase(Sheet sheet, int columnNum, TestIssueFolderRelDTO folderRel, CellStyle rowStyles) {
         Row row = ExcelUtil.createRow(sheet, columnNum, rowStyles);
         Optional.ofNullable(folderRel.getFolderName()).ifPresent(v -> ExcelUtil.createCell(row, 0, ExcelUtil.CellType.TEXT, v));
-        if(!ObjectUtils.isEmpty(folderRel.getIssueInfosDTO())) {
+        if (!ObjectUtils.isEmpty(folderRel.getIssueInfosDTO())) {
             Optional.ofNullable(folderRel.getIssueInfosDTO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
             if (!ObjectUtils.isEmpty(folderRel.getIssueInfosDTO().getPriorityDTO())) {
                 Optional.ofNullable(folderRel.getIssueInfosDTO().getPriorityDTO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
             }
             //接口修改后，改成描述
-            Optional.ofNullable( ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosDTO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosDTO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosDTO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
         }
@@ -234,10 +236,7 @@ public class ITestCaseExcelServiceImpl extends IAbstarctExcelServiceImpl<TestIss
 
         List<LookupValueDTO> lookupValueDTOS = testCaseService.queryLookupValueByCode(projectId, "priority").getLookupValues();
 
-        PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(1);
-        pageRequest.setSize(999999999);
-        pageRequest.setSort(new Sort(Sort.Direction.ASC, "componentId"));
+        PageRequest pageRequest = new PageRequest(1, 999999999, Sort.Direction.ASC, "componentId");
 
         List<UserDTO> userDTOS = userService.list(pageRequest, projectId, null, null).getBody().getList();
 

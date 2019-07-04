@@ -2,7 +2,9 @@ package io.choerodon.test.manager.app.service.impl;
 
 import io.choerodon.base.domain.Sort;
 import io.choerodon.core.convertor.ConvertHelper;
+
 import com.github.pagehelper.PageInfo;
+
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
@@ -10,6 +12,7 @@ import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
 import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil;
 import io.choerodon.test.manager.infra.mapper.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
@@ -362,11 +365,9 @@ public class DemoServiceImpl implements DemoService {
         List<Long> executionIdsTwo = new ArrayList<>();
         List<Long> executionIdsThree = new ArrayList<>();
 
-        PageRequest pageRequest = new PageRequest();
-        pageRequest.setPage(1);
-        pageRequest.setSize(30);
+        PageRequest pageRequest = new PageRequest(1, 30);
         List<Sort.Order> sort = new ArrayList<>();
-        sort.add(new Sort.Order(Sort.Direction.ASC,"cycle_id"));
+        sort.add(new Sort.Order(Sort.Direction.ASC, "cycle_id"));
         pageRequest.setSort(new Sort(sort));
 
         List<Long> phaseIdsOne = phaseIdsMap.get(0L);

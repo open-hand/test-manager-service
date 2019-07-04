@@ -35,4 +35,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             createSequence(sequenceName: 'test_case_step_s', startValue: "1")
         }
     }
+    changeSet(author: 'WangZhe@choerodon.io', id: '2019-07-04-change_column_type') {
+        modifyDataType(tableName: 'test_case_step', columnName: 'test_step', newDataType: "TEXT")
+        modifyDataType(tableName: 'test_case_step', columnName: 'test_data', newDataType: "TEXT")
+        modifyDataType(tableName: 'test_case_step', columnName: 'expected_result', newDataType: "TEXT")
+    }
 }
