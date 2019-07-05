@@ -1195,7 +1195,7 @@ class EditIssueNarrow extends Component {
                   height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
                 }}
                 >
-                  <TypeTag type={issueTypeDTO} />
+                  <TypeTag data={issueTypeDTO} />
                 </div>
               </div>
               <ul className="c7ntest-nav-ul">

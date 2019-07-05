@@ -699,7 +699,7 @@ class CreateIssue extends Component {
                     <Option key={type.id} value={type.id}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                         <TypeTag
-                          type={type}
+                          data={type}
                           showName
                         />
                       </div>
@@ -1162,111 +1162,109 @@ class CreateIssue extends Component {
                 newIssueTypeCode !== 'issue_epic' && (
                   issueLinkArr && issueLinkArr.length > 0 && (
                     issueLinkArr.map((item, index, arr) => (
-                      <div
-                        key={item}
-                        style={{
-                          display: 'flex', width: 520, justifyContent: 'flex-start', alignItems: 'flex-end',
-                        }}
-                      >
-                        <FormItem label="关系" style={{ width: 110, marginRight: 20 }}>
-                          {getFieldDecorator(`linkTypeId[${item}]`, {
-                          })(
-                            <Select
-                              label="关系"
-                              loading={selectLoading}
-                              getPopupContainer={triggerNode => triggerNode.parentNode}
-                              tokenSeparators={[',']}
-                              onFocus={() => {
-                                this.getLinks();
-                              }}
-                            >
-                              {links.map(link => (
-                                <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
-                                  {link.name}
-                                </Option>
-                              ))}
-                            </Select>,
-                          )}
-                        </FormItem>
-                        <FormItem label="问题" style={{ width: 290, marginRight: 20 }}>
-                          {getFieldDecorator(`linkIssues[${item}]`, {
-                          })(
-                            <Select
-                              label="问题"
-                              mode="multiple"
-                              loading={selectLoading}
-                              optionLabelProp="showName"
-                              filter
-                              filterOption={false}
-                              onFilterChange={this.onIssueSelectFilterChange.bind(this)}
-                              getPopupContainer={triggerNode => triggerNode.parentNode}
-                            >
-                              {originIssues.map(issue => (
-                                <Option
-                                  key={issue.issueId}
-                                  value={issue.issueId}
-                                  showName={issue.issueNum}
-                                >
-                                  <div style={{
-                                    display: 'inline-flex',
-                                    flex: 1,
-                                    width: 'calc(100% - 30px)',
-                                    alignItems: 'center',
-                                    verticalAlign: 'bottom',
-                                  }}
+                      <Row gutter={16} style={{ width: 520 }}>
+                        <Col span={8}>
+                          <FormItem label="关系">
+                            {getFieldDecorator(`linkTypeId[${item}]`, {
+                            })(
+                              <Select
+                                label="关系"
+                                loading={selectLoading}
+                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                                tokenSeparators={[',']}
+                                onFocus={() => {
+                                  this.getLinks();
+                                }}
+                              >
+                                {links.map(link => (
+                                  <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
+                                    {link.name}
+                                  </Option>
+                                ))}
+                              </Select>,
+                            )}
+                          </FormItem>
+                        </Col>
+                        <Col span={12}>
+                          <FormItem label="问题">
+                            {getFieldDecorator(`linkIssues[${item}]`, {
+                            })(
+                              <Select
+                                label="问题"
+                                mode="multiple"
+                                loading={selectLoading}
+                                optionLabelProp="showName"
+                                filter
+                                filterOption={false}
+                                onFilterChange={this.onIssueSelectFilterChange.bind(this)}
+                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                              >
+                                {originIssues.map(issue => (
+                                  <Option
+                                    key={issue.issueId}
+                                    value={issue.issueId}
+                                    showName={issue.issueNum}
                                   >
-                                    <TypeTag
-                                      type={issue.issueTypeDTO}
-                                    />
-                                    <span style={{
-                                      paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                    <div style={{
+                                      display: 'inline-flex',
+                                      flex: 1,
+                                      width: 'calc(100% - 30px)',
+                                      alignItems: 'center',
+                                      verticalAlign: 'bottom',
                                     }}
                                     >
-                                      {issue.issueNum}
-                                    </span>
-                                    <div style={{ overflow: 'hidden', flex: 1 }}>
-                                      <p style={{
-                                        paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+                                      <TypeTag
+                                        data={issue.issueTypeDTO}
+                                      />
+                                      <span style={{
+                                        paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                                       }}
                                       >
-                                        {issue.summary}
-                                      </p>
+                                        {issue.issueNum}
+                                      </span>
+                                      <div style={{ overflow: 'hidden', flex: 1 }}>
+                                        <p style={{
+                                          paddingRight: '25px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+                                        }}
+                                        >
+                                          {issue.summary}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                </Option>
-                              ))}
-                            </Select>,
-                          )}
-                        </FormItem>
-                        <Button
-                          shape="circle"
-                          style={{ marginBottom: 10, marginRight: 10 }}
-                          onClick={() => {
-                            arr.splice(index + 1, 0, randomString(5));
-                            this.setState({
-                              issueLinkArr: arr,
-                            });
-                          }}
-                        >
-                          <Icon type="add icon" />
-                        </Button>
-                        {
-                          issueLinkArr.length > 1 ? (
-                            <Button
-                              shape="circle"
-                              style={{ marginBottom: 10 }}
-                              onClick={() => {
-                                arr.splice(index, 1);
-                                this.setState({
-                                  issueLinkArr: arr,
-                                });
-                              }}
-                            >
-                              <Icon type="delete" />
-                            </Button>
-                          ) : null
-                        }
-                      </div>
+                                  </Option>
+                                ))}
+                              </Select>,
+                            )}
+                          </FormItem>
+                        </Col>
+                        <Col span={4} style={{ marginTop: 10 }}>
+                          <Button
+                            shape="circle"
+                            icon="add"
+                            onClick={() => {
+                              arr.splice(index + 1, 0, randomString(5));
+                              this.setState({
+                                issueLinkArr: arr,
+                              });
+                            }}
+                          />
+                          {
+                            issueLinkArr.length > 1 ? (
+                              <Button
+                                shape="circle"
+                                style={{ marginLeft: 10 }}
+                                icon="delete"
+                                onClick={() => {
+                                  arr.splice(index, 1);
+                                  this.setState({
+                                    issueLinkArr: arr,
+                                  });
+                                }}
+                              />
+                            ) : null
+                          }
+                        </Col>
+                      </Row>
                     )))
                 )
               }

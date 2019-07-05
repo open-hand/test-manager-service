@@ -21,7 +21,7 @@ export function renderType(issueTypeDTO, showTypeName) {
     <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
       <div style={{ display: 'flex' }}>
         <TypeTag
-          type={issueTypeDTO || {}}
+          data={issueTypeDTO || {}}
         />
         {showTypeName && <span style={{ marginLeft: 5 }}>{testTypes[typeCode]}</span>}
       </div>
