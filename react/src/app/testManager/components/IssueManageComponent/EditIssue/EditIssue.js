@@ -1252,7 +1252,7 @@ class EditIssueNarrow extends Component {
                           )}
                         </Text>
                         <Edit>
-                          <TextArea maxLength={44} size="small" autoFocus />
+                          <TextArea style={{ fontSize: '20px', fontWeight: 500 }} maxLength={44} autosize autoFocus />
                         </Edit>
                       </TextEditToggle>
                       <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
