@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, Fragment } from 'react';
 import { Tooltip } from 'choerodon-ui';
 
 function getFirst(str) {
@@ -25,12 +25,12 @@ const UserHead = memo(({
   const iconSize = size || 18;
   return (
     <Tooltip title={tooltip ? `${user.loginName || ''}${user.realName || ''}` : ''} mouseEnterDelay={0.5}>
-      <div
-        className="c7n-userHead"
+      <div        
         style={{
           ...style,
-          display: user.id ? 'flex' : 'none',
+          display: user.id ? 'inline-block' : 'none',
           maxWidth: 108,
+          verticalAlign: 'text-bottom',
         }}
       >
         {
@@ -66,43 +66,46 @@ const UserHead = memo(({
               }
             </div>
           ) : (
-            <div
-              style={{
-                width: iconSize,
-                height: iconSize,
-                background: '#c5cbe8',
-                color: '#6473c3',
-                overflow: 'hidden',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: 5,
-                textAlign: 'center',
-                borderRadius: '50%',
-                flexShrink: 0,
-              }}
-            >
+            <Fragment>
               {
                   user.avatar ? (
-                    <img src={user.avatar} alt="" style={{ width: iconSize, height: iconSize }} />
+                    <img
+                      src={user.avatar}
+                      alt=""
+                      style={{
+                        width: iconSize,
+                        height: iconSize,
+                        marginRight: 5,   
+                        borderRadius: '50%', 
+                        verticalAlign: 'middle', 
+                        background: '#c5cbe8',
+                      }}
+                    />
                   ) : (
                     <span style={{
-                      width: iconSize, height: iconSize, lineHeight: `${iconSize}px`, textAlign: 'center', color: '#6473c3',
+                      width: iconSize,
+                      height: iconSize,
+                      lineHeight: `${iconSize}px`, 
+                      textAlign: 'center',
+                      color: '#6473c3',
                     }}
                     >
                       {getFirst(user.realName)}
                     </span>
                   )
                 }
-            </div>
+            </Fragment>
           )
         }
         {
           hiddenText ? null : (
             <span
-              style={{
+              style={{                
+                display: 'inline-block',       
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
+                borderRadius: '50%', 
+                verticalAlign: 'middle',
                 whiteSpace: 'nowrap',
                 fontSize: '13px',
                 lineHeight: '20px',

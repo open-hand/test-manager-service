@@ -8,56 +8,55 @@ const User = ({
   <Tooltip title={`${user.loginName}${user.realName}`}>  
     <div
       style={{
-        display: 'inline-flex',
-        alignItems: 'center',
+        display: 'inline-block',
         padding: 2,
+        lineHeight: '18px',
+        verticalAlign: 'text-bottom',
       }}
-    >
-      <div
-        style={{
-          width: 18,
-          height: 18,
-          background: '#c5cbe8',
-          color: '#6473c3',
-          overflow: 'hidden',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginRight: 5,
-          textAlign: 'center',
-          borderRadius: '50%',
-        }}
-      >
-        {
+    >      
+      {
         user.imageUrl ? (
           <img
             src={user.imageUrl}
             alt=""
-            style={{ width: '100%', height: '100%' }}
+            style={{        
+              width: 18,
+              height: 18,   
+              marginRight: 5,   
+              borderRadius: '50%', 
+              verticalAlign: 'middle',
+              background: '#c5cbe8',
+            }}
           />
         ) : (
-          <span>
+          <span style={{  
+            display: 'inline-block',   
+            textAlign: 'center',
+            borderRadius: '50%', 
+            verticalAlign: 'middle',
+            background: '#c5cbe8',
+            color: '#6473c3',
+            marginRight: 5,   
+            width: 18,
+            height: 18,       
+          }}
+          >
             {user.realName[0]}
           </span>
         )
-      }
-      </div>
-      <div>
-        <span
-          style={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '13px',
-            lineHeight: '20px',
-            color: 'rgba(0, 0, 0, 0.65)',
-          }}
-        >
-          {/* {user.loginName}
-        {' '} */}
-          {user.realName}
-        </span>
-      </div>
+      }     
+      <span
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          fontSize: '13px',
+          verticalAlign: 'middle',
+          color: 'rgba(0, 0, 0, 0.65)',
+        }}
+      >
+        {user.realName}
+      </span>
     </div>
   </Tooltip>
 ) : null);
