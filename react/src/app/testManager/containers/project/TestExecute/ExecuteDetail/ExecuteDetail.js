@@ -190,6 +190,11 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
+  handleBugCreate=() => {
+    ExecuteDetailStore.setCreateBugShow(false);
+    ExecuteDetailStore.getInfo();
+  }
+
   handleCreateBugShow = () => {
     ExecuteDetailStore.setCreateBugShow(true);
     ExecuteDetailStore.setDefectType('CYCLE_CASE');
@@ -328,7 +333,7 @@ class ExecuteDetail extends Component {
                   defectType={defectType}
                   id={createDectTypeId}
                   onCancel={this.handleHiddenCreateBug}
-                  onOk={this.handleHiddenCreateBug}
+                  onOk={this.handleBugCreate}
                 />
               )
             }
