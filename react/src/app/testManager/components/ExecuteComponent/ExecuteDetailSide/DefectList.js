@@ -37,7 +37,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
       >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
           <div>
-            <TypeTag type={issueTypeDTO} />
+            <TypeTag data={issueTypeDTO} />
           </div>
         </Tooltip>
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>

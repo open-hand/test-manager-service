@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import {
-  Input, Icon, Modal, Tooltip, Button, 
+  Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
-import { stores } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -16,9 +15,7 @@ import './TestStepTable.scss';
 
 const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
-const { AppState } = stores;
 const { TextArea } = Input;
-let didUpdateFlag = false;
 let didCreatedFlag = false;
 let createStepId;
 class TestStepTable extends Component {
@@ -32,7 +29,6 @@ class TestStepTable extends Component {
         testData: '',
         expectedResult: '',
       },
-      lastValue: '',
       fileList: [],
       createdStepInfo: {
 
@@ -53,18 +49,10 @@ class TestStepTable extends Component {
             isStepExpectedResultEditing: false,
           }
         )),
-        lastValue: '',
       });
     }
   }
 
-  componentWillUpdate() {
-    didUpdateFlag = false;
-  }
-
-  componentDidUpdate() {
-    didUpdateFlag = true;
-  }
 
   onDragEnd = (sourceIndex, targetIndex) => {
     const arr = this.state.data.slice();
@@ -107,6 +95,7 @@ class TestStepTable extends Component {
         attachmentType: 'CASE_STEP',
       };
       if (fileList.some(one => !one.url)) {
+        // eslint-disable-next-line no-shadow
         const fileList = propFileList.filter(i => !i.url);
         const formData = new FormData();
         fileList.forEach((file) => {
@@ -133,6 +122,7 @@ class TestStepTable extends Component {
     } else {
       this.props.onOk();
     }
+    return false;
   }
 
   handleClickCreate = () => {
@@ -167,7 +157,6 @@ class TestStepTable extends Component {
       },
       fileList: [],
       createdStepInfo: {},
-      lastValue: '',
     });
   }
 
@@ -195,7 +184,7 @@ class TestStepTable extends Component {
         });
       } else {
         setTimeout(() => {
-          let { createdStepInfo, createStep, lastValue } = this.state;
+          let { createdStepInfo } = this.state;
           createdStepInfo = {
             ...createdStepInfo,
             ...createStep,
@@ -259,152 +248,6 @@ class TestStepTable extends Component {
     });
   }
 
-  renderStepName = (record) => {
-    const { disabled } = this.props;
-    const { isEditing, createStep } = this.state;
-    if (disabled) {
-      return (
-        <span>{record.testStep}</span>
-      );
-    } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
-      if (editingStepIndex !== -1) {
-        return isEditing[editingStepIndex].isStepNameEditing ? (
-          <TextArea
-            ref={(testStep) => {
-              this[`testStep${record.stepId}`] = testStep;
-            }}
-            autosize
-            placeholder="测试步骤"
-            onBlur={e => this.handleBlurOrEnter(e, record, 'testStep')}
-            defaultValue={record.stepIsCreating ? createStep.testStep : record.testStep}
-          />
-        ) : (
-          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.testStep ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testStep ? createStep.testStep : '测试步骤') : record.testStep}</span>
-        );
-      }
-    }
-  }
-
-  renderStepTestData = (record) => {
-    const { disabled } = this.props;
-    const { isEditing, createStep } = this.state;
-    if (disabled) {
-      return (
-        <span>{record.testData ? record.testData : '-'}</span>
-      );
-    } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
-      if (editingStepIndex !== -1) {
-        return isEditing[editingStepIndex].isStepDataEditing ? (
-          <TextArea 
-            ref={(testData) => {
-              this[`testData${record.stepId}`] = testData;
-            }}
-            autosize
-            onBlur={e => this.handleBlurOrEnter(e, record, 'testData')}
-            defaultValue={record.stepIsCreating ? createStep.testData : record.testData}
-            placeholder="测试数据"
-          />
-        ) : (
-          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.testData ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.testData ? createStep.testData : '测试数据') : (record.testData ? record.testData : '-')}</span>
-        );
-      }
-    }
-  }
-
-  renderStepExpectedResult = (record) => {
-    const { disabled } = this.props;
-    const { isEditing, createStep } = this.state;
-    if (disabled) {
-      return (
-        <span>{record.expectedResult}</span>
-      );
-    } else {
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId) ? _.find(isEditing, item => item.stepId === record.stepId).index : -1;
-      if (editingStepIndex !== -1) {
-        return isEditing[editingStepIndex].isStepExpectedResultEditing ? (
-          <TextArea 
-            ref={(expectedResult) => {
-              this[`expectedResult${record.stepId}`] = expectedResult;
-            }}
-            autosize
-            onBlur={e => this.handleBlurOrEnter(e, record, 'expectedResult')}
-            defaultValue={record.stepIsCreating ? createStep.expectedResult : record.expectedResult}
-            placeholder="预期结果"
-          />
-        ) : (
-          <span className="preWrapSpan" style={{ color: record.stepIsCreating && !createStep.expectedResult ? '#bfbfbf' : '#000' }}>{record.stepIsCreating ? (createStep.expectedResult ? createStep.expectedResult : '预期结果') : record.expectedResult}</span>
-        );
-      }
-    }
-  }
-
-
-  handleBlurOrEnter = (e, record, editField) => {
-    const { createStep, isEditing, lastValue } = this.state;
-
-    if (!record.stepIsCreating) {
-      record[editField] = e.target.value;
-      const { expectedResult, testStep } = record;
-      if (expectedResult !== '' && testStep !== '' && lastValue !== e.target.value) {
-        this.editStep({ ...record, [editField]: e.target.value });
-      } else if (expectedResult == '' || testStep == '') {
-        const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
-        isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true;
-        this.setState({
-          isEditing,
-        });
-        Choerodon.prompt('测试步骤和预期结果均为必输项');
-      }
-    } else {
-      isEditing[isEditing.length - 1][`is${_.upperFirst(editField)}Editing`] = false;
-      this.setState({
-        isEditing,
-      });
-      this.setState({
-        createStep: {
-          ...createStep,
-          [editField]: e.target.value,
-        },
-      });
-    }
-  }
-
-  handleFieldOnClick = (e, record, editField) => {
-    const { disabled } = this.props;
-    const { isEditing } = this.state;
-    if (!disabled) {
-      // let fieldClicked = e.target;
-      // let fieldClickedParent = fieldClicked.parentNode;
-      _.forEach(isEditing, (ele) => {
-        ele.isStepNameEditing = false;
-        ele.isStepDataEditing = false;
-        ele.isStepExpectedResultEditing = false;
-      });
-      const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
-      // isEditing[editingStepIndex].isStepNameEditing = true,
-      isEditing[editingStepIndex][`is${_.upperFirst(editField)}Editing`] = true,
-
-      this.setState({
-        isEditing,
-      });
-
-      setTimeout(() => {
-        if (didUpdateFlag) {
-          const fieldClicked = e.target;
-          const fieldClickedParent = fieldClicked.parentNode;
-          if (fieldClicked.tagName === 'DIV') {
-            fieldClicked.getElementsByTagName('textArea')[0].focus();
-          } else {
-            fieldClickedParent.getElementsByTagName('textArea')[0].focus();
-          }
-        }
-      }, 300);
-    }
-    e.stopPropagation();
-  }
-
 
   cancelCreateStep = (index) => {
     const { data } = this.state;
@@ -444,128 +287,141 @@ class TestStepTable extends Component {
       dataIndex: 'testStep',
       key: 'testStep',
       flex: 2,
-      render: (testStep, record) => (
-        <div
-          role="none"
-          className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer' }}
-          // onClick={e => this.handleFieldOnClick(e, record, 'testStep')}
-          onClick={(e) => {
-            if (!disabled) {
-              const fieldClicked = e.target;
-              const fieldClickedParent = fieldClicked.parentNode;
-              _.forEach(isEditing, (ele) => {
-                ele.isStepNameEditing = false;
-                ele.isStepDataEditing = false;
-                ele.isStepExpectedResultEditing = false;
-              });
-              const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
-              isEditing[editingStepIndex].isStepNameEditing = true,
-              this.setState({
-                isEditing,
-                lastValue: record.stepIsCreating ? createStep.testStep : record.testStep,
-              });
-
-              setTimeout(() => {
-                if (fieldClicked.tagName === 'DIV') {
-                  fieldClicked.getElementsByTagName('textArea')[0].focus();
-                } else {
-                  fieldClickedParent.getElementsByTagName('textArea')[0].focus();
-                }
-              }, 100);
-            }
-            e.stopPropagation();
-          }
-          }
-        >
-          {
-            this.renderStepName(record)
-          }
-        </div>
-      ),
+      render: (testStep, record) => {
+        const { stepIsCreating } = record;
+        return (
+          <TextEditToggle
+            simpleMode
+            originData={stepIsCreating ? createStep.testStep : testStep}
+            formKey="testStep"
+            style={{ padding: '5px 0' }} 
+            // rules={[{ required: true, message: '请输入测试步骤' }]}
+            onSubmit={(value) => {
+              if (stepIsCreating) {
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    testStep: value,
+                  },
+                });
+              } else {
+                this.editStep({
+                  ...record,
+                  testStep: value,
+                });
+              }
+            }}
+          >
+            <Text>
+              {newValue => (
+                stepIsCreating 
+                  ? (
+                    <span>
+                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试步骤</span>}
+                    </span>
+                  )
+                  : <span>{newValue || '-'}</span>
+              )}
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize placeholder="测试步骤" />
+            </Edit>
+          </TextEditToggle>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
       flex: 2,
-      render: (testData, record) => (
-        <div
-          role="none"
-          className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer' }}
-          onClick={(e) => {
-            if (!disabled) {
-              const fieldClicked = e.target;
-              const fieldClickedParent = fieldClicked.parentNode;
-              _.forEach(isEditing, (ele) => {
-                ele.isStepNameEditing = false;
-                ele.isStepDataEditing = false;
-                ele.isStepExpectedResultEditing = false;
-              });
-              const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
-              isEditing[editingStepIndex].isStepDataEditing = true,
-              this.setState({
-                isEditing,
-                lastValue: record.stepIsCreating ? createStep.testData : record.testData,
-              });
-
-              setTimeout(() => {
-                if (fieldClicked.tagName === 'DIV') {
-                  fieldClicked.getElementsByTagName('textArea')[0].focus();
-                } else {
-                  fieldClickedParent.getElementsByTagName('textArea')[0].focus();
-                }
-              }, 100);
-            }
-            e.stopPropagation();
-          }}
-        >
-          {
-            this.renderStepTestData(record)
-          }
-        </div>
-      ),
+      render: (testData, record) => {
+        const { stepIsCreating } = record;
+        return (
+          <TextEditToggle
+            simpleMode
+            style={{ padding: '5px 0' }} 
+            originData={stepIsCreating ? createStep.testData : testData}
+            formKey="testData"
+            onSubmit={(value) => {
+              if (stepIsCreating) {
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    testData: value,
+                  },
+                });
+              } else {
+                this.editStep({
+                  ...record,
+                  testData: value,
+                });
+              }
+            }}
+          >
+            <Text>
+              {newValue => (
+                stepIsCreating 
+                  ? (
+                    <span>
+                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试数据</span>}
+                    </span>
+                  )
+                  : <span>{newValue || '-'}</span>
+              )}
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize placeholder="测试数据" />
+            </Edit>
+          </TextEditToggle>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
       flex: 2,
-      render: (expectedResult, record) => (
-        <div
-          role="none"
-          className="item-container"
-          style={{ cursor: disabled ? 'auto' : 'pointer' }}
-          onClick={(e) => {
-            if (!disabled) {
-              const fieldClicked = e.target;
-              const fieldClickedParent = fieldClicked.parentNode;
-              _.forEach(isEditing, (ele) => {
-                ele.isStepNameEditing = false;
-                ele.isStepDataEditing = false;
-                ele.isStepExpectedResultEditing = false;
-              });
-              const editingStepIndex = _.find(isEditing, item => item.stepId === record.stepId).index;
-              isEditing[editingStepIndex].isStepExpectedResultEditing = true,
-              this.setState({
-                isEditing,
-                lastValue: record.stepIsCreating ? createStep.expectedResult : record.expectedResult,
-              });
-              setTimeout(() => {
-                if (fieldClicked.tagName === 'DIV') {
-                  fieldClicked.getElementsByTagName('textArea')[0].focus();
-                } else {
-                  fieldClickedParent.getElementsByTagName('textArea')[0].focus();
-                }
-              }, 100);
-            }
-            e.stopPropagation();
-          }}
-        >
-          {
-            this.renderStepExpectedResult(record)
-          }
-        </div>
-      ),
+      render: (expectedResult, record) => {
+        const { stepIsCreating } = record;
+        return (
+          <TextEditToggle
+            simpleMode
+            style={{ padding: '5px 0' }} 
+            originData={stepIsCreating ? createStep.expectedResult : expectedResult}
+            formKey="expectedResult"
+            // rules={[{ required: true, message: '请输入预期结果' }]}
+            onSubmit={(value) => {
+              if (stepIsCreating) {
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    expectedResult: value,
+                  },
+                });
+              } else {
+                this.editStep({
+                  ...record,
+                  expectedResult: value,
+                });
+              }
+            }}
+          >
+            <Text>
+              {newValue => (
+                stepIsCreating 
+                  ? (
+                    <span>
+                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>预期结果</span>}
+                    </span>
+                  )
+                  : <span>{newValue || '-'}</span>
+              )}
+            </Text>
+            <Edit>
+              <TextArea autoFocus autosize placeholder="预期结果" />
+            </Edit>
+          </TextEditToggle>
+        );
+      },
     }, {
       title: <FormattedMessage id="execute_stepAttachment" />,
       dataIndex: 'attachments',
@@ -604,7 +460,7 @@ class TestStepTable extends Component {
         const { stepIsCreating } = record;
         return !stepIsCreating ? (
           <div style={{
-            display: 'flex', alignItems: 'center', minWidth: 100, 
+            display: 'flex', alignItems: 'center', minWidth: 100,
           }}
           >
             <Tooltip title={<FormattedMessage id="execute_move" />}>

@@ -1,4 +1,4 @@
-/* eslint-disable react/no-find-dom-node */
+/* eslint-disable react/no-find-dom-node, react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Form, Icon } from 'choerodon-ui';
 import { findDOMNode } from 'react-dom';
@@ -70,7 +70,7 @@ class TextEditToggle extends Component {
   }
   
   handleDocumentClick = (event) => {
-    const target = event.target;
+    const { target } = event;
     const root = findDOMNode(this); 
     // 如果点击不在当前元素内，就调用submit提交数据
     if (!this.PortalMouseDown && !contains(root, target)) {
@@ -247,7 +247,7 @@ class TextEditToggle extends Component {
   render() {
     const { style, className } = this.props;
     return (
-      <div style={style} className={className}>
+      <div style={style} className={`c7ntest-TextEditToggle ${className}`}>
         {this.renderChild()}
       </div>
     );

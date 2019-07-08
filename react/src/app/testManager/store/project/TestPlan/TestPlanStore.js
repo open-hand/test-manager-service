@@ -116,14 +116,8 @@ class TestPlanStore extends BaseTreeProto {
     this.CurrentEditStage = {};
     this.assignedTo = null;
     this.lastUpdatedBy = null;
-    this.treeData = [
-      {
-        title: '所有版本',
-        key: '0',
-        children: [],
-      },
-    ];
-    this.expandedKeys = ['0'];
+    this.treeData = [];
+    this.expandedKeys = ['0-0'];
     this.selectedKeys = [];
     this.addingParent = null;
     this.currentCycle = {};
@@ -143,12 +137,10 @@ class TestPlanStore extends BaseTreeProto {
       this.setPrioritys(prioritys);
       this.setStatusList(statusList);
       // traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      this.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
-      this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
-      ]);
+      this.setTreeData(data.versions);
+      this.generateList(data.versions);
       // 默认选中一个项
-      this.selectDefaultNode({ title: '所有版本', key: '0', children: data.versions });
+      this.selectDefaultNode(data.versions);
       resolve();
     }).catch((err) => {
       Choerodon.prompt('网络错误');

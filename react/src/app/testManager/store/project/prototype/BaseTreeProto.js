@@ -3,15 +3,9 @@ import {
 } from 'mobx';
 
 class BaseTreeProto {
-  @observable treeData = [
-    {
-      title: '所有版本',
-      key: '0',
-      children: [],
-    },
-  ]
+  @observable treeData = []
 
-  @observable expandedKeys = ['0', '0-0'];
+  @observable expandedKeys = ['0-0'];
 
   @observable selectedKeys = [];
 

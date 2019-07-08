@@ -244,7 +244,7 @@ class ExecuteDetailSide extends Component {
             height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
           >
-            <TypeTag type={{ colour: '#4D90FE', icon: 'test-case' }} />
+            <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
           </div>
           {/* 下方锚点列表 */}
           <ul className="c7ntest-nav-ul">
