@@ -23,14 +23,8 @@ class TestExecuteStore extends BaseTreeProto {
       total: 0,
       pageSize: 50,
     };
-    this.treeData = [
-      {
-        title: '所有版本',
-        key: '0',
-        children: [],
-      },
-    ];  
-    this.expandedKeys = ['0'];  
+    this.treeData = [];  
+    this.expandedKeys = ['0-0'];  
     this.selectedKeys = [];  
     this.addingParent = null;  
     this.currentCycle = {};  

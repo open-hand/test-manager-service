@@ -92,9 +92,9 @@ class IssueTree extends Component {
   getTree = () => {
     IssueTreeStore.setLoading(true);
     getIssueTree().then((data) => {
-      IssueTreeStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      IssueTreeStore.setTreeData(data.versions);
       IssueTreeStore.setLoading(false);
-      this.generateList({ title: '所有版本', key: '0', children: data.versions });
+      this.generateList(data.versions);
 
       // window.console.log(dataList);
     }).catch(() => {
@@ -229,7 +229,7 @@ class IssueTree extends Component {
     selected, selectedNodes, node, event,
   } = {}) => {
     const { executePagination, filters } = this.state;
-    const data = node.props.data;
+    const { data } = node.props;
     // console.log(data);
     // if (data.versionId) {
     if (selectedKeys) {
@@ -326,7 +326,7 @@ class IssueTree extends Component {
   render() {
     const { onClose } = this.props;
     const { autoExpandParent } = this.state;
-    const loading = IssueTreeStore.loading;
+    const { loading } = IssueTreeStore;
     const treeData = IssueTreeStore.getTreeData;
     const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
     const expandedKeys = IssueTreeStore.getExpandedKeys;

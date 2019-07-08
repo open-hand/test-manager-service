@@ -50,13 +50,11 @@ class TestExecuteHomeContainer extends Component {
     });
     getCycleTree(assignedTo).then((data) => {
       // traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      TestExecuteStore.setTreeData([{ title: '所有版本', key: '0', children: data.versions }]);
+      TestExecuteStore.setTreeData(data.versions);
       this.setState({
         loading: false,
       });
-      this.generateList([
-        { title: '所有版本', key: '0', children: data.versions },
-      ]);
+      this.generateList(data.versions);
 
       // window.console.log(dataList);
     });
