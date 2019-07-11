@@ -252,9 +252,9 @@ public class IExcelImportServiceImpl implements IExcelImportService {
     }
 
     private TestCaseStepE buildTestCaseStepE(Long issueId, Row row) {
-        String testStep = ExcelUtil.getStringValue(row.getCell(2));
-        String testData = ExcelUtil.getStringValue(row.getCell(3));
-        String expectedResult = ExcelUtil.getStringValue(row.getCell(4));
+        String testStep = ExcelUtil.getStringValue(row.getCell(6));
+        String testData = ExcelUtil.getStringValue(row.getCell(7));
+        String expectedResult = ExcelUtil.getStringValue(row.getCell(8));
 
         TestCaseStepE testCaseStepE = null;
         if (StringUtils.isNotBlank(testStep) || StringUtils.isNotBlank(testData) || StringUtils.isNotBlank(expectedResult)) {

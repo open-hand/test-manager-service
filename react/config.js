@@ -6,7 +6,7 @@ const config = {
   projectType: 'choerodon',
   buildType: 'single',
   dashboard: {},
-  // webSocketServer: 'ws://10.211.111.134:18085',
+  webSocketServer: 'ws://10.211.111.134:18085',
 };
 
 module.exports = config;
