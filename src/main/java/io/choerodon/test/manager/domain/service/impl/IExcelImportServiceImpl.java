@@ -248,7 +248,12 @@ public class IExcelImportServiceImpl implements IExcelImportService {
 
         String summary = ExcelUtil.getStringValue(row.getCell(0));
         String description = ExcelUtil.getStringValue(row.getCell(1));
-        return StringUtils.isNotBlank(summary) || StringUtils.isNotBlank(description);
+        String priority = ExcelUtil.getStringValue(row.getCell(2));
+        String user = ExcelUtil.getStringValue(row.getCell(3));
+        String component = ExcelUtil.getStringValue(row.getCell(4));
+        String issueLink = ExcelUtil.getStringValue(row.getCell(5));
+        return StringUtils.isNotBlank(summary) || StringUtils.isNotBlank(description) || StringUtils.isNotBlank(priority)
+                || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(component) || StringUtils.isNotBlank(issueLink);
     }
 
     private TestCaseStepE buildTestCaseStepE(Long issueId, Row row) {
