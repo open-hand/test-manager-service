@@ -6,8 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -25,6 +23,7 @@ import io.choerodon.test.manager.domain.service.impl.IExcelImportServiceImpl;
 import io.choerodon.test.manager.domain.test.manager.entity.TestFileLoadHistoryE;
 import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
 @Service
 public class ExcelImportServiceImpl implements ExcelImportService {
@@ -50,9 +49,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     @Override
-    public void downloadImportTemp(HttpServletRequest request, HttpServletResponse response) {
+    public void downloadImportTemp(HttpServletRequest request, HttpServletResponse response, Long organizationId, Long projectId) {
         ExcelUtil.setExcelHeaderByStream(request, response);
-        excelService.downloadWorkBookByStream(iExcelImportService.buildImportTemp(), response);
+        excelService.downloadWorkBookByStream(iExcelImportService.buildImportTemp(organizationId, projectId), response);
     }
 
     @Async

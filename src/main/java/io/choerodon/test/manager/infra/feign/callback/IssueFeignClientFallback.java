@@ -21,4 +21,9 @@ public class IssueFeignClientFallback implements IssueFeignClient {
     public ResponseEntity<PriorityDTO> queryDefaultPriority(Long projectId, Long organizationId) {
         throw new CommonException("error.issueFeignClient.queryDefaultPriority");
     }
+
+    @Override
+    public ResponseEntity<List<PriorityDTO>> queryByOrganizationIdList(Long organizationId) {
+        throw new CommonException("error.priorityList.get");
+    }
 }

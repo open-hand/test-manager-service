@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<PageInfo<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
-        return userFeignClient.list(projectId, userId, pageRequest.getPage(), pageRequest.getSize(), param);
+        return userFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
     }
 
     public void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto) {

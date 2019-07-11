@@ -3,18 +3,48 @@ package io.choerodon.agile.api.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import io.swagger.annotations.ApiModelProperty;
 
+/**
+ * Created by HuangFuqiang@choerodon.io on 2018/10/25.
+ * Email: fuqianghuang01@gmail.com
+ */
 public class PriorityDTO implements Serializable {
 
+    @ApiModelProperty(value = "优先级主键id")
     private Long id;
+
+    @ApiModelProperty(value = "优先级名称")
     private String name;
+
+    @ApiModelProperty(value = "优先级描述")
     private String description;
+
+    @ApiModelProperty(value = "优先级颜色")
     private String colour;
+
+    @ApiModelProperty(value = "优先级所属组织id")
     private Long organizationId;
+
+    @ApiModelProperty(value = "是否默认")
     private Boolean isDefault;
+
+    @ApiModelProperty(value = "版本号")
     private Long objectVersionNumber;
+
+    @ApiModelProperty(value = "优先级排序字段")
     private BigDecimal sequence;
 
+    @ApiModelProperty(value = "优先级是否启用")
+    private Boolean enable;
+
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
 
     public BigDecimal getSequence() {
         return sequence;
