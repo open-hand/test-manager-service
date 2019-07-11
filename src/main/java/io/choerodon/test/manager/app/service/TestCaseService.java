@@ -1,9 +1,11 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.agile.api.dto.*;
+import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import org.springframework.http.ResponseEntity;
 
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
@@ -11,11 +13,7 @@ import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-import java.util.Map;
+import io.choerodon.agile.api.dto.*;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -66,7 +64,7 @@ public interface TestCaseService {
 
     List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds);
 
-    PageInfo<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest);
+    PageInfo<ComponentForListDTO> listByProjectId(Long projectId);
 
     List<IssueLabelDTO> listIssueLabel(Long projectId);
 

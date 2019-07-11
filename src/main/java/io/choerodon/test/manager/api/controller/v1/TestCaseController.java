@@ -1,5 +1,18 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
+
 import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.base.domain.Sort;
 import io.choerodon.base.enums.ResourceType;
@@ -11,19 +24,6 @@ import io.choerodon.base.annotation.Permission;
 import io.choerodon.mybatis.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
-
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.annotations.ApiIgnore;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -153,7 +153,7 @@ public class TestCaseController {
     @ApiOperation("导出之前失败过的excel")
     @GetMapping("/download/excel/fail")
     public ResponseEntity downExcelFail(@PathVariable(name = "project_id") Long projectId,
-                                           @RequestParam(name = "historyId") Long historyId) {
+                                        @RequestParam(name = "historyId") Long historyId) {
         excelServiceHandler.exportFailCase(projectId, historyId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -161,9 +161,11 @@ public class TestCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成excel导入模板")
     @GetMapping("/download/excel/import_template")
-    public void downloadImportTemplate(@PathVariable("project_id") Long projectId,HttpServletRequest request,
-                                       HttpServletResponse response) {
-        excelImportService.downloadImportTemp(request,response);
+    public void downloadImportTemplate(@PathVariable("project_id") Long projectId,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response,
+                                       @RequestParam Long organizationId) {
+        excelImportService.downloadImportTemp(request, response, organizationId, projectId);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
