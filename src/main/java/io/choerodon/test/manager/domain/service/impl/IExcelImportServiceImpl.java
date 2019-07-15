@@ -595,7 +595,7 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         writeHeader(readMeSheet, 0, 0);
 
         readMeSheet.createRow(8).createCell(1, CELL_TYPE_STRING).setCellValue("示例");
-        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 5));
+        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 9));
         writeExample(readMeSheet, 9, 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
         writeExample(readMeSheet, 10, 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
         writeExample(readMeSheet, 11, 1, EXAMPLE_ISSUES[2],
