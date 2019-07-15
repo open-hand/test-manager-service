@@ -24,6 +24,7 @@ dist/
 nbdist/
 .nb-gradle/
 application-default.yml
+.DS_Store
 
 # frontend
 lib

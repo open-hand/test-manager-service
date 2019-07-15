@@ -9,7 +9,7 @@ public interface ExcelImportService {
 
     boolean cancelFileUpload(Long historyId);
 
-    void downloadImportTemp(HttpServletRequest request, HttpServletResponse response);
+    void downloadImportTemp(HttpServletRequest request, HttpServletResponse response, Long organizationId, Long projectId);
 
     void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook workbook);
 }

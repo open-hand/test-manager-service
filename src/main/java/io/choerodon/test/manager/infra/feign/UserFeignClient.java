@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.infra.feign;
 
+import java.util.List;
+
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import io.choerodon.agile.api.dto.UserDO;
 import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.test.manager.infra.feign.callback.UserFeignClientFallback;
-
-import java.util.List;
 
 /**
  * @author dinghuang123@gmail.com
@@ -38,8 +38,7 @@ public interface UserFeignClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/users")
     ResponseEntity<PageInfo<UserDTO>> list(@PathVariable(name = "project_id") Long id,
-                                                  @RequestParam(required = false, name = "id") Long userId,
-                                                  @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-                                                  @RequestParam(required = false, name = "param") String param);
+                                           @RequestParam int page,
+                                           @RequestParam int size);
 }
 

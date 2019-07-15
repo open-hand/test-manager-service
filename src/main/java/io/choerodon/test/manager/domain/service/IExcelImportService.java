@@ -14,7 +14,7 @@ import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
 
 public interface IExcelImportService {
 
-    Workbook buildImportTemp();
+    Workbook buildImportTemp(Long organizationId, Long projectId);
 
     boolean cancelFileUpload(Long historyId);
 

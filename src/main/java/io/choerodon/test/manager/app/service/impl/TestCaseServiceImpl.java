@@ -142,9 +142,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public PageInfo<ComponentForListDTO> listByProjectId(Long projectId, Long componentId, Boolean noIssueTest, SearchDTO searchDTO, PageRequest pageRequest) {
-        return testCaseFeignClient.listByProjectId(projectId, null, null, new SearchDTO(),
-                pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).getBody();
+    public PageInfo<ComponentForListDTO> listByProjectId(Long projectId) {
+        return testCaseFeignClient.listByProjectId(projectId, new SearchDTO()).getBody();
     }
 
     @Override
