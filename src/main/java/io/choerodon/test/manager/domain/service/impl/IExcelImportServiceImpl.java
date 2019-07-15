@@ -521,12 +521,16 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
         row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
         row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
+        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("高");
+        row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("1234张三");
+        row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue("测试模块");
+        row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue("XX-111");
 
         for (int i = 0; i < steps.length; i++) {
             row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
-            row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
-            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
-            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+            row.createCell(colNum + 6, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 7, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 8, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
         }
     }
 
@@ -589,5 +593,14 @@ public class IExcelImportServiceImpl implements IExcelImportService {
         }
 
         writeHeader(readMeSheet, 0, 0);
+
+        readMeSheet.createRow(8).createCell(1, CELL_TYPE_STRING).setCellValue("示例");
+        readMeSheet.addMergedRegion(new CellRangeAddress(8, 8, 1, 5));
+        writeExample(readMeSheet, 9, 1, EXAMPLE_ISSUES[0], EXAMPLE_TEST_CASE_STEPS);
+        writeExample(readMeSheet, 10, 1, EXAMPLE_ISSUES[1], EXAMPLE_TEST_CASE_STEPS[0]);
+        writeExample(readMeSheet, 11, 1, EXAMPLE_ISSUES[2],
+                EXAMPLE_TEST_CASE_STEPS[0],
+                EXAMPLE_TEST_CASE_STEPS[1]
+        );
     }
 }
