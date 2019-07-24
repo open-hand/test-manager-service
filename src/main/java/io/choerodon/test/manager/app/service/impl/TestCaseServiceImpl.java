@@ -180,7 +180,11 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionId) {
-        return applicationFeignClient.getAppversion(projectId, appVersionId).getBody();
+        Long[] result = new Long[appVersionId.size()];
+        int i = 0;
+        for (Long l : appVersionId)
+            result[i++] = l;
+        return applicationFeignClient.getAppversion(projectId, result).getBody();
     }
 
     @Override

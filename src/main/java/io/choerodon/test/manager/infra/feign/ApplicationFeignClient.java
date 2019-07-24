@@ -53,7 +53,7 @@ public interface ApplicationFeignClient {
     @PostMapping(value = "/v1/projects/{project_id}/app_versions/list_by_appVersionIds")
     ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestBody List<Long> appVersionIds);
+            @RequestParam Long[] appVersionIds);
 
     /**
      * @param projectId     项目id

@@ -366,7 +366,11 @@ public class IJsonImportServiceImpl implements IJsonImportService {
     @Override
     public String getAppVersionName(Long projectId, Long appVersionId) {
         try {
-            ResponseEntity<List<ApplicationVersionRepDTO>> responses = applicationFeignClient.getAppversion(projectId, Lists.newArrayList(appVersionId));
+            Long[] result = new Long[Lists.newArrayList(appVersionId).size()];
+            int i = 0;
+            for (Long l : Lists.newArrayList(appVersionId))
+                result[i++] = l;
+            ResponseEntity<List<ApplicationVersionRepDTO>> responses = applicationFeignClient.getAppversion(projectId, result);
             ApplicationVersionRepDTO response = responses.getBody().get(0);
             if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
                 throw new CommonException(ERROR_GET_APP_VERSION_NAME);

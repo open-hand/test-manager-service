@@ -34,7 +34,7 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     }
 
     @Override
-    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, List<Long> appVersionId) {
+    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, Long[] appVersionIds) {
         throw new CommonException(QUERY_VERSION_ERROR);
     }
 
