@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="54px" height="48px" viewBox="0 0 54 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>release</title>
+    <desc>Created with Sketch.</desc>
+    <g id="测试" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="测试计划" transform="translate(-280.000000, -239.000000)">
+            <g id="release" transform="translate(280.000000, 239.000000)">
+                <rect id="Rectangle-19" fill="#E8EAF4" x="0" y="0" width="40.8994083" height="9.6" rx="4.8"></rect>
+                <rect id="Rectangle-19-Copy" fill="#E8EAF4" x="0" y="11.2" width="40.8994083" height="9.6" rx="4.8"></rect>
+                <rect id="Rectangle-19-Copy-2" fill="#E8EAF4" x="0" y="22.4" width="40.8994083" height="9.6" rx="4.8"></rect>
+                <ellipse id="Oval-7" fill="#DEE0ED" cx="20.4497041" cy="40.96" rx="3.19526627" ry="3.2"></ellipse>
+                <rect id="Rectangle-20" fill="#E0E5FF" x="19.4911243" y="33.28" width="1.91715976" height="3.2"></rect>
+                <rect id="Rectangle-20-Copy" fill="#E0E5FF" x="0" y="40" width="15.9763314" height="1.92"></rect>
+                <rect id="Rectangle-20-Copy-2" fill="#E0E5FF" x="24.9230769" y="40" width="15.9763314" height="1.92"></rect>
+                <rect id="Rectangle-21" fill="#DEE0ED" x="3.19526627" y="3.52" width="17.8934911" height="2.56" rx="1.28"></rect>
+                <rect id="Rectangle-21-Copy-3" fill="#DEE0ED" x="3.19526627" y="14.72" width="17.8934911" height="2.56" rx="1.28"></rect>
+                <rect id="Rectangle-21-Copy-6" fill="#DEE0ED" x="3.19526627" y="25.92" width="17.8934911" height="2.56" rx="1.28"></rect>
+                <rect id="Rectangle-21-Copy" fill="#F9FAFF" x="23.6449704" y="3.52" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <rect id="Rectangle-21-Copy-4" fill="#F9FAFF" x="23.6449704" y="14.72" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <rect id="Rectangle-21-Copy-7" fill="#F9FAFF" x="23.6449704" y="25.92" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <rect id="Rectangle-21-Copy-2" fill="#F9FAFF" x="28.1183432" y="3.52" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <rect id="Rectangle-21-Copy-5" fill="#F9FAFF" x="28.1183432" y="14.72" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <rect id="Rectangle-21-Copy-8" fill="#F9FAFF" x="28.1183432" y="25.92" width="2.55621302" height="2.56" rx="1.27810651"></rect>
+                <ellipse id="Oval-8" fill="#CFD5F1" cx="35.4674556" cy="4.8" rx="2.23668639" ry="2.24"></ellipse>
+                <ellipse id="Oval-8-Copy" fill="#CFD5F1" cx="35.4674556" cy="16" rx="2.23668639" ry="2.24"></ellipse>
+                <ellipse id="Oval-8-Copy-2" fill="#CFD5F1" cx="35.4674556" cy="27.2" rx="2.23668639" ry="2.24"></ellipse>
+                <path d="M29.4555604,23.6187794 C33.8896238,22.6904021 37.8107492,20.8974756 41.2189363,18.24 C44.8476439,20.8900363 48.7731772,22.6803572 52.995536,23.6109625 L52.9955281,23.6109983 C53.5821982,23.7403001 54,24.2602123 54,24.8609625 L54,39.0001078 C54,39.4266989 53.7874797,39.8252545 53.4332569,40.0629646 L41.9321932,47.7810433 C41.5007598,48.0705676 40.9371128,48.0705676 40.5056794,47.7810433 L29.0046158,40.0629646 C28.6503929,39.8252545 28.4378726,39.4266989 28.4378726,39.0001078 L28.4378654,24.8716205 C28.4378654,24.2657912 28.8625889,23.7429322 29.4555604,23.6187794 Z" id="Rectangle-22" fill="#6776C4"></path>
+                <path d="M31.3676341,25.2272142 C35.0154392,24.447981 38.2459517,22.9722429 41.0591716,20.8 C44.0528794,22.9650509 47.2878172,24.4382014 50.763985,25.2194514 L50.7639852,25.2194508 C51.3481957,25.350749 51.7633136,25.8695171 51.7633136,26.4683002 L51.7633136,37.8974507 C51.7633136,38.3260868 51.5487642,38.7262715 51.1917696,38.9635135 L41.7676276,45.2263616 C41.3383929,45.5116111 40.7799503,45.5116111 40.3507156,45.2263616 L30.9265736,38.9635135 C30.569579,38.7262715 30.3550296,38.3260868 30.3550296,37.8974507 L30.3550363,26.4789659 C30.3550363,25.8750938 30.7770857,25.3533653 31.3676341,25.2272142 Z" id="Rectangle-22" stroke="#FFFFFF" stroke-width="0.64" stroke-linecap="round" stroke-linejoin="round"></path>
+                <ellipse id="Oval-9" fill="#2A2E76" cx="41.2189349" cy="32" rx="7.0295858" ry="7.04"></ellipse>
+                <path d="M42.2470414,32.71 L42.2470414,27.59 L44.0251479,27.59 L44.0251479,34.49 L39.0517751,34.49 L39.0517751,32.71 L42.2470414,32.71 Z" id="Combined-Shape-Copy-3" stroke="#FFBA1C" stroke-width="0.5" fill="#FFBA1C" stroke-linecap="round" stroke-linejoin="round" transform="translate(41.538462, 31.040000) rotate(45.000000) translate(-41.538462, -31.040000) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

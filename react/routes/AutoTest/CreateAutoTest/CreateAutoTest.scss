@@ -1,0 +1,143 @@
+.c7ntest-deployApp-wrapper {
+  // background-color: rgba(0, 0, 0, 0.04);
+
+  .deployApp-card {
+    margin-bottom: 32px;
+    padding: 32px;
+    background-color: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .deployApp-card-content {
+    margin-left: 36px;
+    padding-top: 32px;
+
+    p {
+      font-size: 13px;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 20px;
+      text-align: justify;
+      white-space: pre-wrap;
+    }
+
+    .deployApp-section {
+      margin: 24px 0;
+
+      a {
+        margin-left: auto;
+      }
+
+      button {
+        margin-right: 12px;
+      }
+
+      .autotest-title {
+        margin-bottom: 16px;
+
+        .section-title {
+          vertical-align: middle;
+          color: #000;
+          line-height: 20px;
+        }
+
+        .section-title-icon {
+          vertical-align: middle;
+          font-size: 18px;
+          padding-right: 10px;
+        }
+      }
+
+      .autotest-text {
+        width: 512px;
+        display: flex;
+
+        .icon-small {
+          font-size: 13px !important;
+        }
+
+        .section-text {
+          vertical-align: middle;
+          font-size: 13px;
+          color: #000;
+          line-height: 20px;
+        }
+
+        .section-text-icon {
+          vertical-align: middle;
+          font-size: 16px;
+          padding-right: 5px;
+          color: #000;
+        }
+      }
+
+      .section-text-margin {
+        margin-left: 30px;
+      }
+    }
+
+    .deployApp-review {
+      .deployApp-title {
+        font-size: 13px;
+        color: #000;
+        line-height: 20px;
+        display: inline-block;
+        margin: 0 0 12px 0;
+
+        span {
+          padding-right: 10px;
+        }
+
+        .deployApp-title-text {
+          vertical-align: middle;
+          padding-left: 10px;
+        }
+      }
+
+      .deployApp-text {
+        display: inline-block;
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 20px;
+        padding-left: 15px;
+      }
+
+      .deployApp-value {
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        text-align: left;
+        line-height: 20px;
+      }
+    }
+  }
+}
+
+.autotest-radio {
+  display: block;
+  height: 30px;
+  line-height: 30px;
+}
+
+.section-instance-icon {
+  vertical-align: middle;
+  font-size: 16px;
+  padding: 0 6px 0 12px;
+  color: #f44336;
+}
+
+.autotest-tip-text {
+  vertical-align: middle;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.autotest-select {
+  width: 482px;
+  display: block;
+}
+
+.step-disabled {
+  pointer-events: none;
+}
+
+.c7ntest-autotest-clear {
+  color: #3f51b5;
+}

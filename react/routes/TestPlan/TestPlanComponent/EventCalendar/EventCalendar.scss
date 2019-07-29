@@ -1,0 +1,68 @@
+.c7ntest-EventCalendar {
+  &-header {
+    height: 26px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    &-title {
+      font-size: 16px;
+    }
+    &-radio {
+      margin-left: 10px;
+    }
+    &-page {
+      button:first-of-type {
+        margin-left: 15px;
+      }
+    }    
+  }
+  &-scroller {
+    // position: relative;
+    height: calc(100% - 55px);
+    overflow: auto;
+    cursor: grab;
+  }
+  &-content {
+    height: calc(100% - 44px);
+    position: relative; 
+    overflow: auto;
+  }
+  &-fixed-header {
+    // overflow: hidden;
+    height: 54px;
+    position: sticky;
+    z-index: 1;
+    top: 0;
+    display: flex;   
+    min-width: 100%;
+    border-left: 1px solid 	#E0E0E0;
+  }
+ 
+  &-BackItems {
+    min-width: 100%; // width: 4000px;
+    position: absolute;
+    // left: 0;
+    // top: 100; // bottom: 0; // height: 100%; 
+    height: calc(100% - 59px);
+    display: flex; 
+    white-space: nowrap;
+    border-left: 1px solid 	#E0E0E0;
+    border-right: none;
+    border-top: none;
+    &-item {
+      min-width: 70px; // width: 64px;
+      flex: 1;
+      display: inline-block;
+      border-right: 1px solid 	#E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+      border-bottom: 1px solid 	#E0E0E0; // box-shadow: 1px 0 0 rgba(0, 0, 0, 0.12);  
+      height: 100%;
+    }
+  }
+  &-eventContainer {
+    // padding-top: 50px; // height: calc(100% - 65px); // overflow: auto;
+    // overflow-x: hidden;
+    // width: 100%;
+    // position: relative; // top: 60px;
+    min-height: calc(100% - 59px)
+  }
+}
