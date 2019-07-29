@@ -1,0 +1,12 @@
+.c7ntest-TestExecuteTable {
+  table {
+    table-layout: fixed;
+  }
+  .c7n-table-tbody>tr>td,
+  .c7n-table-thead>tr>th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 0 5px 18px;
+  }
+}

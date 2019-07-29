@@ -1,0 +1,26 @@
+.c7ntest-plan-tree-title {
+  display: flex;
+  align-items: center;
+  &-text {
+    width: 0;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &-actionButton {
+    height: 28px;
+    margin-top: -2px;
+    .c7ntest-add-folder {
+      transition: none; // margin-left: 43px;
+      padding-right: 7px;
+      visibility: hidden;
+    }
+  }
+}
+
+.c7ntest-plan-tree-title:hover {
+  .c7ntest-add-folder {
+    visibility: visible;
+  }
+}

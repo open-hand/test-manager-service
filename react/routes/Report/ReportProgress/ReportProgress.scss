@@ -1,0 +1,77 @@
+.c7ntest-report-progress {
+  .c7ntest-switch {
+    display: flex;
+
+    .c7ntest-switchVersion {
+      margin-right: 20px;
+
+      .c7ntest-version-filter-item {
+        min-width: 200px;
+      }
+    }
+
+    .c7ntest-switchCycle {
+      .c7ntest-cycle-filter-item {
+        min-width: 200px;
+      }
+    }
+  }
+
+  .c7ntest-chartAndTable {
+    display: flex;
+    position: relative;
+
+    .c7ntest-tableContainer {
+      position: absolute;
+      right: 95px;
+      top: 35px;
+      background: #fff;
+      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+      padding: 24px;
+      padding-right: 10px;
+      max-width: 380px;
+
+      .c7ntest-table-title {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+
+      .c7ntest-table-icon {
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        margin-top: 3px;
+        border-radius: 2px;
+        margin-right: 6px;
+      }
+
+      .c7ntest-table-name {
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+      }
+    }
+  }
+
+  .c7ntest-spinning-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 35px;
+  }
+
+  .c7ntest-emptyCase {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 35px;
+
+    .c7ntest-emptyCase-detail {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+  }
+
+}
