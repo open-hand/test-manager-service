@@ -25,7 +25,7 @@ class TestManagerIndex extends React.Component {
       moment.locale('zh-cn');
     }
     
-    const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`./src/app/testManager/locale/${langauge}`));
+    const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`./locale/${langauge}`));
     return (
       <div>
         <IntlProviderAsync>

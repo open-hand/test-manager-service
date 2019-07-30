@@ -1,0 +1,39 @@
+.c7ntest-dashboard-TestSurvey {
+  .c7ntest-charts {
+    position: relative; // margin-bottom: -120px;
+    &-legend {
+      list-style: none;
+      position: absolute;
+      right: 15%;
+      top: 28px;
+      li {
+        margin-bottom: 29px;
+        display: flex;
+        div {
+          width: 20px;
+          height: 20px; // background-color: aquamarine;
+          border-radius: 2px;
+          margin-right: 16px;
+        }
+        font-size: 13px;
+      }
+      li:first-child {
+        div {
+          background-color: #FFB100;
+        }
+      }
+      li:nth-child(2) {
+        div {
+          background-color: #00BFA5;
+        }
+      }
+      li:last-child {
+        div {
+          background-color: #FF7043;
+        }
+      }
+    }
+  }
+}
+
+
