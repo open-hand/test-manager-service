@@ -34,16 +34,6 @@ const TestExecuteTreeToggle = ({
   <div className="c7ntest-TestExecuteTreeToggle">
     {/* 树隐藏 */}
     <div className={!leftVisible ? 'c7ntest-TestExecuteTreeToggle-side' : 'c7ntest-TestExecuteTreeToggle-hidden'} style={{ minHeight: window.innerHeight - 128 }}>
-      <div className="c7ntest-TestExecuteTreeToggle-button">
-        <div
-          role="none"          
-          onClick={() => {
-            TestExecuteStore.setLeftVisible(true);
-          }}
-        >
-          <Icon type="navigate_next" />
-        </div>
-      </div>
       <div className="c7ntest-TestExecuteTreeToggle-side-bar">
         {leftVisible ? '' : (
           <p
@@ -60,7 +50,7 @@ const TestExecuteTreeToggle = ({
     {/* 树显示区域 */}
     <div className={leftVisible ? 'c7ntest-TestExecuteTreeToggle-tree-area' : 'c7ntest-TestExecuteTreeToggle-hidden'}>
       <RadioButton
-        style={{ marginBottom: 20 }}
+        style={{ margin: '10px 0' }}
         onChange={onTreeAssignedToChange}
         value={treeAssignedTo === 0 ? 'all' : 'my'}
         data={[{
@@ -72,18 +62,21 @@ const TestExecuteTreeToggle = ({
         }]}
       />
       <div className="c7ntest-TestExecuteTreeToggle-tree-area-head">
-        <div className="c7ntest-TestExecuteTreeToggle-tree-area-head-search">
-          <Input prefix={prefix} placeholder="过滤" onChange={e => _.debounce(filterCycle, 200).call(null, e.target.value)} />
-        </div>
-        <div className="c7ntest-TestExecuteTreeToggle-button" style={{ margin: '0 5px 0 10px' }}>
-          <div
-            role="none"            
+        <div className="c7ntest-treeTop">
+          <Input
+            className="hidden-label"
+            prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
+            placeholder="过滤"
+            style={{ marginTop: 2 }}
+            onChange={e => _.debounce(filterCycle, 200).call(null, e.target.value)}
+          />
+          <Icon
+            type="close"
+            className="c7ntest-pointer"
             onClick={() => {
               TestExecuteStore.setLeftVisible(false);
             }}
-          >
-            <Icon type="navigate_before" />
-          </div>
+          />
         </div>
       </div>    
       <TestExecuteTree

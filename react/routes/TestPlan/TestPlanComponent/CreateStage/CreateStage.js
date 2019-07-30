@@ -130,8 +130,7 @@ class CreateStage extends Component {
                   })(
                     <Select
                       loading={selectLoading}
-                      onFilterChange={this.loadFolders}
-                      style={{ width: 500, margin: '0 0 10px 0' }}
+                      onFilterChange={this.loadFolders}                      
                       label={<FormattedMessage id="testPlan_linkFolder" />}
                       optionFilterProp="children"
                       filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -143,7 +142,7 @@ class CreateStage extends Component {
                 </FormItem>
                 <FormItem>
                   <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label"><span>持续时间</span></div>
+                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
                     {getFieldDecorator('range', {
                       rules: [{
                         required: true, message: '请选择日期!',

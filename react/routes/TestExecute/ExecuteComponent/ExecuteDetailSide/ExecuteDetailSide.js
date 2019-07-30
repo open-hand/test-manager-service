@@ -8,7 +8,7 @@ import {
   Button, Tooltip, Icon, Upload, Select,
 } from 'choerodon-ui';
 import { find } from 'lodash';
-import { delta2Html, issueLink } from '../../../../common/utils';
+import { delta2Html, issueLink,text2Delta } from '../../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
   TextEditToggle,
@@ -369,7 +369,7 @@ class ExecuteDetailSide extends Component {
                 : (
                   <WYSIWYGEditor
                     bottomBar
-                    value={comment}
+                    defaultValue={text2Delta(comment)}
                     style={{ height: 200, width: '100%' }}
                     handleSave={this.handleCommentSave}
                     handleDelete={this.handleCommentCancel}

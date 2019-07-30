@@ -5,8 +5,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Upload, Button, Icon } from 'choerodon-ui';
-import { FormattedMessage } from 'react-intl';
 import { deleteFileAgile } from '../../../../api/FileApi';
+
 
 class UploadButton extends React.Component {
   static propTypes = {
@@ -14,73 +14,40 @@ class UploadButton extends React.Component {
     beforeUpload: PropTypes.func,
   };
 
-  onRemove = fileList => (file) => {
-    const index = fileList.indexOf(file);
-    const newFileList = fileList.slice();
-    if (file.url && this.props.onRemove) {
-      deleteFileAgile(file.uid)
-        .then((response) => {
-          if (response) {
-            newFileList.splice(index, 1);
-            this.props.onRemove(newFileList);
-            Choerodon.prompt('删除成功');
-          }
-        })
-        .catch((error) => {
-          if (error.response) {
-            Choerodon.prompt(error.response.data.message);
-          } else {
-            Choerodon.prompt(error.message);
-          }
-        });
-    } else {
-      newFileList.splice(index, 1);
-      this.props.onRemove(newFileList);
-    }
-  };
-
-  beforeUpload = fileList => (file) => {
-    if (file.size > 1024 * 1024 * 30) {
-      Choerodon.prompt('文件不能超过30M');
-      return false;
-    } else if (fileList.length >= 10) {
-      Choerodon.prompt('最多上传10个文件');
-      return false;
-    } else {
-      const tmp = file;
-      tmp.status = 'done';
-      if (this.props.onBeforeUpload) {
-        if (fileList.length > 0) {
-          this.props.onBeforeUpload(fileList.slice().concat(file));
-        } else {
-          this.props.onBeforeUpload([file]);
-        }
-      }
-    }
-    return false;
-  };
+  constructor(props, context) {
+    super(props, context);
+    this.state = {};
+  }
 
   render() {
-    const { fileList } = this.props;
+    const {
+      fileList, onBeforeUpload, onRemove, funcType, mode,
+    } = this.props;
     const props = {
       action: '//jsonplaceholder.typicode.com/posts/',
       multiple: true,
-      // listType: 'picture',
       beforeUpload: (file) => {
         if (file.size > 1024 * 1024 * 30) {
           Choerodon.prompt('文件不能超过30M');
           return false;
-        } else if (fileList.length >= 10) {
-          Choerodon.prompt('最多上传10个文件');
+        } else if (file.name && encodeURI(file.name).length > 210) {
+          // check name length, the name in the database will
+          // like `file_uuid_encodeURI(file.name)`,
+          // uuid's length is 32
+          // the total could save is 255
+          // so select length of encodeURI(file.name)
+          // 255 - 32 - 6 = 217 -> 210
+
+          Choerodon.prompt('文件名过长');
           return false;
         } else {
           const tmp = file;
           tmp.status = 'done';
-          if (this.props.onBeforeUpload) {
+          if (onBeforeUpload) {
             if (fileList.length > 0) {
-              this.props.onBeforeUpload(fileList.slice().concat(file));
+              onBeforeUpload(fileList.slice().concat(file));
             } else {
-              this.props.onBeforeUpload([file]);
+              onBeforeUpload([file]);
             }
           }
         }
@@ -89,12 +56,12 @@ class UploadButton extends React.Component {
       onRemove: (file) => {
         const index = fileList.indexOf(file);
         const newFileList = fileList.slice();
-        if (file.url && this.props.onRemove) {
+        if (file.url && onRemove) {
           deleteFileAgile(file.uid)
             .then((response) => {
               if (response) {
                 newFileList.splice(index, 1);
-                this.props.onRemove(newFileList);
+                onRemove(newFileList);
                 Choerodon.prompt('删除成功');
               }
             })
@@ -107,19 +74,23 @@ class UploadButton extends React.Component {
             });
         } else {
           newFileList.splice(index, 1);
-          this.props.onRemove(newFileList);
+          onRemove(newFileList);
         }
       },
-      // onPreview: (file) => {
-      //   this.props.onPreview(file);
-      // },
     };
     return (
-      <Upload {...props} fileList={fileList} className="upload-button">
-        <Button funcType={this.props.funcType || 'primary'}>
-          <Icon type="file_upload" /> 
-          <FormattedMessage id="upload_attachment" />
-        </Button>
+      <Upload
+        {...props}
+        fileList={fileList}        
+      >
+        {mode === 'circle' ? <Button funcType="raised" type={funcType || 'primary'} style={{ color: 'white' }} icon="file_upload" shape="circle" />
+          : (
+            <Button type="primary">
+              <Icon type="file_upload" /> 
+              上传附件
+            </Button>
+          )
+      }
       </Upload>
     );
   }

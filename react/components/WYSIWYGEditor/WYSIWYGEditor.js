@@ -1,122 +1,145 @@
-/* eslint-disable */
-import React, { Component } from 'react';
-import ReactQuill, { Quill } from 'react-quill';
-import { Button } from 'choerodon-ui';
-import 'react-quill/dist/quill.snow.css';
-import ImageDrop from './ImageDrop';
-import Link from './Link';
-import './WYSIWYGEditor.less';
+import React, { Component, Fragment } from 'react';
+import { Modal } from 'choerodon-ui';
+import PropTypes from 'prop-types';
+import BaseEditor from './BaseEditor';
 
-Quill.register('modules/imageDrop', ImageDrop);
-Quill.register('formats/link', Link);
+const defaultProps = {
+  mode: 'edit',
+};
 
+const propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  value: PropTypes.any,
+  placeholder: PropTypes.string,
+  toolbarHeight: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
+  style: PropTypes.shape({}),
+  bottomBar: PropTypes.bool,
+  onChange: PropTypes.func,
+  handleDelete: PropTypes.func,
+  handleSave: PropTypes.func,
+  saveRef: PropTypes.func,
+  autoFocus: PropTypes.bool,
+  mode: PropTypes.oneOf([
+    'edit', 'read',
+  ]),
+};
 class WYSIWYGEditor extends Component {
-  state = {
-    value: null,
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      isFullScreen: false,
+    };
+    this.oldValue = null;// 全屏弹出之前的值，用来处理取消
+    this.value = props.value || props.defaultValue;
   }
 
-  modules = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ list: 'ordered' }, { list: 'bullet' }, 'image', 'link', { color: [] }],
-    ],
-    imageDrop: true,
-  };
-
-  formats = [
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'link',
-    'image',
-    'color',
-  ];
-
-  defaultStyle = {
-    width: 498,
-    height: 200,
-    borderRight: 'none',
-  };
-
-  handleChange = (content, delta, source, editor) => {
-    const value = editor.getContents();
-    this.value = value.ops;
-    // this.setState({
-    //   value: value.ops,
-    // });
-    if (this.props.onChange && value && value.ops) {
-      this.props.onChange(value.ops);
+  saveRef = name => (ref) => {
+    this[name] = ref;
+    const { saveRef } = this.props;
+    if (saveRef) {
+      saveRef(ref);
     }
-  };
-  componentDidMount() {
-    // console.log(this.editor)
-    // this.editor.setBounds(this.container)
   }
 
-  // componentWillReceiveProps(nextProps) {       
-  //   if (this.props.value !== nextProps.value) {
-  //     this.editor.setEditorContents(this.editor.getEditor(), nextProps.value);
-  //   }  
-  // }
+  handleFullScreenClick = () => {
+    this.oldValue = this.Editor.value;
+    this.setState({
+      isFullScreen: true,
+    });
+  }
+
+  handleFullScreenCancel = () => {
+    this.Editor.setValue(this.oldValue);
+    this.value = this.oldValue;
+    this.setState({
+      isFullScreen: false,
+    });
+  }
+
+  handleCancel = () => {
+    const { handleDelete } = this.props;
+    if (handleDelete) {
+      handleDelete();
+    }
+  }
+
+  handleSave = () => {
+    this.setState({
+      isFullScreen: false,
+      loading: true,
+    });
+    const { handleSave } = this.props;
+    if (handleSave) {
+      handleSave(this.value);
+    }
+  }
+
+  handleChange = (value) => {
+    this.value = value;
+    const { onChange } = this.props;
+    if (onChange) {
+      onChange(value);
+    }
+  }
 
   render() {
-    const { placeholder, value } = this.props;
-    let defaultValue = value;
-    try {
-      defaultValue = JSON.parse(value);
-    } catch (error) {
-      defaultValue = value;
-    }
-    const style = { ...this.defaultStyle, ...this.props.style };
-    const editHeight = style.height - (this.props.toolbarHeight || 42);
+    const {
+      toolbarHeight,
+      handleDelete,
+      handleSave,
+      mode,
+      defaultValue, value,
+      ...restProps
+    } = this.props;
+    const readOnly = mode === 'read';
+    const {
+      loading, isFullScreen,
+    } = this.state;
     return (
-      <div style={{ width: '100%' }}>
-        <div style={style} className="react-quill-editor" ref={container => this.container = container}>
-          <ReactQuill
-            ref={(editor) => { this.editor = editor; }}
-            theme="snow"
-            modules={this.modules}
-            formats={this.formats}
-            style={{ height: editHeight }}
-            placeholder={placeholder || Choerodon.getMessage('描述', 'Description')}
-            defaultValue={defaultValue}
-            onChange={this.handleChange}
-            bounds=".react-quill-editor"
-          />
-        </div>
+      <Fragment>
+        <BaseEditor
+          {...restProps}
+          value={value || this.value}
+          onChange={this.handleChange}
+          ref={this.saveRef('Editor')}
+          mode={mode}
+          readOnly={readOnly}
+          onFullScreenClick={this.handleFullScreenClick}
+          onCancel={this.handleCancel}
+          onSave={this.handleSave}
+          loading={loading}
+        />
         {
-          this.props.bottomBar && (
-            <div style={{
-              padding: '0 8px',
-              border: '1px solid #ccc',
-              borderTop: 'none',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              height: 35,
-            }}
+          isFullScreen && (
+            <Modal
+              title="描述"
+              maskClosable={false}
+              visible
+              width={1200}
+              onCancel={this.handleFullScreenCancel}
+              onOk={this.handleSave}
             >
-              <Button
-                type="primary"
-                onClick={() => this.props.handleDelete && this.props.handleDelete()}
-              >
-                {Choerodon.getMessage('取消', 'Cancle')}
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => this.props.handleSave(this.value)}
-              >
-                {Choerodon.getMessage('保存', 'Save')}
-              </Button>
-            </div>
+              <BaseEditor
+                {...restProps}
+                value={value || this.value}
+                onChange={this.handleChange}
+                mode={mode}
+                readOnly={readOnly}
+                bottomBar={false}
+                hideFullScreen
+                style={{ height: '65vh', marginTop: 20, width: '100%' }}
+              />
+            </Modal>
           )
         }
-      </div>
+      </Fragment>
     );
   }
 }
-
+WYSIWYGEditor.defaultProps = defaultProps;
+WYSIWYGEditor.propTypes = propTypes;
 export default WYSIWYGEditor;

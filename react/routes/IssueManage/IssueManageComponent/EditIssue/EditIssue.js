@@ -562,7 +562,7 @@ class EditIssueNarrow extends Component {
         editDescriptionShow && <div className="line-start mt-10">
           <WYSIWYGEditor
             bottomBar
-            value={text2Delta(description)}
+            defaultValue={text2Delta(description)}
             style={{ height: 200, width: '100%' }}
             handleDelete={() => {
               this.setState({

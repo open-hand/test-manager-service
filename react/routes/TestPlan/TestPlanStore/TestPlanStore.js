@@ -140,7 +140,9 @@ class TestPlanStore extends BaseTreeProto {
       this.setTreeData(data.versions);
       this.generateList(data.versions);
       // 默认选中一个项
-      this.selectDefaultNode(data.versions);
+      if (data.versions && data.versions.length > 0) {
+        this.selectDefaultNode(data.versions[0]);
+      }
       resolve();
     }).catch((err) => {
       Choerodon.prompt('网络错误');

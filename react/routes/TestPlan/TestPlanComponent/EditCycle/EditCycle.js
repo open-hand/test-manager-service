@@ -86,11 +86,7 @@ class EditCycle extends Component {
     const {
       versionId, title, description, build, environment, fromDate, toDate,
     } = TestPlanStore.CurrentEditCycle;
-    const options = versions.map(version => (
-      <Option value={version.versionId} key={version.versionId}>
-        {version.name}
-      </Option>
-    ));
+
     return (
       <div>
         <Sidebar
@@ -143,7 +139,7 @@ class EditCycle extends Component {
                 </FormItem>
                 <FormItem>
                   <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label"><span>持续时间</span></div>
+                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
                     {getFieldDecorator('range', {
                       rules: [{
                         required: true,

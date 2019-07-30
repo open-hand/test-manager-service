@@ -27,7 +27,7 @@ class TestManagerIndex extends React.Component {
     
     const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`./locale/${langauge}`));
     return (
-      <div>
+      <div className="testManager">
         <IntlProviderAsync>
           <Switch>
             <Route path={`${match.url}/summary`} component={SummaryIndex} />

@@ -173,6 +173,7 @@ class TestExecuteTable extends Component {
             allowClear
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_executeBy" />}
+            getPopupContainer={ele => ele.parentNode}
             type="user"
             onChange={onExecuteByChange}
           />
@@ -182,6 +183,7 @@ class TestExecuteTable extends Component {
             style={{ marginLeft: 20, width: 200 }}
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_assignedTo" />}
+            getPopupContainer={ele => ele.parentNode}
             type="user"
             onChange={onAssignedToChange}
           />

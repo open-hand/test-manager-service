@@ -180,6 +180,7 @@ const AutoTestList = ({
           loading={selectLoading}
           onChange={onAppChange}
           onFilterChange={onFilterChange}
+          getPopupContainer={trigger => trigger.parentNode}
         >
           {appOptions}
         </Select>

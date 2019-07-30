@@ -49,6 +49,8 @@ class FullEditor extends Component {
         confirmLoading={loading}
       >
         <WYSIWYGEditor
+          autoFocus
+          hideFullScreen
           value={this.state.delta}
           style={{ height: 500, width: '100%', marginTop: 20 }}
           onChange={(value) => {

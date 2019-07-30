@@ -14,14 +14,7 @@ const TreeArea = ({ isTreeVisible, setIsTreeVisible }) => (
       </div>
     )
     : (
-      <div className="c7ntest-TestPlan-bar">
-        <div
-          role="none"
-          className="c7ntest-TestPlan-bar-button"
-          onClick={() => { setIsTreeVisible(true); }}
-        >
-          <Icon type="navigate_next" />
-        </div>
+      <div className="c7ntest-TestPlan-bar">        
         <p
           role="none"
           onClick={() => { setIsTreeVisible(true); }}
