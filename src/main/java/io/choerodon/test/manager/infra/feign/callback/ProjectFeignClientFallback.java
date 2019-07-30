@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import io.choerodon.agile.api.dto.ProjectDTO;
+import io.choerodon.agile.api.vo.ProjectDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import org.springframework.http.ResponseEntity;

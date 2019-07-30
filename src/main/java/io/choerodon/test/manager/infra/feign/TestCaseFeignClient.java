@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO;
+import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
-import io.choerodon.agile.api.dto.*;
+import io.choerodon.agile.api.vo.*;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -33,7 +33,7 @@ public interface TestCaseFeignClient {
 
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub")
-    ResponseEntity<PageInfo<IssueListDTO>> listIssueWithoutSubToTestComponent(
+    ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSubToTestComponent(
             @PathVariable(name = "project_id") Long projectId,
             @RequestBody(required = false) SearchDTO searchDTO,
             @RequestParam("organizationId") Long organizationId,
@@ -54,13 +54,13 @@ public interface TestCaseFeignClient {
                                                             @RequestBody List<Long> issueIds);
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/test_component/no_sub_detail")
-    ResponseEntity<PageInfo<IssueComponentDetailDTO>> listIssueWithoutSubDetail(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-                                                                                @RequestParam(name = "orders") String orders,
-                                                                                @ApiParam(value = "项目id", required = true)
+    ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(@RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+                                                                               @RequestParam(name = "orders") String orders,
+                                                                               @ApiParam(value = "项目id", required = true)
                                                                                 @PathVariable(name = "project_id") Long projectId,
-                                                                                @ApiParam(value = "查询参数", required = true)
+                                                                               @ApiParam(value = "查询参数", required = true)
                                                                                 @RequestBody(required = false) SearchDTO searchDTO,
-                                                                                @RequestParam("organizationId") Long organizationId);
+                                                                               @RequestParam("organizationId") Long organizationId);
 
     /**
      * @param projectId 缺陷到issue报表过滤接口

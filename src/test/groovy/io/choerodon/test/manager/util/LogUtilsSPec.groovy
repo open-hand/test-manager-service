@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.util
 
-import io.choerodon.test.manager.infra.common.utils.LogUtils
+import io.choerodon.test.manager.infra.util.LogUtils
 import org.apache.commons.logging.Log
 import spock.lang.Specification
 

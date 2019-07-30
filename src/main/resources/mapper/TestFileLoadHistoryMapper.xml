@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestFileLoadHistoryDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO" id="BaseResultMap">
         <id column="id" property="id"/>
         <id column="project_id" property="projectId"/>
         <id column="action_type" property="actionType"/>

@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO
+import io.choerodon.test.manager.api.vo.TestCaseStepVO
 import io.choerodon.test.manager.app.service.TestCaseStepService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,19 +28,19 @@ class TestCaseStepControllerSpec extends Specification {
     TestCaseStepService caseStepService;
 
     @Shared
-    List<ResponseEntity<TestCaseStepDTO>> stepIds=new ArrayList<>();
+    List<ResponseEntity<TestCaseStepVO>> stepIds=new ArrayList<>();
 
 
     def "ChangeStep"() {
         given:"创建一个将插入StepDTO"
-        TestCaseStepDTO step=new TestCaseStepDTO(issueId:99L)
-        HttpEntity<TestCaseStepDTO> requestEntity = new HttpEntity<>(step,null)
+        TestCaseStepVO step=new TestCaseStepVO(issueId:99L)
+        HttpEntity<TestCaseStepVO> requestEntity = new HttpEntity<>(step,null)
 
         when:"调用服务"
         def result = restTemplate.exchange("/v1/projects/{project_id}/case/step/change",
                 HttpMethod.PUT,
                 requestEntity,
-                TestCaseStepDTO.class,
+                TestCaseStepVO.class,
                 144)
         then:
         result.body.stepId!=null
@@ -60,15 +60,15 @@ class TestCaseStepControllerSpec extends Specification {
     }
     def "ChangeOneStep"() {
         given:"创建一个将更新StepDTO"
-        TestCaseStepDTO step=stepIds.get(0)
+        TestCaseStepVO step=stepIds.get(0)
         step.setTestData("test data")
-        HttpEntity<TestCaseStepDTO> requestEntity = new HttpEntity<>(step,null)
+        HttpEntity<TestCaseStepVO> requestEntity = new HttpEntity<>(step,null)
 
         when:
         def result = restTemplate.exchange("/v1/projects/{project_id}/case/step/change",
                 HttpMethod.PUT,
                 requestEntity,
-                TestCaseStepDTO.class,
+                TestCaseStepVO.class,
                 144)
         then:
         result.body.objectVersionNumber==2
@@ -76,23 +76,23 @@ class TestCaseStepControllerSpec extends Specification {
 
     def "Clone"() {
         given:"需要克隆步骤"
-        TestCaseStepDTO step=stepIds.get(0)
+        TestCaseStepVO step=stepIds.get(0)
         when:
-        restTemplate.postForEntity("/v1/projects/{project_id}/case/step/clone",step,TestCaseStepDTO,144)
+        restTemplate.postForEntity("/v1/projects/{project_id}/case/step/clone",step,TestCaseStepVO,144)
         then:
         def result = restTemplate.getForEntity("/v1/projects/{project_id}/case/step/query/{caseId}",List,144,99)
         expect:
         result.body.size()==2
         when:
-        def result1 = restTemplate.postForEntity("/v1/projects/{project_id}/case/step/clone",new TestCaseStepDTO(stepId: 0),TestCaseStepDTO,144)
+        def result1 = restTemplate.postForEntity("/v1/projects/{project_id}/case/step/clone",new TestCaseStepVO(stepId: 0),TestCaseStepVO,144)
         then:
         result1.statusCode.value()==200
     }
 
     def "RemoveStep"() {
         given:
-        TestCaseStepDTO step=new TestCaseStepDTO(issueId: 99L)
-        HttpEntity<TestCaseStepDTO> requestEntity = new HttpEntity<>(step,null)
+        TestCaseStepVO step=new TestCaseStepVO(issueId: 99L)
+        HttpEntity<TestCaseStepVO> requestEntity = new HttpEntity<>(step,null)
 
         when:
         restTemplate.exchange("/v1/projects/{project_id}/case/step",

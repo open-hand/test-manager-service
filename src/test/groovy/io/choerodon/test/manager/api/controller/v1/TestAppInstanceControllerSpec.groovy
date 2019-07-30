@@ -7,12 +7,12 @@ import io.choerodon.devops.api.dto.ApplicationRepDTO
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
 import io.choerodon.devops.api.dto.ReplaceResult
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.dto.ApplicationDeployDTO
+import io.choerodon.test.manager.api.vo.ApplicationDeployVO
 import io.choerodon.test.manager.app.service.ScheduleService
 import io.choerodon.test.manager.app.service.TestCaseService
-import io.choerodon.test.manager.api.dto.TestAppInstanceDTO
-import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE
-import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommand
+import io.choerodon.test.manager.api.vo.TestAppInstanceVO
+import io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO
+import io.choerodon.test.manager.infra.dto.TestEnvCommandDTO
 import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper
 import io.choerodon.test.manager.infra.mapper.TestEnvCommandMapper
@@ -78,19 +78,19 @@ class TestAppInstanceControllerSpec extends Specification {
 
     def "Deploy"() {
         given:
-        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVersionId: 1L,
+        ApplicationDeployVO deployDTO = new ApplicationDeployVO(appId: 1L, appVersionId: 1L,
                 environmentId: 1L, projectVersionId: 1L, code: "0.1.0-自动化测试部署测试", values: values)
-        ApplicationDeployDTO deployDTO2 = new ApplicationDeployDTO(appId: 2L, appVersionId: 2L,
+        ApplicationDeployVO deployDTO2 = new ApplicationDeployVO(appId: 2L, appVersionId: 2L,
                 environmentId: 2L, projectVersionId: 2L, code: "0.1.0-自动化测试部署测试2", values: values)
 
         when:
         def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
-                deployDTO, TestAppInstanceDTO, 144L)
+                deployDTO, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: values, deltaYaml: "")
-        TestEnvCommand insertCommand = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
-        TestAutomationHistoryE historyE = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche",
-                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
+        TestEnvCommandDTO insertCommand = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
+        TestAutomationHistoryDTO historyE = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche",
+                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
         and:
         insertCommand.getCommandType().equals("create")
         insertCommand.valueId == null
@@ -102,10 +102,10 @@ class TestAppInstanceControllerSpec extends Specification {
 
         when:
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
-                deployDTO, TestAppInstanceDTO, 144L)
+                deployDTO, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
-        TestEnvCommand insertCommand2 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
+        TestEnvCommandDTO insertCommand2 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         and:
         insertCommand2.commandType.equals("restart")
         insertCommand2.valueId == null
@@ -114,12 +114,12 @@ class TestAppInstanceControllerSpec extends Specification {
 
         when:
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
-                deployDTO2, TestAppInstanceDTO, 144L)
+                deployDTO2, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
-        TestEnvCommand insertCommand3 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
-        TestAutomationHistoryE historyE3 = historyMapper.selectOne(new TestAutomationHistoryE(projectId: 144L, framework: "moche2",
-                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryE.Status.NONEXECUTION))
+        TestEnvCommandDTO insertCommand3 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
+        TestAutomationHistoryDTO historyE3 = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche2",
+                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
 
         and:
         insertCommand3.getCommandType().equals("create")
@@ -133,10 +133,10 @@ class TestAppInstanceControllerSpec extends Specification {
 
         when:
         res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
-                deployDTO2, TestAppInstanceDTO, 144L)
+                deployDTO2, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
-        TestEnvCommand insertCommand4 = envCommandMapper.selectOne(new TestEnvCommand(instanceId: res.getBody().getId()))
+        TestEnvCommandDTO insertCommand4 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         and:
         insertCommand4.commandType.equals("restart")
         insertCommand4.valueId != null
@@ -148,7 +148,7 @@ class TestAppInstanceControllerSpec extends Specification {
         given:
         List<ScheduleMethodDTO> methodDTOS = Lists.newArrayList(new ScheduleMethodDTO(id: 3L, code: "instance"),
                 new ScheduleMethodDTO(id: 1L, code: "test-deploy-instance"), new ScheduleMethodDTO(id: 2L, code: "test"))
-        ApplicationDeployDTO deployDTO = new ApplicationDeployDTO(appId: 1L, appVersionId: 1L,
+        ApplicationDeployVO deployDTO = new ApplicationDeployVO(appId: 1L, appVersionId: 1L,
                 environmentId: 1L, projectVersionId: 1L, code: "0.1.0-自动化测试部署测试", values: values)
         ScheduleTaskDTO taskDTO = new ScheduleTaskDTO()
         taskDTO.setParams(Maps.newHashMap("deploy", deployDTO))
@@ -191,14 +191,14 @@ class TestAppInstanceControllerSpec extends Specification {
         noExceptionThrown()
 
         and: "清理数据"
-        historyMapper.delete(new TestAutomationHistoryE(instanceId: instanceIds.get(0)))
-        historyMapper.delete(new TestAutomationHistoryE(instanceId: instanceIds.get(1)))
-        historyMapper.delete(new TestAutomationHistoryE(instanceId: instanceIds.get(2)))
-        historyMapper.delete(new TestAutomationHistoryE(instanceId: instanceIds.get(3)))
-        envCommandMapper.delete(new TestEnvCommand(instanceId: instanceIds.get(0)))
-        envCommandMapper.delete(new TestEnvCommand(instanceId: instanceIds.get(1)))
-        envCommandMapper.delete(new TestEnvCommand(instanceId: instanceIds.get(2)))
-        envCommandMapper.delete(new TestEnvCommand(instanceId: instanceIds.get(3)))
+        historyMapper.delete(new TestAutomationHistoryDTO(instanceId: instanceIds.get(0)))
+        historyMapper.delete(new TestAutomationHistoryDTO(instanceId: instanceIds.get(1)))
+        historyMapper.delete(new TestAutomationHistoryDTO(instanceId: instanceIds.get(2)))
+        historyMapper.delete(new TestAutomationHistoryDTO(instanceId: instanceIds.get(3)))
+        envCommandMapper.delete(new TestEnvCommandDTO(instanceId: instanceIds.get(0)))
+        envCommandMapper.delete(new TestEnvCommandDTO(instanceId: instanceIds.get(1)))
+        envCommandMapper.delete(new TestEnvCommandDTO(instanceId: instanceIds.get(2)))
+        envCommandMapper.delete(new TestEnvCommandDTO(instanceId: instanceIds.get(3)))
         envCommandValueMapper.deleteByPrimaryKey(valueIds.get(0))
         instanceMapper.deleteByPrimaryKey(instanceIds.get(0))
         instanceMapper.deleteByPrimaryKey(instanceIds.get(1))

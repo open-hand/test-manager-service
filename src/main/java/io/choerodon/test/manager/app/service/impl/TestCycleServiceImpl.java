@@ -1,42 +1,41 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import io.choerodon.agile.api.dto.UserDO;
-import io.choerodon.agile.infra.common.utils.RankUtil;
-import io.choerodon.core.convertor.ConvertHelper;
-import com.github.pagehelper.PageInfo;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.api.dto.*;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.UserService;
-import io.choerodon.test.manager.domain.service.ITestCycleService;
-import io.choerodon.test.manager.domain.service.ITestFileLoadHistoryService;
-import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
-import io.choerodon.test.manager.domain.service.ITestStatusService;
-import io.choerodon.test.manager.domain.test.manager.entity.*;
-import io.choerodon.test.manager.domain.test.manager.factory.*;
-import io.choerodon.test.manager.infra.common.utils.SpringUtil;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+import com.github.pagehelper.PageInfo;
+
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestCycleType;
+import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
+import io.choerodon.test.manager.infra.enums.TestStatusType;
+import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.TestDateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -44,61 +43,84 @@ import java.util.stream.Collectors;
 @Component
 public class TestCycleServiceImpl implements TestCycleService {
 
-    @Autowired
-    ITestCycleService iTestCycleService;
-
-    @Autowired
-    ProductionVersionClient productionVersionClient;
-
-    @Autowired
-    TestCaseService testCaseService;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    TestCycleCaseService testCycleCaseService;
-
-    @Autowired
-    ITestStatusService iTestStatusService;
-
-    @Autowired
-    ITestIssueFolderService folderService;
-
-    @Autowired
-    TestIssueFolderMapper testIssueFolderMapper;
-
-    @Autowired
-    ITestFileLoadHistoryService iTestFileLoadHistoryService;
-
     private static final String NODE_CHILDREN = "children";
     private static final String CYCLE_ID = "cycleId";
+    private static final String NOTIFYCYCLECODE = "test-cycle-batch-clone";
+    private static final String CYCLE_DATE_NULL_ERROR = "error.clone.cycle.date.not.be.null";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCycleServiceImpl.class);
+
+    @Autowired
+    private TestFileLoadHistoryService testFileLoadHistoryService;
+
+    @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private NotifyService notifyService;
+
+    @Autowired
+    private TestStatusService testStatusService;
+
+    @Autowired
+    private TestCycleMapper cycleMapper;
+
+    @Autowired
+    private TestStatusMapper testStatusMapper;
+
+    @Autowired
+    private TestIssueFolderRelMapper testIssueFolderRelMapper;
+
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    private TestCaseStepMapper testCaseStepMapper;
+
+    @Autowired
+    private TestCycleCaseStepMapper testCycleCaseStepMapper;
+
+    @Autowired
+    private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     /**
      * 新建cycle，folder 并同步folder下的执行
      *
-     * @param testCycleDTO
+     * @param testCycleVO
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO insert(Long projectId,TestCycleDTO testCycleDTO) {
-        TestCycleDTO cycleDTO = ConvertHelper.convert(iTestCycleService.insert(projectId,ConvertHelper.convert(testCycleDTO, TestCycleE.class)), TestCycleDTO.class);
-        if (testCycleDTO.getFolderId() != null) {
-            iTestCycleService.insertCaseToFolder(testCycleDTO.getFolderId(), cycleDTO.getCycleId());
+    public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
+        TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
+        if (testCycleVO.getFolderId() != null) {
+            insertCaseToFolder(testCycleVO.getFolderId(), cycleDTO.getCycleId());
         }
         return cycleDTO;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO insertWithoutSyncFolder(Long projectId, TestCycleDTO testCycleDTO) {
-        TestCycleE cycleE = iTestCycleService.insert(projectId, ConvertHelper.convert(testCycleDTO, TestCycleE.class));
+    public TestCycleVO insertWithoutSyncFolder(Long projectId, TestCycleVO testCycleVO) {
+        TestCycleVO cycleE = baseInsert(projectId, testCycleVO);
         cycleE.setProjectId(projectId);
-        if (StringUtils.equals(cycleE.getType(), TestCycleE.FOLDER)) {
+        if (StringUtils.equals(cycleE.getType(), TestCycleType.FOLDER)) {
             syncCycleDate(projectId, cycleE);
         }
-        return ConvertHelper.convert(cycleE, TestCycleDTO.class);
+        return modelMapper.map(cycleE, TestCycleVO.class);
     }
 
     /**
@@ -111,17 +133,17 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public boolean synchroFolder(Long cycleId, Long folderId, Long projectId) {
         //获取folder下所有issue
-        TestIssueFolderRelE folder = TestIssueFolderRelEFactory.create();
+        TestIssueFolderRelDTO folder = new TestIssueFolderRelDTO();
         folder.setFolderId(folderId);
-        List<TestIssueFolderRelE> list = Optional.ofNullable(folder.queryAllUnderProject()).orElseGet(ArrayList::new);
-        Set<Long> folderIssues = list.stream().map(TestIssueFolderRelE::getIssueId).collect(Collectors.toSet());
+        List<TestIssueFolderRelDTO> list = Optional.ofNullable(testIssueFolderRelMapper.select(folder)).orElseGet(ArrayList::new);
+        Set<Long> folderIssues = list.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toSet());
         //获取cycle下所有issue执行
-        TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
+        TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setCycleId(cycleId);
-        List<TestCycleCaseE> caseList = Optional.ofNullable(cycleCaseE.querySelf()).orElseGet(ArrayList::new);
-        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseE::getIssueId, TestCycleCaseE::getExecuteId));
+        List<TestCycleCaseDTO> caseList = Optional.ofNullable(testCycleCaseMapper.select(cycleCaseE)).orElseGet(ArrayList::new);
+        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseDTO::getIssueId, TestCycleCaseDTO::getExecuteId));
         //对比执行和folder中的issue添加未添加的执行
-        TestCycleCaseDTO dto = new TestCycleCaseDTO();
+        TestCycleCaseVO dto = new TestCycleCaseVO();
         dto.setCycleId(cycleId);
         folderIssues.forEach(v -> {
             if (!caseIssues.containsKey(v)) {
@@ -143,24 +165,30 @@ public class TestCycleServiceImpl implements TestCycleService {
      */
     private void syncCycleCaseStep(Long executeId, Long issueId) {
         //获取issue下所有步骤
-        TestCaseStepE caseStepE = TestCaseStepEFactory.create();
+        TestCaseStepDTO caseStepE = new TestCaseStepDTO();
         caseStepE.setIssueId(issueId);
-        List<TestCaseStepE> caseSteps = caseStepE.querySelf();
+        List<TestCaseStepDTO> caseSteps = testCaseStepMapper.query(caseStepE);
         if (ObjectUtils.isEmpty(caseSteps)) {
             return;
         }
         //获取执行下的所有步骤
-        TestCycleCaseStepE stepE = TestCycleCaseStepEFactory.create();
+        TestCycleCaseStepDTO stepE = new TestCycleCaseStepDTO();
+
         stepE.setExecuteId(executeId);
-        List<TestCycleCaseStepE> cycleSteps = Optional.ofNullable(stepE.querySelf()).orElseGet(ArrayList::new);
+        List<TestCycleCaseStepDTO> cycleSteps = Optional.ofNullable(testCycleCaseStepMapper.select(stepE)).orElseGet(ArrayList::new);
         //当issue下步骤有修改时启动新的步骤
 
         if (caseSteps.size() != cycleSteps.size()) {
-            TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
-            Long status = iTestStatusService.getDefaultStatusId(TestStatusE.STATUS_TYPE_CASE_STEP);
+            TestCycleCaseStepDTO testCycleCaseStepE = new TestCycleCaseStepDTO();
+            Long status = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
 
             Set<Long> newStepSet = compareStep(caseSteps, cycleSteps);
-            newStepSet.forEach(v -> testCycleCaseStepE.runOneStep(executeId, v, status));
+            newStepSet.forEach(v -> {
+                Assert.notNull(testCycleCaseStepE.getExecuteId(), "error.cant.run.step.because.executeId.is.null");
+                Assert.notNull(testCycleCaseStepE.getStepId(), "error.cant.run.step.because.stepId.is.null");
+                Assert.notNull(testCycleCaseStepE.getStepStatus(), "error.cant.run.step.because.stepStatus.is.null");
+                testCycleCaseStepMapper.insert(testCycleCaseStepE);
+            });
         }
     }
 
@@ -171,10 +199,10 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param cycleSteps
      * @return
      */
-    private Set<Long> compareStep(List<TestCaseStepE> caseSteps, List<TestCycleCaseStepE> cycleSteps) {
+    private Set<Long> compareStep(List<TestCaseStepDTO> caseSteps, List<TestCycleCaseStepDTO> cycleSteps) {
         Set<Long> newStep = new HashSet<>();
-        Set caseStepSet = caseSteps.stream().map(TestCaseStepE::getStepId).collect(Collectors.toSet());
-        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepE::getStepId).collect(Collectors.toSet());
+        Set caseStepSet = caseSteps.stream().map(TestCaseStepDTO::getStepId).collect(Collectors.toSet());
+        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepDTO::getStepId).collect(Collectors.toSet());
         Iterator<Long> iterator = caseStepSet.iterator();
         while (iterator.hasNext()) {
             Long stepId = iterator.next();
@@ -190,9 +218,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public boolean synchroFolderInCycle(Long cycleId, Long projectId) {
         //查询cycle下所有关联folder
-        TestCycleE cycleE = TestCycleEFactory.create();
+        TestCycleDTO cycleE = new TestCycleDTO();
         cycleE.setParentCycleId(cycleId);
-        List<TestCycleE> list = cycleE.querySelf();
+        List<TestCycleDTO> list = cycleMapper.select(cycleE);
         if (!ObjectUtils.isEmpty(list)) {
             list.forEach(v -> synchroFolder(v.getCycleId(), v.getFolderId(), projectId));
         }
@@ -202,9 +230,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean synchroFolderInVersion(Long versionId, Long projectId) {
-        TestCycleE cycleE = TestCycleEFactory.create();
+        TestCycleDTO cycleE = new TestCycleDTO();
         cycleE.setVersionId(versionId);
-        List<TestCycleE> list = cycleE.querySelf();
+        List<TestCycleDTO> list = cycleMapper.select(cycleE);
         if (!ObjectUtils.isEmpty(list)) {
             list.forEach(v -> synchroFolderInCycle(v.getCycleId(), projectId));
         }
@@ -213,48 +241,56 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleDTO testCycleDTO, Long projectId) {
-        iTestCycleService.delete(ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId);
+    public void delete(TestCycleVO testCycleVO, Long projectId) {
+        List<TestCycleDTO> testCycleES = cycleMapper.select(modelMapper.map(testCycleVO, TestCycleDTO.class));
+        testCycleES.forEach(v -> {
+            if (v.getType().equals(TestCycleType.CYCLE)) {
+                TestCycleDTO testCycleDTO = new TestCycleDTO();
+                testCycleDTO.setParentCycleId(v.getCycleId());
+                delete(modelMapper.map(testCycleDTO, TestCycleVO.class), projectId);
+            }
+            deleteCycleWithCase(v, projectId);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO update(Long projectId, TestCycleDTO testCycleDTO) {
-        TestCycleE temp = TestCycleEFactory.create();
-        temp.setCycleId(testCycleDTO.getCycleId());
-        TestCycleE temp1 = temp.queryOne();
-        Long objectVersionNumber = testCycleDTO.getObjectVersionNumber();
-        if (!StringUtils.isEmpty(testCycleDTO.getRank())) {
-            temp1.checkRank();
-            temp1.setRank(testCycleDTO.getRank());
-            List<String> ranks = iTestCycleService.queryUpdateRank(temp1);
-            Optional.ofNullable(ranks.get(0)).ifPresent(testCycleDTO::setLastRank);
-            Optional.ofNullable(ranks.get(1)).ifPresent(testCycleDTO::setNextRank);
+    public TestCycleVO update(Long projectId, TestCycleVO testCycleVO) {
+        TestCycleDTO temp = new TestCycleDTO();
+        temp.setCycleId(testCycleVO.getCycleId());
+        TestCycleVO temp1 = modelMapper.map(cycleMapper.selectOne(temp), TestCycleVO.class);
+        Long objectVersionNumber = testCycleVO.getObjectVersionNumber();
+        if (!StringUtils.isEmpty(testCycleVO.getRank())) {
+            checkRank(testCycleVO);
+            temp1.setRank(testCycleVO.getRank());
+            List<String> ranks = queryUpdateRank(temp1);
+            Optional.ofNullable(ranks.get(0)).ifPresent(testCycleVO::setLastRank);
+            Optional.ofNullable(ranks.get(1)).ifPresent(testCycleVO::setNextRank);
             objectVersionNumber++;
         }
-        if (temp1.getType().equals(TestCycleE.FOLDER)) {
-            Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(temp1::setCycleName);
-            Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
-            Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
-            Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
-            Optional.ofNullable(testCycleDTO.getFolderId()).ifPresent(temp1::setFolderId);
+        if (temp1.getType().equals(TestCycleType.FOLDER)) {
+            Optional.ofNullable(testCycleVO.getCycleName()).ifPresent(temp1::setCycleName);
+            Optional.ofNullable(testCycleVO.getFromDate()).ifPresent(temp1::setFromDate);
+            Optional.ofNullable(testCycleVO.getToDate()).ifPresent(temp1::setToDate);
+            Optional.ofNullable(testCycleVO.getDescription()).ifPresent(temp1::setDescription);
+            Optional.ofNullable(testCycleVO.getFolderId()).ifPresent(temp1::setFolderId);
             temp1.setObjectVersionNumber(objectVersionNumber);
             syncCycleDate(projectId, temp1);
-        } else if (temp1.getType().equals(TestCycleE.CYCLE)) {
-            Optional.ofNullable(testCycleDTO.getBuild()).ifPresent(temp1::setBuild);
-            Optional.ofNullable(testCycleDTO.getCycleName()).ifPresent(temp1::setCycleName);
-            Optional.ofNullable(testCycleDTO.getDescription()).ifPresent(temp1::setDescription);
-            Optional.ofNullable(testCycleDTO.getEnvironment()).ifPresent(temp1::setEnvironment);
-            Optional.ofNullable(testCycleDTO.getFromDate()).ifPresent(temp1::setFromDate);
-            Optional.ofNullable(testCycleDTO.getToDate()).ifPresent(temp1::setToDate);
+        } else if (temp1.getType().equals(TestCycleType.CYCLE)) {
+            Optional.ofNullable(testCycleVO.getBuild()).ifPresent(temp1::setBuild);
+            Optional.ofNullable(testCycleVO.getCycleName()).ifPresent(temp1::setCycleName);
+            Optional.ofNullable(testCycleVO.getDescription()).ifPresent(temp1::setDescription);
+            Optional.ofNullable(testCycleVO.getEnvironment()).ifPresent(temp1::setEnvironment);
+            Optional.ofNullable(testCycleVO.getFromDate()).ifPresent(temp1::setFromDate);
+            Optional.ofNullable(testCycleVO.getToDate()).ifPresent(temp1::setToDate);
             temp1.setObjectVersionNumber(objectVersionNumber);
             syncFolderDate(projectId, temp1);
         }
-        if (!StringUtils.isEmpty(testCycleDTO.getLastRank()) || !StringUtils.isEmpty(testCycleDTO.getNextRank())) {
-            temp1.setRank(RankUtil.Operation.UPDATE.getRank(testCycleDTO.getLastRank(), testCycleDTO.getNextRank()));
+        if (!StringUtils.isEmpty(testCycleVO.getLastRank()) || !StringUtils.isEmpty(testCycleVO.getNextRank())) {
+            temp1.setRank(RankUtil.Operation.UPDATE.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
             temp1.setObjectVersionNumber(objectVersionNumber);
         }
-        return ConvertHelper.convert(iTestCycleService.update(projectId, temp1), TestCycleDTO.class);
+        return modelMapper.map(baseUpdate(projectId, modelMapper.map(temp1, TestCycleDTO.class)), TestCycleVO.class);
     }
 
     /**
@@ -263,18 +299,19 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param projectId
      * @param cycleE
      */
-    private void syncFolderDate(Long projectId, TestCycleE cycleE) {
-        List<TestCycleE> folders = cycleE.getChildFolder();
-        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> iTestCycleService.update(projectId, v));
+    private void syncFolderDate(Long projectId, TestCycleVO cycleE) {
+        cycleE.setType(TestCycleType.FOLDER);
+        List<TestCycleDTO> folders = cycleMapper.select(modelMapper.map(cycleE, TestCycleDTO.class));
+        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> baseUpdate(projectId, v));
     }
 
-    private void syncCycleDate(Long projectId, TestCycleE cycleE) {
+    private void syncCycleDate(Long projectId, TestCycleVO cycleE) {
         Long parentCycleId = cycleE.getParentCycleId();
-        TestCycleE parentCycle = TestCycleEFactory.create();
+        TestCycleDTO parentCycle = new TestCycleDTO();
         parentCycle.setCycleId(parentCycleId);
-        TestCycleE cycle = parentCycle.queryOne();
-        if (ifSyncNeed(cycle, cycleE.getFromDate(), cycleE.getToDate())) {
-            iTestCycleService.update(projectId, cycle);
+        parentCycle = cycleMapper.selectOne(parentCycle);
+        if (ifSyncNeed(parentCycle, cycleE.getFromDate(), cycleE.getToDate())) {
+            baseUpdate(projectId, parentCycle);
         }
     }
 
@@ -286,10 +323,10 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param to
      * @return
      */
-    private boolean ifSyncNeed(TestCycleE type, Date from, Date to) {
+    private boolean ifSyncNeed(TestCycleDTO type, Date from, Date to) {
         boolean flag = false;
 
-        if (StringUtils.equals(type.getType(), TestCycleE.FOLDER)) {
+        if (StringUtils.equals(type.getType(), TestCycleType.FOLDER)) {
             long folderPeriod = getDuration(type.getFromDate(), type.getToDate());
             long cyclePeriod = getDuration(from, to);
 
@@ -324,7 +361,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         return 0;
     }
 
-    private void adaption(TestCycleE folder, long folderDuration, long cycleDuration, Date from, Date to) {
+    private void adaption(TestCycleDTO folder, long folderDuration, long cycleDuration, Date from, Date to) {
         if (folder.getToDate().compareTo(folder.getFromDate()) < 0) {
             if (folderDuration < cycleDuration) {
                 if (folder.getToDate().compareTo(from) < 0) {
@@ -342,11 +379,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         }
     }
 
-    public TestCycleDTO getOneCycle(Long cycleId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        testCycleE.querySelf();
-        return ConvertHelper.convert(testCycleE.queryOne(), TestCycleDTO.class);
+    public TestCycleVO getOneCycle(Long cycleId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setCycleId(cycleId);
+        return modelMapper.map(cycleMapper.selectOne(testCycleDTO), TestCycleVO.class);
     }
 
     @Override
@@ -363,49 +399,68 @@ public class TestCycleServiceImpl implements TestCycleService {
         JSONArray versionStatus = new JSONArray();
         root.put("versions", versionStatus);
 
-        List<TestCycleDTO> cycles = ConvertHelper.convertList(iTestCycleService.queryCycleWithBar(projectId, versions.stream().map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo), TestCycleDTO.class);
+        List<TestCycleVO> cycles = testCycleDTOToTestCycleVO(countStatus(cycleMapper.query(projectId, versions.stream()
+                        .map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo)));
         populateUsers(cycles);
-
         initVersionTree(projectId, versionStatus, versions, cycles);
 
         return root;
     }
 
+    private List<TestCycleVO> testCycleDTOToTestCycleVO(List<TestCycleProDTO> testCycleProDTOS) {
+        List<TestCycleVO> tempTestCycleVOS = modelMapper.map((testCycleProDTOS), new TypeToken<List<TestCycleVO>>() {
+        }.getType());
+        List<TestCycleVO> resTestCycleVOS = new ArrayList<>();
+        for (int a = 0; a < tempTestCycleVOS.size(); a++) {
+            TestCycleProDTO testCycleDTO = testCycleProDTOS.get(a);
+            TestCycleVO testCycleVO = tempTestCycleVOS.get(a);
+            List<Object> list = new ArrayList<>();
+            if (testCycleDTO.getCycleCaseList() != null) {
+                testCycleDTO.getCycleCaseList().forEach((k, v) -> list.add(v));
+            }
+            testCycleVO.setCycleCaseWithBarList(list);
+            resTestCycleVOS.add(testCycleVO);
+        }
+        return resTestCycleVOS;
+    }
+
     @Override
     public JSONArray getTestCycleCaseCountInVersion(Long versionId, Long projectId, Long cycleId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleCaseList(new ArrayList<>());
-        List<TestCycleE> list;
-        List<TestCycleE> allCycle = new ArrayList<>();
+        TestCycleProDTO testCycleProDTO = new TestCycleProDTO();
+        testCycleProDTO.setCycleCaseList(new ArrayList<>());
+        List<TestCycleProDTO> list;
+        List<TestCycleProDTO> allCycle = new ArrayList<>();
 
         Optional optionalCycleId = Optional.ofNullable(cycleId);
         if (optionalCycleId.isPresent()) {
-            list = iTestCycleService.queryCycleWithBarOneCycle(cycleId);
+            list = countStatus(cycleMapper.queryOneCycleBar(cycleId));
             list.forEach(v -> {
                 if (!ObjectUtils.isEmpty(v.getCycleCaseList())) {
                     allCycle.add(v);
                 }
             });
         } else {
-            list = iTestCycleService.queryCycleWithBar(projectId, new Long[]{versionId}, null);
+            list = modelMapper.map(cycleMapper.query(projectId, new Long[]{versionId}, null),
+                    new TypeToken<List<TestCycleProDTO>>() {
+                    }.getType());
             list.forEach(v -> {
-                if (v.getType().equals(TestCycleE.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {
+                if (v.getType().equals(TestCycleType.CYCLE) && !ObjectUtils.isEmpty(v.getCycleCaseList())) {
                     allCycle.add(v);
                 }
             });
         }
-        testCycleE.countChildStatus(allCycle);
+        testCycleProDTO.countChildStatus(allCycle);
         JSONArray root = new JSONArray();
-        if (!ObjectUtils.isEmpty(testCycleE.getCycleCaseList())) {
-            createCountColorJson(testCycleE.getCycleCaseList(), root, projectId);
+        if (!ObjectUtils.isEmpty(testCycleProDTO.getCycleCaseList())) {
+            createCountColorJson(testCycleProDTO.getCycleCaseList(), root);
         }
         return root;
     }
 
-    private void createCountColorJson(Map<Long, Object> cycle, JSONArray root, Long projectId) {
+    private void createCountColorJson(Map<Long, Object> cycle, JSONArray root) {
         cycle.forEach((k, v) -> {
             JSONObject object = new JSONObject();
-            TestCycleE.ProcessBarSection processBarSection = (TestCycleE.ProcessBarSection) v;
+            TestCycleProDTO.ProcessBarSection processBarSection = (TestCycleProDTO.ProcessBarSection) v;
             object.put("counts", processBarSection.getCounts());
             object.put("name", processBarSection.getStatusName());
             object.put("color", processBarSection.getColor());
@@ -413,8 +468,8 @@ public class TestCycleServiceImpl implements TestCycleService {
         });
     }
 
-    public void populateUsers(List<TestCycleDTO> dtos) {
-        Long[] usersId = dtos.stream().map(TestCycleDTO::getCreatedBy).toArray(Long[]::new);
+    public void populateUsers(List<TestCycleVO> dtos) {
+        Long[] usersId = dtos.stream().map(TestCycleVO::getCreatedBy).toArray(Long[]::new);
         Map<Long, UserDO> users = userService.query(usersId);
         dtos.forEach(v -> {
             if (v.getCreatedBy() != null && v.getCreatedBy().longValue() != 0) {
@@ -428,15 +483,17 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 
     @Override
-    public void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList) {
+    public void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleVO> cycleDTOList) {
         Map<String, JSONObject> versionsMap = new HashMap<>(versionDTOList.size());
         Map<Long, String> versions = versionDTOList.stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-        Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
-        Map<Long, List<TestCycleDTO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.TEMP)).collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
-        Map<Long, List<TestCycleDTO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
-        TestIssueFolderE foldE = TestIssueFolderEFactory.create();
+        Map<Long, List<TestCycleVO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.CYCLE)).collect(Collectors.groupingBy(TestCycleVO::getVersionId));
+        Map<Long, List<TestCycleVO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.TEMP)).collect(Collectors.groupingBy(TestCycleVO::getVersionId));
+        Map<Long, List<TestCycleVO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(Collectors.groupingBy(TestCycleVO::getParentCycleId));
+        TestIssueFolderDTO foldE = new TestIssueFolderDTO();
         foldE.setProjectId(projectId);
-        Map<Long, TestIssueFolderDTO> folderMap = ConvertHelper.convertList(foldE.queryAllUnderProject(), TestIssueFolderDTO.class).stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(foldE), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
+        Map<Long, TestIssueFolderVO> folderMap = testIssueFolderVOS.stream().collect(Collectors.toMap(TestIssueFolderVO::getFolderId, Function.identity()));
         for (ProductVersionDTO versionDTO : versionDTOList) {
             JSONObject version = versionsMap.get(versionDTO.getStatusName());
             if (version == null) {
@@ -459,34 +516,34 @@ public class TestCycleServiceImpl implements TestCycleService {
 
 
     @Override
-    public List<TestCycleDTO> getCyclesInVersion(Long versionId) {
-        TestCycleE cycleE = TestCycleEFactory.create();
-        cycleE.setVersionId(versionId);
-        cycleE.setType(TestCycleE.CYCLE);
-        return ConvertHelper.convertList(cycleE.querySelf(), TestCycleDTO.class);
+    public List<TestCycleVO> getCyclesInVersion(Long versionId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setVersionId(versionId);
+        testCycleDTO.setType(TestCycleType.CYCLE);
+        return modelMapper.map(cycleMapper.select(testCycleDTO), new TypeToken<List<TestCycleVO>>() {
+        }.getType());
     }
 
     @Override
     public void batchChangeAssignedInOneCycle(Long projectId, Long userId, Long cycleId) {
-        TestCycleE cycleE = TestCycleEFactory.create();
-        cycleE.setParentCycleId(cycleId);
-        List<TestCycleE> cycleES = cycleE.querySelf();
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setParentCycleId(cycleId);
+        List<TestCycleDTO> cycleES = cycleMapper.select(testCycleDTO);
         if (ObjectUtils.isEmpty(cycleES)) {
             batchChangeCase(projectId, userId, cycleId);
         } else {
-            for (TestCycleE cycle : cycleES) {
+            for (TestCycleDTO cycle : cycleES) {
                 batchChangeCase(projectId, userId, cycle.getCycleId());
             }
         }
     }
 
     @Override
-    public void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleDTO> list) {
-        Boolean hasSameNameCycle = iTestCycleService.checkSameNameCycleForBatchClone(versionId, list);
+    public void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleVO> list) {
+        Boolean hasSameNameCycle = checkSameNameCycleForBatchClone(versionId, list);
 
         if (!hasSameNameCycle) {
-            iTestCycleService.batchCloneCycleAndFolders(projectId, versionId, list,
-                    DetailsHelper.getUserDetails().getUserId());
+            batchCloneCycleAndFolders(projectId, versionId, list, DetailsHelper.getUserDetails().getUserId());
         }
     }
 
@@ -495,36 +552,36 @@ public class TestCycleServiceImpl implements TestCycleService {
         JSONObject root = new JSONObject();
         Long[] versionIds = {versionId};
 
-        List<TestCycleDTO> cycles = ConvertHelper.convertList(
-                iTestCycleService.queryCycleWithBar(projectId, versionIds, null), TestCycleDTO.class);
+        List<TestCycleVO> cycles = modelMapper.map(cycleMapper.query(projectId, versionIds, null), new TypeToken<List<TestCycleVO>>() {
+        }.getType());
         populateUsers(cycles);
 
-        Map<Long, List<TestCycleDTO>> cycleVersionGroup = cycles.stream()
-                .filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleE.CYCLE))
-                .collect(Collectors.groupingBy(TestCycleDTO::getVersionId));
+        Map<Long, List<TestCycleVO>> cycleVersionGroup = cycles.stream()
+                .filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.CYCLE))
+                .collect(Collectors.groupingBy(TestCycleVO::getVersionId));
 
-        Map<Long, List<TestCycleDTO>> parentGroup = cycles.stream()
+        Map<Long, List<TestCycleVO>> parentGroup = cycles.stream()
                 .filter(x -> x.getParentCycleId() != null)
-                .collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+                .collect(Collectors.groupingBy(TestCycleVO::getParentCycleId));
         if (ObjectUtils.isEmpty(cycleVersionGroup.get(versionId))) {
             root.put("cycle", new ArrayList<>());
         } else {
             List<JSONObject> cycleList = new ArrayList<>();
 
-            for (TestCycleDTO testCycleDTO : cycleVersionGroup.get(versionId)) {
+            for (TestCycleVO testCycleVO : cycleVersionGroup.get(versionId)) {
                 JSONObject cycle = new JSONObject();
 
-                cycle.put(CYCLE_ID, testCycleDTO.getCycleId());
-                cycle.put("type", testCycleDTO.getType());
-                cycle.put("cycleName", testCycleDTO.getCycleName());
-                cycle.put("rank", testCycleDTO.getRank());
+                cycle.put(CYCLE_ID, testCycleVO.getCycleId());
+                cycle.put("type", testCycleVO.getType());
+                cycle.put("cycleName", testCycleVO.getCycleName());
+                cycle.put("rank", testCycleVO.getRank());
 
                 List<JSONObject> childrenList = new ArrayList<>();
 
-                if (ObjectUtils.isEmpty(parentGroup.get(testCycleDTO.getCycleId()))) {
+                if (ObjectUtils.isEmpty(parentGroup.get(testCycleVO.getCycleId()))) {
                     cycle.put(NODE_CHILDREN, new ArrayList<>());
                 } else {
-                    for (TestCycleDTO folderCycleDTO : parentGroup.get(testCycleDTO.getCycleId())) {
+                    for (TestCycleVO folderCycleDTO : parentGroup.get(testCycleVO.getCycleId())) {
                         JSONObject children = new JSONObject();
 
                         children.put(CYCLE_ID, folderCycleDTO.getCycleId());
@@ -545,23 +602,25 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public TestFileLoadHistoryDTO queryLatestBatchCloneHistory(Long projectId) {
-        TestFileLoadHistoryE testFileLoadHistoryE = SpringUtil.getApplicationContext().getBean(TestFileLoadHistoryE.class);
-        testFileLoadHistoryE.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
-        testFileLoadHistoryE.setActionType(TestFileLoadHistoryE.Action.CLONE_CYCLES);
-        testFileLoadHistoryE = iTestFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryE);
+    public TestFileLoadHistoryVO queryLatestBatchCloneHistory(Long projectId) {
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
+        testFileLoadHistoryDTO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
+        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.CLONE_CYCLES.getTypeValue());
+        testFileLoadHistoryDTO = testFileLoadHistoryService.queryLatestHistory(testFileLoadHistoryDTO);
 
-        if (testFileLoadHistoryE == null) {
+        if (testFileLoadHistoryDTO == null) {
             return null;
         }
 
-        return ConvertHelper.convert(testFileLoadHistoryE, TestFileLoadHistoryDTO.class);
+        return modelMapper.map(testFileLoadHistoryDTO, TestFileLoadHistoryVO.class);
     }
 
     private void batchChangeCase(Long projectId, Long userId, Long cycleId) {
-        TestCycleCaseE cycleCaseE = TestCycleCaseEFactory.create();
-        cycleCaseE.setCycleId(cycleId);
-        List<TestCycleCaseDTO> caseDTOS = ConvertHelper.convertList(cycleCaseE.querySelf(), TestCycleCaseDTO.class);
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setCycleId(cycleId);
+        List<TestCycleCaseVO> caseDTOS = modelMapper.map(testCycleCaseMapper.select(testCycleCaseDTO), new TypeToken<List<TestCycleCaseVO>>() {
+        }.getType());
+
         caseDTOS.forEach(v -> v.setAssignedTo(userId));
         testCycleCaseService.batchChangeCase(projectId, caseDTOS);
     }
@@ -577,42 +636,42 @@ public class TestCycleServiceImpl implements TestCycleService {
         return version;
     }
 
-    private JSONObject createCycle(TestCycleDTO testCycleDTO, String height, Map<Long, String> versions, Map<Long, TestIssueFolderDTO> folderMap) {
+    private JSONObject createCycle(TestCycleVO testCycleVO, String height, Map<Long, String> versions, Map<Long, TestIssueFolderVO> folderMap) {
         JSONObject version = new JSONObject();
-        version.put("title", testCycleDTO.getCycleName());
-        version.put("environment", testCycleDTO.getEnvironment());
-        version.put("description", testCycleDTO.getDescription());
-        version.put("build", testCycleDTO.getBuild());
-        version.put("type", testCycleDTO.getType());
-        version.put("parentCycleId", testCycleDTO.getParentCycleId());
-        version.put("versionId", testCycleDTO.getVersionId());
-        version.put(CYCLE_ID, testCycleDTO.getCycleId());
-        Optional.ofNullable(testCycleDTO.getCreatedUser()).ifPresent(v ->
+        version.put("title", testCycleVO.getCycleName());
+        version.put("environment", testCycleVO.getEnvironment());
+        version.put("description", testCycleVO.getDescription());
+        version.put("build", testCycleVO.getBuild());
+        version.put("type", testCycleVO.getType());
+        version.put("parentCycleId", testCycleVO.getParentCycleId());
+        version.put("versionId", testCycleVO.getVersionId());
+        version.put(CYCLE_ID, testCycleVO.getCycleId());
+        Optional.ofNullable(testCycleVO.getCreatedUser()).ifPresent(v ->
                 version.put("createdUser", JSONObject.toJSON(v))
         );
-        version.put("folderId", testCycleDTO.getFolderId());
-        Optional.ofNullable(testCycleDTO.getFolderId()).map(folderMap::get)
+        version.put("folderId", testCycleVO.getFolderId());
+        Optional.ofNullable(testCycleVO.getFolderId()).map(folderMap::get)
                 .ifPresent(v -> {
                     version.put("folderName", v.getName());
                     version.put("folderVersionID", v.getVersionId());
                     version.put("folderVersionName", versions.get(v.getVersionId()));
                 });
-        version.put("rank", testCycleDTO.getRank());
-        version.put("lastRank", testCycleDTO.getLastRank());
-        version.put("nextRank", testCycleDTO.getNextRank());
-        version.put("toDate", testCycleDTO.getToDate());
-        version.put("fromDate", testCycleDTO.getFromDate());
-        version.put("cycleCaseList", testCycleDTO.getCycleCaseWithBarList());
-        version.put("objectVersionNumber", testCycleDTO.getObjectVersionNumber());
+        version.put("rank", testCycleVO.getRank());
+        version.put("lastRank", testCycleVO.getLastRank());
+        version.put("nextRank", testCycleVO.getNextRank());
+        version.put("toDate", testCycleVO.getToDate());
+        version.put("fromDate", testCycleVO.getFromDate());
+        version.put("cycleCaseList", testCycleVO.getCycleCaseWithBarList());
+        version.put("objectVersionNumber", testCycleVO.getObjectVersionNumber());
         version.put("key", height);
-        version.put("versionName", versions.get(testCycleDTO.getVersionId()));
+        version.put("versionName", versions.get(testCycleVO.getVersionId()));
         JSONArray versionNames = new JSONArray();
         version.put(NODE_CHILDREN, versionNames);
         return version;
     }
 
 
-    private void initCycleTree(JSONArray cycles, String height, Map<Long, String> versions, List<TestCycleDTO> cycleList, List<TestCycleDTO> tempList, Map<Long, List<TestCycleDTO>> parentMap, Map<Long, TestIssueFolderDTO> folderMap) {
+    private void initCycleTree(JSONArray cycles, String height, Map<Long, String> versions, List<TestCycleVO> cycleList, List<TestCycleVO> tempList, Map<Long, List<TestCycleVO>> parentMap, Map<Long, TestIssueFolderVO> folderMap) {
         if (cycleList != null) {
             cycleList.stream().forEach(v -> {
                 JSONObject cycle = createCycle(v, height + "-" + cycles.size(), versions, folderMap);
@@ -629,7 +688,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         }
     }
 
-    private void initCycleFolderTree(JSONArray folders, String height, List<TestCycleDTO> cycleDTOList, Map<Long, String> versions, Map<Long, TestIssueFolderDTO> folderMap) {
+    private void initCycleFolderTree(JSONArray folders, String height, List<TestCycleVO> cycleDTOList, Map<Long, String> versions, Map<Long, TestIssueFolderVO> folderMap) {
         if (cycleDTOList != null) {
             cycleDTOList.stream().forEach(u ->
                     folders.add(createCycle(u, height + "-" + folders.size(), versions, folderMap))
@@ -653,43 +712,422 @@ public class TestCycleServiceImpl implements TestCycleService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        TestCycleE protoTestCycleE = testCycleE.queryOne();
+    public TestCycleVO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setCycleId(cycleId);
+        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(testCycleDTO);
 
         Assert.notNull(protoTestCycleE, "error.clone.cycle.protoCycle.not.be.null");
-        TestCycleE newTestCycleE = TestCycleEFactory.create();
+        TestCycleVO newTestCycleE = new TestCycleVO();
         newTestCycleE.setCycleName(cycleName);
         newTestCycleE.setVersionId(versionId);
-        newTestCycleE.setType(TestCycleE.CYCLE);
-        return ConvertHelper.convert(iTestCycleService.cloneCycle(protoTestCycleE, newTestCycleE, projectId), TestCycleDTO.class);
+        newTestCycleE.setType(TestCycleType.CYCLE);
+        return modelMapper.map(baseCloneCycle(protoTestCycleE, newTestCycleE, projectId), TestCycleVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        TestCycleE protoTestCycleE = testCycleE.queryOne();
+    public TestCycleVO cloneFolder(Long cycleId, TestCycleVO testCycleVO, Long projectId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setCycleId(cycleId);
+        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(testCycleDTO);
         Assert.notNull(protoTestCycleE, "error.clone.folder.protoFolder.not.be.null");
-        testCycleDTO.setType(TestCycleE.FOLDER);
+        testCycleVO.setType(TestCycleType.FOLDER);
 
-        return ConvertHelper.convert(iTestCycleService.cloneFolder(protoTestCycleE, ConvertHelper.convert(testCycleDTO, TestCycleE.class), projectId), TestCycleDTO.class);
+        return modelMapper.map(baseCloneFolder(protoTestCycleE, testCycleVO, projectId), TestCycleVO.class);
     }
 
 
     @Override
-    public List<TestCycleDTO> getFolderByCycleId(Long cycleId) {
-        TestCycleE testCycleE = TestCycleEFactory.create();
-        testCycleE.setCycleId(cycleId);
-        return ConvertHelper.convertList(testCycleE.getChildFolder(), TestCycleDTO.class);
+    public List<TestCycleVO> getFolderByCycleId(Long cycleId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setCycleId(cycleId);
+        testCycleDTO.setParentCycleId(cycleId);
+        testCycleDTO.setType(TestCycleType.FOLDER);
+        return modelMapper.map(cycleMapper.select(testCycleDTO), new TypeToken<List<TestCycleVO>>() {
+        }.getType());
     }
 
     @Override
-    public void populateVersion(TestCycleDTO cycle, Long projectId) {
+    public void populateVersion(TestCycleVO cycle, Long projectId) {
         Map<Long, ProductVersionDTO> map = testCaseService.getVersionInfo(projectId);
         cycle.setVersionName(map.get(cycle.getVersionId()).getName());
         cycle.setVersionStatusName(map.get(cycle.getVersionId()).getStatusName());
+    }
+
+    private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setProjectId(projectId);
+        checkRank(testCycleVO);
+        testCycleVO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+
+        return testCycleVO;
+    }
+
+    public void checkRank(TestCycleVO testCycleVO) {
+        if (getCount(testCycleVO) != 0 && StringUtils.isEmpty(getLastedRank(testCycleVO))) {
+            fixRank(testCycleVO);
+        }
+    }
+
+    private Long getCount(TestCycleVO testCycleVO) {
+        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
+            return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
+        } else {
+            return cycleMapper.getFolderCountInCycle(testCycleVO.getParentCycleId());
+        }
+    }
+
+    private void fixRank(TestCycleVO testCycleVO) {
+        List<TestCycleDTO> cycleES;
+        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
+            cycleES = cycleMapper.queryCycleInVersion(modelMapper.map(testCycleVO, TestCycleDTO.class));
+        } else {
+            TestCycleDTO testCycleDTO = new TestCycleDTO();
+            testCycleDTO.setCycleId(testCycleVO.getParentCycleId());
+            cycleES = cycleMapper.queryChildCycle(testCycleDTO);
+        }
+        for (int a = 0; a < cycleES.size(); a++) {
+            TestCycleDTO testCycleETemp = cycleES.get(a);
+            List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);
+            TestCycleDTO testCycleETemp1 = list.get(0);
+            if (a == 0) {
+                testCycleETemp1.setRank(RankUtil.Operation.INSERT.getRank(null, null));
+            } else {
+                testCycleETemp1.setRank(RankUtil.Operation.INSERT.getRank(cycleES.get(a - 1).getRank(), null));
+            }
+            if (cycleMapper.updateByPrimaryKeySelective(testCycleETemp1) != 1) {
+                throw new CommonException("error.testCycle.update");
+            }
+            testCycleETemp1 = cycleMapper.selectByPrimaryKey(testCycleETemp1.getCycleId());
+            cycleES.set(a, testCycleETemp1);
+        }
+    }
+
+    private String getLastedRank(TestCycleVO testCycleVO) {
+        if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
+            return cycleMapper.getCycleLastedRank(testCycleVO.getVersionId());
+        } else {
+            return cycleMapper.getFolderLastedRank(testCycleVO.getParentCycleId());
+        }
+    }
+
+    private void insertCaseToFolder(Long issueFolderId, Long cycleId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setFolderId(issueFolderId);
+        List<TestIssueFolderRelDTO> list = testIssueFolderRelMapper.select(testIssueFolderRelDTO);
+        TestCycleCaseVO dto = new TestCycleCaseVO();
+        dto.setCycleId(cycleId);
+        list.forEach(v -> {
+            dto.setIssueId(v.getIssueId());
+            testCycleCaseService.create(dto, v.getProjectId());
+        });
+    }
+
+    private TestCycleDTO baseUpdate(Long projectId, TestCycleDTO testCycleE) {
+        if (testCycleE.getFolderId() != null) {
+            TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+            testCycleCaseDTO.setCycleId(testCycleE.getCycleId());
+            testCycleCaseDTO.setProjectId(projectId);
+            testCycleCaseMapper.select(testCycleCaseDTO).forEach(v -> testCycleCaseService.delete(v.getExecuteId(), 0L));
+            insertCaseToFolder(testCycleE.getFolderId(), testCycleE.getCycleId());
+        }
+        testCycleE.setProjectId(projectId);
+        return updateSelf(testCycleE);
+    }
+
+    private TestCycleDTO updateSelf(TestCycleDTO testCycleE) {
+        Assert.notNull(testCycleE, "error.cycle.update.not.be.null");
+        validateCycle(testCycleE);
+        if (cycleMapper.updateByPrimaryKeySelective(testCycleE) != 1) {
+            throw new CommonException("error.testCycle.update");
+        }
+        return cycleMapper.selectByPrimaryKey(testCycleE.getCycleId());
+    }
+
+    private void validateCycle(TestCycleDTO testCycleE) {
+        Assert.notNull(testCycleE.getProjectId(), "error.cycle.projectId.not.be.null");
+        Assert.notNull(testCycleE.getVersionId(), "error.cycle.versionId.not.be.null");
+        Assert.notNull(testCycleE.getCycleName(), "error.cycle.name.not.be.null");
+        if (!cycleMapper.validateCycle(testCycleE).equals(0L)) {
+            throw new CommonException("error.cycle.in.version.has.existed");
+        }
+    }
+
+    private void deleteCycleWithCase(TestCycleDTO testCycleE, Long projectId) {
+        TestCycleCaseDTO testCycleCaseE = new TestCycleCaseDTO();
+
+        testCycleCaseE.setCycleId(testCycleE.getCycleId());
+        testCycleCaseE.setProjectId(projectId);
+        testCycleCaseMapper.select(testCycleCaseE).forEach(v -> testCycleCaseService.delete(v.getExecuteId(), projectId));
+        cycleMapper.delete(testCycleE);
+    }
+
+    private List<String> queryUpdateRank(TestCycleVO testCycleE) {
+        long lastCycleId = Long.parseLong(testCycleE.getRank());
+        List<TestCycleDTO> testCycleDTOS;
+        List<String> res = new ArrayList<>();
+
+        if (testCycleE.getType().equals(TestCycleType.CYCLE)) {
+            TestCycleDTO convert = modelMapper.map(testCycleE, TestCycleDTO.class);
+            testCycleDTOS = cycleMapper.queryCycleInVersion(convert);
+        } else {
+            TestCycleDTO testCycleETemp = new TestCycleDTO();
+            testCycleETemp.setCycleId(testCycleE.getParentCycleId());
+            TestCycleDTO convert = modelMapper.map(testCycleETemp, TestCycleDTO.class);
+            testCycleDTOS = cycleMapper.queryChildCycle(convert);
+        }
+
+        if (lastCycleId != -1L) {
+            int lastIndex = -1;
+
+            for (int a = 0; a < testCycleDTOS.size(); a++) {
+                if (testCycleDTOS.get(a).getCycleId().equals(lastCycleId)) {
+                    lastIndex = a;
+                }
+            }
+
+            if (lastIndex >= 0) {
+                TestCycleDTO testCycleETemp = new TestCycleDTO();
+                testCycleETemp.setCycleId(testCycleDTOS.get(lastIndex).getCycleId());
+                List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);
+                res.add(list.get(0).getRank());
+            } else {
+                res.add(null);
+            }
+
+            if (lastIndex < testCycleDTOS.size() - 1) {
+                TestCycleDTO testCycleETemp = new TestCycleDTO();
+                testCycleETemp.setCycleId(testCycleDTOS.get(lastIndex + 1).getCycleId());
+                List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);
+                res.add(list.get(0).getRank());
+            } else {
+                res.add(null);
+            }
+        } else {
+            res.add(null);
+            TestCycleDTO testCycleETemp = new TestCycleDTO();
+            testCycleETemp.setCycleId(testCycleDTOS.get(0).getCycleId());
+            List<TestCycleDTO> list = cycleMapper.select(testCycleETemp);
+            res.add(list.get(0).getRank());
+        }
+        return res;
+    }
+
+    private List<TestCycleProDTO> countStatus(List<TestCycleDTO> testCycleES) {
+        List<TestCycleProDTO> testCycleProDTOS = modelMapper.map(testCycleES, new TypeToken<List<TestCycleProDTO>>() {
+        }.getType());
+
+        Map<Long, List<TestCycleProDTO>> parentGroup = testCycleProDTOS.stream().filter(x -> x.getParentCycleId() != null
+                && TestCycleType.FOLDER.equals(x.getType())).collect(Collectors.groupingBy(TestCycleProDTO::getParentCycleId));
+
+        testCycleProDTOS.parallelStream().filter(v -> StringUtils.equals(v.getType(), TestCycleType.CYCLE))
+                .forEach(u -> u.countChildStatus(parentGroup.get(u.getCycleId())));
+        return testCycleProDTOS;
+    }
+
+    private Boolean checkSameNameCycleForBatchClone(Long versionId, List<BatchCloneCycleVO> list) {
+        list.forEach(v -> {
+            TestCycleDTO oldTestCycleDTO = new TestCycleDTO();
+            oldTestCycleDTO.setCycleId(v.getCycleId());
+            TestCycleDTO protoTestCycleDTO = cycleMapper.selectOne(oldTestCycleDTO);
+            protoTestCycleDTO.setVersionId(versionId);
+
+            validateCycle(protoTestCycleDTO);
+        });
+        return false;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void batchCloneCycleAndFolders(Long projectId, Long versionId, List<BatchCloneCycleVO> list, Long userId) {
+        TestFileLoadHistoryWithRateVO testFileLoadHistoryE = initBatchCloneFileLoadHistory(projectId, versionId);
+
+        int sum = 0;
+        int offset = 0;
+
+        for (BatchCloneCycleVO batchCloneCycleVO : list) {
+            sum = sum + batchCloneCycleVO.getFolderIds().length;
+        }
+
+        try {
+            for (BatchCloneCycleVO batchCloneCycleVO : list) {
+                offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleVO,
+                        testFileLoadHistoryE, sum, offset, userId);
+            }
+
+            testFileLoadHistoryE.setLastUpdateDate(new Date());
+            testFileLoadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryE.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
+        } catch (Exception e) {
+            LOGGER.error(e.toString());
+
+            testFileLoadHistoryE.setLastUpdateDate(new Date());
+            testFileLoadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryE.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
+
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+            throw new CommonException(CYCLE_DATE_NULL_ERROR);
+        }
+
+        testFileLoadHistoryMapper.updateByPrimaryKey(modelMapper.map(testFileLoadHistoryE, TestFileLoadHistoryDTO.class));
+    }
+
+    private int cloneCycleWithSomeFolder(Long projectId, Long versionId, BatchCloneCycleVO batchCloneCycleVO,
+                                         TestFileLoadHistoryWithRateVO testFileLoadHistoryE, int sum, int offset, Long userId) {
+        TestCycleDTO oldTestCycleE = new TestCycleDTO();
+        oldTestCycleE.setCycleId(batchCloneCycleVO.getCycleId());
+        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(oldTestCycleE);
+
+        TestCycleVO newTestCycleE = new TestCycleVO();
+        newTestCycleE.setCycleName(protoTestCycleE.getCycleName());
+        newTestCycleE.setVersionId(versionId);
+        newTestCycleE.setType(TestCycleType.CYCLE);
+
+        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleE, newTestCycleE, projectId);
+
+        if (sum == 0) {
+            testFileLoadHistoryE.setRate(1.0);
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+
+            return 0;
+        }
+
+        for (Long folderId : batchCloneCycleVO.getFolderIds()) {
+            TestCycleDTO oldFolderTestCycleE = new TestCycleDTO();
+            oldFolderTestCycleE.setCycleId(folderId);
+            TestCycleDTO protoFolderTestCycleE = cycleMapper.selectOne(oldFolderTestCycleE);
+
+            TestCycleVO newFolderTestCycleE = new TestCycleVO();
+            newFolderTestCycleE.setParentCycleId(parentCycle.getCycleId());
+            newFolderTestCycleE.setVersionId(versionId);
+            newFolderTestCycleE.setType(TestCycleType.FOLDER);
+
+            baseCloneFolder(protoFolderTestCycleE, newFolderTestCycleE, projectId);
+
+            offset++;
+            testFileLoadHistoryE.setRate(offset * 1.0 / sum);
+            notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
+                    JSON.toJSONString(testFileLoadHistoryE));
+        }
+        return offset;
+    }
+
+    private TestFileLoadHistoryWithRateVO initBatchCloneFileLoadHistory(Long projectId, Long versionId) {
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
+        testFileLoadHistoryDTO.setProjectId(projectId);
+        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.CLONE_CYCLES.getTypeValue());
+        testFileLoadHistoryDTO.setSourceType(TestFileLoadHistoryEnums.Source.VERSION.getTypeValue());
+        testFileLoadHistoryDTO.setLinkedId(versionId);
+        testFileLoadHistoryDTO.setStatus(TestFileLoadHistoryEnums.Status.SUSPENDING.getTypeValue());
+        testFileLoadHistoryMapper.insert(testFileLoadHistoryDTO);
+        return modelMapper.map(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDTO), TestFileLoadHistoryWithRateVO.class);
+    }
+
+    private TestCycleDTO baseCloneFolder(TestCycleDTO protoTestCycleE, TestCycleVO newTestCycleE, Long projectId) {
+        protoTestCycleE.setProjectId(projectId);
+        checkRank(newTestCycleE);
+        TestCycleDTO parentCycleE = new TestCycleDTO();
+
+        parentCycleE.setCycleId(newTestCycleE.getParentCycleId());
+        if (!protoTestCycleE.getType().equals(TestCycleType.CYCLE)) {
+            List<TestCycleDTO> parentCycleES = cycleMapper.select(parentCycleE);
+
+            Date parentFromDate = parentCycleES.get(0).getFromDate();
+            Date parentToDate = parentCycleES.get(0).getToDate();
+
+            Date oldFolderFromDate = protoTestCycleE.getFromDate();
+            Date oldFolderToDate = protoTestCycleE.getToDate();
+
+            Assert.notNull(parentFromDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(parentToDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(oldFolderFromDate, CYCLE_DATE_NULL_ERROR);
+            Assert.notNull(oldFolderToDate, CYCLE_DATE_NULL_ERROR);
+
+            int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
+            int differentDaysParent = TestDateUtil.differentDaysByMillisecond(parentFromDate, parentToDate);
+
+            protoTestCycleE.setFromDate(parentFromDate);
+
+            if (differentDaysOldFolder > differentDaysParent) {
+                protoTestCycleE.setToDate(parentToDate);
+            } else {
+                protoTestCycleE.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
+            }
+        }
+        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(newTestCycleE), null));
+        TestCycleDTO newCycleE = cloneCycle(protoTestCycleE);
+        cloneSubCycleCase(protoTestCycleE.getCycleId(), newCycleE.getCycleId(), projectId);
+
+        return newCycleE;
+    }
+
+    private TestCycleDTO baseCloneCycle(TestCycleDTO protoTestCycleE, TestCycleVO newTestCycleE, Long projectId) {
+        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleE, newTestCycleE, projectId);
+        cycleMapper.queryChildFolderByRank(protoTestCycleE.getCycleId()).forEach(v -> {
+            TestCycleVO testCycleDTO = new TestCycleVO();
+            testCycleDTO.setParentCycleId(parentCycle.getCycleId());
+            testCycleDTO.setVersionId(parentCycle.getVersionId());
+            testCycleDTO.setType(TestCycleType.FOLDER);
+            baseCloneFolder(v, testCycleDTO, projectId);
+        });
+        return parentCycle;
+    }
+
+    private void cloneSubCycleCase(Long protoTestCycleId, Long newCycleId, Long projectId) {
+        Assert.notNull(protoTestCycleId, "error.clone.cycle.protoCycleId.not.be.null");
+        Assert.notNull(newCycleId, "error.clone.cycle.newCycleId.not.be.null");
+
+        TestCycleCaseDTO testCycleCaseE = new TestCycleCaseDTO();
+        testCycleCaseE.setCycleId(protoTestCycleId);
+        Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
+        final String[] lastRank = new String[1];
+        lastRank[0] = testCycleCaseMapper.getLastedRank(protoTestCycleId);
+
+        //查询出cycle下所有case将其创建到新的cycle下并执行
+        testCycleCaseMapper.select(testCycleCaseE).forEach(v ->
+                lastRank[0] = cloneCycleCase(getCloneCase(RankUtil.Operation.INSERT
+                        .getRank(lastRank[0], null), newCycleId, defaultStatus), projectId).getRank()
+        );
+    }
+
+    private TestCycleDTO cloneCycle(TestCycleDTO proto) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setParentCycleId(Optional.ofNullable(testCycleDTO.getParentCycleId()).orElse(proto.getParentCycleId()));
+        testCycleDTO.setCycleName(Optional.ofNullable(testCycleDTO.getCycleName()).orElse(proto.getCycleName()));
+        testCycleDTO.setVersionId(Optional.ofNullable(testCycleDTO.getVersionId()).orElse(proto.getVersionId()));
+        testCycleDTO.setDescription(Optional.ofNullable(testCycleDTO.getDescription()).orElse(proto.getDescription()));
+        testCycleDTO.setBuild(Optional.ofNullable(testCycleDTO.getBuild()).orElse(proto.getBuild()));
+        testCycleDTO.setEnvironment(Optional.ofNullable(testCycleDTO.getEnvironment()).orElse(proto.getEnvironment()));
+        testCycleDTO.setFromDate(Optional.ofNullable(testCycleDTO.getFromDate()).orElse(proto.getFromDate()));
+        testCycleDTO.setToDate(Optional.ofNullable(testCycleDTO.getToDate()).orElse(proto.getToDate()));
+        testCycleDTO.setType(Optional.ofNullable(testCycleDTO.getType()).orElse(proto.getType()));
+        testCycleDTO.setFolderId(Optional.ofNullable(testCycleDTO.getFolderId()).orElse(proto.getFolderId()));
+        testCycleDTO.setRank(Optional.ofNullable(testCycleDTO.getRank()).orElse(proto.getRank()));
+        testCycleDTO.setProjectId(Optional.ofNullable(testCycleDTO.getProjectId()).orElse(proto.getProjectId()));
+        cycleMapper.insert(testCycleDTO);
+        return testCycleDTO;
+    }
+
+    private TestCycleCaseDTO cloneCycleCase(TestCycleCaseDTO testCycleCaseE, Long projectId) {
+        testCycleCaseE.setProjectId(projectId);
+        if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCaseE).longValue() > 0) {
+            throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
+        }
+        testCycleCaseMapper.insert(testCycleCaseE);
+
+        testCycleCaseService.createTestCycleCaseStep(testCycleCaseE);
+        return testCycleCaseE;
+    }
+
+    private TestCycleCaseDTO getCloneCase(String rank, Long newCycleId, Long defaultStatus) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setExecuteId(null);
+        testCycleCaseDTO.setRank(rank);
+        testCycleCaseDTO.setCycleId(newCycleId);
+        testCycleCaseDTO.setExecutionStatus(defaultStatus);
+        testCycleCaseDTO.setObjectVersionNumber(null);
+        return testCycleCaseDTO;
     }
 }

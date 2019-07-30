@@ -1,7 +1,6 @@
 package io.choerodon.agile.infra.common.utils;
 
-import io.choerodon.agile.api.dto.IssueTypeDTO;
-import io.choerodon.agile.infra.common.enums.IssueTypeCode;
+import io.choerodon.agile.api.vo.IssueTypeVO;
 import io.choerodon.agile.infra.common.enums.SchemeApplyType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
@@ -36,7 +35,7 @@ public class AgileUtil {
         if (issueTypeMapObj == null) {
             //获取问题类型id
             Map<String, Long> issueTypeCodeMap = issueFeignClient.queryIssueType(projectId, SchemeApplyType.TEST, organizationId).getBody()
-                    .stream().collect(Collectors.toMap(IssueTypeDTO::getTypeCode, IssueTypeDTO::getId));
+                    .stream().collect(Collectors.toMap(IssueTypeVO::getTypeCode, IssueTypeVO::getId));
             issueTypeId = issueTypeCodeMap.get(issueTypeCode);
             threadLocal.get().put(ISSUE_TYPE_MAP, issueTypeCodeMap);
         } else {

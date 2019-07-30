@@ -1,22 +1,25 @@
 package io.choerodon.test.manager.app.service;
 
-import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
-
 import java.util.List;
+
+import io.choerodon.test.manager.api.vo.TestCaseStepVO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCaseStepService {
 
-    List<TestCaseStepDTO> query(TestCaseStepDTO testCaseStepDTO);
+    List<TestCaseStepVO> query(TestCaseStepVO testCaseStepVO);
 
-    void removeStep(TestCaseStepDTO testCaseStepDTO);
+    void removeStep(TestCaseStepVO testCaseStepVO);
 
-    TestCaseStepDTO changeStep(TestCaseStepDTO testCaseStepDTO, Long projectId);
+    TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId);
 
-    TestCaseStepDTO clone(TestCaseStepDTO testCaseStepDTO, Long projectId);
+    TestCaseStepVO clone(TestCaseStepVO testCaseStepVO, Long projectId);
 
-    List<TestCaseStepDTO> batchClone(TestCaseStepDTO testCaseStepDTO,Long issueId,Long projectId);
+    List<TestCaseStepVO> batchClone(TestCaseStepVO testCaseStepVO, Long issueId, Long projectId);
 
+    TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO);
 }

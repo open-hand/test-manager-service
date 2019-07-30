@@ -1,13 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.app.service.ExcelService;
-import io.choerodon.test.manager.app.service.ExcelServiceHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.app.service.ExcelService;
+import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 
 /**
  * Created by zongw.lee@gmail.com on 08/11/2018
@@ -18,7 +19,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     @Autowired
     private ExcelService excelService;
 
-    public void setExcelService(ExcelService excelService){
+    public void setExcelService(ExcelService excelService) {
         this.excelService = excelService;
     }
 
@@ -60,6 +61,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
 
     /**
      * 导出文件夹下的所有用例
+     *
      * @param projectId
      * @param folderId
      * @param request
@@ -73,6 +75,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
 
     /**
      * 导出失败重试
+     *
      * @param projectId
      * @param fileHistoryId
      */

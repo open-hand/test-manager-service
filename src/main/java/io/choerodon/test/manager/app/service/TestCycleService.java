@@ -1,25 +1,26 @@
 package io.choerodon.test.manager.app.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
-import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.api.dto.BatchCloneCycleDTO;
-import io.choerodon.test.manager.api.dto.TestCycleDTO;
-import io.choerodon.test.manager.api.dto.TestFileLoadHistoryDTO;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+import org.springframework.http.ResponseEntity;
+
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.test.manager.api.vo.BatchCloneCycleVO;
+import io.choerodon.test.manager.api.vo.TestCycleVO;
+import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleService {
-    TestCycleDTO insert(Long projectId,TestCycleDTO testCycleDTO);
+    TestCycleVO insert(Long projectId, TestCycleVO testCycleVO);
 
-    TestCycleDTO insertWithoutSyncFolder(Long projectId, TestCycleDTO testCycleDTO);
+    TestCycleVO insertWithoutSyncFolder(Long projectId, TestCycleVO testCycleVO);
 
     boolean synchroFolder(Long cycleId, Long folderId, Long projectId);
 
@@ -27,37 +28,39 @@ public interface TestCycleService {
 
     boolean synchroFolderInVersion(Long versionId, Long projectId);
 
-    void delete(TestCycleDTO testCycleDTO, Long projectId);
+    void delete(TestCycleVO testCycleVO, Long projectId);
 
-    TestCycleDTO update(Long projectId, TestCycleDTO testCycleDTO);
+    TestCycleVO update(Long projectId, TestCycleVO testCycleVO);
 
-    TestCycleDTO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId);
+    TestCycleVO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId);
 
-    TestCycleDTO cloneFolder(Long cycleId, TestCycleDTO testCycleDTO, Long projectId);
+    TestCycleVO cloneFolder(Long cycleId, TestCycleVO testCycleVO, Long projectId);
 
     JSONObject getTestCycle(Long versionId, Long assignedTo);
 
     JSONArray getTestCycleCaseCountInVersion(Long versionId, Long projectId, Long cycleId);
 
-    TestCycleDTO getOneCycle(Long cycleId);
+    TestCycleVO getOneCycle(Long cycleId);
 
     ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersion(Long projectId, Map<String, Object> searchParamMap);
 
-    List<TestCycleDTO> getFolderByCycleId(Long cycleId);
+    List<TestCycleVO> getFolderByCycleId(Long cycleId);
 
-    void populateVersion(TestCycleDTO cycle, Long projectId);
+    void populateVersion(TestCycleVO cycle, Long projectId);
 
-    void populateUsers(List<TestCycleDTO> dtos);
+    void populateUsers(List<TestCycleVO> dtos);
 
-    void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleDTO> cycleDTOList);
+    void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleVO> cycleDTOList);
 
-    List<TestCycleDTO> getCyclesInVersion(Long versionId);
+    List<TestCycleVO> getCyclesInVersion(Long versionId);
 
     void batchChangeAssignedInOneCycle(Long projectId, Long userId, Long cycleId);
 
-    void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleDTO> list);
+    void batchCloneCycles(Long projectId, Long versionId, List<BatchCloneCycleVO> list);
 
     JSONObject getTestCycleInVersionForBatchClone(Long versionId, Long projectId);
 
-    TestFileLoadHistoryDTO queryLatestBatchCloneHistory(Long projectId);
+    TestFileLoadHistoryVO queryLatestBatchCloneHistory(Long projectId);
+
+    void checkRank(TestCycleVO testCycleVO);
 }

@@ -1,26 +1,26 @@
-package io.choerodon.test.manager.domain.service;
-
-import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
-
-import java.util.List;
-
-public interface ITestAppInstanceService {
-
-    List<TestAppInstanceE> queryDelayInstance(int delayTime);
-
-    String queryValueByEnvIdAndAppId( Long envId, Long appId);
-
-    TestAppInstanceE update(TestAppInstanceE instanceE);
-
-    void delete(TestAppInstanceE instanceE);
-
-    TestAppInstanceE insert(TestAppInstanceE instanceE);
-
-    TestAppInstanceE queryOne(TestAppInstanceE id);
-
-    void updateInstanceWithoutStatus(TestAppInstanceE testAppInstanceE);
-
-    void updateStatus(TestAppInstanceE testAppInstanceE);
-
-    void closeInstance(TestAppInstanceE testAppInstanceE);
-}
+//package io.choerodon.test.manager.domain.service;
+//
+//import io.choerodon.test.manager.infra.vo.TestAppInstanceDTO;
+//
+//import java.util.List;
+//
+//public interface ITestAppInstanceService {
+//
+//    List<TestAppInstanceDTO> queryDelayInstance(int delayTime);
+//
+//    String queryValueByEnvIdAndAppId( Long envId, Long appId);
+//
+//    TestAppInstanceDTO update(TestAppInstanceDTO instanceE);
+//
+//    void delete(TestAppInstanceDTO instanceE);
+//
+//    TestAppInstanceDTO insert(TestAppInstanceDTO instanceE);
+//
+//    TestAppInstanceDTO queryOne(TestAppInstanceDTO id);
+//
+//    void updateInstanceWithoutStatus(TestAppInstanceDTO testAppInstanceDTO);
+//
+//    void updateStatus(TestAppInstanceDTO testAppInstanceDTO);
+//
+//    void closeInstance(TestAppInstanceDTO testAppInstanceDTO);
+//}

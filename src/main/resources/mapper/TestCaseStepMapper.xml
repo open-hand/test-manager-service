@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseStepMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCaseStepDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCaseStepDTO" id="BaseResultMap">
         <id column="step_id" property="stepId"/>
         <id column="rank" property="rank"/>
         <id column="issue_id" property="issueId"/>
@@ -11,7 +11,7 @@
         <id column="test_data" property="testData"/>
         <id column="expected_result" property="expectedResult"/>
         <collection property="attachments"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
             <id column="url" property="url"/>
             <id column="attachment_name" property="attachmentName"/>
             <id column="id" property="id"/>

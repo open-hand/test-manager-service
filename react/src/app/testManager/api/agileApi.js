@@ -42,7 +42,7 @@ export function getIssues(search) {
  * @returns
  */
 export function getIssueTypes(applyType) {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
 }
 /**
  *获取缺陷列表（排除test类型）
@@ -127,7 +127,7 @@ export function getLabels() {
  * @returns
  */
 export function getPrioritys() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/priority/list_by_org`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/priority/list_by_org`);
 }
 /**
  *获取当前项目的issue状态列表
@@ -136,7 +136,7 @@ export function getPrioritys() {
  * @returns
  */
 export function getIssueStatus(applyType) {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
 }
 
 /**

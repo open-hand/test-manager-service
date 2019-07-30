@@ -1,13 +1,12 @@
 package io.choerodon.test.manager.infra.mapper
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
-import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO
-import io.choerodon.test.manager.infra.dataobject.TestStatusDO
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO
+import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO
+import io.choerodon.test.manager.infra.dto.TestStatusDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -31,13 +30,13 @@ class TestStatusMapperSpec extends Specification {
 
     def "QueryAllUnderProject"() {
         given:
-        TestStatusDO statusDO = new TestStatusDO()
+        TestStatusDTO statusDO = new TestStatusDTO()
         statusDO.setProjectId(new Long(1))
         statusDO.setStatusName("未执行")
         statusDO.setStatusColor("yellow")
         statusDO.setStatusType("CYCLE_CASE")
 
-        TestStatusDO statusDO1 = new TestStatusDO()
+        TestStatusDTO statusDO1 = new TestStatusDTO()
         statusDO1.setProjectId(new Long(1))
         statusDO1.setStatusName("未执行")
         statusDO1.setStatusColor("yellow")
@@ -54,7 +53,7 @@ class TestStatusMapperSpec extends Specification {
 
     def "IfDeleteCycleCaseAllow"() {
         given:
-        TestCycleCaseDO caseDO = new TestCycleCaseDO()
+        TestCycleCaseDTO caseDO = new TestCycleCaseDTO()
         caseDO.setCycleId(new Long(9999))
         caseDO.setExecutionStatus(new Long(36))
         caseDO.setIssueId(new Long(999))
@@ -73,7 +72,7 @@ class TestStatusMapperSpec extends Specification {
 
     def "IfDeleteCaseStepAllow"() {
         given:
-        TestCycleCaseStepDO stepDO = new TestCycleCaseStepDO()
+        TestCycleCaseStepDTO stepDO = new TestCycleCaseStepDTO()
         stepDO.setExecuteId(new Long(9999))
         stepDO.setStepStatus(new Long(9))
         stepDO.setStepId(new Long(999))

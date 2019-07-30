@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO" id="BaseResultMap">
         <id column="execute_step_id" property="executeStepId"/>
         <id column="execute_id" property="executeId"/>
         <id column="step_id" property="stepId"/>
@@ -18,14 +18,14 @@
         <id column="expected_result" property="expectedResult"/>
 
         <collection property="stepAttachment"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
             <id column="url" property="url"/>
             <id column="attachment_name" property="attachmentName"/>
             <id column="attachment_type" property="attachmentType"/>
             <id column="id" property="id"/>
         </collection>
         <collection property="defects"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO">
             <id column="defect_issue_id" property="issueId"/>
             <id column="defect_type" property="defectType"/>
             <id column="defect_link_id" property="defectLinkId"/>

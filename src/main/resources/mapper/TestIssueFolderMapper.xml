@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestIssueFolderDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO" id="BaseResultMap">
         <id column="folder_id" property="folderId"/>
         <id column="name" property="name"/>
         <id column="version_id" property="versionId"/>

@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.infra.mapper;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceLogE;
+import io.choerodon.test.manager.infra.dto.TestAppInstanceLogDTO;
 
-public interface TestAppInstanceLogMapper extends Mapper<TestAppInstanceLogE> {
+public interface TestAppInstanceLogMapper extends Mapper<TestAppInstanceLogDTO> {
 }
