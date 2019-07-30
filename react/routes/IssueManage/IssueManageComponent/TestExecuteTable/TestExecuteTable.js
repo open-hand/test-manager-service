@@ -194,7 +194,7 @@ class TestExecuteTable extends Component {
                     {item.defects.map((defect, i) => {
                       const { 
                         issueId, typeCode, issueName, summary, 
-                      } = defect.issueInfosDTO || {};
+                      } = defect.issueInfosVO || {};
                       return (
                         <div>
                           <Link
@@ -214,7 +214,7 @@ class TestExecuteTable extends Component {
                 )}
               >
                 <div className="c7ntest-text-dot">
-                  {item.defects.map((defect, i) => defect.issueInfosDTO && defect.issueInfosDTO.issueName).join(',')}
+                  {item.defects.map((defect, i) => defect.issueInfosVO && defect.issueInfosVO.issueName).join(',')}
                 </div>
               </Tooltip>
 

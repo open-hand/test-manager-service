@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { throttle } from 'lodash';
 import {
-  Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon,
+  Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon, Tabs
 } from 'choerodon-ui';
 import './EditIssue.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
@@ -31,12 +31,13 @@ import LinkList from './Component/LinkList';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
-import IssueTreeStore from '../../IssueManagestore/IssueTreeStore';
-
+import TestStepTable from '../TestStepTable'
+import TestExecuteTable from '../TestExecuteTable'
 const { AppState } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
+const { TabPane } = Tabs;
 let sign = true;
 let filterSign = false;
 const { Text, Edit } = TextEditToggle;
@@ -84,8 +85,6 @@ class EditIssueNarrow extends Component {
   }
 
   state = {
-    // 子组件显示控制
-    issueLoading: false,
     selectLoading: true,
     FullEditorShow: false,
     createLinkTaskShow: false,
@@ -260,8 +259,8 @@ class EditIssueNarrow extends Component {
         }
         break;
       }
-      case 'componentIssueRelDTOList': {
-        issue.componentIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, componentList, 'name');
+      case 'componentIssueRelVOList': {
+        issue.componentIssueRelVOList = this.prepareMutilSelectValueBeforeSubmit(value, componentList, 'name');
         updateIssue(issue)
           .then((res) => {
             this.props.reloadIssue();
@@ -381,7 +380,7 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    const { issueInfo } = this.props;
+    const { issueInfo, enterLoad, leaveLoad } = this.props;
     const { issueId } = issueInfo;
     switch (e.key) {
       case 'copy': {
@@ -391,9 +390,7 @@ class EditIssueNarrow extends Component {
           subTask: false,
           summary: false,
         };
-        this.setState({
-          issueLoading: true,
-        });
+        enterLoad()
         cloneIssue(issueId, copyConditionDTO).then((res) => {
           // 跳转至复制后的页面
           if (res.issueId) {
@@ -401,9 +398,7 @@ class EditIssueNarrow extends Component {
           }
           Choerodon.prompt('复制成功');
         }).catch((err) => {
-          this.setState({
-            issueLoading: false,
-          });
+          leaveLoad()
           Choerodon.prompt('网络错误');
         });
         break;
@@ -491,11 +486,11 @@ class EditIssueNarrow extends Component {
     const {
       createdBy,
       createrImageUrl, createrEmail,
-      createrName, creationDate, issueTypeDTO,
+      createrName, creationDate, issueTypeVO = {},
     } = issueInfo;
     const createLog = {
       email: createrEmail,
-      field: issueTypeDTO.typeCode,
+      field: issueTypeVO.typeCode,
       imageUrl: createrImageUrl,
       name: createrName,
       lastUpdateDate: creationDate,
@@ -610,9 +605,9 @@ class EditIssueNarrow extends Component {
    */
   loadTransformsByStatusId = (statusId) => {
     const { issueInfo } = this.props;
-    const { issueTypeDTO, issueId } = issueInfo;
+    const { issueTypeVO, issueId } = issueInfo;
 
-    const typeId = issueTypeDTO.id;
+    const typeId = issueTypeVO.id;
     loadStatus(statusId, issueId, typeId).then((res) => {
       this.setState({
         StatusList: res,
@@ -652,10 +647,10 @@ class EditIssueNarrow extends Component {
     } = this.state;
     const { issueInfo } = this.props;
     const { mode } = this.props;
-    const { statusMapDTO } = issueInfo;
+    const { statusVO } = issueInfo;
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon, type: statusCode,
-    } = statusMapDTO || {};
+    } = statusVO || {};
     const Tag = StatusTag;
     return (
       <TextEditToggle
@@ -665,7 +660,7 @@ class EditIssueNarrow extends Component {
         onSubmit={(value, done) => { this.editIssue({ statusId: value }, done); }}
         originData={StatusList.length ? statusId : (
           <Tag
-            status={statusMapDTO}
+            status={statusVO}
           />
         )}
       >
@@ -674,7 +669,7 @@ class EditIssueNarrow extends Component {
             const targetStatus = _.find(StatusList, { endStatusId: data });
             return (
               <div>
-                {<Tag status={targetStatus ? targetStatus.statusDTO : statusMapDTO} />
+                {<Tag status={targetStatus ? targetStatus.statusDTO : statusVO} />
                 }
               </div>
             );
@@ -712,8 +707,8 @@ class EditIssueNarrow extends Component {
       priorityList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { priorityDTO } = issueInfo;
-    const { name: priorityName, id: priorityId, colour: priorityColor } = priorityDTO || {};
+    const { priorityVO } = issueInfo;
+    const { name: priorityName, id: priorityId, colour: priorityColor } = priorityVO || {};
     const priorityOptions = priorityList.map(priority => (
       <Option key={priority.id} value={priority.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
@@ -728,7 +723,7 @@ class EditIssueNarrow extends Component {
         formKey="priorityId"
         onSubmit={(value, done) => { this.editIssue({ priorityId: value }, done); }}
         originData={priorityList.length
-          ? priorityId : <PriorityTag priority={priorityDTO || {}} />}
+          ? priorityId : <PriorityTag priority={priorityVO || {}} />}
       >
         <Text>
           {(data) => {
@@ -738,7 +733,7 @@ class EditIssueNarrow extends Component {
                 {
                   targetPriority ? (
                     <PriorityTag priority={targetPriority} />
-                  ) : <PriorityTag priority={priorityDTO || {}} />
+                  ) : <PriorityTag priority={priorityVO || {}} />
                 }
               </div>
             );
@@ -778,14 +773,14 @@ class EditIssueNarrow extends Component {
       componentList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { componentIssueRelDTOList } = issueInfo;
+    const { componentIssueRelVOList } = issueInfo;
     return (
       <TextEditToggle
         // disabled={disabled}
         style={{ width: '100%' }}
-        formKey="componentIssueRelDTOList"
-        onSubmit={(value, done) => { this.editIssue({ componentIssueRelDTOList: value }, done); }}
-        originData={this.transToArr(componentIssueRelDTOList, 'name', 'array')}
+        formKey="componentIssueRelVOList"
+        onSubmit={(value, done) => { this.editIssue({ componentIssueRelVOList: value }, done); }}
+        originData={this.transToArr(componentIssueRelVOList, 'name', 'array')}
       >
         <Text>
           {data => (
@@ -1091,31 +1086,31 @@ class EditIssueNarrow extends Component {
 
   render() {
     const {
-      issueLoading, FullEditorShow, createLinkTaskShow,
+      FullEditorShow, createLinkTaskShow,
       currentNav, showMore
     } = this.state;
     const {
-      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName,
-    } = this.props;
+      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName, testStepData, testExecuteData
+      , leaveLoad, enterLoad, reloadIssue } = this.props;
     const {
       issueNum, summary, creationDate, lastUpdateDate, description,
-      priorityDTO, issueTypeDTO, statusMapDTO, versionIssueRelDTOList,
-      issueAttachmentDTOList,
+      priorityVO, issueTypeVO, statusVO, versionIssueRelVOList,
+      issueAttachmentVOList,
     } = issueInfo || {};
     const {
       name: statusName, id: statusId, colour: statusColor, icon: statusIcon,
       type: statusCode,
-    } = statusMapDTO || {};
-    const { colour: priorityColor } = priorityDTO || {};
-    const typeCode = issueTypeDTO ? issueTypeDTO.typeCode : '';
-    const typeColor = issueTypeDTO ? issueTypeDTO.colour : '#fab614';
-    const typeIcon = issueTypeDTO ? issueTypeDTO.icon : 'help';
+    } = statusVO || {};
+    const { colour: priorityColor } = priorityVO || {};
+    const typeCode = issueTypeVO ? issueTypeVO.typeCode : '';
+    const typeColor = issueTypeVO ? issueTypeVO.colour : '#fab614';
+    const typeIcon = issueTypeVO ? issueTypeVO.icon : 'help';
 
     // const currentCycle = IssueTreeStore.currentCycle;
     // const { cycleId } = currentCycle;
 
 
-    const fixVersionsTotal = _.filter(versionIssueRelDTOList, { relationType: 'fix' }) || [];
+    const fixVersionsTotal = _.filter(versionIssueRelVOList, { relationType: 'fix' }) || [];
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
     const menu = AppState.currentMenuType;
@@ -1155,13 +1150,11 @@ class EditIssueNarrow extends Component {
         <ResizeAble
           modes={['left']}
           size={{
-            // maxHeight: 500,
-            // minWidth: 100,
-            maxWidth: 800,
+            maxWidth: window.innerWidth * 0.6,
             minWidth: 440,
           }}
           defaultSize={{
-            width: localStorage.getItem('agile.EditIssue.width') || 440,
+            width: localStorage.getItem('agile.EditIssue.width') || 600,
             height: '100%',
           }}
           onResizeEnd={this.handleResizeEnd}
@@ -1170,7 +1163,7 @@ class EditIssueNarrow extends Component {
           <div className="c7ntest-editIssue" ref={this.container}>
             <div className="c7ntest-editIssue-divider" />
             {
-              issueLoading ? (
+              loading ? (
                 <div
                   style={{
                     position: 'absolute',
@@ -1189,44 +1182,34 @@ class EditIssueNarrow extends Component {
                 </div>
               ) : null
             }
-            <div className="c7ntest-nav">
-              <div>
-                <div style={{
-                  height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,0.26)',
-                }}
-                >
-                  <TypeTag data={issueTypeDTO} />
-                </div>
-              </div>
-              <ul className="c7ntest-nav-ul">
-                {this.renderNavs()}
-
-              </ul>
-            </div>
-
             <div className="c7ntest-content">
               <div className="c7ntest-content-top">
                 <div className="c7ntest-header-editIssue">
                   <div className="c7ntest-content-editIssue" style={{ overflowY: 'hidden' }}>
                     <div
-                      className="line-justify"
                       style={{
+                        display: 'flex',
                         alignItems: 'center',
                         paddingLeft: '20px',
                         paddingRight: '20px',
                         marginLeft: '-20px',
                         marginRight: '-20px',
-                        borderBottom: '1px solid rgba(0, 0, 0, 0.26)',
                         height: 44,
                       }}
                     >
+                      <div style={{
+                        height: 44, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                      }}
+                      >
+                        <TypeTag data={issueTypeVO} />
+                      </div>
                       {/* issueNum 用例编号 */}
-                      <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500 }}>
+                      <div style={{ fontSize: 16, lineHeight: '28px', fontWeight: 500, marginLeft: 15 }}>
                         <span>{issueNum}</span>
                       </div>
                       <div
                         style={{
-                          cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center',
+                          cursor: 'pointer', fontSize: '13px', lineHeight: '20px', display: 'flex', alignItems: 'center', marginLeft: 'auto'
                         }}
                         role="none"
                         onClick={() => this.props.onClose()}
@@ -1236,7 +1219,6 @@ class EditIssueNarrow extends Component {
                       </div>
                     </div>
                     <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
-
                       <TextEditToggle
                         disabled={disabled}
                         style={{ width: '100%' }}
@@ -1269,275 +1251,298 @@ class EditIssueNarrow extends Component {
               <div className="c7ntest-content-bottom" id="scroll-area" style={{ position: 'relative' }}>
                 <section className="c7ntest-body-editIssue">
                   <div className="c7ntest-content-editIssue">
-                    <div className="c7ntest-details">
-                      <div id="detail">
-                        <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
-                          <div className="c7ntest-title-left">
-                            <Icon type="error_outline c7ntest-icon-title" />
-                            <FormattedMessage id="detail" />
-                          </div>
-                          <div style={{
-                            flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                          }}
-                          />
-                        </div>
-                        <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
-
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                {'状态：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {this.renderSelectStatus()}
-                            </div>
-                          </div>
-
-                          {/* 优先级 */}
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">优先级：</span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {this.renderSelectPriority()}
-                            </div>
-                          </div>
-
-                          {/* 版本名称 */}
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_create_content_version" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              <div>
-                                {
-                                  !fixVersionsFixed.length && !fixVersions.length ? '无' : (
-                                    <div>
-                                      <div style={{ color: '#000' }}>
-                                        {_.map(fixVersionsFixed, 'name').join(' , ')}
-                                      </div>
-                                      <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
-                                        {_.map(fixVersions, 'name').join(' , ')}
-                                      </p>
-                                    </div>
-                                  )
-                                }
+                    <Tabs>
+                      <TabPane tab="测试步骤" key="test">
+                        <TestStepTable
+                          disabled={disabled}
+                          issueId={issueId}
+                          data={testStepData}
+                          enterLoad={enterLoad}
+                          leaveLoad={leaveLoad}
+                          onOk={reloadIssue}
+                        />
+                      </TabPane>
+                      <TabPane tab="详情" key="detail">
+                        <div className="c7ntest-details">
+                          <div id="detail">
+                            <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
+                              <div className="c7ntest-title-left">
+                                <Icon type="error_outline c7ntest-icon-title" />
+                                <FormattedMessage id="detail" />
                               </div>
-                            </div>
-                          </div>
-                          {/* 文件夹名称 */}
-                          <div className="line-start mt-10">
-                            <div className="c7ntest-property-wrapper">
-                              <span className="c7ntest-property">
-                                <FormattedMessage id="issue_create_content_folder" />
-                                {'：'}
-                              </span>
-                            </div>
-                            <div className="c7ntest-value-wrapper">
-                              {folderName || '无'}
-                            </div>
-                          </div>
-                          {showMore ? <Fragment>
-                            {/* 模块 */}
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="summary_component" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper">
-                                {this.renderSelectModule()}
-                              </div>
-                            </div>
-
-                            {/* 标签 */}
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="summary_label" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper">
-                                {this.renderSelectLabel()}
-                              </div>
-                            </div>
-
-                            {/* 报告人 */}
-                            <div className="line-start mt-10 assignee">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="issue_edit_reporter" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                                {this.renderSelectPerson()}
-                              </div>
-                            </div>
-                            <div className="line-start mt-10 assignee">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="issue_edit_manager" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                                {this.renderSelectAssign()}
-                                <span
-                                  role="none"
-                                  style={{
-                                    color: '#3f51b5',
-                                    cursor: 'pointer',
-                                    marginTop: '-2px',
-                                    display: 'inline-block',
-                                  }}
-                                  onClick={() => {
-                                    this.editIssue({ assigneeId: AppState.userInfo.id });
-                                  }}
-                                >
-                                  <FormattedMessage id="issue_edit_assignToMe" />
-                                </span>
-                              </div>
-                            </div>
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="issue_edit_createDate" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper">
-                                <Timeago date={creationDate} />
-                              </div>
-                            </div>
-                            <div className="line-start mt-10">
-                              <div className="c7ntest-property-wrapper">
-                                <span className="c7ntest-property">
-                                  <FormattedMessage id="issue_edit_updateDate" />
-                                  {'：'}
-                                </span>
-                              </div>
-                              <div className="c7ntest-value-wrapper">
-                                <Timeago date={lastUpdateDate} />
-                              </div>
-                            </div>
-                          </Fragment> : null}
-                        </div>
-                        <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
-                          <span>{showMore ? '收起' : '展开'}</span>
-                          <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
-                        </Button>
-                      </div>
-                      <div id="des">
-                        <div className="c7ntest-title-wrapper">
-                          <div className="c7ntest-title-left">
-                            <Icon type="subject c7ntest-icon-title" />
-                            <span><FormattedMessage id="execute_description" /></span>
-                          </div>
-                          <div style={{
-                            flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                          }}
-                          />
-                          <div style={{ marginLeft: '14px', display: "flex" }}>
-                            <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                              <Button icon="zoom_out_map" onClick={() => this.setState({ FullEditorShow: true })} />
-                            </Tooltip>
-                            <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
-                              <Button
-                                icon="mode_edit mlr-3"
-                                onClick={() => {
-                                  this.setState({
-                                    editDescriptionShow: true,
-                                  });
-                                }}
+                              <div style={{
+                                flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                              }}
                               />
-                            </Tooltip>
+                            </div>
+                            <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
+
+                              <div className="line-start mt-10">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">
+                                    {'状态：'}
+                                  </span>
+                                </div>
+                                <div className="c7ntest-value-wrapper">
+                                  {this.renderSelectStatus()}
+                                </div>
+                              </div>
+
+                              {/* 优先级 */}
+                              <div className="line-start mt-10">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">优先级：</span>
+                                </div>
+                                <div className="c7ntest-value-wrapper">
+                                  {this.renderSelectPriority()}
+                                </div>
+                              </div>
+
+                              {/* 版本名称 */}
+                              <div className="line-start mt-10">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">
+                                    <FormattedMessage id="issue_create_content_version" />
+                                    {'：'}
+                                  </span>
+                                </div>
+                                <div className="c7ntest-value-wrapper">
+                                  <div>
+                                    {
+                                      !fixVersionsFixed.length && !fixVersions.length ? '无' : (
+                                        <div>
+                                          <div style={{ color: '#000' }}>
+                                            {_.map(fixVersionsFixed, 'name').join(' , ')}
+                                          </div>
+                                          <p style={{ wordBreak: 'break-word', marginBottom: 0 }}>
+                                            {_.map(fixVersions, 'name').join(' , ')}
+                                          </p>
+                                        </div>
+                                      )
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                              {/* 文件夹名称 */}
+                              <div className="line-start mt-10">
+                                <div className="c7ntest-property-wrapper">
+                                  <span className="c7ntest-property">
+                                    <FormattedMessage id="issue_create_content_folder" />
+                                    {'：'}
+                                  </span>
+                                </div>
+                                <div className="c7ntest-value-wrapper">
+                                  {folderName || '无'}
+                                </div>
+                              </div>
+                              {showMore ? <Fragment>
+                                {/* 模块 */}
+                                <div className="line-start mt-10">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="summary_component" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper">
+                                    {this.renderSelectModule()}
+                                  </div>
+                                </div>
+
+                                {/* 标签 */}
+                                <div className="line-start mt-10">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="summary_label" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper">
+                                    {this.renderSelectLabel()}
+                                  </div>
+                                </div>
+
+                                {/* 报告人 */}
+                                <div className="line-start mt-10 assignee">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="issue_edit_reporter" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                    {this.renderSelectPerson()}
+                                  </div>
+                                </div>
+                                <div className="line-start mt-10 assignee">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="issue_edit_manager" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                                    {this.renderSelectAssign()}
+                                    <span
+                                      role="none"
+                                      style={{
+                                        color: '#3f51b5',
+                                        cursor: 'pointer',
+                                        marginTop: '-2px',
+                                        display: 'inline-block',
+                                      }}
+                                      onClick={() => {
+                                        this.editIssue({ assigneeId: AppState.userInfo.id });
+                                      }}
+                                    >
+                                      <FormattedMessage id="issue_edit_assignToMe" />
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="line-start mt-10">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="issue_edit_createDate" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper">
+                                    <Timeago date={creationDate} />
+                                  </div>
+                                </div>
+                                <div className="line-start mt-10">
+                                  <div className="c7ntest-property-wrapper">
+                                    <span className="c7ntest-property">
+                                      <FormattedMessage id="issue_edit_updateDate" />
+                                      {'：'}
+                                    </span>
+                                  </div>
+                                  <div className="c7ntest-value-wrapper">
+                                    <Timeago date={lastUpdateDate} />
+                                  </div>
+                                </div>
+                              </Fragment> : null}
+                            </div>
+                            <Button className="leftBtn" funcType="flat" onClick={() => this.setState(({ showMore }) => ({ showMore: !showMore }))}>
+                              <span>{showMore ? '收起' : '展开'}</span>
+                              <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
+                            </Button>
+                          </div>
+                          <div id="des">
+                            <div className="c7ntest-title-wrapper">
+                              <div className="c7ntest-title-left">
+                                <Icon type="subject c7ntest-icon-title" />
+                                <span><FormattedMessage id="execute_description" /></span>
+                              </div>
+                              <div style={{
+                                flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                              }}
+                              />
+                              <div style={{ marginLeft: '14px', display: "flex" }}>
+                                <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                  <Button icon="zoom_out_map" onClick={() => this.setState({ FullEditorShow: true })} />
+                                </Tooltip>
+                                <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
+                                  <Button
+                                    icon="mode_edit mlr-3"
+                                    onClick={() => {
+                                      this.setState({
+                                        editDescriptionShow: true,
+                                      });
+                                    }}
+                                  />
+                                </Tooltip>
+                              </div>
+                            </div>
+                            {this.renderDescription()}
                           </div>
                         </div>
-                        {this.renderDescription()}
-                      </div>
-                    </div>
-
-                    {/* 附件 */}
-                    <div id="attachment">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="attach_file c7ntest-icon-title" />
-                          <FormattedMessage id="attachment" />
+                        {/* 附件 */}
+                        <div id="attachment">
+                          <div className="c7ntest-title-wrapper">
+                            <div className="c7ntest-title-left">
+                              <Icon type="attach_file c7ntest-icon-title" />
+                              <FormattedMessage id="attachment" />
+                            </div>
+                            <div style={{
+                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: 50,
+                            }}
+                            />
+                          </div>
+                          <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
+                            <UploadButtonNow
+                              onRemove={this.setFileList}
+                              onBeforeUpload={this.setFileList}
+                              updateNow={this.onChangeFileList}
+                              fileList={fileList}
+                            />
+                          </div>
                         </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: 50,
-                        }}
-                        />
-                      </div>
-                      <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
-                        <UploadButtonNow
-                          onRemove={this.setFileList}
-                          onBeforeUpload={this.setFileList}
-                          updateNow={this.onChangeFileList}
-                          fileList={fileList}
-                        />
-                      </div>
-                    </div>
-                    {/* 评论 */}
-                    <div id="commit">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="sms_outline c7ntest-icon-title" />
-                          <FormattedMessage id="issue_edit_comment" />
+                        {/* 关联用例 */}
+                        <div id="link_task">
+                          <div className="c7ntest-title-wrapper">
+                            <div className="c7ntest-title-left">
+                              <Icon type="link c7ntest-icon-title" />
+                              关联问题
                         </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                        }}
-                        />
-                        <div style={{ marginLeft: '14px' }}>
-                          <Tooltip title="添加评论" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <Button icon="playlist_add" onClick={() => this.setState({ addingComment: true })} />
-                          </Tooltip>
+                            <div style={{
+                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                            }}
+                            />
+                            <div style={{ marginLeft: '14px' }}>
+                              <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
+                              </Tooltip>
+                            </div>
+                          </div>
+                          {this.renderLinkIssues()}
                         </div>
-                      </div>
-                      {this.renderCommits()}
-                    </div>
-                    {/* 修改日志 */}
-                    <div id="data_log">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="insert_invitation c7ntest-icon-title" />
-                          <FormattedMessage id="issue_edit_activeLog" />
+                      </TabPane>
+                      <TabPane tab="评论" key="comment">
+                        {/* 评论 */}
+                        <div id="commit">
+                          <div className="c7ntest-title-wrapper">
+                            <div className="c7ntest-title-left">
+                              <Icon type="sms_outline c7ntest-icon-title" />
+                              <FormattedMessage id="issue_edit_comment" />
+                            </div>
+                            <div style={{
+                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                            }}
+                            />
+                            <div style={{ marginLeft: '14px' }}>
+                              <Tooltip title="添加评论" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                                <Button icon="playlist_add" onClick={() => this.setState({ addingComment: true })} />
+                              </Tooltip>
+                            </div>
+                          </div>
+                          {this.renderCommits()}
                         </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                        }}
-                        />
-                      </div>
-                      {this.renderDataLogs()}
-                    </div>
-
-                    {/* 关联用例 */}
-                    <div id="link_task">
-                      <div className="c7ntest-title-wrapper">
-                        <div className="c7ntest-title-left">
-                          <Icon type="link c7ntest-icon-title" />
-                          关联问题
+                      </TabPane>
+                      <TabPane tab="记录" key="log">
+                        {/* 修改日志 */}
+                        <div id="data_log">
+                          <div className="c7ntest-title-wrapper">
+                            <div className="c7ntest-title-left">
+                              <Icon type="insert_invitation c7ntest-icon-title" />
+                              <FormattedMessage id="issue_edit_activeLog" />
+                            </div>
+                            <div style={{
+                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
+                            }}
+                            />
+                          </div>
+                          {this.renderDataLogs()}
                         </div>
-                        <div style={{
-                          flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                        }}
-                        />
-                        <div style={{ marginLeft: '14px' }}>
-                          <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                            <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
-                          </Tooltip>
-                        </div>
-                      </div>
-                      {this.renderLinkIssues()}
-                    </div>
+                        {testExecuteData.length > 0 && <TestExecuteTable
+                          issueId={issueId}
+                          data={testExecuteData}
+                          enterLoad={enterLoad}
+                          leaveLoad={leaveLoad}
+                          onOk={reloadIssue}
+                        />}
+                      </TabPane>
+                    </Tabs>
                   </div>
                 </section>
               </div>

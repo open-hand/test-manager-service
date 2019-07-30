@@ -22,7 +22,7 @@ export function createIssue(issueObj, folderId) {
   const issue = {
     ...issueObj,
   };
-  const { versionId } = issue.versionIssueRelDTOList[0];
+  const { versionId } = issue.versionIssueRelVOList[0];
   return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}&applyType=test`, issue);
 }
 /**

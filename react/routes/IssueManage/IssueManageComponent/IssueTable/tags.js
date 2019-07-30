@@ -15,13 +15,13 @@ const testTypes = {
   issue_auto_test: '自动化测试',
   issue_test: '测试',
 };
-export function renderType(issueTypeDTO, showTypeName) {
-  const { name, typeCode } = issueTypeDTO || {};
+export function renderType(issueTypeVO, showTypeName) {
+  const { name, typeCode } = issueTypeVO || {};
   return (
     <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${name}`}>
       <div style={{ display: 'flex' }}>
         <TypeTag
-          data={issueTypeDTO || {}}
+          data={issueTypeVO || {}}
         />
         {showTypeName && <span style={{ marginLeft: 5 }}>{testTypes[typeCode]}</span>}
       </div>
@@ -51,16 +51,16 @@ export function renderSummary(summary) {
     </div>
   );
 }
-export function renderPriority(priorityDTO) {
-  if (!priorityDTO) {
+export function renderPriority(priorityVO) {
+  if (!priorityVO) {
     return null;
   }
-  const { name } = priorityDTO;
+  const { name } = priorityVO;
   return ( 
     <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
       <div style={{ marginTop: 4 }}>
         <PriorityTag
-          priority={priorityDTO}
+          priority={priorityVO}
         />
       </div>
     </Tooltip>
@@ -206,14 +206,14 @@ export function renderReporter(reporterId, reporterLoginName, reporterRealName, 
     ) : null
   );
 }
-export function renderStatus(statusMapDTO) {
-  const { name: statusName } = statusMapDTO;
+export function renderStatus(statusVO) {
+  const { name: statusName } = statusVO;
   return (
     <div style={{ margin: '0 5px' }}>
       <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
         <div>
           <StatusTag
-            status={statusMapDTO}
+            status={statusVO}
           />
         </div>
       </Tooltip>

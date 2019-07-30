@@ -54,10 +54,10 @@ const Section = ({
     </section>
   );
 const defaultProps = {
-  issueInfosDTO: { issueTypeDTO: {} },
+  issueInfosVO: { issueTypeVO: {} },
 };
 const propTypes = {
-  issueInfosDTO: PropTypes.shape({}),
+  issueInfosVO: PropTypes.shape({}),
   cycleData: PropTypes.shape({}).isRequired,
   fileList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   onFileRemove: PropTypes.func.isRequired,
@@ -200,7 +200,7 @@ class ExecuteDetailSide extends Component {
 
   render() {
     const {
-      issueInfosDTO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
+      issueInfosVO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
       onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit, disabled,
     } = this.props;
     const issueList = ExecuteDetailStore.getIssueList;
@@ -209,8 +209,8 @@ class ExecuteDetailSide extends Component {
     const { selectLoading } = ExecuteDetailStore;
     const { FullEditorShow, editing } = this.state;
     const {
-      issueNum, summary, issueId, issueTypeDTO: { typeCode },
-    } = issueInfosDTO || { issueTypeDTO: {} };
+      issueNum, summary, issueId, issueTypeVO: { typeCode },
+    } = issueInfosVO || { issueTypeVO: {} };
     const { statusColor, statusName } = status;
     const {
       lastUpdateDate, cycleName, lastUpdateUser, assigneeUser, comment, defects,

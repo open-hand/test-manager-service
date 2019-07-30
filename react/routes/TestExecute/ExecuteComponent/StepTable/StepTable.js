@@ -268,7 +268,7 @@ class StepTable extends PureComponent {
                         fontSize: '13px',
                       }}
                     >
-                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                      {defect.issueInfosVO && defect.issueInfosVO.issueName}
                     </div>
                   ))}
                 </div>

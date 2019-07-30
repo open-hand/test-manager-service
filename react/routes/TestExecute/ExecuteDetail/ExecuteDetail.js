@@ -215,7 +215,7 @@ class ExecuteDetail extends Component {
     const defectType = ExecuteDetailStore.getDefectType;
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const {
-      nextExecuteId, lastExecuteId, issueInfosDTO, executionStatus,
+      nextExecuteId, lastExecuteId, issueInfosVO, executionStatus,
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
@@ -264,14 +264,14 @@ class ExecuteDetail extends Component {
               }}
             >
               <div style={{ marginBottom: 24 }}>
-                {issueInfosDTO && (
+                {issueInfosVO && (
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <StatusTags
                       style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
                       color={statusColor}
                       name={statusName}
                     />
-                    <span style={{ fontSize: '20px' }}>{issueInfosDTO.summary}</span>
+                    <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
                     <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
                       <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
                       {visible ? '隐藏详情' : '打开详情'}
@@ -313,7 +313,7 @@ class ExecuteDetail extends Component {
               <ExecuteDetailSide
                 disabled={disabled}
                 ref={this.saveRef('ExecuteDetailSide')}
-                issueInfosDTO={issueInfosDTO}
+                issueInfosVO={issueInfosVO}
                 cycleData={cycleData}
                 fileList={fileList}
                 onFileRemove={this.handleFileRemove}

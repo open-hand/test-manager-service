@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Select } from 'choerodon-ui';
+import { Select, Button } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { removeDefect, addDefects } from '../../api/ExecuteDetailApi';
+import { removeDefect } from '../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../api/agileApi';
 import './DefectSelect.less';
 import ExecuteDetailStore from '../../store/ExecuteDetailStore';
@@ -18,6 +18,8 @@ class DefectSelect extends Component {
       defects: defects || [],
       defectIds: defects ? defects.map(defect => defect.issueId.toString()) : [],
       originDefects: defects ? defects.map(defect => defect.issueId.toString()) : [],
+      canLoadMore: false,
+      page: 1,
     };
   }
 
@@ -29,8 +31,9 @@ class DefectSelect extends Component {
     this.setState({
       selectLoading: true,
     });
-    getIssuesForDefects().then((issueData) => {
+    getIssuesForDefects('', { page: 1 }).then((issueData) => {
       this.setState({
+        canLoadMore: issueData.hasNextPage,
         issueList: issueData.list,
         selectLoading: false,
       });
@@ -39,7 +42,7 @@ class DefectSelect extends Component {
 
   handleDefectsChange = (List) => {
     const {
-      originDefects, defects, defectIds, issueList, 
+      originDefects, defects, defectIds, issueList,
     } = this.state;
     const oldList = [...defectIds];
     // window.console.log('old', oldList, 'new', List);
@@ -76,27 +79,40 @@ class DefectSelect extends Component {
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
-  render() {  
-    const { executeStepId, ...otherProps } = this.props;        
-    const { handleSubmit } = this.props.bugsToggleRef;
+  loadMore=() => {
+    this.setState({
+      selectLoading: true,
+    });
+    const { page } = this.state;
+    getIssuesForDefects('', { page: page + 1 }).then((issueData) => {
+      this.setState({
+        canLoadMore: issueData.hasNextPage,
+        issueList: issueData.list,
+        page: issueData.page,
+        selectLoading: false,
+      });
+    });
+  }
+
+  render() {
+    const { executeStepId, bugsToggleRef, ...otherProps } = this.props;
+    const { handleSubmit } = bugsToggleRef;
     const {
-      defects, selectLoading, defectIds, issueList, originDefects,  
+      defects, selectLoading, issueList, canLoadMore,
     } = this.state;
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum} 
+        {issue.issueNum}
         {' '}
         {issue.summary}
       </Option>
     ));
     return (
       <div>
-        <Select  
-          // defaultOpen        
-          dropdownStyle={{        
-            width: 300,  
-          }}
-          getPopupContainer={this.props.getPopupContainer}
+        <Select      
+          dropdownStyle={{
+            width: 300,
+          }}         
           autoFocus
           filter
           mode="multiple"
@@ -105,7 +121,7 @@ class DefectSelect extends Component {
           loading={selectLoading}
           defaultValue={defects.map(defect => defect.issueId.toString())}
           footer={(
-            <div 
+            <div
               style={{ color: '#3f51b5', cursor: 'pointer' }}
               role="none"
               onClick={() => {
@@ -134,6 +150,11 @@ class DefectSelect extends Component {
           {...otherProps}
         >
           {defectsOptions}
+          {canLoadMore && (
+            <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
+              <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={this.loadMore}>更多</Button>
+            </Option>
+          )}
         </Select>
       </div>
     );

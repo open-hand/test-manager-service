@@ -24,12 +24,12 @@ class LinkList extends Component {
   render() {
     const { issue, i } = this.props;
     const {
-      priorityDTO, issueTypeDTO, issueNum, summary, issueId, linkedIssueId,
-      linkId, ward, statusMapDTO,
+      priorityVO, issueTypeVO, issueNum, summary, issueId, linkedIssueId,
+      linkId, ward, statusVO,
     } = issue;
-    const { colour: priorityColor, name: priorityName } = priorityDTO || {};
-    const { colour: typeColor, name: typeName, typeCode } = issueTypeDTO || {};
-    const { colour: statusColor, name: statusName } = statusMapDTO || {};
+    const { colour: priorityColor, name: priorityName } = priorityVO || {};
+    const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
+    const { colour: statusColor, name: statusName } = statusVO || {};
     const Reg = /被/g;
     return (
       <div
@@ -44,7 +44,7 @@ class LinkList extends Component {
       >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
           <div>
-            <TypeTag data={issueTypeDTO} />
+            <TypeTag data={issueTypeVO} />
           </div>
         </Tooltip>
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
@@ -67,7 +67,7 @@ class LinkList extends Component {
         <div style={{ marginRight: '15px', overflow: 'hidden' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
             <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityDTO} />
+              <PriorityTag priority={priorityVO} />
             </div>
           </Tooltip>
         </div>
@@ -78,7 +78,7 @@ class LinkList extends Component {
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
             <div>
               <StatusTag
-                status={statusMapDTO}
+                status={statusVO}
               />
             </div>
           </Tooltip>

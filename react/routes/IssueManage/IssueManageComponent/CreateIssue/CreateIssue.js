@@ -184,7 +184,7 @@ class CreateIssue extends Component {
           parentIssueId: 0,
           assigneeId: values.assigneedId,
           labelIssueRelDTOList,
-          versionIssueRelDTOList: fixVersionIssueRelDTOList,
+          versionIssueRelVOList: fixVersionIssueRelDTOList,
           componentIssueRelDTOList,
         };
         this.setState({ createLoading: true });

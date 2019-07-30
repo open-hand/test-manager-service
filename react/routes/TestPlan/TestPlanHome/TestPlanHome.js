@@ -76,7 +76,7 @@ class TestPlanHome extends Component {
     delete temp.defects;
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
-    delete temp.issueInfosDTO;
+    delete temp.issueInfosVO;
     temp.assignedTo = temp.assignedTo || 0;
     TestPlanStore.rightEnterLoading();
     editExecuteDetail({

@@ -393,7 +393,7 @@ class CreateIssue extends Component {
           parentIssueId: 0,
           assigneeId: values.assigneedId,
           labelIssueRelDTOList,
-          versionIssueRelDTOList: fixVersionIssueRelDTOList,
+          versionIssueRelVOList: fixVersionIssueRelDTOList,
           componentIssueRelDTOList,
           storyPoints,
           remainingTime: estimatedTime,
@@ -1214,7 +1214,7 @@ class CreateIssue extends Component {
                                     }}
                                     >
                                       <TypeTag
-                                        data={issue.issueTypeDTO}
+                                        data={issue.issueTypeVO}
                                       />
                                       <span style={{
                                         paddingLeft: 12, paddingRight: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',

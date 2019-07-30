@@ -234,10 +234,10 @@ class TestStepTable extends Component {
       width: 560,
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
-  <div style={{ marginBottom: 32 }}>
-    {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
+        <div style={{ marginBottom: 32 }}>
+          {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
           }
-  </div>,
+        </div>,
       onOk() {
         return deleteStep({ data: { stepId } })
           .then((res) => {
@@ -296,7 +296,7 @@ class TestStepTable extends Component {
             simpleMode
             originData={stepIsCreating ? createStep.testStep : testStep}
             formKey="testStep"
-            style={{ padding: '5px 0' }} 
+            style={{ padding: '5px 0' }}
             // rules={[{ required: true, message: '请输入测试步骤' }]}
             onSubmit={(value) => {
               if (stepIsCreating) {
@@ -316,7 +316,7 @@ class TestStepTable extends Component {
           >
             <Text>
               {newValue => (
-                stepIsCreating 
+                stepIsCreating
                   ? (
                     <span>
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试步骤</span>}
@@ -341,7 +341,7 @@ class TestStepTable extends Component {
         return (
           <TextEditToggle
             simpleMode
-            style={{ padding: '5px 0' }} 
+            style={{ padding: '5px 0' }}
             originData={stepIsCreating ? createStep.testData : testData}
             formKey="testData"
             onSubmit={(value) => {
@@ -362,7 +362,7 @@ class TestStepTable extends Component {
           >
             <Text>
               {newValue => (
-                stepIsCreating 
+                stepIsCreating
                   ? (
                     <span>
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试数据</span>}
@@ -387,7 +387,7 @@ class TestStepTable extends Component {
         return (
           <TextEditToggle
             simpleMode
-            style={{ padding: '5px 0' }} 
+            style={{ padding: '5px 0' }}
             originData={stepIsCreating ? createStep.expectedResult : expectedResult}
             formKey="expectedResult"
             // rules={[{ required: true, message: '请输入预期结果' }]}
@@ -409,7 +409,7 @@ class TestStepTable extends Component {
           >
             <Text>
               {newValue => (
-                stepIsCreating 
+                stepIsCreating
                   ? (
                     <span>
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>预期结果</span>}
@@ -424,40 +424,43 @@ class TestStepTable extends Component {
           </TextEditToggle>
         );
       },
-    }, {
-      title: <FormattedMessage id="execute_stepAttachment" />,
-      dataIndex: 'attachments',
-      key: 'attachments',
-      flex: 2,
-      className: 'attachmentsColumn',
-      render: (attachments, record) => (
-        <div className="item-container item-container-upload">
-          {record.stepIsCreating ? (
-            <UploadButton
-              className="createUploadBtn"
-              onRemove={this.setFileList}
-              onBeforeUpload={this.setFileList}
-              fileList={fileList}
-            />
-          ) : (
-            <UploadInTable
-              fileList={attachments}
-              onOk={onOk}
-              enterLoad={enterLoad}
-              leaveLoad={leaveLoad}
-              config={{
-                attachmentLinkId: record.stepId,
-                attachmentType: 'CASE_STEP',
-              }}
-            />
-          )}
-        </div>
-      ),
-    }, {
+    },
+    // {
+    //   title: <FormattedMessage id="execute_stepAttachment" />,
+    //   dataIndex: 'attachments',
+    //   key: 'attachments',
+    //   flex: 2,
+    //   className: 'attachmentsColumn',
+    //   render: (attachments, record) => (
+    //     <div className="item-container item-container-upload">
+    //       {record.stepIsCreating ? (
+    //         <UploadButton
+    //           className="createUploadBtn"
+    //           onRemove={this.setFileList}
+    //           onBeforeUpload={this.setFileList}
+    //           fileList={fileList}
+    //         />
+    //       ) : (
+    //           <UploadInTable
+    //             fileList={attachments}
+    //             onOk={onOk}
+    //             enterLoad={enterLoad}
+    //             leaveLoad={leaveLoad}
+    //             config={{
+    //               attachmentLinkId: record.stepId,
+    //               attachmentType: 'CASE_STEP',
+    //             }}
+    //           />
+    //         )}
+    //     </div>
+    //   ),
+    // }, 
+    {
       title: null,
       dataIndex: 'action',
       key: 'action',
-      flex: 2,
+      flex: 'unset 0 0%',
+      width: 105,
       render: (attachments, record, index, provided, snapshot) => {
         const { stepIsCreating } = record;
         return !stepIsCreating ? (
@@ -474,16 +477,16 @@ class TestStepTable extends Component {
             <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
           </div>
         ) : (
-          <div>
-            <div {...provided.dragHandleProps} />
-            <Tooltip title={<FormattedMessage id="excute_save" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
-            </Tooltip>
-            <Tooltip title={<FormattedMessage id="excute_cancel" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
-            </Tooltip>
-          </div>
-        );
+            <div>
+              <div {...provided.dragHandleProps} />
+              <Tooltip title={<FormattedMessage id="excute_save" />}>
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
+              </Tooltip>
+              <Tooltip title={<FormattedMessage id="excute_cancel" />}>
+                <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
+              </Tooltip>
+            </div>
+          );
       },
     }];
 
@@ -498,6 +501,7 @@ class TestStepTable extends Component {
           onDragEnd={this.onDragEnd}
           dragKey="stepId"
           customDragHandle
+          scroll={{ x: true }}
         />
         <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
           <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.handleClickCreate}>

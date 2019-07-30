@@ -10,9 +10,9 @@
     "@babel/highlight" "7.0.0-beta.44"
 
 "@babel/code-frame@^7.0.0":
-  version "7.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
-  integrity sha1-BuKrGb21NThVWaq7W6WXKUgoAPg=
+  version "7.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
+  integrity sha1-vAeC9tafe31JUxIZaZuYj2aaj50=
   dependencies:
     "@babel/highlight" "^7.0.0"
 
@@ -67,31 +67,31 @@
     js-tokens "^3.0.0"
 
 "@babel/highlight@^7.0.0":
-  version "7.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/highlight/-/highlight-7.0.0.tgz#f710c38c8d458e6dd9a201afb637fcb781ce99e4"
-  integrity sha1-9xDDjI1Fjm3ZogGvtjf8t4HOmeQ=
+  version "7.5.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/highlight/-/highlight-7.5.0.tgz#56d11312bd9248fa619591d02472be6e8cb32540"
+  integrity sha1-VtETEr2SSPphlZHQJHK+boyzJUA=
   dependencies:
     chalk "^2.0.0"
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
 "@babel/parser@^7.4.3":
-  version "7.4.5"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/parser/-/parser-7.4.5.tgz#04af8d5d5a2b044a2a1bffacc1e5e6673544e872"
-  integrity sha1-BK+NXVorBEoqG/+sweXmZzVE6HI=
+  version "7.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/parser/-/parser-7.5.5.tgz#02f077ac8817d3df4a832ef59de67565e71cca4b"
+  integrity sha1-AvB3rIgX099Kgy71neZ1Zeccyks=
 
 "@babel/runtime-corejs2@^7.0.0":
-  version "7.4.5"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime-corejs2/-/runtime-corejs2-7.4.5.tgz#3d892f0560df21bafb384dd7727e33853e95d3c9"
-  integrity sha1-PYkvBWDfIbr7OE3Xcn4zhT6V08k=
+  version "7.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime-corejs2/-/runtime-corejs2-7.5.5.tgz#c3214c08ef20341af4187f1c9fbdc357fbec96b2"
+  integrity sha1-wyFMCO8gNBr0GH8cn73DV/vslrI=
   dependencies:
     core-js "^2.6.5"
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2":
-  version "7.4.5"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime/-/runtime-7.4.5.tgz#582bb531f5f9dc67d2fcb682979894f75e253f12"
-  integrity sha1-WCu1MfX53GfS/LaCl5iU914lPxI=
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.4.5":
+  version "7.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/runtime/-/runtime-7.5.5.tgz#74fba56d35efbeca444091c7850ccd494fd2f132"
+  integrity sha1-dPulbTXvvspEQJHHhQzNSU/S8TI=
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -131,18 +131,18 @@
     to-fast-properties "^2.0.0"
 
 "@babel/types@^7.0.0", "@babel/types@^7.0.0-beta.49":
-  version "7.4.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/types/-/types-7.4.4.tgz#8db9e9a629bb7c29370009b4b779ed93fe57d5f0"
-  integrity sha1-jbnppim7fCk3AAm0t3ntk/5X1fA=
+  version "7.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@babel/types/-/types-7.5.5.tgz#97b9f728e182785909aa4ab56264f090a028d18a"
+  integrity sha1-l7n3KOGCeFkJqkq1YmTwkKAo0Yo=
   dependencies:
     esutils "^2.0.2"
-    lodash "^4.17.11"
+    lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
 "@choerodon/boot@0.19.x":
-  version "0.19.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.19.0.tgz#f31269662237a911b6948d498b4288c461a23bd1"
-  integrity sha512-f0JIx58B+KsLF0MiI65YVzxEnWEHkdCjxrbO6jeChvriRKBJE0T6+hBfqPoVq9Dyj1Eu0XmxHn8/xCvBpg3qzA==
+  version "0.19.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/boot/-/boot-0.19.2.tgz#cf5919f40a81eec7793f7ffcf6b041bc1cf05c58"
+  integrity sha512-gI1RSgAdOVsDVvwzPwkf7SqDqxIW8oq/rydHehrj4ktWA6/vSIfPQ5zzgmVT2/cvxiPb2+WE5Bwm1gDlQnYuDg==
   dependencies:
     "@babel/parser" "^7.4.3"
     add-asset-html-webpack-plugin "^2.1.2"
@@ -203,6 +203,7 @@
     mkdirp "^0.5.1"
     mobx "4.7.0"
     mobx-react "5.1.2"
+    mobx-react-lite "^1.4.1"
     moment latest
     node-sass "^4.7.2"
     nunjucks "^3.1.3"
@@ -243,10 +244,10 @@
     webpack "^3.12.0"
     webpack-dev-server "^2.11.3"
 
-"@choerodon/master@0.18.x":
-  version "0.18.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.18.1.tgz#ec8dca2ba59bd5af714e409144e9a9206ee6b17d"
-  integrity sha512-UyIjnmrwi6d78fBSU4sx05Tdep+fvmr6jsbLMjhfBnM0aExeh3nIkq90V/VCpdUeNn6wZciCInyBfspQq5H5fg==
+"@choerodon/master@0.19.x":
+  version "0.19.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@choerodon/master/-/master-0.19.1.tgz#76fe678b59921fa5b140c631a4faddbb78027a3b"
+  integrity sha512-govq6QBmRuy6YWkcX9gLXqA9hB0B3X7/X5Zz9JDe5onsOKgVjaQzKdKbvp/GvTT7ShlE49oJwcgpSbTnZcUvdw==
   dependencies:
     react-onclickoutside "^6.8.0"
 
@@ -300,9 +301,9 @@
   integrity sha1-PcoOPzOyAPx9ETnAzZbBJoyt/Z0=
 
 "@types/node@*":
-  version "12.0.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@types/node/-/node-12.0.2.tgz#3452a24edf9fea138b48fad4a0a028a683da1e40"
-  integrity sha1-NFKiTt+f6hOLSPrUoKAopoPaHkA=
+  version "12.6.8"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@types/node/-/node-12.6.8.tgz#e469b4bf9d1c9832aee4907ba8a051494357c12c"
+  integrity sha1-5Gm0v50cmDKu5JB7qKBRSUNXwSw=
 
 "@types/prop-types@*":
   version "15.7.1"
@@ -317,9 +318,9 @@
     parchment "^1.1.2"
 
 "@types/react@*":
-  version "16.8.18"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@types/react/-/react-16.8.18.tgz#fe66fb748b0b6ca9709d38b87b2d1356d960a511"
-  integrity sha1-/mb7dIsLbKlwnTi4ey0TVtlgpRE=
+  version "16.8.23"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/@types/react/-/react-16.8.23.tgz#ec6be3ceed6353a20948169b6cb4c97b65b97ad2"
+  integrity sha1-7Gvjzu1jU6IJSBabbLTJe2W5etI=
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
@@ -380,9 +381,9 @@ acorn@^5.0.0:
   integrity sha1-Z6ojG/iBKXS4UjWpZ3Hra9B+onk=
 
 acorn@^6.0.7:
-  version "6.1.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/acorn/-/acorn-6.1.1.tgz#7d25ae05bb8ad1f9b699108e1094ecd7884adc1f"
-  integrity sha1-fSWuBbuK0fm2mRCOEJTs14hK3B8=
+  version "6.2.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/acorn/-/acorn-6.2.1.tgz#3ed8422d6dec09e6121cc7a843ca86a330a86b51"
+  integrity sha1-PthCLW3sCeYSHMeoQ8qGozCoa1E=
 
 add-asset-html-webpack-plugin@^2.1.2:
   version "2.1.3"
@@ -416,9 +417,9 @@ ajv-errors@^1.0.0:
   integrity sha1-81mGrOuRr63sQQL72FAUlQzvpk0=
 
 ajv-keywords@^3.0.0, ajv-keywords@^3.1.0:
-  version "3.4.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ajv-keywords/-/ajv-keywords-3.4.0.tgz#4b831e7b531415a7cc518cd404e73f6193c6349d"
-  integrity sha1-S4Mee1MUFafMUYzUBOc/YZPGNJ0=
+  version "3.4.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ajv-keywords/-/ajv-keywords-3.4.1.tgz#ef916e271c64ac12171fd8384eaae6b2345854da"
+  integrity sha1-75FuJxxkrBIXH9g4TqrmsjRYVNo=
 
 ajv@^4.9.1:
   version "4.11.8"
@@ -438,10 +439,10 @@ ajv@^5.0.0:
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.3.0"
 
-ajv@^6.0.1, ajv@^6.1.0, ajv@^6.5.5, ajv@^6.9.1:
-  version "6.10.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ajv/-/ajv-6.10.0.tgz#90d0d54439da587cd7e843bfb7045f50bd22bdf1"
-  integrity sha1-kNDVRDnaWHzX6EO/twRfUL0ivfE=
+ajv@^6.0.1, ajv@^6.1.0, ajv@^6.10.2, ajv@^6.5.5, ajv@^6.9.1:
+  version "6.10.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ajv/-/ajv-6.10.2.tgz#d3cea04d6b017b2894ad69040fec8b623eb4bd52"
+  integrity sha1-086gTWsBeyiUrWkED+yLYj60vVI=
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -746,11 +747,9 @@ async-foreach@^0.1.3:
   integrity sha1-NhIfhFwFeBct5Bmpfb6x0W7DRUI=
 
 async-validator@1.x:
-  version "1.11.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/async-validator/-/async-validator-1.11.2.tgz#ca5e2ba31c15e9319cb2d873c2b137b67a198ead"
-  integrity sha1-yl4roxwV6TGcsthzwrE3tnoZjq0=
-  dependencies:
-    babel-runtime "6.x"
+  version "1.12.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/async-validator/-/async-validator-1.12.1.tgz#d987bf2dee74766e48d6e199d5e30e294ab2f7ba"
+  integrity sha1-2Ye/Le50dm5I1uGZ1eMOKUqy97o=
 
 async@2.6.1:
   version "2.6.1"
@@ -765,11 +764,11 @@ async@^1.5.2:
   integrity sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo=
 
 async@^2.1.2, async@^2.4.1:
-  version "2.6.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/async/-/async-2.6.2.tgz#18330ea7e6e313887f5d2f2a904bac6fe4dd5381"
-  integrity sha1-GDMOp+bjE4h/XS8qkEusb+TdU4E=
+  version "2.6.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/async/-/async-2.6.3.tgz#d72625e2344a3656e3a3ad4fa749fa83299d82ff"
+  integrity sha1-1yYl4jRKNlbjo61Pp0n6gymdgv8=
   dependencies:
-    lodash "^4.17.11"
+    lodash "^4.17.14"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -1061,9 +1060,9 @@ babel-plugin-check-es2015-constants@^6.22.0:
     babel-runtime "^6.22.0"
 
 babel-plugin-import@^1.5.0:
-  version "1.11.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/babel-plugin-import/-/babel-plugin-import-1.11.2.tgz#7566459543656585382c60e99a9c751c6d09ff3d"
-  integrity sha1-dWZFlUNlZYU4LGDpmpx1HG0J/z0=
+  version "1.12.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/babel-plugin-import/-/babel-plugin-import-1.12.0.tgz#12d50950aecfd8de3f10880730221f0f0843a755"
+  integrity sha1-EtUJUK7P2N4/EIgHMCIfDwhDp1U=
   dependencies:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/runtime" "^7.0.0"
@@ -1773,9 +1772,9 @@ block-stream@*:
     inherits "~2.0.0"
 
 bluebird@^3.5.1:
-  version "3.5.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/bluebird/-/bluebird-3.5.4.tgz#d6cc661595de30d5b3af5fcedd3c0b3ef6ec5714"
-  integrity sha1-1sxmFZXeMNWzr1/O3TwLPvbsVxQ=
+  version "3.5.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
+  integrity sha1-qNCv1zJR7/u9X+OEp31zADwXpx8=
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.8"
@@ -2116,14 +2115,14 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000969"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/caniuse-db/-/caniuse-db-1.0.30000969.tgz#e6aeca9b1bac88865990913a0b041f587180cd59"
-  integrity sha1-5q7KmxusiIZZkJE6CwQfWHGAzVk=
+  version "1.0.30000986"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/caniuse-db/-/caniuse-db-1.0.30000986.tgz#0439a4052bbd3243fa01c9998601b9226e7ea6b7"
+  integrity sha1-BDmkBSu9MkP6AcmZhgG5Im5+prc=
 
 caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000805, caniuse-lite@^1.0.30000844:
-  version "1.0.30000969"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/caniuse-lite/-/caniuse-lite-1.0.30000969.tgz#7664f571f2072657bde70b00a1fc1ba41f1942a9"
-  integrity sha1-dmT1cfIHJle95wsAofwbpB8ZQqk=
+  version "1.0.30000986"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/caniuse-lite/-/caniuse-lite-1.0.30000986.tgz#f34350e367cc900509511574817ac092112bf7ab"
+  integrity sha1-80NQ42fMkAUJURV0gXrAkhEr96s=
 
 case-sensitive-paths-webpack-plugin@^2.1.2:
   version "2.2.0"
@@ -2239,14 +2238,14 @@ chardet@^0.7.0:
   integrity sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=
 
 choerodon-ui-font@0.2.x:
-  version "0.2.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui-font/-/choerodon-ui-font-0.2.0.tgz#1de694174f63fea5c8d9c7cfc37c51e51bad2558"
-  integrity sha1-HeaUF09j/qXI2cfPw3xR5RutJVg=
+  version "0.2.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui-font/-/choerodon-ui-font-0.2.1.tgz#8bd5a06206da6f400084238d2201b2cf6f984fde"
+  integrity sha1-i9WgYgbab0AAhCONIgGyz2+YT94=
 
 choerodon-ui@0.8.x:
   version "0.8.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui/-/choerodon-ui-0.8.0.tgz#d1caac3ef242b0b31e7a2d9ff44f4f858300c0d1"
-  integrity sha512-Gd1yzH4DP+mDaSOe86gMNSB3LnjjpvcrvUaHhSbixsKZvCPCy3doL+/QXRPu/cY3/bAorIzUo4U9VJR/BZQfZw==
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/choerodon-ui/-/choerodon-ui-0.8.0.tgz#e6cd9066d421dca2e1542edbc595b7cc91992de8"
+  integrity sha512-+YoedlAoz5WvKngAsZ570P87y7XdWEBGqLWyB4J/nNBXx2lR0t2TSxT8/5TxLGvY7GhODLkgdoN732B80r63Uw==
   dependencies:
     add-dom-event-listener "1.x"
     array-tree-filter "^2.0.0"
@@ -2281,6 +2280,7 @@ choerodon-ui@0.8.x:
     react-slick "~0.22.3"
     resize-observer-polyfill "^1.5.1"
     rmc-feedback "^1.0.0"
+    string-template "^1.0.0"
     tslib "^1.9.3"
     warning "~3.0.0"
 
@@ -2304,9 +2304,9 @@ chokidar@^2.0.0, chokidar@^2.0.2, chokidar@^2.1.2:
     fsevents "^1.2.7"
 
 chownr@^1.0.1, chownr@^1.1.1:
-  version "1.1.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/chownr/-/chownr-1.1.1.tgz#54726b8b8fff4df053c42187e801fb4412df1494"
-  integrity sha1-VHJri4//TfBTxCGH6AH7RBLfFJQ=
+  version "1.1.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/chownr/-/chownr-1.1.2.tgz#a18f1e0b269c8a6a5d3c86eb298beb14c3dd7bf6"
+  integrity sha1-oY8eCyacimpdPIbrKYvrFMPde/Y=
 
 ci-info@^2.0.0:
   version "2.0.0"
@@ -2473,9 +2473,9 @@ codemirror@5.44.0:
   integrity sha1-gNwqIx7reqsl7CQFzco35pPM+cw=
 
 codemirror@^5.18.2:
-  version "5.47.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/codemirror/-/codemirror-5.47.0.tgz#c13a521ae5660d3acc655af252f4955065293789"
-  integrity sha1-wTpSGuVmDTrMZVryUvSVUGUpN4k=
+  version "5.48.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/codemirror/-/codemirror-5.48.2.tgz#a9dd3d426dea4cd59efd59cd98e20a9152a30922"
+  integrity sha1-qd09Qm3qTNWe/VnNmOIKkVKjCSI=
 
 collapse-white-space@^1.0.2:
   version "1.0.5"
@@ -2631,6 +2631,11 @@ concat-stream@^1.5.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
+confusing-browser-globals@^1.0.5:
+  version "1.0.7"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/confusing-browser-globals/-/confusing-browser-globals-1.0.7.tgz#5ae852bd541a910e7ffb2dbb864a2d21a36ad29b"
+  integrity sha1-WuhSvVQakQ5/+y27hkotIaNq0ps=
+
 connect-history-api-fallback@^1.3.0:
   version "1.6.0"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/connect-history-api-fallback/-/connect-history-api-fallback-1.6.0.tgz#8b32089359308d111115d81cad3fceab888f97bc"
@@ -2723,9 +2728,9 @@ core-js@^1.0.0:
   integrity sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=
 
 core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.1, core-js@^2.6.5:
-  version "2.6.8"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/core-js/-/core-js-2.6.8.tgz#dc3a1e633a04267944e0cb850d3880f340248139"
-  integrity sha1-3DoeYzoEJnlE4MuFDTiA80AkgTk=
+  version "2.6.9"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
+  integrity sha1-a0shRiDINBUuF5Mjcn/Bl0GwhPI=
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -2742,17 +2747,7 @@ cosmiconfig@^3.1.0:
     parse-json "^3.0.0"
     require-from-string "^2.0.1"
 
-cosmiconfig@^4.0.0:
-  version "4.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/cosmiconfig/-/cosmiconfig-4.0.0.tgz#760391549580bbd2df1e562bc177b13c290972dc"
-  integrity sha1-dgORVJWAu9LfHlYrwXexPCkJctw=
-  dependencies:
-    is-directory "^0.3.1"
-    js-yaml "^3.9.0"
-    parse-json "^4.0.0"
-    require-from-string "^2.0.1"
-
-cosmiconfig@^5.0.2, cosmiconfig@^5.0.7:
+cosmiconfig@^5.0.0, cosmiconfig@^5.0.2, cosmiconfig@^5.0.7:
   version "5.2.1"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/cosmiconfig/-/cosmiconfig-5.2.1.tgz#040f726809c591e77a17c0a3626ca45b4f168b1a"
   integrity sha1-BA9yaAnFked6F8CjYmykW08Wixo=
@@ -2855,19 +2850,19 @@ crypto-browserify@^3.11.0:
     randomfill "^1.0.3"
 
 css-animation@^1.2.5:
-  version "1.5.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/css-animation/-/css-animation-1.5.0.tgz#c96b9097a5ef74a7be8480b45cc44e4ec6ca2bf5"
-  integrity sha1-yWuQl6XvdKe+hIC0XMROTsbKK/U=
+  version "1.6.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/css-animation/-/css-animation-1.6.1.tgz#162064a3b0d51f958b7ff37b3d6d4de18e17039e"
+  integrity sha1-FiBko7DVH5WLf/N7PW1N4Y4XA54=
   dependencies:
     babel-runtime "6.x"
     component-classes "^1.2.5"
 
 css-box-model@^1.0.0:
-  version "1.1.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/css-box-model/-/css-box-model-1.1.2.tgz#c0e2c9d23b1b2fd98759706b88cfd4e2c38db727"
-  integrity sha1-wOLJ0jsbL9mHWXBriM/U4sONtyc=
+  version "1.1.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/css-box-model/-/css-box-model-1.1.3.tgz#aa1ac5853d2c9358783e67fe0b1ca22ecd82b232"
+  integrity sha1-qhrFhT0sk1h4Pmf+CxyiLs2CsjI=
   dependencies:
-    tiny-invariant "^1.0.4"
+    tiny-invariant "^1.0.5"
 
 css-color-names@0.0.4:
   version "0.0.4"
@@ -2985,9 +2980,9 @@ csso@~2.3.1:
     source-map "^0.5.3"
 
 csstype@^2.2.0:
-  version "2.6.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/csstype/-/csstype-2.6.4.tgz#d585a6062096e324e7187f80e04f92bd0f00e37f"
-  integrity sha1-1YWmBiCW4yTnGH+A4E+SvQ8A438=
+  version "2.6.6"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/csstype/-/csstype-2.6.6.tgz#c34f8226a94bbb10c32cc0d714afdf942291fc41"
+  integrity sha1-w0+CJqlLuxDDLMDXFK/flCKR/EE=
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -3002,11 +2997,12 @@ cyclist@~0.2.2:
   integrity sha1-GzN5LhHpFKL9bW7WRHRkRE5fpkA=
 
 d@1:
-  version "1.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"
-  integrity sha1-dUu1v+VUUdpppYuU1F9MWwRi1Y8=
+  version "1.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/d/-/d-1.0.1.tgz#8698095372d58dbee346ffd0c7093f99f8f9eb5a"
+  integrity sha1-hpgJU3LVjb7jRv/Qxwk/mfj561o=
   dependencies:
-    es5-ext "^0.10.9"
+    es5-ext "^0.10.50"
+    type "^1.0.1"
 
 damerau-levenshtein@^1.0.4:
   version "1.0.5"
@@ -3282,9 +3278,9 @@ doctrine@^3.0.0:
     esutils "^2.0.2"
 
 dom-align@1.x:
-  version "1.8.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/dom-align/-/dom-align-1.8.2.tgz#fdcd36bce25ba8d34fe3582efd57ac767df490bd"
-  integrity sha1-/c02vOJbqNNP41gu/Vesdn30kL0=
+  version "1.10.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/dom-align/-/dom-align-1.10.1.tgz#515e7469b78a69ab8ff0adb5f866d0840467a6bb"
+  integrity sha1-UV50abeKaauP8K21+GbQhARnprs=
 
 dom-closest@^0.2.0:
   version "0.2.0"
@@ -3442,9 +3438,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.47:
-  version "1.3.136"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/electron-to-chromium/-/electron-to-chromium-1.3.136.tgz#758a156109077536780cfa8207b1aeaa99843e33"
-  integrity sha1-dYoVYQkHdTZ4DPqCB7GuqpmEPjM=
+  version "1.3.203"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/electron-to-chromium/-/electron-to-chromium-1.3.203.tgz#76de1b76eaaf7208e587a26b8e45407535a00abd"
+  integrity sha1-dt4bduqvcgjlh6JrjkVAdTWgCr0=
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -3452,9 +3448,9 @@ elegant-spinner@^1.0.1:
   integrity sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=
 
 elliptic@^6.0.0:
-  version "6.4.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/elliptic/-/elliptic-6.4.1.tgz#c2d0b7776911b86722c632c3c06c60f2f819939a"
-  integrity sha1-wtC3d2kRuGcixjLDwGxg8vgZk5o=
+  version "6.5.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/elliptic/-/elliptic-6.5.0.tgz#2b8ed4c891b7de3200e14412a5b8248c7af505ca"
+  integrity sha1-K47UyJG33jIA4UQSpbgkjHr1Bco=
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"
@@ -3574,7 +3570,7 @@ es-to-primitive@^1.2.0:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
-es5-ext@^0.10.14, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
+es5-ext@^0.10.35, es5-ext@^0.10.46, es5-ext@^0.10.50, es5-ext@~0.10.14:
   version "0.10.50"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/es5-ext/-/es5-ext-0.10.50.tgz#6d0e23a0abdb27018e5ac4fd09b412bc5517a778"
   integrity sha1-bQ4joKvbJwGOWsT9CbQSvFUXp3g=
@@ -3583,7 +3579,7 @@ es5-ext@^0.10.14, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
     es6-symbol "~3.1.1"
     next-tick "^1.0.0"
 
-es6-iterator@^2.0.1, es6-iterator@~2.0.1, es6-iterator@~2.0.3:
+es6-iterator@^2.0.3, es6-iterator@~2.0.1, es6-iterator@~2.0.3:
   version "2.0.3"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/es6-iterator/-/es6-iterator-2.0.3.tgz#a7de889141a05a94b0854403b2d0a0fbfa98f3b7"
   integrity sha1-p96IkUGgWpSwhUQDstCg+/qY87c=
@@ -3624,13 +3620,13 @@ es6-symbol@3.1.1, es6-symbol@^3.1.0, es6-symbol@^3.1.1, es6-symbol@~3.1.1:
     es5-ext "~0.10.14"
 
 es6-weak-map@^2.0.1:
-  version "2.0.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/es6-weak-map/-/es6-weak-map-2.0.2.tgz#5e3ab32251ffd1538a1f8e5ffa1357772f92d96f"
-  integrity sha1-XjqzIlH/0VOKH45f+hNXdy+S2W8=
+  version "2.0.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/es6-weak-map/-/es6-weak-map-2.0.3.tgz#b6da1f16cc2cc0d9be43e6bdbfc5e7dfcdf31d53"
+  integrity sha1-ttofFswswNm+Q+a9v8Xn383zHVM=
   dependencies:
     d "1"
-    es5-ext "^0.10.14"
-    es6-iterator "^2.0.1"
+    es5-ext "^0.10.46"
+    es6-iterator "^2.0.3"
     es6-symbol "^3.1.1"
 
 escape-html@~1.0.3:
@@ -3653,23 +3649,23 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-airbnb-base@^13.1.0:
-  version "13.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-config-airbnb-base/-/eslint-config-airbnb-base-13.1.0.tgz#b5a1b480b80dfad16433d6c4ad84e6605052c05c"
-  integrity sha1-taG0gLgN+tFkM9bErYTmYFBSwFw=
+eslint-config-airbnb-base@^13.2.0:
+  version "13.2.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-config-airbnb-base/-/eslint-config-airbnb-base-13.2.0.tgz#f6ea81459ff4dec2dda200c35f1d8f7419d57943"
+  integrity sha1-9uqBRZ/03sLdogDDXx2PdBnVeUM=
   dependencies:
-    eslint-restricted-globals "^0.1.1"
+    confusing-browser-globals "^1.0.5"
     object.assign "^4.1.0"
-    object.entries "^1.0.4"
+    object.entries "^1.1.0"
 
 eslint-config-airbnb@latest:
-  version "17.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-config-airbnb/-/eslint-config-airbnb-17.1.0.tgz#3964ed4bc198240315ff52030bf8636f42bc4732"
-  integrity sha1-OWTtS8GYJAMV/1IDC/hjb0K8RzI=
+  version "17.1.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-config-airbnb/-/eslint-config-airbnb-17.1.1.tgz#2272e0b86bb1e2b138cdf88d07a3b6f4cda3d626"
+  integrity sha1-InLguGux4rE4zfiNB6O29M2j1iY=
   dependencies:
-    eslint-config-airbnb-base "^13.1.0"
+    eslint-config-airbnb-base "^13.2.0"
     object.assign "^4.1.0"
-    object.entries "^1.0.4"
+    object.entries "^1.1.0"
 
 eslint-import-resolver-node@^0.3.2:
   version "0.3.2"
@@ -3680,9 +3676,9 @@ eslint-import-resolver-node@^0.3.2:
     resolve "^1.5.0"
 
 eslint-module-utils@^2.4.0:
-  version "2.4.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-module-utils/-/eslint-module-utils-2.4.0.tgz#8b93499e9b00eab80ccb6614e69f03678e84e09a"
-  integrity sha1-i5NJnpsA6rgMy2YU5p8DZ46E4Jo=
+  version "2.4.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-module-utils/-/eslint-module-utils-2.4.1.tgz#7b4675875bf96b0dbf1b21977456e5bb1f5e018c"
+  integrity sha1-e0Z1h1v5aw2/GyGXdFblux9eAYw=
   dependencies:
     debug "^2.6.8"
     pkg-dir "^2.0.0"
@@ -3695,9 +3691,9 @@ eslint-plugin-babel@^5.1.0:
     eslint-rule-composer "^0.3.0"
 
 eslint-plugin-import@^2.14.0:
-  version "2.17.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-import/-/eslint-plugin-import-2.17.2.tgz#d227d5c6dc67eca71eb590d2bb62fb38d86e9fcb"
-  integrity sha1-0ifVxtxn7KcetZDSu2L7ONhun8s=
+  version "2.18.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-import/-/eslint-plugin-import-2.18.2.tgz#02f1180b90b077b33d447a17a2326ceb400aceb6"
+  integrity sha1-AvEYC5Cwd7M9RHoXojJs60AKzrY=
   dependencies:
     array-includes "^3.0.3"
     contains-path "^0.1.0"
@@ -3706,16 +3702,17 @@ eslint-plugin-import@^2.14.0:
     eslint-import-resolver-node "^0.3.2"
     eslint-module-utils "^2.4.0"
     has "^1.0.3"
-    lodash "^4.17.11"
     minimatch "^3.0.4"
+    object.values "^1.1.0"
     read-pkg-up "^2.0.0"
-    resolve "^1.10.0"
+    resolve "^1.11.0"
 
 eslint-plugin-jsx-a11y@^6.1.1:
-  version "6.2.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.1.tgz#4ebba9f339b600ff415ae4166e3e2e008831cf0c"
-  integrity sha1-Trup8zm2AP9BWuQWbj4uAIgxzww=
+  version "6.2.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.2.3.tgz#b872a09d5de51af70a97db1eea7dc933043708aa"
+  integrity sha1-uHKgnV3lGvcKl9se6n3JMwQ3CKo=
   dependencies:
+    "@babel/runtime" "^7.4.5"
     aria-query "^3.0.0"
     array-includes "^3.0.3"
     ast-types-flow "^0.0.7"
@@ -3723,25 +3720,22 @@ eslint-plugin-jsx-a11y@^6.1.1:
     damerau-levenshtein "^1.0.4"
     emoji-regex "^7.0.2"
     has "^1.0.3"
-    jsx-ast-utils "^2.0.1"
+    jsx-ast-utils "^2.2.1"
 
 eslint-plugin-react@^7.11.1:
-  version "7.13.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-react/-/eslint-plugin-react-7.13.0.tgz#bc13fd7101de67996ea51b33873cd9dc2b7e5758"
-  integrity sha1-vBP9cQHeZ5lupRszhzzZ3Ct+V1g=
+  version "7.14.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-plugin-react/-/eslint-plugin-react-7.14.3.tgz#911030dd7e98ba49e1b2208599571846a66bdf13"
+  integrity sha1-kRAw3X6YuknhsiCFmVcYRqZr3xM=
   dependencies:
     array-includes "^3.0.3"
     doctrine "^2.1.0"
     has "^1.0.3"
     jsx-ast-utils "^2.1.0"
+    object.entries "^1.1.0"
     object.fromentries "^2.0.0"
+    object.values "^1.1.0"
     prop-types "^15.7.2"
     resolve "^1.10.1"
-
-eslint-restricted-globals@^0.1.1:
-  version "0.1.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-restricted-globals/-/eslint-restricted-globals-0.1.1.tgz#35f0d5cbc64c2e3ed62e93b4b1a7af05ba7ed4d7"
-  integrity sha1-NfDVy8ZMLj7WLpO0saevBbp+1Nc=
 
 eslint-rule-composer@^0.3.0:
   version "0.3.0"
@@ -3765,9 +3759,11 @@ eslint-scope@^4.0.3:
     estraverse "^4.1.1"
 
 eslint-utils@^1.3.1:
-  version "1.3.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-utils/-/eslint-utils-1.3.1.tgz#9a851ba89ee7c460346f97cf8939c7298827e512"
-  integrity sha1-moUbqJ7nxGA0b5fPiTnHKYgn5RI=
+  version "1.4.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/eslint-utils/-/eslint-utils-1.4.0.tgz#e2c3c8dba768425f897cf0f9e51fe2e241485d4c"
+  integrity sha1-4sPI26doQl+JfPD55R/i4kFIXUw=
+  dependencies:
+    eslint-visitor-keys "^1.0.0"
 
 eslint-visitor-keys@^1.0.0:
   version "1.0.0"
@@ -4005,9 +4001,9 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
     homedir-polyfill "^1.0.1"
 
 express@^4.16.2:
-  version "4.17.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/express/-/express-4.17.0.tgz#288af62228a73f4c8ea2990ba3b791bb87cd4438"
-  integrity sha1-KIr2IiinP0yOopkLo7eRu4fNRDg=
+  version "4.17.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
+  integrity sha1-RJH8OGBc9R+GKdOcK10Cb5ikwTQ=
   dependencies:
     accepts "~1.3.7"
     array-flatten "1.1.1"
@@ -4070,9 +4066,9 @@ external-editor@^2.0.4:
     tmp "^0.0.33"
 
 external-editor@^3.0.3:
-  version "3.0.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/external-editor/-/external-editor-3.0.3.tgz#5866db29a97826dbe4bf3afd24070ead9ea43a27"
-  integrity sha1-WGbbKal4Jtvkvzr9JAcOrZ6kOic=
+  version "3.1.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/external-editor/-/external-editor-3.1.0.tgz#cb03f740befae03ea4d283caed2741a83f335495"
+  integrity sha1-ywP3QL764D6k0oPK7SdBqD8zVJU=
   dependencies:
     chardet "^0.7.0"
     iconv-lite "^0.4.24"
@@ -4179,9 +4175,9 @@ faye-websocket@^0.10.0:
     websocket-driver ">=0.5.1"
 
 faye-websocket@~0.11.0, faye-websocket@~0.11.1:
-  version "0.11.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/faye-websocket/-/faye-websocket-0.11.1.tgz#f0efe18c4f56e4f40afc7e06c719fd5ee6188f38"
-  integrity sha1-8O/hjE9W5PQK/H4Gxxn9XuYYjzg=
+  version "0.11.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/faye-websocket/-/faye-websocket-0.11.3.tgz#5c0e9a8968e8912c286639fde977a8b209f2508e"
+  integrity sha1-XA6aiWjokSwoZjn96XeosgnyUI4=
   dependencies:
     websocket-driver ">=0.5.1"
 
@@ -4386,9 +4382,9 @@ flat-cache@^2.0.1:
     write "1.0.3"
 
 flatted@^2.0.0:
-  version "2.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/flatted/-/flatted-2.0.0.tgz#55122b6536ea496b4b44893ee2608141d10d9916"
-  integrity sha1-VRIrZTbqSWtLRIk+4mCBQdENmRY=
+  version "2.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/flatted/-/flatted-2.0.1.tgz#69e57caa8f0eacbc281d2e2cb458d46fdb449e08"
+  integrity sha1-aeV8qo8OrLwoHS4stFjUb9tEngg=
 
 flatten@^1.0.2:
   version "1.0.2"
@@ -4766,12 +4762,12 @@ global-prefix@^1.0.1:
     which "^1.2.14"
 
 global@^4.3.0:
-  version "4.3.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/global/-/global-4.3.2.tgz#e76989268a6c74c38908b1305b10fc0e394e9d0f"
-  integrity sha1-52mJJopsdMOJCLEwWxD8DjlOnQ8=
+  version "4.4.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/global/-/global-4.4.0.tgz#3e7b105179006a323ed71aafca3e9c57a5cc6406"
+  integrity sha1-PnsQUXkAajI+1xqvyj6cV6XMZAY=
   dependencies:
     min-document "^2.19.0"
-    process "~0.5.1"
+    process "^0.11.10"
 
 globals@^11.1.0, globals@^11.7.0:
   version "11.12.0"
@@ -4878,9 +4874,9 @@ graceful-fs@^3.0.0, graceful-fs@~3.0.2:
     natives "^1.1.0"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
-  version "4.1.15"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/graceful-fs/-/graceful-fs-4.1.15.tgz#ffb703e1066e8a0eeaa4c8b80ba9253eeefbfb00"
-  integrity sha1-/7cD4QZuig7qpMi4C6klPu77+wA=
+  version "4.2.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/graceful-fs/-/graceful-fs-4.2.0.tgz#8d8fdc73977cb04104721cb53666c1ca64cd328b"
+  integrity sha1-jY/cc5d8sEEEchy1NmbBymTNMos=
 
 graceful-fs@~1.2.0:
   version "1.2.3"
@@ -5107,9 +5103,9 @@ header-case@^1.0.0:
     upper-case "^1.1.3"
 
 highlight.js@^9.13.1:
-  version "9.15.6"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/highlight.js/-/highlight.js-9.15.6.tgz#72d4d8d779ec066af9a17cb14360c3def0aa57c4"
-  integrity sha1-ctTY13nsBmr5oXyxQ2DD3vCqV8Q=
+  version "9.15.8"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/highlight.js/-/highlight.js-9.15.8.tgz#f344fda123f36f1a65490e932cf90569e4999971"
+  integrity sha1-80T9oSPzbxplSQ6TLPkFaeSZmXE=
 
 history@^4.6.3, history@^4.7.2:
   version "4.9.0"
@@ -5266,7 +5262,7 @@ http-deceiver@^1.2.7:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/http-deceiver/-/http-deceiver-1.2.7.tgz#fa7168944ab9a519d337cb0bec7284dc3e723d87"
   integrity sha1-+nFolEq5pRnTN8sL7HKE3D5yPYc=
 
-http-errors@1.7.2, http-errors@~1.7.2:
+http-errors@1.7.2:
   version "1.7.2"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/http-errors/-/http-errors-1.7.2.tgz#4f5029cf13239f31036e5b2e55292bcfbcc85c8f"
   integrity sha1-T1ApzxMjnzEDblsuVSkrz7zIXI8=
@@ -5287,10 +5283,21 @@ http-errors@~1.6.2:
     setprototypeof "1.1.0"
     statuses ">= 1.4.0 < 2"
 
-http-parser-js@>=0.4.0:
-  version "0.5.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/http-parser-js/-/http-parser-js-0.5.0.tgz#d65edbede84349d0dc30320815a15d39cc3cbbd8"
-  integrity sha1-1l7b7ehDSdDcMDIIFaFdOcw8u9g=
+http-errors@~1.7.2:
+  version "1.7.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/http-errors/-/http-errors-1.7.3.tgz#6c619e4f9c60308c38519498c14fbb10aacebb06"
+  integrity sha1-bGGeT5xgMIw4UZSYwU+7EKrOuwY=
+  dependencies:
+    depd "~1.1.2"
+    inherits "2.0.4"
+    setprototypeof "1.1.1"
+    statuses ">= 1.5.0 < 2"
+    toidentifier "1.0.0"
+
+"http-parser-js@>=0.4.0 <0.4.11":
+  version "0.4.10"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/http-parser-js/-/http-parser-js-0.4.10.tgz#92c9c1374c35085f75db359ec56cc257cbb93fa4"
+  integrity sha1-ksnBN0w1CF912zWexWzCV8u5P6Q=
 
 http-proxy-middleware@^0.19.1:
   version "0.19.1"
@@ -5420,9 +5427,9 @@ import-fresh@^2.0.0:
     resolve-from "^3.0.0"
 
 import-fresh@^3.0.0:
-  version "3.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/import-fresh/-/import-fresh-3.0.0.tgz#a3d897f420cab0e671236897f75bc14b4885c390"
-  integrity sha1-o9iX9CDKsOZxI2iX91vBS0iFw5A=
+  version "3.1.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/import-fresh/-/import-fresh-3.1.0.tgz#6d33fa1dcef6df930fae003446f33415af905118"
+  integrity sha1-bTP6Hc7235MPrgA0RvM0Fa+QURg=
   dependencies:
     parent-module "^1.0.0"
     resolve-from "^4.0.0"
@@ -5469,11 +5476,6 @@ indexes-of@^1.0.1:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/indexes-of/-/indexes-of-1.0.1.tgz#f30f716c8e2bd346c7b67d3df3915566a7c05607"
   integrity sha1-8w9xbI4r00bHtn0985FVZqfAVgc=
 
-indexof@0.0.1:
-  version "0.0.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/indexof/-/indexof-0.0.1.tgz#82dc336d232b9062179d05ab3293a66059fd435d"
-  integrity sha1-gtwzbSMrkGIXnQWrMpOmYFn9Q10=
-
 inflight@^1.0.4:
   version "1.0.6"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
@@ -5487,15 +5489,20 @@ inherits@1:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inherits/-/inherits-1.0.2.tgz#ca4309dadee6b54cc0b8d247e8d7c7a0975bdc9b"
   integrity sha1-ykMJ2t7mtUzAuNJH6NfHoJdb3Js=
 
-inherits@2, inherits@2.0.3, inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
-  version "2.0.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
-  integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
+inherits@2, inherits@2.0.4, inherits@^2.0.1, inherits@^2.0.3, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
+  version "2.0.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
+  integrity sha1-D6LGT5MpF8NDOg3tVTY6rjdBa3w=
 
 inherits@2.0.1:
   version "2.0.1"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inherits/-/inherits-2.0.1.tgz#b17d08d326b4423e568eff719f91b0b1cbdf69f1"
   integrity sha1-sX0I0ya0Qj5Wjv9xn5GwscvfafE=
+
+inherits@2.0.3:
+  version "2.0.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
+  integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
 
 ini@^1.3.4, ini@~1.3.0:
   version "1.3.5"
@@ -5523,9 +5530,9 @@ inquirer@3.3.0:
     through "^2.3.6"
 
 inquirer@^6.2.2:
-  version "6.3.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inquirer/-/inquirer-6.3.1.tgz#7a413b5e7950811013a3db491c61d1f3b776e8e7"
-  integrity sha1-ekE7XnlQgRATo9tJHGHR87d26Oc=
+  version "6.5.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/inquirer/-/inquirer-6.5.0.tgz#2303317efc9a4ea7ec2e2df6f86569b734accf42"
+  integrity sha1-IwMxfvyaTqfsLi32+GVptzSsz0I=
   dependencies:
     ansi-escapes "^3.2.0"
     chalk "^2.4.2"
@@ -5533,7 +5540,7 @@ inquirer@^6.2.2:
     cli-width "^2.0.0"
     external-editor "^3.0.3"
     figures "^2.0.0"
-    lodash "^4.17.11"
+    lodash "^4.17.12"
     mute-stream "0.0.7"
     run-async "^2.2.0"
     rxjs "^6.4.0"
@@ -5554,9 +5561,9 @@ interpret@^1.0.0:
   integrity sha1-1QYaYiS+WOgIOYX1AU2EQ1lXYpY=
 
 intl-format-cache@^2.0.5:
-  version "2.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/intl-format-cache/-/intl-format-cache-2.1.0.tgz#04a369fecbfad6da6005bae1f14333332dcf9316"
-  integrity sha1-BKNp/sv61tpgBbrh8UMzMy3PkxY=
+  version "2.2.9"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/intl-format-cache/-/intl-format-cache-2.2.9.tgz#fb560de20c549cda20b569cf1ffb6dc62b5b93b4"
+  integrity sha1-+1YN4gxUnNogtWnPH/ttxitbk7Q=
 
 intl-messageformat-parser@1.4.0:
   version "1.4.0"
@@ -5571,9 +5578,9 @@ intl-messageformat@^2.0.0, intl-messageformat@^2.1.0:
     intl-messageformat-parser "1.4.0"
 
 intl-relativeformat@^2.1.0:
-  version "2.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/intl-relativeformat/-/intl-relativeformat-2.1.0.tgz#010f1105802251f40ac47d0e3e1a201348a255df"
-  integrity sha1-AQ8RBYAiUfQKxH0OPhogE0iiVd8=
+  version "2.2.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/intl-relativeformat/-/intl-relativeformat-2.2.0.tgz#6aca95d019ec8d30b6c5653b6629f9983ea5b6c5"
+  integrity sha1-asqV0BnsjTC2xWU7Zin5mD6ltsU=
   dependencies:
     intl-messageformat "^2.0.0"
 
@@ -6150,9 +6157,9 @@ json2mq@^0.2.0:
     string-convert "^0.2.0"
 
 json3@^3.3.2:
-  version "3.3.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/json3/-/json3-3.3.2.tgz#3c0434743df93e2f5c42aee7b19bcb483575f4e1"
-  integrity sha1-PAQ0dD35Pi9cQq7nsZvLSDV19OE=
+  version "3.3.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/json3/-/json3-3.3.3.tgz#7fc10e375fc5ae42c4705a5cc0aa6f62be305b81"
+  integrity sha1-f8EON1/FrkLEcFpcwKpvYr4wW4E=
 
 json5@^0.5.0, json5@^0.5.1:
   version "0.5.1"
@@ -6196,12 +6203,13 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jsx-ast-utils@^2.0.1, jsx-ast-utils@^2.1.0:
-  version "2.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/jsx-ast-utils/-/jsx-ast-utils-2.1.0.tgz#0ee4e2c971fb9601c67b5641b71be80faecf0b36"
-  integrity sha1-DuTiyXH7lgHGe1ZBtxvoD67PCzY=
+jsx-ast-utils@^2.1.0, jsx-ast-utils@^2.2.1:
+  version "2.2.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/jsx-ast-utils/-/jsx-ast-utils-2.2.1.tgz#4d4973ebf8b9d2837ee91a8208cc66f3a2776cfb"
+  integrity sha1-TUlz6/i50oN+6RqCCMxm86J3bPs=
   dependencies:
     array-includes "^3.0.3"
+    object.assign "^4.1.0"
 
 killable@^1.0.0:
   version "1.0.1"
@@ -6611,10 +6619,10 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
-lodash@^4.0.0, lodash@^4.0.1, lodash@^4.16.5, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1, lodash@~4.17.10, lodash@~4.17.11:
-  version "4.17.11"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
-  integrity sha1-s56mIp72B+zYniyN8SU2iRysm40=
+lodash@^4.0.0, lodash@^4.0.1, lodash@^4.16.5, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1, lodash@~4.17.10, lodash@~4.17.11:
+  version "4.17.15"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  integrity sha1-tEf2ZwoEVbv+7dETku/zMOoJdUg=
 
 lodash@~1.0.1:
   version "1.0.2"
@@ -6645,9 +6653,9 @@ log-update@^2.3.0:
     wrap-ansi "^3.0.1"
 
 loglevel@^1.4.1:
-  version "1.6.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
-  integrity sha1-4PyVEztu8nbNyIh82vJKpvFW+Po=
+  version "1.6.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/loglevel/-/loglevel-1.6.3.tgz#77f2eb64be55a404c9fd04ad16d57c1d6d6b1280"
+  integrity sha1-d/LrZL5VpATJ/QStFtV8HW1rEoA=
 
 longest-streak@^2.0.1:
   version "2.0.3"
@@ -6788,9 +6796,9 @@ md5.js@^1.3.4:
     safe-buffer "^5.1.2"
 
 mdast-util-compact@^1.0.0:
-  version "1.0.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mdast-util-compact/-/mdast-util-compact-1.0.2.tgz#c12ebe16fffc84573d3e19767726de226e95f649"
-  integrity sha1-wS6+Fv/8hFc9Phl2dybeIm6V9kk=
+  version "1.0.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mdast-util-compact/-/mdast-util-compact-1.0.3.tgz#98a25cc8a7865761a41477b3a87d1dcef0b1e79d"
+  integrity sha1-mKJcyKeGV2GkFHezqH0dzvCx550=
   dependencies:
     unist-util-visit "^1.1.0"
 
@@ -6936,9 +6944,9 @@ mime@1.6.0, mime@^1.2.11, mime@^1.5.0:
   integrity sha1-Ms2eXGRVO9WNGaVor0Uqz/BJgbE=
 
 mime@^2.0.3:
-  version "2.4.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mime/-/mime-2.4.3.tgz#229687331e86f68924e6cb59e1cdd937f18275fe"
-  integrity sha1-IpaHMx6G9okk5stZ4c3ZN/GCdf4=
+  version "2.4.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mime/-/mime-2.4.4.tgz#bd7b91135fc6b01cde3e9bae33d659b63d8857e5"
+  integrity sha1-vXuRE1/GsBzePpuuM9ZZtj2IV+U=
 
 mimic-fn@^1.0.0:
   version "1.2.0"
@@ -7024,7 +7032,7 @@ minimist@^1.1.0, minimist@^1.1.3, minimist@^1.2.0:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
   integrity sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
 
-minipass@^2.2.1, minipass@^2.3.4:
+minipass@^2.2.1, minipass@^2.3.5:
   version "2.3.5"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/minipass/-/minipass-2.3.5.tgz#cacebe492022497f656b0f0f51e2682a9ed2d848"
   integrity sha1-ys6+SSAiSX9law8PUeJoKp7S2Eg=
@@ -7032,7 +7040,7 @@ minipass@^2.2.1, minipass@^2.3.4:
     safe-buffer "^5.1.2"
     yallist "^3.0.0"
 
-minizlib@^1.1.1:
+minizlib@^1.2.1:
   version "1.2.1"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/minizlib/-/minizlib-1.2.1.tgz#dd27ea6136243c7c880684e8672bb3a45fd9b614"
   integrity sha1-3SfqYTYkPHyIBoToZyuzpF/ZthQ=
@@ -7056,9 +7064,9 @@ mississippi@^2.0.0:
     through2 "^2.0.0"
 
 mixin-deep@^1.2.0:
-  version "1.3.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mixin-deep/-/mixin-deep-1.3.1.tgz#a49e7268dce1a0d9698e45326c5626df3543d0fe"
-  integrity sha1-pJ5yaNzhoNlpjkUybFYm3zVD0P4=
+  version "1.3.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mixin-deep/-/mixin-deep-1.3.2.tgz#1120b43dc359a785dce65b55b82e257ccf479566"
+  integrity sha1-ESC0PcNZp4Xc5ltVuC4lfM9HlWY=
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
@@ -7077,6 +7085,11 @@ mkdirp@0.5, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+mobx-react-lite@^1.4.1:
+  version "1.4.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/mobx-react-lite/-/mobx-react-lite-1.4.1.tgz#7307a45901f97f9a07ebed32b654235507644e1a"
+  integrity sha1-cwekWQH5f5oH6+0ytlQjVQdkTho=
 
 mobx-react@5.1.2:
   version "5.1.2"
@@ -7120,10 +7133,15 @@ ms@2.0.0:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
   integrity sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=
 
-ms@2.1.1, ms@^2.1.1:
+ms@2.1.1:
   version "2.1.1"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
   integrity sha1-MKWGTrPrsKZvLr5tcnrwagnYbgo=
+
+ms@^2.1.1:
+  version "2.1.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
+  integrity sha1-0J0fNXtEP0kzgqjrPM0YOHKuYAk=
 
 multicast-dns-service-types@^1.1.0:
   version "1.1.0"
@@ -7255,9 +7273,9 @@ node-gyp@^3.8.0:
     which "1"
 
 node-libs-browser@^2.0.0:
-  version "2.2.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/node-libs-browser/-/node-libs-browser-2.2.0.tgz#c72f60d9d46de08a940dedbb25f3ffa2f9bbaa77"
-  integrity sha1-xy9g2dRt4IqUDe27JfP/ovm7qnc=
+  version "2.2.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/node-libs-browser/-/node-libs-browser-2.2.1.tgz#b64f513d18338625f90346d27b0d235e631f6425"
+  integrity sha1-tk9RPRgzhiX5A0bSew0jXmMfZCU=
   dependencies:
     assert "^1.1.1"
     browserify-zlib "^0.2.0"
@@ -7269,7 +7287,7 @@ node-libs-browser@^2.0.0:
     events "^3.0.0"
     https-browserify "^1.0.0"
     os-browserify "^0.3.0"
-    path-browserify "0.0.0"
+    path-browserify "0.0.1"
     process "^0.11.10"
     punycode "^1.2.4"
     querystring-es3 "^0.2.0"
@@ -7281,7 +7299,7 @@ node-libs-browser@^2.0.0:
     tty-browserify "0.0.0"
     url "^0.11.0"
     util "^0.11.0"
-    vm-browserify "0.0.4"
+    vm-browserify "^1.0.1"
 
 node-pre-gyp@^0.12.0:
   version "0.12.0"
@@ -7393,9 +7411,9 @@ npm-bundled@^1.0.1:
   integrity sha1-57qarc75YrthJI+RchzZMrP+a90=
 
 npm-packlist@^1.1.6:
-  version "1.4.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/npm-packlist/-/npm-packlist-1.4.1.tgz#19064cdf988da80ea3cee45533879d90192bbfbc"
-  integrity sha1-GQZM35iNqA6jzuRVM4edkBkrv7w=
+  version "1.4.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/npm-packlist/-/npm-packlist-1.4.4.tgz#866224233850ac534b63d1a6e76050092b5d2f44"
+  integrity sha1-hmIkIzhQrFNLY9Gm52BQCStdL0Q=
   dependencies:
     ignore-walk "^3.0.1"
     npm-bundled "^1.0.1"
@@ -7522,7 +7540,7 @@ object.defaults@^1.1.0:
     for-own "^1.0.0"
     isobject "^3.0.0"
 
-object.entries@^1.0.4:
+object.entries@^1.1.0:
   version "1.1.0"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/object.entries/-/object.entries-1.1.0.tgz#2024fc6d6ba246aee38bdb0ffd5cfbcf371b7519"
   integrity sha1-ICT8bWuiRq7ji9sP/Vz7zzcbdRk=
@@ -7579,6 +7597,16 @@ object.pick@^1.2.0, object.pick@^1.3.0:
   integrity sha1-h6EKxMFpS9Lhy/U1kaZhQftd10c=
   dependencies:
     isobject "^3.0.1"
+
+object.values@^1.1.0:
+  version "1.1.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/object.values/-/object.values-1.1.0.tgz#bf6810ef5da3e5325790eaaa2be213ea84624da9"
+  integrity sha1-v2gQ712j5TJXkOqqK+IT6oRiTak=
+  dependencies:
+    define-properties "^1.1.3"
+    es-abstract "^1.12.0"
+    function-bind "^1.1.1"
+    has "^1.0.3"
 
 obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
@@ -7905,10 +7933,10 @@ pascalcase@^0.1.1:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
-path-browserify@0.0.0:
-  version "0.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/path-browserify/-/path-browserify-0.0.0.tgz#a0b870729aae214005b7d5032ec2cbbb0fb4451a"
-  integrity sha1-oLhwcpquIUAFt9UDLsLLuw+0RRo=
+path-browserify@0.0.1:
+  version "0.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/path-browserify/-/path-browserify-0.0.1.tgz#e6c4ddd7ed3aa27c68a20cc4e50e1a4ee83bbc4a"
+  integrity sha1-5sTd1+06onxoogzE5Q4aTug7vEo=
 
 path-case@^2.1.0:
   version "2.1.1"
@@ -8088,9 +8116,9 @@ plugin-error@^1.0.1:
     extend-shallow "^3.0.2"
 
 portfinder@^1.0.9:
-  version "1.0.20"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/portfinder/-/portfinder-1.0.20.tgz#bea68632e54b2e13ab7b0c4775e9b41bf270e44a"
-  integrity sha1-vqaGMuVLLhOrewxHdem0G/Jw5Eo=
+  version "1.0.21"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/portfinder/-/portfinder-1.0.21.tgz#60e1397b95ac170749db70034ece306b9a27e324"
+  integrity sha1-YOE5e5WsFwdJ23ADTs4wa5on4yQ=
   dependencies:
     async "^1.5.2"
     debug "^2.2.0"
@@ -8187,11 +8215,11 @@ postcss-less@^1.1.0:
     postcss "^5.2.16"
 
 postcss-load-config@^2.0.0:
-  version "2.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/postcss-load-config/-/postcss-load-config-2.0.0.tgz#f1312ddbf5912cd747177083c5ef7a19d62ee484"
-  integrity sha1-8TEt2/WRLNdHF3CDxe96GdYu5IQ=
+  version "2.1.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/postcss-load-config/-/postcss-load-config-2.1.0.tgz#c84d692b7bb7b41ddced94ee62e8ab31b417b003"
+  integrity sha1-yE1pK3u3tB3c7ZTuYuirMbQXsAM=
   dependencies:
-    cosmiconfig "^4.0.0"
+    cosmiconfig "^5.0.0"
     import-cwd "^2.0.0"
 
 postcss-loader@^2.1.5:
@@ -8512,19 +8540,14 @@ private@^0.1.6, private@^0.1.8:
   integrity sha1-I4Hts2ifelPWUxkAYPz4ItLzaP8=
 
 process-nextick-args@~2.0.0:
-  version "2.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
-  integrity sha1-o31zL0JxtKsa0HDTVQjoKQeI/6o=
+  version "2.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
+  integrity sha1-eCDZsWEgzFXKmud5JoCufbptf+I=
 
 process@^0.11.10:
   version "0.11.10"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha1-czIwDoQBYb2j5podHZGn1LwW8YI=
-
-process@~0.5.1:
-  version "0.5.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/process/-/process-0.5.2.tgz#1638d8a8e34c2f440a91db95ab9aeb677fc185cf"
-  integrity sha1-FjjYqONML0QKkduVq5rrZ3/Bhc8=
 
 progress@^2.0.0:
   version "2.0.3"
@@ -8580,9 +8603,9 @@ pseudomap@^1.0.2:
   integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
 psl@^1.1.24:
-  version "1.1.31"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/psl/-/psl-1.1.31.tgz#e9aa86d0101b5b105cbe93ac6b784cd547276184"
-  integrity sha1-6aqG0BAbWxBcvpOsa3hM1UcnYYQ=
+  version "1.2.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/psl/-/psl-1.2.0.tgz#df12b5b1b3a30f51c329eacbdef98f3a6e136dc6"
+  integrity sha1-3xK1sbOjD1HDKerL3vmPOm4TbcY=
 
 public-encrypt@^4.0.0:
   version "4.0.3"
@@ -8721,9 +8744,9 @@ quill@^1.2.6:
     quill-delta "^3.6.2"
 
 raf-schd@^4.0.0:
-  version "4.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/raf-schd/-/raf-schd-4.0.0.tgz#9855756c5045ff4ed4516e14a47719387c3c907b"
-  integrity sha1-mFV1bFBF/07UUW4UpHcZOHw8kHs=
+  version "4.0.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/raf-schd/-/raf-schd-4.0.2.tgz#bd44c708188f2e84c810bf55fcea9231bcaed8a0"
+  integrity sha1-vUTHCBiPLoTIEL9V/OqSMbyu2KA=
 
 raf@^3.1.0:
   version "3.4.1"
@@ -8772,9 +8795,9 @@ raw-body@2.4.0:
     unpipe "1.0.0"
 
 rc-editor-core@~0.8.3:
-  version "0.8.9"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/rc-editor-core/-/rc-editor-core-0.8.9.tgz#f611952c8eed965e3e348d84ae7be885daeb221c"
-  integrity sha1-9hGVLI7tll4+NI2ErnvohdrrIhw=
+  version "0.8.10"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/rc-editor-core/-/rc-editor-core-0.8.10.tgz#6f215bc5df9c33ffa9f6c5b30ca73a7dabe8ab7c"
+  integrity sha1-byFbxd+cM/+p9sWzDKc6favoq3w=
   dependencies:
     babel-runtime "^6.26.0"
     classnames "^2.2.5"
@@ -8953,14 +8976,14 @@ react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.2, react-lifecycles
   integrity sha1-TxonOv38jzSIqMUWv9p4+HI1I2I=
 
 react-modal@^3.1.10:
-  version "3.8.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/react-modal/-/react-modal-3.8.1.tgz#7300f94a6f92a2e17994de0be6ccb61734464c9e"
-  integrity sha1-cwD5Sm+SouF5lN4L5sy2FzRGTJ4=
+  version "3.9.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/react-modal/-/react-modal-3.9.1.tgz#82ce53d110eea0d8f028f3315ef336d0baffa9b9"
+  integrity sha1-gs5T0RDuoNjwKPMxXvM20Lr/qbk=
   dependencies:
     exenv "^1.2.0"
     prop-types "^15.5.10"
     react-lifecycles-compat "^3.0.0"
-    warning "^3.0.0"
+    warning "^4.0.3"
 
 react-motion@^0.5.2:
   version "0.5.2"
@@ -9170,9 +9193,9 @@ readable-stream@1.1:
     string_decoder "~0.10.x"
 
 readable-stream@^3.0.6, readable-stream@^3.1.1:
-  version "3.3.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/readable-stream/-/readable-stream-3.3.0.tgz#cb8011aad002eb717bf040291feba8569c986fb9"
-  integrity sha1-y4ARqtAC63F78EApH+uoVpyYb7k=
+  version "3.4.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/readable-stream/-/readable-stream-3.4.0.tgz#a51c26754658e0a3c21dbf59163bd45ba6f447fc"
+  integrity sha1-pRwmdUZY4KPCHb9ZFjvUW6b0R/w=
   dependencies:
     inherits "^2.0.3"
     string_decoder "^1.1.1"
@@ -9254,9 +9277,9 @@ reduce-function-call@^1.0.1:
     balanced-match "^0.4.2"
 
 redux@^4.0.0:
-  version "4.0.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/redux/-/redux-4.0.1.tgz#436cae6cc40fbe4727689d7c8fae44808f1bfef5"
-  integrity sha1-Q2yubMQPvkcnaJ18j65EgI8b/vU=
+  version "4.0.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/redux/-/redux-4.0.4.tgz#4ee1aeb164b63d6a1bcc57ae4aa0b6e6fa7a3796"
+  integrity sha1-TuGusWS2PWobzFeuSqC25vp6N5Y=
   dependencies:
     loose-envify "^1.4.0"
     symbol-observable "^1.2.0"
@@ -9277,9 +9300,9 @@ regenerator-runtime@^0.11.0:
   integrity sha1-vgWtf5v30i4Fb5cmzuUBf78Z4uk=
 
 regenerator-runtime@^0.13.2:
-  version "0.13.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/regenerator-runtime/-/regenerator-runtime-0.13.2.tgz#32e59c9a6fb9b1a4aff09b4930ca2d4477343447"
-  integrity sha1-MuWcmm+5saSv8JtJMMotRHc0NEc=
+  version "0.13.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
+  integrity sha1-fPanfY9cb2Drc8X8GVWyzrAea/U=
 
 regenerator-transform@^0.10.0:
   version "0.10.1"
@@ -9557,10 +9580,10 @@ resolve-url@^0.2.1:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
   integrity sha1-LGN/53yJOv0qZj/iGqkIAGjiBSo=
 
-resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.10.1, resolve@^1.3.2, resolve@^1.5.0:
-  version "1.11.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/resolve/-/resolve-1.11.0.tgz#4014870ba296176b86343d50b60f3b50609ce232"
-  integrity sha1-QBSHC6KWF2uGND1Qtg87UGCc4jI=
+resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.10.1, resolve@^1.11.0, resolve@^1.3.2, resolve@^1.5.0:
+  version "1.11.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/resolve/-/resolve-1.11.1.tgz#ea10d8110376982fef578df8fc30b9ac30a07a3e"
+  integrity sha1-6hDYEQN2mC/vV434/DC5rDCgej4=
   dependencies:
     path-parse "^1.0.6"
 
@@ -9672,10 +9695,15 @@ rxjs@^6.3.3, rxjs@^6.4.0:
   dependencies:
     tslib "^1.9.0"
 
-safe-buffer@5.1.2, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha1-mR7GnSluAxN0fVm9/St0XDX4go0=
+
+safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2:
+  version "5.2.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/safe-buffer/-/safe-buffer-5.2.0.tgz#b74daec49b1148f88c64b68d49b1e815c1f2f519"
+  integrity sha1-t02uxJsRSPiMZLaNSbHoFcHy9Rk=
 
 safe-regex@^1.1.0:
   version "1.1.0"
@@ -9852,20 +9880,10 @@ set-blocking@^2.0.0, set-blocking@~2.0.0:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
   integrity sha1-BF+XgtARrppoA93TgrJDkrPYkPc=
 
-set-value@^0.4.3:
-  version "0.4.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/set-value/-/set-value-0.4.3.tgz#7db08f9d3d22dc7f78e53af3c3bf4666ecdfccf1"
-  integrity sha1-fbCPnT0i3H945Trzw79GZuzfzPE=
-  dependencies:
-    extend-shallow "^2.0.1"
-    is-extendable "^0.1.1"
-    is-plain-object "^2.0.1"
-    to-object-path "^0.3.0"
-
-set-value@^2.0.0:
-  version "2.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/set-value/-/set-value-2.0.0.tgz#71ae4a88f0feefbbf52d1ea604f3fb315ebb6274"
-  integrity sha1-ca5KiPD+77v1LR6mBPP7MV67YnQ=
+set-value@^2.0.0, set-value@^2.0.1:
+  version "2.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/set-value/-/set-value-2.0.1.tgz#a18d40530e6f07de4228c7defe4227af8cad005b"
+  integrity sha1-oY1AUw5vB95CKMfe/kInr4ytAFs=
   dependencies:
     extend-shallow "^2.0.1"
     is-extendable "^0.1.1"
@@ -9957,9 +9975,9 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
 size-sensor@^0.2.0:
-  version "0.2.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/size-sensor/-/size-sensor-0.2.4.tgz#93f7b3a8a8582967a1ae782c5ae39ae1dbb7368d"
-  integrity sha1-k/ezqKhYKWehrngsWuOa4du3No0=
+  version "0.2.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/size-sensor/-/size-sensor-0.2.5.tgz#e8ffb7cc5258893472bfda4f5734d66583247757"
+  integrity sha1-6P+3zFJYiTRyv9pPVzTWZYMkd1c=
 
 slash@^1.0.0:
   version "1.0.0"
@@ -10179,9 +10197,9 @@ spdx-expression-parse@^3.0.0:
     spdx-license-ids "^3.0.0"
 
 spdx-license-ids@^3.0.0:
-  version "3.0.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/spdx-license-ids/-/spdx-license-ids-3.0.4.tgz#75ecd1a88de8c184ef015eafb51b5b48bfd11bb1"
-  integrity sha1-dezRqI3owYTvAV6vtRtbSL/RG7E=
+  version "3.0.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
+  integrity sha1-NpS1gEVnpFjTyARYQqY1hjL2JlQ=
 
 spdy-transport@^3.0.0:
   version "3.0.0"
@@ -10336,6 +10354,11 @@ string-convert@^0.2.0:
   version "0.2.1"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/string-convert/-/string-convert-0.2.1.tgz#6982cc3049fbb4cd85f8b24568b9d9bf39eeff97"
   integrity sha1-aYLMMEn7tM2F+LJFaLnZvznu/5c=
+
+string-template@^1.0.0:
+  version "1.0.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/string-template/-/string-template-1.0.0.tgz#9e9f2233dc00f218718ec379a28a5673ecca8b96"
+  integrity sha1-np8iM9wA8hhxjsN5oopWc+zKi5Y=
 
 string-width@^1.0.1, string-width@^1.0.2:
   version "1.0.2"
@@ -10630,12 +10653,12 @@ table@^4.0.1:
     string-width "^2.1.1"
 
 table@^5.2.3:
-  version "5.3.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/table/-/table-5.3.3.tgz#eae560c90437331b74200e011487a33442bd28b4"
-  integrity sha1-6uVgyQQ3Mxt0IA4BFIejNEK9KLQ=
+  version "5.4.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/table/-/table-5.4.4.tgz#6e0f88fdae3692793d1077fd172a4667afe986a6"
+  integrity sha1-bg+I/a42knk9EHf9FypGZ6/phqY=
   dependencies:
-    ajv "^6.9.1"
-    lodash "^4.17.11"
+    ajv "^6.10.2"
+    lodash "^4.17.14"
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
@@ -10659,17 +10682,17 @@ tar@^2.0.0:
     inherits "2"
 
 tar@^4:
-  version "4.4.8"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tar/-/tar-4.4.8.tgz#b19eec3fde2a96e64666df9fdb40c5ca1bc3747d"
-  integrity sha1-sZ7sP94qluZGZt+f20DFyhvDdH0=
+  version "4.4.10"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tar/-/tar-4.4.10.tgz#946b2810b9a5e0b26140cf78bea6b0b0d689eba1"
+  integrity sha1-lGsoELml4LJhQM94vqawsNaJ66E=
   dependencies:
     chownr "^1.1.1"
     fs-minipass "^1.2.5"
-    minipass "^2.3.4"
-    minizlib "^1.1.1"
+    minipass "^2.3.5"
+    minizlib "^1.2.1"
     mkdirp "^0.5.0"
     safe-buffer "^5.1.2"
-    yallist "^3.0.2"
+    yallist "^3.0.3"
 
 text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
@@ -10752,15 +10775,15 @@ timers-browserify@^2.0.4:
   dependencies:
     setimmediate "^1.0.4"
 
-tiny-invariant@^1.0.0, tiny-invariant@^1.0.2, tiny-invariant@^1.0.4:
-  version "1.0.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tiny-invariant/-/tiny-invariant-1.0.4.tgz#346b5415fd93cb696b0c4e8a96697ff590f92463"
-  integrity sha1-NGtUFf2Ty2lrDE6Klml/9ZD5JGM=
+tiny-invariant@^1.0.0, tiny-invariant@^1.0.2, tiny-invariant@^1.0.5:
+  version "1.0.6"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tiny-invariant/-/tiny-invariant-1.0.6.tgz#b3f9b38835e36a41c843a3b0907a5a7b3755de73"
+  integrity sha1-s/mziDXjakHIQ6OwkHpaezdV3nM=
 
 tiny-warning@^1.0.0:
-  version "1.0.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tiny-warning/-/tiny-warning-1.0.2.tgz#1dfae771ee1a04396bdfde27a3adcebc6b648b28"
-  integrity sha1-Hfrnce4aBDlr394no63OvGtkiyg=
+  version "1.0.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
+  integrity sha1-lKMNtFPfTGQ9D9VmBg1gqHXYR1Q=
 
 tinycolor2@^1.4.1:
   version "1.4.1"
@@ -10925,12 +10948,7 @@ tsconfig@^7.0.0:
     strip-bom "^3.0.0"
     strip-json-comments "^2.0.0"
 
-tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
-  version "1.9.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
-  integrity sha1-1+TdeSRdhUKMTX5IIqeZF5VMooY=
-
-tslib@^1.9.3:
+tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.10.0"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
   integrity sha1-w8GflZc/sKYpc/sJ2Q2WHuQ+XIo=
@@ -10947,9 +10965,9 @@ tslint-loader@^3.5.3:
     semver "^5.3.0"
 
 tslint@^5.9.1:
-  version "5.16.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tslint/-/tslint-5.16.0.tgz#ae61f9c5a98d295b9a4f4553b1b1e831c1984d67"
-  integrity sha1-rmH5xamNKVuaT0VTsbHoMcGYTWc=
+  version "5.18.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/tslint/-/tslint-5.18.0.tgz#f61a6ddcf372344ac5e41708095bbf043a147ac6"
+  integrity sha1-9hpt3PNyNErF5BcICVu/BDoUesY=
   dependencies:
     "@babel/code-frame" "^7.0.0"
     builtin-modules "^1.1.1"
@@ -10957,7 +10975,7 @@ tslint@^5.9.1:
     commander "^2.12.1"
     diff "^3.2.0"
     glob "^7.1.1"
-    js-yaml "^3.13.0"
+    js-yaml "^3.13.1"
     minimatch "^3.0.4"
     mkdirp "^0.5.1"
     resolve "^1.3.2"
@@ -11004,6 +11022,11 @@ type-is@~1.6.17, type-is@~1.6.18:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
+type@^1.0.1:
+  version "1.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/type/-/type-1.0.1.tgz#084c9a17fcc9151a2cdb1459905c2e45e4bb7d61"
+  integrity sha1-CEyaF/zJFRos2xRZkFwuReS7fWE=
+
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
@@ -11015,9 +11038,9 @@ typescript@^2.6.2:
   integrity sha1-HL9h0F1rliaSROtqO85L2RTg8Aw=
 
 ua-parser-js@^0.7.18:
-  version "0.7.19"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ua-parser-js/-/ua-parser-js-0.7.19.tgz#94151be4c0a7fb1d001af7022fdaca4642659e4b"
-  integrity sha1-lBUb5MCn+x0AGvcCL9rKRkJlnks=
+  version "0.7.20"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/ua-parser-js/-/ua-parser-js-0.7.20.tgz#7527178b82f6a62a0f243d1f94fd30e3e3c21098"
+  integrity sha1-dScXi4L2pioPJD0flP0w4+PCEJg=
 
 uglify-es@^3.3.4:
   version "3.3.9"
@@ -11104,14 +11127,14 @@ unified@^6.0.0:
     x-is-string "^0.1.0"
 
 union-value@^1.0.0:
-  version "1.0.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/union-value/-/union-value-1.0.0.tgz#5c71c34cb5bad5dcebe3ea0cd08207ba5aa1aea4"
-  integrity sha1-XHHDTLW61dzr4+oM0IIHulqhrqQ=
+  version "1.0.1"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/union-value/-/union-value-1.0.1.tgz#0b6fe7b835aecda61c6ea4d4f02c14221e109847"
+  integrity sha1-C2/nuDWuzaYcbqTU8CwUIh4QmEc=
   dependencies:
     arr-union "^3.1.0"
     get-value "^2.0.6"
     is-extendable "^0.1.1"
-    set-value "^0.4.3"
+    set-value "^2.0.1"
 
 uniq@^1.0.1:
   version "1.0.1"
@@ -11131,9 +11154,9 @@ unique-filename@^1.1.0:
     unique-slug "^2.0.0"
 
 unique-slug@^2.0.0:
-  version "2.0.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unique-slug/-/unique-slug-2.0.1.tgz#5e9edc6d1ce8fb264db18a507ef9bd8544451ca6"
-  integrity sha1-Xp7cbRzo+yZNsYpQfvm9hURFHKY=
+  version "2.0.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unique-slug/-/unique-slug-2.0.2.tgz#baabce91083fc64e945b0f3ad613e264f7cd4e6c"
+  integrity sha1-uqvOkQg/xk6UWw861hPiZPfNTmw=
   dependencies:
     imurmurhash "^0.1.4"
 
@@ -11143,21 +11166,21 @@ unique-stream@^1.0.0:
   integrity sha1-1ZpKdUJ0R9mqbJHnAmP40mpLEEs=
 
 unist-util-find-all-after@^1.0.1:
-  version "1.0.3"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-find-all-after/-/unist-util-find-all-after-1.0.3.tgz#5114041df272315a36d10b15f4bd199f9d2c3652"
-  integrity sha1-URQEHfJyMVo20QsV9L0Zn50sNlI=
+  version "1.0.4"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-find-all-after/-/unist-util-find-all-after-1.0.4.tgz#2eeaba818fd98492d69c44f9bee52c6a25282eef"
+  integrity sha1-Luq6gY/ZhJLWnET5vuUsaiUoLu8=
   dependencies:
-    unist-util-is "^2.0.0"
+    unist-util-is "^3.0.0"
 
-unist-util-is@^2.0.0, unist-util-is@^2.1.2:
-  version "2.1.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-is/-/unist-util-is-2.1.2.tgz#1193fa8f2bfbbb82150633f3a8d2eb9a1c1d55db"
-  integrity sha1-EZP6jyv7u4IVBjPzqNLrmhwdVds=
+unist-util-is@^3.0.0:
+  version "3.0.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-is/-/unist-util-is-3.0.0.tgz#d9e84381c2468e82629e4a5be9d7d05a2dd324cd"
+  integrity sha1-2ehDgcJGjoJinkpb6dfQWi3TJM0=
 
 unist-util-remove-position@^1.0.0:
-  version "1.1.2"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-remove-position/-/unist-util-remove-position-1.1.2.tgz#86b5dad104d0bbfbeb1db5f5c92f3570575c12cb"
-  integrity sha1-hrXa0QTQu/vrHbX1yS81cFdcEss=
+  version "1.1.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-remove-position/-/unist-util-remove-position-1.1.3.tgz#d91aa8b89b30cb38bad2924da11072faa64fd972"
+  integrity sha1-2RqouJswyzi60pJNoRBy+qZP2XI=
   dependencies:
     unist-util-visit "^1.1.0"
 
@@ -11167,11 +11190,11 @@ unist-util-stringify-position@^1.0.0, unist-util-stringify-position@^1.1.1:
   integrity sha1-Pzf881EnncvKdICrWIm7ioMu4cY=
 
 unist-util-visit-parents@^2.0.0:
-  version "2.1.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-visit-parents/-/unist-util-visit-parents-2.1.0.tgz#e45cad0d7e5ac683362088b329bc80abd1cfc5fb"
-  integrity sha1-5FytDX5axoM2IIizKbyAq9HPxfs=
+  version "2.1.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/unist-util-visit-parents/-/unist-util-visit-parents-2.1.2.tgz#25e43e55312166f3348cae6743588781d112c1e9"
+  integrity sha1-JeQ+VTEhZvM0jK5nQ1iHgdESwek=
   dependencies:
-    unist-util-is "^2.1.2"
+    unist-util-is "^3.0.0"
 
 unist-util-visit@^1.1.0:
   version "1.4.1"
@@ -11371,9 +11394,9 @@ verror@1.10.0:
     extsprintf "^1.2.0"
 
 vfile-location@^2.0.0:
-  version "2.0.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/vfile-location/-/vfile-location-2.0.4.tgz#2a5e7297dd0d9e2da4381464d04acc6b834d3e55"
-  integrity sha1-Kl5yl90Nni2kOBRk0ErMa4NNPlU=
+  version "2.0.5"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/vfile-location/-/vfile-location-2.0.5.tgz#c83eb02f8040228a8d2b3f10e485be3e3433e0a2"
+  integrity sha1-yD6wL4BAIoqNKz8Q5IW+PjQz4KI=
 
 vfile-message@^1.0.0:
   version "1.1.1"
@@ -11430,12 +11453,10 @@ vinyl@^0.5.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-vm-browserify@0.0.4:
-  version "0.0.4"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/vm-browserify/-/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
-  integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
-  dependencies:
-    indexof "0.0.1"
+vm-browserify@^1.0.1:
+  version "1.1.0"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/vm-browserify/-/vm-browserify-1.1.0.tgz#bd76d6a23323e2ca8ffa12028dc04559c75f9019"
+  integrity sha1-vXbWojMj4sqP+hICjcBFWcdfkBk=
 
 warning@^3.0.0, warning@~3.0.0:
   version "3.0.0"
@@ -11444,7 +11465,7 @@ warning@^3.0.0, warning@~3.0.0:
   dependencies:
     loose-envify "^1.0.0"
 
-warning@^4.0.1:
+warning@^4.0.1, warning@^4.0.3:
   version "4.0.3"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"
   integrity sha1-Fungd+uKhtavfWSqHgX9hbRnjKM=
@@ -11548,11 +11569,12 @@ webpack@^3.12.0:
     yargs "^8.0.2"
 
 websocket-driver@>=0.5.1:
-  version "0.7.0"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/websocket-driver/-/websocket-driver-0.7.0.tgz#0caf9d2d755d93aee049d4bdd0d3fe2cca2a24eb"
-  integrity sha1-DK+dLXVdk67gSdS90NP+LMoqJOs=
+  version "0.7.3"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/websocket-driver/-/websocket-driver-0.7.3.tgz#a2d4e0d4f4f116f1e6297eba58b05d430100e9f9"
+  integrity sha1-otTg1PTxFvHmKX66WLBdQwEA6fk=
   dependencies:
-    http-parser-js ">=0.4.0"
+    http-parser-js ">=0.4.0 <0.4.11"
+    safe-buffer ">=5.1.0"
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
@@ -11667,9 +11689,9 @@ xml@1.0.1:
   integrity sha1-eLpyAgApxbyHuKgaPPzXS0ovweU=
 
 "xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.1:
-  version "4.0.1"
-  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
-  integrity sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
+  version "4.0.2"
+  resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
+  integrity sha1-u3J3n1+kZRhrH0OPZ0+jR/2121Q=
 
 y18n@^3.2.0, y18n@^3.2.1:
   version "3.2.1"
@@ -11686,7 +11708,7 @@ yallist@^2.1.2:
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
   integrity sha1-HBH5IY8HYImkfdUS+TxmmaaoHVI=
 
-yallist@^3.0.0, yallist@^3.0.2:
+yallist@^3.0.0, yallist@^3.0.3:
   version "3.0.3"
   resolved "https://nexus.choerodon.com.cn/repository/choerodon-npm/yallist/-/yallist-3.0.3.tgz#b4b049e314be545e3ce802236d6cd22cd91c3de9"
   integrity sha1-tLBJ4xS+VF486AIjbWzSLNkcPek=

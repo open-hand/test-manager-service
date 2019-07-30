@@ -360,7 +360,7 @@ class TestExecuteInfo extends Component {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
+                      {defects.map((defect, i) => defect.issueInfosVO.issueName).join('，')}
                     </div>
                   ) : '无'}
                 </Text>

@@ -27,13 +27,13 @@ class DragTable extends Component {
     }
   }
 
-  handleColumnFilterChange=({ selectedKeys }) => {
+  handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
     });
   }
 
-  shouldColumnShow=(column) => {
+  shouldColumnShow = (column) => {
     if (column.title === '' || !column.dataIndex) {
       return true;
     }
@@ -62,7 +62,7 @@ class DragTable extends Component {
     }
   }
 
-  onDragStart=() => {
+  onDragStart = () => {
     // document.addEventListener('keydown', (e) => { 
     //   e.preventDefault();  
     //   e.stopImmediatePropagation();
@@ -80,20 +80,20 @@ class DragTable extends Component {
           </thead>
           {disabled ? (
             <tbody>
-              {this.renderTbody(this.state.data)}               
+              {this.renderTbody(this.state.data)}
             </tbody>
           ) : (
-            <Droppable droppableId="dropTable">
-              {(provided, snapshot) => (
-                <tbody
-                  ref={provided.innerRef}
-                >
-                  {this.renderTbody(this.state.data)}
-                  {provided.placeholder}
-                </tbody>
-              )}
-            </Droppable>
-          )}
+              <Droppable droppableId="dropTable">
+                {(provided, snapshot) => (
+                  <tbody
+                    ref={provided.innerRef}
+                  >
+                    {this.renderTbody(this.state.data)}
+                    {provided.placeholder}
+                  </tbody>
+                )}
+              </Droppable>
+            )}
         </table>
       );
       return disabled || disableContext ? table : (
@@ -102,10 +102,10 @@ class DragTable extends Component {
         </DragDropContext>
       );
     },
- 
+
   }
 
-  handleRow=(item, e) => {
+  handleRow = (item, e) => {
     // console.log(item, e);
     const { onRow } = this.props;
     if (onRow && onRow(item).onClick) {
@@ -114,10 +114,10 @@ class DragTable extends Component {
   }
 
   renderThead = () => {
-    const { columns } = this.props;  
+    const { columns } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
-      <th style={{ flex: column.flex || 1 }}>
+      <th style={{ flex: column.flex || 1, width: column.width }}>
         {column.title}
         {' '}
       </th>
@@ -125,7 +125,7 @@ class DragTable extends Component {
     return (<tr>{ths}</tr>);
   }
 
-  renderTbody(data) {   
+  renderTbody(data) {
     const {
       columns, dragKey, disabled, customDragHandle, onRow,
     } = this.props;
@@ -165,7 +165,7 @@ class DragTable extends Component {
                 {Columns.map((column) => {
                   let renderedItem = null;
                   const {
-                    dataIndex, key, flex, render, className,
+                    dataIndex, key, flex, render, width, className,
                   } = column;
                   if (render) {
                     renderedItem = render(data[index][dataIndex], data[index], index, provided, snapshot);
@@ -173,14 +173,14 @@ class DragTable extends Component {
                     renderedItem = data[index][dataIndex];
                   }
                   return (
-                    <td className={className} style={{ flex: flex || 1 }}>
+                    <td className={className} style={{ flex: flex || 1, width }}>
                       {renderedItem}
                     </td>
                   );
                 })}
               </tr>
             )
-        }
+            }
           </Draggable>
         )
     ));
@@ -190,9 +190,9 @@ class DragTable extends Component {
   render() {
     const { data } = this.state;
     return (
-      <div className="c7ntest-dragtable">        
+      <div className="c7ntest-dragtable">
         <Table
-          {...this.props}   
+          {...this.props}
           dataSource={data}
           components={this.components}
           onColumnFilterChange={this.handleColumnFilterChange}

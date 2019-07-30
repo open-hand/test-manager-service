@@ -103,8 +103,7 @@ const UserHead = memo(({
               style={{                
                 display: 'inline-block',       
                 overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                borderRadius: '50%', 
+                textOverflow: 'ellipsis',               
                 verticalAlign: 'middle',
                 whiteSpace: 'nowrap',
                 fontSize: '13px',

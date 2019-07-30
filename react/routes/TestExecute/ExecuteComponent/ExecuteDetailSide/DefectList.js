@@ -15,14 +15,14 @@ const DefectList = ({ defects, onRemoveDefect }) => {
   };
 
   const renderItem = (defect, index) => {
-    const { id, issueInfosDTO } = defect;
+    const { id, issueInfosVO } = defect;
     const {
-      priorityDTO, issueTypeDTO, issueNum, summary, issueId, 
-      ward, statusMapDTO,
-    } = issueInfosDTO;
-    const { colour: priorityColor, name: priorityName } = priorityDTO || {};
-    const { colour: typeColor, name: typeName, typeCode } = issueTypeDTO || {};
-    const { colour: statusColor, name: statusName } = statusMapDTO || {};
+      priorityVO, issueTypeVO, issueNum, summary, issueId, 
+      ward, statusVO,
+    } = issueInfosVO;
+    const { colour: priorityColor, name: priorityName } = priorityVO || {};
+    const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
+    const { colour: statusColor, name: statusName } = statusVO || {};
     const Reg = /被/g;
     return (
       <div
@@ -37,7 +37,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
       >
         <Tooltip mouseEnterDelay={0.5} title={`任务类型： ${typeName}`}>
           <div>
-            <TypeTag data={issueTypeDTO} />
+            <TypeTag data={issueTypeVO} />
           </div>
         </Tooltip>
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
@@ -57,7 +57,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
         <div style={{ width: '34px', marginRight: '15px', overflow: 'hidden' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
             <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityDTO || {}} />
+              <PriorityTag priority={priorityVO || {}} />
             </div>
           </Tooltip>
         </div>
@@ -68,7 +68,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
           <Tooltip mouseEnterDelay={0.5} title={`任务状态： ${statusName}`}>
             <div style={{ lineHeight: '10px' }}>
               <StatusTag
-                status={statusMapDTO || {}}
+                status={statusVO || {}}
               />
             </div>
           </Tooltip>
