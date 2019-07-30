@@ -66,7 +66,7 @@ export function deleteCommit(commitId) {
  */
 export function loadStatus(statusId, issueId, typeId) {
   return request.get(
-    `/issue/v1/projects/${getProjectId()}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&apply_type=test`,
+    `/agile/v1/projects/${getProjectId()}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&apply_type=test`,
   );
 }
 /**
