@@ -8,8 +8,8 @@ import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '../../../../api/IssueManageApi';
 import { uploadFile } from '../../../../api/FileApi';
-import { DragTable } from '../../../../components/CommonComponent';
-import { TextEditToggle, UploadInTable } from '../../../../components/CommonComponent';
+import { DragTable } from '../../../../components';
+import { TextEditToggle, UploadInTable } from '../../../../components';
 import UploadButton from '../CommonComponent/UploadButton';
 import './TestStepTable.scss';
 

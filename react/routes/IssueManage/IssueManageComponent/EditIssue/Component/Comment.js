@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
-import { WYSIWYGEditor } from '../../../../../components/CommonComponent';
+import { WYSIWYGEditor } from '../../../../../components';
 import { IssueDescription } from '../../CommonComponent';
 import {
   delta2Html, text2Delta, beforeTextUpload, formatDate, 
 } from '../../../../../common/utils';
-import Timeago from '../../../../../components/CommonComponent/DateTimeAgo/DateTimeAgo';
+import Timeago from '../../../../../components/DateTimeAgo/DateTimeAgo';
 import { deleteCommit, updateCommit } from '../../../../../api/IssueManageApi';
 import './Comment.scss';
 

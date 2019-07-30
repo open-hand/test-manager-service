@@ -5,7 +5,7 @@ import {
   Menu, Dropdown, Button, Tooltip, Icon, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { SmartTooltip } from '../../../../components/CommonComponent';
+import { SmartTooltip } from '../../../../components';
 import './PlanTreeTitle.scss';
 import { deleteCycleOrFolder } from '../../../../api/cycleApi';
 import { syncFolder, syncFoldersInCycle, syncFoldersInVersion } from '../../../../api/IssueManageApi';

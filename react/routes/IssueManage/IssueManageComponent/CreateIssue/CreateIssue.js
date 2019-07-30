@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { stores, axios, Content } from '@choerodon/boot';
+import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import {
@@ -7,7 +7,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
-import { UploadButton } from '../CommonComponent';
+import UploadButton from '../CommonComponent';
 import { handleFileUpload, beforeTextUpload } from '../../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../../api/IssueManageApi';
 import IssueStore from '../../IssueManagestore/IssueStore';
@@ -15,7 +15,7 @@ import {
   getLabels, getModules, getPrioritys, getProjectVersion, 
 } from '../../../../api/agileApi';
 import { getUsers } from '../../../../api/IamApi';
-import { FullEditor, WYSIWYGEditor } from '../../../../components/CommonComponent';
+import { FullEditor, WYSIWYGEditor } from '../../../../components';
 import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
 

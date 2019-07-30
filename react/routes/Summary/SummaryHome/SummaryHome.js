@@ -15,7 +15,7 @@ import { Page, Header } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import ReactEcharts from 'echarts-for-react';
-import { RadioButton, SmartTooltip } from '../../../components/CommonComponent';
+import { RadioButton, SmartTooltip } from '../../../components';
 import './SummaryHome.scss';
 
 const propTypes = {

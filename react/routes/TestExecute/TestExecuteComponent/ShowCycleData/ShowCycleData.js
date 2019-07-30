@@ -4,7 +4,7 @@ import isEqual from 'react-fast-compare';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { FormattedMessage } from 'react-intl';
-import { User, TestProgressLine } from '../../../../components/CommonComponent';
+import { User, TestProgressLine } from '../../../../components';
 import './ShowCycleData.scss';
 
 const CardColumn = ({ children }) => (

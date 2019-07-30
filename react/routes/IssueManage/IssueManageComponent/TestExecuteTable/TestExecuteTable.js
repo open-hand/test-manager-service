@@ -11,7 +11,7 @@ import TimeAgo from 'timeago-react';
 import { TestExecuteLink, issueLink, executeDetailShowLink } from '../../../../common/utils';
 import './TestExecuteTable.scss';
 import { editCycle } from '../../../../api/ExecuteDetailApi';
-import { StatusTags } from '../../../../components/CommonComponent';
+import { StatusTags } from '../../../../components';
 
 const { AppState } = stores;
 

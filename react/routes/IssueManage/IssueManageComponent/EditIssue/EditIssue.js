@@ -10,19 +10,19 @@ import {
 } from 'choerodon-ui';
 import './EditIssue.scss';
 import { UploadButtonNow, IssueDescription } from '../CommonComponent';
-import { TextEditToggle, User, ResizeAble } from '../../../../components/CommonComponent';
+import { TextEditToggle, User, ResizeAble } from '../../../../components';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate,
   returnBeforeTextUpload, color2rgba, testCaseTableLink, commonLink, testCaseDetailLink,
 } from '../../../../common/utils';
-import Timeago from '../../../../components/CommonComponent/DateTimeAgo/DateTimeAgo';
+import Timeago from '../../../../components/DateTimeAgo/DateTimeAgo';
 import {
   loadDatalogs, loadLinkIssues, loadIssue, updateStatus, updateIssue,
   createCommit, deleteIssue, loadStatus, cloneIssue, getIssueSteps, getIssueExecutes,
 } from '../../../../api/IssueManageApi';
 import { getLabels, getPrioritys, getModules } from '../../../../api/agileApi';
 import { getUsers, getUpdateProjectInfoPermission } from '../../../../api/IamApi';
-import { FullEditor, WYSIWYGEditor } from '../../../../components/CommonComponent';
+import { FullEditor, WYSIWYGEditor } from '../../../../components';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Comment from './Component/Comment';

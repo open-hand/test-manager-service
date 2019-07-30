@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from 'choerodon-ui';
-import { StatusTags } from '../../../../../components/CommonComponent';
+import { StatusTags } from '../../../../../components';
 
 const { Option } = Select;
 const style = {

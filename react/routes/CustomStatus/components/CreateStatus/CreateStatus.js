@@ -13,7 +13,7 @@ import {
 } from 'choerodon-ui';
 import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
-import { ColorPicker } from '../../../../components/CommonComponent';
+import { ColorPicker } from '../../../../components';
 import './CreateStatus.less';
 import { getProjectName } from '../../../../common/utils';
 

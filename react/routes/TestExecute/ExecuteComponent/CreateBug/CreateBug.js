@@ -18,7 +18,7 @@ import {
 import { getUsers } from '../../../../api/IamApi';
 import { addBugForExecuteOrStep, getIssueLinkTypes } from '../../../../api/ExecuteDetailApi';
 import { loadIssuesInLink } from '../../../../api/IssueManageApi';
-import { WYSIWYGEditor, FullEditor } from '../../../../components/CommonComponent';
+import { WYSIWYGEditor, FullEditor } from '../../../../components';
 import UserHead from '../../../IssueManage/IssueManageComponent/UserHead';
 import TypeTag from '../../../IssueManage/IssueManageComponent/TypeTag';
 import UploadButton from '../../../IssueManage/IssueManageComponent/CommonComponent/UploadButton';

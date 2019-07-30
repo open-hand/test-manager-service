@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../../api/cycleApi';
-import { SelectFolder, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { SelectFolder, SelectFocusLoad } from '../../../../components';
 import TestPlanStore from '../../TestPlanStore/TestPlanStore';
 
 const FormItem = Form.Item;

@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { pull, pullAll, intersection } from 'lodash';
 import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../api/cycleApi';
-import { SelectFocusLoad } from '../../../../../components/CommonComponent';
+import { SelectFocusLoad } from '../../../../../components';
 import TestPlanStore from '../../../TestPlanStore/TestPlanStore';
 
 const { AppState } = stores;

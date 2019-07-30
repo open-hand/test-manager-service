@@ -12,7 +12,7 @@ import { delta2Html, issueLink } from '../../../../common/utils';
 import {
   WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
   TextEditToggle,
-} from '../../../../components/CommonComponent';
+} from '../../../../components';
 import { addDefects, removeDefect } from '../../../../api/ExecuteDetailApi';
 import ExecuteDetailStore from '../../TestExecuteStore/ExecuteDetailStore';
 import TypeTag from '../../../IssueManage/IssueManageComponent/TypeTag';

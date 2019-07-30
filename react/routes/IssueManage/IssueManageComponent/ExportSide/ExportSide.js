@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import moment from 'moment';
-import { SelectVersion, SelectFolder } from '../../../../components/CommonComponent';
+import { SelectVersion, SelectFolder } from '../../../../components';
 import {
   exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
 } from '../../../../api/IssueManageApi';

@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
-} from '../../../../../components/CommonComponent';
+} from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
 import './TestExecuteTable.scss';
 

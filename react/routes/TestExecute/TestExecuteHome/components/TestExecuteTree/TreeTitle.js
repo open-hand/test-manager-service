@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
 import { observer } from 'mobx-react';
 import './TreeTitle.scss';
-import { SmartTooltip, TestProgressLine } from '../../../../../components/CommonComponent';
+import { SmartTooltip, TestProgressLine } from '../../../../../components';
 
 const TreeTitle = ({
   title,

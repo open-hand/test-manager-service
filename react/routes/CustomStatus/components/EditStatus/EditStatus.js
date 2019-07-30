@@ -12,7 +12,7 @@ import { Form, Input, Modal } from 'choerodon-ui';
 import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectName } from '../../../../common/utils';
-import { ColorPicker } from '../../../../components/CommonComponent';
+import { ColorPicker } from '../../../../components';
 import './EditStatus.less';
 
 const FormItem = Form.Item;

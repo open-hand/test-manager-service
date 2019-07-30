@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import './PlanTree.scss';
-import { NoVersion } from '../../../../components/CommonComponent';
+import { NoVersion } from '../../../../components';
 import TestPlanStore from '../../TestPlanStore/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';

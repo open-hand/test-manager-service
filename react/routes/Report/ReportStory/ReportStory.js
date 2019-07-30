@@ -10,7 +10,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { Tags } from '../../../components/CommonComponent';
+import { Tags } from '../../../components';
 import { ReporterSwitcher } from '../ReportComponent';
 import { getReportsFromStory } from '../../../api/reportApi';
 import {

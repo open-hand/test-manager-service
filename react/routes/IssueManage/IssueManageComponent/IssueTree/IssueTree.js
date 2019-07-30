@@ -12,7 +12,7 @@ import {
 } from '../../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../IssueManagestore/IssueStore';
-import { NoVersion } from '../../../../components/CommonComponent';
+import { NoVersion } from '../../../../components';
 
 const { TreeNode } = Tree;
 @observer

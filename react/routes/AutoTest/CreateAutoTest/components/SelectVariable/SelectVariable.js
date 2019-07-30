@@ -5,7 +5,7 @@ import {
 import { injectIntl, FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { YamlEditor, SelectVersion } from '../../../../../components/CommonComponent';
+import { YamlEditor, SelectVersion } from '../../../../../components';
 import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
 import { getAllEnvs } from '../../../../../api/AutoTestApi';
 import SelectAppAndVersion from '../SelectAppAndVersion';

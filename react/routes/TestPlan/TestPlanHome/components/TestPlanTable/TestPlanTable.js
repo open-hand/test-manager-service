@@ -5,7 +5,7 @@ import { Button } from 'choerodon-ui';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
-} from '../../../../../components/CommonComponent';
+} from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
 import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
 

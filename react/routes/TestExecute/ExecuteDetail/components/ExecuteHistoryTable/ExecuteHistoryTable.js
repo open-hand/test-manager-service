@@ -4,7 +4,7 @@ import isEqual from 'react-fast-compare';
 import { FormattedMessage } from 'react-intl';
 import { Table, Tooltip } from 'choerodon-ui';
 import { delta2Html, delta2Text } from '../../../../../common/utils';
-import { RichTextShow, User } from '../../../../../components/CommonComponent';
+import { RichTextShow, User } from '../../../../../components';
 import './ExecuteHistoryTable.scss';
 
 const propTypes = {

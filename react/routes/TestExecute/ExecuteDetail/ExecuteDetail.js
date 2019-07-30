@@ -7,7 +7,7 @@ import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { StatusTags } from '../../../components/CommonComponent';
+import { StatusTags } from '../../../components';
 import {
   executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink, 
 } from '../../../common/utils';
