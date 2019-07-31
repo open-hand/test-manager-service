@@ -23,7 +23,7 @@ export function renderType(issueTypeVO, showTypeName) {
         <TypeTag
           data={issueTypeVO || {}}
         />
-        {showTypeName && <span style={{ marginLeft: 5 }}>{testTypes[typeCode]}</span>}
+        {showTypeName && <span style={{ marginLeft: 5, lineHeight: '27px' }}>{testTypes[typeCode]}</span>}
       </div>
     </Tooltip>
   );

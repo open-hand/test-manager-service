@@ -245,7 +245,7 @@ export function issueLink(issueId, typeCode, issueName = null) {
     type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
-    return encodeURI(`/testManager/IssueManage/testCase/${issueId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else if (issueName) {
     return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {
