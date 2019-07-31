@@ -8,7 +8,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
 import { getLog } from '../../../../../api/AutoTestApi';
 
-import './ContainerLog.scss';
+import './ContainerLog.less';
 
 const { Sidebar } = Modal;
 const { Option } = Select;

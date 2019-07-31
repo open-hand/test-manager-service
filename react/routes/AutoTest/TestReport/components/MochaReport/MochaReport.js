@@ -8,7 +8,7 @@ import { getProjectName } from '../../../../../common/utils';
 import { StatusTags } from '../../../../../components/CommonComponent';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
-import './MochaReport.scss';
+import './MochaReport.less';
 
 const STATUS = {
   passed: {

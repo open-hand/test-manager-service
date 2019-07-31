@@ -7,7 +7,7 @@ import {
   Content, Header, Page, stores, 
 } from '@choerodon/boot';
 import _ from 'lodash';
-import './CreateAutoTest.scss';
+import './CreateAutoTest.less';
 import { commonLink } from '../../../common/utils';
 import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
 import { SelectVariable, ModifyConfig, ConfirmInfo } from './components';

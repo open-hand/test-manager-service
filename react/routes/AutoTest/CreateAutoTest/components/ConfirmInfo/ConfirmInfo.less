@@ -1,0 +1,44 @@
+@task-border-shadow1: rgba(0, 0, 0, 0.20);
+@task-border-shadow2: rgba(0, 0, 0, 0.12);
+
+.c7ntest-create-task {
+  box-shadow: 0 0.01rem 0 0 @task-border-shadow1, 0 0 0 0.01rem @task-border-shadow2, 0 0.02rem 0.02rem -0.01rem @task-border-shadow2;
+  border-radius: 0.02rem;
+  padding-left: 0.18rem;
+  padding-top: 0.18rem;
+  margin-left: 0.09rem;
+  margin-bottom: 0.15rem;
+  width: 5.52rem;
+  &-radio-container>label:first-child {
+    margin-right: 0.52rem;
+  }
+  &-select {
+    position: relative;
+    top: 0.06rem;
+  }
+  &-inline-formitem {
+    display: inline-block;
+    &-select {
+      margin-top: 0.12rem;
+    }
+  }
+  &-set-task {
+    width: 2.6rem;
+    display: inline-block;
+    margin-right: 0.42rem;
+  }
+  div.c7ntest-create-task-inline-formitem {
+    margin-right: 0.18rem;
+  }
+}
+
+.c7ntest-task-detail-popover {
+  width: 2.72rem;
+  height: 1.56rem;
+  &-icon {
+    position: absolute;
+    margin-top: 0.16rem;
+    margin-left: -0.21rem;
+    cursor: pointer;
+  }
+}

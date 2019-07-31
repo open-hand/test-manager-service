@@ -5,7 +5,7 @@ import { Content } from '@choerodon/boot';
 import { Tabs, Select } from 'choerodon-ui';
 import TestTable from './TestTable';
 import { toArray } from './utils';
-import './TestNGReport.scss';
+import './TestNGReport.less';
 
 const { TabPane } = Tabs;
 const { Option } = Select;

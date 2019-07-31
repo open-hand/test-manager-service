@@ -13,7 +13,7 @@ import { importIssue } from '../../../api/FileApi';
 import { commonLink, humanizeDuration, getProjectName } from '../../../common/utils';
 import { SelectVersion } from '../../../components/CommonComponent';
 import { getImportHistory, cancelImport, downloadTemplate } from '../../../api/IssueManageApi';
-import './ImportIssue.scss';
+import './ImportIssue.less';
 
 const { AppState } = stores;
 const { confirm, Sidebar } = Modal;
