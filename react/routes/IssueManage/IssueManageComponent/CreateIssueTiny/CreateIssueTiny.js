@@ -1,7 +1,7 @@
 /*eslint-disable */
 import React, { Component } from 'react';
 import {
-  Button, Input, Icon, Select, 
+  Button, Input, Icon, Select,
 } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
@@ -14,7 +14,7 @@ import IssueTreeStore from '../../IssueManagestore/IssueTreeStore';
 const { Option } = Select;
 @observer
 class CreateIssueTiny extends Component {
-  state={
+  state = {
     creating: false,
     createLoading: false,
     createIssueValue: '',
@@ -63,17 +63,17 @@ class CreateIssueTiny extends Component {
           if (folderId) {
             targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
           } else {
-            const {versionId} = data.versionIssueRelVOList[0];
+            const { versionId } = data.versionIssueRelVOList[0];
             targetCycle = _.find(IssueTreeStore.dataList, { versionId });
-          }    
-          if (targetCycle) {      
+          }
+          if (targetCycle) {
             const expandKeys = IssueTreeStore.getExpandedKeys;
             // 设置当前选中项
             IssueTreeStore.setCurrentCycle(targetCycle);
             // 设置当前选中项
             IssueTreeStore.setSelectedKeys([targetCycle.key]);
             // 设置展开项，展开父元素
-            IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);      
+            IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
           }
           IssueStore.loadIssues();
           this.setState({
@@ -83,7 +83,7 @@ class CreateIssueTiny extends Component {
         })
         .catch((error) => {
           console.log(error);
-          this.setState({  
+          this.setState({
             createLoading: false,
           });
         });
@@ -101,21 +101,19 @@ class CreateIssueTiny extends Component {
           {
             _.find(versions, { versionId: selectedVersion })
               ? (
-                <div style={{ display: 'flex', alignItems: 'center', marginTop: -8 }}>                 
-                  <Select
-                    disabled={IssueTreeStore.currentCycle.versionId}
-                    onChange={(value) => {
-                      IssueStore.selectVersion(value);
-                    }}
-                    value={selectedVersion}
-                    style={{ minWidth: 50 }}
-                    dropdownMatchSelectWidth={false}
-                  >
-                    {
-                      versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
-                    }
-                  </Select>
-                </div>
+                <Select
+                  disabled={IssueTreeStore.currentCycle.versionId}
+                  onChange={(value) => {
+                    IssueStore.selectVersion(value);
+                  }}
+                  value={selectedVersion}
+                  style={{ minWidth: 50, height: 36 }}
+                  dropdownMatchSelectWidth={false}
+                >
+                  {
+                    versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
+                  }
+                </Select>
               )
               : (
                 <div style={{ color: 'gray', marginTop: -3 }}>
@@ -163,21 +161,21 @@ class CreateIssueTiny extends Component {
         </div>
       </div>
     ) : (
-      <Button
-        className="leftBtn"
-        style={{ color: '#3f51b5' }}
-        funcType="flat"
-        onClick={() => {
-          this.setState({
-            creating: true,
-            createIssueValue: '',
-          });
-        }}
-      >
-        <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
-        <span><FormattedMessage id="issue_issueCreate" /></span>
-      </Button>
-    );
+        <Button
+          className="leftBtn"
+          style={{ color: '#3f51b5' }}
+          funcType="flat"
+          onClick={() => {
+            this.setState({
+              creating: true,
+              createIssueValue: '',
+            });
+          }}
+        >
+          <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
+          <span><FormattedMessage id="issue_issueCreate" /></span>
+        </Button>
+      );
   }
 }
 

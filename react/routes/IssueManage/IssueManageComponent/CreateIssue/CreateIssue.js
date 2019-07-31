@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
 import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+import { find, debounce, map } from 'lodash';
 import {
-  Select, Form, Input, Button, Modal, Icon, Tooltip,
+  Select, Form, Input, Modal, 
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
 import { UploadButton } from '../CommonComponent';
-import { handleFileUpload, beforeTextUpload } from '../../../../common/utils';
+import {
+  handleFileUpload, beforeTextUpload, validateFile, normFile, 
+} from '../../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../../api/IssueManageApi';
 import IssueStore from '../../IssueManagestore/IssueStore';
 import {
-  getLabels, getModules, getPrioritys, getProjectVersion, 
+  getLabels, getModules, getPrioritys, getProjectVersion,
 } from '../../../../api/agileApi';
 import { getUsers } from '../../../../api/IamApi';
-import { FullEditor, WYSIWYGEditor } from '../../../../components';
+import { WYSIWYGEditor } from '../../../../components';
 import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
 
@@ -30,15 +32,13 @@ class CreateIssue extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      createLoading: false,
-      fileList: [],
+      createLoading: false,     
       selectLoading: false,
       originLabels: [],
       originComponents: [],
       originPriorities: [],
       originFixVersions: [],
       originUsers: [],
-
       // origin: {},
       folders: [],
     };
@@ -56,7 +56,7 @@ class CreateIssue extends Component {
         selectLoading: false,
       });
       const { setFieldsValue } = this.props.form;
-      if (_.find(res, { versionId: this.props.defaultVersion })) {
+      if (find(res, { versionId: this.props.defaultVersion })) {
         setFieldsValue({ versionId: this.props.defaultVersion });
       }
     });
@@ -79,7 +79,7 @@ class CreateIssue extends Component {
     }
   }
 
-  debounceFilterIssues = _.debounce((input) => {
+  debounceFilterIssues = debounce((input) => {
     this.setState({
       selectLoading: true,
     });
@@ -91,13 +91,10 @@ class CreateIssue extends Component {
     });
   }, 500);
 
-  setFileList = (data) => {
-    this.setState({ fileList: data });
-  }
 
   getPrioritys() {
     getPrioritys().then((priorities) => {
-      const defaultPriority = _.find(priorities, { default: true });
+      const defaultPriority = find(priorities, { default: true });
       if (defaultPriority) {
         this.props.form.setFieldsValue({ priorityId: defaultPriority.id });
       }
@@ -125,10 +122,10 @@ class CreateIssue extends Component {
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const { description } = values;
+        const { description, fileList } = values;
         const exitComponents = this.state.originComponents;
-        const componentIssueRelDTOList = _.map(values.componentIssueRel, (component) => {
-          const target = _.find(exitComponents, { name: component });
+        const componentIssueRelDTOList = map(values.componentIssueRel, (component) => {
+          const target = find(exitComponents, { name: component });
           if (target) {
             return target;
           } else {
@@ -139,8 +136,8 @@ class CreateIssue extends Component {
           }
         });
         const exitLabels = this.state.originLabels;
-        const labelIssueRelDTOList = _.map(values.issueLink, (label) => {
-          const target = _.find(exitLabels, { labelName: label });
+        const labelIssueRelDTOList = map(values.issueLink, (label) => {
+          const target = find(exitLabels, { labelName: label });
           if (target) {
             return target;
           } else {
@@ -152,7 +149,7 @@ class CreateIssue extends Component {
         });
         const exitFixVersions = this.state.originFixVersions;
         const version = values.versionId;
-        const target = _.find(exitFixVersions, { versionId: version });
+        const target = find(exitFixVersions, { versionId: version });
         let fixVersionIssueRelDTOList = [];
         if (target) {
           fixVersionIssueRelDTOList = [{
@@ -182,7 +179,7 @@ class CreateIssue extends Component {
         this.setState({ createLoading: true });
         const deltaOps = description;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, values.folderId));
+          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, fileList, values.folderId));
         } else {
           extra.description = '';
           this.handleSave(extra, values.folderId);
@@ -192,11 +189,7 @@ class CreateIssue extends Component {
     });
   };
 
-  handleSave = (data, folderId) => {
-    const { fileList } = this.state;
-    const callback = (newFileList) => {
-      this.setState({ fileList: newFileList });
-    };
+  handleSave = (data, fileList, folderId) => {
     createIssue(data, folderId)
       .then((res) => {
         if (fileList.length > 0) {
@@ -207,7 +200,7 @@ class CreateIssue extends Component {
             projectId: AppState.currentMenuType.id,
           };
           if (fileList.some(one => !one.url)) {
-            handleFileUpload(this.state.fileList, callback, config);
+            handleFileUpload(fileList, () => {}, config);
           }
         }
         this.props.onOk(data, folderId);
@@ -292,7 +285,17 @@ class CreateIssue extends Component {
                 />,
               )}
             </FormItem>
-
+            <FormItem style={{ display: 'block' }}>
+              {getFieldDecorator('fileList', {
+                valuePropName: 'fileList',
+                getValueFromEvent: normFile,
+                rules: [{
+                  validator: validateFile,
+                }],
+              })(
+                <UploadButton />,
+              )}
+            </FormItem>
             <FormItem>
               {getFieldDecorator('assigneedId', {})(
                 <Select
@@ -422,13 +425,6 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
-            <UploadButton
-              className="c7ntest-upload-button"
-              mode="circle"
-              onRemove={this.setFileList}
-              onBeforeUpload={this.setFileList}
-              fileList={this.state.fileList}
-            />
           </Form>
         </Content>
       </Sidebar>
