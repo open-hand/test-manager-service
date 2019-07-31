@@ -10,6 +10,7 @@ import io.choerodon.agile.api.vo.IssueLinkDTO;
 import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 
 /**
@@ -282,6 +283,10 @@ public class TestCycleCaseVO {
 
     public List<TestCycleCaseAttachmentRelVO> getCaseAttachment() {
         return caseAttachment;
+    }
+
+    public void setCaseAttachment(List<TestCycleCaseAttachmentRelVO> caseAttachment) {
+        this.caseAttachment = caseAttachment;
     }
 
     public Long getLastUpdatedBy() {

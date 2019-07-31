@@ -26,6 +26,7 @@ import io.choerodon.base.domain.Sort;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.app.service.*;
@@ -270,6 +271,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
 
         TestCycleCaseVO dto = modelMapper.map(list.get(0), TestCycleCaseVO.class);
+        dto.setCaseAttachment(modelMapper.map(list.get(0).getCaseAttachment(), new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+        }.getType()));
         testCycleCaseDefectRelService.populateDefectAndIssue(dto, projectId, organizationId);
         userService.populateTestCycleCaseDTO(dto);
 

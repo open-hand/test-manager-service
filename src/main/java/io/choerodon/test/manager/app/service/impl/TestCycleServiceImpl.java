@@ -400,7 +400,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         root.put("versions", versionStatus);
 
         List<TestCycleVO> cycles = testCycleDTOToTestCycleVO(countStatus(cycleMapper.query(projectId, versions.stream()
-                        .map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo)));
+                .map(ProductVersionDTO::getVersionId).toArray(Long[]::new), assignedTo)));
         populateUsers(cycles);
         initVersionTree(projectId, versionStatus, versions, cycles);
 
@@ -756,12 +756,13 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        TestCycleDTO testCycleDTO = modelMapper.map(testCycleVO, TestCycleDTO.class);
         testCycleDTO.setProjectId(projectId);
         checkRank(testCycleVO);
         testCycleVO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+        cycleMapper.insert(testCycleDTO);
 
-        return testCycleVO;
+        return modelMapper.map(testCycleDTO, TestCycleVO.class);
     }
 
     public void checkRank(TestCycleVO testCycleVO) {
