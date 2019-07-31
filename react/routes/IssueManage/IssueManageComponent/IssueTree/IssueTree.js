@@ -12,7 +12,7 @@ import {
 } from '../../../../api/IssueManageApi';
 import IssueTreeTitle from './IssueTreeTitle';
 import IssueStore from '../../IssueManagestore/IssueStore';
-import { NoVersion } from '../../../../components/CommonComponent';
+import { NoVersion } from '../../../../components';
 
 const { TreeNode } = Tree;
 @observer
@@ -127,9 +127,11 @@ class IssueTree extends Component {
     if (type === 'ADD_FOLDER') {
       return (
         <TreeNode
+          className="hidden-hover"
           title={(
             <div onClick={e => e.stopPropagation()} role="none">
               <Input
+                className="hidden-label"              
                 defaultValue={item.title}
                 autoFocus
                 onBlur={(e) => {
@@ -144,7 +146,7 @@ class IssueTree extends Component {
       );
     } else {
       return (
-        <TreeNode
+        <TreeNode          
           title={item.cycleId || item.versionId
             ? (
               <IssueTreeTitle
@@ -343,6 +345,7 @@ class IssueTree extends Component {
         </div>
         <div className="c7ntest-treeTop">
           <Input
+            className="hidden-label"
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
             placeholder="过滤"
             style={{ marginTop: 2 }}

@@ -22,7 +22,7 @@ class CreateIssueTiny extends Component {
 
   handleBlurCreateIssue() {
     if (this.state.createIssueValue !== '') {
-      const versionIssueRelDTOList = [];
+      const versionIssueRelVOList = [];
       const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
       const folderId = IssueTreeStore.currentCycle.cycleId;
       // 判断是否选择版本
@@ -31,7 +31,7 @@ class CreateIssueTiny extends Component {
         Choerodon.prompt('请选择版本');
         return;
       }
-      versionIssueRelDTOList.push({
+      versionIssueRelVOList.push({
         versionId: selectedVersion,
         relationType: 'fix',
       });
@@ -51,7 +51,7 @@ class CreateIssueTiny extends Component {
         summary: this.state.createIssueValue,
         epicId: 0,
         parentIssueId: 0,
-        versionIssueRelDTOList,
+        versionIssueRelVOList,
       };
       this.setState({
         createLoading: true,
@@ -63,7 +63,7 @@ class CreateIssueTiny extends Component {
           if (folderId) {
             targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
           } else {
-            const {versionId} = data.versionIssueRelDTOList[0];
+            const {versionId} = data.versionIssueRelVOList[0];
             targetCycle = _.find(IssueTreeStore.dataList, { versionId });
           }    
           if (targetCycle) {      

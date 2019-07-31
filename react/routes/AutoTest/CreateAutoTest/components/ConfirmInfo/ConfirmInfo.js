@@ -8,7 +8,7 @@ import YAML from 'yamljs';
 import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
-import { YamlEditor } from '../../../../../components/CommonComponent';
+import { YamlEditor } from '../../../../../components';
 import { commonLink } from '../../../../../common/utils';
 import {
   getYaml, runTestTiming, runTestInstant,

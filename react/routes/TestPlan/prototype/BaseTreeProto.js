@@ -37,7 +37,7 @@ class BaseTreeProto {
   }
 
   getItemByKey(key) {
-    const arr = key.split('-');
+    const arr = key.split('-').slice(1);;
     let temp = this.treeData;
     arr.forEach((index, i) => {
       // window.console.log(temp);
@@ -78,7 +78,7 @@ class BaseTreeProto {
   }
 
   @action addItemByParentKey = (key, item) => {
-    const arr = key.split('-');
+    const arr = key.split('-').slice(1);
     let temp = this.treeData;
     arr.forEach((index, i) => {
       // window.console.log(temp);

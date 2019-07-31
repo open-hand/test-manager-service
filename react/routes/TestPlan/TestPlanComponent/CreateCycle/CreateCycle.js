@@ -111,7 +111,7 @@ class CreateCycle extends Component {
                     <Select
                       // loading={selectLoading}
                       // onFocus={this.getProjectVersion}
-                      style={{ width: 500, margin: '0 0 10px 0' }}
+                      style={{ width: 500 }}
                       label={<FormattedMessage id="version" />}
                     >
                       {options}
@@ -147,7 +147,7 @@ class CreateCycle extends Component {
                 </FormItem>
                 <FormItem>
                   <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label"><span>持续时间</span></div>
+                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
                     {getFieldDecorator('range', {
                       rules: [{
                         required: true, message: '请选择日期!',

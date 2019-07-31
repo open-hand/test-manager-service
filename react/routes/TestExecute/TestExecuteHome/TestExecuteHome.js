@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { ShowCycleData } from '../TestExecuteComponent';
-import { NoCycle } from '../../../components/CommonComponent';
+import { NoCycle } from '../../../components';
 import { TestExecuteTreeToggle } from './components';
 import { TestExecuteTable } from './components';
 import './TestExecuteHome.scss';
@@ -83,7 +83,7 @@ const TestExecuteHome = ({
       </Header>
       <Content
         style={{
-          paddingLeft: 0, paddingBottom: 0, paddingRight: 0, display: 'flex',
+          padding: 0, display: 'flex',
         }}
       >
         <Spin spinning={loading}>

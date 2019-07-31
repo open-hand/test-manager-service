@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
-} from '../../../../../components/CommonComponent';
+} from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
 import './TestExecuteTable.scss';
 
@@ -60,11 +60,11 @@ class TestExecuteTable extends Component {
       filters: [],
       width: '30%',
       render(issueId, record) {
-        const { issueInfosDTO } = record;
+        const { issueInfosVO } = record;
         return (
-          issueInfosDTO && (
+          issueInfosVO && (
           <SmartTooltip style={{ color: '#3F51B5' }}>
-            {issueInfosDTO.summary}
+            {issueInfosVO.summary}
           </SmartTooltip>
           )
         );
@@ -101,9 +101,9 @@ class TestExecuteTable extends Component {
       key: 'priorityId',
       filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
       render(issueId, record) {
-        const { issueInfosDTO } = record;
+        const { issueInfosVO } = record;
         return (
-          issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
+          issueInfosVO && renderPriority(issueInfosVO.priorityVO)
         );
       },
     }, {
@@ -173,6 +173,7 @@ class TestExecuteTable extends Component {
             allowClear
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_executeBy" />}
+            getPopupContainer={ele => ele.parentNode}
             type="user"
             onChange={onExecuteByChange}
           />
@@ -182,6 +183,7 @@ class TestExecuteTable extends Component {
             style={{ marginLeft: 20, width: 200 }}
             className="c7ntest-select"
             placeholder={<FormattedMessage id="cycle_assignedTo" />}
+            getPopupContainer={ele => ele.parentNode}
             type="user"
             onChange={onAssignedToChange}
           />

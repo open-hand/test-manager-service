@@ -5,7 +5,7 @@ import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { getProjectName } from '../../../../../common/utils';
-import { StatusTags } from '../../../../../components/CommonComponent';
+import { StatusTags } from '../../../../../components';
 import ReportStore from './reportStore';
 import DuringChart from './DuringChart';
 import './MochaReport.scss';

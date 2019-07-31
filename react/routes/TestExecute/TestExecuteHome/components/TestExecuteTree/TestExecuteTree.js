@@ -4,7 +4,7 @@ import { Icon, Tree } from 'choerodon-ui';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import TreeTitle from './TreeTitle';
-import { NoVersion } from '../../../../../components/CommonComponent';
+import { NoVersion } from '../../../../../components';
 import './TestExecuteTree.scss';
 
 const { TreeNode } = Tree;

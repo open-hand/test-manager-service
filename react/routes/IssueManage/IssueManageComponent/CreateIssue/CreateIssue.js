@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { stores, axios, Content } from '@choerodon/boot';
+import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import {
@@ -15,7 +15,7 @@ import {
   getLabels, getModules, getPrioritys, getProjectVersion, 
 } from '../../../../api/agileApi';
 import { getUsers } from '../../../../api/IamApi';
-import { FullEditor, WYSIWYGEditor } from '../../../../components/CommonComponent';
+import { FullEditor, WYSIWYGEditor } from '../../../../components';
 import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
 
@@ -30,8 +30,6 @@ class CreateIssue extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      delta: '',
-      edit: false,
       createLoading: false,
       fileList: [],
       selectLoading: false,
@@ -51,7 +49,7 @@ class CreateIssue extends Component {
     this.loadVersions();
   }
 
-  loadVersions=() => {
+  loadVersions = () => {
     getProjectVersion().then((res) => {
       this.setState({
         originFixVersions: res,
@@ -59,11 +57,11 @@ class CreateIssue extends Component {
       });
       const { setFieldsValue } = this.props.form;
       if (_.find(res, { versionId: this.props.defaultVersion })) {
-        setFieldsValue({ versionId: this.props.defaultVersion }); 
+        setFieldsValue({ versionId: this.props.defaultVersion });
       }
     });
   }
-  
+
   onFilterChange(input) {
     if (!sign) {
       this.setState({
@@ -124,16 +122,10 @@ class CreateIssue extends Component {
     }
   }
 
-  handleFullEdit = (delta) => {
-    this.setState({
-      delta,
-      edit: false,
-    });
-  }
-
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        const { description } = values;
         const exitComponents = this.state.originComponents;
         const componentIssueRelDTOList = _.map(values.componentIssueRel, (component) => {
           const target = _.find(exitComponents, { name: component });
@@ -171,7 +163,7 @@ class CreateIssue extends Component {
           Choerodon.prompt('版本错误');
           return null;
         }
-        const testType = IssueStore.getTestType;     
+        const testType = IssueStore.getTestType;
         const extra = {
           typeCode: 'issue_test',
           issueTypeId: testType,
@@ -188,13 +180,13 @@ class CreateIssue extends Component {
           componentIssueRelDTOList,
         };
         this.setState({ createLoading: true });
-        const deltaOps = this.state.delta;
+        const deltaOps = description;
         if (deltaOps) {
           beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, values.folderId));
         } else {
           extra.description = '';
           this.handleSave(extra, values.folderId);
-        }        
+        }
       }
       return null;
     });
@@ -219,9 +211,6 @@ class CreateIssue extends Component {
           }
         }
         this.props.onOk(data, folderId);
-      })
-      .catch((error) => {
-        /* console.log(error); */
       });
   };
 
@@ -254,12 +243,6 @@ class CreateIssue extends Component {
         {folder.name}
       </Option>
     ));
-    const callback = (value) => {
-      this.setState({
-        delta: value,
-        edit: false,
-      });
-    };
 
     return (
       <Sidebar
@@ -280,8 +263,8 @@ class CreateIssue extends Component {
           description={<FormattedMessage id="issue_create_content_description" />}
           link="http://v0-16.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >
-          <Form layout="vertical">
-            <FormItem style={{ width: 520 }}>
+          <Form layout="vertical" style={{ width: 670 }} className="c7ntest-form">
+            <FormItem className="c7ntest-line">
               {getFieldDecorator('summary', {
                 rules: [{ required: true, message: '概要为必输项' }],
               })(
@@ -289,7 +272,7 @@ class CreateIssue extends Component {
               )}
             </FormItem>
 
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('priorityId', {
                 rules: [{ required: true, message: '优先级为必选项' }],
                 // initialValue: this.state.origin.defaultPriorityCode,
@@ -302,33 +285,15 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
+            <FormItem className="c7ntest-line">
+              {getFieldDecorator('description')(
+                <WYSIWYGEditor
+                  style={{ height: 200, width: '100%' }}
+                />,
+              )}
+            </FormItem>
 
-            <div>
-              <div style={{ display: 'flex', marginBottom: 13, alignItems: 'center' }}>
-                <div style={{ fontWeight: 500 }}><FormattedMessage id="execute_description" /></div>
-                <div style={{ marginLeft: 80 }}>
-                  <Button className="leftBtn" funcType="flat" onClick={() => this.setState({ edit: true })} style={{ display: 'flex', alignItems: 'center' }}>
-                    <Icon type="zoom_out_map" style={{ color: '#3f51b5', fontSize: '18px', marginRight: 12 }} />
-                    <span style={{ color: '#3f51b5' }}><FormattedMessage id="execute_edit_fullScreen" /></span>
-                  </Button>
-                </div>
-              </div>
-              {
-                !this.state.edit && (
-                  <div className="clear-p-mw">
-                    <WYSIWYGEditor
-                      value={this.state.delta}
-                      style={{ height: 200, width: 520 }}
-                      onChange={(value) => {
-                        this.setState({ delta: value });
-                      }}
-                    />
-                  </div>
-                )
-              }
-            </div>
-
-            <FormItem style={{ width: 520, display: 'inline-block' }}>
+            <FormItem>
               {getFieldDecorator('assigneedId', {})(
                 <Select
                   label={<FormattedMessage id="issue_issueSortByPerson" />}
@@ -341,33 +306,20 @@ class CreateIssue extends Component {
                 >
                   {this.state.originUsers.map(user => (
                     <Option key={user.id} value={user.id}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
-                        <UserHead
-                          user={{
-                            id: user.id,
-                            loginName: user.loginName,
-                            realName: user.realName,
-                            avatar: user.imageUrl,
-                          }}
-                        />
-                      </div>
+                      <UserHead
+                        user={{
+                          id: user.id,
+                          loginName: user.loginName,
+                          realName: user.realName,
+                          avatar: user.imageUrl,
+                        }}
+                      />
                     </Option>
                   ))}
                 </Select>,
               )}
             </FormItem>
-            <Tooltip title="可自行选择经办人，如不选择，会应用模块的默认经办人逻辑和项目的默认经办人策略">
-              <Icon
-                type="error"
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(0,0,0,0.54)',
-                  marginLeft: 15,
-                  marginTop: 20,
-                }}
-              />
-            </Tooltip>
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('versionId', {
                 rules: [
                   {
@@ -386,15 +338,13 @@ class CreateIssue extends Component {
                   onChange={() => {
                     const { resetFields } = this.props.form;
                     resetFields(['folderId']);
-                  }}             
+                  }}
                 >
                   {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
             <FormItem
-              style={{ width: 520 }}
-              // {...formItemLayout}
               label={null}
             >
               {getFieldDecorator('folderId', {
@@ -411,7 +361,7 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('componentIssueRel', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],
               })(
@@ -438,7 +388,7 @@ class CreateIssue extends Component {
               )}
             </FormItem>
 
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('issueLink', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],
               })(
@@ -472,30 +422,14 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
+            <UploadButton
+              className="c7ntest-upload-button"
+              mode="circle"
+              onRemove={this.setFileList}
+              onBeforeUpload={this.setFileList}
+              fileList={this.state.fileList}
+            />
           </Form>
-
-          <div className="sign-upload" style={{ marginTop: 38 }}>
-            <div style={{ display: 'flex', marginBottom: '13px', alignItems: 'center' }}>
-              <div style={{ fontWeight: 500 }}><FormattedMessage id="attachment" /></div>
-            </div>
-            <div style={{ marginTop: -38 }}>
-              <UploadButton
-                onRemove={this.setFileList}
-                onBeforeUpload={this.setFileList}
-                fileList={this.state.fileList}
-              />
-            </div>
-          </div>
-          {
-            this.state.edit ? (
-              <FullEditor
-                initValue={this.state.delta}
-                visible={this.state.edit}
-                onCancel={() => this.setState({ edit: false })}
-                onOk={callback}
-              />
-            ) : null
-          }
         </Content>
       </Sidebar>
     );

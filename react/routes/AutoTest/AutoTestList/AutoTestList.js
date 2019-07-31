@@ -12,7 +12,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/base16-dark.css';
-import { User } from '../../../components/CommonComponent';
+import { User } from '../../../components';
 import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult,
 } from './AutoTestTags';
@@ -180,6 +180,7 @@ const AutoTestList = ({
           loading={selectLoading}
           onChange={onAppChange}
           onFilterChange={onFilterChange}
+          getPopupContainer={trigger => trigger.parentNode}
         >
           {appOptions}
         </Select>

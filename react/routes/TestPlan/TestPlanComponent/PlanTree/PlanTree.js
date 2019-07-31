@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import _ from 'lodash';
 import './PlanTree.scss';
-import { NoVersion } from '../../../../components/CommonComponent';
+import { NoVersion } from '../../../../components';
 import TestPlanStore from '../../TestPlanStore/TestPlanStore';
 import CloneCycle from '../CloneCycle';
 import CloneStage from '../CloneStage';
@@ -13,7 +13,6 @@ import { addFolder, editFolder } from '../../../../api/cycleApi';
 import PlanTreeTitle from './PlanTreeTitle';
 import CreateStage from '../CreateStage';
 import { getDragRank } from '../../../../common/utils';
-
 const { TreeNode } = Tree;
 
 @observer
@@ -300,20 +299,15 @@ class PlanTree extends Component {
           onCancel={() => { this.setState({ AssignBatchShow: false }); }}
           onOk={this.handleAssignDone}
         />
-        <div className="c7ntest-PlanTree-treeTop">
+        <div className="c7ntest-treeTop">
           <Input
+            className="hidden-label"
             prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
             placeholder="过滤"
             style={{ marginTop: 2 }}
             onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
           />
-          <div
-            role="none"
-            className="c7ntest-PlanTree-treeTop-button"
-            onClick={onClose}
-          >
-            <Icon type="navigate_before" />
-          </div>
+          <Icon type="close" className="c7ntest-pointer" onClick={onClose} />
         </div>
 
         <div className="c7ntest-PlanTree-tree">

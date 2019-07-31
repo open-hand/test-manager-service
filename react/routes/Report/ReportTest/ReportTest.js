@@ -221,12 +221,12 @@ class ReportTest extends Component {
       key: 'a',
       width: '25%',
       render(test, record) {
-        const { issueInfosDTO } = record;
+        const { issueInfosVO } = record;
         const {
-          issueId, statusMapDTO,
+          issueId, statusVO,
           issueName, summary, typeCode,
-        } = issueInfosDTO;
-        const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
+        } = issueInfosVO;
+        const { name: statusName, colour: statusColor, type: statusCode } = statusVO || {};
         return (
           <Collapse
             activeKey={openId}
@@ -265,8 +265,8 @@ class ReportTest extends Component {
       key: 'execute',
       width: '25%',
       render(a, record) {
-        const { testCycleCaseES, testCycleCaseStepES, issueInfosDTO } = record;
-        const { issueId } = issueInfosDTO;
+        const { testCycleCaseES, testCycleCaseStepES, issueInfosVO } = record;
+        const { issueId } = issueInfosVO;
         const executeStatus = {};
         const totalExecute = testCycleCaseES.length + testCycleCaseStepES.length;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
@@ -378,18 +378,18 @@ class ReportTest extends Component {
       render(cycleId, record) {
         // const { linkedTestIssues } = record;
         const { testCycleCaseES, testCycleCaseStepES } = record;
-        const { issueId } = record.issueInfosDTO;
+        const { issueId } = record.issueInfosVO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute) => {
-          const { issueInfosDTO } = execute;
+          const { issueInfosVO } = execute;
           const {
-            issueName, summary, typeCode, statusMapDTO,
-          } = issueInfosDTO || {};
-          const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
+            issueName, summary, typeCode, statusVO,
+          } = issueInfosVO || {};
+          const { name: statusName, colour: statusColor, type: statusCode } = statusVO || {};
           return (
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, typeCode, issueName)} target="_blank">
+                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, typeCode, issueName)} target="_blank">
                     {issueName}
                   </Link>
                 </Tooltip>
@@ -428,14 +428,14 @@ class ReportTest extends Component {
       width: '25%',
       render(demand, record) {
         const { testCycleCaseES, testCycleCaseStepES } = record;
-        const { issueId } = record.issueInfosDTO;
+        const { issueId } = record.issueInfosVO;
         const caseShow = testCycleCaseES.concat(testCycleCaseStepES).map((execute, i) => {
-          const { issueLinkDTOS, issueInfosDTO } = execute;
-          const { issueName } = issueInfosDTO || {};
+          const { issueLinkDTOS, issueInfosVO } = execute;
+          const { issueName } = issueInfosVO || {};
           // window.console.log(issueLinkDTOS.length);
           const issueLinks = issueLinkDTOS && issueLinkDTOS.map((link) => {
-            const { issueNum, summary, statusMapDTO } = link;
-            const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
+            const { issueNum, summary, statusVO } = link;
+            const { name: statusName, colour: statusColor, type: statusCode } = statusVO || {};
             return (
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">

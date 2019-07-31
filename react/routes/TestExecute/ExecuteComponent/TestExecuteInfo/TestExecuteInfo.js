@@ -7,13 +7,13 @@ import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import {
   TextEditToggle, RichTextShow, User, StatusTags,
-} from '../../../../components/CommonComponent';
+} from '../../../../components';
 import { uploadFile, deleteAttachment } from '../../../../api/FileApi';
 import { delta2Html, beforeTextUpload, returnBeforeTextUpload } from '../../../../common/utils';
 import {
   addDefects, editCycle, removeDefect,
 } from '../../../../api/ExecuteDetailApi';
-import { FullEditor, Upload as UploadButton } from '../../../../components/CommonComponent';
+import { FullEditor, Upload as UploadButton } from '../../../../components';
 import CreateBug from '../CreateBug/CreateBug';
 import ExecuteDetailStore from '../../TestExecuteStore/ExecuteDetailStore';
 import './TestExecuteInfo.scss';
@@ -360,7 +360,7 @@ class TestExecuteInfo extends Component {
                         wordBreak: 'break-word',
                       }}
                     >
-                      {defects.map((defect, i) => defect.issueInfosDTO.issueName).join('，')}
+                      {defects.map((defect, i) => defect.issueInfosVO.issueName).join('，')}
                     </div>
                   ) : '无'}
                 </Text>

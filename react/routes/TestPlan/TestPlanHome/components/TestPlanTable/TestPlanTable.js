@@ -5,7 +5,7 @@ import { Button } from 'choerodon-ui';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
-} from '../../../../../components/CommonComponent';
+} from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
 import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
 
@@ -42,11 +42,11 @@ const TestPlanTable = ({
     filters: [],
     flex: 2,
     render(issueId, record) {
-      const { issueInfosDTO } = record;
+      const { issueInfosVO } = record;
       return (
-        issueInfosDTO && (
+        issueInfosVO && (
         <SmartTooltip style={{ color: '#3F51B5' }}>
-          {issueInfosDTO.summary}
+          {issueInfosVO.summary}
         </SmartTooltip>
         )
       );
@@ -86,9 +86,9 @@ const TestPlanTable = ({
     filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
     flex: 1,
     render(issueId, record) {
-      const { issueInfosDTO } = record;
+      const { issueInfosVO } = record;
       return (
-        issueInfosDTO && renderPriority(issueInfosDTO.priorityDTO)
+        issueInfosVO && renderPriority(issueInfosVO.priorityVO)
       );
     },
   }, {

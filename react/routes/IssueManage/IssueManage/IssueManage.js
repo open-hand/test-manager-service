@@ -12,13 +12,15 @@ import IssueTree from '../IssueManageComponent/IssueTree';
 import IssueTable from '../IssueManageComponent/IssueTable';
 import ExportSide from '../IssueManageComponent/ExportSide';
 import ImportSide from '../ImportIssue';
+import TestCaseDetail from '../TestCaseDetail';
 import './IssueManage.scss';
 import IssueTreeStore from '../IssueManagestore/IssueTreeStore';
 
 @observer
 export default class IssueManage extends Component {
-  state = { 
+  state = {
     createIssueShow: false,
+    clickIssue: {},
   };
 
   componentDidMount() {
@@ -52,34 +54,42 @@ export default class IssueManage extends Component {
     if (folderId) {
       targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
     } else {
-      const { versionId } = issue.versionIssueRelDTOList[0];
+      const { versionId } = issue.versionIssueRelVOList[0];
       targetCycle = _.find(IssueTreeStore.dataList, { versionId });
-    }    
-    if (targetCycle) {      
+    }
+    if (targetCycle) {
       const expandKeys = IssueTreeStore.getExpandedKeys;
       // 设置当前选中项
       IssueTreeStore.setCurrentCycle(targetCycle);
       // 设置当前选中项
       IssueTreeStore.setSelectedKeys([targetCycle.key]);
       // 设置展开项，展开父元素
-      IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);      
+      IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
     }
     IssueStore.loadIssues();
   }
 
 
-  handleTableRowClick=(record) => {
-    const { history } = this.props;
-    history.push(testCaseDetailLink(record.issueId, record.folderName));
+  handleTableRowClick = (record) => {
+    this.setState({
+      clickIssue: record,
+    });
+    // const { history } = this.props;
+    // history.push(testCaseDetailLink(record.issueId, record.folderName));
   }
 
 
   saveRef = name => (ref) => {
     this[name] = ref;
   }
+  handleClose = () => {
+    this.setState({
+      clickIssue: {},
+    })
+  }
 
   render() {
-    const { createIssueShow } = this.state;
+    const { createIssueShow, clickIssue } = this.state;
     const { treeShow } = IssueStore;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
@@ -100,7 +110,7 @@ export default class IssueManage extends Component {
             <FormattedMessage id="import" />
           </Button>
           <Button
-            onClick={() => {              
+            onClick={() => {
               const { current, pageSize } = IssueStore.pagination;
               if (this.tree) {
                 this.tree.getTree();
@@ -115,24 +125,24 @@ export default class IssueManage extends Component {
         <Content style={{ display: 'flex', padding: '0' }}>
           <div className="c7ntest-chs-bar">
             {!treeShow && (
-            <p
-              role="none"
-              onClick={() => {
-                IssueStore.setTreeShow(true);
-              }}
-            >
-              <FormattedMessage id="issue_repository" />
-            </p>
+              <p
+                role="none"
+                onClick={() => {
+                  IssueStore.setTreeShow(true);
+                }}
+              >
+                <FormattedMessage id="issue_repository" />
+              </p>
             )}
           </div>
           <div className="c7ntest-issue-tree">
             {treeShow && (
-            <IssueTree
-              ref={(tree) => { this.tree = tree; }}
-              onClose={() => {
-                IssueStore.setTreeShow(false);
-              }}
-            />
+              <IssueTree
+                ref={(tree) => { this.tree = tree; }}
+                onClose={() => {
+                  IssueStore.setTreeShow(false);
+                }}
+              />
             )}
           </div>
           <div
@@ -144,14 +154,15 @@ export default class IssueManage extends Component {
               overflowX: 'hidden',
             }}
           >
-            <IssueTable              
+            <IssueTable
               onRow={record => ({
-                onClick: (event) => { this.handleTableRowClick(record); },                             
+                onClick: (event) => { this.handleTableRowClick(record); },
               })}
             />
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           <ImportSide ref={this.saveRef('importSide')} />
+          {clickIssue.issueId && <TestCaseDetail clickIssue={clickIssue} onClose={this.handleClose} />}
           {
             createIssueShow && (
               <CreateIssue

@@ -20,7 +20,7 @@ import pic from '../../../../assets/testCaseEmpty.svg';
 class IssueTable extends Component {
   state = {
     firstIndex: null,
-    filteredColumns: ['issueNum', 'issueTypeDTO', 'summary', 'versionIssueRelDTOList', 'folderName', 'reporter', 'priorityId'],
+    filteredColumns: ['issueNum', 'issueTypeVO', 'summary', 'versionIssueRelVOList', 'folderName', 'reporter', 'priorityId'],
   };
 
 
@@ -117,10 +117,10 @@ class IssueTable extends Component {
   renderNarrowIssue(issue) {
     const {
       issueId,
-      issueTypeDTO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusMapDTO, priorityDTO,
+      issueTypeVO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
+      reporterName, reporterImageUrl, statusVO, priorityVO,
       folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
-      versionIssueRelDTOList, creationDate, lastUpdateDate,
+      versionIssueRelVOList, creationDate, lastUpdateDate,
     } = issue;
     return (
       <div style={{ padding: '12px 16px', cursor: 'pointer', width: '100%' }}>
@@ -128,13 +128,13 @@ class IssueTable extends Component {
           display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
         }}
         >
-          {renderType(issueTypeDTO)}
+          {renderType(issueTypeVO)}
           {renderIssueNum(issueNum)}
           <div className="c7ntest-flex-space" />
-          {renderVersions(versionIssueRelDTOList)}
+          {renderVersions(versionIssueRelVOList)}
           {renderFolder(folderName)}
           {renderReporter(reporterId, reporterName, reporterImageUrl, true)}
-          {renderPriority(priorityDTO)}
+          {renderPriority(priorityVO)}
         </div>
         <div style={{ display: 'flex' }}>
           {renderSummary(summary)}
@@ -312,9 +312,9 @@ class IssueTable extends Component {
       },
       {
         title: '类型',
-        dataIndex: 'issueTypeDTO',
-        key: 'issueTypeDTO',
-        render: (issueTypeDTO, record) => renderType(issueTypeDTO, true),
+        dataIndex: 'issueTypeVO',
+        key: 'issueTypeVO',
+        render: (issueTypeVO, record) => renderType(issueTypeVO, true),
       },
       {
         title: '概要',
@@ -325,9 +325,9 @@ class IssueTable extends Component {
       },
       {
         title: '版本',
-        dataIndex: 'versionIssueRelDTOList',
-        key: 'versionIssueRelDTOList',
-        render: (versionIssueRelDTOList, record) => renderVersions(versionIssueRelDTOList),
+        dataIndex: 'versionIssueRelVOList',
+        key: 'versionIssueRelVOList',
+        render: (versionIssueRelVOList, record) => renderVersions(versionIssueRelVOList),
       },
       {
         title: '文件夹',
@@ -352,7 +352,7 @@ class IssueTable extends Component {
         key: 'priorityId',
         filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
         filterMultiple: true,
-        render: (priorityId, record) => renderPriority(record.priorityDTO),
+        render: (priorityId, record) => renderPriority(record.priorityVO),
       },
       {
         title: '经办人',
@@ -371,7 +371,7 @@ class IssueTable extends Component {
         key: 'statusId',
         filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
-        render: (statusMapDTO, record) => renderStatus(record.statusMapDTO),
+        render: (statusVO, record) => renderStatus(record.statusVO),
       },
       {
         title: '标签',

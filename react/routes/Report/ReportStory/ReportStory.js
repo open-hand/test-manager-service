@@ -10,7 +10,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { Tags } from '../../../components/CommonComponent';
+import { Tags } from '../../../components';
 import { ReporterSwitcher } from '../ReportComponent';
 import { getReportsFromStory } from '../../../api/reportApi';
 import {
@@ -265,9 +265,9 @@ class ReportStory extends Component {
       render(issue, record) {
         const { defectInfo, defectCount } = record;
         const {
-          statusMapDTO, issueStatusName, issueName, issueId, typeCode, summary, sprintDTOList, versionIssueRelDTOList,
+          statusVO, issueStatusName, issueName, issueId, typeCode, summary, sprintDTOList, versionIssueRelVOList,
         } = defectInfo;
-        const { name: statusName, colour: statusColor, type: statusCode } = statusMapDTO || {};
+        const { name: statusName, colour: statusColor, type: statusCode } = statusVO || {};
         return (
           <div>
             <div className="c7ntest-collapse-header-container">
@@ -291,7 +291,7 @@ class ReportStory extends Component {
                 <Tags data={sprintDTOList} nameField="sprintName" />
               </div>
               <div>
-                <Tags data={versionIssueRelDTOList} nameField="name" />
+                <Tags data={versionIssueRelVOList} nameField="name" />
               </div>
             </div>
             <div>
@@ -464,26 +464,26 @@ class ReportStory extends Component {
                           <div>
                             {defects.concat(subStepDefects).length > 0
                               ? defects.concat(subStepDefects).map((defect) => {
-                                const { issueInfosDTO } = defect;
+                                const { issueInfosVO } = defect;
                                 return (
                                   <div className="c7ntest-issue-show-container">
-                                    <Tooltip title={issueInfosDTO && issueInfosDTO.issueName}>
+                                    <Tooltip title={issueInfosVO && issueInfosVO.issueName}>
                                       <Link
                                         className="c7ntest-showId"
-                                        to={issueLink(issueInfosDTO && issueInfosDTO.issueId,
-                                          issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)}
+                                        to={issueLink(issueInfosVO && issueInfosVO.issueId,
+                                          issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)}
                                         target="_blank"
                                       >
-                                        {issueInfosDTO && issueInfosDTO.issueName}
+                                        {issueInfosVO && issueInfosVO.issueName}
                                       </Link>
                                     </Tooltip>
                                     <div className="c7ntest-issue-status-icon">
                                       <span style={{
-                                        color: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
-                                        borderColor: issueInfosDTO && STATUS[issueInfosDTO.statusMapDTO.type],
+                                        color: issueInfosVO && STATUS[issueInfosVO.statusVO.type],
+                                        borderColor: issueInfosVO && STATUS[issueInfosVO.statusVO.type],
                                       }}
                                       >
-                                        {issueInfosDTO && issueInfosDTO.statusMapDTO.name}
+                                        {issueInfosVO && issueInfosVO.statusVO.name}
                                       </span>
                                     </div>
                                     {defect.defectType === 'CASE_STEP'
@@ -518,15 +518,15 @@ class ReportStory extends Component {
                         return (
                           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                             {defects.concat(subStepDefects).map((defect, i) => {
-                              const { issueInfosDTO } = defect;
+                              const { issueInfosVO } = defect;
                               return (
                                 <span style={{
                                   fontSize: '13px',
                                   color: '#3F51B5',
                                 }}
                                 >
-                                  <Link className="c7ntest-showId" to={issueLink(issueInfosDTO && issueInfosDTO.issueId, issueInfosDTO && issueInfosDTO.typeCode, issueInfosDTO && issueInfosDTO.issueName)} target="_blank">
-                                    {issueInfosDTO && issueInfosDTO.issueName}
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)} target="_blank">
+                                    {issueInfosVO && issueInfosVO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}
                                 </span>

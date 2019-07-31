@@ -1,6 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Page, Header } from '@choerodon/boot';
+import { withRouter } from 'react-router-dom';
 import {
   Button, Card, Spin, Icon, Tooltip,
 } from 'choerodon-ui';
@@ -33,7 +34,7 @@ const styles = {
 class TestCaseDetail extends Component {
   state = {
     testCaseId: undefined,
-    issueInfo: undefined,
+    issueInfo: {},
     disabled: false,
     fileList: [],
     linkIssues: [],
@@ -48,28 +49,18 @@ class TestCaseDetail extends Component {
   }
 
   componentDidMount() {
-    const { id } = this.props.match.params;
-    const Request = getParams(this.props.location.search);
-    const { folderName } = Request;
-    this.setState({
-      testCaseId: id,
-      folderName,
-    });
-    const allIdValues = sessionStorage.allIdValues ? sessionStorage.allIdValues.split(',') : IssueStore.getIssueIds;
-    let testCaseIdIndex;
-    allIdValues.forEach((valueId, index) => {
-      if (id === valueId) {
-        testCaseIdIndex = index;
-      }
-    });
-    this.setState({
-      lasttestCaseId: testCaseIdIndex >= 1 ? allIdValues[testCaseIdIndex - 1] : null,
-      nexttestCaseId: testCaseIdIndex <= allIdValues.length - 2 ? allIdValues[testCaseIdIndex + 1] : null,
-    });
-
-    this.reloadIssue(id);
+    const { clickIssue } = this.props;
+    const { issueId } = clickIssue;
+    this.reloadIssue(issueId);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { clickIssue } = this.props;
+    const { issueId } = clickIssue;
+    if (nextProps.clickIssue.issueId && nextProps.clickIssue.issueId !== issueId) {
+      this.reloadIssue(nextProps.clickIssue.issueId);
+    }
+  }
 
   /**
    *加载issue以及相关信息
@@ -89,9 +80,9 @@ class TestCaseDetail extends Component {
       getIssueExecutes(issueId),
     ]).then(([issue, linkIssues, datalogs, testStepData, testExecuteData]) => {
       const {
-        issueAttachmentDTOList,
+        issueAttachmentVOList,
       } = issue;
-      const fileList = _.map(issueAttachmentDTOList, issueAttachment => ({
+      const fileList = _.map(issueAttachmentVOList, issueAttachment => ({
         uid: issueAttachment.attachmentId,
         name: issueAttachment.fileName,
         url: issueAttachment.url,
@@ -112,7 +103,7 @@ class TestCaseDetail extends Component {
     });
   }
 
-  setFileList=(fileList) => {
+  setFileList = (fileList) => {
     this.setState({
       fileList,
     });
@@ -151,154 +142,42 @@ class TestCaseDetail extends Component {
       isExpand,
       folderName,
     } = this.state;
-
+    const { clickIssue } = this.props;
+    const { issueId } = clickIssue;
+    const { onClose } = this.props;
     return (
-      <Page className="c7ntest-testCaseDetail">
-        <Header
-          title={<FormattedMessage id="testCase_detail" />}
-          backPath={testCaseTableLink()}
-        >
-          <Button
-            disabled={lasttestCaseId === null}
-            onClick={() => {
-              this.goTestCase('pre');
+      <Fragment>
+        <div style={{ height: '100%' }}>
+          <EditIssue
+            loading={loading}
+            issueId={issueId}
+            folderName={folderName}
+            issueInfo={issueInfo}
+            testStepData={testStepData}
+            testExecuteData={testExecuteData}
+            enterLoad={() => {
+              this.setState({
+                loading: true,
+              });
             }}
-          >
-            <Icon type="navigate_before" />
-            <span><FormattedMessage id="testCase_pre" /></span>
-          </Button>
-          <Button
-            disabled={nexttestCaseId === null}
-            onClick={() => {
-              this.goTestCase('next');
+            leaveLoad={() => {
+              this.setState({
+                loading: false,
+              });
             }}
-          >
-            <span><FormattedMessage id="testCase_next" /></span>
-            <Icon type="navigate_next" />
-          </Button>
-          <Button onClick={() => {
-            // this.props.history.replace('55');
-            this.reloadIssue(testCaseId);
-          }}
-          >
-            <Icon type="refresh" />
-            <span><FormattedMessage id="refresh" /></span>
-          </Button>
-        </Header>
-
-        <Spin spinning={loading}>
-          <div style={{ display: 'flex', height: '100%' }}>
-            <div style={{ overflowY: 'auto' }}>
-              {
-                <div style={{
-                  display: 'flex', margin: '24px', fontSize: 20, height: '30px',
-                }}
-                >
-                  <span>{issueInfo && issueInfo.summary}</span>
-                  <div
-                    role="none"
-                    style={{
-                      display: 'flex', alignItems: 'center', marginLeft: 20, color: '#3F51B5', fontSize: 14, cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      this.setState({
-                        isExpand: !isExpand,
-                      });
-                    }}
-                  >
-                    <Icon type={isExpand ? 'format_indent_increase' : 'format_indent_decrease'} style={{ verticalAlign: -2, fontSize: 15 }} />
-                    <span style={{ display: 'inline-block', marginLeft: 3 }}>{isExpand ? '隐藏详情' : '显示详情'}</span>
-                  </div>
-                </div>
-              }
-              <Card
-                title={null}
-                style={{ marginBottom: 24, marginLeft: 24 }}
-                bodyStyle={styles.cardBodyStyle}
-              >
-                <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                  {/* <Icon type="expand_more" /> */}
-                  <span style={styles.cardTitleText}><FormattedMessage id="testCase_testDetail" /></span>
-                  <span style={{ marginLeft: 5 }}>{`（${testStepData.length}）`}</span>
-                </div>
-                <TestStepTable
-                  disabled={disabled}
-                  issueId={testCaseId}
-                  data={testStepData}
-                  enterLoad={() => {
-                    this.setState({
-                      loading: true,
-                    });
-                  }}
-                  leaveLoad={() => {
-                    this.setState({
-                      loading: false,
-                    });
-                  }}
-                  onOk={() => {
-                    this.reloadIssue(testCaseId);
-                  }}
-                />
-              </Card>
-              <Card
-                title={null}
-                style={{ margin: 24, marginRight: 0 }}
-                bodyStyle={styles.cardBodyStyle}
-              >
-                <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-                  {/* <Icon type="expand_more" /> */}
-                  <span style={styles.cardTitleText}><FormattedMessage id="testCase_testexecute" /></span>
-                </div>
-                <div>
-                  <TestExecuteTable
-                    issueId={testCaseId}
-                    data={testExecuteData}
-                    enterLoad={() => {
-                      this.setState({
-                        loading: true,
-                      });
-                    }}
-                    leaveLoad={() => {
-                      this.setState({
-                        loading: false,
-                      });
-                    }}
-                    onOk={() => {
-                      this.reloadIssue(testCaseId);
-                    }}
-                  />
-                </div>
-              </Card>
-            </div>
-            {
-              isExpand && issueInfo && (
-                <div style={{ height: '100%' }}>
-                  <EditIssue
-                    loading={loading}
-                    issueId={testCaseId}
-                    folderName={folderName}
-                    issueInfo={issueInfo}
-                    fileList={fileList}
-                    setFileList={this.setFileList}
-                    linkIssues={linkIssues}
-                    datalogs={datalogs}
-                    disabled={disabled}
-                    reloadIssue={this.reloadIssue.bind(this, testCaseId)}
-                    onClose={() => {
-                      this.setState({
-                        isExpand: false,
-                      });
-                    }}
-                    mode="wide"
-                  />
-                </div>
-              )
-            }
-          </div>
-        </Spin>
-      </Page>
+            fileList={fileList}
+            setFileList={this.setFileList}
+            linkIssues={linkIssues}
+            datalogs={datalogs}
+            disabled={disabled}
+            reloadIssue={this.reloadIssue.bind(this, issueId)}
+            onClose={onClose}
+            mode="wide"
+          />
+        </div>
+      </Fragment>
     );
   }
 }
 
-export default TestCaseDetail;
+export default withRouter(TestCaseDetail);

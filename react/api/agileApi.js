@@ -32,8 +32,8 @@ export function getProjectVersionByStatus(statusList = ['version_planning', 'rel
  * @param {*} summary
  * @returns
  */
-export function getIssues(search) {
-  return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub`, search);
+export function getIssues(search, { page = 1, size = 20 } = {}) {
+  return request.post(`agile/v1/projects/${getProjectId()}/issues/test_component/no_sub?page=${page}&size=${size}`, search);
 }
 /**
  *获取当前项目的issue类型列表
@@ -42,7 +42,7 @@ export function getIssues(search) {
  * @returns
  */
 export function getIssueTypes(applyType) {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/schemes/query_issue_types_with_sm_id?apply_type=${applyType || 'test'}`);
 }
 /**
  *获取缺陷列表（排除test类型）
@@ -51,7 +51,7 @@ export function getIssueTypes(applyType) {
  * @param {*} summary
  * @returns
  */
-export function getIssuesForDefects(summary) {
+export function getIssuesForDefects(summary, { page = 1, size = 20 } = {}) {
   return new Promise(((resolve) => {
     getIssueTypes('agile').then((types) => {
       const advancedSearchArgs = {
@@ -61,7 +61,7 @@ export function getIssuesForDefects(summary) {
       if (summary) {
         searchArgs.summary = summary;
       }
-      resolve(getIssues({ advancedSearchArgs, searchArgs }));
+      resolve(getIssues({ advancedSearchArgs, searchArgs }, { page, size }));
     });
   }));
 }
@@ -127,7 +127,7 @@ export function getLabels() {
  * @returns
  */
 export function getPrioritys() {
-  return request.get(`/issue/v1/projects/${getProjectId()}/priority/list_by_org`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/priority/list_by_org`);
 }
 /**
  *获取当前项目的issue状态列表
@@ -136,7 +136,7 @@ export function getPrioritys() {
  * @returns
  */
 export function getIssueStatus(applyType) {
-  return request.get(`/issue/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
+  return request.get(`/agile/v1/projects/${getProjectId()}/schemes/query_status_by_project_id?apply_type=${applyType || 'test'}`);
 }
 
 /**
@@ -171,13 +171,13 @@ export function createIssue(issueObj, projectId = getProjectId()) {
  * 新增Issue字段值
  * @returns {V|*}
  */
-export function createFieldValue(id, code, dto) {  
+export function createFieldValue(id, code, dto) {
   return request.post(`/foundation/v1/projects/${getProjectId()}/field_value/${id}?organizationId=${getOrganizationId()}&schemeCode=${code}`, dto);
 }
 /**
  * 加载字段配置
  * @returns {V|*}
  */
-export function getFields(dto) {  
+export function getFields(dto) {
   return request.post(`/foundation/v1/projects/${getProjectId()}/field_value/list?organizationId=${getOrganizationId()}`, dto);
 }

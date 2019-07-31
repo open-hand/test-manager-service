@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { editCycleStep, addDefects } from '../../../../api/ExecuteDetailApi';
 import {
   TextEditToggle, UploadInTable, DefectSelect, StatusTags,
-} from '../../../../components/CommonComponent';
+} from '../../../../components';
 import { delta2Text } from '../../../../common/utils';
 import './StepTable.scss';
 import ExecuteDetailStore from '../../TestExecuteStore/ExecuteDetailStore';
@@ -268,7 +268,7 @@ class StepTable extends PureComponent {
                         fontSize: '13px',
                       }}
                     >
-                      {defect.issueInfosDTO && defect.issueInfosDTO.issueName}
+                      {defect.issueInfosVO && defect.issueInfosVO.issueName}
                     </div>
                   ))}
                 </div>

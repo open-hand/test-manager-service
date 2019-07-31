@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { editFolder } from '../../../../api/cycleApi';
-import { SelectFolder, SelectFocusLoad } from '../../../../components/CommonComponent';
+import { SelectFolder, SelectFocusLoad } from '../../../../components';
 import TestPlanStore from '../../TestPlanStore/TestPlanStore';
 
 const FormItem = Form.Item;
@@ -130,14 +130,14 @@ class EditStage extends Component {
                     <SelectFocusLoad                
                       type="folder"
                       versionId={versionId}
-                      style={{ width: 500, margin: '0 0 10px 0' }}
+                      style={{ width: 500 }}
                       label={<FormattedMessage id="testPlan_linkFolder" />}
                     />,
                   )}
                 </FormItem>
                 <FormItem>
                   <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label"><span>持续时间</span></div>
+                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
                     {getFieldDecorator('range', {
                       rules: [{
                         type: 'array',

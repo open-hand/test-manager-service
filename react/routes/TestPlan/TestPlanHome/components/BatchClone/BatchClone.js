@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { pull, pullAll, intersection } from 'lodash';
 import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../api/cycleApi';
-import { SelectFocusLoad } from '../../../../../components/CommonComponent';
+import { SelectFocusLoad } from '../../../../../components';
 import TestPlanStore from '../../../TestPlanStore/TestPlanStore';
 
 const { AppState } = stores;
@@ -194,14 +194,14 @@ class BatchClone extends Component {
     }
   }
 
-  handleClose=() => {
+  handleClose = () => {
     this.setState({
       cloning: false,
       visible: false,
     });
   }
 
-  handleDone=() => {   
+  handleDone = () => {
     const { targetVersionId } = this.state;
     setTimeout(() => {
       TestPlanStore.selectDefaultVersion(targetVersionId);
@@ -235,19 +235,19 @@ class BatchClone extends Component {
             funcType="raised"
             onClick={this.handleClose}
           >
-          完成            
+            完成
           </Button>
         ) : [
-          <Button
-            type="primary"
-            funcType="raised"
-            onClick={this.handleOk}
-            disabled={cloning || !targetVersionId || !selectedRowKeys.length > 0}
-          >
-            确定            
+            <Button
+              type="primary"
+              funcType="raised"
+              onClick={this.handleOk}
+              disabled={cloning || !targetVersionId || !selectedRowKeys.length > 0}
+            >
+              确定
           </Button>,
-          <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
-            关闭
+            <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
+              关闭
           </Button>]}
       >
         <Content
@@ -255,7 +255,7 @@ class BatchClone extends Component {
             padding: '0 0 10px 0',
           }}
         >
-          <div className="c7ntest-BatchClone">
+          <div className="c7ntest-BatchClone" style={{ paddingTop: 10 }}>
             <div style={{ marginBottom: 24, display: 'flex', alignItems: 'center' }}>
               <SelectFocusLoad
                 disabled={cloning}
@@ -265,7 +265,7 @@ class BatchClone extends Component {
                 optionDisabled={version => version.versionId === targetVersionId}
                 type="version"
                 style={{ width: 160 }}
-                onChange={this.handleSourceVersionChange}        
+                onChange={this.handleSourceVersionChange}
               />
               <SelectFocusLoad
                 disabled={cloning || !sourceVersionId}
@@ -275,9 +275,9 @@ class BatchClone extends Component {
                 optionDisabled={version => version.versionId === sourceVersionId}
                 type="version"
                 style={{ marginLeft: 20, width: 160 }}
-                onChange={this.handleTargetVersionChange}                
-              />         
-            </div>   
+                onChange={this.handleTargetVersionChange}
+              />
+            </div>
             <WSHandler
               messageKey={`choerodon:msg:test-cycle-batch-clone:${AppState.userInfo.id}`}
               onMessage={this.handleMessage}
@@ -288,24 +288,24 @@ class BatchClone extends Component {
                     <Tooltip title={`进度：${progress}%`}>
                       <Progress type="circle" status="active" percent={progress} />
                     </Tooltip>
-                  </div>                  
+                  </div>
                 ) : (
-                  <Table
-                    filterBar={false}
-                    pagination={false}                    
-                    rowKey="cycleId"
-                    columns={columns}
-                    rowSelection={{
-                      selectedRowKeys,
-                      onSelectAll: this.handleSelectAll,
-                      onSelect: this.handleRowSelect,
-                      disabled: true,
-                    }}
-                    dataSource={data}
-                  />
-                )
-              }                
-            </WSHandler>    
+                    <Table
+                      filterBar={false}
+                      pagination={false}
+                      rowKey="cycleId"
+                      columns={columns}
+                      rowSelection={{
+                        selectedRowKeys,
+                        onSelectAll: this.handleSelectAll,
+                        onSelect: this.handleRowSelect,
+                        disabled: true,
+                      }}
+                      dataSource={data}
+                    />
+                  )
+              }
+            </WSHandler>
           </div>
         </Content>
       </Sidebar>

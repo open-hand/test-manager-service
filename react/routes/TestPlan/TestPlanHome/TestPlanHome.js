@@ -10,7 +10,7 @@ import { editExecuteDetail, deleteExecute } from '../../../api/cycleApi';
 import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
 } from '../TestPlanComponent';
-import { Injecter, NoCycle, Loading } from '../../../components/CommonComponent';
+import { Injecter, NoCycle, Loading } from '../../../components';
 import { TestPlanTable, BatchClone } from './components';
 import TestPlanStore from '../TestPlanStore/TestPlanStore';
 import { executeDetailShowLink, getDragRank } from '../../../common/utils';
@@ -76,7 +76,7 @@ class TestPlanHome extends Component {
     delete temp.defects;
     delete temp.caseAttachment;
     delete temp.testCycleCaseStepES;
-    delete temp.issueInfosDTO;
+    delete temp.issueInfosVO;
     temp.assignedTo = temp.assignedTo || 0;
     TestPlanStore.rightEnterLoading();
     editExecuteDetail({

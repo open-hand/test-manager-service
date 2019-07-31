@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
 import UserHead from '../../UserHead';
-import DatetimeAgo from '../../../../../components/CommonComponent/DateTimeAgo';
+import DatetimeAgo from '../../../../../components/DateTimeAgo';
 import './DataLog.scss';
 
 const PROP = {

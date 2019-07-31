@@ -1,4 +1,4 @@
-import React, { memo, Fragment } from 'react';
+import React, { memo } from 'react';
 import { Tooltip } from 'choerodon-ui';
 
 function getFirst(str) {
@@ -23,14 +23,18 @@ const UserHead = memo(({
   tooltip = true, 
 }) => {
   const iconSize = size || 18;
+  const {
+    id, loginName, realName, avatar, imageUrl, 
+  } = user;
+  const img = avatar || imageUrl;
   return (
-    <Tooltip title={tooltip ? `${user.loginName || ''}${user.realName || ''}` : ''} mouseEnterDelay={0.5}>
-      <div        
+    <Tooltip title={tooltip ? `${loginName || ''}${realName || ''}` : ''} mouseEnterDelay={0.5}>
+      <div
+        className="c7n-userHead"
         style={{
           ...style,
-          display: user.id ? 'inline-block' : 'none',
+          display: id ? 'flex' : 'none',
           maxWidth: 108,
-          verticalAlign: 'text-bottom',
         }}
       >
         {
@@ -51,8 +55,8 @@ const UserHead = memo(({
               }}
             >
               {
-                user.avatar ? (
-                  <img src={user.avatar} alt="" style={{ width: '100%' }} />
+                img ? (
+                  <img src={img} alt="" style={{ width: '100%' }} />
                 ) : (
                   <span
                     style={{
@@ -60,59 +64,56 @@ const UserHead = memo(({
                     }}
                     className="user-Head-Title"
                   >
-                    {getFirst(user.realName)}
+                    {getFirst(realName)}
                   </span>
                 )
               }
             </div>
           ) : (
-            <Fragment>
+            <div
+              style={{
+                width: iconSize,
+                height: iconSize,
+                background: '#c5cbe8',
+                color: '#6473c3',
+                overflow: 'hidden',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: 5,
+                textAlign: 'center',
+                borderRadius: '50%',
+                flexShrink: 0,
+              }}
+            >
               {
-                  user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt=""
-                      style={{
-                        width: iconSize,
-                        height: iconSize,
-                        marginRight: 5,   
-                        borderRadius: '50%', 
-                        verticalAlign: 'middle', 
-                        background: '#c5cbe8',
-                      }}
-                    />
+                  img ? (
+                    <img src={img} alt="" style={{ width: iconSize, height: iconSize }} />
                   ) : (
                     <span style={{
-                      width: iconSize,
-                      height: iconSize,
-                      lineHeight: `${iconSize}px`, 
-                      textAlign: 'center',
-                      color: '#6473c3',
+                      width: iconSize, height: iconSize, lineHeight: `${iconSize}px`, textAlign: 'center', color: '#6473c3',
                     }}
                     >
-                      {getFirst(user.realName)}
+                      {getFirst(realName)}
                     </span>
                   )
                 }
-            </Fragment>
+            </div>
           )
         }
         {
           hiddenText ? null : (
             <span
-              style={{                
-                display: 'inline-block',       
+              style={{
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                borderRadius: '50%', 
-                verticalAlign: 'middle',
                 whiteSpace: 'nowrap',
                 fontSize: '13px',
                 lineHeight: '20px',
                 color: color || 'rgba(0, 0, 0, 0.65)',
               }}
             >
-              {`${user.realName || user.loginName}`}
+              {`${realName || loginName}`}
             </span>
           )
         }

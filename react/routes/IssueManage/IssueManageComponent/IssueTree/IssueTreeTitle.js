@@ -8,7 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import FileSaver from 'file-saver';
-import { SmartTooltip } from '../../../../components/CommonComponent';
+import { SmartTooltip } from '../../../../components';
 import IssueTreeStore from '../../IssueManagestore/IssueTreeStore';
 import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,

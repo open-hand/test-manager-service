@@ -11,7 +11,7 @@ import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '../../../api/FileApi';
 import { commonLink, humanizeDuration, getProjectName } from '../../../common/utils';
-import { SelectVersion } from '../../../components/CommonComponent';
+import { SelectVersion } from '../../../components';
 import { getImportHistory, cancelImport, downloadTemplate } from '../../../api/IssueManageApi';
 import './ImportIssue.scss';
 
