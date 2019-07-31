@@ -113,16 +113,16 @@ class EditIssueNarrow extends Component {
       });
     });
 
-    document.getElementById('scroll-area').addEventListener('scroll', (e) => {
-      if (sign) {
-        const currentNav = this.getCurrentNav(e);
-        if (this.state.currentNav !== currentNav && currentNav) {
-          this.setState({
-            currentNav,
-          });
-        }
-      }
-    });
+    // document.getElementById('scroll-area').addEventListener('scroll', (e) => {
+    //   if (sign) {
+    //     const currentNav = this.getCurrentNav(e);
+    //     if (this.state.currentNav !== currentNav && currentNav) {
+    //       this.setState({
+    //         currentNav,
+    //       });
+    //     }
+    //   }
+    // });
     this.setQuery();
   }
 
@@ -445,7 +445,7 @@ class EditIssueNarrow extends Component {
    */
   renderCommits() {
     const { addingComment } = this.state;
-    const { issueCommentDTOList } = this.props.issueInfo;
+    const { issueCommentVOList } = this.props.issueInfo;
     return (
       <div>
         {
@@ -465,7 +465,7 @@ class EditIssueNarrow extends Component {
           )
         }
         {
-          issueCommentDTOList && issueCommentDTOList.map(comment => (
+          issueCommentVOList && issueCommentVOList.map(comment => (
             <Comment
               key={comment.commentId}
               comment={comment}
