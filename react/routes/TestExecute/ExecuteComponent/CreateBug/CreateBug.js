@@ -316,7 +316,7 @@ class CreateIssue extends Component {
       if (!err) {
         const { typeCode } = originIssueTypes.find(t => t.id === values.typeId);
         const exitComponents = originComponents;
-        const componentIssueRelDTOList = _.map(values.componentIssueRel
+        const componentIssueRelVOList = _.map(values.componentIssueRel
           && values.componentIssueRel.filter(v => v && v.trim()), (component) => {
           const target = _.find(exitComponents, { name: component.trim() });
           if (target) {
@@ -329,7 +329,7 @@ class CreateIssue extends Component {
           }
         });
         const exitLabels = originLabels;
-        const labelIssueRelDTOList = _.map(values.issueLabel, (label) => {
+        const labelIssueRelVOList = _.map(values.issueLabel, (label) => {
           const target = _.find(exitLabels, { labelName: label });
           if (target) {
             return target;
@@ -341,7 +341,7 @@ class CreateIssue extends Component {
           }
         });
         const exitFixVersions = originFixVersions;
-        const fixVersionIssueRelDTOList = _.map(values.fixVersionIssueRel
+        const fixVersionIssueRelVOList = _.map(values.fixVersionIssueRel
           && values.fixVersionIssueRel.filter(v => v && v.trim()), (version) => {
           const target = _.find(exitFixVersions, { name: version.trim() });
           if (target) {
@@ -392,9 +392,9 @@ class CreateIssue extends Component {
           epicName: values.epicName,
           parentIssueId: 0,
           assigneeId: values.assigneedId,
-          labelIssueRelDTOList,
-          versionIssueRelDTOList: fixVersionIssueRelDTOList,
-          componentIssueRelDTOList,
+          labelIssueRelVOList,
+          versionIssueRelVOList: fixVersionIssueRelVOList,
+          componentIssueRelVOList,
           storyPoints,
           remainingTime: estimatedTime,
           issueLinkCreateDTOList,

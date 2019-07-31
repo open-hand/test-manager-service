@@ -37,7 +37,7 @@ class BaseTreeProto {
   }
 
   getItemByKey(key) {
-    const arr = key.split('-').slice(1);;
+    const arr = key.split('-').slice(1);
     let temp = this.treeData;
     arr.forEach((index, i) => {
       // window.console.log(temp);

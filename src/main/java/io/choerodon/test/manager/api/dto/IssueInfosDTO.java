@@ -112,13 +112,13 @@ public class IssueInfosDTO {
     private List<IssueSprintDTO> sprintDTOList;
 
     @ApiModelProperty(value = "版本关联DTOList")
-    private List<VersionIssueRelDTO> versionIssueRelDTOList;
+    private List<VersionIssueRelDTO> versionIssueRelVOList;
 
     @ApiModelProperty(value = "标签关联DTOList")
-    private List<LabelIssueRelDTO> labelIssueRelDTOList;
+    private List<LabelIssueRelDTO> labelIssueRelVOList;
 
     @ApiModelProperty(value = "模块关联DTOList")
-    private List<ComponentIssueRelDTO> componentIssueRelDTOList;
+    private List<ComponentIssueRelDTO> componentIssueRelVOList;
 
     public IssueInfosDTO() {
     }
@@ -149,9 +149,9 @@ public class IssueInfosDTO {
         this.creationDate = issueComponentDetailDTO.getCreationDate();
         this.epicName = issueComponentDetailDTO.getEpicName();
         this.epicColor = issueComponentDetailDTO.getEpicColor();
-        this.versionIssueRelDTOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
-        this.labelIssueRelDTOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
-        this.componentIssueRelDTOList = issueComponentDetailDTO.getComponentIssueRelDTOList();
+        this.versionIssueRelVOList = issueComponentDetailDTO.getVersionIssueRelDTOList();
+        this.labelIssueRelVOList = issueComponentDetailDTO.getLabelIssueRelDTOList();
+        this.componentIssueRelVOList = issueComponentDetailDTO.getcomponentIssueRelVOList();
         issueTypeDTO = issueComponentDetailDTO.getIssueTypeDTO();
     }
 
@@ -173,7 +173,7 @@ public class IssueInfosDTO {
         statusMapDTO = listTestWithSprintVersionDTO.getStatusMapDTO();
         typeCode = listTestWithSprintVersionDTO.getTypeCode();
         issueTypeDTO = listTestWithSprintVersionDTO.getIssueTypeDTO();
-        versionIssueRelDTOList = listTestWithSprintVersionDTO.getVersionDTOList();
+        versionIssueRelVOList = listTestWithSprintVersionDTO.getVersionDTOList();
         sprintDTOList = listTestWithSprintVersionDTO.getSprintDTOList();
     }
 
@@ -268,19 +268,19 @@ public class IssueInfosDTO {
     }
 
     public List<LabelIssueRelDTO> getLabelIssueRelDTOList() {
-        return labelIssueRelDTOList;
+        return labelIssueRelVOList;
     }
 
-    public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelDTOList) {
-        this.labelIssueRelDTOList = labelIssueRelDTOList;
+    public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelVOList) {
+        this.labelIssueRelVOList = labelIssueRelVOList;
     }
 
-    public List<ComponentIssueRelDTO> getComponentIssueRelDTOList() {
-        return componentIssueRelDTOList;
+    public List<ComponentIssueRelDTO> getcomponentIssueRelVOList() {
+        return componentIssueRelVOList;
     }
 
-    public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
-        this.componentIssueRelDTOList = componentIssueRelDTOList;
+    public void setcomponentIssueRelVOList(List<ComponentIssueRelDTO> componentIssueRelVOList) {
+        this.componentIssueRelVOList = componentIssueRelVOList;
     }
 
     public Long getStatusId() {
@@ -421,11 +421,11 @@ public class IssueInfosDTO {
     }
 
     public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
-        return versionIssueRelDTOList;
+        return versionIssueRelVOList;
     }
 
-    public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelDTOList) {
-        this.versionIssueRelDTOList = versionIssueRelDTOList;
+    public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelVOList) {
+        this.versionIssueRelVOList = versionIssueRelVOList;
     }
 
     public PriorityDTO getPriorityDTO() {

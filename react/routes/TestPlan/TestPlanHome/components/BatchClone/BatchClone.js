@@ -238,15 +238,15 @@ class BatchClone extends Component {
             完成
           </Button>
         ) : [
-            <Button
-              type="primary"
-              funcType="raised"
-              onClick={this.handleOk}
-              disabled={cloning || !targetVersionId || !selectedRowKeys.length > 0}
-            >
+          <Button
+            type="primary"
+            funcType="raised"
+            onClick={this.handleOk}
+            disabled={cloning || !targetVersionId || !selectedRowKeys.length > 0}
+          >
               确定
           </Button>,
-            <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
+          <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
               关闭
           </Button>]}
       >
@@ -290,20 +290,20 @@ class BatchClone extends Component {
                     </Tooltip>
                   </div>
                 ) : (
-                    <Table
-                      filterBar={false}
-                      pagination={false}
-                      rowKey="cycleId"
-                      columns={columns}
-                      rowSelection={{
-                        selectedRowKeys,
-                        onSelectAll: this.handleSelectAll,
-                        onSelect: this.handleRowSelect,
-                        disabled: true,
-                      }}
-                      dataSource={data}
-                    />
-                  )
+                  <Table
+                    filterBar={false}
+                    pagination={false}
+                    rowKey="cycleId"
+                    columns={columns}
+                    rowSelection={{
+                      selectedRowKeys,
+                      onSelectAll: this.handleSelectAll,
+                      onSelect: this.handleRowSelect,
+                      disabled: true,
+                    }}
+                    dataSource={data}
+                  />
+                )
               }
             </WSHandler>
           </div>

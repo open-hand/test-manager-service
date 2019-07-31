@@ -19,7 +19,7 @@
   ],
   "extends": "airbnb",
   "rules": {
-    "no-console":0,
+    "no-console":"off",
     "react/jsx-no-bind": [
       "error",
       {
