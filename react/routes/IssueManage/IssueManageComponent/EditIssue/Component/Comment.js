@@ -18,7 +18,7 @@ class Comment extends Component {
     this.state = {
       editCommentId: undefined,
       editComment: undefined,
-      expand: false,
+      expand: true,
     };
   }
 
@@ -69,42 +69,6 @@ class Comment extends Component {
         className={`c7ntest-comment ${commit.commentId === this.state.editCommentId ? 'c7ntest-comment-focus' : ''}`}
       >
         <div className="line-justify">
-          {
-            this.state.expand ? (
-              <Icon
-                role="none"
-                style={{ 
-                  position: 'absolute',
-                  left: 5,
-                  top: 15,
-                }}
-                type="baseline-arrow_drop_down pointer"
-                onClick={() => {
-                  this.setState({
-                    expand: false,
-                  });
-                }}
-              />
-            ) : null
-          }
-          {
-            !this.state.expand ? (
-              <Icon
-                role="none"
-                style={{ 
-                  position: 'absolute',
-                  left: 5,
-                  top: 15,
-                }}
-                type="baseline-arrow_right pointer"
-                onClick={() => {
-                  this.setState({
-                    expand: true,
-                  });
-                }}
-              />
-            ) : null
-          }
           <div className="c7ntest-title-commit">
             <div style={{ marginRight: 19 }}>
               <UserHead

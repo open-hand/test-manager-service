@@ -33,6 +33,13 @@ export default class IssueManage extends Component {
     const { paramName, paramIssueId } = Request;
     IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
+    if (paramName && paramIssueId) {
+      this.setState({
+        clickIssue: {
+          issueId: paramIssueId,
+        },
+      });
+    }
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
@@ -82,10 +89,11 @@ export default class IssueManage extends Component {
   saveRef = name => (ref) => {
     this[name] = ref;
   }
+
   handleClose = () => {
     this.setState({
       clickIssue: {},
-    })
+    });
   }
 
   render() {

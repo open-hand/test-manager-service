@@ -28,6 +28,7 @@ import UserHead from '../UserHead';
 import Comment from './Component/Comment';
 import DataLogs from './Component/DataLogs';
 import LinkList from './Component/LinkList';
+import Divider from './Component/Divider';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
@@ -272,8 +273,8 @@ class EditIssueNarrow extends Component {
           });
         break;
       }
-      case 'labelIssueRelDTOList': {
-        issue.labelIssueRelDTOList = this.prepareMutilSelectValueBeforeSubmit(value, labelList, 'labelName');
+      case 'labelIssueRelVOList': {
+        issue.labelIssueRelVOList = this.prepareMutilSelectValueBeforeSubmit(value, labelList, 'labelName');
         updateIssue(issue)
           .then((res) => {
             this.props.reloadIssue();
@@ -384,18 +385,18 @@ class EditIssueNarrow extends Component {
     const { issueId } = issueInfo;
     switch (e.key) {
       case 'copy': {
-        const copyConditionDTO = {
+        const copyConditionVO = {
           issueLink: false,
           sprintValues: false,
           subTask: false,
           summary: false,
         };
         enterLoad()
-        cloneIssue(issueId, copyConditionDTO).then((res) => {
+        cloneIssue(issueId, copyConditionVO).then((res) => {
           // 跳转至复制后的页面
-          if (res.issueId) {
-            this.handleLinkToNewIssue(res.issueId);
-          }
+          // if (res.issueId) {
+          //   this.handleLinkToNewIssue(res.issueId);
+          // }
           Choerodon.prompt('复制成功');
         }).catch((err) => {
           leaveLoad()
@@ -669,7 +670,7 @@ class EditIssueNarrow extends Component {
             const targetStatus = _.find(StatusList, { endStatusId: data });
             return (
               <div>
-                {<Tag status={targetStatus ? targetStatus.statusDTO : statusVO} />
+                {<Tag status={targetStatus ? targetStatus.statusVO : statusVO} />
                 }
               </div>
             );
@@ -686,7 +687,7 @@ class EditIssueNarrow extends Component {
               StatusList.map(transform => (
                 <Option key={transform.id} value={transform.endStatusId}>
                   <Tag
-                    status={transform.statusDTO}
+                    status={transform.statusVO}
                   />
                 </Option>
               ))
@@ -833,14 +834,14 @@ class EditIssueNarrow extends Component {
       labelList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { labelIssueRelDTOList } = issueInfo;
+    const { labelIssueRelVOList } = issueInfo;
     return (
       <TextEditToggle
         // disabled={disabled}
         style={{ width: '100%' }}
-        formKey="labelIssueRelDTOList"
-        onSubmit={(value, done) => { this.editIssue({ labelIssueRelDTOList: value }, done); }}
-        originData={this.transToArr(labelIssueRelDTOList, 'labelName', 'array')}
+        formKey="labelIssueRelVOList"
+        onSubmit={(value, done) => { this.editIssue({ labelIssueRelVOList: value }, done); }}
+        originData={this.transToArr(labelIssueRelVOList, 'labelName', 'array')}
       >
         <Text>
           {data => (
@@ -1267,13 +1268,8 @@ class EditIssueNarrow extends Component {
                           <div id="detail">
                             <div className="c7ntest-title-wrapper" style={{ marginTop: 0 }}>
                               <div className="c7ntest-title-left">
-                                <Icon type="error_outline c7ntest-icon-title" />
                                 <FormattedMessage id="detail" />
                               </div>
-                              <div style={{
-                                flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                              }}
-                              />
                             </div>
                             <div className="c7ntest-content-wrapper" style={{ display: 'flex', flexWrap: 'wrap' }}>
 
@@ -1307,7 +1303,7 @@ class EditIssueNarrow extends Component {
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
-                                  <div>
+                                  <div style={{ marginLeft: 6 }}>
                                     {
                                       !fixVersionsFixed.length && !fixVersions.length ? '无' : (
                                         <div>
@@ -1332,7 +1328,10 @@ class EditIssueNarrow extends Component {
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
-                                  {folderName || '无'}
+                                  <div style={{ marginLeft: 6 }}>
+                                    {folderName || '无'}
+                                  </div>
+
                                 </div>
                               </div>
                               {showMore ? <Fragment>
@@ -1388,7 +1387,7 @@ class EditIssueNarrow extends Component {
                                       style={{
                                         color: '#3f51b5',
                                         cursor: 'pointer',
-                                        marginTop: '-2px',
+                                        marginLeft: 5,
                                         display: 'inline-block',
                                       }}
                                       onClick={() => {
@@ -1406,7 +1405,7 @@ class EditIssueNarrow extends Component {
                                       {'：'}
                                     </span>
                                   </div>
-                                  <div className="c7ntest-value-wrapper">
+                                  <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>
                                     <Timeago date={creationDate} />
                                   </div>
                                 </div>
@@ -1417,7 +1416,7 @@ class EditIssueNarrow extends Component {
                                       {'：'}
                                     </span>
                                   </div>
-                                  <div className="c7ntest-value-wrapper">
+                                  <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>
                                     <Timeago date={lastUpdateDate} />
                                   </div>
                                 </div>
@@ -1428,16 +1427,12 @@ class EditIssueNarrow extends Component {
                               <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
                             </Button>
                           </div>
+                          <Divider />
                           <div id="des">
                             <div className="c7ntest-title-wrapper">
                               <div className="c7ntest-title-left">
-                                <Icon type="subject c7ntest-icon-title" />
                                 <span><FormattedMessage id="execute_description" /></span>
                               </div>
-                              <div style={{
-                                flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                              }}
-                              />
                               <div style={{ marginLeft: '14px', display: "flex" }}>
                                 <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                   <Button icon="zoom_out_map" onClick={() => this.setState({ FullEditorShow: true })} />
@@ -1458,16 +1453,12 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
                         {/* 附件 */}
+                        <Divider />
                         <div id="attachment">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              <Icon type="attach_file c7ntest-icon-title" />
                               <FormattedMessage id="attachment" />
                             </div>
-                            <div style={{
-                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px', marginRight: 50,
-                            }}
-                            />
                           </div>
                           <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
                             <UploadButtonNow
@@ -1479,16 +1470,13 @@ class EditIssueNarrow extends Component {
                           </div>
                         </div>
                         {/* 关联用例 */}
+                        <Divider />
                         <div id="link_task">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              <Icon type="link c7ntest-icon-title" />
                               关联问题
                         </div>
-                            <div style={{
-                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                            }}
-                            />
+
                             <div style={{ marginLeft: '14px' }}>
                               <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                 <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
@@ -1503,13 +1491,8 @@ class EditIssueNarrow extends Component {
                         <div id="commit">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              <Icon type="sms_outline c7ntest-icon-title" />
                               <FormattedMessage id="issue_edit_comment" />
                             </div>
-                            <div style={{
-                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                            }}
-                            />
                             <div style={{ marginLeft: '14px' }}>
                               <Tooltip title="添加评论" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                 <Button icon="playlist_add" onClick={() => this.setState({ addingComment: true })} />
@@ -1524,13 +1507,8 @@ class EditIssueNarrow extends Component {
                         <div id="data_log">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              <Icon type="insert_invitation c7ntest-icon-title" />
                               <FormattedMessage id="issue_edit_activeLog" />
                             </div>
-                            <div style={{
-                              flex: 1, height: 1, borderTop: '1px solid rgba(0, 0, 0, 0.08)', marginLeft: '14px',
-                            }}
-                            />
                           </div>
                           {this.renderDataLogs()}
                         </div>
