@@ -13,7 +13,7 @@ import { commonLink } from '../../../../../common/utils';
 import {
   getYaml, runTestTiming, runTestInstant,
 } from '../../../../../api/AutoTestApi';
-import './ConfirmInfo.scss';
+import './ConfirmInfo.less';
 
 const intlPrefix = 'taskdetail';
 const FormItem = Form.Item;

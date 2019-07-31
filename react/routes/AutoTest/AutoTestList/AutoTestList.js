@@ -18,7 +18,7 @@ import {
 } from './AutoTestTags';
 import { ContainerLog } from './components';
 import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../common/utils';
-import './AutoTestList.scss';
+import './AutoTestList.less';
 
 const { Option } = Select;
 const { SubMenu, Item: MenuItem } = Menu;

@@ -15,7 +15,7 @@ import {
   Modal, Table, Select, Spin,
 } from 'choerodon-ui';
 import { stores, Content } from '@choerodon/boot';
-import './SelectAppAndVersion.scss';
+import './SelectAppAndVersion.less';
 import { getApps, getAppVersions } from '../../../../../api/AutoTestApi';
 import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
 
