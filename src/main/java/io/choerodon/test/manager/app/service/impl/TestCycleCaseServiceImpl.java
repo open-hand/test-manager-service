@@ -538,7 +538,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     private TestCycleCaseDTO changeStep(Long projectId, TestCycleCaseVO testCycleCaseVO) {
-        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class);
         testCycleCaseDTO.setProjectId(projectId);
         if (!StringUtils.isEmpty(testCycleCaseVO.getLastRank()) || !StringUtils.isEmpty(testCycleCaseVO.getNextRank())) {
             testCycleCaseDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseVO.getLastRank(), testCycleCaseVO.getNextRank()));

@@ -48,6 +48,8 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Transient
     private Long nextExecuteId;
 
+    private Long objectVersionNumber;
+
     private Long createdBy;
 
     private Long lastUpdatedBy;
@@ -258,5 +260,15 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Override
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    @Override
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    @Override
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }
