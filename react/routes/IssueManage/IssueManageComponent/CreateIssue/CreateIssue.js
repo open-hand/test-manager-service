@@ -124,8 +124,8 @@ class CreateIssue extends Component {
       if (!err) {
         const { description, fileList } = values;
         const exitComponents = this.state.originComponents;
-        const componentIssueRelDTOList = map(values.componentIssueRel, (component) => {
-          const target = find(exitComponents, { name: component });
+        const componentIssueRelVOList = _.map(values.componentIssueRel, (component) => {
+          const target = _.find(exitComponents, { name: component });
           if (target) {
             return target;
           } else {
@@ -136,8 +136,8 @@ class CreateIssue extends Component {
           }
         });
         const exitLabels = this.state.originLabels;
-        const labelIssueRelDTOList = map(values.issueLink, (label) => {
-          const target = find(exitLabels, { labelName: label });
+        const labelIssueRelVOList = _.map(values.issueLink, (label) => {
+          const target = _.find(exitLabels, { labelName: label });
           if (target) {
             return target;
           } else {
@@ -149,10 +149,10 @@ class CreateIssue extends Component {
         });
         const exitFixVersions = this.state.originFixVersions;
         const version = values.versionId;
-        const target = find(exitFixVersions, { versionId: version });
-        let fixVersionIssueRelDTOList = [];
+        const target = _.find(exitFixVersions, { versionId: version });
+        let fixVersionIssueRelVOList = [];
         if (target) {
-          fixVersionIssueRelDTOList = [{
+          fixVersionIssueRelVOList = [{
             ...target,
             relationType: 'fix',
           }];
@@ -172,9 +172,9 @@ class CreateIssue extends Component {
           epicName: values.epicName,
           parentIssueId: 0,
           assigneeId: values.assigneedId,
-          labelIssueRelDTOList,
-          versionIssueRelDTOList: fixVersionIssueRelDTOList,
-          componentIssueRelDTOList,
+          labelIssueRelVOList,
+          versionIssueRelVOList: fixVersionIssueRelVOList,
+          componentIssueRelVOList,
         };
         this.setState({ createLoading: true });
         const deltaOps = description;

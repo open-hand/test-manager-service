@@ -42,15 +42,15 @@ public class IssueDTO {
 
     private Integer storyPoints;
 
-    private List<VersionIssueRelDTO> versionIssueRelDTOList;
+    private List<VersionIssueRelDTO> versionIssueRelVOList;
 
     private SprintNameDTO activeSprint;
 
     private List<SprintNameDTO> closeSprint;
 
-    private List<LabelIssueRelDTO> labelIssueRelDTOList;
+    private List<LabelIssueRelDTO> labelIssueRelVOList;
 
-    private List<ComponentIssueRelDTO> componentIssueRelDTOList;
+    private List<ComponentIssueRelDTO> componentIssueRelVOList;
 
     private List<IssueCommentDTO> issueCommentDTOList;
 
@@ -213,27 +213,27 @@ public class IssueDTO {
     }
 
     public List<VersionIssueRelDTO> getVersionIssueRelDTOList() {
-        return versionIssueRelDTOList;
+        return versionIssueRelVOList;
     }
 
-    public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelDTOList) {
-        this.versionIssueRelDTOList = versionIssueRelDTOList;
+    public void setVersionIssueRelDTOList(List<VersionIssueRelDTO> versionIssueRelVOList) {
+        this.versionIssueRelVOList = versionIssueRelVOList;
     }
 
     public List<LabelIssueRelDTO> getLabelIssueRelDTOList() {
-        return labelIssueRelDTOList;
+        return labelIssueRelVOList;
     }
 
-    public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelDTOList) {
-        this.labelIssueRelDTOList = labelIssueRelDTOList;
+    public void setLabelIssueRelDTOList(List<LabelIssueRelDTO> labelIssueRelVOList) {
+        this.labelIssueRelVOList = labelIssueRelVOList;
     }
 
-    public List<ComponentIssueRelDTO> getComponentIssueRelDTOList() {
-        return componentIssueRelDTOList;
+    public List<ComponentIssueRelDTO> getcomponentIssueRelVOList() {
+        return componentIssueRelVOList;
     }
 
-    public void setComponentIssueRelDTOList(List<ComponentIssueRelDTO> componentIssueRelDTOList) {
-        this.componentIssueRelDTOList = componentIssueRelDTOList;
+    public void setcomponentIssueRelVOList(List<ComponentIssueRelDTO> componentIssueRelVOList) {
+        this.componentIssueRelVOList = componentIssueRelVOList;
     }
 
     public List<IssueCommentDTO> getIssueCommentDTOList() {

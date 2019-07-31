@@ -109,7 +109,7 @@ class CreateLinkTask extends Component {
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const labelIssueRelDTOList = _.map(this.state.selected, (issue) => {
+        const labelIssueRelVOList = _.map(this.state.selected, (issue) => {
           const currentLinkType = this.state.originLinks[0];
           // if (currentLinkType.outWard === linkTypeId.split('+')[1]) {
           return ({
@@ -126,7 +126,7 @@ class CreateLinkTask extends Component {
           // }
         });
         this.setState({ createLoading: true });
-        createLink(this.props.issueId, labelIssueRelDTOList)
+        createLink(this.props.issueId, labelIssueRelVOList)
           .then((res) => {
             this.setState({ createLoading: false });
             this.props.onOk();

@@ -1,7 +1,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import BaseTreeProto from '../prototype';
+import BaseTreeProto from '../../../store/BaseTreeProto';
 
 
 class TestExecuteStore extends BaseTreeProto {

@@ -346,11 +346,11 @@ public class IExcelImportServiceImpl implements IExcelImportService {
                 markAsError(row, "模块有误，请检查导入模板是否为最新数据。");
                 return null;
             }
-            List<ComponentIssueRelDTO> componentIssueRelDTOList = new ArrayList<>();
+            List<ComponentIssueRelDTO> componentIssueRelVOList = new ArrayList<>();
             ComponentIssueRelDTO componentIssueRelDTO = new ComponentIssueRelDTO();
             componentIssueRelDTO.setComponentId(componentNameIdMap.get(ExcelUtil.getStringValue(row.getCell(4))));
-            componentIssueRelDTOList.add(componentIssueRelDTO);
-            issueCreateDTO.setComponentIssueRelDTOList(componentIssueRelDTOList);
+            componentIssueRelVOList.add(componentIssueRelDTO);
+            issueCreateDTO.setcomponentIssueRelVOList(componentIssueRelVOList);
         }
 
 

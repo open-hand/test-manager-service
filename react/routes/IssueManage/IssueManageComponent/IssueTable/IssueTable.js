@@ -119,7 +119,7 @@ class IssueTable extends Component {
       issueId,
       issueTypeVO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
       reporterName, reporterImageUrl, statusVO, priorityVO,
-      folderName, epicColor, componentIssueRelDTOList, labelIssueRelDTOList,
+      folderName, epicColor, componentIssueRelVOList, labelIssueRelVOList,
       versionIssueRelVOList, creationDate, lastUpdateDate,
     } = issue;
     return (
@@ -269,7 +269,7 @@ class IssueTable extends Component {
     }
 
     const {
-      statusId, priorityId, issueNum, summary, labelIssueRelDTOList,
+      statusId, priorityId, issueNum, summary, labelIssueRelVOList,
     } = filters;
     const search = {
       advancedSearchArgs: {
@@ -277,7 +277,7 @@ class IssueTable extends Component {
         priorityId: priorityId || [],
       },
       otherArgs: {
-        label: labelIssueRelDTOList || [],
+        label: labelIssueRelVOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
       },
@@ -375,11 +375,11 @@ class IssueTable extends Component {
       },
       {
         title: '标签',
-        dataIndex: 'labelIssueRelDTOList',
-        key: 'labelIssueRelDTOList',
+        dataIndex: 'labelIssueRelVOList',
+        key: 'labelIssueRelVOList',
         filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
         filterMultiple: true,
-        render: (labelIssueRelDTOList, record) => renderLabels(labelIssueRelDTOList),
+        render: (labelIssueRelVOList, record) => renderLabels(labelIssueRelVOList),
       },
     ]);
     return (

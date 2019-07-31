@@ -5,7 +5,7 @@ import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getPrioritys } from '../../../api/agileApi';
-import BaseTreeProto from '../prototype';
+import BaseTreeProto from '../../../store/BaseTreeProto';
 /**
  * 非递归遍历树 将测试阶段按照时间排序
  *
