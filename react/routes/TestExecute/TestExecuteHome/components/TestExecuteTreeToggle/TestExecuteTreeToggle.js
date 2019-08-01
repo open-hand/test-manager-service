@@ -65,18 +65,18 @@ const TestExecuteTreeToggle = ({
         <div className="c7ntest-treeTop">
           <Input
             className="hidden-label"
-            prefix={<Icon type="filter_list" style={{ color: 'black' }} />}
-            placeholder="过滤"
-            style={{ marginTop: 2 }}
+            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.45)' }} />}
+            placeholder="搜索"
+            style={{ marginTop: 2, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
             onChange={e => _.debounce(filterCycle, 200).call(null, e.target.value)}
           />
-          <Icon
+          {/* <Icon
             type="close"
             className="c7ntest-pointer"
             onClick={() => {
               TestExecuteStore.setLeftVisible(false);
             }}
-          />
+          /> */}
         </div>
       </div>    
       <TestExecuteTree

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Page, Header, Content,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import moment from 'moment';
 import {
@@ -159,19 +159,17 @@ const AutoTestList = ({
           <Icon type="playlist_add icon" />
           <span>添加测试</span>
         </Button>
-        <Button onClick={onRefreshClick}>
+        {/* <Button onClick={onRefreshClick}>
           <Icon type="autorenew icon" />
           <span><FormattedMessage id="refresh" /></span>
         </Button>
         <div style={{ color: 'rgba(0,0,0,.65)', margin: '0 5px' }}>
         自动刷新
         </div>        
-        <Switch checked={autoRefresh} onChange={onAutoRefreshChange} />
+        <Switch checked={autoRefresh} onChange={onAutoRefreshChange} /> */}
       </Header>
-      <Content
-        title={<FormattedMessage id="autotestlist_content_title" values={{ name: getProjectName() }} />}
-        description={<FormattedMessage id="autotestlist_content_description" />}
-      >
+      <Breadcrumb title="自动化测试" />
+      <Content>
         <Select
           label="选择应用"
           style={{ width: 512, marginBottom: 20 }}

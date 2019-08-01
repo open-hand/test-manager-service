@@ -185,6 +185,8 @@ const zhCN = {
   testPlan_createStageIn: '在测试循环“{cycleName}”中添加测试阶段',
   testPlan_EditStage_title: '编辑测试阶段',
   testPlan_EditStage: '编辑测试阶段“{cycleName}”',
+  testPlan_creatCycle: '创建循环',
+  testPlan_export: '导出用例',
   // 测试循环
   cycle_title: '测试执行',
   cycle_name: '测试循环',
@@ -249,7 +251,7 @@ const zhCN = {
   issue_name: '测试用例',
   issue_noIssueTitle: '根据当前搜索条件没有查询到测试用例',
   issue_noIssueDescription: '尝试修改您的过滤选项或者在下面创建新的测试用例',
-  issue_createTestIssue: '创建测试用例',
+  issue_createTestIssue: '创建用例',
   issue_importIssue: '导入测试用例',
   issue_filterTestIssue: '过滤表',
   issue_issueTotal: '共{total}条任务',
@@ -279,8 +281,9 @@ const zhCN = {
   issue_folder: '文件夹',
   issue_download_tpl: '下载模板',
   issue_import: '导入用例',
+  issue_export: '导出用例',
   issue_import_cancel: '取消上传',
-  //测试用例详情
+  // 测试用例详情
   testCase_detail: '用例详情',
   testCase_pre: '上一个用例',
   testCase_next: '下一个用例',

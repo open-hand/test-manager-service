@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { Page, Header, Content } from '@choerodon/boot';
+import {
+  Page, Header, Content, Breadcrumb, 
+} from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import IssueStore from '../IssueManagestore/IssueStore';
@@ -13,7 +15,7 @@ import IssueTable from '../IssueManageComponent/IssueTable';
 import ExportSide from '../IssueManageComponent/ExportSide';
 import ImportSide from '../ImportIssue';
 import TestCaseDetail from '../TestCaseDetail';
-import './IssueManage.scss';
+import './IssueManage.less';
 import IssueTreeStore from '../IssueManagestore/IssueTreeStore';
 
 @observer
@@ -111,13 +113,13 @@ export default class IssueManage extends Component {
           </Button>
           <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
             <Icon type="export icon" />
-            <FormattedMessage id="export" />
+            <FormattedMessage id="issue_export" />
           </Button>
           <Button className="leftBtn" onClick={() => this.importSide.open()}>
             <Icon type="file_upload icon" />
-            <FormattedMessage id="import" />
+            <FormattedMessage id="issue_import" />
           </Button>
-          <Button
+          {/* <Button
             onClick={() => {
               const { current, pageSize } = IssueStore.pagination;
               if (this.tree) {
@@ -128,10 +130,12 @@ export default class IssueManage extends Component {
           >
             <Icon type="autorenew icon" />
             <FormattedMessage id="refresh" />
-          </Button>
+          </Button> */}
         </Header>
-        <Content style={{ display: 'flex', padding: '0' }}>
-          <div className="c7ntest-chs-bar">
+        <Breadcrumb title="用例库" />
+        <div className="breadcrumb-border" />
+        <Content className="c7ntest-issue-content" style={{ display: 'flex', padding: '0' }}>
+          {/* <div className="c7ntest-chs-bar">
             {!treeShow && (
               <p
                 role="none"
@@ -142,7 +146,7 @@ export default class IssueManage extends Component {
                 <FormattedMessage id="issue_repository" />
               </p>
             )}
-          </div>
+          </div> */}
           <div className="c7ntest-issue-tree">
             {treeShow && (
               <IssueTree

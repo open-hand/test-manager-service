@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  Page, Header, Content,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
@@ -73,14 +73,16 @@ const TestExecuteHome = ({
   const { cycleId } = currentCycle;
   return (
     <Page className="c7ntest-TestExecuteHome">
-      <Header title={<FormattedMessage id="cycle_title" />}>
+      {/* <Header title={<FormattedMessage id="cycle_title" />}>
         <Button onClick={onRefreshClick}>
           <Icon type="autorenew icon" />
           <span>
             <FormattedMessage id="refresh" />
           </span>
         </Button>
-      </Header>
+      </Header> */}
+      <Breadcrumb title="执行" />
+      <div className="breadcrumb-border" />
       <Content
         style={{
           padding: 0, display: 'flex',

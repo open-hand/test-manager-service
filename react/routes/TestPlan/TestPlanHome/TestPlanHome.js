@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Page, Header, Content } from '@choerodon/boot';
+import {
+  Page, Header, Content, Breadcrumb, 
+} from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -133,18 +135,20 @@ class TestPlanHome extends Component {
       <Page className="c7ntest-TestPlan">
         <Header title={<FormattedMessage id="testPlan_name" />}>
           <Button icon="playlist_add" onClick={() => { setCreateCycleVisible(true); }}>            
-            <FormattedMessage id="cycle_create_title" />
+            <FormattedMessage id="testPlan_creatCycle" />
           </Button>
           <Button icon="export" onClick={() => this.ExportSide.open()}>           
-            <FormattedMessage id="export" />
+            <FormattedMessage id="testPlan_export" />
           </Button>
           <Button icon="baseline-file_copy" onClick={() => this.BatchClone.open()}>            
             批量克隆
           </Button>
-          <Button icon="autorenew" onClick={this.refresh}>           
+          {/* <Button icon="autorenew" onClick={this.refresh}>           
             <FormattedMessage id="refresh" />
-          </Button>
+          </Button> */}
         </Header>
+        <Breadcrumb title="计划" />
+        <div className="breadcrumb-border" />
         <Content
           title={null}
           description={null}
