@@ -26,7 +26,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/boot": "0.19.x",
+    "@choerodon/boot": "0.19.3",
     "@choerodon/master": "0.19.x",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",

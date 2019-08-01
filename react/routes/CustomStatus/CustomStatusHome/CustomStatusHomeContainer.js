@@ -6,102 +6,116 @@
  * @Feature: 用户自定状态容器组件
  */
 
-/* 将原文件class组件改为如下函数组件（未完成版） */
-
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import _ from 'lodash';
 import {
   getStatusList, createStatus, editStatus, deleteStatus,
 } from '../../../api/TestStatusApi';
 import CustomStatusHome from './CustomStatusHome';
 
-
-function CustomStatusHomeContainer() {
-  const [loading, setLoading] = useState(false);
-  const [statusType, setStatusType] = useState('CYCLE_CASE');
-  const [createVisible, setCreateVisible] = useState(false);
-  const [editVisible, setEditVisible] = useState(false);
-  const [statusList, setStatusList] = useState([]);
-  const [CurrentEditStatus, setCurrentEditStatus] = useState({
-    statusId: null,
+class CustomStatusHomeContainer extends Component {
+  state = {
+    loading: false,
     statusType: 'CYCLE_CASE',
-    objectVersionNumber: null,
-    statusName: null,
-    description: null,
-    statusColor: null,
-  });
-  const [EditStatusLoading, setEditStatusLoading] = useState(false);
-  const [CreateStatusLoading, setCreateStatusLoading] = useState(false);
+    createVisible: false,
+    editVisible: false,
+    statusList: [],
+    CurrentEditStatus: {
+      statusId: null,
+      statusType: 'CYCLE_CASE',
+      objectVersionNumber: null,
+      statusName: null,
+      description: null,
+      statusColor: null,
+    },
+    EditStatusLoading: false,
+    CreateStatusLoading: false,
+  };
 
-  const loadStatusList = (thisstatusType = { statusType }) => {
-    setLoading(true);
-    getStatusList(thisstatusType).then((thisstatusList) => {
-      setLoading(false);
-      setStatusList(thisstatusList);
+  componentDidMount() {
+    this.loadStatusList(this.state.statusType);
+  }
+
+  loadStatusList = (statusType = this.state.statusType) => {
+    this.setState({ loading: true });    
+    getStatusList(statusType).then((statusList) => {
+      this.setState({
+        loading: false,
+        statusList,
+      });
     }).catch(() => {
-      setLoading(false);
+      this.setState({
+        loading: false,
+      });
       Choerodon.prompt('网络异常');
     });
   };
-  
-  useEffect(() => {
-    loadStatusList({ statusType });
-  }, []);
-  
 
   /**
    * 切换创建状态侧边栏的显示状态
    *
    * 
    */
-  const ToggleCreateStatusVisible = (visible) => {
-    setCreateVisible(visible);
-  };
+  ToggleCreateStatusVisible = (visible) => {
+    this.setState({
+      createVisible: visible,
+    });
+  }
 
   /**
    * 切换编辑状态侧边栏的显示状态
    *
    * 
    */
-  const ToggleEditStatusVisible = (visible, data = {}) => {
-    setEditVisible(visible);
-    setCurrentEditStatus(data);
-  };
+  ToggleEditStatusVisible = (visible, data = {}) => {
+    this.setState({
+      editVisible: visible,
+      CurrentEditStatus: data,
+    });
+  }
 
   /**
    * tab切换时更改当前状态类型
    *
    * 
    */
-  const handleTabChange = (key) => {
-    setStatusType(key);
-    loadStatusList(key);
-  };
+  handleTabChange = (key) => {
+    this.setState({
+      statusType: key,
+    });
+    this.loadStatusList(key);
+  }
 
   /**
    * 刷新状态列表
    *
    * 
    */
-  const handleRefreshClick = () => {
-    loadStatusList();
-  };
+  handleRefreshClick = () => {
+    this.loadStatusList();
+  }
 
   /**
    * 点击删除状态按钮的处理
    *
    * 
    */
-  const handleDeleteOk = (data) => {
-    setLoading(true);
+  handleDeleteOk = (data) => {
+    this.setState({
+      loading: true,
+    });
     deleteStatus(data.statusId).then((res) => {
       if (res.failed) {
         Choerodon.prompt('状态已被使用，不可删除');
       }
-      setLoading(false);
-      loadStatusList();
+      this.setState({
+        loading: false,
+      });
+      this.loadStatusList();
     }).catch(() => {
-      setLoading(false);
+      this.setState({
+        loading: false,
+      });
     });
   };
 
@@ -110,50 +124,50 @@ function CustomStatusHomeContainer() {
    * 1.显示编辑侧边栏
    * 2.设置当前编辑状态数据
    */
-  const handleEditStatusClick = (statusData) => {
-    ToggleEditStatusVisible(true, statusData);
-  };
+  handleEditStatusClick = (statusData) => {
+    this.ToggleEditStatusVisible(true, statusData);
+  }
 
   /**
    * 点击显示状态创建侧边
    *
    * 
    */
-  const handleShowCreateClick = () => {
-    ToggleCreateStatusVisible(true);
-  };
+  handleShowCreateClick = () => {
+    this.ToggleCreateStatusVisible(true);
+  }
 
   /**
    * 创建状态侧边点击取消
    *
    * 
    */
-  const handleCreateStatusCancel = () => {
-    ToggleCreateStatusVisible(false);
-  };
+  handleCreateStatusCancel = () => {
+    this.ToggleCreateStatusVisible(false);
+  }
 
   /**
    * 编辑状态侧边点击取消
    *
    * 
    */
-  const handleEditStatusCancel = () => {
-    ToggleEditStatusVisible(false);
-  };
+  handleEditStatusCancel = () => {
+    this.ToggleEditStatusVisible(false);
+  }
 
   /**
    * 校验状态是否重复
    *
    * 
    */
-  const handleCheckStatusRepeat = status => (rule, value, callback) => {
+  handleCheckStatusRepeat = status => (rule, value, callback) => {
     const {
-      statusName, statusColor, thisstatusType, statusId, 
+      statusName, statusColor, statusType, statusId, 
     } = status;
-    getStatusList(thisstatusType).then((thisstatusList) => {
-      if (_.find(thisstatusList, o => o.statusName === statusName && o.statusId !== statusId)) {
+    getStatusList(statusType).then((statusList) => {
+      if (_.find(statusList, o => o.statusName === statusName && o.statusId !== statusId)) {
         callback('状态名称已存在');
-      } else if (_.find(thisstatusList, o => o.statusColor === statusColor && o.statusId !== statusId)) {
+      } else if (_.find(statusList, o => o.statusColor === statusColor && o.statusId !== statusId)) {
         callback('状态颜色已存在');
       } else {
         callback();
@@ -168,66 +182,64 @@ function CustomStatusHomeContainer() {
    *
    * 
    */
-  const handleCreateStatusSubmit = (newStatus) => {
-    setCreateStatusLoading(true);
+  handleCreateStatusSubmit = (newStatus) => {
+    this.setState({ CreateStatusLoading: true });
     createStatus(newStatus).then((res) => {
       if (res.failed) {
         Choerodon.prompt('状态或颜色不能相同');
       } else {
-        setStatusType(newStatus.statusType);
-        ToggleCreateStatusVisible(false);
-        loadStatusList();
+        this.setState({
+          statusType: newStatus.statusType,
+        });
+        this.ToggleCreateStatusVisible(false);
+        this.loadStatusList();
       }
-      setCreateStatusLoading(false);
+      this.setState({ CreateStatusLoading: false });
     }).catch(() => {
       Choerodon.prompt('网络异常');
-      setCreateStatusLoading(false);
+      this.setState({ CreateStatusLoading: false });
     });
-  };
+  }
 
   /**
    * 编辑状态侧边点击确定
    *
    * 
    */
-  const handleEditStatusSubmit = (modifyedStatus) => {
-    setEditStatusLoading(true);
+  handleEditStatusSubmit = (modifyedStatus) => {
+    this.setState({ EditStatusLoading: true });
     editStatus(modifyedStatus).then((res) => {
       if (res.failed) {
         Choerodon.prompt('状态或颜色不能相同');
       } else {
-        ToggleEditStatusVisible(false);
-        loadStatusList();
+        this.ToggleEditStatusVisible(false);
+        this.loadStatusList();
       }
-      setEditStatusLoading(false);
+      this.setState({ EditStatusLoading: false });
     }).catch(() => {
       Choerodon.prompt('网络异常');
-      setEditStatusLoading(false);
+      this.setState({ EditStatusLoading: false });
     });
-  };
-  
-  return (
-    <CustomStatusHome
-      loading={loading}
-      statusType={statusType}
-      createVisible={createVisible}
-      editVisible={editVisible}
-      statusList={statusList}
-      CurrentEditStatus={CurrentEditStatus}
-      EditStatusLoading={EditStatusLoading}
-      CreateStatusLoading={CreateStatusLoading}
+  }
 
-      onShowCreateClick={handleShowCreateClick}
-      onRefreshClick={handleRefreshClick}
-      onEditStatusClick={handleEditStatusClick}
-      onDeleteOk={handleDeleteOk}
-      onTabChange={handleTabChange}
-      onCheckStatusRepeat={handleCheckStatusRepeat}
-      onCreateStatusCancel={handleCreateStatusCancel}
-      onEditStatusCancel={handleEditStatusCancel}
-      onCreateStatusSubmit={handleCreateStatusSubmit}
-      onEditStatusSubmit={handleEditStatusSubmit}
-    />
-  );
+  render() {
+    return (
+      <CustomStatusHome
+        {...this.state}
+        onShowCreateClick={this.handleShowCreateClick}
+        onRefreshClick={this.handleRefreshClick}
+        onEditStatusClick={this.handleEditStatusClick}
+        onDeleteOk={this.handleDeleteOk}
+        onTabChange={this.handleTabChange}
+        onCheckStatusRepeat={this.handleCheckStatusRepeat}
+        onCreateStatusCancel={this.handleCreateStatusCancel}
+        onEditStatusCancel={this.handleEditStatusCancel}
+        onCreateStatusSubmit={this.handleCreateStatusSubmit}
+        onEditStatusSubmit={this.handleEditStatusSubmit}
+      />
+    );
+  }
 }
+
+
 export default CustomStatusHomeContainer;
