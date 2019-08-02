@@ -18,6 +18,7 @@ import {
 } from './AutoTestTags';
 import { ContainerLog } from './components';
 import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../common/utils';
+import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
 
 const { Option } = Select;
@@ -186,6 +187,7 @@ const AutoTestList = ({
         <ContainerLog            
           ref={onSaveLogRef('ContainerLog')}
         />
+        <CreateAutoTest />
       </Content>
     </Page>
   );

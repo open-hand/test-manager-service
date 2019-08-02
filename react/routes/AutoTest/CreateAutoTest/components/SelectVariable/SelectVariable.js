@@ -73,20 +73,13 @@ class SelectVariable extends Component {
       app, env, version, appVersion, envList,
     } = CreateAutoTestStore;
     return (
-      <div className="deployApp-app">
-        <p>
-          {formatMessage({ id: 'autoteststep_one_description' })}
-        </p>
+      <div className="deployApp-app">        
         {/* 选择应用 */}
         <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-widgets section-title-icon" />
-            <span className="section-title">{formatMessage({ id: 'autoteststep_one_app' })}</span>
-          </div>
           <div className="autotest-text">
             {/* 选择应用版本后才显示应用 */}
             {appVersion.id && (
-              <div className="section-text-margin">
+              <div>
                 <Tooltip title={<FormattedMessage id="project" />}><span className="icon icon-project section-text-icon" /></Tooltip>
                 <span className="section-text">
                   {app.name}
@@ -97,8 +90,7 @@ class SelectVariable extends Component {
               </div>
             )}
             <a
-              role="none"
-              className={`${appVersion.id ? '' : 'section-text-margin'}`}
+              role="none"              
               onClick={this.showSideBar}
             >
               {formatMessage({ id: 'autotestapp_add' })}
@@ -107,28 +99,18 @@ class SelectVariable extends Component {
           </div>
         </section>
         {/* 选择目标版本 */}
-        <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-publish2 section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep_one_targetversion' })}</span>
-          </div>
+        <section className="deployApp-section">         
           <SelectVersion
-            value={version.versionId}
-            className="section-text-margin"
+            value={version.versionId}            
             style={{ width: 482 }}
             onChange={this.handleVersionSelect}
           />
         </section>
         {/* 选择环境 */}
-        <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-donut_large section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep_one_environment' })}</span>
-          </div>
+        <section className="deployApp-section">          
           <Select
             value={env.id}
-            label={<span className="autotest-text">{formatMessage({ id: 'autoteststep_one_environment' })}</span>}
-            className="section-text-margin"
+            label={formatMessage({ id: 'autoteststep_one_environment' })}           
             onSelect={this.handleSelectEnv}
             style={{ width: 482 }}
             optionFilterProp="children"
@@ -146,7 +128,7 @@ class SelectVariable extends Component {
             ))}
           </Select>
         </section>
-        <section className="deployApp-section">
+        {/* <section className="deployApp-section">
           <Button
             type="primary"
             funcType="raised"
@@ -156,7 +138,7 @@ class SelectVariable extends Component {
             {formatMessage({ id: 'next' })}
           </Button>
           <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-        </section>
+        </section> */}
         <SelectAppAndVersion
           show={selectApp}
           handleCancel={this.handleCancel}

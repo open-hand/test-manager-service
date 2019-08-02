@@ -6,115 +6,105 @@
 @instance-icon-color: #f44336;
 @autotest-clear-color: #3f51b5;
 
-.c7ntest-deployApp-wrapper {
-  // background-color: rgba(0, 0, 0, 0.04);
-
-  .deployApp-card {
-    margin-bottom: 0.32rem;
-    padding: 0.32rem;
-    background-color: @card-color;
-    box-shadow: 0 0.01rem 0.03rem 0 @card-box-shadow;
+.c7ntest-deployApp {
+  .c7n-steps {
+    display: none;
   }
 
-  .deployApp-card-content {
-    margin-left: 0.36rem;
-    padding-top: 0.32rem;
+  p {
+    font-size: 0.13rem;
+    color: @p-color;
+    line-height: 0.2rem;
+    text-align: justify;
+    white-space: pre-wrap;
+  }
 
-    p {
-      font-size: 0.13rem;
-      color: @p-color;
-      line-height: 0.2rem;
-      text-align: justify;
-      white-space: pre-wrap;
+  .deployApp-section {
+    margin: 0.24rem 0;
+
+    a {
+      margin-left: auto;
     }
 
-    .deployApp-section {
-      margin: 0.24rem 0;
-
-      a {
-        margin-left: auto;
-      }
-
-      button {
-        margin-right: 0.12rem;
-      }
-
-      .autotest-title {
-        margin-bottom: 0.16rem;
-
-        .section-title {
-          vertical-align: middle;
-          color: @text-color;
-          line-height: 0.2rem;
-        }
-
-        .section-title-icon {
-          vertical-align: middle;
-          font-size: 0.18rem;
-          padding-right: 0.1rem;
-        }
-      }
-
-      .autotest-text {
-        width: 5.12rem;
-        display: flex;
-
-        .icon-small {
-          font-size: 0.13rem !important;
-        }
-
-        .section-text {
-          vertical-align: middle;
-          font-size: 0.13rem;
-          color: @text-color;
-          line-height: 0.13rem;
-        }
-
-        .section-text-icon {
-          vertical-align: middle;
-          font-size: 0.16rem;
-          padding-right: 0.05rem;
-          color: @text-color;
-        }
-      }
-
-      .section-text-margin {
-        margin-left: 0.3rem;
-      }
+    button {
+      margin-right: 0.12rem;
     }
 
-    .deployApp-review {
-      .deployApp-title {
-        font-size: 0.13rem;
+    .autotest-title {
+      margin-bottom: 0.16rem;
+
+      .section-title {
+        vertical-align: middle;
         color: @text-color;
         line-height: 0.2rem;
-        display: inline-block;
-        margin: 0 0 0.12rem 0;
-
-        span {
-          padding-right: 0.1rem;
-        }
-
-        .deployApp-title-text {
-          vertical-align: middle;
-          padding-left: 0.1rem;
-        }
       }
 
-      .deployApp-text {
-        display: inline-block;
+      .section-title-icon {
+        vertical-align: middle;
+        font-size: 0.18rem;
+        padding-right: 0.1rem;
+      }
+    }
+
+    .autotest-text {
+      width: 5.12rem;
+      display: flex;
+
+      .icon-small {
+        font-size: 0.13rem !important;
+      }
+
+      .section-text {
+        vertical-align: middle;
         font-size: 0.13rem;
-        color: @deployApp-text-color;
-        line-height: 0.2rem;
-        padding-left: 0.15rem;
+        color: @text-color;
+        line-height: 0.13rem;
       }
 
-      .deployApp-value {
-        font-size: 0.13rem;
-        color: @deployApp-text-color;
-        text-align: left;
-        line-height: 0.2rem;
+      .section-text-icon {
+        vertical-align: middle;
+        font-size: 0.16rem;
+        padding-right: 0.05rem;
+        color: @text-color;
       }
+    }
+
+    .section-text-margin {
+      margin-left: 0.3rem;
+    }
+  }
+
+  .deployApp-review {
+    .deployApp-title {
+      font-size: 0.13rem;
+      color: @text-color;
+      line-height: 0.2rem;
+      display: inline-block;
+      margin: 0 0 0.06rem 0;
+
+      span {
+        padding-right: 0.1rem;
+      }
+
+      .deployApp-title-text {
+        vertical-align: middle;
+        padding-left: 0.1rem;
+      }
+    }
+
+    .deployApp-text {
+      display: inline-block;
+      font-size: 0.13rem;
+      color: @deployApp-text-color;
+      line-height: 0.2rem;
+      padding-left: 0.15rem;
+    }
+
+    .deployApp-value {
+      font-size: 0.13rem;
+      color: @deployApp-text-color;
+      text-align: left;
+      line-height: 0.2rem;
     }
   }
 }

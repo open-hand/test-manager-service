@@ -42,48 +42,24 @@ class ModifyConfig extends Component {
   };
 
   render() {
-    const { intl } = this.props;
-    const { formatMessage } = intl;
     const { errorLine, markers } = this.state;
     const data = CreateAutoTestStore.getNewConfigValue;
     return (
       <div className="deployApp-env">
-        <p>
-          {formatMessage({ id: 'autoteststep_two_description' })}
-        </p>
-
-        <section className="deployApp-section">
-          <div className="autotest-title">
-            <i className="icon icon-description section-title-icon " />
-            <span className="section-title">{formatMessage({ id: 'autoteststep_two_config' })}</span>
-          </div>
-          {data && (
-            <YamlEditor
-              newLines={data.newLines}
-              isFileError={!!data.errorLines}
-              totalLine={data.totalLine}
-              errorLines={errorLine}
-              errMessage={data.errorMsg}
-              modifyMarkers={markers}
-              value={data.yaml}
-              highlightMarkers={data.highlightMarkers}
-              onChange={this.handleChangeValue}
-              change
-            />
-          )}
-        </section>
-        <section className="deployApp-section">
-          <Button
-            type="primary"
-            funcType="raised"
-            onClick={CreateAutoTestStore.nextStep}
-            disabled={!data}
-          >
-            {formatMessage({ id: 'next' })}
-          </Button>
-          <Button onClick={CreateAutoTestStore.preStep} funcType="raised">{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-        </section>
+        {data && (
+        <YamlEditor
+          newLines={data.newLines}
+          isFileError={!!data.errorLines}
+          totalLine={data.totalLine}
+          errorLines={errorLine}
+          errMessage={data.errorMsg}
+          modifyMarkers={markers}
+          value={data.yaml}
+          highlightMarkers={data.highlightMarkers}
+          onChange={this.handleChangeValue}
+          change
+        />
+        )}
       </div>
     );
   }

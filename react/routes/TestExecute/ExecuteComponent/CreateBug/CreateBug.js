@@ -213,7 +213,7 @@ class CreateIssue extends Component {
   };
 
   loadIssueTypes = () => {
-    axios.get(`/issue/v1/projects/${AppState.currentMenuType.projectId}/schemes/query_issue_types_with_sm_id?apply_type=agile`)
+    axios.get(`/agile/v1/projects/${AppState.currentMenuType.projectId}/schemes/query_issue_types_with_sm_id?apply_type=agile`)
       .then((res) => {
         if (res && res.length) {
           const story = res.filter(item => item.typeCode === 'bug');

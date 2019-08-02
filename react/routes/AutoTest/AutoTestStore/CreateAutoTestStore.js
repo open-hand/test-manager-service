@@ -3,6 +3,10 @@ import {
 } from 'mobx';
 
 class CreateAutoTestStore {
+  @observable visible = false;
+
+  @observable loading = false;
+
   @observable currentStep = 1;
 
   @observable appList = [];
@@ -28,6 +32,14 @@ class CreateAutoTestStore {
   @observable configValue = null;
 
   @observable newConfigValue = null;
+
+  @action setVisible = (visible) => {
+    this.visible = visible;
+  }
+
+  @action setLoading = (loading) => {
+    this.loading = loading;
+  }
 
   @action setApp = (app) => {
     this.app = app;
@@ -94,6 +106,7 @@ class CreateAutoTestStore {
     this.envList = [];
     this.configValue = null;
     this.newConfigValue = null;
+    this.visible = false;
   }
 
   @action setConfigValue(configValue) {
