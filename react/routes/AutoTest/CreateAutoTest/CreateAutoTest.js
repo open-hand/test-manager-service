@@ -54,7 +54,7 @@ class CreateAutoTest extends Component {
               type="primary"
               funcType="raised"
               onClick={CreateAutoTestStore.nextStep}
-              disabled={!data}
+              disabled={!data || (data.errorLines && data.errorLines.length > 0)}
             >
               {formatMessage({ id: 'next' })}
             </Button>

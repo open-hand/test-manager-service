@@ -13,7 +13,6 @@ import { getYaml, checkYaml } from '../../../../../api/AutoTestApi';
 class ModifyConfig extends Component {
   state = {
     markers: null,
-    errorLine: [],
   };
 
   componentDidMount() {
@@ -36,22 +35,22 @@ class ModifyConfig extends Component {
   handleChangeValue = (value) => {
     CreateAutoTestStore.setNewConfigValue(value);
     checkYaml(value)
-      .then((data) => {
-        this.setState({ errorLine: data });
+      .then((data) => {      
+        CreateAutoTestStore.setNewConfigValue(value, data);
       });
   };
 
   render() {
-    const { errorLine, markers } = this.state;
+    const { markers } = this.state;
     const data = CreateAutoTestStore.getNewConfigValue;
     return (
       <div className="deployApp-env">
         {data && (
         <YamlEditor
           newLines={data.newLines}
-          isFileError={!!data.errorLines}
+          isFileError={data.errorLines && data.errorLines.length > 0}
           totalLine={data.totalLine}
-          errorLines={errorLine}
+          errorLines={data.errorLines}
           errMessage={data.errorMsg}
           modifyMarkers={markers}
           value={data.yaml}

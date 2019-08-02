@@ -114,8 +114,8 @@ class CreateAutoTestStore {
     this.newConfigValue = configValue;
   }
 
-  @action setNewConfigValue(newConfigValue) {
-    this.newConfigValue = { ...this.newConfigValue, yaml: newConfigValue };
+  @action setNewConfigValue(newConfigValue, errorLines = []) {
+    this.newConfigValue = { ...this.newConfigValue, yaml: newConfigValue, errorLines };
   }
 
   @computed get getConfigValue() {

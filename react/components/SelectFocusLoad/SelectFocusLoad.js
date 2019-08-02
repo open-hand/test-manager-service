@@ -1,102 +1,144 @@
-import React, { Component } from 'react';
-import { Select } from 'choerodon-ui';
+/* eslint-disable no-shadow */
+import React, { useState, useEffect, Component } from 'react';
+import { Select, Button } from 'choerodon-ui';
+import { debounce, uniqBy } from 'lodash';
 import PropTypes from 'prop-types';
 import Types from './Types';
+import './SelectFocusLoad.less';
 
+const { Option } = Select;
+function dataConverter(data) {
+  if (data instanceof Array) {
+    return {
+      list: data,
+      hasNextPage: false,
+    };
+  }
+  return data;
+}
 const propTypes = {
   type: PropTypes.string.isRequired,
 };
-class SelectFocusLoad extends Component {
-  state = {
-    loading: false,
-    List: [],
-  }
-
-  componentDidMount() {
-    this.avoidShowError();   
-    this.loadData(); 
-  }
-  
-  componentDidUpdate(prevProps, prevState) {
-    // eslint-disable-next-line react/destructuring-assignment
-    if (prevProps.value !== this.props.value) {
-      this.avoidShowError();
-    }
-  }
+const SelectFocusLoad = (props) => {
+  const SelectRef = React.createRef();
+  const { type } = props;
+  const getType = () => {
+    const Type = { ...Types[type], ...props };
+    return Type;
+  };
+  const Type = getType();
+  const {
+    request, props: TypeProps, getDefaultValue, render, propArg,
+  } = Type;
+  const totalProps = { ...props, ...TypeProps };
+  const {
+    loadWhenMount, afterLoad, value, saveList, children, defaultOpen, defaultOption,
+  } = totalProps;
+  const [loading, setLoading] = useState(false);
+  const [List, setList] = useState(defaultOption ? [defaultOption] : []);
+  const [extraList, setExtraList] = useState(false);
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState(1);
+  const [canLoadMore, setCanLoadMore] = useState(false);
 
   // 防止取值不在option列表中，比如user
-  avoidShowError=() => {
-    const { type } = this.props;  
-    const Type = Types[type];
+  const avoidShowError = (ListDate = List) => {
     if (Type.avoidShowError) {
-      const { List } = this.state;
-      Type.avoidShowError(this.props, List).then((newList) => {
-        if (newList) {
-          this.setState({
-            List: newList,
-          });
+      Type.avoidShowError(props, ListDate).then((extra) => {
+        if (extraList) {
+          setExtraList(extra);
         }
       });
     }
-  }
-
-  loadData=() => {
-    const {
-      type, afterLoad, loadWhenMount, 
-    } = this.props;  
-    const Type = Types[type];
-    const {
-      request, propArg,   
-    } = Type;
-    if (loadWhenMount) {
-      this.setState({
-        loading: true,
-      });
-      request(propArg ? this.props[propArg] : undefined).then((Data) => {
-        this.setState({
-          List: Data,
-          loading: false,
-        });
+  };
+  const loadData = ({ filter = '', page = 1, isLoadMore = false } = {}) => new Promise((resolve) => {
+    setLoading(true);
+    request({ filter, page }, propArg ? props[propArg] : undefined).then((data) => {
+      const { list, hasNextPage } = dataConverter(data);
+      const TotalList = isLoadMore ? [...List, ...list] : list;
+      setPage(page);
+      setFilter(filter);
+      setCanLoadMore(hasNextPage);
+      avoidShowError(TotalList);
+      setList(TotalList);
+      setLoading(false);
+      resolve(TotalList);
+    });
+  });
+  const LoadWhenMount = () => {
+    if (props.loadWhenMount || loadWhenMount) {
+      loadData().then((list) => {
+        let defaultValue;
+        if (getDefaultValue) {
+          defaultValue = getDefaultValue(list);
+        }
         if (afterLoad) {
-          afterLoad(Data);
+          afterLoad(list, defaultValue);
         }
       });
     }
-  }
+  };
 
+  useEffect(() => {
+    LoadWhenMount();
+  }, []);
+  useEffect(() => {
+    avoidShowError();
+  }, [value]);
+  useEffect(() => {
+    if (defaultOpen) {
+      SelectRef.current.rcSelect.onDropdownVisibleChange(true);
+    }
+  }, []);
+
+  const handleFilterChange = debounce((Filter) => {
+    setLoading(true);
+    loadData({ filter: Filter });
+  }, 300);
+  const loadMore = () => {
+    setLoading(true);
+    loadData({ filter, page: page + 1, isLoadMore: true });
+  };
+
+  const totalList = [...List, ...extraList];
+  if (saveList) {
+    saveList(totalList);
+  }
+  // 渲染去掉重复项
+  const Options = uniqBy(totalList.map(render).concat(React.Children.toArray(children)), option => option.props.value);
+  return (
+    <Select
+      filter
+      filterOption={false}
+      loading={loading}
+      ref={SelectRef}
+      // style={{ width: 200 }}      
+      onFilterChange={handleFilterChange}
+      {...TypeProps}
+      {...props}
+    >
+      {Options}
+      {/* {canLoadMore && (
+        <Option key="SelectFocusLoad-loadMore" disabled style={{ cursor: 'auto' }}>
+          <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
+        </Option>
+      )} */}
+      <Option style={{ display: canLoadMore ? 'block' : 'none', cursor: 'pointer' }} key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
+        <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
+      </Option>
+    </Select>
+  );
+};
+
+SelectFocusLoad.propTypes = propTypes;
+// export default SelectFocusLoad;
+
+class SelectFocusLoadClass extends Component {
   render() {
-    const { loading, List } = this.state;
-    const { type } = this.props;  
-    const Type = Types[type];
-    const {
-      render, request, props, propArg, 
-    } = Type;
-    const Options = List.map(item => render(item, this.props));
     return (
-      <Select
-        filter       
-        filterOption={false}
-        loading={loading}   
-        style={{ width: 200 }}
-        onFilterChange={(value) => {
-          this.setState({
-            loading: true,
-          });
-          request(value, propArg ? this.props[propArg] : undefined).then((Data) => {
-            this.setState({
-              List: Data,
-              loading: false,
-            });
-          });
-        }}
-        {...props}
-        {...this.props}
-      >
-        {Options}
-      </Select>
+      <SelectFocusLoad {...this.props} />
     );
   }
 }
 
-SelectFocusLoad.propTypes = propTypes;
-export default SelectFocusLoad;
+export default SelectFocusLoadClass;

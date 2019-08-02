@@ -5,36 +5,42 @@ import User from '../User';
 import { getUsers, getUser } from '../../api/IamApi';
 import { getFoldersByVersion } from '../../api/IssueManageApi';
 import { getProjectVersion } from '../../api/agileApi';
+import { getApps, getAppVersions } from '../../api/AutoTestApi';
 
 const { Option } = Select;
 
 export default {
   user: {
-    request: (...args) => new Promise(resolve => getUsers(...args).then((UserData) => { resolve(UserData.list); })),
+    request: ({ filter, page }) => new Promise(resolve => getUsers(filter, undefined, page).then((UserData) => { resolve({ ...UserData, list: UserData.list.filter(user => user.enabled) }); })),
     render: user => (
       <Option key={user.id} value={user.id}>
-        <User user={user} />
+        <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
+          <User
+            user={user}
+          />
+        </div>
       </Option>
     ),
     avoidShowError: (props, List) => new Promise((resolve) => {
       const { value } = props;
-      const UserList = [...List];
-
-      if (value && !find(UserList, { id: value })) {
-        getUser(value).then((res) => {
+      const extraList = [];
+      const values = value instanceof Array ? value : [value];
+      const requestQue = [];
+      values.forEach((a) => {
+        if (a && !find(List, { id: a })) {
+          requestQue.push(getUser(a));
+        }
+      });
+      Promise.all(requestQue).then((users) => {
+        users.forEach((res) => {
           if (res.list && res.list.length > 0) {
-            UserList.push(res.list[0]);
-            resolve(UserList);
-          } else {
-            resolve(null);
+            extraList.push(res.list[0]);
           }
-        }).catch((err) => {
-          // console.log(err);
-          resolve(null);
         });
-      } else {
-        resolve(null);
-      }
+        resolve(extraList);
+      }).catch((err) => {
+        resolve(extraList);
+      });
     }),
   },
   version: {
@@ -47,7 +53,7 @@ export default {
   },
   folder: {
     propArg: 'versionId',
-    request: (value, ...args) => getFoldersByVersion(...args),
+    request: ({ filter }, ...args) => getFoldersByVersion(...args),
     render: folder => (
       <Option value={folder.folderId} key={folder.folderId} name={`${folder.versionName}-${folder.name}`}>
         {folder.versionName}
@@ -58,5 +64,24 @@ export default {
     props: {
       filterOption: (input, option) => option.props.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
     },
+  },
+  app: {
+    request: ({ page, filter }) => getApps({
+      page,
+      size: 20,
+      sort: { field: 'id', order: 'desc' },
+      postData: { searchParam: { name: [filter] }, param: '' },
+    }),
+    render: app => <Option value={app.id} key={app.id}>{app.name}</Option>,
+  },
+  appVersion: {
+    propArg: 'appId',
+    request: ({ page, filter }, appId) => getAppVersions(appId, {
+      page,
+      size: 20,
+      sort: { field: 'id', order: 'desc' },
+    },
+    { version: [filter] }),
+    render: appVersion => <Option value={appVersion.id} key={appVersion.id}>{appVersion.version}</Option>,
   },
 };
