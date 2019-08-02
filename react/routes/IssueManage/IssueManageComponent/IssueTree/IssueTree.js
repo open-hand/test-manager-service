@@ -348,7 +348,7 @@ class IssueTree extends Component {
             className="hidden-label"
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.45)' }} />}
             placeholder="搜索"
-            style={{ marginTop: 2, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
+            style={{ marginTop: 10, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
             onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
           />
           {/* <Icon type="close" className="c7ntest-pointer" onClick={onClose} /> */}
