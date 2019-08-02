@@ -278,11 +278,11 @@
       align-items: center;
       height: 40px;
       margin-bottom: 11px;
-      // margin-top: 32px;
 
       .c7ntest-title-left {
         color: #000;
-        font-size: 14px;
+        font-size: 16px;
+        font-weight: 500;
         line-height: 22px;
         display: flex;
         align-items: center;
@@ -296,7 +296,6 @@
     }
 
     .c7ntest-content-wrapper {
-      padding-left: 26px;
 
       .c7ntest-property-wrapper {
         width: 100px;
@@ -524,11 +523,11 @@
     margin-right: 2px;
   }
 
-  .c7n-btn >.icon +span {
+  .c7n-btn > .icon + span {
     margin-left: 0 !important;
   }
 
-  .c7n-btn >.icon {
+  .c7n-btn > .icon {
     margin-right: 0 !important;
   }
 }

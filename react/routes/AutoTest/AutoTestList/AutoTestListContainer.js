@@ -9,6 +9,7 @@ import {
 import { commonLink, TestExecuteLink } from '../../../common/utils';
 import AutoTestList from './AutoTestList';
 import AutoListStore from '../AutoTestStore/AutoListStore';
+import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
 
 const store = AutoListStore;
 @observer
@@ -127,7 +128,7 @@ class AutoTestListContainer extends Component {
   }
 
   toCreateAutoTest = () => {
-    this.props.history.push(commonLink('/AutoTest/create'));
+    CreateAutoTestStore.setVisible(true);
   }
 
   toReport = (resultId) => {

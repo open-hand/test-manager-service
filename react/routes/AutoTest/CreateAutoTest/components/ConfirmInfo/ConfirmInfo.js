@@ -34,25 +34,11 @@ const formItemLayout = {
 @observer
 class ConfirmInfo extends Component {
   state = {
-    // selectType:''
     triggerType: 'easy',
     testType: 'instant',
     data: null,
   }
 
-  componentDidMount() {
-    // this.loadYaml();
-  }
-
-  // loadYaml=() => {
-  //   getYaml().then((data) => {
-  //     if (data) {
-  //       this.setState({
-  //         data,
-  //       });
-  //     }
-  //   });
-  // }
 
   // 创建任务切换触发类型
   changeValue(e) {
@@ -193,27 +179,19 @@ class ConfirmInfo extends Component {
     const { testType } = this.state;
 
     if (testType === 'instant') {
-      this.setState({
-        loading: true,
-      });
+      CreateAutoTestStore.setLoading(true);
       // 立即执行
       runTestInstant(applicationDeployDTO).then((res) => {
-        this.setState({
-          loading: false,
-        });
+        CreateAutoTestStore.setLoading(false);
         this.toTestHistory();
       }).catch((err) => {
-        this.setState({
-          loading: false,
-        });
+        CreateAutoTestStore.setLoading(false);
       });
     } else {
       // 定时执行
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          this.setState({
-            loading: true,
-          });
+          CreateAutoTestStore.setLoading(true);
           const flag = values.triggerType === 'simple-trigger';
           const {
             startTime, endTime, cronExpression, simpleRepeatInterval,
@@ -232,9 +210,7 @@ class ConfirmInfo extends Component {
             },
           };
           runTestTiming(scheduleTaskDTO).then((res) => {
-            this.setState({
-              loading: false,
-            });
+            CreateAutoTestStore.setLoading(false);
             this.toTestHistory();
           });
         } else {
@@ -297,6 +273,7 @@ class ConfirmInfo extends Component {
         <FormItem
           {...formItemLayout}
           className="c7ntest-create-task-inline-formitem"
+          style={{ display: 'block', width: 512 }}
         >
           {getFieldDecorator('startTime', {
             rules: [{
@@ -306,7 +283,7 @@ class ConfirmInfo extends Component {
           })(
             <DatePicker
               label="开始时间"
-              style={{ width: '248px' }}
+              style={{ width: '100%' }}
               format="YYYY-MM-DD HH:mm:ss"
               disabledDate={this.disabledStartDate}
               disabledTime={this.disabledDateStartTime}
@@ -320,14 +297,15 @@ class ConfirmInfo extends Component {
         <FormItem
           {...formItemLayout}
           className="c7ntest-create-task-inline-formitem"
+          style={{ display: 'block', width: 512 }}
         >
           {getFieldDecorator('endTime', {
             rules: [],
           })(
             <DatePicker
               label="结束时间"
-              style={{ width: '248px' }}
               format="YYYY-MM-DD HH:mm:ss"
+              style={{ width: '100%' }}
               disabledDate={this.disabledEndDate.bind(this)}
               disabledTime={this.disabledDateEndTime.bind(this)}
               showTime={{ defaultValue: moment() }}
@@ -339,6 +317,7 @@ class ConfirmInfo extends Component {
         </FormItem>
         <FormItem
           {...formItemLayout}
+          style={{ marginBottom: '0.1rem' }}
         >
           {getFieldDecorator('triggerType', {
             initialValue: 'simple-trigger',
@@ -368,7 +347,7 @@ class ConfirmInfo extends Component {
               }],
               validateFirst: true,
             })(
-              <Input style={{ width: '100px' }} autoComplete="off" label="重复间隔" />,
+              <Input style={{ width: '164px' }} autoComplete="off" label="重复间隔" />,
             )}
           </FormItem>
           <FormItem
@@ -380,7 +359,8 @@ class ConfirmInfo extends Component {
               initialValue: 'SECONDS',
             })(
               <Select
-                style={{ width: '124px' }}
+                style={{ width: '164px' }}
+                label="时间单位"
               >
                 <Option value="SECONDS">秒</Option>
                 <Option value="MINUTES">分</Option>
@@ -403,7 +383,7 @@ class ConfirmInfo extends Component {
                 message: intl.formatMessage({ id: `${intlPrefix}.repeat.pattern` }),
               }],
             })(
-              <Input style={{ width: '100px' }} autoComplete="off" label="执行次数" />,
+              <Input style={{ width: '164px' }} autoComplete="off" label="执行次数" />,
             )}
           </FormItem>
         </div>
@@ -411,6 +391,7 @@ class ConfirmInfo extends Component {
           <FormItem
             {...formItemLayout}
             style={{ display: triggerType === 'cron' ? 'inline-block' : 'none' }}
+            className="c7ntest-create-task-inline-formitem"
           >
             {getFieldDecorator('cronExpression', {
               rules: [{
@@ -447,13 +428,14 @@ class ConfirmInfo extends Component {
 
   render() {
     const {
-      app, appVersion, version, env,
+      app, appVersion, version,
     } = CreateAutoTestStore;
-    const { intl } = this.props;
+    const { intl, saveRef } = this.props;
+    saveRef(this);
     const { formatMessage } = intl;
-    const data = this.state.data || CreateAutoTestStore.getNewConfigValue;
+    const data = CreateAutoTestStore.getNewConfigValue;
     const {
-      testType, loading,
+      testType,
     } = this.state;
     const options = {
       theme: 'neat',
@@ -461,136 +443,90 @@ class ConfirmInfo extends Component {
       readOnly: true,
       lineNumbers: true,
     };
+    const radioStyle = {
+      display: 'block',
+      height: '30px',
+      lineHeight: '30px',
+    };
     return (
       <section className="deployApp-review">
-        <p>
-          {formatMessage({ id: 'autoteststep_three_description' })}
-        </p>
-        <section className="deployApp-section">
-          <div>
-            <div className="deployApp-title">
-              <span className="deployApp-title-text">
-                {'测试类型：'}
-              </span>
-            </div>
-            <div className="deployApp-text">
-              <RadioGroup
-                value={testType}
-                onChange={(e) => {
-                  this.setState({
-                    testType: e.target.value,
-                  });
-                }}
-              >
-                <Radio value="instant">立即执行</Radio>
-                <Radio value="timing">定时执行</Radio>
-              </RadioGroup>
-            </div>
+        <RadioGroup
+          value={testType}
+          style={{ marginBottom: 20 }}
+          onChange={(e) => {
+            this.setState({
+              testType: e.target.value,
+            });
+          }}
+        >
+          <Radio style={radioStyle} value="instant">立即执行</Radio>
+          <Radio style={radioStyle} value="timing">定时执行</Radio>
+        </RadioGroup>
+        {/* 定时执行 */}
+        {testType === 'timing' && this.renderTimingExecute()}
+        <div style={{ border: '1px solid #D8D8D8', borderRadius: '4px' }}>
+          <div style={{
+            height: 48, borderBottom: '1px solid #D8D8D8', lineHeight: '48px', fontSize: '14px', fontWeight: 500, paddingLeft: 16,
+          }}
+          >
+            确认信息
           </div>
-          {/* 定时执行 */}
-          {testType === 'timing' && this.renderTimingExecute()}
-          {/* <div>
-            <div className="deployApp-title">
-              <span className="deployApp-title-text">
-                {'测试框架：'}
-              </span>
+          <div style={{ padding: 16 }}>
+            <div>
+              <div className="deployApp-title">
+                <span className="deployApp-title-text">
+                  {'应用名称：'}
+                </span>
+              </div>
+              <div className="deployApp-text">
+                {app && app.name}
+                <span className="deployApp-value">
+                  {app && `(${app.code})`}
+                </span>
+              </div>
             </div>
-            <div className="deployApp-text">
-              {app && app.name}
-              <span className="deployApp-value">
-                {'('}
-                {app && app.code}
-                {')'}
-              </span>
+            <div>
+              <div className="deployApp-title">
+                <span className="deployApp-title-text">
+                  {'应用版本：'}
+                </span>
+              </div>
+              <div className="deployApp-text">
+                {appVersion && appVersion.version}
+              </div>
             </div>
-          </div> */}
-          <div>
-            <div className="deployApp-title">
-              <span className="deployApp-title-text">
-                {'应用名称：'}
-              </span>
+            <div>
+              <div className="deployApp-title">
+                <span className="deployApp-title-text">
+                  {'目标版本：'}
+                </span>
+              </div>
+              <div className="deployApp-text">
+                {version && version.versionName}
+              </div>
             </div>
-            <div className="deployApp-text">
-              {app && app.name}
-              <span className="deployApp-value">
-                {app && `(${app.code})`}
-              </span>
+            <div>
+              <div className="deployApp-title">
+                {/* <Icon type="description" /> */}
+                <span className="deployApp-title-text">
+                  {formatMessage({ id: 'autoteststep_two_config' })}
+                  {'：'}
+                </span>
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="deployApp-title">
-              <span className="deployApp-title-text">
-                {'应用版本：'}
-              </span>
-            </div>
-            <div className="deployApp-text">
-              {appVersion && appVersion.version}
-            </div>
-          </div>
-          <div>
-            <div className="deployApp-title">
-              <span className="deployApp-title-text">
-                {'目标版本：'}
-              </span>
-            </div>
-            <div className="deployApp-text">
-              {version && version.versionName}
-            </div>
-          </div>
-          {/* <div>
-            <div className="deployApp-title">
-              <Icon type="version" />
-              <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep_three_version' })}
-                {'：'}
-              </span>
-            </div>
-            <div className="deployApp-text">{this.state.versionDto && this.state.versionDto.version}</div>
-          </div>
-          <div>
-            <div className="deployApp-title">
-              <Icon type="donut_large" />
-              <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep_one_env_title' })}
-                {'：'}
-              </span>
-            </div>
-            <div className="deployApp-text">
-              {this.state.envDto && this.state.envDto.name}
-              <span className="deployApp-value">
-                {'('}
-                {this.state.envDto && this.state.envDto.code}
-                {')'}
-              </span>
-            </div>
-          </div>
-          */}
-          <div>
-            <div className="deployApp-title">
-              {/* <Icon type="description" /> */}
-              <span className="deployApp-title-text">
-                {formatMessage({ id: 'autoteststep_two_config' })}
-                {'：'}
-              </span>
-            </div>
-          </div>
-          {data && (
+            {data && (
             <div>
               {<YamlEditor
                 options={options}
                 newLines={data.newLines}
-                readOnly={this.state.current === 3}
+                readOnly
                 value={data.yaml}
                 highlightMarkers={data.highlightMarkers}
               />}
             </div>
-          )}
-        </section>
-        <section className="deployApp-section">
-          <Button type="primary" funcType="raised" onClick={this.handleDeploy} loading={loading}>{formatMessage({ id: 'autotestbtn_autotest' })}</Button>
-          <Button funcType="raised" onClick={CreateAutoTestStore.preStep}>{formatMessage({ id: 'previous' })}</Button>
-          <Button funcType="raised" className="c7ntest-autotest-clear" onClick={CreateAutoTestStore.clearTestInfo}>{formatMessage({ id: 'cancel' })}</Button>
-        </section>
+            )}
+          </div>
+        </div>
       </section>
     );
   }

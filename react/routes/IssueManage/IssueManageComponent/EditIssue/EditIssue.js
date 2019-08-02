@@ -450,22 +450,6 @@ class EditIssueNarrow extends Component {
     return (
       <div>
         {
-          addingComment && (
-            <div className="line-start mt-10">
-              <WYSIWYGEditor
-                bottomBar
-                style={{ height: 200, width: '100%' }}
-                handleDelete={() => {
-                  this.setState({
-                    addingComment: false
-                  })
-                }}
-                handleSave={value => this.handleCreateCommit(value)}
-              />
-            </div>
-          )
-        }
-        {
           issueCommentVOList && issueCommentVOList.map(comment => (
             <Comment
               key={comment.commentId}
@@ -1088,7 +1072,7 @@ class EditIssueNarrow extends Component {
   render() {
     const {
       FullEditorShow, createLinkTaskShow,
-      currentNav, showMore
+      currentNav, showMore, addingComment
     } = this.state;
     const {
       loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName, testStepData, testExecuteData
@@ -1139,10 +1123,10 @@ class EditIssueNarrow extends Component {
     );
     return (
       <div style={{
-        position: 'absolute',
+        position: 'fixed',
         right: 0,
-        top: 0,
-        height: '100%',
+        top: 49,
+        bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
         overflowX: 'visible',
@@ -1488,30 +1472,48 @@ class EditIssueNarrow extends Component {
                       </TabPane>
                       <TabPane tab="评论" key="comment">
                         {/* 评论 */}
-                        <div id="commit">
-                          <div className="c7ntest-title-wrapper">
-                            <div className="c7ntest-title-left">
-                              <FormattedMessage id="issue_edit_comment" />
-                            </div>
-                            <div style={{ marginLeft: '14px' }}>
-                              <Tooltip title="添加评论" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                                <Button icon="playlist_add" onClick={() => this.setState({ addingComment: true })} />
-                              </Tooltip>
-                            </div>
-                          </div>
-                          {this.renderCommits()}
+                        {this.renderCommits()}
+                        <div style={{ marginTop: 30 }}>
+                          {addingComment ? <div className="line-start mt-10">
+                            <WYSIWYGEditor
+                              bottomBar
+                              style={{ height: 200, width: '100%' }}
+                              handleDelete={() => {
+                                this.setState({
+                                  addingComment: false
+                                })
+                              }}
+                              handleSave={value => this.handleCreateCommit(value)}
+                            />
+                          </div> : <div
+                            role="none"
+                            onClick={() => this.setState({ addingComment: true })}
+                            style={{
+                              background: 'rgba(0,0,0,0.03)',
+                              border: '1px solid rgba(0,0,0,0.20)',
+                              borderRadius: '5px',
+                              height: 36,
+                              lineHeight: '32px',
+                              width: '100%',
+                              color: 'rgba(0,0,0,0.65)',
+                              paddingLeft: 10,
+                              cursor: 'pointer',
+                            }}
+                          >
+                              点击添加评论…
+                        </div>}
                         </div>
                       </TabPane>
                       <TabPane tab="记录" key="log">
                         {/* 修改日志 */}
-                        <div id="data_log">
+                        {/* <div id="data_log">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
                               <FormattedMessage id="issue_edit_activeLog" />
                             </div>
-                          </div>
-                          {this.renderDataLogs()}
-                        </div>
+                          </div> */}
+                        {this.renderDataLogs()}
+                        {/* </div> */}
                         {testExecuteData.length > 0 && <TestExecuteTable
                           issueId={issueId}
                           data={testExecuteData}
