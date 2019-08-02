@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Page, Header, Content, Breadcrumb,
+  Page, Header, Content, Breadcrumb, stores, 
 } from '@choerodon/boot';
 import moment from 'moment';
 import {
-  Icon, Button, Table, Select, Menu, Dropdown, Switch,
+  Icon, Button, Table, Select, Menu, Dropdown, Switch, Steps,
 } from 'choerodon-ui';
+import { Modal } from 'choerodon-ui/pro';
+
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -20,6 +22,8 @@ import { ContainerLog } from './components';
 import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../common/utils';
 import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
+import { SelectVariable, ModifyConfig, ConfirmInfo } from '../CreateAutoTest/components';
+import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
 
 const { Option } = Select;
 const { SubMenu, Item: MenuItem } = Menu;
@@ -153,21 +157,31 @@ const AutoTestList = ({
       </div>
     ),
   }];
+
+  const ModalContent = ({ modal }) => (
+    <div>
+      <SelectVariable />
+    </div>
+  );
+
+  const key1 = Modal.key();
+  function openModal() {
+    Modal.open({
+      key: key1,
+      title: 'Basic',
+      drawer: true,
+      children: <ModalContent />,
+      okProps: { children: '保存' },
+    });
+  }
+
   return (
     <Page className="c7ntest-AutoTestList">
       <Header title={<FormattedMessage id="autotestlist_title" />}>
-        <Button onClick={toCreateAutoTest}>
+        <Button onClick={toCreateAutoTest/* openModal */}>
           <Icon type="playlist_add icon" />
           <span>添加测试</span>
         </Button>
-        {/* <Button onClick={onRefreshClick}>
-          <Icon type="autorenew icon" />
-          <span><FormattedMessage id="refresh" /></span>
-        </Button>
-        <div style={{ color: 'rgba(0,0,0,.65)', margin: '0 5px' }}>
-        自动刷新
-        </div>        
-        <Switch checked={autoRefresh} onChange={onAutoRefreshChange} /> */}
       </Header>
       <Breadcrumb title="自动化测试" />
       <Content>

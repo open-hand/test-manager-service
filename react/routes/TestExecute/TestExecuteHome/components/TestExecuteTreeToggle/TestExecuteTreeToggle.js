@@ -50,7 +50,7 @@ const TestExecuteTreeToggle = ({
     {/* 树显示区域 */}
     <div className={leftVisible ? 'c7ntest-TestExecuteTreeToggle-tree-area' : 'c7ntest-TestExecuteTreeToggle-hidden'}>
       <RadioButton
-        style={{ margin: '10px 0' }}
+        style={{ margin: '15px 0 15px' }}
         onChange={onTreeAssignedToChange}
         value={treeAssignedTo === 0 ? 'all' : 'my'}
         data={[{
@@ -67,16 +67,9 @@ const TestExecuteTreeToggle = ({
             className="hidden-label"
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.45)' }} />}
             placeholder="搜索"
-            style={{ marginTop: 2, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
+            style={{ marginTop: 0, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
             onChange={e => _.debounce(filterCycle, 200).call(null, e.target.value)}
           />
-          {/* <Icon
-            type="close"
-            className="c7ntest-pointer"
-            onClick={() => {
-              TestExecuteStore.setLeftVisible(false);
-            }}
-          /> */}
         </div>
       </div>    
       <TestExecuteTree

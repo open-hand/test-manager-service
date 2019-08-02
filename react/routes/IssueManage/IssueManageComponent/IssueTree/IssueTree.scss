@@ -2,17 +2,9 @@
   // border-left: 1px solid rgba(0, 0, 0, 0.12);
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   height: 100%;
-  width: 250px;
+  width: 230px;
   display: flex;
   flex-direction: column;
-
-  // .c7n-spin-nested-loading,
-  // .c7n-spin-container {
-  //   // height: 100%;
-  //   flex: 1;
-  //   // overflow-x: hidden;
-  //   // overflow-y: auto;
-  // }
   .c7ntest-treeTop {
     padding: 0 16px;
     font-size: 13px;
@@ -35,12 +27,13 @@
     height: calc(100% - 44px);
     overflow-x: hidden;
     overflow-y: auto;
-    // padding-left: 15px;
-
+    padding-left: 12px;
+    padding-top: 3px;
     .c7n-input {
-      height: 0.32rem;
+      height: 32px;
 
       & +.c7n-input-label-wrapper {
+        /* padding-left: 0 !important; */
         .c7n-input-label {
           margin-top: -4px;
         }
@@ -97,6 +90,7 @@
     align-items: center;
     height: 30px;
     line-height: 30px;
+    padding-left: 0 !important;
   }
 
   .IssueTree-drag-prompt {

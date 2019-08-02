@@ -125,7 +125,7 @@ class CreateCycle extends Component {
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycleName" />} />,
+                    <Input style={{ width: 340 }} maxLength={30} label={<FormattedMessage id="cycleName" />} />,
                   )}
                 </FormItem>
                 <FormItem>
@@ -146,19 +146,19 @@ class CreateCycle extends Component {
                 <FormItem>
                   {getFieldDecorator('description', {
                   })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="comment" />} />,
+                    <Input style={{ width: 340 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
                   )}
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('build', {
                   })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycle_build" />} />,
+                    <Input style={{ width: 340 }} maxLength={30} label={<FormattedMessage id="cycle_build" />} />,
                   )}
                 </FormItem>
                 <FormItem>
                   {getFieldDecorator('environment', {
                   })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycle_environment" />} />,
+                    <Input style={{ width: 340 }} maxLength={30} label={<FormattedMessage id="cycle_environment" />} />,
                   )}
                 </FormItem>
               </Form>

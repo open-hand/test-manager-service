@@ -124,8 +124,8 @@ class CreateIssue extends Component {
       if (!err) {
         const { description, fileList } = values;
         const exitComponents = this.state.originComponents;
-        const componentIssueRelVOList = _.map(values.componentIssueRel, (component) => {
-          const target = _.find(exitComponents, { name: component });
+        const componentIssueRelVOList = map(values.componentIssueRel, (component) => {
+          const target = find(exitComponents, { name: component });
           if (target) {
             return target;
           } else {
@@ -136,8 +136,8 @@ class CreateIssue extends Component {
           }
         });
         const exitLabels = this.state.originLabels;
-        const labelIssueRelVOList = _.map(values.issueLink, (label) => {
-          const target = _.find(exitLabels, { labelName: label });
+        const labelIssueRelVOList = map(values.issueLink, (label) => {
+          const target = find(exitLabels, { labelName: label });
           if (target) {
             return target;
           } else {
@@ -149,7 +149,7 @@ class CreateIssue extends Component {
         });
         const exitFixVersions = this.state.originFixVersions;
         const version = values.versionId;
-        const target = _.find(exitFixVersions, { versionId: version });
+        const target = find(exitFixVersions, { versionId: version });
         let fixVersionIssueRelVOList = [];
         if (target) {
           fixVersionIssueRelVOList = [{
@@ -252,23 +252,37 @@ class CreateIssue extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="issue_create_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="issue_create_content_description" />}
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/agile/issue/create-issue/"
         >
           <Form layout="vertical" style={{ width: 670 }} className="c7ntest-form">
-            <FormItem className="c7ntest-line">
-              {getFieldDecorator('summary', {
-                rules: [{ required: true, message: '概要为必输项' }],
+            <FormItem>
+              {getFieldDecorator('versionId', {
+                rules: [
+                  {
+                    required: true,
+                    message: '请选择版本',
+                  }, {
+                    transform: value => (value ? value.toString() : value),
+                  }],
               })(
-                <Input label={<FormattedMessage id="issue_issueFilterBySummary" />} maxLength={44} />,
+                <Select
+                  label={<FormattedMessage id="issue_create_content_version" />}
+                  // mode="tags"
+                  loading={this.state.selectLoading}
+                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  tokenSeparators={[',']}
+                  onChange={() => {
+                    const { resetFields } = this.props.form;
+                    resetFields(['folderId']);
+                  }}
+                >
+                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
+                </Select>,
               )}
             </FormItem>
-
             <FormItem>
               {getFieldDecorator('priorityId', {
                 rules: [{ required: true, message: '优先级为必选项' }],
-                // initialValue: this.state.origin.defaultPriorityCode,
+              // initialValue: this.state.origin.defaultPriorityCode,
               })(
                 <Select
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}
@@ -276,6 +290,13 @@ class CreateIssue extends Component {
                 >
                   {priorityOptions}
                 </Select>,
+              )}
+            </FormItem>
+            <FormItem className="c7ntest-line">
+              {getFieldDecorator('summary', {
+                rules: [{ required: true, message: '概要为必输项' }],
+              })(
+                <Input label={<FormattedMessage id="issue_issueFilterBySummary" />} maxLength={44} />,
               )}
             </FormItem>
             <FormItem className="c7ntest-line">
@@ -322,31 +343,6 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
-            <FormItem>
-              {getFieldDecorator('versionId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择版本',
-                  }, {
-                    transform: value => (value ? value.toString() : value),
-                  }],
-              })(
-                <Select
-                  label={<FormattedMessage id="issue_create_content_version" />}
-                  // mode="tags"
-                  loading={this.state.selectLoading}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
-                  tokenSeparators={[',']}
-                  onChange={() => {
-                    const { resetFields } = this.props.form;
-                    resetFields(['folderId']);
-                  }}
-                >
-                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
-                </Select>,
-              )}
-            </FormItem>
             <FormItem
               label={null}
             >
@@ -390,7 +386,6 @@ class CreateIssue extends Component {
                 </Select>,
               )}
             </FormItem>
-
             <FormItem>
               {getFieldDecorator('issueLink', {
                 rules: [{ transform: value => (value ? value.toString() : value) }],

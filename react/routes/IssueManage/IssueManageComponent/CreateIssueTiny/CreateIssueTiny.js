@@ -1,8 +1,9 @@
 /*eslint-disable */
 import React, { Component } from 'react';
 import {
-  Button, Input, Icon, Select,
+  /* Button, */ Input, Icon, Select,
 } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -10,6 +11,7 @@ import { getProjectId } from '../../../../common/utils';
 import { createIssue } from '../../../../api/IssueManageApi';
 import IssueStore from '../../IssueManagestore/IssueStore';
 import IssueTreeStore from '../../IssueManagestore/IssueTreeStore';
+import './CreateIssueTiny.less';
 
 const { Option } = Select;
 @observer
@@ -134,15 +136,26 @@ class CreateIssueTiny extends Component {
               }}
               maxLength={44}
               onPressEnter={this.handleBlurCreateIssue.bind(this)}
+              style={{width: '97%' }}
             />
           </div>
-        </div>
-        <div style={{
-          marginTop: 10, display: 'flex', marginLeft: 50, paddingRight: 70,
+          <div style={{
+          marginRight: '5%', display: 'flex',
         }}
         >
           <Button
-            type="primary"
+            /* type="primary"
+            funcType="flat" */
+            funcType="raised"
+            loading={this.state.createLoading}
+            onClick={this.handleBlurCreateIssue.bind(this)}
+            color="blue"
+          >
+            <FormattedMessage id="ok" />
+          </Button>
+          <Button
+            /* type="primary" */
+            funcType="raised"
             onClick={() => {
               this.setState({
                 creating: false,
@@ -151,13 +164,8 @@ class CreateIssueTiny extends Component {
           >
             <FormattedMessage id="cancel" />
           </Button>
-          <Button
-            type="primary"
-            loading={this.state.createLoading}
-            onClick={this.handleBlurCreateIssue.bind(this)}
-          >
-            <FormattedMessage id="ok" />
-          </Button>
+          
+        </div>
         </div>
       </div>
     ) : (

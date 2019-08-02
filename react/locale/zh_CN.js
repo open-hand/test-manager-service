@@ -221,6 +221,8 @@ const zhCN = {
   cycle_sync: '同步',
 
   // 创建测试循环侧边
+  cycle_create: '创建循环',
+  cycleName: '循环名称',
   cycle_create_title: '创建测试循环',
   cycle_create_content_title: '在项目“{name}”中创建测试循环',
   cycle_create_content_description: '您可以在一个版本中创建一个测试循环。',
