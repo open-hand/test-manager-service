@@ -1,0 +1,19 @@
+.c7ntest-createIssue {
+  .clear-p-mw {
+    margin-bottom: 24px;
+
+    p {
+      max-width: inherit !important;
+    }
+  }
+
+  .c7n-form-item {
+    width: calc(50% - 10px);
+    display: inline-block;
+    margin-left: 10px;
+  }
+
+  .c7ntest-line {
+    width: calc(100% - 10px);
+  }
+}

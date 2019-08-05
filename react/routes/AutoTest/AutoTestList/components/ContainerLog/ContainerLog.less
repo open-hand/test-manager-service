@@ -1,0 +1,214 @@
+@section-background: #fff;
+@section-border: rgba(0, 0, 0, .12);
+@selected-background: rgba(255, 255, 255, .25);
+@podLog-text-color: rgba(0, 0, 0, 0.54);
+@podLog-title-color: #000;
+@deploy-text_gray-color: rgba(0, 0, 0, 0.36);
+@dom-more-color: #3f51b5;
+@podLog-action-color: #41a9fd;
+@podLog-action-background: rgba(0, 0, 0, 0.6);
+@podLog-action-border: #565656;
+
+.c7ntest-podLog-content {
+  width: 100%;
+
+  .page-content-header {
+    max-width: 100%;
+  }
+
+  .c7n-modal-body {
+    height: 82% !important;
+  }
+
+  .sidebar-content {
+    height: 100%;
+  }
+}
+
+.c7ntest-podLog-icon {
+  padding-right: 0.08rem;
+  font-size: 0.2rem;
+  vertical-align: middle;
+}
+
+.c7ntest-podLog-column {
+  padding-right: 1rem;
+}
+
+.c7ntest-podLog-column-text {
+  padding-left: 0.28rem;
+}
+
+.c7ntest-podLog-section {
+  background-color: @section-background;
+  border: 0.01rem solid @section-border;
+  border-radius: 2px;
+  height: 85%;
+
+  .c7ntest-podLog-hei-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c7ntest-podShell-title {
+    padding: 0.05rem;
+    box-sizing: border-box;
+    height: 0.36rem;
+    line-height: 0.28rem;
+    margin: 0;
+    font-size: 0.14rem;
+    font-weight: 400;
+  }
+
+  .c7n-select-underline {
+    display: none;
+  }
+
+  .c7n-select-selection-selected-value, .c7n-select-arrow > i {
+    font-size: 0.14rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .CodeMirror-selected {
+    background-color: @selected-background !important;
+  }
+}
+
+.c7ntest-podLog-text {
+  font-size: 0.13rem;
+  color: @podLog-text-color;
+  line-height: 0.2rem;
+}
+
+.c7ntest-podLog-text-hasPadding {
+  padding-left: 0.28rem;
+}
+
+.c7ntest-podLog-title {
+  font-size: 0.14rem;
+  color: @podLog-title-color;
+  vertical-align: middle;
+}
+
+.c7ntest-podLog-icon-status {
+  font-size: 0.19rem;
+  margin-right: 0.08rem;
+  margin-left: 0.01rem;
+}
+
+.c7ntest-podLog-table {
+  margin-top: 0.32rem;
+}
+
+.c7ntest-deploy-text_gray {
+  color: @deploy-text_gray-color;
+}
+
+.c7ntest-podLog-editor {
+  height: 100%;
+  display: flex;
+  flex: 1;
+
+  .CodeMirror {
+    height: 100%;
+    flex: 1;
+  }
+}
+
+.c7ntest-container-i {
+  vertical-align: sub !important;
+}
+
+.c7ntest-app-select_247 {
+  width: 2.47rem;
+  margin-bottom: 0.32rem;
+  margin-right: 0.2rem;
+}
+
+.c7ntest-container-option-popover {
+  width: 2.32rem;
+  display: inline-flex;
+}
+
+.c7ntest-dom-more {
+  margin: -0.08rem -0.2rem;
+  height: 0.28rem;
+  line-height: 0.28rem;
+  color: @dom-more-color;
+  padding-left: 0.2rem;
+}
+
+.c7ntest-podShell-title {
+  padding: 0.05rem;
+  box-sizing: border-box;
+  height: 0.36rem;
+  line-height: 0.26rem;
+  margin: 0;
+  font-size: 0.14rem;
+  font-weight: 400;
+  display: flex;
+
+  .c7n-select {
+    line-height: 0.22rem;
+  }
+
+  button {
+    margin-left: auto;
+    width: 0.24rem;
+    height: 0.24rem;
+    line-height: 0.24rem;
+    font-size: 0.18rem;
+    font-weight: bolder;
+  }
+}
+
+.c7ntest-CodeMirror-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  z-index: 9;
+}
+
+.c7ntest-podLog-action {
+  z-index: 99;
+  cursor: pointer;
+  position: absolute;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  padding: 0 0.12rem;
+  color: @podLog-action-color;
+  background: @podLog-action-background;
+  border: 0.01rem solid @podLog-action-border;
+
+  &:hover {
+    background: @podLog-title-color;
+  }
+}
+
+.log-following {
+  right: 0.1rem;
+  top: 1.2rem;
+}
+
+.log-goTop {
+  right: 0.1rem;
+  top: 85%;
+  margin-top: 0.48rem;
+}
+
+.f-top {
+  top: 0.01rem;
+  right: 0;
+}
+
+.g-top {
+  bottom: 0;
+  top: 98%;
+  margin-top: 0;
+  right: 0;
+}

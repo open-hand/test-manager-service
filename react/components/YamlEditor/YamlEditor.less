@@ -1,0 +1,122 @@
+@newlinebackcolor:#cdffd8;
+@newtextbackcolor:#ecfdf0;
+@lasttextcolor:white;
+@lasttextbackcolor:#5e92f2;
+@modifylinecolor:rgba(255, 204, 0, 0.25);
+@modifytextcolor:#1b69b6;
+@clearcolor:#f5f5f5;
+@deployAppmodify:#fdda80;
+@deployApptitlecolor:#000;
+@inconerrorcolor:#f44336;
+@meserrorcolor:rgba(0, 0, 0, 0.65);
+@CodeMirror-selected:#b3d7fd;
+.newLine-line {
+  background-color: @newlinebackcolor;
+}
+
+.newLine-text {
+  background-color: @newtextbackcolor;
+}
+
+.lastModifyLine-line {
+  // background-color: #1b69b6;
+}
+
+.lastModifyLine-text {
+  color: @lasttextcolor !important;
+  background-color: @lasttextbackcolor;
+}
+
+.modifyLine-line {
+  background-color: @modifylinecolor;
+}
+
+.modifyLine-text {
+  background-color: @modifytextcolor;
+}
+
+.clearLineHeight-line {
+  //position: absolute;
+  //z-index: 20;
+  background-color: @clearcolor;
+}
+
+.clearLineHeight-text {
+  //position: absolute;
+  background-color: @clearcolor;
+
+  //&::before {
+  //  content: '+  ';
+  //}
+}
+
+.line_error {
+  background-image: url('error.png');
+  background-repeat: no-repeat;
+  background-position: 0.02rem center;
+  // background-image: none !important;
+}
+
+.ace-error {
+  margin-bottom: 0.16rem;
+
+  .deployApp-config-block {
+    width: 0.16rem;
+    height: 0.13rem;
+    display: inline-block;
+    margin-right: 0.1rem;
+  }
+
+  .deployApp-config-lastModify {
+    background-color: @lasttextbackcolor;
+  }
+
+  .deployApp-config-new {
+    background-color: @newtextbackcolor;
+  }
+
+  .deployApp-config-modify {
+    background: @deployAppmodify;
+  }
+
+  .deployApp-config-error {
+    padding-left: 0.19rem;
+    padding-right: 0.1rem;
+    height: 0.16rem;
+    background-image: url('./error.png');
+    background-repeat: no-repeat;
+    background-position: 0.02rem center;
+  }
+
+  .deployApp-config-title {
+    font-size: 0.13rem;
+    color: @deployApptitlecolor;
+    padding-right: 0.86rem;
+  }
+}
+
+.ace-error-message {
+  margin-top: 0.24rem;
+
+  .config-icon-error {
+    color: @inconerrorcolor;
+    font-size: 0.13rem;
+    vertical-align: middle;
+    padding-right: 0.05rem;
+  }
+
+  .config-error-mes {
+    font-size: 0.12rem;
+    color: @meserrorcolor;
+    text-align: left;
+    line-height: 0.2rem;
+    vertical-align: middle;
+  }
+}
+
+.CodeMirror-gutter-elt {
+  height: 0.19rem !important;
+  width: 0.38rem !important;
+}
+
+.CodeMirror-selected { background-color: @CodeMirror-selected !important; }

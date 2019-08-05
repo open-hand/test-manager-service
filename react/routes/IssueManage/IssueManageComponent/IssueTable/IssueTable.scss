@@ -1,0 +1,118 @@
+.c7ntest-issueArea {
+
+  .c7n-table-thead > tr > th:focus,
+  .c7n-table-tbody > tr > td:focus {
+    background-color: transparent;
+  }
+
+  .c7n-pagination-options {
+    margin-left: 0;
+  }
+
+  .IssueTable-drag-prompt {
+    position: absolute;
+    margin-top: 3px;
+    top: 100%;
+    right: 100px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+    padding: 10px;
+  }
+
+  .c7ntest-border-visible {
+    border-left: 3px solid #3f51b5;
+    background: rgba(140, 158, 255, 0.08);
+  }
+
+  .c7ntest-border {
+    border-left: 3px solid transparent;
+  }
+
+  .c7ntest-table-item {
+    background: white;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .c7ntest-table-item:hover,
+  .c7ntest-table-item.selected {
+    background: #eee;
+  }
+
+  .c7n-table-filter-bar {
+    padding-right: 90px;
+    padding-top: 4px;
+    padding-bottom: 3px;
+    border-top: none;
+    // border-bottom: none;
+  }
+
+  .c7n-dropdown-trigger {
+    bottom: 30;
+  }
+
+  .c7n-select-selection__rendered {
+    margin-bottom: -4px !important;
+  }
+
+  .c7ntest-issuetable {
+    .c7n-table-placeholder {
+      // display: none;
+    }
+
+    table {
+      table-layout: fixed;
+      border: none;
+      width: 100%;
+
+      thead {
+        tr {
+          height: 30px;
+          background: rgba(0, 0, 0, 0.04);
+          display: flex;
+          align-items: center;
+
+          th {
+            font-weight: normal; // width: 50px;
+            // flex: 1;
+            line-height: 20px;
+            padding-left: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block; //fix ie11
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          display: flex;
+          align-items: center;
+          min-height: 40px; // border-bottom: 1px solid #e8e8e8;
+          // border-top: 1px solid #e8e8e8;
+          // box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+
+          .c7ntest-table-item {
+            width: 100%;
+            min-height: 33px;
+            border: none !important;
+            padding: 0 !important;
+            display: flex;
+          }
+
+          td {
+            // width: 50px;
+            // flex: 1;
+            // line-height: 20px;
+            padding-left: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block; //fix ie11
+          }
+        }
+      }
+    }
+  }
+}

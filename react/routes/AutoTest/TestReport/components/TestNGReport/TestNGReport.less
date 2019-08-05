@@ -1,0 +1,165 @@
+@table-total-background: #F5F5F5;
+@table-thead-border: #e9e9e9;
+@hover-td: #fbfbfb;
+@table-title-background: #EBEBEB;
+@table-footer-border: #e8e8e8;
+@table-header-pass: #F3F9F4;
+@table-header-skip: #FFFDF2;
+@table-header-failed: #FFF4F2;
+@spin-container-box-shadow1: rgba(0, 0, 0, 0.2);
+@spin-container-box-shadow2: rgba(0, 0, 0, 0.14);
+@spin-container-box-shadow3: rgba(0, 0, 0, 0.12);
+@quickSearchSelect-hover-background: rgba(0, 0, 0, 0.04);
+@selection__placeholder-color: #3f51b5;
+
+.c7ntest-TestNGReport {
+  .c7n-table {
+    // font-size: 0.14rem;
+  }
+  .c7ntest-table-total {
+    background: @table-total-background;
+    font-weight: 500;
+    .c7n-table-row-expand-icon-cell .c7n-table-row-expand-icon {
+      display: none;
+    }
+  }
+  .c7n-table-expanded-row>td:last-child {
+    padding: 0 0.48rem 0 0.16rem;
+  }
+  .c7n-table-expanded-row>td:last-child .c7n-table-thead th {
+    border-bottom: 0.01rem solid @table-thead-border;
+    border-top: 0.01rem solid @table-thead-border;
+    text-align: left;
+  }
+  .c7n-table-expanded-row>td:last-child .c7n-table-thead th:first-child {
+    padding-left: 0.1rem;
+  }
+  .c7n-table-expanded-row>td:last-child .c7n-table-row td:first-child {
+    padding-left: 0.1rem;
+  }
+  .c7n-table-expanded-row .c7n-table-row:last-child td {
+    border: none;
+  }
+  .c7n-table-expanded-row .c7n-table-thead>tr>th {
+    // background: none;
+  }
+  .table-operation a:not(:last-child) {
+    margin-right: 0.24rem;
+  }
+  .c7n-table-expanded-row:hover>td {
+    background: @hover-td;
+  }
+  .c7n-table-thead>tr>th,
+  .c7n-table-tbody>tr>td {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    vertical-align: top;
+  }
+  .c7ntest-table-title {
+    padding: 0.1rem;
+    background: @table-title-background;
+  }
+  .c7n-table-title {
+    border-bottom: none;
+    padding: 0.1rem;
+    background: @table-title-background;
+  }
+  .c7n-table-footer {
+    border-top: none;
+    border-bottom: 0.01rem solid @table-footer-border;
+  }
+  .c7ntest-table-header-pass {
+    background: @table-header-pass;
+  }
+  .c7ntest-table-header-skip {
+    background: @table-header-skip;
+  }
+  .c7ntest-table-header-failed {
+    background: @table-header-failed;
+  }
+  .quickSearchSelect {
+    border-radius: 0.03rem;
+    padding: 0 0.05rem;
+    min-width: 0.96rem;
+    margin-right: 0.15rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden; // Select 下划线
+    .c7n-select-underline {
+      display: none;
+    } // DropDown 菜单容器
+    .c7n-spin-container,
+    .c7n-spin-nested-loading {
+      min-width: 1.7rem;
+    } // antd Select 组件覆盖
+    .c7n-select-dropdown {
+      box-shadow: none;
+      .c7n-spin-container {
+        box-shadow: 0 0.05rem 0.05rem -0.03rem @spin-container-box-shadow1, 0 0.08rem 0.1rem 0.01rem @spin-container-box-shadow2, 0 0.03rem 0.14rem 0.02rem @spin-container-box-shadow3;
+      }
+    }
+    .c7n-select-selection__rendered {
+      padding: 0 !important;
+    }
+    &:hover {
+      background-color: @quickSearchSelect-hover-background;
+    }
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none; //设置径向渐变
+      background-image: radial-gradient(circle, #666 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(10, 10);
+      opacity: 0;
+      transition: transform .3s, opacity .5s;
+    }
+    &:active:after {
+      transform: scale(0, 0);
+      opacity: .3;
+      transition: 0s;
+    }
+    .c7n-select-selection--multiple {
+      cursor: pointer;
+      padding: 0 0 0 0.05rem;
+      .c7n-select-selection__rendered {
+        margin-bottom: 0;
+        li {
+          margin-bottom: 0;
+        }
+        .c7n-select-arrow {
+          left: 0.64rem;
+          height: 0.26rem;
+          line-height: 0.26rem;
+        }
+        .c7n-select-selection__choice__content {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 0.64rem;
+          height: 0.24rem;
+        }
+        .c7n-select-selection__placeholder {
+          margin-top: 0.03rem;
+          color: @selection__placeholder-color;
+        }
+      }
+    }
+    .quickSearchSelect-dropdown,
+    .assigneeSelect-dropdown {
+      min-width: 1.7rem;
+    }
+    .quickSearchSelect-dropdown {
+      .c7n-select-dropdown-select-all-none {
+        display: none;
+      }
+    }
+  }
+}
