@@ -149,6 +149,7 @@ const TestPlanTable = ({
         <SelectFocusLoad
           allowClear
           className="c7ntest-select"
+          style={{ width: 200 }}
           placeholder={<FormattedMessage id="cycle_executeBy" />}
           type="user"
           onChange={onLastUpdatedByChange}

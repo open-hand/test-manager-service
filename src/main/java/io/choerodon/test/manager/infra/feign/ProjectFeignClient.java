@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign;
 
-import io.choerodon.agile.api.dto.ProjectDTO;
+import io.choerodon.agile.api.vo.ProjectDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProjectFeignClientFallback;
 
 import org.springframework.cloud.openfeign.FeignClient;

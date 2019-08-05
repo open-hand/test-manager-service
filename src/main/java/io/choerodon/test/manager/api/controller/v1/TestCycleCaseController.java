@@ -22,7 +22,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.mybatis.annotation.SortDefault;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 
@@ -49,9 +49,9 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试组下循环用例")
     @GetMapping("/query/issue/{issueId}")
-    public ResponseEntity<List<TestCycleCaseDTO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
-                                                                @PathVariable(name = "issueId") Long issueId,
-                                                                @RequestParam Long organizationId) {
+    public ResponseEntity<List<TestCycleCaseVO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
+                                                               @PathVariable(name = "issueId") Long issueId,
+                                                               @RequestParam Long organizationId) {
         return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
@@ -60,13 +60,13 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试用例下循环case")
     @PostMapping("/query/cycleId")
-    public ResponseEntity<PageInfo<TestCycleCaseDTO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
-                                                               @ApiIgnore
-                                                               @ApiParam(value = "分页信息", required = true)
-                                                               @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
-                                                                       PageRequest pageRequest,
-                                                               @RequestBody TestCycleCaseDTO dto,
-                                                               @RequestParam Long organizationId) {
+    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
+                                                                  @ApiIgnore
+                                                                  @ApiParam(value = "分页信息", required = true)
+                                                                  @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
+                                                                          PageRequest pageRequest,
+                                                                  @RequestBody TestCycleCaseVO dto,
+                                                                  @RequestParam Long organizationId) {
         Assert.notNull(dto.getCycleId(), "error.queryByCycle.cycleId.not.null");
         return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageRequest, projectId, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
@@ -76,13 +76,13 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("过滤查询测试用例下循环case")
     @PostMapping("/query/filtered/{cycleId}")
-    public ResponseEntity<PageInfo<TestCycleCaseDTO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
-                                                                             @PathVariable(name = "cycleId") Long cycleId,
-                                                                             @RequestBody TestCycleCaseDTO searchDTO,
-                                                                             @ApiIgnore
-                                                                             @ApiParam(value = "分页信息", required = true)
-                                                                             @SortDefault(value = "rank", direction = Sort.Direction.ASC)
-                                                                                     PageRequest pageRequest) {
+    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
+                                                                                @PathVariable(name = "cycleId") Long cycleId,
+                                                                                @RequestBody TestCycleCaseVO searchDTO,
+                                                                                @ApiIgnore
+                                                                                @ApiParam(value = "分页信息", required = true)
+                                                                                @SortDefault(value = "rank", direction = Sort.Direction.ASC)
+                                                                                        PageRequest pageRequest) {
         return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageRequest, projectId, searchDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
@@ -91,10 +91,10 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询一个循环用例")
     @GetMapping("/query/one/{executeId}")
-    public ResponseEntity<TestCycleCaseDTO> queryOne(@PathVariable(name = "project_id") Long projectId,
-                                                     @PathVariable(name = "executeId") Long executeId,
-                                                     @RequestParam(name = "cycleId") Long cycleId,
-                                                     @RequestParam Long organizationId) {
+    public ResponseEntity<TestCycleCaseVO> queryOne(@PathVariable(name = "project_id") Long projectId,
+                                                    @PathVariable(name = "executeId") Long executeId,
+                                                    @RequestParam(name = "cycleId") Long cycleId,
+                                                    @RequestParam Long organizationId) {
         return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId, cycleId, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
@@ -104,8 +104,8 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加一个测试组下循环用例")
     @PostMapping("/insert")
-    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO, @PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseDTO, projectId))
+    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseVO testCycleCaseVO, @PathVariable(name = "project_id") Long projectId) {
+        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
 
@@ -115,9 +115,9 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("修改一个测试组下循环用例")
     @PostMapping("/update")
-    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseDTO testCycleCaseDTO,
+    public ResponseEntity updateOneCase(@RequestBody TestCycleCaseVO testCycleCaseVO,
                                         @PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseDTO, projectId))
+        return Optional.ofNullable(testCycleCaseService.changeOneCase(testCycleCaseVO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }

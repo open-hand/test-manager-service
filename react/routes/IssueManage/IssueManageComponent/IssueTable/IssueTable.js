@@ -78,7 +78,7 @@ class IssueTable extends Component {
 
   renderTbody(data, columns) {
     const {
-      disabled, onRow,
+      disabled, onRow, clickIssue,
     } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
@@ -104,7 +104,7 @@ class IssueTable extends Component {
         return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
+          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );

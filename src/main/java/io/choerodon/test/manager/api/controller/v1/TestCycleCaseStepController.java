@@ -1,11 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import java.util.List;
+import java.util.Optional;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -14,8 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 
 /**
  * Created by 842767365@qq.com on 6/14/18.
@@ -30,37 +30,34 @@ public class TestCycleCaseStepController {
     /**
      * 更新循环步骤
      *
-     * @param testCycleCaseStepDTO
+     * @param testCycleCaseStepVO
      * @return
      */
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新一个循环步骤")
     @PutMapping
-    public ResponseEntity<List<TestCycleCaseStepDTO>> update(@RequestBody List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
-        return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepDTO))
+    public ResponseEntity<List<TestCycleCaseStepVO>> update(@RequestBody List<TestCycleCaseStepVO> testCycleCaseStepVO) {
+        return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
-
     }
-
 
     /**
      * 查询循环测试步骤
      *
      * @param cycleCaseId cycleCaseId
-     * @return TestCycleCaseStepDTO
+     * @return TestCycleCaseStepVO
      */
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
-    public ResponseEntity<List<TestCycleCaseStepDTO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
-                                                            @ApiParam(value = "cycleCaseId", required = true)
-                                                            @PathVariable(name = "cycleCaseId") Long cycleCaseId,
-                                                            @RequestParam Long organizationId) {
+    public ResponseEntity<List<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+                                                                  @ApiParam(value = "cycleCaseId", required = true)
+                                                                  @PathVariable(name = "cycleCaseId") Long cycleCaseId,
+                                                                  @RequestParam Long organizationId) {
         return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 
     }
-
 }

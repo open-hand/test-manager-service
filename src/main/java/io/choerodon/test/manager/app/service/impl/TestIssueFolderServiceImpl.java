@@ -1,26 +1,29 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
-import io.choerodon.agile.api.dto.ProductVersionDTO;
-import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.api.dto.*;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
-import io.choerodon.test.manager.domain.service.ITestIssueFolderService;
-import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
+import io.choerodon.test.manager.app.service.TestIssueFolderService;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.exception.IssueFolderException;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -28,35 +31,42 @@ import java.util.stream.Collectors;
 @Component
 public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
-    @Autowired
-    TestCycleService testCycleService;
+    public static final String TYPE_CYCLE = "cycle";
+    public static final String TYPE_TEMP = "temp";
 
     @Autowired
-    ITestIssueFolderService iTestIssueFolderService;
+    private TestCycleService testCycleService;
 
     @Autowired
-    TestIssueFolderRelService testIssueFolderRelService;
+    private TestIssueFolderRelService testIssueFolderRelService;
 
     @Autowired
-    TestCaseService testCaseService;
+    private TestCaseService testCaseService;
+
+    @Autowired
+    private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
-    public List<TestIssueFolderDTO> queryByParameter(Long projectId, Long versionId) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, null, null);
-        return ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
+        return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
     }
 
     @Override
-    public List<TestIssueFolderWithVersionNameDTO> queryByParameterWithVersionName(Long projectId, Long versionId) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, null, null);
-        List<TestIssueFolderDTO> resultTemp = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        List<TestIssueFolderWithVersionNameDTO> result = new ArrayList<>();
+    public List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId) {
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
+        List<TestIssueFolderVO> resultTemp = modelMapper.map(testIssueFolderMapper.select(modelMapper
+                .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
+        List<TestIssueFolderWithVersionNameVO> result = new ArrayList<>();
         String versionName = testCaseService.getVersionInfo(projectId).get(versionId).getName();
 
         resultTemp.forEach(v -> {
-            TestIssueFolderWithVersionNameDTO t = new TestIssueFolderWithVersionNameDTO();
+            TestIssueFolderWithVersionNameVO t = new TestIssueFolderWithVersionNameVO();
             t.setFolderId(v.getFolderId());
             t.setName(v.getName());
             t.setVersionId(v.getVersionId());
@@ -72,42 +82,49 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO) {
-        return ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    public TestIssueFolderVO insert(TestIssueFolderVO testIssueFolderVO) {
+        validateType(testIssueFolderVO);
+        if (testIssueFolderVO.getFolderId() != null) {
+            throw new CommonException("error.issue.folder.insert.folderId.should.be.null");
+        }
+        return modelMapper.map(testIssueFolderMapper.insert(modelMapper
+                .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long projectId, Long folderId) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setFolderId(folderId);
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+        testIssueFolderVO.setFolderId(folderId);
 
-        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
-        testIssueFolderRelDTO.setFolderId(folderId);
+        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+        testIssueFolderRelVO.setFolderId(folderId);
 
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setFolderId(folderId);
+        TestCycleVO testCycleVO = new TestCycleVO();
+        testCycleVO.setFolderId(folderId);
 
-        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO).stream()
-                .map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
+        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO).stream()
+                .map(TestIssueFolderRelVO::getIssueId).collect(Collectors.toList());
         testCaseService.batchDeleteIssues(projectId, issuesId);
-        iTestIssueFolderService.delete(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class));
-        testCycleService.delete(testCycleDTO, projectId);
+        testIssueFolderMapper.delete(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class));
+        testCycleService.delete(testCycleVO, projectId);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO) {
-        return ConvertHelper.convert(iTestIssueFolderService.update(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+    public TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO) {
+        validateType(testIssueFolderVO);
+        TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
+        if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
+            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
+        }
+        return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
     @Override
     public JSONObject getTestIssueFolder(Long projectId) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setProjectId(projectId);
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+        testIssueFolderVO.setProjectId(projectId);
         List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
                 .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
 
@@ -119,9 +136,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
         JSONArray versionStatus = new JSONArray();
         root.put("versions", versionStatus);
-        List<TestIssueFolderDTO> testIssueFolderDTOS = ConvertHelper.convertList(iTestIssueFolderService.query(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        List<TestCycleDTO> cycles = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::transferToCycle).collect(Collectors.toList());
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
+                .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
+        List<TestCycleVO> cycles = testIssueFolderVOS.stream().map(TestIssueFolderVO::transferToCycle).collect(Collectors.toList());
         testCycleService.initVersionTree(projectId, versionStatus, versions, cycles);
         return root;
     }
@@ -129,15 +147,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Long getDefaultFolderId(Long projectId, Long versionId) {
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO(null, null, versionId, projectId, "temp", null);
-        TestIssueFolderDTO resultTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.queryOne(ConvertHelper
-                .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
-        testIssueFolderDTO.setName("临时");
-        if (resultTestIssueFolderDTO == null) {
-            return ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
-                    .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class).getFolderId();
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, "temp", null);
+        TestIssueFolderVO resultTestIssueFolderVO = modelMapper.map(testIssueFolderMapper.selectOne(modelMapper
+                .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
+        testIssueFolderVO.setName("临时");
+        if (resultTestIssueFolderVO == null) {
+            return insert(testIssueFolderVO).getFolderId();
         } else {
-            return resultTestIssueFolderDTO.getFolderId();
+            return resultTestIssueFolderVO.getFolderId();
         }
     }
 
@@ -152,42 +169,48 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public void copyFolder(Long projectId, Long versionId, Long[] folderIds) {
         for (Long folderId : folderIds) {
             //通过folder查找
-            TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-            testIssueFolderDTO.setFolderId(folderId);
-            TestIssueFolderDTO resTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.queryByPrimaryKey(ConvertHelper
-                    .convert(testIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+            TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+            testIssueFolderVO.setFolderId(folderId);
+            TestIssueFolderVO resTestIssueFolderVO = modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(folderId), TestIssueFolderVO.class);
             //创建文件夹
-            resTestIssueFolderDTO.setFolderId(null);
-            resTestIssueFolderDTO.setVersionId(versionId);
-            TestIssueFolderDTO returnTestIssueFolderDTO = ConvertHelper.convert(iTestIssueFolderService.insert(ConvertHelper
-                    .convert(resTestIssueFolderDTO, TestIssueFolderE.class)), TestIssueFolderDTO.class);
+            resTestIssueFolderVO.setFolderId(null);
+            resTestIssueFolderVO.setVersionId(versionId);
+            TestIssueFolderVO returnTestIssueFolderVO = insert(resTestIssueFolderVO);
             //复制issue到目的文件夹
-            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, null, null, null);
-            List<IssueInfosDTO> issueInfosDTOS = new ArrayList<>();
-            List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
-            for (TestIssueFolderRelDTO resTestIssueFolderRelDTO : resTestIssueFolderRelDTOS) {
-                IssueInfosDTO issueInfosDTO = new IssueInfosDTO();
-                issueInfosDTO.setIssueId(resTestIssueFolderRelDTO.getIssueId());
-                issueInfosDTOS.add(issueInfosDTO);
+            TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, null, null, null, null);
+            List<IssueInfosVO> issueInfosVOS = new ArrayList<>();
+            List<TestIssueFolderRelVO> resTestIssueFolderRelVOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO);
+            for (TestIssueFolderRelVO resTestIssueFolderRelVO : resTestIssueFolderRelVOS) {
+                IssueInfosVO issueInfosVO = new IssueInfosVO();
+                issueInfosVO.setIssueId(resTestIssueFolderRelVO.getIssueId());
+                issueInfosVOS.add(issueInfosVO);
             }
-            testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderDTO.getFolderId(), issueInfosDTOS);
+            testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderVO.getFolderId(), issueInfosVOS);
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void moveFolder(Long projectId, List<TestIssueFolderDTO> testIssueFolderDTOS) {
-        for (TestIssueFolderDTO testIssueFolderDTO : testIssueFolderDTOS) {
+    public void moveFolder(Long projectId, List<TestIssueFolderVO> testIssueFolderVOS) {
+        for (TestIssueFolderVO testIssueFolderVO : testIssueFolderVOS) {
             //查找folder下的issues
-            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
-            testIssueFolderRelDTO.setFolderId(testIssueFolderDTO.getFolderId());
-            List<TestIssueFolderRelDTO> resTestIssueFolderRelDTOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelDTO);
+            TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+            testIssueFolderRelVO.setFolderId(testIssueFolderVO.getFolderId());
+            List<TestIssueFolderRelVO> resTestIssueFolderRelVOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO);
             //批量改变issue的version并修改对应关联中的version
-            List<Long> issuesId = resTestIssueFolderRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-            TestIssueFolderRelDTO changeTestIssueFolderRelDTO = new TestIssueFolderRelDTO(testIssueFolderDTO.getFolderId(), testIssueFolderDTO.getVersionId(), projectId, null, null);
-            testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelDTO, issuesId);
+            List<Long> issuesId = resTestIssueFolderRelVOS.stream().map(TestIssueFolderRelVO::getIssueId).collect(Collectors.toList());
+            TestIssueFolderRelVO changeTestIssueFolderRelVO = new TestIssueFolderRelVO(testIssueFolderVO.getFolderId(), testIssueFolderVO.getVersionId(), projectId, null, null);
+            testIssueFolderRelService.updateVersionByFolderWithoutLockAndChangeIssueVersion(changeTestIssueFolderRelVO, issuesId);
             //更新folder信息
-            iTestIssueFolderService.updateWithNoType(ConvertHelper.convert(testIssueFolderDTO, TestIssueFolderE.class));
+            if (testIssueFolderMapper.updateByPrimaryKeySelective(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class)) != 1) {
+                throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class).toString());
+            }
+        }
+    }
+
+    private void validateType(TestIssueFolderVO testIssueFolderVO) {
+        if (!(StringUtils.equals(testIssueFolderVO.getType(), TYPE_CYCLE) || StringUtils.equals(testIssueFolderVO.getType(), TYPE_TEMP))) {
+            throw new IssueFolderException(IssueFolderException.ERROR_FOLDER_TYPE);
         }
     }
 }

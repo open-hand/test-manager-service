@@ -13,7 +13,7 @@ const TestProgressLine = ({
   progress.forEach((item) => {
     const { statusName, counts, color } = item;
     content.push(
-      <div key={color} className="c7ntest-between" style={{ width: 100 }}>
+      <div key={color} className="c7ntest-between" style={{ width: 65 }}>
         <div>{statusName}</div>        
         <div>{counts}</div>
       </div>,

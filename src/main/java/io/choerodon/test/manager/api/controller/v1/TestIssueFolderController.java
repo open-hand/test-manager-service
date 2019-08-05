@@ -3,19 +3,19 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
-
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
+import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -39,8 +39,8 @@ public class TestIssueFolderController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询version或所有的下文件夹，返回纯数据")
     @GetMapping("/query/all")
-    public ResponseEntity<List<TestIssueFolderWithVersionNameDTO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
-                                                                                    @RequestParam(name = "versionId", required = false) Long versionId) {
+    public ResponseEntity<List<TestIssueFolderWithVersionNameVO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
+                                                                                   @RequestParam(name = "versionId", required = false) Long versionId) {
         return Optional.ofNullable(testIssueFolderService.queryByParameterWithVersionName(projectId, versionId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
@@ -59,10 +59,10 @@ public class TestIssueFolderController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("插入文件夹")
     @PostMapping
-    public ResponseEntity<TestIssueFolderDTO> insert(@PathVariable(name = "project_id") Long projectId,
-                                                     @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
-        testIssueFolderDTO.setProjectId(projectId);
-        return Optional.ofNullable(testIssueFolderService.insert(testIssueFolderDTO))
+    public ResponseEntity<TestIssueFolderVO> insert(@PathVariable(name = "project_id") Long projectId,
+                                                    @RequestBody TestIssueFolderVO testIssueFolderVO) {
+        testIssueFolderVO.setProjectId(projectId);
+        return Optional.ofNullable(testIssueFolderService.insert(testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
@@ -70,9 +70,9 @@ public class TestIssueFolderController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新文件夹")
     @PutMapping("/update")
-    public ResponseEntity<TestIssueFolderDTO> update(@PathVariable(name = "project_id") Long projectId,
-                                                     @RequestBody TestIssueFolderDTO testIssueFolderDTO) {
-        return Optional.ofNullable(testIssueFolderService.update(testIssueFolderDTO))
+    public ResponseEntity<TestIssueFolderVO> update(@PathVariable(name = "project_id") Long projectId,
+                                                    @RequestBody TestIssueFolderVO testIssueFolderVO) {
+        return Optional.ofNullable(testIssueFolderService.update(testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
     }
@@ -91,8 +91,8 @@ public class TestIssueFolderController {
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestBody List<TestIssueFolderDTO> testIssueFolderDTOS) {
-        testIssueFolderService.moveFolder(projectId, testIssueFolderDTOS);
+                                     @RequestBody List<TestIssueFolderVO> testIssueFolderVOS) {
+        testIssueFolderService.moveFolder(projectId, testIssueFolderVOS);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1203,7 +1203,7 @@ class EditIssueNarrow extends Component {
                         <FormattedMessage id="issue_edit_hide" />
                       </div>
                     </div>
-                    <div className="line-justify" style={{ marginBottom: 5, alignItems: 'center', marginTop: 10 }}>
+                    <div className="line-justify" style={{ marginBottom: 10, alignItems: 'center', marginTop: 10 }}>
                       <TextEditToggle
                         disabled={disabled}
                         style={{ width: '100%' }}
@@ -1219,7 +1219,7 @@ class EditIssueNarrow extends Component {
                           )}
                         </Text>
                         <Edit>
-                          <TextArea style={{ fontSize: '20px', fontWeight: 500 }} maxLength={44} autosize autoFocus />
+                          <TextArea style={{ fontSize: '20px', fontWeight: 500, padding: '0.04rem' }} maxLength={44} autosize autoFocus />
                         </Edit>
                       </TextEditToggle>
                       <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>

@@ -2,26 +2,25 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleCaseDefectRelService {
-	TestCycleCaseDefectRelDTO insert(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId);
+    TestCycleCaseDefectRelVO insert(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long projectId, Long organizationId);
 
-	void delete(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO, Long projectId,Long organizationId);
+    void delete(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long projectId, Long organizationId);
 
-	void populateDefectInfo(List<TestCycleCaseDefectRelDTO> lists, Long projectId,Long organizationId);
+    void populateDefectInfo(List<TestCycleCaseDefectRelVO> lists, Long projectId, Long organizationId);
 
-	void populateDefectAndIssue(TestCycleCaseDTO dto ,Long projectId,Long organizationId);
+    void populateDefectAndIssue(TestCycleCaseVO dto, Long projectId, Long organizationId);
 
-	void populateCycleCaseDefectInfo(List<TestCycleCaseDTO> testCycleCaseDTOS, Long projectId,Long organizationId);
+    void populateCycleCaseDefectInfo(List<TestCycleCaseVO> testCycleCaseVOS, Long projectId, Long organizationId);
 
-	void populateCaseStepDefectInfo(List<TestCycleCaseStepDTO> testCycleCaseDTOS, Long projectId,Long organizationId);
+    void populateCaseStepDefectInfo(List<TestCycleCaseStepVO> testCycleCaseDTOS, Long projectId, Long organizationId);
 
-
-	Boolean updateIssuesProjectId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO,Long organizationId);
+    Boolean updateIssuesProjectId(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long organizationId);
 }

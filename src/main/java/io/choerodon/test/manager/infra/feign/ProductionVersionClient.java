@@ -1,10 +1,9 @@
 package io.choerodon.test.manager.infra.feign;
 
-import io.choerodon.agile.api.dto.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProductionVersionClientFallback;
-import io.choerodon.agile.api.dto.ProductVersionPageDTO;
+import io.choerodon.agile.api.vo.ProductVersionPageDTO;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

@@ -5,10 +5,7 @@ import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
 import io.choerodon.test.manager.app.service.*
-import io.choerodon.test.manager.domain.aop.TestCaseCountRecordAOP
-import io.choerodon.test.manager.domain.aop.TestCycleCaseHistoryRecordAOP
-import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE
-import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil
+import io.choerodon.test.manager.infra.util.RedisTemplateUtil
 import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -18,7 +15,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
-import org.springframework.data.redis.support.atomic.RedisAtomicLong
 import org.springframework.http.HttpRequest
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor

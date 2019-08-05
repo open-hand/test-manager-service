@@ -172,6 +172,7 @@ class TestExecuteTable extends Component {
           <SelectFocusLoad
             allowClear
             className="c7ntest-select"
+            style={{ width: 200 }}
             placeholder={<FormattedMessage id="cycle_executeBy" />}
             getPopupContainer={ele => ele.parentNode}
             type="user"

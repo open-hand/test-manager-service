@@ -33,7 +33,8 @@
     transition: all 0.3s ease-in-out;
   }
 
-  .c7ntest-table-item:hover {
+  .c7ntest-table-item:hover,
+  .c7ntest-table-item.selected {
     background: #eee;
   }
 

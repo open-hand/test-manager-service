@@ -28,21 +28,13 @@ export function loadPodParam(id, type) {
 export function getApps({
   page, size, sort, postData,
 }) {
-  return request.post(`/devops/v1/projects/${getProjectId()}/apps/list_by_options?type=test&active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
+  return request.post(`/devops/v1/projects/${getProjectId()}/apps/page_by_options?type=test&active=true&page=${page}&size=${size}&sort=${sort.field},${sort.order}`, JSON.stringify(postData));
 }
 export function getAppVersions(appId, pagination, filter) {
   const { page, size } = pagination;
   return request.post(`/devops/v1/projects/${getProjectId()}/app_versions/list_by_options?appId=${appId}&page=${page}&size=${size}&sort=id,desc`, { searchParam: filter });
 }
-export function getEnvs() {
-  return request.post(
-    `/devops/v1/organizations/${getOrganizationId()}/clusters/page_cluster?page=0&size=12&sort=id,desc`,
-    {
-      param: '',
-      searchParam: {},
-    },
-  );
-}
+
 export function getAllEnvs() {
   return request.get(`/devops/v1/projects/${getProjectId()}/envs/clusters`);
 }

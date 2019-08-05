@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import { Draggable } from 'react-beautiful-dnd';
 import IssueStore from '../../IssueManagestore/IssueStore';
@@ -10,9 +11,9 @@ class TableDraggleItem extends Component {
   render() {
     const draggingTableItems = IssueStore.getDraggingTableItems;
     const {
-      issue, index, handleClickIssue, 
+      issue, index, handleClickIssue, clickIssue,
     } = this.props;
-
+    const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.issueId });
     return (
       <Draggable key={issue.issueId} draggableId={issue.issueId} index={index} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
         {(provided, snapshotinner) => (
@@ -26,7 +27,7 @@ class TableDraggleItem extends Component {
               ...provided.draggableProps.style,
             }}
             onClick={(e) => { handleClickIssue(issue, index, e); }}
-            className="c7ntest-border c7ntest-table-item"
+            className={classes}
           >
             {snapshotinner.isDragging
               && (
