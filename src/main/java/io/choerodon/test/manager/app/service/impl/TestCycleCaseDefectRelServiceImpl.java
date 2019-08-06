@@ -1,9 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +38,9 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+
+    @Autowired
+    private TestCaseFeignClient testCaseFeignClient;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -124,5 +132,23 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
             log.debug("fix defect data issueID {} updates num {}", testCycleCaseDefectRelDTO.getIssueId(), count);
         }
         return true;
+    }
+
+    @Override
+    public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
+        List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
+        if (res != null && !res.isEmpty()) {
+            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getIssueId).collect(Collectors.toList());
+            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
+            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
+            res.forEach(testCycleCaseDTO -> {
+                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
+                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
+                testCycleCaseVOList.add(testCycleCaseVO);
+            });
+            return testCycleCaseVOList;
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

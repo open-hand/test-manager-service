@@ -23,4 +23,6 @@ public interface TestCycleCaseDefectRelService {
     void populateCaseStepDefectInfo(List<TestCycleCaseStepVO> testCycleCaseDTOS, Long projectId, Long organizationId);
 
     Boolean updateIssuesProjectId(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long organizationId);
+
+    List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
 }
