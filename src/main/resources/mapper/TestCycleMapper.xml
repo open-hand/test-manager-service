@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleMapper">
     <resultMap id="processBarSection"
-               type="io.choerodon.test.manager.domain.test.manager.entity.TestCycleE$ProcessBarSection">
+               type="io.choerodon.test.manager.infra.dto.TestCycleProDTO$ProcessBarSection">
         <id column="color" property="color"/>
         <id column="statusId" property="statusId"/>
         <id column="statusName" property="statusName"/>
@@ -15,7 +15,7 @@
         <association property="processBarSection" resultMap="processBarSection"/>
     </resultMap>
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="queryAboutBarResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleDTO" id="queryAboutBarResultMap">
         <id column="cycle_id" property="cycleId"/>
         <id column="parent_cycle_id" property="parentCycleId"/>
         <id column="cycle_name" property="cycleName"/>
@@ -33,7 +33,7 @@
         <association property="cycleCaseList" resultMap="hashmap"/>
     </resultMap>
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleDTO" id="BaseResultMap">
         <id column="cycle_id" property="cycleId"/>
         <id column="parent_cycle_id" property="parentCycleId"/>
         <id column="cycle_name" property="cycleName"/>
@@ -213,7 +213,7 @@
         rank
     </select>
 
-    <select id="queryCycleInVersion" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+    <select id="queryCycleInVersion" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
         SELECT
         cycle_id,cycle_name,rank
         FROM
@@ -230,7 +230,7 @@
         rank
     </select>
 
-    <select id="queryByIds" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+    <select id="queryByIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
         SELECT cycle_id,cycle_name,rank
         FROM
         test_cycle
@@ -289,7 +289,7 @@
             AND parent_cycle_id = #{cycleId}
     </select>
 
-    <select id="queryChildFolderByRank" resultType="io.choerodon.test.manager.infra.dataobject.TestCycleDO">
+    <select id="queryChildFolderByRank" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
         SELECT
             cycle1.cycle_id,
             cycle1.parent_cycle_id,

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper">
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO" id="BaseResultMap">
         <id column="execute_id" property="executeId"/>
         <id column="cycle_id" property="cycleId"/>
         <id column="issue_id" property="issueId"/>
@@ -22,21 +22,21 @@
         <id column="last_execute_id" property="lastExecuteId"/>
         <id column="next_execute_id" property="nextExecuteId"/>
         <collection property="caseDefect"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO">
             <id column="defect_issue_id" property="issueId"/>
             <id column="defect_type" property="defectType"/>
             <id column="defect_link_id" property="defectLinkId"/>
             <id column="defece_id" property="id"/>
         </collection>
         <collection property="caseAttachment"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseAttachmentRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
             <id column="url" property="url"/>
             <id column="attachment_name" property="attachmentName"/>
             <id column="attachment_link_id" property="attachmentLinkId"/>
             <id column="attachment_type" property="attachmentType"/>
             <id column="id" property="id"/>
         </collection>
-        <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO">
+        <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
             <id column="step_id" property="stepId"/>
             <id column="comment" property="description"/>
             <id column="step_status_name" property="statusName"/>
@@ -477,7 +477,7 @@
     </select>
 
 
-    <resultMap type="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO" id="BaseResultMapForReporter">
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO" id="BaseResultMapForReporter">
         <id column="execute_id" property="executeId"/>
         <id column="cycle_id" property="cycleId"/>
         <id column="issue_id" property="issueId"/>
@@ -492,7 +492,7 @@
         <id column="last_update_date" property="lastUpdateDate"/>
         <id column="last_updated_by" property="lastUpdatedBy"/>
         <collection property="caseDefect"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO">
             <id column="defect_issue_id" property="issueId"/>
             <id column="defect_type" property="defectType"/>
             <id column="defect_link_id" property="defectLinkId"/>
@@ -500,7 +500,7 @@
         </collection>
 
         <collection property="subStepDefects"
-                    ofType="io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO">
+                    ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO">
             <id column="sub_defect_issue_id" property="issueId"/>
             <id column="sub_defect_type" property="defectType"/>
             <id column="sub_defect_link_id" property="defectLinkId"/>

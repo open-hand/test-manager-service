@@ -1,24 +1,25 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.agile.api.dto.IssueCreateDTO;
-import io.choerodon.agile.api.dto.IssueDTO;
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.api.dto.IssueInfosDTO;
-import io.choerodon.test.manager.api.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import io.choerodon.agile.api.vo.IssueCreateDTO;
+import io.choerodon.agile.api.vo.IssueDTO;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
@@ -36,13 +37,13 @@ public class TestCycleCaseDefectRelController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加缺陷")
     @PostMapping
-    public ResponseEntity<List<TestCycleCaseDefectRelDTO>> insert(@PathVariable(name = "project_id") Long projectId,
-                                                                  @RequestBody List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTO,
-                                                                  @RequestParam Long organizationId ) {
-        List<TestCycleCaseDefectRelDTO> dtos = new ArrayList<>();
-        testCycleCaseDefectRelDTO.forEach(v -> {
+    public ResponseEntity<List<TestCycleCaseDefectRelVO>> insert(@PathVariable(name = "project_id") Long projectId,
+                                                                 @RequestBody List<TestCycleCaseDefectRelVO> testCycleCaseDefectRelVO,
+                                                                 @RequestParam Long organizationId) {
+        List<TestCycleCaseDefectRelVO> dtos = new ArrayList<>();
+        testCycleCaseDefectRelVO.forEach(v -> {
             v.setProjectId(projectId);
-            dtos.add(testCycleCaseDefectRelService.insert(v, projectId,organizationId));
+            dtos.add(testCycleCaseDefectRelService.insert(v, projectId, organizationId));
         });
         return Optional.ofNullable(dtos)
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
@@ -55,29 +56,29 @@ public class TestCycleCaseDefectRelController {
     public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
                                            @PathVariable(name = "defectId") Long defectId,
                                            @RequestParam Long organizationId) {
-        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
-        testCycleCaseDefectRelDTO.setId(defectId);
-        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelDTO, projectId,organizationId);
+        TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
+        testCycleCaseDefectRelVO.setId(defectId);
+        testCycleCaseDefectRelService.delete(testCycleCaseDefectRelVO, projectId, organizationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建一个缺陷并且关联到对应case或者step")
     @PostMapping("/createIssueAndDefect/{defectType}/{id}")
-    public TestCycleCaseDefectRelDTO createIssueAndLinkDefect(@RequestBody IssueCreateDTO issueCreateDTO,
-                                                              @PathVariable("project_id") Long projectId,
-                                                              @RequestParam("applyType") String applyType,
-                                                              @PathVariable("defectType") String defectType,
-                                                              @RequestParam Long organizationId,
-                                                              @PathVariable("id") Long id){
-        IssueDTO issueDTO=testCaseService.createTest(issueCreateDTO,projectId,applyType);
-        TestCycleCaseDefectRelDTO defectRelDTO=new TestCycleCaseDefectRelDTO();
+    public TestCycleCaseDefectRelVO createIssueAndLinkDefect(@RequestBody IssueCreateDTO issueCreateDTO,
+                                                             @PathVariable("project_id") Long projectId,
+                                                             @RequestParam("applyType") String applyType,
+                                                             @PathVariable("defectType") String defectType,
+                                                             @RequestParam Long organizationId,
+                                                             @PathVariable("id") Long id) {
+        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, applyType);
+        TestCycleCaseDefectRelVO defectRelDTO = new TestCycleCaseDefectRelVO();
         defectRelDTO.setIssueId(issueDTO.getIssueId());
         defectRelDTO.setProjectId(projectId);
         defectRelDTO.setDefectType(defectType);
         defectRelDTO.setDefectLinkId(id);
-        TestCycleCaseDefectRelDTO defect= testCycleCaseDefectRelService.insert(defectRelDTO,projectId,organizationId);
-        defect.setIssueInfosDTO(new IssueInfosDTO(issueDTO));
+        TestCycleCaseDefectRelVO defect = testCycleCaseDefectRelService.insert(defectRelDTO, projectId, organizationId);
+        defect.setIssueInfosVO(new IssueInfosVO(issueDTO));
         return defect;
     }
 
@@ -86,8 +87,8 @@ public class TestCycleCaseDefectRelController {
     @PutMapping("/fix")
     public void fixDefectData(@PathVariable(name = "project_id") Long projectId,
                               @RequestParam Long organizationId) {
-        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
-        testCycleCaseDefectRelDTO.setProjectId(projectId);
-        testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelDTO,organizationId);
+        TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
+        testCycleCaseDefectRelVO.setProjectId(projectId);
+        testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelVO, organizationId);
     }
 }

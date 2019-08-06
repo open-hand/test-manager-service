@@ -29,7 +29,6 @@ application-default.yml
 # frontend
 lib
 node_modules
-yarn.lock
 package-lock.json
 **/lib/dist/
 **/lib/assets/

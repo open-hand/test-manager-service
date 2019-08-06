@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.util
 
-import io.choerodon.test.manager.infra.common.utils.LiquibaseHelper
+import io.choerodon.test.manager.infra.util.LiquibaseHelper
 import io.choerodon.test.manager.infra.exception.DBTypeException
 import io.choerodon.test.manager.infra.exception.TestCycleCaseException
 import spock.lang.Specification
