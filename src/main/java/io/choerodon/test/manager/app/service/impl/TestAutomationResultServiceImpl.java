@@ -1,76 +1,47 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import io.choerodon.test.manager.api.vo.TestAutomationResultVO;
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.test.manager.api.dto.TestAutomationResultDTO;
 import io.choerodon.test.manager.app.service.TestAutomationResultService;
-import io.choerodon.test.manager.infra.dto.TestAutomationResultDTO;
-import io.choerodon.test.manager.infra.mapper.TestAutomationResultMapper;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import io.choerodon.test.manager.domain.service.ITestAutomationResultService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationResultE;
 
 @Service
 public class TestAutomationResultServiceImpl implements TestAutomationResultService {
 
     @Autowired
-    private TestAutomationResultMapper testAutomationResultMapper;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    private ITestAutomationResultService iTestAutomationResultService;
 
     @Override
-    public List<TestAutomationResultVO> query(TestAutomationResultVO testAutomationResultVO) {
-        return modelMapper.map(testAutomationResultMapper.select(modelMapper.map(testAutomationResultVO,
-                TestAutomationResultDTO.class)), new TypeToken<List<TestAutomationResultDTO>>() {
-        }.getType());
+    public List<TestAutomationResultDTO> query(TestAutomationResultDTO testAutomationResultDTO) {
+        TestAutomationResultE testAutomationResultE = ConvertHelper.convert(testAutomationResultDTO, TestAutomationResultE.class);
+        return ConvertHelper.convertList(iTestAutomationResultService.query(testAutomationResultE), TestAutomationResultDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestAutomationResultVO changeAutomationResult(TestAutomationResultVO testAutomationResultVO, Long projectId) {
-        Assert.notNull(testAutomationResultVO, "error.change.testAutomationResult.param.not.null");
-        TestAutomationResultDTO testAutomationResultDTO = modelMapper.map(testAutomationResultVO, TestAutomationResultDTO.class);
-        if (testAutomationResultDTO.getId() == null) {
-            testAutomationResultDTO = insert(testAutomationResultDTO);
+    public TestAutomationResultDTO changeAutomationResult(TestAutomationResultDTO testAutomationResultDTO, Long projectId) {
+        Assert.notNull(testAutomationResultDTO,"error.change.testAutomationResult.param.not.null");
+        TestAutomationResultE testAutomationResultE = ConvertHelper.convert(testAutomationResultDTO, TestAutomationResultE.class);
+        if (testAutomationResultE.getId() == null) {
+            testAutomationResultE = iTestAutomationResultService.add(testAutomationResultE);
         } else {
-            testAutomationResultDTO = update(testAutomationResultDTO);
+            testAutomationResultE = iTestAutomationResultService.update(testAutomationResultE);
         }
 
-        return modelMapper.map(testAutomationResultDTO, TestAutomationResultVO.class);
+        return ConvertHelper.convert(testAutomationResultE, TestAutomationResultDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void removeAutomationResult(TestAutomationResultVO testAutomationResultVO) {
-        delete(modelMapper.map(testAutomationResultVO, TestAutomationResultDTO.class));
-    }
-
-    private TestAutomationResultDTO insert(TestAutomationResultDTO testAutomationResultDTO) {
-        Date now = new Date();
-        testAutomationResultDTO.setCreationDate(now);
-        testAutomationResultDTO.setLastUpdateDate(now);
-        DBValidateUtil.executeAndvalidateUpdateNum(
-                testAutomationResultMapper::insertOneResult, testAutomationResultDTO, 1, "error.testAutomationResult.insert");
-        return testAutomationResultDTO;
-    }
-
-    private TestAutomationResultDTO update(TestAutomationResultDTO testAutomationResultDTO) {
-        DBValidateUtil.executeAndvalidateUpdateNum(
-                testAutomationResultMapper::updateByPrimaryKeySelective, testAutomationResultDTO, 1, "error.testAutomationResult.update");
-
-        return testAutomationResultMapper.selectByPrimaryKey(testAutomationResultDTO.getId());
-    }
-
-    private void delete(TestAutomationResultDTO testAutomationResultDTO) {
-        Assert.notNull(testAutomationResultDTO, "error.testAutomationResult.delete.param1.not.null");
-
-        testAutomationResultMapper.delete(testAutomationResultDTO);
+    public void removeAutomationResult(TestAutomationResultDTO testAutomationResultDTO) {
+        iTestAutomationResultService.delete(ConvertHelper.convert(testAutomationResultDTO, TestAutomationResultE.class));
     }
 }

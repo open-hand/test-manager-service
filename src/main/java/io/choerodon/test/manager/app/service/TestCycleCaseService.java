@@ -1,12 +1,11 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
-
 import com.github.pagehelper.PageInfo;
-
 import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -15,53 +14,50 @@ public interface TestCycleCaseService {
 
     void delete(Long cycleCaseId, Long projectId);
 
-    PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, PageRequest pageRequest, Long projectId, Long organizationId);
+    PageInfo<TestCycleCaseDTO> queryByCycle(TestCycleCaseDTO dto, PageRequest pageRequest, Long projectId, Long organizationId);
 
-    PageInfo<TestCycleCaseVO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseVO searchDTO);
+    PageInfo<TestCycleCaseDTO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseDTO searchDTO);
 
-    TestCycleCaseVO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
+    TestCycleCaseDTO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
 
-    List<TestCycleCaseVO> queryByIssuse(Long issuseId, Long projectId, Long organizationId);
+    List<TestCycleCaseDTO> queryByIssuse(Long issuseId, Long projectId, Long organizationId);
 
-    List<TestCycleCaseVO> queryInIssues(Long[] issueIds, Long projectId, Long organizationId);
+    List<TestCycleCaseDTO> queryInIssues(Long[] issueIds, Long projectId, Long organizationId);
 
-    List<TestCycleCaseVO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId, Long organizationId);
+    List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId, Long organizationId);
 
-    void batchDelete(TestCycleCaseVO testCycleCaseVO, Long projectId);
+    void batchDelete(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
     /**
      * 启动一个测试例
      *
-     * @param testCycleCaseVO
+     * @param testCycleCaseDTO
      * @return
      */
-    TestCycleCaseVO create(TestCycleCaseVO testCycleCaseVO, Long projectId);
+    TestCycleCaseDTO create(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
-    List<TestCycleCaseVO> batchCreateForAutoTest(List<TestCycleCaseVO> list, Long projectId);
+    List<TestCycleCaseE> batchCreateForAutoTest(List<TestCycleCaseDTO> list, Long projectId);
 
     List<Long> getActiveCase(Long range, Long projectId, String day);
 
     /**
      * 修改一个case
      *
-     * @param testCycleCaseVO
+     * @param testCycleCaseDTO
      */
-    TestCycleCaseVO changeOneCase(TestCycleCaseVO testCycleCaseVO, Long projectId);
+    TestCycleCaseDTO changeOneCase(TestCycleCaseDTO testCycleCaseDTO, Long projectId);
 
     /**
      * 修改一堆case
      *
      * @param cycleCaseDTOS
      */
-    void batchChangeCase(Long projectId, List<TestCycleCaseVO> cycleCaseDTOS);
+    void batchChangeCase(Long projectId, List<TestCycleCaseDTO> cycleCaseDTOS);
+
 
     Long countCaseNotRun(Long projectId);
 
     Long countCaseNotPlain(Long projectId);
 
     Long countCaseSum(Long projectId);
-
-    void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
-
-    List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, PageRequest pageRequest);
 }

@@ -1,22 +1,30 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.Page
-import io.choerodon.agile.api.vo.IssueComponentDetailVO
-import io.choerodon.agile.api.vo.IssueListTestVO
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO
-import io.choerodon.agile.api.vo.ProjectDTO
-import io.choerodon.agile.api.vo.SearchDTO
-import io.choerodon.agile.api.vo.StatusVO
+import io.choerodon.agile.api.dto.IssueComponentDetailDTO
+import io.choerodon.agile.api.dto.IssueListDTO
+import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO
+import io.choerodon.agile.api.dto.ProjectDTO
+import io.choerodon.agile.api.dto.SearchDTO
+import io.choerodon.agile.api.dto.StatusMapDTO
 import com.github.pagehelper.PageInfo
 import io.choerodon.base.domain.PageRequest
 import io.choerodon.base.domain.Sort
+import io.choerodon.test.manager.IntegrationTestConfiguration
+import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
 import io.choerodon.test.manager.infra.feign.ProjectFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import org.assertj.core.util.Lists
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Stepwise
+
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
  * Created by jialongZuo@hand-china.com on 8/24/18.
@@ -63,18 +71,18 @@ class TestCaseServiceImplSpec extends Specification {
         service.getIssueInfoMapAndPopulatePageInfo(1L, new SearchDTO(), new PageRequest(sort: new Sort("id")), new Page(), 1L)
         then:
         1*testCaseFeignClient.listIssueWithLinkedIssues(_,_,_,_,_,_)>>
-                new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId:1L,StatusVO: new StatusVO(code: "code")))),HttpStatus.OK)
+                new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId:1L,statusMapDTO: new StatusMapDTO(code: "code")))),HttpStatus.OK)
     }
 
     def "GetIssueInfoMap1"() {
         when:
         service.getIssueInfoMap(1L, new SearchDTO(), true, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailDTO(issueId: 1L, statusMapDTO: new StatusMapDTO(code: "code")))), HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L, new SearchDTO(), false, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListDTO(issueId: 1L, statusMapDTO: new StatusMapDTO(code: "code")))), HttpStatus.OK)
 
     }
 
@@ -82,7 +90,7 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMap(1L, [1, 2] as Long[], true, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailDTO(issueId: 1L, statusMapDTO: new StatusMapDTO(code: "code")))), HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L, [] as Long[], true, 1L)
         then:
@@ -95,7 +103,7 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMap(1L, [1, 2] as Long[], new PageRequest(sort: new Sort("id")), 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListDTO(issueId: 1L, statusMapDTO: new StatusMapDTO(code: "code")))), HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L, [] as Long[], new PageRequest(), 1L)
         then:

@@ -6,12 +6,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO;
+import io.choerodon.test.manager.infra.dataobject.TestFileLoadHistoryDO;
 
-public interface TestFileLoadHistoryMapper extends Mapper<TestFileLoadHistoryDTO> {
-    List<TestFileLoadHistoryDTO> queryDownloadFile(TestFileLoadHistoryDTO testFileLoadHistoryDTO);
+public interface TestFileLoadHistoryMapper extends Mapper<TestFileLoadHistoryDO> {
+    List<TestFileLoadHistoryDO> queryDownloadFile(TestFileLoadHistoryDO testFileLoadHistoryDO);
 
-    List<TestFileLoadHistoryDTO> queryLatestHistory(TestFileLoadHistoryDTO testFileLoadHistoryDTO);
+    List<TestFileLoadHistoryDO> queryLatestHistory(TestFileLoadHistoryDO testFileLoadHistoryDO);
 
     Long queryLoadHistoryStatus(@Param("id") Long id);
 

@@ -1,26 +1,26 @@
-//package io.choerodon.test.manager.domain.service;
-//
-//import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
-//import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
-//import io.choerodon.test.manager.infra.vo.TestAutomationHistoryDTO;
-//
-//import java.util.List;
-//import java.util.Map;
-//
-//public interface ITestAutomationHistoryService {
-//
-//    List<TestAutomationHistoryDTO> query(TestAutomationHistoryDTO testAutomationHistory);
-//
-//    TestAutomationHistoryDTO queryByPrimaryKey(Long historyId);
-//
-//    TestAutomationHistoryDTO update(TestAutomationHistoryDTO testAutomationHistory);
-//
-//    void delete(TestAutomationHistoryDTO testAutomationHistory);
-//
-//    TestAutomationHistoryDTO insert(TestAutomationHistoryDTO testAutomationHistory);
-//
-//    void shutdownInstance(Long instanceId,Long status);
-//
-//    PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest);
-//}
+package io.choerodon.test.manager.domain.service;
+
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ITestAutomationHistoryService {
+
+    List<TestAutomationHistoryE> query(TestAutomationHistoryE testAutomationHistory);
+
+    TestAutomationHistoryE queryByPrimaryKey(Long historyId);
+
+    TestAutomationHistoryE update(TestAutomationHistoryE testAutomationHistory);
+
+    void delete(TestAutomationHistoryE testAutomationHistory);
+
+    TestAutomationHistoryE insert(TestAutomationHistoryE testAutomationHistory);
+
+    void shutdownInstance(Long instanceId,Long status);
+
+    PageInfo<TestAutomationHistoryDTO> queryWithInstance(Map map, PageRequest pageRequest);
+}

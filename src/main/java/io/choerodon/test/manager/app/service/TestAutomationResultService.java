@@ -2,12 +2,12 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import io.choerodon.test.manager.api.vo.TestAutomationResultVO;
+import io.choerodon.test.manager.api.dto.TestAutomationResultDTO;
 
 public interface TestAutomationResultService {
-    List<TestAutomationResultVO> query(TestAutomationResultVO testAutomationResultVO);
+    List<TestAutomationResultDTO> query(TestAutomationResultDTO testAutomationResultDTO);
 
-    TestAutomationResultVO changeAutomationResult(TestAutomationResultVO testAutomationResultVO, Long projectId);
+    TestAutomationResultDTO changeAutomationResult(TestAutomationResultDTO testAutomationResultDTO, Long projectId);
 
-    void removeAutomationResult(TestAutomationResultVO testAutomationResultVO);
+    void removeAutomationResult(TestAutomationResultDTO testAutomationResultDTO);
 }

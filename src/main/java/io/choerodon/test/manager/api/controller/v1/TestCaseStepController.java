@@ -1,7 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.util.List;
-import java.util.Optional;
+import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.test.manager.api.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
+import io.choerodon.base.annotation.Permission;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.base.enums.ResourceType;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.api.vo.TestCaseStepVO;
-import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.base.annotation.Permission;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -24,17 +24,17 @@ import io.choerodon.base.annotation.Permission;
 public class TestCaseStepController {
 
     @Autowired
-    TestCaseStepService testCaseStepService;
+    TestCaseStepService iTestCaseStepService;
 
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询")
     @GetMapping("/query/{caseId}")
-    public ResponseEntity<List<TestCaseStepVO>> query(@PathVariable(name = "project_id") Long projectId,
-                                                      @PathVariable(name = "caseId") Long caseId) {
-        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-        testCaseStepVO.setIssueId(caseId);
-        return Optional.ofNullable(testCaseStepService.query(testCaseStepVO))
+    public ResponseEntity<List<TestCaseStepDTO>> query(@PathVariable(name = "project_id") Long projectId,
+                                                       @PathVariable(name = "caseId") Long caseId) {
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+        testCaseStepDTO.setIssueId(caseId);
+        return Optional.ofNullable(iTestCaseStepService.query(testCaseStepDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
     }
@@ -43,11 +43,11 @@ public class TestCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
-    public ResponseEntity<TestCaseStepVO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
-                                                        @RequestBody TestCaseStepVO testCaseStepVO) {
+    public ResponseEntity<TestCaseStepDTO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
+                                                         @RequestBody TestCaseStepDTO testCaseStepDTO) {
 
 
-        return Optional.ofNullable(testCaseStepService.changeStep(testCaseStepVO, projectId))
+        return Optional.ofNullable(iTestCaseStepService.changeStep(testCaseStepDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
@@ -57,8 +57,8 @@ public class TestCaseStepController {
     @ApiOperation("删除测试步骤")
     @DeleteMapping
     public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
-                                              @RequestBody TestCaseStepVO testCaseStepVO) {
-        testCaseStepService.removeStep(testCaseStepVO);
+                                              @RequestBody TestCaseStepDTO testCaseStepDTO) {
+        iTestCaseStepService.removeStep(testCaseStepDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -66,8 +66,8 @@ public class TestCaseStepController {
     @ApiOperation("克隆")
     @PostMapping("/clone")
     public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,
-                                @RequestBody TestCaseStepVO testCaseStepVO) {
-        return Optional.ofNullable(testCaseStepService.clone(testCaseStepVO, projectId))
+                                @RequestBody TestCaseStepDTO testCaseStepDTO) {
+        return Optional.ofNullable(iTestCaseStepService.clone(testCaseStepDTO, projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.clone"));
     }

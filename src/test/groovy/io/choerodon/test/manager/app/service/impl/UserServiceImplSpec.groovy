@@ -1,14 +1,14 @@
 package io.choerodon.test.manager.app.service.impl
 
 
-import io.choerodon.agile.api.vo.UserDO
-import io.choerodon.agile.api.vo.UserDTO
+import io.choerodon.agile.api.dto.UserDO
+import io.choerodon.agile.api.dto.UserDTO
 import com.github.pagehelper.PageInfo
 import io.choerodon.base.domain.PageRequest
-import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO
-import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO
-import io.choerodon.test.manager.infra.util.LongUtils
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO
+import io.choerodon.test.manager.infra.common.utils.LongUtils
 import io.choerodon.test.manager.infra.feign.UserFeignClient
 import org.assertj.core.util.Lists
 import org.springframework.http.HttpStatus
@@ -51,39 +51,39 @@ class UserServiceImplSpec extends Specification {
     }
 
     def "populateUsersInHistory"() {
-        TestCycleCaseHistoryVO dto = new TestCycleCaseHistoryVO(lastUpdatedBy: 111L);
-        TestCycleCaseHistoryVO dto1 = new TestCycleCaseHistoryVO(lastUpdatedBy: 0L);
-        List<TestCycleCaseHistoryVO> dtos = Lists.newArrayList(dto)
+        TestCycleCaseHistoryDTO dto = new TestCycleCaseHistoryDTO(lastUpdatedBy: 111L);
+        TestCycleCaseHistoryDTO dto1 = new TestCycleCaseHistoryDTO(lastUpdatedBy: 0L);
+        List<TestCycleCaseHistoryDTO> dtos = Lists.newArrayList(dto)
         dtos.add(dto1)
         when:
         userService.populateUsersInHistory(dtos)
         then:
         1 * client.listUsersByIds(_, false) >> new ResponseEntity(Lists.newArrayList(new UserDO(id: 111L)), HttpStatus.OK)
         when:
-        userService.populateUsersInHistory(new ArrayList<TestCycleCaseHistoryVO>())
+        userService.populateUsersInHistory(new ArrayList<TestCycleCaseHistoryDTO>())
         then:
         0 * client.listUsersByIds(_, false)
         when:
-        userService.populateUsersInHistory(Lists.newArrayList(new TestCycleCaseHistoryVO(lastUpdatedBy: 111L)))
+        userService.populateUsersInHistory(Lists.newArrayList(new TestCycleCaseHistoryDTO(lastUpdatedBy: 111L)))
         then:
         1 * client.listUsersByIds(_, false) >> new ResponseEntity(Lists.newArrayList(new UserDO(id: 111L)), HttpStatus.OK)
     }
 
     def "populateTestCycleCaseDTO"() {
-        TestCycleCaseVO dto = new TestCycleCaseVO(lastUpdatedBy: 111L, assignedTo: 0L);
+        TestCycleCaseDTO dto = new TestCycleCaseDTO(lastUpdatedBy: 111L, assignedTo: 0L);
         when:
         userService.populateTestCycleCaseDTO(dto)
         then:
         1 * client.listUsersByIds(_, false) >> new ResponseEntity(Lists.newArrayList(new UserDO(id: 111L)), HttpStatus.OK)
         when:
-        userService.populateTestCycleCaseDTO(new TestCycleCaseVO(lastUpdatedBy: 0L))
+        userService.populateTestCycleCaseDTO(new TestCycleCaseDTO(lastUpdatedBy: 0L))
         then:
         0 * client.listUsersByIds(_, false)
     }
 
     def "populateTestAutomationHistory"() {
         given:
-        PageInfo page = new PageInfo(Lists.newArrayList(new TestAutomationHistoryVO(createdBy: 11L)))
+        PageInfo page = new PageInfo(Lists.newArrayList(new TestAutomationHistoryDTO(createdBy: 11L)))
         when:
         userService.populateTestAutomationHistory(page);
         then:

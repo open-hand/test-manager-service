@@ -1,8 +1,12 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.test.manager.app.service.JsonImportService;
+import io.choerodon.test.manager.app.service.TestAppInstanceService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE;
+import io.choerodon.test.manager.infra.common.utils.FileUtil;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.ApiOperation;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.app.service.JsonImportService;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
-import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.infra.util.FileUtil;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/v1/automation")
@@ -50,7 +49,7 @@ public class TestAutomationController {
             return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName,
                     new String(bytes, StandardCharsets.UTF_8)), HttpStatus.CREATED);
         } catch (Throwable e) {
-            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseName)), 3L);
+            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入mocha测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.mocha.report");
         }
@@ -71,7 +70,7 @@ public class TestAutomationController {
         try {
             return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {
-            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseName)), 3L);
+            appInstanceService.updateStatus(Long.parseLong(TestAppInstanceE.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入testng测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.testng.report");
         }

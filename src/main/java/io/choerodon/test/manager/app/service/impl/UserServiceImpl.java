@@ -11,14 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
+import io.choerodon.test.manager.api.dto.TestAutomationHistoryDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.UserService;
-import io.choerodon.test.manager.infra.util.LongUtils;
+import io.choerodon.test.manager.infra.common.utils.LongUtils;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
 
 /**
@@ -26,7 +26,6 @@ import io.choerodon.test.manager.infra.feign.UserFeignClient;
  */
 @Component
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserFeignClient userFeignClient;
 
@@ -42,8 +41,8 @@ public class UserServiceImpl implements UserService {
         return userFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
     }
 
-    public void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto) {
-        Long[] users = dto.stream().map(TestCycleCaseHistoryVO::getLastUpdatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+    public void populateUsersInHistory(List<TestCycleCaseHistoryDTO> dto) {
+        Long[] users = dto.stream().map(TestCycleCaseHistoryDTO::getLastUpdatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
         if (ObjectUtils.isEmpty(users)) {
             return;
         }
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
         });
     }
 
-    public void populateTestCycleCaseDTO(TestCycleCaseVO dto) {
+    public void populateTestCycleCaseDTO(TestCycleCaseDTO dto) {
         Long[] users = Stream.of(dto.getAssignedTo(), dto.getLastUpdatedBy()).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
         if (ObjectUtils.isEmpty(users)) {
             return;
@@ -65,8 +64,8 @@ public class UserServiceImpl implements UserService {
         Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v -> dto.setLastUpdateUser(user.get(v)));
     }
 
-    public void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto) {
-        Long[] users = dto.getList().stream().map(TestAutomationHistoryVO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+    public void populateTestAutomationHistory(PageInfo<TestAutomationHistoryDTO> dto) {
+        Long[] users = dto.getList().stream().map(TestAutomationHistoryDTO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
         if (ObjectUtils.isEmpty(users)) {
             return;
         }

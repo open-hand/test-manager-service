@@ -1,6 +1,5 @@
 .c7ntest-TestExecuteTree {
   height: calc(100% - 75px);
-  padding-left: 12px !important;
   overflow-y: auto;
   overflow-x: hidden;
   li .c7n-tree-node-content-wrapper.c7n-tree-node-selected {
@@ -19,14 +18,11 @@
   .c7n-tree-title {
     display: inline-block;
     float: right;
-    width: 100px;
   }
    li .c7n-tree-node-content-wrapper {
     display: inline-flex;
     align-items: center;
     height: 30px;
     line-height: 30px;
-    width: 100%;
-    padding-left: 0 !important;
   }
 }

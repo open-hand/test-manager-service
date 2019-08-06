@@ -6,17 +6,17 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDefectRelDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleCaseDefectRelMapper extends Mapper<TestCycleCaseDefectRelDTO> {
-    List<TestCycleCaseDefectRelDTO> queryInIssues(@Param("issues") Long[] issues, @Param("projectId") Long projectId);
+public interface TestCycleCaseDefectRelMapper extends Mapper<TestCycleCaseDefectRelDO> {
+    List<TestCycleCaseDefectRelDO> queryInIssues(@Param("issues") Long[] issues, @Param("projectId") Long projectId);
 
     List<Long> queryAllIssueIds();
 
-    int updateProjectIdByIssueId(TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO);
+    int updateProjectIdByIssueId(TestCycleCaseDefectRelDO testCycleCaseDefectRelDO);
 
     List<Long> queryIssueIdAndDefectId(Long projectId);
 

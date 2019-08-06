@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
 import io.choerodon.base.domain.Sort;
 import io.choerodon.base.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
@@ -23,7 +23,7 @@ import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.annotation.Permission;
 import io.choerodon.mybatis.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.util.ExcelUtil;
+import io.choerodon.test.manager.infra.common.utils.ExcelUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

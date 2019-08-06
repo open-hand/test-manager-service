@@ -4,23 +4,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageInfo;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.agile.api.dto.IssueCreateDTO;
+import io.choerodon.agile.api.dto.IssueDTO;
+import io.choerodon.agile.api.dto.SearchDTO;
+import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.dto.*;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
+import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestIssueFolderEFactory;
+import io.choerodon.test.manager.infra.common.utils.PageUtil;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
@@ -29,69 +29,71 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService {
 
     @Autowired
-    private TestCaseService testCaseService;
+    ITestIssueFolderRelService iTestIssueFolderRelService;
 
     @Autowired
-    private TestIssueFolderService testIssueFolderService;
+    TestCaseService testCaseService;
 
     @Autowired
-    private TestCaseStepService testCaseStepService;
+    TestIssueFolderService testIssueFolderService;
 
     @Autowired
-    private TestIssueFolderMapper testIssueFolderMapper;
+    ReporterFormService reporterFormService;
 
     @Autowired
-    private TestIssueFolderRelMapper testIssueFolderRelMapper;
+    TestCycleCaseService testCycleCaseService;
 
     @Autowired
-    private ModelMapper modelMapper;
+    TestCaseStepService testCaseStepService;
 
     @Override
-    public PageInfo<IssueComponentDetailFolderRelVO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, null, projectId, null, null);
-        List<TestIssueFolderRelVO> resultRelDTOS = new ArrayList<>();
+    public PageInfo<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, null, projectId, null, null);
+        List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
         for (Long issueId : issueIds) {
-            testIssueFolderRelVO.setIssueId(issueId);
-            resultRelDTOS.add(modelMapper.map(testIssueFolderRelMapper.selectOne(modelMapper
-                    .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class));
+            testIssueFolderRelDTO.setIssueId(issueId);
+            resultRelDTOS.add(ConvertHelper.convert(iTestIssueFolderRelService.queryOne(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class));
         }
         if (ObjectUtils.isEmpty(resultRelDTOS)) {
             return new PageInfo<>(new ArrayList<>());
         }
-        List<IssueComponentDetailFolderRelVO> issueComponentDetailFolderRelVOS = new ArrayList<>();
-        Map<Long, IssueInfosVO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true, organizationId);
+        List<IssueComponentDetailFolderRelDTO> issueComponentDetailFolderRelDTOS = new ArrayList<>();
+        Map<Long, IssueInfosDTO> map = testCaseService.getIssueInfoMap(projectId, issueIds, true, organizationId);
         if (ObjectUtils.isEmpty(map)) {
             return new PageInfo<>(new ArrayList<>());
         }
 
-        for (TestIssueFolderRelVO resultRelDTO : resultRelDTOS) {
+        TestIssueFolderE testIssueFolderE = TestIssueFolderEFactory.create();
+
+        for (TestIssueFolderRelDTO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
-                IssueComponentDetailFolderRelVO issueComponentDetailFolderRelVO = new IssueComponentDetailFolderRelVO(map.get(resultRelDTO.getIssueId()));
-                issueComponentDetailFolderRelVO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
-                TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(resultRelDTO.getFolderId());
-                issueComponentDetailFolderRelVO.setFolderId(resultRelDTO.getFolderId());
-                issueComponentDetailFolderRelVO.setFolderName(testIssueFolderDTO.getName());
-                issueComponentDetailFolderRelVOS.add(issueComponentDetailFolderRelVO);
+                IssueComponentDetailFolderRelDTO issueComponentDetailFolderRelDTO = new IssueComponentDetailFolderRelDTO(map.get(resultRelDTO.getIssueId()));
+                issueComponentDetailFolderRelDTO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
+                testIssueFolderE.setFolderId(resultRelDTO.getFolderId());
+                TestIssueFolderE resE = testIssueFolderE.queryByPrimaryKey();
+                issueComponentDetailFolderRelDTO.setFolderId(resultRelDTO.getFolderId());
+                issueComponentDetailFolderRelDTO.setFolderName(resE.getName());
+                issueComponentDetailFolderRelDTOS.add(issueComponentDetailFolderRelDTO);
             }
         }
-        return new PageInfo<>(issueComponentDetailFolderRelVOS);
+        return new PageInfo<>(issueComponentDetailFolderRelDTOS);
     }
 
-    private void loadResultRelDTOS(Long projectId, Long versionId, Long folderId, Long issueId, List<TestIssueFolderRelVO> resultRelDTOS) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, versionId, projectId, issueId, null);
-        List<TestIssueFolderRelVO> res = modelMapper.map(testIssueFolderRelMapper.select(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)),
-                new TypeToken<List<TestIssueFolderRelVO>>() {
-                }.getType());
+    private void loadResultRelDTOS(Long projectId, Long versionId, Long folderId, Long issueId, List<TestIssueFolderRelDTO> resultRelDTOS) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, issueId, null);
+        List res = ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
         if (!res.isEmpty()) {
             resultRelDTOS.addAll(res);
         }
     }
 
     @Override
-    public PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, PageRequest pageRequest, Long organizationId) {
-        SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryVO.getSearchDTO()).orElseGet(SearchDTO::new);
+    public PageInfo<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest, Long organizationId) {
+        SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryDTO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
-        List<TestIssueFolderRelVO> resultRelDTOS = new ArrayList<>();
+        List<TestIssueFolderRelDTO> resultRelDTOS = new ArrayList<>();
 
         String sIssueIds = "issueIds";
 
@@ -104,10 +106,10 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             }
         } else {
             //如果传入了version就去筛选这些version下的rel
-            if (ObjectUtils.isEmpty(testFolderRelQueryVO.getVersionIds())) {
+            if (ObjectUtils.isEmpty(testFolderRelQueryDTO.getVersionIds())) {
                 loadResultRelDTOS(projectId, null, folderId, null, resultRelDTOS);
             } else {
-                for (Long versionId : testFolderRelQueryVO.getVersionIds()) {
+                for (Long versionId : testFolderRelQueryDTO.getVersionIds()) {
                     loadResultRelDTOS(projectId, versionId, folderId, null, resultRelDTOS);
                 }
             }
@@ -135,12 +137,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         return new CustomPage<>(queryIssuesById(projectId, null, folderId, pagedIssues, organizationId).getList(), allIssuesArray);
     }
 
-    private Long[] getFilterIssues(Long projectId, SearchDTO searchDTO, List<TestIssueFolderRelVO> resultRelDTOS) {
+    private Long[] getFilterIssues(Long projectId, SearchDTO searchDTO, List<TestIssueFolderRelDTO> resultRelDTOS) {
         //返回过滤后的issueIds
         List<Long> filteredIssues = testCaseService.queryIssueIdsByOptions(searchDTO, projectId);
 
         List<Long> allFilteredIssues = new ArrayList<>();
-        resultRelDTOS.stream().map(TestIssueFolderRelVO::getIssueId).forEach(v -> {
+        resultRelDTOS.stream().map(TestIssueFolderRelDTO::getIssueId).forEach(v -> {
             if (filteredIssues.contains(v)) {
                 allFilteredIssues.add(v);
             }
@@ -151,29 +153,30 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelVO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId, String applyType) {
+    public TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId, String applyType) {
         Long newFolderId = getDefaultFolderId(projectId, folderId, versionId);
         IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, applyType);
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(newFolderId, versionId, projectId, issueDTO.getIssueId(), null);
-        return modelMapper.map(testIssueFolderRelMapper.insert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(newFolderId, versionId, projectId, issueDTO.getIssueId(), null);
+        return ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
+                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestIssueFolderRelVO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelVO> testIssueFolderRelVOS) {
-        List<TestIssueFolderRelVO> resultTestIssueFolderRelVOS = new ArrayList<>();
+    public List<TestIssueFolderRelDTO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS) {
+        List<TestIssueFolderRelDTO> resultTestIssueFolderRelDTOS = new ArrayList<>();
         Long newFolderId = null;
-        if (!ObjectUtils.isEmpty(testIssueFolderRelVOS)) {
-            newFolderId = getDefaultFolderId(projectId, testIssueFolderRelVOS.get(0).getFolderId(), testIssueFolderRelVOS.get(0).getVersionId());
+        if (!ObjectUtils.isEmpty(testIssueFolderRelDTOS)) {
+            newFolderId = getDefaultFolderId(projectId, testIssueFolderRelDTOS.get(0).getFolderId(), testIssueFolderRelDTOS.get(0).getVersionId());
         }
-        for (TestIssueFolderRelVO testIssueFolderRelVO : testIssueFolderRelVOS) {
-            testIssueFolderRelVO.setFolderId(newFolderId);
-            testIssueFolderRelVO.setProjectId(projectId);
-            TestIssueFolderRelVO resultTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
-                    .insert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
-            resultTestIssueFolderRelVOS.add(resultTestIssueFolderRelVO);
+        for (TestIssueFolderRelDTO testIssueFolderRelDTO : testIssueFolderRelDTOS) {
+            testIssueFolderRelDTO.setFolderId(newFolderId);
+            testIssueFolderRelDTO.setProjectId(projectId);
+            TestIssueFolderRelDTO resultTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.insert(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+            resultTestIssueFolderRelDTOS.add(resultTestIssueFolderRelDTO);
         }
-        return resultTestIssueFolderRelVOS;
+        return resultTestIssueFolderRelDTOS;
     }
 
     private Long getDefaultFolderId(Long projectId, Long folderId, Long versionId) {
@@ -187,95 +190,92 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long projectId, List<Long> issuesId) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
         for (Long issueId : issuesId) {
-            testIssueFolderRelVO.setIssueId(issueId);
-            testIssueFolderRelMapper.delete(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class));
+            testIssueFolderRelDTO.setIssueId(issueId);
+            iTestIssueFolderRelService.delete(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelVO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues) {
-        TestIssueFolderRelDTO testIssueFolderRelDTO = modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class);
-        testIssueFolderRelMapper.updateVersionByFolderWithNoLock(testIssueFolderRelDTO);
-        TestIssueFolderRelVO resTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
-                .selectByPrimaryKey(testIssueFolderRelDTO.getId()), TestIssueFolderRelVO.class);
-        testCaseService.batchIssueToVersionTest(testIssueFolderRelVO.getProjectId(), testIssueFolderRelVO.getVersionId(), issues);
-        return resTestIssueFolderRelVO;
+    public TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO, List<Long> issues) {
+        TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.updateVersionByFolderWithNoLock(ConvertHelper
+                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
+        testCaseService.batchIssueToVersionTest(testIssueFolderRelDTO.getProjectId(), testIssueFolderRelDTO.getVersionId(), issues);
+        return resTestIssueFolderRelDTO;
     }
 
     @Override
-    public List<TestIssueFolderRelVO> queryByFolder(TestIssueFolderRelVO testIssueFolderRelVO) {
-        return modelMapper.map(testIssueFolderRelMapper.select(modelMapper
-                        .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)),
-                new TypeToken<List<TestIssueFolderRelVO>>() {
-                }.getType());
+    public List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO) {
+        return ConvertHelper.convertList(iTestIssueFolderRelService.query(ConvertHelper
+                .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
     }
 
     @Override
-    public TestIssueFolderRelVO cloneOneIssue(Long projectId, Long issueId) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
-        testIssueFolderRelVO.setIssueId(issueId);
+    public TestIssueFolderRelDTO cloneOneIssue(Long projectId, Long issueId) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
+        testIssueFolderRelDTO.setIssueId(issueId);
 
-        TestIssueFolderRelVO resTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
-                .selectOne(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+        TestIssueFolderRelDTO resTestIssueFolderRelDTO = ConvertHelper.convert(iTestIssueFolderRelService.queryOne(
+                ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class)), TestIssueFolderRelDTO.class);
 
         Long[] issueIds = {issueId};
-        List<Long> issuesId = testCaseService.batchCloneIssue(projectId, resTestIssueFolderRelVO.getVersionId(), issueIds);
+        List<Long> issuesId = testCaseService.batchCloneIssue(projectId, resTestIssueFolderRelDTO.getVersionId(), issueIds);
         for (Long id : issuesId) {
             //克隆issue步骤
-            TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-            testCaseStepVO.setIssueId(issueId);
-            testCaseStepService.batchClone(testCaseStepVO, id, projectId);
+            TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+            testCaseStepDTO.setIssueId(issueId);
+            testCaseStepService.batchClone(testCaseStepDTO, id, projectId);
             //插入issue与folder的关联
-            resTestIssueFolderRelVO.setId(null);
-            resTestIssueFolderRelVO.setIssueId(id);
-            modelMapper.map(testIssueFolderRelMapper.insert(modelMapper
-                    .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+            resTestIssueFolderRelDTO.setId(null);
+            resTestIssueFolderRelDTO.setIssueId(id);
+            iTestIssueFolderRelService.insert(ConvertHelper
+                    .convert(resTestIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
-        return resTestIssueFolderRelVO;
+        return resTestIssueFolderRelDTO;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void moveFolderIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosVO> issueInfosVOS) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, versionId, projectId, null, null);
-        for (IssueInfosVO issueInfosVO : issueInfosVOS) {
-            testIssueFolderRelVO.setObjectVersionNumber(issueInfosVO.getObjectVersionNumber());
-            testIssueFolderRelVO.setIssueId(issueInfosVO.getIssueId());
-            TestIssueFolderRelDTO testIssueFolderRelDTO = modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class);
-            testIssueFolderRelMapper.updateFolderByIssue(testIssueFolderRelDTO);
+    public void moveFolderIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
+        for (IssueInfosDTO issueInfosDTO : issueInfosDTOS) {
+            testIssueFolderRelDTO.setObjectVersionNumber(issueInfosDTO.getObjectVersionNumber());
+            testIssueFolderRelDTO.setIssueId(issueInfosDTO.getIssueId());
+            iTestIssueFolderRelService.updateFolderByIssue(ConvertHelper
+                    .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
         }
-        testCaseService.batchIssueToVersionTest(projectId, versionId, issueInfosVOS.stream().map(IssueInfosVO::getIssueId).collect(Collectors.toList()));
+        testCaseService.batchIssueToVersionTest(projectId, versionId, issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).collect(Collectors.toList()));
     }
 
     /*
      * @param projectId
      * @param versionId 目标version
      * @param folderId 目标folder
-     * @param issueInfosVOS 插入成功的issue信息
+     * @param issueInfosDTOS 插入成功的issue信息
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosVO> issueInfosVOS) {
-        TestIssueFolderRelVO testIssueFolderRelVO;
-        testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, versionId, projectId, null, null);
+    public void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosDTO> issueInfosDTOS) {
+        TestIssueFolderRelDTO testIssueFolderRelDTO;
+        testIssueFolderRelDTO = new TestIssueFolderRelDTO(folderId, versionId, projectId, null, null);
         //远程服务复制issue，得到远程issue的ids
-        if (!ObjectUtils.isEmpty(issueInfosVOS)) {
+        if (!ObjectUtils.isEmpty(issueInfosDTOS)) {
             //克隆接口，传给它的顺序是怎么样的返回的就是怎么样的
             List<Long> issuesId = testCaseService.batchCloneIssue(projectId, versionId,
-                    issueInfosVOS.stream().map(IssueInfosVO::getIssueId).toArray(Long[]::new));
+                    issueInfosDTOS.stream().map(IssueInfosDTO::getIssueId).toArray(Long[]::new));
             int i = 0;
             for (Long id : issuesId) {
                 //克隆issue步骤
-                TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-                testCaseStepVO.setIssueId(issueInfosVOS.get(i++).getIssueId());
-                testCaseStepService.batchClone(testCaseStepVO, id, projectId);
+                TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+                testCaseStepDTO.setIssueId(issueInfosDTOS.get(i++).getIssueId());
+                testCaseStepService.batchClone(testCaseStepDTO, id, projectId);
                 //插入issue与folder的关联
-                testIssueFolderRelVO.setIssueId(id);
-                modelMapper.map(testIssueFolderRelMapper.insert(modelMapper
-                        .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+                testIssueFolderRelDTO.setIssueId(id);
+                iTestIssueFolderRelService.insert(ConvertHelper
+                        .convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
             }
         }
     }

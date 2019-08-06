@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
+import io.choerodon.agile.api.dto.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.choerodon.agile.api.vo.*;
+import io.choerodon.agile.api.dto.*;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -32,7 +32,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String orders) {
+    public ResponseEntity<PageInfo<IssueListDTO>> listIssueWithoutSubToTestComponent(Long projectId, SearchDTO searchDTO, Long organizationId, int page, int size, String orders) {
         throw new CommonException(QUERY_ERROR);
     }
 
@@ -47,7 +47,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
+    public ResponseEntity<PageInfo<IssueComponentDetailDTO>> listIssueWithoutSubDetail(int page, int size, String orders, Long projectId, SearchDTO searchDTO, Long organizationId) {
         throw new CommonException(QUERY_ERROR);
     }
 

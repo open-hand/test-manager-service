@@ -4,19 +4,19 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderWithVersionNameDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
  */
 public interface TestIssueFolderService {
 
-    TestIssueFolderVO insert(TestIssueFolderVO testIssueFolderVO);
+    TestIssueFolderDTO insert(TestIssueFolderDTO testIssueFolderDTO);
 
     void delete(Long projectId, Long folderId);
 
-    TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO);
+    TestIssueFolderDTO update(TestIssueFolderDTO testIssueFolderDTO);
 
     JSONObject getTestIssueFolder(Long projectId);
 
@@ -24,9 +24,9 @@ public interface TestIssueFolderService {
 
     void copyFolder(Long projectId, Long versionId, Long[] folderIds);
 
-    void moveFolder(Long projectId, List<TestIssueFolderVO> testIssueFolderVOS);
+    void moveFolder(Long projectId, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
-    List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId);
+    List<TestIssueFolderDTO> queryByParameter(Long projectId,Long versionId);
 
-    List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId);
+    List<TestIssueFolderWithVersionNameDTO> queryByParameterWithVersionName(Long projectId, Long versionId);
 }

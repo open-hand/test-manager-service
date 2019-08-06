@@ -1,19 +1,21 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.Map;
-
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
-import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
+import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
+import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
+
+import java.util.Map;
+
+import org.springframework.security.core.Authentication;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
  */
 public interface TestAppInstanceService {
 
-    TestAppInstanceVO create(ApplicationDeployVO deployDTO, Long projectId, Long userId);
+    TestAppInstanceDTO create(ApplicationDeployDTO deployDTO, Long projectId, Long userId);
 
     void createBySchedule(Map<String, Object> data);
 

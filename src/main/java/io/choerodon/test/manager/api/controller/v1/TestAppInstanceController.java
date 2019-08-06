@@ -16,8 +16,8 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
-import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
+import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
+import io.choerodon.test.manager.api.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;
 
 /**
@@ -57,17 +57,17 @@ public class TestAppInstanceController {
      * 立刻部署应用
      *
      * @param projectId            项目id
-     * @param applicationDeployVO 部署信息
+     * @param applicationDeployDTO 部署信息
      * @return ApplicationInstanceDTO
      */
     @Permission(type = ResourceType.PROJECT,
             roles = {InitRoleCode.PROJECT_OWNER,
                     InitRoleCode.PROJECT_MEMBER})
     @PostMapping
-    public ResponseEntity<TestAppInstanceVO> deploy(
+    public ResponseEntity<TestAppInstanceDTO> deploy(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestBody ApplicationDeployVO applicationDeployVO) {
-        return Optional.ofNullable(instanceService.create(applicationDeployVO, projectId, DetailsHelper.getUserDetails().getUserId()))
+            @RequestBody ApplicationDeployDTO applicationDeployDTO) {
+        return Optional.ofNullable(instanceService.create(applicationDeployDTO, projectId, DetailsHelper.getUserDetails().getUserId()))
                 .map(target -> new ResponseEntity<>(target, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.application.deploy.immediate"));
     }

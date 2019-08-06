@@ -1,23 +1,23 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestStatusDTO;
 
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestStatusVO;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
 public interface TestStatusService {
-    List<TestStatusVO> query(TestStatusVO testStatusVO);
+    List<TestStatusDTO> query(TestStatusDTO testStatusDTO);
 
-    TestStatusVO insert(TestStatusVO testStatusVO);
+    TestStatusDTO insert(TestStatusDTO testStatusDTO);
 
-    void delete(TestStatusVO testStatusVO);
+    void delete(TestStatusDTO testStatusDTO);
 
-    TestStatusVO update(TestStatusVO testStatusVO);
+    TestStatusDTO update(TestStatusDTO testStatusDTO);
 
-    void populateStatus(TestCycleCaseVO testCycleCaseVO);
+    void populateStatus(TestCycleCaseDTO testCycleCaseDTO);
 
     Long getDefaultStatusId(String type);
 }
