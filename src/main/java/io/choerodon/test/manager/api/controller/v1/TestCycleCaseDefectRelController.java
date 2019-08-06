@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -90,5 +91,16 @@ public class TestCycleCaseDefectRelController {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
         testCycleCaseDefectRelVO.setProjectId(projectId);
         testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelVO, organizationId);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("根据缺陷issueId查询测试步骤")
+    @GetMapping("/query_by_bug")
+    public ResponseEntity<List<TestCycleCaseVO>> queryByBug(@PathVariable(name = "project_id") Long projectId,
+                                                            @RequestParam Long bugId) {
+        return Optional.ofNullable(testCycleCaseDefectRelService.queryByBug(projectId, bugId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCaseStep.get"));
+
     }
 }

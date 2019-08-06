@@ -10,6 +10,8 @@ public class IssueInfoDTO {
 
 	private String issueNum;
 
+	private String summary;
+
 	public Long getIssueId() {
 		return issueId;
 	}
@@ -24,5 +26,13 @@ public class IssueInfoDTO {
 
 	public void setIssueNum(String issueNum) {
 		this.issueNum = issueNum;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getSummary() {
+		return summary;
 	}
 }

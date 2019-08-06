@@ -27,6 +27,9 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "用例issueID")
     private Long issueId;
 
+    @ApiModelProperty(value = "用例issue名称")
+    private String summary;
+
     @ApiModelProperty(value = "排序值")
     private String rank;
 
@@ -340,5 +343,13 @@ public class TestCycleCaseVO {
 
     public void setDefects(List<TestCycleCaseDefectRelVO> caseDefect) {
         this.caseDefect = caseDefect;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 }
