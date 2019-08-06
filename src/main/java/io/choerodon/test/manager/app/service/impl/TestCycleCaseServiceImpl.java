@@ -519,6 +519,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseDTO.setProjectId(projectId);
         testCycleCaseDTO.setCycleId(testCycleCaseVO.getCycleId());
         testCycleCaseDTO.setIssueId(testCycleCaseVO.getIssueId());
+        testCycleCaseDTO.setExecutionStatus(testCycleCaseVO.getExecutionStatus());
         if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCaseDTO).longValue() > 0) {
             throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
         }
