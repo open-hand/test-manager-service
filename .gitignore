@@ -27,9 +27,9 @@ application-default.yml
 .DS_Store
 
 # frontend
-yarn.lock
 lib
 node_modules
+yarn.lock
 package-lock.json
 **/lib/dist/
 **/lib/assets/

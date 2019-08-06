@@ -6,8 +6,8 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.agile.api.dto.UserDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.UserFeignClient;
 

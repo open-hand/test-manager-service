@@ -1,24 +1,27 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import io.choerodon.base.domain.Sort;
+import io.choerodon.core.convertor.ConvertHelper;
 
-import org.modelmapper.ModelMapper;
+import com.github.pagehelper.PageInfo;
+
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.*;
+import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.domain.service.ITestIssueFolderRelService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestIssueFolderRelE;
+import io.choerodon.test.manager.infra.common.utils.RedisTemplateUtil;
+import io.choerodon.test.manager.infra.mapper.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
-import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
-import io.choerodon.test.manager.infra.mapper.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-02-15.
@@ -26,6 +29,63 @@ import io.choerodon.test.manager.infra.mapper.*;
  */
 @Service
 public class DemoServiceImpl implements DemoService {
+
+    @Autowired
+    TestIssueFolderService testIssueFolderService;
+
+    @Autowired
+    TestCaseStepService iTestCaseStepService;
+
+    @Autowired
+    ITestIssueFolderRelService iTestIssueFolderRelService;
+
+    @Autowired
+    TestCycleService testCycleService;
+
+    @Autowired
+    TestStatusService testStatusService;
+
+    @Autowired
+    TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    TestCycleCaseStepService testCycleCaseStepService;
+
+    @Autowired
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+
+    @Autowired
+    TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    TestCaseStepMapper testCaseStepMapper;
+
+    @Autowired
+    TestIssueFolderRelMapper testIssueFolderRelMapper;
+
+    @Autowired
+    TestCycleMapper testCycleMapper;
+
+    @Autowired
+    TestStatusMapper testStatusMapper;
+
+    @Autowired
+    TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    TestCycleCaseStepMapper testCycleCaseStepMapper;
+
+    @Autowired
+    TestCycleCaseHistoryMapper testCycleCaseHistoryMapper;
+
+    @Autowired
+    TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    @Autowired
+    RedisTemplateUtil redisTemplateUtil;
 
     private static final String DATE_FORMATTER = "yyyy-MM-dd";
     private static final String REDIS_COUNT_KEY = "summary:";
@@ -38,63 +98,6 @@ public class DemoServiceImpl implements DemoService {
     private static final String RANK_7 = "0|c0000k:";
     private static final String RANK_8 = "0|c0000o:";
     private static final String STRING_1 = "维护配送信息";
-
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
-
-    @Autowired
-    private TestCaseStepService testCaseStepService;
-
-    @Autowired
-    private TestCycleService testCycleService;
-
-    @Autowired
-    private TestStatusService testStatusService;
-
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
-
-    @Autowired
-    private TestCycleCaseStepService testCycleCaseStepService;
-
-    @Autowired
-    private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
-
-    @Autowired
-    private TestIssueFolderMapper testIssueFolderMapper;
-
-    @Autowired
-    private TestCaseStepMapper testCaseStepMapper;
-
-    @Autowired
-    private TestIssueFolderRelMapper testIssueFolderRelMapper;
-
-    @Autowired
-    private TestCycleMapper testCycleMapper;
-
-    @Autowired
-    private TestStatusMapper testStatusMapper;
-
-    @Autowired
-    private TestCycleCaseMapper testCycleCaseMapper;
-
-    @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
-
-    @Autowired
-    private TestCycleCaseHistoryMapper testCycleCaseHistoryMapper;
-
-    @Autowired
-    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
-
-    @Autowired
-    private RedisTemplate redisTemplate;
-
-    @Autowired
-    private RedisTemplateUtil redisTemplateUtil;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     public OrganizationRegisterEventPayload demoInit(DemoPayload demoPayload) {
@@ -179,14 +182,14 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private long insertIssueFolder(Long versionId, Long projectId, String folderName) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
 
-        testIssueFolderVO.setName(folderName);
-        testIssueFolderVO.setProjectId(projectId);
-        testIssueFolderVO.setVersionId(versionId);
-        testIssueFolderVO.setType("cycle");
+        testIssueFolderDTO.setName(folderName);
+        testIssueFolderDTO.setProjectId(projectId);
+        testIssueFolderDTO.setVersionId(versionId);
+        testIssueFolderDTO.setType("cycle");
 
-        return testIssueFolderService.insert(testIssueFolderVO).getFolderId();
+        return testIssueFolderService.insert(testIssueFolderDTO).getFolderId();
     }
 
     private void initIssueSteps(List<Long> testIssueIds, Long projectId, Long userId, Date date) {
@@ -225,15 +228,15 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private void insertIssueSteps(String rank, Long issueId, String testStep, String testData, String expectedResult, Long projectId) {
-        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
 
-        testCaseStepVO.setRank(rank);
-        testCaseStepVO.setIssueId(issueId);
-        testCaseStepVO.setTestStep(testStep);
-        testCaseStepVO.setTestData(testData);
-        testCaseStepVO.setExpectedResult(expectedResult);
+        testCaseStepDTO.setRank(rank);
+        testCaseStepDTO.setIssueId(issueId);
+        testCaseStepDTO.setTestStep(testStep);
+        testCaseStepDTO.setTestData(testData);
+        testCaseStepDTO.setExpectedResult(expectedResult);
 
-        testCaseStepService.changeStep(testCaseStepVO, projectId);
+        iTestCaseStepService.changeStep(testCaseStepDTO, projectId);
     }
 
     private void initIssueFolderRels(List<Long> issueFolderIds, List<Long> testIssueIds, Long projectId, Long versionId, Long userId, Date date) {
@@ -246,15 +249,14 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private void insertIssueFolderRel(Long folderId, Long versionId, Long projectId, Long issueId) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+        TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
 
-        testIssueFolderRelVO.setFolderId(folderId);
-        testIssueFolderRelVO.setVersionId(versionId);
-        testIssueFolderRelVO.setProjectId(projectId);
-        testIssueFolderRelVO.setIssueId(issueId);
+        testIssueFolderRelDTO.setFolderId(folderId);
+        testIssueFolderRelDTO.setVersionId(versionId);
+        testIssueFolderRelDTO.setProjectId(projectId);
+        testIssueFolderRelDTO.setIssueId(issueId);
 
-        TestIssueFolderRelDTO testIssueFolderRelDTO = modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class);
-        testIssueFolderRelMapper.insert(testIssueFolderRelDTO);
+        iTestIssueFolderRelService.insert(ConvertHelper.convert(testIssueFolderRelDTO, TestIssueFolderRelE.class));
     }
 
     private List<Long> initCycles(Long projectId, Long versionId, Date dateOne, Date dateThree, Date dateFour, Date dateSix, Long userId) {
@@ -269,17 +271,17 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private Long insertCycle(Long projectId, String cycleName, Long versionId, String environment, Date fromDate, Date toDate) {
-        TestCycleVO testCycleVO = new TestCycleVO();
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
 
-        testCycleVO.setCycleName(cycleName);
-        testCycleVO.setVersionId(versionId);
-        testCycleVO.setEnvironment(environment);
-        testCycleVO.setFromDate(fromDate);
-        testCycleVO.setToDate(toDate);
-        testCycleVO.setType("cycle");
-        testCycleVO.setProjectId(projectId);
+        testCycleDTO.setCycleName(cycleName);
+        testCycleDTO.setVersionId(versionId);
+        testCycleDTO.setEnvironment(environment);
+        testCycleDTO.setFromDate(fromDate);
+        testCycleDTO.setToDate(toDate);
+        testCycleDTO.setType("cycle");
+        testCycleDTO.setProjectId(projectId);
 
-        return testCycleService.insert(projectId, testCycleVO).getCycleId();
+        return testCycleService.insert(projectId, testCycleDTO).getCycleId();
     }
 
     private Map<Long, List<Long>> initCycleFolders(Long projectId, List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
@@ -326,30 +328,30 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private Long insertCycleFolder(Long projectId, Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId) {
-        TestCycleVO testCycleVO = new TestCycleVO();
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
 
-        testCycleVO.setParentCycleId(parentCycleId);
-        testCycleVO.setCycleName(cycleName);
-        testCycleVO.setVersionId(versionId);
-        testCycleVO.setFromDate(fromDate);
-        testCycleVO.setToDate(toDate);
-        testCycleVO.setType("folder");
-        testCycleVO.setFolderId(folderId);
-        testCycleVO.setProjectId(projectId);
+        testCycleDTO.setParentCycleId(parentCycleId);
+        testCycleDTO.setCycleName(cycleName);
+        testCycleDTO.setVersionId(versionId);
+        testCycleDTO.setFromDate(fromDate);
+        testCycleDTO.setToDate(toDate);
+        testCycleDTO.setType("folder");
+        testCycleDTO.setFolderId(folderId);
+        testCycleDTO.setProjectId(projectId);
 
-        return testCycleService.insert(projectId, testCycleVO).getCycleId();
+        return testCycleService.insert(projectId, testCycleDTO).getCycleId();
     }
 
     private long initTestStatus(Long projectId, Long userId, Date date) {
-        TestStatusVO testStatusVO = new TestStatusVO();
+        TestStatusDTO testStatusDTO = new TestStatusDTO();
 
-        testStatusVO.setStatusName("WIP");
-        testStatusVO.setDescription("Work In Process");
-        testStatusVO.setStatusColor("rgba(248,231,28,1)");
-        testStatusVO.setStatusType("CYCLE_CASE");
-        testStatusVO.setProjectId(projectId);
+        testStatusDTO.setStatusName("WIP");
+        testStatusDTO.setDescription("Work In Process");
+        testStatusDTO.setStatusColor("rgba(248,231,28,1)");
+        testStatusDTO.setStatusType("CYCLE_CASE");
+        testStatusDTO.setProjectId(projectId);
 
-        Long statusID = testStatusService.insert(testStatusVO).getStatusId();
+        Long statusID = testStatusService.insert(testStatusDTO).getStatusId();
 
         testStatusMapper.updateAuditFields(statusID, userId, date);
 
@@ -357,7 +359,7 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private Long[] updateExecutionStatus(Map<Long, List<Long>> phaseIdsMap, List<Long> testIssueIds, Long statusWIPId, Long projectId, Long organizationId, Long userId, Date dateTwo, Date dateThree) {
-        TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         Long[] defectExecution = new Long[2];
         List<Long> executionIdsOne = new ArrayList<>();
         List<Long> executionIdsTwo = new ArrayList<>();
@@ -373,10 +375,10 @@ public class DemoServiceImpl implements DemoService {
 
 
         for (Long phaseId : phaseIdsOne) {
-            testCycleCaseVO.setCycleId(phaseId);
-            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageRequest, projectId, organizationId);
+            testCycleCaseDTO.setCycleId(phaseId);
+            PageInfo<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
 
-            for (TestCycleCaseVO executionDTO : executionDTOs.getList()) {
+            for (TestCycleCaseDTO executionDTO : executionDTOs.getList()) {
                 if (executionDTO.getIssueId().equals(testIssueIds.get(2))) {
                     updateExecutionStepStatus(executionDTO.getExecuteId(), 2, projectId, organizationId);
                     executionDTO.setExecutionStatus(statusWIPId);
@@ -398,10 +400,10 @@ public class DemoServiceImpl implements DemoService {
         }
 
         for (Long phaseId : phaseIdsTwo) {
-            testCycleCaseVO.setCycleId(phaseId);
-            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageRequest, projectId, organizationId);
+            testCycleCaseDTO.setCycleId(phaseId);
+            PageInfo<TestCycleCaseDTO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseDTO, pageRequest, projectId, organizationId);
 
-            for (TestCycleCaseVO executionDTO : executionDTOs.getList()) {
+            for (TestCycleCaseDTO executionDTO : executionDTOs.getList()) {
                 executionIdsThree.add(executionDTO.getExecuteId());
             }
         }
@@ -433,7 +435,7 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private void updateExecutionStepStatus(Long caseId, int flag, Long projectId, Long organizationId) {
-        List<TestCycleCaseStepVO> testCaseStepDTOs = testCycleCaseStepService.querySubStep(caseId, projectId, organizationId);
+        List<TestCycleCaseStepDTO> testCaseStepDTOs = testCycleCaseStepService.querySubStep(caseId, projectId, organizationId);
         switch (flag) {
             case 2:
                 testCaseStepDTOs.get(0).setStepStatus(5L);
@@ -451,8 +453,8 @@ public class DemoServiceImpl implements DemoService {
                 testCaseStepDTOs.get(4).setStepStatus(6L);
                 break;
             default:
-                for (TestCycleCaseStepVO testCycleCaseStepVO : testCaseStepDTOs) {
-                    testCycleCaseStepVO.setStepStatus(5L);
+                for (TestCycleCaseStepDTO testCycleCaseStepDTO : testCaseStepDTOs) {
+                    testCycleCaseStepDTO.setStepStatus(5L);
                 }
                 break;
         }
@@ -460,13 +462,13 @@ public class DemoServiceImpl implements DemoService {
     }
 
     private void initExecutionDefect(Long[] defectExecution, Long projectId, Long organizationId, Long userId, Date date) {
-        TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
-        testCycleCaseDefectRelVO.setDefectType("CYCLE_CASE");
-        testCycleCaseDefectRelVO.setDefectLinkId(defectExecution[0]);
-        testCycleCaseDefectRelVO.setIssueId(defectExecution[1]);
-        testCycleCaseDefectRelVO.setProjectId(projectId);
+        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
+        testCycleCaseDefectRelDTO.setDefectType("CYCLE_CASE");
+        testCycleCaseDefectRelDTO.setDefectLinkId(defectExecution[0]);
+        testCycleCaseDefectRelDTO.setIssueId(defectExecution[1]);
+        testCycleCaseDefectRelDTO.setProjectId(projectId);
 
-        Long defectId = testCycleCaseDefectRelService.insert(testCycleCaseDefectRelVO, projectId, organizationId).getId();
+        Long defectId = testCycleCaseDefectRelService.insert(testCycleCaseDefectRelDTO, projectId, organizationId).getId();
 
         testCycleCaseDefectRelMapper.updateAuditFields(defectId, userId, date);
         testCycleCaseHistoryMapper.updateAuditFields(defectExecution, userId, date);

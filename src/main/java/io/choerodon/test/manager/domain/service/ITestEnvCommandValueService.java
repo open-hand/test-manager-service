@@ -1,14 +1,14 @@
-//package io.choerodon.test.manager.domain.service;
-//
-//import io.choerodon.test.manager.infra.vo.TestEnvCommandValueDTO;
-//
-//public interface ITestEnvCommandValueService {
-//
-//    TestEnvCommandValueDTO query(Long id);
-//
-//    TestEnvCommandValueDTO update(TestEnvCommandValueDTO testEnvCommandValueDTO);
-//
-//    void delete(TestEnvCommandValueDTO testEnvCommandValueDTO);
-//
-//    TestEnvCommandValueDTO insert(TestEnvCommandValueDTO testEnvCommandValueDTO);
-//}
+package io.choerodon.test.manager.domain.service;
+
+import io.choerodon.test.manager.domain.test.manager.entity.TestEnvCommandValue;
+
+public interface ITestEnvCommandValueService {
+
+    TestEnvCommandValue query(Long id);
+
+    TestEnvCommandValue update(TestEnvCommandValue testEnvCommandValue);
+
+    void delete(TestEnvCommandValue testEnvCommandValue);
+
+    TestEnvCommandValue insert(TestEnvCommandValue testEnvCommandValue);
+}

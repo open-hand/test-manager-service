@@ -6,14 +6,14 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.infra.dto.TestStatusDTO;
+import io.choerodon.test.manager.infra.dataobject.TestStatusDO;
 
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
-public interface TestStatusMapper extends Mapper<TestStatusDTO> {
+public interface TestStatusMapper extends Mapper<TestStatusDO> {
 
-    List<TestStatusDTO> queryAllUnderProject(@Param("dto") TestStatusDTO testStatusDTO);
+    List<TestStatusDO> queryAllUnderProject(@Param("dto") TestStatusDO testStatusDO);
 
     Long ifDeleteCycleCaseAllow(@Param("statusId") Long statusId);
 

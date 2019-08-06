@@ -1,37 +1,36 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
-
+import io.choerodon.agile.api.dto.IssueCreateDTO;
 import com.github.pagehelper.PageInfo;
-
-import io.choerodon.agile.api.vo.IssueCreateDTO;
 import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.IssueComponentDetailFolderRelVO;
-import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.test.manager.api.vo.TestFolderRelQueryVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderRelVO;
+import io.choerodon.test.manager.api.dto.IssueComponentDetailFolderRelDTO;
+import io.choerodon.test.manager.api.dto.IssueInfosDTO;
+import io.choerodon.test.manager.api.dto.TestFolderRelQueryDTO;
+import io.choerodon.test.manager.api.dto.TestIssueFolderRelDTO;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
 public interface TestIssueFolderRelService {
-    PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, PageRequest pageRequest, Long organizationId);
+    PageInfo<IssueComponentDetailFolderRelDTO> query(Long projectId, Long folderId, TestFolderRelQueryDTO testFolderRelQueryDTO, PageRequest pageRequest,Long organizationId);
 
-    PageInfo<IssueComponentDetailFolderRelVO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId);
+    PageInfo<IssueComponentDetailFolderRelDTO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds,Long organizationId);
 
-    TestIssueFolderRelVO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId, String applyType);
+    TestIssueFolderRelDTO insertTestAndRelationship(IssueCreateDTO issueCreateDTO, Long projectId, Long folderId, Long versionId,String applyType);
 
-    List<TestIssueFolderRelVO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelVO> testIssueFolderRelVOS);
+    List<TestIssueFolderRelDTO> insertBatchRelationship(Long projectId, List<TestIssueFolderRelDTO> testIssueFolderRelDTOS);
 
-    void delete(Long projectId, List<Long> issuesId);
+    void delete(Long projectId,List<Long> issuesId);
 
-    void moveFolderIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosVO> issueInfosVOS);
+    void moveFolderIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
 
-    void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosVO> issueInfosVOS);
+    void copyIssue(Long projectId, Long versionId, Long folderId,List<IssueInfosDTO> issueInfosDTOS);
 
-    TestIssueFolderRelVO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues);
+    TestIssueFolderRelDTO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelDTO testIssueFolderRelDTO,List<Long> issues);
 
-    List<TestIssueFolderRelVO> queryByFolder(TestIssueFolderRelVO testIssueFolderRelVO);
+    List<TestIssueFolderRelDTO> queryByFolder(TestIssueFolderRelDTO testIssueFolderRelDTO);
 
-    TestIssueFolderRelVO cloneOneIssue(Long projectId, Long issueId);
+    TestIssueFolderRelDTO cloneOneIssue(Long projectId, Long issueId);
 }

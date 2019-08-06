@@ -21,7 +21,7 @@ import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.annotation.Permission;
 import io.choerodon.mybatis.annotation.SortDefault;
-import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 
 /**
@@ -31,22 +31,22 @@ import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 @RestController
 @RequestMapping(value = "/v1/projects/{project_id}/cycle/case/history/{cycleCaseId}")
 public class TestCycleCaseHistoryController {
-
     @Autowired
     TestCycleCaseHistoryService testCycleCaseHistoryService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询循环历史")
     @GetMapping
-    public ResponseEntity<PageInfo<TestCycleCaseHistoryVO>> query(@PathVariable(name = "project_id") Long projectId,
-                                                                  @ApiIgnore
-                                                                  @ApiParam(value = "分页信息", required = true)
-                                                                  @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                          PageRequest pageRequest,
-                                                                  @PathVariable(name = "cycleCaseId") Long cycleCaseId) {
+    public ResponseEntity<PageInfo<TestCycleCaseHistoryDTO>> query(@PathVariable(name = "project_id") Long projectId,
+                                                               @ApiIgnore
+                                                               @ApiParam(value = "分页信息", required = true)
+                                                               @SortDefault(value = "id", direction = Sort.Direction.DESC)
+                                                                       PageRequest pageRequest,
+                                                               @PathVariable(name = "cycleCaseId") Long cycleCaseId) {
 
         return Optional.ofNullable(testCycleCaseHistoryService.query(cycleCaseId, pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.history.query"));
+
     }
 }

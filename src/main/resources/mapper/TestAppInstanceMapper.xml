@@ -3,7 +3,7 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper">
 
 
-    <resultMap type="io.choerodon.test.manager.infra.dto.TestAppInstanceDTO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE" id="BaseResultMap">
         <id column="id" property="id"/>
         <id column="code" property="code"/>
         <id column="app_id" property="appId"/>

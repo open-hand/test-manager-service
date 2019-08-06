@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.vo.TestAutomationResultVO
+import io.choerodon.test.manager.api.dto.TestAutomationResultDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -28,12 +28,12 @@ class TestAutomationResultControllerSpec extends Specification {
 
     def "createAutomationResult"() {
         given:
-        TestAutomationResultVO resultDTO = new TestAutomationResultVO(result: "测试报告内容", objectVersionNumber: 1L)
+        TestAutomationResultDTO resultDTO = new TestAutomationResultDTO(result: "测试报告内容", objectVersionNumber: 1L)
         when: "增加一份新的测试报告"
         def response = restTemplate.exchange("/v1/projects/{project_id}/automation/result/change",
                 HttpMethod.PUT,
                 new HttpEntity<>(resultDTO),
-                TestAutomationResultVO,
+                TestAutomationResultDTO,
                 144L
         )
         then:
@@ -47,12 +47,12 @@ class TestAutomationResultControllerSpec extends Specification {
 
     def "updateAutomationResult"() {
         given:
-        TestAutomationResultVO resultDTO = new TestAutomationResultVO(id: automationResultIds[0], result: "测试报告内容1", objectVersionNumber: 1L)
+        TestAutomationResultDTO resultDTO = new TestAutomationResultDTO(id: automationResultIds[0], result: "测试报告内容1", objectVersionNumber: 1L)
         when: "更新测试报告内容"
         def response = restTemplate.exchange("/v1/projects/{project_id}/automation/result/change",
                 HttpMethod.PUT,
                 new HttpEntity<>(resultDTO),
-                TestAutomationResultVO,
+                TestAutomationResultDTO,
                 144L
         )
         then:
@@ -79,7 +79,7 @@ class TestAutomationResultControllerSpec extends Specification {
 
     def "removeAutomationResult"() {
         given:
-        TestAutomationResultVO resultDTO = new TestAutomationResultVO(id: automationResultIds[0])
+        TestAutomationResultDTO resultDTO = new TestAutomationResultDTO(id: automationResultIds[0])
         when: "删除新增的测试报告"
         def response = restTemplate.exchange("/v1/projects/{project_id}/automation/result/remove",
                 HttpMethod.DELETE,

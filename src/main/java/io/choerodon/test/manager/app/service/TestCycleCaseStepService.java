@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
 
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -12,10 +14,10 @@ public interface TestCycleCaseStepService {
     /**
      * 更新循环步骤
      *
-     * @param testCycleCaseStepVO
+     * @param testCycleCaseStepDTO
      * @return
      */
-    List<TestCycleCaseStepVO> update(List<TestCycleCaseStepVO> testCycleCaseStepVO);
+    List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO);
 
     /**
      * 查询循环测试步骤
@@ -23,7 +25,9 @@ public interface TestCycleCaseStepService {
      * @param CycleCaseId    CycleCaseId
      * @param projectId      projectId
      * @param organizationId organizationId
-     * @return TestCycleCaseStepVO
+     * @return TestCycleCaseStepDTO
      */
-    List<TestCycleCaseStepVO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
+    List<TestCycleCaseStepDTO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
+
+
 }

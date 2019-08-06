@@ -3,7 +3,7 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper">
 
     <update id="updateTestStatusByInstanceId"
-            parameterType="io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO">
+            parameterType="io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE">
         UPDATE test_automation_history
         SET
         test_status = #{testStatus},
@@ -19,13 +19,13 @@
     </update>
 
     <select id="queryObjectVersionNumberByInstanceId" resultType="long"
-            parameterType="io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO">
+            parameterType="io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE">
         SELECT object_version_number
         FROM test_automation_history
         WHERE instance_id = #{instanceId}
     </select>
     
-    <resultMap type="io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO" id="BaseResultMap">
+    <resultMap type="io.choerodon.test.manager.domain.test.manager.entity.TestAutomationHistoryE" id="BaseResultMap">
         <id column="id" property="id"/>
         <id column="framework" property="framework"/>
         <id column="test_status" property="testStatus"/>
@@ -37,7 +37,7 @@
         <id column="created_by" property="createdBy"/>
         <id column="creation_date" property="creationDate"/>
         <id column="last_update_date" property="lastUpdateDate"/>
-        <association property="testAppInstanceDTO" javaType="io.choerodon.test.manager.infra.dto.TestAppInstanceDTO">
+        <association property="testAppInstanceE" javaType="io.choerodon.test.manager.domain.test.manager.entity.TestAppInstanceE">
             <id column="pod_status" property="podStatus"/>
             <id column="app_version_id" property="appVersionId"/>
             <id column="log_id" property="logId"/>

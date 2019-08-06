@@ -1,6 +1,6 @@
 package io.choerodon.devops.api.dto;
 
-import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
+import io.choerodon.test.manager.api.dto.ApplicationDeployDTO;
 
 public class DevopsApplicationDeployDTO {
     private Long appVersionId;
@@ -85,7 +85,7 @@ public class DevopsApplicationDeployDTO {
         this.commandId = commandId;
     }
 
-    public DevopsApplicationDeployDTO(ApplicationDeployVO deployDTO, Long appInstanceId, String values) {
+    public DevopsApplicationDeployDTO(ApplicationDeployDTO deployDTO,Long appInstanceId,String values) {
         this.appVersionId = deployDTO.getAppVersionId();
         this.environmentId = deployDTO.getEnvironmentId();
         this.values = values;

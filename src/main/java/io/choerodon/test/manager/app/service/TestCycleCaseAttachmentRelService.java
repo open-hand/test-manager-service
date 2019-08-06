@@ -1,18 +1,17 @@
 package io.choerodon.test.manager.app.service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
+import io.choerodon.test.manager.api.dto.TestCycleCaseAttachmentRelDTO;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 public interface TestCycleCaseAttachmentRelService {
 
-    TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
+    TestCycleCaseAttachmentRelDTO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
 
     void delete(String bucketName, Long attachId);
 
@@ -25,7 +24,7 @@ public interface TestCycleCaseAttachmentRelService {
      * @param bucketName       bucketName
      * @param attachmentLinkId attachmentLinkId
      * @param attachmentType   attachmentType
-     * @return TestCycleCaseAttachmentRelVO
+     * @return TestCycleCaseAttachmentRelDTO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType);
+    List<TestCycleCaseAttachmentRelDTO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType);
 }

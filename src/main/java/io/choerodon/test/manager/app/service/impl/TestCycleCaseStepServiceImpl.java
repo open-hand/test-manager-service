@@ -1,22 +1,25 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseStepService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
+import io.choerodon.test.manager.domain.test.manager.factory.TestCycleCaseStepEFactory;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseStepDO;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -28,54 +31,40 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     private String dsUrl;
 
     @Autowired
-    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
+    TestCycleCaseStepMapper testCycleCaseStepMapper;
+    @Autowired
+    ITestCycleCaseStepService iTestCycleCaseStepService;
 
     @Autowired
-    private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
+    TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestCycleCaseStepVO> update(List<TestCycleCaseStepVO> testCycleCaseStepVO) {
-        return modelMapper.map(baseUpdate(modelMapper.map(testCycleCaseStepVO, new TypeToken<List<TestCycleCaseStepDTO>>() {
-        }.getType())), new TypeToken<List<TestCycleCaseStepVO>>() {
-        }.getType());
+    public List<TestCycleCaseStepDTO> update(List<TestCycleCaseStepDTO> testCycleCaseStepDTO) {
+        return ConvertHelper.convertList(iTestCycleCaseStepService.update(ConvertHelper.convertList(testCycleCaseStepDTO, TestCycleCaseStepE.class)), TestCycleCaseStepDTO.class);
+
     }
 
     @Override
-    public List<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId) {
-        if (cycleCaseId == null) {
+    public List<TestCycleCaseStepDTO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setExecuteId(cycleCaseId);
+        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
+        testCycleCaseStepE.setExecuteId(ConvertHelper.convert(testCycleCaseDTO, TestCycleCaseE.class).getExecuteId());
+        if (testCycleCaseStepE.getExecuteId() == null) {
             throw new CommonException("error.test.cycle.case.step.caseId.not.null");
         }
-        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-        testCycleCaseStepDTO.setExecuteId(cycleCaseId);
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryWithTestCaseStep(testCycleCaseStepDTO, null, null);
-        if (testCycleCaseStepDTOS != null && !testCycleCaseStepDTOS.isEmpty()) {
-            List<TestCycleCaseStepVO> testCycleCaseStepVOS = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
-            }.getType());
-            testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
-            return testCycleCaseStepVOS;
+        List<TestCycleCaseStepDO> testCycleCaseStepDOS = testCycleCaseStepMapper.queryWithTestCaseStep(ConvertHelper.convert(testCycleCaseStepE, TestCycleCaseStepDO.class), null, null);
+        if (testCycleCaseStepDOS != null && !testCycleCaseStepDOS.isEmpty()) {
+            List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = ConvertHelper.convertList(ConvertHelper.convertList(testCycleCaseStepDOS, TestCycleCaseStepE.class), TestCycleCaseStepDTO.class);
+            testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepDTOS, projectId, organizationId);
+            return testCycleCaseStepDTOS;
         } else {
             return new ArrayList<>();
         }
     }
 
-    private List<TestCycleCaseStepDTO> baseUpdate(List<TestCycleCaseStepDTO> list) {
-        List<TestCycleCaseStepDTO> res = new ArrayList<>();
-        list.forEach(v -> res.add(updateSelf(v)));
-
-        return res;
-    }
-
-    private TestCycleCaseStepDTO updateSelf(TestCycleCaseStepDTO testCycleCaseStepDTO) {
-        if (testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
-        return testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepDTO.getExecuteStepId());
-    }
 }

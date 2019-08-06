@@ -6,16 +6,16 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleMapper extends Mapper<TestCycleDTO> {
+public interface TestCycleMapper extends Mapper<TestCycleDO> {
 
-    List<TestCycleDTO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
+    List<TestCycleDO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
 
-    List<TestCycleDTO> queryOneCycleBar(@Param("cycleId") Long cycleId);
+    List<TestCycleDO> queryOneCycleBar(@Param("cycleId") Long cycleId);
 
     /**
      * 获取version下的所有循环Id
@@ -28,16 +28,16 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
     /**
      * 验证version下是否有重名cycle
      *
-     * @param testCycleDTO
+     * @param testCycleDO
      * @return
      */
-    Long validateCycle(TestCycleDTO testCycleDTO);
+    Long validateCycle(TestCycleDO testCycleDO);
 
-    List<TestCycleDTO> queryChildCycle(@Param("dto") TestCycleDTO testCycleDTO);
+    List<TestCycleDO> queryChildCycle(@Param("dto") TestCycleDO testCycleDO);
 
-    List<TestCycleDTO> queryCycleInVersion(@Param("dto") TestCycleDTO testCycleDTO);
+    List<TestCycleDO> queryCycleInVersion(@Param("dto") TestCycleDO testCycleDO);
 
-    List<TestCycleDTO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
+    List<TestCycleDO> queryByIds(@Param("cycleIds") List<Long> cycleIds);
 
     void updateAuditFields(@Param("cycleIds") Long[] cycleId, @Param("userId") Long userId, @Param("date") Date date);
 
@@ -49,5 +49,5 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
 
     Long getFolderCountInCycle(@Param("cycleId") Long cycleId);
 
-    List<TestCycleDTO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
+    List<TestCycleDO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
 }

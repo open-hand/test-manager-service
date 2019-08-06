@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.infra.mapper
 
-
+import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO
-import io.choerodon.test.manager.infra.dto.TestCycleDTO
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO
+import io.choerodon.test.manager.infra.dataobject.TestCycleDO
 import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,19 +28,19 @@ class TestCycleMapperSpec extends Specification {
     @Autowired
     TestCycleCaseMapper caseMapper
     @Shared
-    TestCycleDTO cycleDO1=new TestCycleDTO()
+    TestCycleDO cycleDO1=new TestCycleDO()
     @Shared
-    TestCycleDTO cycleDO2=new TestCycleDTO()
+    TestCycleDO cycleDO2=new TestCycleDO()
     @Shared
-    TestCycleDTO cycleDO3=new TestCycleDTO()
+    TestCycleDO cycleDO3=new TestCycleDO()
     @Shared
-    TestCycleDTO cycleDO4=new TestCycleDTO()
+    TestCycleDO cycleDO4=new TestCycleDO()
     @Shared
-    TestCycleCaseDTO caseDO = new TestCycleCaseDTO()
+    TestCycleCaseDO caseDO = new TestCycleCaseDO()
     @Shared
-    TestCycleCaseDTO caseDO1 = new TestCycleCaseDTO()
+    TestCycleCaseDO caseDO1 = new TestCycleCaseDO()
     @Shared
-    TestCycleCaseDTO caseDO2 = new TestCycleCaseDTO()
+    TestCycleCaseDO caseDO2 = new TestCycleCaseDO()
 
     def "initEnv"(){
         given:
@@ -95,7 +95,7 @@ class TestCycleMapperSpec extends Specification {
         Long[] versions=new Long[1]
         versions[0] = new Long(929)
         when:
-        List<TestCycleDTO> result=mapper.query(1L,versions,null)
+        List<TestCycleDO> result=mapper.query(1L,versions,null)
         then:
         result.size()==4
 
@@ -119,7 +119,7 @@ class TestCycleMapperSpec extends Specification {
 
     def "validateCycle"(){
         given:
-        TestCycleDTO cycleDO2 = new TestCycleDTO()
+        TestCycleDO cycleDO2 = new TestCycleDO()
         BeanUtils.copyProperties(cycleDO1, cycleDO2, "cycleId")
 
         expect:

@@ -7,33 +7,33 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.dataobject.TestCycleCaseDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
-    List<TestCycleCaseDTO> queryWithAttachAndDefect(@Param("dto") TestCycleCaseDTO testCycleCaseDTO, @Param("page") int page, @Param("pageSize") int pageSize);
+public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDO> {
+    List<TestCycleCaseDO> queryWithAttachAndDefect(@Param("dto") TestCycleCaseDO testCycleCaseDO, @Param("page") int page, @Param("pageSize") int pageSize);
 
     /**
      * 查询为父cycle的所有子阶段的信息
      *
-     * @param testCycleCaseDTOS
+     * @param testCycleCaseDOS
      * @param page
      * @param pageSize
      * @return
      */
-    List<TestCycleCaseDTO> queryByFatherCycleWithAttachAndDefect(@Param("dtos") List<TestCycleCaseDTO> testCycleCaseDTOS, @Param("page") int page, @Param("pageSize") int pageSize, @Param("sort") String sort);
+    List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect(@Param("dtos") List<TestCycleCaseDO> testCycleCaseDOS, @Param("page") int page, @Param("pageSize") int pageSize, @Param("sort") String sort);
 
-    List<TestCycleCaseDTO> queryByFatherCycleWithAttachAndDefect_oracle(@Param("dtos") List<TestCycleCaseDTO> testCycleCaseDTOS, @Param("page") int page, @Param("pageSize") int pageSize);
+    List<TestCycleCaseDO> queryByFatherCycleWithAttachAndDefect_oracle(@Param("dtos") List<TestCycleCaseDO> testCycleCaseDOS, @Param("page") int page, @Param("pageSize") int pageSize);
 
-    List<TestCycleCaseDTO> queryWithAttachAndDefect_oracle(@Param("dto") TestCycleCaseDTO testCycleCaseDTO, @Param("page") int page, @Param("pageSize") int pageSize);
+    List<TestCycleCaseDO> queryWithAttachAndDefect_oracle(@Param("dto") TestCycleCaseDO testCycleCaseDO, @Param("page") int page, @Param("pageSize") int pageSize);
 
-    Long queryWithAttachAndDefect_count(@Param("dto") TestCycleCaseDTO testCycleCaseDTO);
+    Long queryWithAttachAndDefect_count(@Param("dto") TestCycleCaseDO testCycleCaseDO);
 
-    List<TestCycleCaseDTO> filter(Map map);
+    List<TestCycleCaseDO> filter(Map map);
 
-    List<TestCycleCaseDTO> queryByIssue(@Param("issueId") Long issueId);
+    List<TestCycleCaseDO> queryByIssue(@Param("issueId") Long issueId);
 
 
     /**
@@ -42,11 +42,11 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      * @param issueId
      * @return
      */
-    List<TestCycleCaseDTO> queryInIssues(@Param("ids") Long[] issueId);
+    List<TestCycleCaseDO> queryInIssues(@Param("ids") Long[] issueId);
 
-    List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(@Param("cycleIds") Long[] cycleIds, @Param("versionIds") Long[] versionIds);
+    List<TestCycleCaseDO> queryCaseAllInfoInCyclesOrVersions(@Param("cycleIds") Long[] cycleIds, @Param("versionIds") Long[] versionIds);
 
-    List<TestCycleCaseDTO> queryCycleCaseForReporter(@Param("ids") Long[] issueIds);
+    List<TestCycleCaseDO> queryCycleCaseForReporter(@Param("ids") Long[] issueIds);
 
     Long countCaseNotRun(@Param("ids") Long[] cycleIds);
 
@@ -72,7 +72,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      * @param testCycleCase
      * @return
      */
-    Long validateCycleCaseInCycle(TestCycleCaseDTO testCycleCase);
+    Long validateCycleCaseInCycle(TestCycleCaseDO testCycleCase);
 
     /**
      * 获取cycle下最后一个case的rank
@@ -84,7 +84,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     String getLastedRank_oracle(@Param("cycleId") Long cycleId);
 
-    int batchInsertTestCycleCases(List<TestCycleCaseDTO> testCycleCaseDTOS);
+    int batchInsertTestCycleCases(List<TestCycleCaseDO> testCycleCaseDOs);
 
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
 }

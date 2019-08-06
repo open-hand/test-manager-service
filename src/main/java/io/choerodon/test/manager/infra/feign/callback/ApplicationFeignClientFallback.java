@@ -1,18 +1,15 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import java.util.List;
-import java.util.Map;
-
-import com.github.pagehelper.PageInfo;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Created by zongw.lee@gmail.com on 26/11/2018
@@ -25,7 +22,6 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     private static final String QUERY_APP_ERROR = "error.ApplicationFeign.query.app";
     private static final String QUERY_VERSION_ERROR = "error.ApplicationFeign.query.version";
     private static final String CREATE_APPLICATION_ERROR = "error.ApplicationFeign.deploy.application";
-    private static final String QUERY_ERROR = "error.devops.fegin.query";
 
     @Override
     public ResponseEntity<String> getVersionValue(Long projectId, Long appVersionId) {
@@ -38,7 +34,7 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     }
 
     @Override
-    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, Long[] appVersionId) {
+    public ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(Long projectId, List<Long> appVersionId) {
         throw new CommonException(QUERY_VERSION_ERROR);
     }
 
@@ -50,15 +46,5 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     @Override
     public void deployTestApp(Long projectId, DevopsApplicationDeployDTO applicationDeployDTO) {
         throw new CommonException(CREATE_APPLICATION_ERROR);
-    }
-
-    @Override
-    public void getTestStatus(Map<Long,List<String>> releaseName) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<PageInfo<ApplicationVersionRepDTO>> pageByOptions(Long projectId, int page, int size, String orders, Long appId, String searchParam) {
-        throw new CommonException(QUERY_ERROR);
     }
 }

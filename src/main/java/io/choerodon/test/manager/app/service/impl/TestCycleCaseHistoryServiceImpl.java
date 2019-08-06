@@ -1,74 +1,62 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.List;
-import java.util.Map;
+import io.choerodon.agile.api.dto.UserDO;
+import io.choerodon.core.convertor.ConvertHelper;
+import io.choerodon.core.convertor.ConvertPageHelper;
 
-import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.api.dto.TestCycleCaseHistoryDTO;
+import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
+import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
+import io.choerodon.test.manager.infra.common.utils.LongUtils;
+
 import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
-import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
-import io.choerodon.test.manager.app.service.UserService;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseHistoryDTO;
-import io.choerodon.test.manager.infra.enums.TestCycleCaseHistoryType;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import io.choerodon.test.manager.infra.util.LongUtils;
-import io.choerodon.test.manager.infra.util.PageUtil;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
 public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryService {
+    @Autowired
+    ITestCycleCaseHistoryService iTestCycleCaseHistoryService;
 
     @Autowired
-    private TestCycleCaseHistoryMapper testCycleCaseHistoryMapper;
-
-    @Autowired
-    private UserService userFeignClient;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    UserService userFeignClient;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCycleCaseHistoryVO insert(TestCycleCaseHistoryVO testCycleCaseHistoryVO) {
-        TestCycleCaseHistoryDTO testCycleCaseHistoryDTO = modelMapper.map(testCycleCaseHistoryVO, TestCycleCaseHistoryDTO.class);
-        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseHistoryMapper::insert, testCycleCaseHistoryDTO, 1, "error.history.insert");
-        return modelMapper.map(testCycleCaseHistoryDTO, TestCycleCaseHistoryVO.class);
+    public TestCycleCaseHistoryDTO insert(TestCycleCaseHistoryDTO testCycleCaseHistoryDTO) {
+        return ConvertHelper.convert(iTestCycleCaseHistoryService.insert(ConvertHelper.convert(testCycleCaseHistoryDTO, TestCycleCaseHistoryE.class)), TestCycleCaseHistoryDTO.class);
+
     }
 
     @Override
-    public PageInfo<TestCycleCaseHistoryVO> query(Long cycleCaseId, PageRequest pageRequest) {
-        TestCycleCaseHistoryVO historyVO = new TestCycleCaseHistoryVO();
-        historyVO.setExecuteId(cycleCaseId);
-        PageInfo<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTOPageInfo = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(()
-                -> testCycleCaseHistoryMapper.query(modelMapper.map(historyVO, TestCycleCaseHistoryDTO.class)));
-        List<TestCycleCaseHistoryVO> testCycleCaseHistoryVOS = modelMapper.map(testCycleCaseHistoryDTOPageInfo.getList(),
-                new TypeToken<List<TestCycleCaseHistoryVO>>() {
-                }.getType());
-        userFeignClient.populateUsersInHistory(testCycleCaseHistoryVOS);
-        return PageUtil.buildPageInfoWithPageInfoList(testCycleCaseHistoryDTOPageInfo, testCycleCaseHistoryVOS);
+    public PageInfo<TestCycleCaseHistoryDTO> query(Long cycleCaseId, PageRequest pageRequest) {
+        TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
+        historyDTO.setExecuteId(cycleCaseId);
+        PageInfo<TestCycleCaseHistoryE> serviceEPage = iTestCycleCaseHistoryService.query(ConvertHelper.convert(historyDTO, TestCycleCaseHistoryE.class), pageRequest);
+        PageInfo<TestCycleCaseHistoryDTO> dto = ConvertPageHelper.convertPageInfo(serviceEPage, TestCycleCaseHistoryDTO.class);
+        userFeignClient.populateUsersInHistory(dto.getList());
+        return dto;
     }
 
 
     @Override
     @Transactional
-    public void createAssignedHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
-        TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
+    public void createAssignedHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase) {
+        TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
-        historyDTO.setField(TestCycleCaseHistoryType.FIELD_ASSIGNED);
+        historyDTO.setField(TestCycleCaseHistoryE.FIELD_ASSIGNED);
         Long after = afterCycleCase.getAssignedTo();
         Long before = beforeCycleCase.getAssignedTo();
         Long[] para = new Long[]{before, after};
@@ -78,25 +66,25 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
             UserDO u = users.get(before);
             historyDTO.setOldValue(u.getLoginName() + u.getRealName());
         } else {
-            historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
+            historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
         }
         if (LongUtils.isUserId(after)) {
             UserDO u = users.get(after);
             historyDTO.setNewValue(u.getLoginName() + u.getRealName());
         } else {
-            historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
+            historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
         }
         insert(historyDTO);
     }
 
     @Override
     @Transactional
-    public void createStatusHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
-        TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
+    public void createStatusHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase) {
+        TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
         String newColor = afterCycleCase.getExecutionStatusName();
         String oldColor = beforeCycleCase.getExecutionStatusName();
-        historyDTO.setField(TestCycleCaseHistoryType.FIELD_STATUS);
+        historyDTO.setField(TestCycleCaseHistoryE.FIELD_STATUS);
         historyDTO.setNewValue(newColor);
         historyDTO.setOldValue(oldColor);
         insert(historyDTO);
@@ -104,17 +92,17 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 
     @Override
     @Transactional
-    public void createCommentHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
-        TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
+    public void createCommentHistory(TestCycleCaseDTO afterCycleCase, TestCycleCaseDTO beforeCycleCase) {
+        TestCycleCaseHistoryDTO historyDTO = new TestCycleCaseHistoryDTO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
-        historyDTO.setField(TestCycleCaseHistoryType.FIELD_COMMENT);
+        historyDTO.setField(TestCycleCaseHistoryE.FIELD_COMMENT);
         if (StringUtils.isEmpty(afterCycleCase.getComment())) {
-            historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
+            historyDTO.setNewValue(TestCycleCaseHistoryE.FIELD_NULL);
         } else {
             historyDTO.setNewValue(afterCycleCase.getComment());
         }
         if (StringUtils.isEmpty(beforeCycleCase.getComment())) {
-            historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
+            historyDTO.setOldValue(TestCycleCaseHistoryE.FIELD_NULL);
         } else {
             historyDTO.setOldValue(beforeCycleCase.getComment());
         }
