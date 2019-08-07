@@ -236,7 +236,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             //插入issue与folder的关联
             resTestIssueFolderRelVO.setId(null);
             resTestIssueFolderRelVO.setIssueId(id);
-            this.baseInsert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class));
+            this.baseInsert(modelMapper.map(resTestIssueFolderRelVO, TestIssueFolderRelDTO.class));
         }
         return resTestIssueFolderRelVO;
     }
