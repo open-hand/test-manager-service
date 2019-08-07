@@ -300,8 +300,9 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param cycleE
      */
     private void syncFolderDate(Long projectId, TestCycleVO cycleE) {
-        cycleE.setType(TestCycleType.FOLDER);
-        List<TestCycleDTO> folders = cycleMapper.select(modelMapper.map(cycleE, TestCycleDTO.class));
+        TestCycleDTO select = modelMapper.map(cycleE, TestCycleDTO.class);
+        select.setType(TestCycleType.FOLDER);
+        List<TestCycleDTO> folders = cycleMapper.select(select);
         folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> baseUpdate(projectId, v));
     }
 
