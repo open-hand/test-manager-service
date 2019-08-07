@@ -1,9 +1,20 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.api.vo.IssueCreateDTO;
+import io.choerodon.agile.api.vo.IssueDTO;
+import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
+import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
+import io.choerodon.test.manager.app.service.TestIssueFolderService;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +22,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
@@ -30,21 +33,24 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Autowired
     private TestCaseService testCaseService;
-
     @Autowired
     private TestIssueFolderService testIssueFolderService;
-
     @Autowired
     private TestCaseStepService testCaseStepService;
-
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
-
     @Autowired
     private TestIssueFolderRelMapper testIssueFolderRelMapper;
-
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
+    public TestIssueFolderRelDTO baseInsert(TestIssueFolderRelDTO insert) {
+        if (testIssueFolderRelMapper.insert(insert) != 1) {
+            throw new CommonException("error.issueFolderRel.insert");
+        }
+        return testIssueFolderRelMapper.selectByPrimaryKey(insert.getId());
+    }
 
     @Override
     public PageInfo<IssueComponentDetailFolderRelVO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId) {
@@ -155,7 +161,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         Long newFolderId = getDefaultFolderId(projectId, folderId, versionId);
         IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, applyType);
         TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(newFolderId, versionId, projectId, issueDTO.getIssueId(), null);
-        return modelMapper.map(testIssueFolderRelMapper.insert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+        return modelMapper.map(this.baseInsert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -169,8 +175,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         for (TestIssueFolderRelVO testIssueFolderRelVO : testIssueFolderRelVOS) {
             testIssueFolderRelVO.setFolderId(newFolderId);
             testIssueFolderRelVO.setProjectId(projectId);
-            TestIssueFolderRelVO resultTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
-                    .insert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+            TestIssueFolderRelVO resultTestIssueFolderRelVO = modelMapper.map(this.baseInsert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
             resultTestIssueFolderRelVOS.add(resultTestIssueFolderRelVO);
         }
         return resultTestIssueFolderRelVOS;
@@ -231,8 +236,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
             //插入issue与folder的关联
             resTestIssueFolderRelVO.setId(null);
             resTestIssueFolderRelVO.setIssueId(id);
-            modelMapper.map(testIssueFolderRelMapper.insert(modelMapper
-                    .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+            this.baseInsert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class));
         }
         return resTestIssueFolderRelVO;
     }
@@ -274,8 +278,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
                 testCaseStepService.batchClone(testCaseStepVO, id, projectId);
                 //插入issue与folder的关联
                 testIssueFolderRelVO.setIssueId(id);
-                modelMapper.map(testIssueFolderRelMapper.insert(modelMapper
-                        .map(testIssueFolderRelVO, TestIssueFolderRelDTO.class)), TestIssueFolderRelVO.class);
+                this.baseInsert(modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class));
             }
         }
     }

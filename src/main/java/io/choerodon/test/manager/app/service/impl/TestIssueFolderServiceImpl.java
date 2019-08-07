@@ -1,19 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
@@ -24,6 +12,17 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -36,18 +35,22 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Autowired
     private TestCycleService testCycleService;
-
     @Autowired
     private TestIssueFolderRelService testIssueFolderRelService;
-
     @Autowired
     private TestCaseService testCaseService;
-
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
-
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
+    public TestIssueFolderDTO baseInsert(TestIssueFolderDTO insert) {
+        if (testIssueFolderMapper.insert(insert) != 1) {
+            throw new CommonException("error.issueFolder.insert");
+        }
+        return testIssueFolderMapper.selectByPrimaryKey(insert.getFolderId());
+    }
 
     @Override
     public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {
@@ -87,7 +90,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         if (testIssueFolderVO.getFolderId() != null) {
             throw new CommonException("error.issue.folder.insert.folderId.should.be.null");
         }
-        return modelMapper.map(testIssueFolderMapper.insert(modelMapper
+        return modelMapper.map(this.baseInsert(modelMapper
                 .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
     }
 
