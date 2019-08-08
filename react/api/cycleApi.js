@@ -1,4 +1,3 @@
-
 import { getProjectId, request } from '../common/utils';
 
 export function getCycleTree(assignedTo) {
