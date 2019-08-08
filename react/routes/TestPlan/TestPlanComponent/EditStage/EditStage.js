@@ -31,7 +31,7 @@ class EditStage extends Component {
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         const { folderVersionName, folderName, folderId } = TestPlanStore.CurrentEditStage;
-        const originFolder = `${folderVersionName}-${folderName}`;        
+        const originFolder = `${folderVersionName}-${folderName}`;
         this.setState({ loading: true });
         const { range } = values;
         const [fromDate, toDate] = range;
@@ -127,7 +127,7 @@ class EditStage extends Component {
                       required: true, message: '请选择文件夹!',
                     }],
                   })(
-                    <SelectFocusLoad                
+                    <SelectFocusLoad
                       type="folder"
                       versionId={versionId}
                       style={{ width: 500 }}

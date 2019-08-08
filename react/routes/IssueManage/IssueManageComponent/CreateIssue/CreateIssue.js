@@ -3,13 +3,13 @@ import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import { find, debounce, map } from 'lodash';
 import {
-  Select, Form, Input, Modal, 
+  Select, Form, Input, Modal,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import './CreateIssue.scss';
 import { UploadButton } from '../CommonComponent';
 import {
-  handleFileUpload, beforeTextUpload, validateFile, normFile, 
+  handleFileUpload, beforeTextUpload, validateFile, normFile,
 } from '../../../../common/utils';
 import { createIssue, getFoldersByVersion } from '../../../../api/IssueManageApi';
 import IssueStore from '../../IssueManagestore/IssueStore';
@@ -32,7 +32,7 @@ class CreateIssue extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      createLoading: false,     
+      createLoading: false,
       selectLoading: false,
       originLabels: [],
       originComponents: [],
@@ -200,7 +200,7 @@ class CreateIssue extends Component {
             projectId: AppState.currentMenuType.id,
           };
           if (fileList.some(one => !one.url)) {
-            handleFileUpload(fileList, () => {}, config);
+            handleFileUpload(fileList, () => { }, config);
           }
         }
         this.props.onOk(data, folderId);
@@ -282,7 +282,7 @@ class CreateIssue extends Component {
             <FormItem>
               {getFieldDecorator('priorityId', {
                 rules: [{ required: true, message: '优先级为必选项' }],
-              // initialValue: this.state.origin.defaultPriorityCode,
+                // initialValue: this.state.origin.defaultPriorityCode,
               })(
                 <Select
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}
@@ -308,6 +308,7 @@ class CreateIssue extends Component {
             </FormItem>
             <FormItem style={{ display: 'block' }}>
               {getFieldDecorator('fileList', {
+                initialValue: [],
                 valuePropName: 'fileList',
                 getValueFromEvent: normFile,
                 rules: [{
@@ -347,9 +348,9 @@ class CreateIssue extends Component {
               label={null}
             >
               {getFieldDecorator('folderId', {
-                // rules: [{
-                //   required: true, message: '请选择文件夹!',
-                // }],
+                rules: [{
+                  required: true, message: '请选择文件夹!',
+                }],
               })(
                 <Select
                   loading={selectLoading}

@@ -391,6 +391,7 @@ class EditIssueNarrow extends Component {
           subTask: false,
           summary: false,
         };
+        console.log(this.props);
         enterLoad()
         cloneIssue(issueId, copyConditionVO).then((res) => {
           // 跳转至复制后的页面
@@ -399,7 +400,7 @@ class EditIssueNarrow extends Component {
           // }
           Choerodon.prompt('复制成功');
         }).catch((err) => {
-          leaveLoad()
+          leaveLoad();
           Choerodon.prompt('网络错误');
         });
         break;
@@ -410,6 +411,7 @@ class EditIssueNarrow extends Component {
       }
       default: break;
     }
+    this.props.onClose();
   }
 
   handleLinkToTestCase = () => {

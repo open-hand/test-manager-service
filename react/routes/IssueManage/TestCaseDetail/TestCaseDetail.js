@@ -72,6 +72,7 @@ class TestCaseDetail extends Component {
     this.setState({
       loading: true,
     });
+    const { onClose } = this.props;
     Promise.all([
       loadIssue(issueId),
       loadLinkIssues(issueId),
@@ -100,6 +101,9 @@ class TestCaseDetail extends Component {
         testExecuteData,
         loading: false,
       });
+    }).catch((error) => {
+      Choerodon.prompt('加载用例错误');
+      onClose();
     });
   }
 
