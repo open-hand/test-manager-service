@@ -759,6 +759,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private TestCycleVO baseInsert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleDTO testCycleDTO = modelMapper.map(testCycleVO, TestCycleDTO.class);
         testCycleDTO.setProjectId(projectId);
+        validateCycle(testCycleDTO);
         checkRank(testCycleVO);
         testCycleVO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
         cycleMapper.insert(testCycleDTO);
