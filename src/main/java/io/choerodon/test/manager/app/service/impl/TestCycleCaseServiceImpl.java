@@ -244,13 +244,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
 
         for (TestCycleCaseVO cases : dto) {
-            TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-            testCycleCaseDTO.setCycleId(cases.getCycleId());
+            TestCycleDTO testCycleDTO = new TestCycleDTO();
+            testCycleDTO.setCycleId(cases.getCycleId());
 
-            List<TestCycleCaseDTO> list = queryWithAttachAndDefect(modelMapper.map(dto, TestCycleCaseDTO.class), new PageRequest(1, 1));
-            DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
+//            List<TestCycleCaseDTO> list = queryWithAttachAndDefect(modelMapper.map(dto, TestCycleCaseDTO.class), new PageRequest(1, 1));
+//            DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
 
-            Long versionId = modelMapper.map(list.get(0), TestCycleCaseVO.class).getVersionId();
+//            Long versionId = modelMapper.map(list.get(0), TestCycleCaseVO.class).getVersionId();
+            Long versionId = cycleMapper.selectOne(testCycleDTO).getVersionId();
             Assert.notNull(versionId, "error.version.id.not.null");
             Optional.ofNullable(map.get(versionId)).ifPresent(v -> cases.setVersionName(v.getName()));
         }
