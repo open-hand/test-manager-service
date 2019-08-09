@@ -160,6 +160,14 @@ public class TestCycleCaseStepVO {
     }
 
 
+    public void setStepAttachment(List<TestCycleCaseAttachmentRelVO> stepAttachment) {
+        this.stepAttachment = stepAttachment;
+    }
+
+    public void setDefects(List<TestCycleCaseDefectRelVO> defects) {
+        this.defects = defects;
+    }
+
     public List<TestCycleCaseAttachmentRelVO> getStepAttachment() {
         return stepAttachment;
     }
