@@ -3,6 +3,8 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +58,15 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         testCycleCaseStepDTO.setExecuteId(cycleCaseId);
         List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryWithTestCaseStep(testCycleCaseStepDTO, null, null);
         if (testCycleCaseStepDTOS != null && !testCycleCaseStepDTOS.isEmpty()) {
-            List<TestCycleCaseStepVO> testCycleCaseStepVOS = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
-            }.getType());
+//            List<TestCycleCaseStepVO> testCycleCaseStepVOS = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
+//            }.getType());
+            List<TestCycleCaseStepVO> testCycleCaseStepVOS = new ArrayList<>();
+            testCycleCaseStepDTOS.forEach(testCycleCaseStep -> {
+                TestCycleCaseStepVO testCycleCaseStepVO = modelMapper.map(testCycleCaseStep, TestCycleCaseStepVO.class);
+                testCycleCaseStepVO.setDefects(modelMapper.map(testCycleCaseStep.getDefects(), new TypeToken<List<TestCycleCaseDefectRelVO>>(){}.getType()));
+                testCycleCaseStepVO.setStepAttachment(modelMapper.map(testCycleCaseStep.getStepAttachment(), new TypeToken<List<TestCycleCaseAttachmentRelVO>>(){}.getType()));
+                testCycleCaseStepVOS.add(testCycleCaseStepVO);
+            });
             testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
             return testCycleCaseStepVOS;
         } else {

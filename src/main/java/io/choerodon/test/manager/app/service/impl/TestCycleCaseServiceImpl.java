@@ -533,9 +533,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
         testCaseStepDTO.setIssueId(testCycleCaseDTO.getIssueId());
         List<TestCaseStepDTO> testCaseStepES = testCaseStepMapper.query(testCaseStepDTO);
-        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-        testCycleCaseStepDTO.setStepStatus(testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP));
+        Long defaultStepStatusId = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
         testCaseStepES.forEach(v -> {
+            TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+            testCycleCaseStepDTO.setStepStatus(defaultStepStatusId);
             testCycleCaseStepDTO.setStepId(v.getStepId());
             testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
             testCycleCaseStepMapper.insert(testCycleCaseStepDTO);
