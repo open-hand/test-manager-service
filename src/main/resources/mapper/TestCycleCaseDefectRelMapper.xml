@@ -54,7 +54,8 @@
     <select id="queryByBug" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
         select
         tcc.*,
-        ts.status_name as execution_status_name
+        ts.status_name as execution_status_name,
+        ts.status_color
         from test_cycle_case tcc, test_status ts
         where tcc.execute_id in (
             select defect_link_id from test_cycle_case_defect_rel tccdr

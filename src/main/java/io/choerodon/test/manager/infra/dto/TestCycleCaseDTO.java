@@ -34,6 +34,9 @@ public class TestCycleCaseDTO extends BaseDTO {
     private String executionStatusName;
 
     @Transient
+    private String statusColor;
+
+    @Transient
     private String cycleName;
 
     @Transient
@@ -270,5 +273,13 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Override
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public void setStatusColor(String statusColor) {
+        this.statusColor = statusColor;
+    }
+
+    public String getStatusColor() {
+        return statusColor;
     }
 }
