@@ -1093,7 +1093,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         //查询出cycle下所有case将其创建到新的cycle下并执行
         testCycleCaseMapper.select(testCycleCaseDTO).forEach(v ->
                 lastRank[0] = cloneCycleCase(getCloneCase(RankUtil.Operation.INSERT
-                        .getRank(lastRank[0], null), newCycleId, defaultStatus, v.getIssueId()), projectId).getRank()
+                        .getRank(lastRank[0], null), newCycleId, defaultStatus, v), projectId).getRank()
         );
     }
 
@@ -1126,14 +1126,13 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testCycleCaseE;
     }
 
-    private TestCycleCaseDTO getCloneCase(String rank, Long newCycleId, Long defaultStatus, Long issueId) {
-        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+    private TestCycleCaseDTO getCloneCase(String rank, Long newCycleId, Long defaultStatus, TestCycleCaseDTO testCycleCaseDTO) {
         testCycleCaseDTO.setExecuteId(null);
         testCycleCaseDTO.setRank(rank);
         testCycleCaseDTO.setCycleId(newCycleId);
-        testCycleCaseDTO.setIssueId(issueId);
         testCycleCaseDTO.setExecutionStatus(defaultStatus);
         testCycleCaseDTO.setObjectVersionNumber(null);
         return testCycleCaseDTO;
     }
+
 }
