@@ -168,7 +168,7 @@ public interface TestCaseFeignClient {
 
     @PostMapping(value = "/v1/projects/{project_id}/issue_link_types/query_all")
     ResponseEntity<PageInfo<IssueLinkTypeDTO>> listIssueLinkType(@PathVariable(name = "project_id") Long projectId,
-                                                                 @RequestParam(required = false) Long issueLinkTypeId,
+                                                                 @RequestParam(required = false, value = "issueLinkTypeId") Long issueLinkTypeId,
                                                                  @RequestBody IssueLinkTypeSearchDTO issueLinkTypeSearchDTO);
 
     @PostMapping(value = "/v1/projects/{project_id}/issues/query_by_issue_num")

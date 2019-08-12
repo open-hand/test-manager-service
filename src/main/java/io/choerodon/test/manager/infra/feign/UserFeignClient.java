@@ -38,7 +38,7 @@ public interface UserFeignClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/users")
     ResponseEntity<PageInfo<UserDTO>> list(@PathVariable(name = "project_id") Long id,
-                                           @RequestParam int page,
-                                           @RequestParam int size);
+                                           @RequestParam("page") int page,
+                                           @RequestParam("size") int size);
 }
 
