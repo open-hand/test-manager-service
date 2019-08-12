@@ -39,6 +39,9 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "执行状态名")
     private String executionStatusName;
 
+    @ApiModelProperty(value = "状态颜色")
+    private String statusColor;
+
     @ApiModelProperty(value = "指派人")
     private Long assignedTo;
 
@@ -351,5 +354,13 @@ public class TestCycleCaseVO {
 
     public String getSummary() {
         return summary;
+    }
+
+    public void setStatusColor(String statusColor) {
+        this.statusColor = statusColor;
+    }
+
+    public String getStatusColor() {
+        return statusColor;
     }
 }
