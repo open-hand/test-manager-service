@@ -179,15 +179,17 @@ public class TestCycleServiceImpl implements TestCycleService {
         //当issue下步骤有修改时启动新的步骤
 
         if (caseSteps.size() != cycleSteps.size()) {
-            TestCycleCaseStepDTO testCycleCaseStepE = new TestCycleCaseStepDTO();
             Long status = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
-
             Set<Long> newStepSet = compareStep(caseSteps, cycleSteps);
             newStepSet.forEach(v -> {
-                Assert.notNull(testCycleCaseStepE.getExecuteId(), "error.cant.run.step.because.executeId.is.null");
-                Assert.notNull(testCycleCaseStepE.getStepId(), "error.cant.run.step.because.stepId.is.null");
-                Assert.notNull(testCycleCaseStepE.getStepStatus(), "error.cant.run.step.because.stepStatus.is.null");
-                testCycleCaseStepMapper.insert(testCycleCaseStepE);
+                TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+                testCycleCaseStepDTO.setExecuteId(executeId);
+                testCycleCaseStepDTO.setStepId(v);
+                testCycleCaseStepDTO.setStepStatus(status);
+                Assert.notNull(testCycleCaseStepDTO.getExecuteId(), "error.cant.run.step.because.executeId.is.null");
+                Assert.notNull(testCycleCaseStepDTO.getStepId(), "error.cant.run.step.because.stepId.is.null");
+                Assert.notNull(testCycleCaseStepDTO.getStepStatus(), "error.cant.run.step.because.stepStatus.is.null");
+                testCycleCaseStepMapper.insert(testCycleCaseStepDTO);
             });
         }
     }
