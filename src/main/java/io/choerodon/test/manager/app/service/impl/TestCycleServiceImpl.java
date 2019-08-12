@@ -718,14 +718,14 @@ public class TestCycleServiceImpl implements TestCycleService {
     public TestCycleVO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setCycleId(cycleId);
-        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(testCycleDTO);
+        TestCycleDTO protoTestCycleDTO = cycleMapper.selectOne(testCycleDTO);
 
-        Assert.notNull(protoTestCycleE, "error.clone.cycle.protoCycle.not.be.null");
+        Assert.notNull(protoTestCycleDTO, "error.clone.cycle.protoCycle.not.be.null");
         TestCycleVO newTestCycleE = new TestCycleVO();
         newTestCycleE.setCycleName(cycleName);
         newTestCycleE.setVersionId(versionId);
         newTestCycleE.setType(TestCycleType.CYCLE);
-        return modelMapper.map(baseCloneCycle(protoTestCycleE, newTestCycleE, projectId), TestCycleVO.class);
+        return modelMapper.map(baseCloneCycle(protoTestCycleDTO, newTestCycleE, projectId), TestCycleVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -733,11 +733,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     public TestCycleVO cloneFolder(Long cycleId, TestCycleVO testCycleVO, Long projectId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setCycleId(cycleId);
-        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(testCycleDTO);
-        Assert.notNull(protoTestCycleE, "error.clone.folder.protoFolder.not.be.null");
+        TestCycleDTO protoTestCycleDTO = cycleMapper.selectOne(testCycleDTO);
+        Assert.notNull(protoTestCycleDTO, "error.clone.folder.protoFolder.not.be.null");
         testCycleVO.setType(TestCycleType.FOLDER);
 
-        return modelMapper.map(baseCloneFolder(protoTestCycleE, testCycleVO, projectId), TestCycleVO.class);
+        return modelMapper.map(baseCloneFolder(protoTestCycleDTO, testCycleVO, projectId), TestCycleVO.class);
     }
 
 
@@ -945,7 +945,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     public void batchCloneCycleAndFolders(Long projectId, Long versionId, List<BatchCloneCycleVO> list, Long userId) {
-        TestFileLoadHistoryWithRateVO testFileLoadHistoryE = initBatchCloneFileLoadHistory(projectId, versionId);
+        TestFileLoadHistoryWithRateVO testFileLoadHistoryVO = initBatchCloneFileLoadHistory(projectId, versionId);
 
         int sum = 0;
         int offset = 0;
@@ -957,44 +957,44 @@ public class TestCycleServiceImpl implements TestCycleService {
         try {
             for (BatchCloneCycleVO batchCloneCycleVO : list) {
                 offset = cloneCycleWithSomeFolder(projectId, versionId, batchCloneCycleVO,
-                        testFileLoadHistoryE, sum, offset, userId);
+                        testFileLoadHistoryVO, sum, offset, userId);
             }
 
-            testFileLoadHistoryE.setLastUpdateDate(new Date());
-            testFileLoadHistoryE.setSuccessfulCount(Integer.toUnsignedLong(sum));
-            testFileLoadHistoryE.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
+            testFileLoadHistoryVO.setLastUpdateDate(new Date());
+            testFileLoadHistoryVO.setSuccessfulCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryVO.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
         } catch (Exception e) {
             LOGGER.error(e.toString());
 
-            testFileLoadHistoryE.setLastUpdateDate(new Date());
-            testFileLoadHistoryE.setFailedCount(Integer.toUnsignedLong(sum));
-            testFileLoadHistoryE.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
+            testFileLoadHistoryVO.setLastUpdateDate(new Date());
+            testFileLoadHistoryVO.setFailedCount(Integer.toUnsignedLong(sum));
+            testFileLoadHistoryVO.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
 
             notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
-                    JSON.toJSONString(testFileLoadHistoryE));
+                    JSON.toJSONString(testFileLoadHistoryVO));
             throw new CommonException(CYCLE_DATE_NULL_ERROR);
         }
 
-        testFileLoadHistoryMapper.updateByPrimaryKey(modelMapper.map(testFileLoadHistoryE, TestFileLoadHistoryDTO.class));
+        testFileLoadHistoryMapper.updateByPrimaryKey(modelMapper.map(testFileLoadHistoryVO, TestFileLoadHistoryDTO.class));
     }
 
     private int cloneCycleWithSomeFolder(Long projectId, Long versionId, BatchCloneCycleVO batchCloneCycleVO,
-                                         TestFileLoadHistoryWithRateVO testFileLoadHistoryE, int sum, int offset, Long userId) {
+                                         TestFileLoadHistoryWithRateVO testFileLoadHistoryVO, int sum, int offset, Long userId) {
         TestCycleDTO oldTestCycleE = new TestCycleDTO();
         oldTestCycleE.setCycleId(batchCloneCycleVO.getCycleId());
-        TestCycleDTO protoTestCycleE = cycleMapper.selectOne(oldTestCycleE);
+        TestCycleDTO protoTestCycleDTO = cycleMapper.selectOne(oldTestCycleE);
 
         TestCycleVO newTestCycleE = new TestCycleVO();
-        newTestCycleE.setCycleName(protoTestCycleE.getCycleName());
+        newTestCycleE.setCycleName(protoTestCycleDTO.getCycleName());
         newTestCycleE.setVersionId(versionId);
         newTestCycleE.setType(TestCycleType.CYCLE);
 
-        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleE, newTestCycleE, projectId);
+        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleDTO, newTestCycleE, projectId);
 
         if (sum == 0) {
-            testFileLoadHistoryE.setRate(1.0);
+            testFileLoadHistoryVO.setRate(1.0);
             notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
-                    JSON.toJSONString(testFileLoadHistoryE));
+                    JSON.toJSONString(testFileLoadHistoryVO));
 
             return 0;
         }
@@ -1012,9 +1012,9 @@ public class TestCycleServiceImpl implements TestCycleService {
             baseCloneFolder(protoFolderTestCycleE, newFolderTestCycleE, projectId);
 
             offset++;
-            testFileLoadHistoryE.setRate(offset * 1.0 / sum);
+            testFileLoadHistoryVO.setRate(offset * 1.0 / sum);
             notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId),
-                    JSON.toJSONString(testFileLoadHistoryE));
+                    JSON.toJSONString(testFileLoadHistoryVO));
         }
         return offset;
     }
@@ -1030,20 +1030,20 @@ public class TestCycleServiceImpl implements TestCycleService {
         return modelMapper.map(testFileLoadHistoryMapper.selectByPrimaryKey(testFileLoadHistoryDTO), TestFileLoadHistoryWithRateVO.class);
     }
 
-    private TestCycleDTO baseCloneFolder(TestCycleDTO protoTestCycleE, TestCycleVO newTestCycleE, Long projectId) {
-        protoTestCycleE.setProjectId(projectId);
+    private TestCycleDTO baseCloneFolder(TestCycleDTO protoTestCycleDTO, TestCycleVO newTestCycleE, Long projectId) {
+        protoTestCycleDTO.setProjectId(projectId);
         checkRank(newTestCycleE);
         TestCycleDTO parentCycleE = new TestCycleDTO();
 
         parentCycleE.setCycleId(newTestCycleE.getParentCycleId());
-        if (!protoTestCycleE.getType().equals(TestCycleType.CYCLE)) {
+        if (!protoTestCycleDTO.getType().equals(TestCycleType.CYCLE)) {
             List<TestCycleDTO> parentCycleES = cycleMapper.select(parentCycleE);
 
             Date parentFromDate = parentCycleES.get(0).getFromDate();
             Date parentToDate = parentCycleES.get(0).getToDate();
 
-            Date oldFolderFromDate = protoTestCycleE.getFromDate();
-            Date oldFolderToDate = protoTestCycleE.getToDate();
+            Date oldFolderFromDate = protoTestCycleDTO.getFromDate();
+            Date oldFolderToDate = protoTestCycleDTO.getToDate();
 
             Assert.notNull(parentFromDate, CYCLE_DATE_NULL_ERROR);
             Assert.notNull(parentToDate, CYCLE_DATE_NULL_ERROR);
@@ -1053,24 +1053,24 @@ public class TestCycleServiceImpl implements TestCycleService {
             int differentDaysOldFolder = TestDateUtil.differentDaysByMillisecond(oldFolderFromDate, oldFolderToDate);
             int differentDaysParent = TestDateUtil.differentDaysByMillisecond(parentFromDate, parentToDate);
 
-            protoTestCycleE.setFromDate(parentFromDate);
+            protoTestCycleDTO.setFromDate(parentFromDate);
 
             if (differentDaysOldFolder > differentDaysParent) {
-                protoTestCycleE.setToDate(parentToDate);
+                protoTestCycleDTO.setToDate(parentToDate);
             } else {
-                protoTestCycleE.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
+                protoTestCycleDTO.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
             }
         }
         newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(newTestCycleE), null));
-        TestCycleDTO newCycleE = cloneCycle(protoTestCycleE);
-        cloneSubCycleCase(protoTestCycleE.getCycleId(), newCycleE.getCycleId(), projectId);
+        TestCycleDTO newCycleE = cloneCycle(protoTestCycleDTO, newTestCycleE);
+        cloneSubCycleCase(protoTestCycleDTO.getCycleId(), newCycleE.getCycleId(), projectId);
 
         return newCycleE;
     }
 
-    private TestCycleDTO baseCloneCycle(TestCycleDTO protoTestCycleE, TestCycleVO newTestCycleE, Long projectId) {
-        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleE, newTestCycleE, projectId);
-        cycleMapper.queryChildFolderByRank(protoTestCycleE.getCycleId()).forEach(v -> {
+    private TestCycleDTO baseCloneCycle(TestCycleDTO protoTestCycleDTO, TestCycleVO newTestCycleE, Long projectId) {
+        TestCycleDTO parentCycle = baseCloneFolder(protoTestCycleDTO, newTestCycleE, projectId);
+        cycleMapper.queryChildFolderByRank(protoTestCycleDTO.getCycleId()).forEach(v -> {
             TestCycleVO testCycleDTO = new TestCycleVO();
             testCycleDTO.setParentCycleId(parentCycle.getCycleId());
             testCycleDTO.setVersionId(parentCycle.getVersionId());
@@ -1084,33 +1084,33 @@ public class TestCycleServiceImpl implements TestCycleService {
         Assert.notNull(protoTestCycleId, "error.clone.cycle.protoCycleId.not.be.null");
         Assert.notNull(newCycleId, "error.clone.cycle.newCycleId.not.be.null");
 
-        TestCycleCaseDTO testCycleCaseE = new TestCycleCaseDTO();
-        testCycleCaseE.setCycleId(protoTestCycleId);
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setCycleId(protoTestCycleId);
         Long defaultStatus = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         final String[] lastRank = new String[1];
         lastRank[0] = testCycleCaseMapper.getLastedRank(protoTestCycleId);
 
         //查询出cycle下所有case将其创建到新的cycle下并执行
-        testCycleCaseMapper.select(testCycleCaseE).forEach(v ->
+        testCycleCaseMapper.select(testCycleCaseDTO).forEach(v ->
                 lastRank[0] = cloneCycleCase(getCloneCase(RankUtil.Operation.INSERT
-                        .getRank(lastRank[0], null), newCycleId, defaultStatus), projectId).getRank()
+                        .getRank(lastRank[0], null), newCycleId, defaultStatus, v.getIssueId()), projectId).getRank()
         );
     }
 
-    private TestCycleDTO cloneCycle(TestCycleDTO proto) {
+    private TestCycleDTO cloneCycle(TestCycleDTO proto, TestCycleVO newTestCycleVO) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setParentCycleId(Optional.ofNullable(testCycleDTO.getParentCycleId()).orElse(proto.getParentCycleId()));
-        testCycleDTO.setCycleName(Optional.ofNullable(testCycleDTO.getCycleName()).orElse(proto.getCycleName()));
-        testCycleDTO.setVersionId(Optional.ofNullable(testCycleDTO.getVersionId()).orElse(proto.getVersionId()));
-        testCycleDTO.setDescription(Optional.ofNullable(testCycleDTO.getDescription()).orElse(proto.getDescription()));
-        testCycleDTO.setBuild(Optional.ofNullable(testCycleDTO.getBuild()).orElse(proto.getBuild()));
-        testCycleDTO.setEnvironment(Optional.ofNullable(testCycleDTO.getEnvironment()).orElse(proto.getEnvironment()));
-        testCycleDTO.setFromDate(Optional.ofNullable(testCycleDTO.getFromDate()).orElse(proto.getFromDate()));
-        testCycleDTO.setToDate(Optional.ofNullable(testCycleDTO.getToDate()).orElse(proto.getToDate()));
-        testCycleDTO.setType(Optional.ofNullable(testCycleDTO.getType()).orElse(proto.getType()));
-        testCycleDTO.setFolderId(Optional.ofNullable(testCycleDTO.getFolderId()).orElse(proto.getFolderId()));
-        testCycleDTO.setRank(Optional.ofNullable(testCycleDTO.getRank()).orElse(proto.getRank()));
-        testCycleDTO.setProjectId(Optional.ofNullable(testCycleDTO.getProjectId()).orElse(proto.getProjectId()));
+        testCycleDTO.setParentCycleId(Optional.ofNullable(newTestCycleVO.getParentCycleId()).orElse(proto.getParentCycleId()));
+        testCycleDTO.setCycleName(Optional.ofNullable(newTestCycleVO.getCycleName()).orElse(proto.getCycleName()));
+        testCycleDTO.setVersionId(Optional.ofNullable(newTestCycleVO.getVersionId()).orElse(proto.getVersionId()));
+        testCycleDTO.setDescription(Optional.ofNullable(newTestCycleVO.getDescription()).orElse(proto.getDescription()));
+        testCycleDTO.setBuild(Optional.ofNullable(newTestCycleVO.getBuild()).orElse(proto.getBuild()));
+        testCycleDTO.setEnvironment(Optional.ofNullable(newTestCycleVO.getEnvironment()).orElse(proto.getEnvironment()));
+        testCycleDTO.setFromDate(Optional.ofNullable(newTestCycleVO.getFromDate()).orElse(proto.getFromDate()));
+        testCycleDTO.setToDate(Optional.ofNullable(newTestCycleVO.getToDate()).orElse(proto.getToDate()));
+        testCycleDTO.setType(Optional.ofNullable(newTestCycleVO.getType()).orElse(proto.getType()));
+        testCycleDTO.setFolderId(Optional.ofNullable(newTestCycleVO.getFolderId()).orElse(proto.getFolderId()));
+        testCycleDTO.setRank(Optional.ofNullable(newTestCycleVO.getRank()).orElse(proto.getRank()));
+        testCycleDTO.setProjectId(Optional.ofNullable(newTestCycleVO.getProjectId()).orElse(proto.getProjectId()));
         cycleMapper.insert(testCycleDTO);
         return testCycleDTO;
     }
@@ -1126,11 +1126,12 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testCycleCaseE;
     }
 
-    private TestCycleCaseDTO getCloneCase(String rank, Long newCycleId, Long defaultStatus) {
+    private TestCycleCaseDTO getCloneCase(String rank, Long newCycleId, Long defaultStatus, Long issueId) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setExecuteId(null);
         testCycleCaseDTO.setRank(rank);
         testCycleCaseDTO.setCycleId(newCycleId);
+        testCycleCaseDTO.setIssueId(issueId);
         testCycleCaseDTO.setExecutionStatus(defaultStatus);
         testCycleCaseDTO.setObjectVersionNumber(null);
         return testCycleCaseDTO;
