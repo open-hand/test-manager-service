@@ -430,6 +430,7 @@ class EventItem extends Component {
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
     };
     TestPlanStore.enterLoading();
+    // console.log(updateData);
     editFolder(updateData).then((res) => {
       TestPlanStore.getTree().finally(() => {
         this.setState({

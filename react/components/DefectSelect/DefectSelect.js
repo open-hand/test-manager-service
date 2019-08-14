@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Select, Button } from 'choerodon-ui';
 import _ from 'lodash';
+import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import { removeDefect } from '../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../api/agileApi';
 import './DefectSelect.less';
-import ExecuteDetailStore from '../../store/ExecuteDetailStore';
+// import ExecuteDetailStore from '../../store/ExecuteDetailStore';
+import ExecuteDetailStore from '../../routes/TestExecute/TestExecuteStore/ExecuteDetailStore';
+
 
 const { Option } = Select;
+@observer
 class DefectSelect extends Component {
   constructor(props) {
     super(props);
@@ -60,16 +64,17 @@ class DefectSelect extends Component {
       // window.console.log('add', List.filter(item => !oldList.includes(item)));
     }
     // 收集需要添加的缺陷
+    const { executeStepId, setNeedAdd } = this.props;
     const needAdd = issueList
       .filter(issue => List.includes(issue.issueId.toString()))// 取到选中的issueList
       .filter(issue => !originDefects.includes(issue.issueId.toString()))// 去掉之前已有的
       .map(item => ({
         defectType: 'CASE_STEP',
-        defectLinkId: this.props.executeStepId,
+        defectLinkId: executeStepId,
         issueId: item.issueId,
         defectName: item.issueNum,
       }));
-    this.props.setNeedAdd(needAdd);
+    setNeedAdd(needAdd);
     this.setState({
       defectIds: List,
     });
@@ -79,7 +84,7 @@ class DefectSelect extends Component {
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
-  loadMore=() => {
+  loadMore = () => {
     this.setState({
       selectLoading: true,
     });
@@ -94,9 +99,22 @@ class DefectSelect extends Component {
     });
   }
 
+  renderLoadMore = () => {
+    const { canLoadMore } = this.state;
+    if (canLoadMore) {
+      return (
+        <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
+          <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={this.loadMore}>更多</Button>
+        </Option>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { executeStepId, bugsToggleRef, ...otherProps } = this.props;
     const { handleSubmit } = bugsToggleRef;
+
     const {
       defects, selectLoading, issueList, canLoadMore,
     } = this.state;
@@ -109,10 +127,10 @@ class DefectSelect extends Component {
     ));
     return (
       <div>
-        <Select      
+        <Select
           dropdownStyle={{
             width: 300,
-          }}         
+          }}
           autoFocus
           filter
           mode="multiple"
@@ -150,11 +168,12 @@ class DefectSelect extends Component {
           {...otherProps}
         >
           {defectsOptions}
-          {canLoadMore && (
+          {/* {canLoadMore && (
             <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
               <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={this.loadMore}>更多</Button>
             </Option>
-          )}
+          )} */}
+          {this.renderLoadMore.bind()}
         </Select>
       </div>
     );

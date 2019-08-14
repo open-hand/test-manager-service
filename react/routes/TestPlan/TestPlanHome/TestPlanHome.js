@@ -174,7 +174,7 @@ class TestPlanHome extends Component {
               )}
             </Injecter>              
             <ExportSide ref={this.saveRef('ExportSide')} />
-            <BatchClone ref={this.saveRef('BatchClone')} />
+            <BatchClone ref={this.saveRef('BatchClone')} onOk={this.refresh} />
             <Injecter store={TestPlanStore} item="isTreeVisible">
               {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
             </Injecter>

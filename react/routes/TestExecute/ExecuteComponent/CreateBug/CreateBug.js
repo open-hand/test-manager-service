@@ -7,6 +7,7 @@ import {
   TimePicker, DatePicker, InputNumber, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import { observer } from 'mobx-react';
 import moment from 'moment';
 import {
   handleFileUpload, beforeTextUpload, getProjectName, randomString,
@@ -34,7 +35,7 @@ const FormItem = Form.Item;
 let sign = false;
 
 const storyPointList = ['0.5', '1', '2', '3', '4', '5', '8', '13'];
-
+@observer
 class CreateIssue extends Component {
   debounceFilterUsers = _.debounce((input) => {
     this.setState({ selectLoading: true });
@@ -1134,7 +1135,7 @@ class CreateIssue extends Component {
       <Sidebar
         className="c7n-createIssue"
         title="创建问题"
-        visible={visible}
+        visible={ExecuteDetailStore.getCreateBugShow}
         onOk={this.handleCreateIssue}
         onCancel={this.handleCancel}
         okText="创建"

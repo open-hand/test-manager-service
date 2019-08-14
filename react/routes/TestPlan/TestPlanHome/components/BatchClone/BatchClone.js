@@ -195,10 +195,12 @@ class BatchClone extends Component {
   }
 
   handleClose = () => {
+    const { onOk } = this.props;
     this.setState({
       cloning: false,
       visible: false,
     });
+    onOk();
   }
 
   handleDone = () => {

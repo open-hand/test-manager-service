@@ -381,7 +381,7 @@ class EditIssueNarrow extends Component {
 
 
   handleClickMenu(e) {
-    const { issueInfo, enterLoad, leaveLoad } = this.props;
+    const { issueInfo, enterLoad, leaveLoad, history } = this.props;
     const { issueId } = issueInfo;
     switch (e.key) {
       case 'copy': {
@@ -391,13 +391,15 @@ class EditIssueNarrow extends Component {
           subTask: false,
           summary: false,
         };
-        console.log(this.props);
+        // console.log(this.props);
         enterLoad()
         cloneIssue(issueId, copyConditionVO).then((res) => {
           // 跳转至复制后的页面
           // if (res.issueId) {
           //   this.handleLinkToNewIssue(res.issueId);
           // }
+          history.push(commonLink('/IssueManage'));
+          this.handleLinkToTestCase();
           Choerodon.prompt('复制成功');
         }).catch((err) => {
           leaveLoad();
