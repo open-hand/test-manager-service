@@ -179,5 +179,5 @@ export function createFieldValue(id, code, dto) {
  * @returns {V|*}
  */
 export function getFields(dto) {
-  return request.post(`/foundation/v1/projects/${getProjectId()}/field_value/list?organizationId=${getOrganizationId()}`, dto);
+  return request.post(`/agile/v1/projects/${getProjectId()}/field_value/list`, dto);
 }

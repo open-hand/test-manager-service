@@ -254,7 +254,7 @@ class StepTable extends PureComponent {
               ExecuteDetailStore.loadDetailList();
             }
           }}
-          // originData={{ defects }}
+          originData={{ defects }}
           onCancel={ExecuteDetailStore.loadDetailList}
         >
           <Text>
@@ -288,7 +288,7 @@ class StepTable extends PureComponent {
             }}
             >
               <DefectSelect
-                getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}               
+                getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
                 defects={defects}
                 setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
                 executeStepId={record.executeStepId}
