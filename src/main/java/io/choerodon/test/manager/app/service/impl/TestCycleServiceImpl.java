@@ -299,13 +299,14 @@ public class TestCycleServiceImpl implements TestCycleService {
      * 修改cycle时间后同步子folder的时间跨度
      *
      * @param projectId
-     * @param cycleE
+     * @param cycleVO
      */
-    private void syncFolderDate(Long projectId, TestCycleVO cycleE) {
-        TestCycleDTO select = modelMapper.map(cycleE, TestCycleDTO.class);
+    private void syncFolderDate(Long projectId, TestCycleVO cycleVO) {
+        TestCycleDTO select = new TestCycleDTO();
+        select.setParentCycleId(cycleVO.getCycleId());
         select.setType(TestCycleType.FOLDER);
         List<TestCycleDTO> folders = cycleMapper.select(select);
-        folders.stream().filter(u -> ifSyncNeed(u, cycleE.getFromDate(), cycleE.getToDate())).forEach(v -> baseUpdate(projectId, v));
+        folders.stream().filter(u -> ifSyncNeed(u, cycleVO.getFromDate(), cycleVO.getToDate())).forEach(v -> baseUpdate(projectId, v));
     }
 
     private void syncCycleDate(Long projectId, TestCycleVO cycleE) {
