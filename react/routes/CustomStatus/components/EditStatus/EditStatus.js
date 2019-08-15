@@ -9,7 +9,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Modal } from 'choerodon-ui';
-import { Content } from '@choerodon/boot';
+import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
 import { getProjectName } from '../../../../common/utils';
 import { ColorPicker } from '../../../../components';

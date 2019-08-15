@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { store } from '@choerodon/boot';
+import { store } from '@choerodon/master';
 import _ from 'lodash';
 import { getParams } from '../common/utils';
 import {

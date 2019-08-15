@@ -3,7 +3,7 @@ import { Button, Icon, Progress } from 'choerodon-ui';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import {
   Content, Header, Page,
-} from '@choerodon/boot';
+} from '@choerodon/master';
 import { MochaReport, TestNGReport } from './components';
 import { getTestReport } from '../../../api/AutoTestApi';
 import { commonLink } from '../../../common/utils';

@@ -26,8 +26,8 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/boot": "0.19.x",
-    "@choerodon/master": "0.18.x",
+    "@choerodon/boot": "0.20.x",
+    "@choerodon/master": "0.20.x",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
@@ -38,9 +38,7 @@
     "dist": "choerodon-front-boot dist --config ./react/config.js",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
-    "compile": "gulp compile",
-    "prepublishOnly": "choerodon-front-boot prepublish",
-    "postpublish": "choerodon-front-boot postpublish"
+    "compile": "gulp compile"    
   },
   "author": "",
   "license": "ISC",
@@ -56,7 +54,7 @@
     }
   },
   "peerDependencies": {
-    "@choerodon/boot": "0.18.x",
-    "@choerodon/master": "0.18.x"
+    "@choerodon/boot": "0.20.x",
+    "@choerodon/master": "0.20.x"
   }
 }

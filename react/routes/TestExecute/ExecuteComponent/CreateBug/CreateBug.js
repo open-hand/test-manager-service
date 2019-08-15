@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { stores, Content, axios } from '@choerodon/boot';
+import { stores, Content, axios } from '@choerodon/master';
 import _ from 'lodash';
 import {
   Select, Form, Input, Button, Modal, Icon, Radio, Checkbox, Row, Col, 
