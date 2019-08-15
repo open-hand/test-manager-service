@@ -3,7 +3,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import { asyncRouter, nomatch } from '@choerodon/master';
 
 const IssueManage = asyncRouter(() => (import('./IssueManage')));
 const ImportIssue = asyncRouter(() => (import('./ImportIssue')));

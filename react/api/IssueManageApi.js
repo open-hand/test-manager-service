@@ -5,7 +5,7 @@
  * @Last Modified time: 2018-11-01 15:25:27
  * @Feature:
  */
-import { stores } from '@choerodon/boot';
+import { stores } from '@choerodon/master';
 import { getProjectId, request } from '../common/utils';
 
 const { AppState } = stores;
@@ -387,7 +387,7 @@ export function moveFolders(data) {
  * @returns
  */
 export function copyFolders(data, versionId) {
-  const folderIds = data.map(item => item.folderId);
+  const folderIds = data.map((item) => item.folderId);
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/copy?versionId=${versionId}`, folderIds);
 }
 /**

@@ -26,8 +26,8 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "@choerodon/boot": "0.19.x",
-    "@choerodon/master": "0.18.x",
+    "@choerodon/boot": "0.20.x",
+    "@choerodon/master": "0.20.x",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",
@@ -50,11 +50,7 @@
     ],
     "react/**/*.scss": "stylelint --syntax scss"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+
   "peerDependencies": {
     "@choerodon/boot": "0.18.x",
     "@choerodon/master": "0.18.x"

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
   Page, Header, Content, Breadcrumb, 
-} from '@choerodon/boot';
+} from '@choerodon/master';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {

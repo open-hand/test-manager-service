@@ -21,7 +21,7 @@ class SelectFolder extends Component {
   render() {
     const { versionId } = this.props;
     const { loading, List } = this.state;
-    const Options = List.map(item => (
+    const Options = List.map((item) => (
       <Option value={item.folderId} key={item.folderId}>
         {item.name}
       </Option>
@@ -37,7 +37,7 @@ class SelectFolder extends Component {
             this.setState({
               loading: true,
             });
-            getFoldersByVersion(versionId).then((Data) => {
+            getFoldersByVersion(versionId === 'all' ? null : versionId).then((Data) => {
               this.setState({
                 List: Data,
                 loading: false,

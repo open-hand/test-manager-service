@@ -1,4 +1,4 @@
-import { stores, axios } from '@choerodon/boot';
+import { stores, axios } from '@choerodon/master';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import _ from 'lodash';
 // eslint-disable-next-line import/no-cycle

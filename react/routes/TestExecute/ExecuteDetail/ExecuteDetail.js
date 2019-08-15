@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
-import { TabPage as Page, Header, Breadcrumb } from '@choerodon/boot';
+import { TabPage as Page, Header, Breadcrumb } from '@choerodon/master';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
