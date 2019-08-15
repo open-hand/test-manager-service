@@ -9,8 +9,6 @@
 - **自动化测试**（执行自动化测试，查看测试结果）
 - **设置**（自定义状态）
 
-
-
 ## 依赖
 - Java8
 - mysql 5.6+
@@ -140,7 +138,7 @@ CREATE DATABASE test_manager_service DEFAULT CHARACTER SET utf8;
 GRANT ALL PRIVILEGES ON test_manager_service.* TO choerodon@'%';
 FLUSH PRIVILEGES;
 ```
-- 在`test_manager_service`项目根目录下创建 `init-local-database.sh` 数据初始化脚本文件
+- 在 `test_manager_service` 项目根目录下创建 `init-local-database.sh` 数据初始化脚本文件
 
 
 - 执行数据库初始化脚本
@@ -148,8 +146,6 @@ FLUSH PRIVILEGES;
 ```sh
 sh init-local-database.sh
 ```
-
-
 
 - 启动项目，在根目录文件下运行 `manager-service` 项目：
 
