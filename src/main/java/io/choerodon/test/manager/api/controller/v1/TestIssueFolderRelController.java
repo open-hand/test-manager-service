@@ -53,7 +53,7 @@ public class TestIssueFolderRelController {
                                           @RequestParam(name = "folderId", required = false) Long folderId,
                                           @RequestParam(name = "versionId", required = false) Long versionId,
                                           @RequestBody Long[] issueIds,
-                                          @RequestParam Long organizationId) {
+                                          @RequestParam  Long organizationId) {
         return Optional.ofNullable(testIssueFolderRelService.queryIssuesById(projectId, versionId, folderId, issueIds, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.queryForm.toIssue.byId"));
