@@ -35,7 +35,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     private TestCycleCaseHistoryMapper testCycleCaseHistoryMapper;
 
     @Autowired
-    private UserService userFeignClient;
+    private UserService userService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -58,7 +58,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         List<TestCycleCaseHistoryVO> testCycleCaseHistoryVOS = modelMapper.map(testCycleCaseHistoryDTOPageInfo.getList(),
                 new TypeToken<List<TestCycleCaseHistoryVO>>() {
                 }.getType());
-        userFeignClient.populateUsersInHistory(testCycleCaseHistoryVOS);
+        userService.populateUsersInHistory(testCycleCaseHistoryVOS);
         return PageUtil.buildPageInfoWithPageInfoList(testCycleCaseHistoryDTOPageInfo, testCycleCaseHistoryVOS);
     }
 
@@ -72,7 +72,7 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         Long after = afterCycleCase.getAssignedTo();
         Long before = beforeCycleCase.getAssignedTo();
         Long[] para = new Long[]{before, after};
-        Map<Long, UserDO> users = userFeignClient.query(para);
+        Map<Long, UserDO> users = userService.query(para);
 
         if (LongUtils.isUserId(before)) {
             UserDO u = users.get(before);

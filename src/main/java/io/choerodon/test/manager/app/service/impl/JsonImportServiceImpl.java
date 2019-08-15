@@ -1,30 +1,10 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import feign.FeignException;
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.json.XML;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-
 import io.choerodon.agile.api.vo.IssueCreateDTO;
 import io.choerodon.agile.api.vo.IssueDTO;
 import io.choerodon.agile.api.vo.ProjectDTO;
@@ -53,11 +33,30 @@ import io.choerodon.test.manager.infra.enums.TestIssueFolderType;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.exception.IssueCreateException;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
-import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.TestNgUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.json.XML;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
@@ -119,7 +118,7 @@ public class JsonImportServiceImpl implements JsonImportService {
     private ApplicationFeignClient applicationFeignClient;
 
     @Autowired
-    private ProjectFeignClient projectFeignClient;
+    private BaseFeignClient baseFeignClient;
 
     @Autowired
     private IssueFeignClient issueFeignClient;
@@ -535,7 +534,7 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     private Long getOrganizationId(Long projectId) {
         try {
-            ResponseEntity<ProjectDTO> response = projectFeignClient.query(projectId);
+            ResponseEntity<ProjectDTO> response = baseFeignClient.queryProject(projectId);
             if (response.getStatusCode().is2xxSuccessful()) {
                 logger.info("get organization id {} by project id {}", response.getBody().getOrganizationId(), projectId);
                 return response.getBody().getOrganizationId();

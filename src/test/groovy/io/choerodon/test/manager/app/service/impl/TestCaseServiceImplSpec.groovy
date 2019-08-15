@@ -1,17 +1,12 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.Page
-import io.choerodon.agile.api.vo.IssueComponentDetailVO
-import io.choerodon.agile.api.vo.IssueListTestVO
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO
-import io.choerodon.agile.api.vo.ProjectDTO
-import io.choerodon.agile.api.vo.SearchDTO
-import io.choerodon.agile.api.vo.StatusVO
 import com.github.pagehelper.PageInfo
+import io.choerodon.agile.api.vo.*
 import io.choerodon.base.domain.PageRequest
 import io.choerodon.base.domain.Sort
+import io.choerodon.test.manager.infra.feign.BaseFeignClient
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
-import io.choerodon.test.manager.infra.feign.ProjectFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import org.assertj.core.util.Lists
 import org.springframework.http.HttpStatus
@@ -25,14 +20,14 @@ import spock.lang.Specification
 class TestCaseServiceImplSpec extends Specification {
 
     TestCaseServiceImpl service
-    ProjectFeignClient projectFeignClient
+    BaseFeignClient baseFeignClient
     TestCaseFeignClient testCaseFeignClient
     ProductionVersionClient productionVersionClient
 
     def setup() {
         testCaseFeignClient = Mock(TestCaseFeignClient)
         productionVersionClient = Mock(ProductionVersionClient)
-        projectFeignClient = Mock(ProjectFeignClient)
+        baseFeignClient = Mock(BaseFeignClient)
         service = new TestCaseServiceImpl(testCaseFeignClient: testCaseFeignClient, productionVersionClient: productionVersionClient, projectFeignClient: projectFeignClient)
 
     }
@@ -62,8 +57,8 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMapAndPopulatePageInfo(1L, new SearchDTO(), new PageRequest(sort: new Sort("id")), new Page(), 1L)
         then:
-        1*testCaseFeignClient.listIssueWithLinkedIssues(_,_,_,_,_,_)>>
-                new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId:1L,StatusVO: new StatusVO(code: "code")))),HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithLinkedIssues(_, _, _, _, _, _) >>
+        new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
     }
 
     def "GetIssueInfoMap1"() {
@@ -141,6 +136,6 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getProjectInfo(1)
         then:
-        1 * projectFeignClient.query(_) >> new ResponseEntity<>(new ProjectDTO(), HttpStatus.OK)
+        1 * baseFeignClient.queryProject(_) >> new ResponseEntity<>(new ProjectDTO(), HttpStatus.OK)
     }
 }

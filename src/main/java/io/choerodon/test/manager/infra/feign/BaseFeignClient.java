@@ -1,32 +1,25 @@
 package io.choerodon.test.manager.infra.feign;
 
-import java.util.List;
-
 import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.api.vo.ProjectDTO;
+import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.infra.feign.callback.BaseFeignClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
-import io.choerodon.test.manager.infra.feign.callback.UserFeignClientFallback;
+import java.util.List;
 
 /**
  * @author dinghuang123@gmail.com
  * @since 2018/5/24
  */
 @Component
-@FeignClient(value = "iam-service", fallback = UserFeignClientFallback.class)
-public interface UserFeignClient {
+@FeignClient(value = "base-service", fallback = BaseFeignClientFallback.class)
+public interface BaseFeignClient {
 
-    /**
-     * 查询用户信息
-     *
-     * @param organizationId organizationId
-     * @param id             id
-     * @return UserDO
-     */
     @GetMapping(value = "/v1/organizations/{organization_id}/users/{id}")
     ResponseEntity<UserDO> query(@PathVariable(name = "organization_id") Long organizationId,
                                  @PathVariable("id") Long id);
@@ -40,5 +33,8 @@ public interface UserFeignClient {
     ResponseEntity<PageInfo<UserDTO>> list(@PathVariable(name = "project_id") Long id,
                                            @RequestParam("page") int page,
                                            @RequestParam("size") int size);
+
+    @GetMapping(value = "/v1/projects/{project_id}")
+    ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);
 }
 

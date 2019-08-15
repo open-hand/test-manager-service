@@ -16,9 +16,10 @@ import io.choerodon.agile.api.vo.*;
  */
 @Component
 public class TestCaseFeignClientFallback implements TestCaseFeignClient {
-    private static final String QUERY_ERROR = "error.UserFeign.query";
-    private static final String UPDATE_ERROR = "error.UserFeign.update";
-    private static final String CREATE_ERROR = "error.UserFeign.create";
+
+    private static final String QUERY_ERROR = "error.baseFeign.query";
+    private static final String UPDATE_ERROR = "error.baseFeign.update";
+    private static final String CREATE_ERROR = "error.baseFeign.create";
 
     @Override
     public ResponseEntity<IssueDTO> createIssue(Long projectId, String applyType, IssueCreateDTO issueCreateDTO) {

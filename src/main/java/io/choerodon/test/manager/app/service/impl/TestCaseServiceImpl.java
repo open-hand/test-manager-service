@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.pagehelper.Page;
+import io.choerodon.test.manager.infra.feign.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,6 @@ import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.util.PageUtil;
-import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import io.choerodon.test.manager.infra.feign.ProjectFeignClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.util.TypeUtil;
 
@@ -44,7 +41,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     private ProductionVersionClient productionVersionClient;
 
     @Autowired
-    private ProjectFeignClient projectFeignClient;
+    private BaseFeignClient baseFeignClient;
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
@@ -218,7 +215,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getProjectInfo.param.projectId.not.be.null");
-        return projectFeignClient.query(projectId).getBody();
+        return baseFeignClient.queryProject(projectId).getBody();
     }
 
     @Override

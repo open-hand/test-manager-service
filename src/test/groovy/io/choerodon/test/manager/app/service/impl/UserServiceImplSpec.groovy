@@ -9,7 +9,7 @@ import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO
 import io.choerodon.test.manager.infra.util.LongUtils
-import io.choerodon.test.manager.infra.feign.UserFeignClient
+import io.choerodon.test.manager.infra.feign.BaseFeignClient
 import org.assertj.core.util.Lists
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,11 +17,11 @@ import spock.lang.Specification
 
 class UserServiceImplSpec extends Specification {
     UserServiceImpl userService;
-    UserFeignClient client;
+    BaseFeignClient client;
 
     def setup() {
-        client = Mock(UserFeignClient)
-        userService = new UserServiceImpl(userFeignClient: client)
+        client = Mock(BaseFeignClient)
+        userService = new UserServiceImpl(baseFeignClient: client)
     }
 
     def "Query"() {
