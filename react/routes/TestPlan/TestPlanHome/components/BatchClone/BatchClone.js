@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { Content, stores, WSHandler } from '@choerodon/boot';
+import { Content, stores, WSHandler } from '@choerodon/master';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Spin,
 } from 'choerodon-ui';

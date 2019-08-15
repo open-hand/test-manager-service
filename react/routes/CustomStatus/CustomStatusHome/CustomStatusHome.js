@@ -12,7 +12,7 @@ import {
   Tabs, Button, Spin, 
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { Page, Header, Content } from '@choerodon/boot';
+import { Page, Header, Content } from '@choerodon/master';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
 import { getProjectName } from '../../../common/utils';
 

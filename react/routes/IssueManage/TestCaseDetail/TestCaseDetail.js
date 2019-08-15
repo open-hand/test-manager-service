@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component, Fragment } from 'react';
-import { Page, Header } from '@choerodon/boot';
+import { Page, Header } from '@choerodon/master';
 import { withRouter } from 'react-router-dom';
 import {
   Button, Card, Spin, Icon, Tooltip,

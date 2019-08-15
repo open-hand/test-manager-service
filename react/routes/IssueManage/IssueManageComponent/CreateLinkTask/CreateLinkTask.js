@@ -1,6 +1,6 @@
 /*eslint-disable */
 import React, { Component } from 'react';
-import { stores, axios, Content } from '@choerodon/boot';
+import { stores, axios, Content } from '@choerodon/master';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';

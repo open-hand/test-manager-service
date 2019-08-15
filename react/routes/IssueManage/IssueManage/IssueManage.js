@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/boot';
+} from '@choerodon/master';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import IssueStore from '../IssueManagestore/IssueStore';
