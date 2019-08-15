@@ -1,4 +1,5 @@
-@baseBackGround:white;
+@baseBackGround: white;
+@base: black;
 .c7ntest-ExecuteDetailSide {
   width: 100%;
   background-color: @baseBackGround;
@@ -28,9 +29,12 @@
       overflow-y: scroll;
 
       .c7ntest-side-item-header {
-        margin-top: 15px;
+        margin-top: .15rem;
         display: flex;
         align-items: center;
+        font-size: 16px;
+        line-height: 0.22rem;
+        justify-content: space-between;
 
         &-left {
           display: flex;
@@ -89,7 +93,7 @@
     display: flex;
     align-items: center;
     margin: 10px 0;
-
+    color: fade(@base,65%);
     &-left {
       width: 45%;
     }
@@ -98,4 +102,7 @@
       flex: 1;
     }
   }
+  // .c7ntest-upload {
+    
+  // }
 }

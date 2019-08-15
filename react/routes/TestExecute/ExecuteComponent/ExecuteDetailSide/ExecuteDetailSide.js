@@ -42,10 +42,9 @@ const Section = ({
     <section id={id}>
       <div className="c7ntest-side-item-header">
         <div className="c7ntest-side-item-header-left">
-          <Icon type={icon} />
+          {/* <Icon type={icon} /> */}
           <span>{title}</span>
         </div>
-        <div className="c7ntest-side-item-header-line" />
         <div className="c7ntest-side-item-header-right">
           {action}
         </div>
@@ -53,6 +52,8 @@ const Section = ({
       <div className="c7ntest-side-item-content" style={style}>
         {children}
       </div>
+      <div className="c7ntest-side-item-header-line" />
+
     </section>
   );
 const defaultProps = {
@@ -306,7 +307,7 @@ class ExecuteDetailSide extends Component {
                     }}
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
-                      相关用例:
+                      <span style={{marginLeft:5}}>相关用例:</span>
                 <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
                     </div>
                    
@@ -332,7 +333,7 @@ class ExecuteDetailSide extends Component {
                     <div className="c7ntest-item-one-line-right">
                       {statusColor && (
                         <StatusTags
-                          style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                          style={{ height: 20, fontSize:'12px',lineHeight: '20px', marginRight: 15,color:'black'}}
                           color={statusColor}
                           name={statusName}
                         />
