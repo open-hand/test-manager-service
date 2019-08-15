@@ -5,6 +5,7 @@ import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
+import './tags.less';
 
 const styles = {
   issueNum: {
@@ -31,9 +32,13 @@ export function renderType(issueTypeVO, showTypeName) {
 export function renderIssueNum(issueNum) {
   return (
     <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
-      <a style={styles.issueNum}>
+      {/* <a style={styles.issueNum}>
         {issueNum}
-      </a>
+      </a> */}
+      <span className="c7n-table-issueTreeTtile-table-span">
+        {issueNum}
+      </span>
+
     </Tooltip>
   );
 }
@@ -41,9 +46,11 @@ export function renderSummary(summary) {
   return (
     <div style={{ overflow: 'hidden' }}>
       <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
-        <p style={{
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
-        }}
+        <p
+          style={{
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+          }}
+          className="c7n-table-issueTreeTtile-table-p"
         >
           {summary}
         </p>
@@ -56,7 +63,7 @@ export function renderPriority(priorityVO) {
     return null;
   }
   const { name } = priorityVO;
-  return ( 
+  return (
     <Tooltip mouseEnterDelay={0.5} title={`优先级： ${name}`}>
       <div style={{ marginTop: 4 }}>
         <PriorityTag
@@ -69,21 +76,29 @@ export function renderPriority(priorityVO) {
 export function renderVersions(versions) {
   if (versions.length > 0) {
     return (
-      <Tooltip title={versions.map(version => version.name).join(',')}>
-        <Tag
-          color="blue"
-          style={{
-            maxWidth: 160,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            verticalAlign: 'bottom',
-          }}
-        >
+    // <Tooltip title={versions.map((version) => version.name).join(',')}>
+    //   <Tag
+    //     color="blue"
+    //     style={{
+    //       maxWidth: 160,
+    //       overflow: 'hidden',
+    //       textOverflow: 'ellipsis',
+    //       whiteSpace: 'nowrap',
+    //       verticalAlign: 'bottom',
+    //     }}
+    //   >
+    //     {versions[0].name}
+    //   </Tag>
+    //   {versions.length > 1 && <Tag color="blue">...</Tag>}
+
+
+      // </Tooltip>
+      <div className="c7ntest-tags-verision-div">
+        <span className="c7n-table-issueTreeTtile-table-span">
           {versions[0].name}
-        </Tag>
-        {versions.length > 1 && <Tag color="blue">...</Tag>}
-      </Tooltip>
+        </span>
+      </div>
+
     );
   } else {
     return null;
@@ -127,7 +142,7 @@ export function renderFolder(folderName) {
             borderRadius: '2px',
             fontSize: '13px',
             lineHeight: '20px',
-            padding: '0 8px',  
+            padding: '0 8px',
             margin: '4px 5px 0px',
           }}
           className="c7ntest-text-dot"
@@ -143,7 +158,7 @@ export function renderComponents(components) {
     components.length > 0 ? (
       <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
         {
-          components.map(component => component.name).join(',')
+          components.map((component) => component.name).join(',')
         }
       </div>
     ) : null
@@ -152,7 +167,7 @@ export function renderComponents(components) {
 export function renderLabels(labels) {
   if (labels.length > 0) {
     return (
-      <Tooltip title={labels.map(label => label.labelName).join(',')}>
+      <Tooltip title={labels.map((label) => label.labelName).join(',')}>
         <Tag
           color="blue"
           style={{
@@ -174,7 +189,7 @@ export function renderLabels(labels) {
 }
 export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, imageUrl, hiddenText) {
   return (
-    assigneeId ? (      
+    assigneeId ? (
       <div>
         <UserHead
           hiddenText={hiddenText}
@@ -185,13 +200,13 @@ export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, 
             avatar: imageUrl,
           }}
         />
-      </div>   
+      </div>
     ) : null
   );
 }
 export function renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl, hiddenText) {
   return (
-    reporterId ? (      
+    reporterId ? (
       <div>
         <UserHead
           hiddenText={hiddenText}
@@ -202,7 +217,7 @@ export function renderReporter(reporterId, reporterLoginName, reporterRealName, 
             avatar: reporterImageUrl,
           }}
         />
-      </div>     
+      </div>
     ) : null
   );
 }

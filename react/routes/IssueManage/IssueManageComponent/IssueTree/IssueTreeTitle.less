@@ -1,3 +1,6 @@
+@base: black;
+@baseblue: #3F51B5;
+
 .c7ntest-issue-tree-title {
   display: flex;
   align-items: center;
@@ -23,9 +26,28 @@
 
     .c7ntest-add-folder {
       transition: none;
-      margin-left: 30px;
-      padding-right: 3px;
+      margin-left: .23rem;
+      padding-right: .04rem;
       visibility: hidden;
+    }
+  }
+}
+
+.c7n-table {
+  &-issueTreeTtile-table {
+    &-p {
+      color: @base;
+    }
+
+    &-p:hover {
+      color: @baseblue;
+      text-decoration: underline;
+    }
+  }
+
+  &-issueTreeTtile-table {
+    &-span {
+      color: fade(@base, 65%);
     }
   }
 }

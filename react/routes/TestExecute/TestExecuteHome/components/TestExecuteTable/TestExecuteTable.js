@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import isEqual from 'react-fast-compare';
 import {
-  Tooltip, Table, Button, Icon, 
+  Tooltip, Table, Button, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -11,7 +11,7 @@ import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
-import './TestExecuteTable.scss';
+import './TestExecuteTable.less';
 
 const propTypes = {
   loading: PropTypes.bool.isRequired,
@@ -42,7 +42,7 @@ class TestExecuteTable extends Component {
       dataSource,
       quickPass,
       quickFail,
-      onTableRowClick, 
+      onTableRowClick,
       onTableChange,
       pagination,
       loading,
@@ -51,7 +51,7 @@ class TestExecuteTable extends Component {
       cycleId, title, type, cycleCaseList,
     } = currentCycle;
     const prefix = <Icon type="filter_list" />;
-    
+
 
     const columns = [{
       title: <span>用例名称</span>,
@@ -63,20 +63,23 @@ class TestExecuteTable extends Component {
         const { issueInfosVO } = record;
         return (
           issueInfosVO && (
-          <SmartTooltip style={{ color: '#3F51B5' }}>
-            {issueInfosVO.summary}
-          </SmartTooltip>
+            <SmartTooltip style={{ color: '#3F51B5' }}>
+              <span className="c7n-table-TestExcuteTable-table-p">
+                {issueInfosVO.summary}
+              </span>
+
+            </SmartTooltip>
           )
         );
       },
     }, {
       title: <FormattedMessage id="cycle_executeBy" />,
       dataIndex: 'lastUpdateUser',
-      key: 'lastUpdateUser',        
+      key: 'lastUpdateUser',
       render(lastUpdateUser) {
         return (
           <div
-            className="c7ntest-text-dot"
+            className="c7ntest-text-dot c7n-table-TestExcuteTable-table-span"
           >
             {lastUpdateUser && lastUpdateUser.realName}
           </div>
@@ -85,60 +88,64 @@ class TestExecuteTable extends Component {
     }, {
       title: <FormattedMessage id="cycle_assignedTo" />,
       dataIndex: 'assigneeUser',
-      key: 'assigneeUser',       
+      key: 'assigneeUser',
       render(assigneeUser) {
         return (
           <div
-            className="c7ntest-text-dot"
+            className="c7ntest-text-dot c7n-table-TestExcuteTable-table-span"
           >
             {assigneeUser && assigneeUser.realName}
           </div>
         );
       },
-    }, {
-      title: <span>用例优先级</span>,
+    },
+    
+    {
+      title: <span>优先级</span>,
       dataIndex: 'priorityId',
       key: 'priorityId',
-      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+      filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
       render(issueId, record) {
         const { issueInfosVO } = record;
         return (
           issueInfosVO && renderPriority(issueInfosVO.priorityVO)
         );
       },
-    }, {
+    },
+    {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),     
+      filters: statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
         return (
           _.find(statusList, { statusId: executionStatus }) && (
-          <StatusTags
-            color={statusColor}
-            name={_.find(statusList, { statusId: executionStatus }).statusName}
-          />
+            <StatusTags
+              color={statusColor}
+              name={_.find(statusList, { statusId: executionStatus }).statusName}
+            />
           )
         );
       },
-    }, {
+    },
+    {
       title: '',
       key: 'action',
       width: 90,
       render: (text, record) => (
         record.projectId !== 0
-          && (
-            <div style={{ display: 'flex' }}>
-              <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-                <Button shape="circle" funcType="flat" icon="check_circle" onClick={quickPass.bind(this, record)} />
-              </Tooltip>
-              <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-                <Button shape="circle" funcType="flat" icon="cancel" onClick={quickFail.bind(this, record)} />
-              </Tooltip>
-            </div>
-          )
+        && (
+          <div style={{ display: 'flex' }}>
+            <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+              <Button shape="circle" funcType="flat" icon="check_circle" onClick={quickPass.bind(this, record)} />
+            </Tooltip>
+            <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
+              <Button shape="circle" funcType="flat" icon="cancel" onClick={quickFail.bind(this, record)} />
+            </Tooltip>
+          </div>
+        )
       ),
     }];
     const nameColumn = {
@@ -148,7 +155,7 @@ class TestExecuteTable extends Component {
       render(cycleName) {
         return (
           <div
-            className="c7ntest-text-dot"
+            className="c7ntest-text-dot c7n-table-TestExcuteTable-table-span"
           >
             {cycleName}
           </div>
@@ -156,7 +163,7 @@ class TestExecuteTable extends Component {
       },
     };
     if (type === 'cycle') {
-      columns.splice(4, 0, nameColumn);
+      columns.splice(3, 0, nameColumn);
     }
     return (
       <div className="c7ntest-TestExecuteTable">
@@ -167,37 +174,37 @@ class TestExecuteTable extends Component {
             fontSize: '14px',
           }}
           >
-          快速筛选:
+            快速筛选:
           </div>
           <SelectFocusLoad
             allowClear
             className="c7ntest-select"
             style={{ width: 200 }}
             placeholder={<FormattedMessage id="cycle_executeBy" />}
-            getPopupContainer={ele => ele.parentNode}
+            getPopupContainer={(ele) => ele.parentNode}
             type="user"
             onChange={onExecuteByChange}
           />
           {treeAssignedTo === 0 && (
-          <SelectFocusLoad
-            allowClear
-            style={{ marginLeft: 20, width: 200 }}
-            className="c7ntest-select"
-            placeholder={<FormattedMessage id="cycle_assignedTo" />}
-            getPopupContainer={ele => ele.parentNode}
-            type="user"
-            onChange={onAssignedToChange}
-          />
+            <SelectFocusLoad
+              allowClear
+              style={{ marginLeft: 20, width: 200 }}
+              className="c7ntest-select"
+              placeholder={<FormattedMessage id="cycle_assignedTo" />}
+              getPopupContainer={(ele) => ele.parentNode}
+              type="user"
+              onChange={onAssignedToChange}
+            />
           )}
         </div>
         <Table
-          rowKey={record => record.executeId}
+          rowKey={(record) => record.executeId}
           pagination={pagination}
           loading={loading}
           onChange={onTableChange}
           dataSource={dataSource}
           columns={columns}
-          onRow={record => ({
+          onRow={(record) => ({
             onClick: (event) => { onTableRowClick(record); },
           })}
         />

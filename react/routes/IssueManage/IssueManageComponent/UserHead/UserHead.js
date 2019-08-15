@@ -110,7 +110,6 @@ const UserHead = memo(({
                 whiteSpace: 'nowrap',
                 fontSize: '13px',
                 lineHeight: '20px',
-                color: color || 'rgba(0, 0, 0, 0.65)',
               }}
             >
               {`${realName || loginName}`}

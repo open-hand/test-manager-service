@@ -92,6 +92,18 @@ class CreateIssueTiny extends Component {
     }
   }
 
+  onBlurCreateInput = () => {
+    const { createIssueValue } = this.state;
+    if (createIssueValue !== '' && !createIssueValue.match(/^[ ]+$/))
+      this.handleBlurCreateIssue();
+    this.onCancel();
+  }
+
+  onCancel = () => {
+    this.setState({
+      creating: false,
+    });
+  }
   render() {
     const { creating } = this.state;
     const versions = IssueStore.getVersions;
@@ -126,9 +138,10 @@ class CreateIssueTiny extends Component {
 
           <div style={{ marginLeft: 8, flexGrow: 1 }}>
             <Input
+              onBlur={this.onBlurCreateInput}
               autoFocus
               value={this.state.createIssueValue}
-              placeholder={<FormattedMessage id="issue_whatToDo" />}
+              // placeholder={<FormattedMessage id="issue_whatToDo" />}
               onChange={(e) => {
                 this.setState({
                   createIssueValue: e.target.value,
@@ -136,36 +149,32 @@ class CreateIssueTiny extends Component {
               }}
               maxLength={44}
               onPressEnter={this.handleBlurCreateIssue.bind(this)}
-              style={{width: '97%' }}
+              style={{ width: '97%' }}
             />
           </div>
           <div style={{
-          marginRight: '5%', display: 'flex',
-        }}
-        >
-          <Button
-            /* type="primary"
-            funcType="flat" */
-            funcType="raised"
-            loading={this.state.createLoading}
-            onClick={this.handleBlurCreateIssue.bind(this)}
-            color="blue"
+            marginRight: '5%', display: 'flex',
+          }}
           >
-            <FormattedMessage id="ok" />
-          </Button>
-          <Button
-            /* type="primary" */
-            funcType="raised"
-            onClick={() => {
-              this.setState({
-                creating: false,
-              });
-            }}
-          >
-            <FormattedMessage id="cancel" />
-          </Button>
-          
-        </div>
+            <Button
+              /* type="primary"
+              funcType="flat" */
+              funcType="raised"
+              loading={this.state.createLoading}
+              onClick={this.handleBlurCreateIssue.bind(this)}
+              color="blue"
+            >
+              <FormattedMessage id="ok" />
+            </Button>
+            <Button
+              /* type="primary" */
+              funcType="raised"
+              onClick={this.onCancel}
+            >
+              <FormattedMessage id="cancel" />
+            </Button>
+
+          </div>
         </div>
       </div>
     ) : (

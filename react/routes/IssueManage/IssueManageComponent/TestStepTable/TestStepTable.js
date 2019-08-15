@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
 import {
   Input, Icon, Modal, Tooltip, Button,
@@ -11,7 +13,7 @@ import { uploadFile } from '../../../../api/FileApi';
 import { DragTable } from '../../../../components';
 import { TextEditToggle, UploadInTable } from '../../../../components';
 import UploadButton from '../CommonComponent/UploadButton';
-import './TestStepTable.scss';
+import './TestStepTable.less';
 
 const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
@@ -31,7 +33,6 @@ class TestStepTable extends Component {
       },
       fileList: [],
       createdStepInfo: {
-
       },
     };
   }
@@ -91,14 +92,14 @@ class TestStepTable extends Component {
 
   handleFileUpload = (propFileList) => {
     if (propFileList.length) {
-      const fileList = propFileList.filter(i => !i.url);
+      const fileList = propFileList.filter((i) => !i.url);
       const config = {
         attachmentLinkId: createStepId,
         attachmentType: 'CASE_STEP',
       };
-      if (fileList.some(one => !one.url)) {
+      if (fileList.some((one) => !one.url)) {
         // eslint-disable-next-line no-shadow
-        const fileList = propFileList.filter(i => !i.url);
+        const fileList = propFileList.filter((i) => !i.url);
         const formData = new FormData();
         fileList.forEach((file) => {
           // file.name = encodeURI(encodeURI(file.name));
@@ -234,10 +235,9 @@ class TestStepTable extends Component {
       width: 560,
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
-        <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')
-          }
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk() {
         return deleteStep({ data: { stepId } })
           .then((res) => {
@@ -273,7 +273,7 @@ class TestStepTable extends Component {
       isEditing, data, createStep, fileList,
     } = this.state;
 
-    const hasStepIsCreating = data.find(item => item.stepIsCreating);
+    const hasStepIsCreating = data.find((item) => item.stepIsCreating);
 
     const columns = [{
       title: null,
@@ -315,7 +315,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span>
@@ -361,7 +361,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span>
@@ -372,7 +372,8 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea autoFocus autosize placeholder="测试数据" />
+              <TextArea autoFocus autosize />
+              {/* <TextArea autoFocus autosize placeholder="测试数据" /> */}
             </Edit>
           </TextEditToggle>
         );
@@ -408,7 +409,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {newValue => (
+              {(newValue) => (
                 stepIsCreating
                   ? (
                     <span>
@@ -477,16 +478,16 @@ class TestStepTable extends Component {
             <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
           </div>
         ) : (
-            <div>
-              <div {...provided.dragHandleProps} />
-              <Tooltip title={<FormattedMessage id="excute_save" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
-              </Tooltip>
-              <Tooltip title={<FormattedMessage id="excute_cancel" />}>
-                <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
-              </Tooltip>
-            </div>
-          );
+          <div>
+            <div {...provided.dragHandleProps} />
+            <Tooltip title={<FormattedMessage id="excute_save" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
+            </Tooltip>
+            <Tooltip title={<FormattedMessage id="excute_cancel" />}>
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
+            </Tooltip>
+          </div>
+        );
       },
     }];
 
