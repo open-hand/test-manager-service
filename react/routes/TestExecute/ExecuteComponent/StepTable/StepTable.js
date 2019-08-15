@@ -96,7 +96,7 @@ class StepTable extends PureComponent {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      render: testStep => (
+      render: (testStep) => (
         <div
           className="c7ntest-text-wrap"
         >
@@ -107,7 +107,7 @@ class StepTable extends PureComponent {
       title: <FormattedMessage id="execute_testData" />,
       dataIndex: 'testData',
       key: 'testData',
-      render: testData => (
+      render: (testData) => (
         <div
           className="c7ntest-text-wrap"
         >
@@ -118,7 +118,7 @@ class StepTable extends PureComponent {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      render: expectedResult => (
+      render: (expectedResult) => (
         <div
           className="c7ntest-text-wrap"
         >
@@ -137,7 +137,7 @@ class StepTable extends PureComponent {
               noButton
               disabled={disabled}
               formKey="stepStatus"
-              onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
+              onSubmit={(value) => that.editCycleStep({ ...record, stepStatus: value })}
               originData={stepStatus}
             >
               <Text>
@@ -174,7 +174,7 @@ class StepTable extends PureComponent {
       render(stepAttachment) {
         return (
           <div>
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').length > 0 ? stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
+            {stepAttachment.filter((attachment) => attachment.attachmentType === 'CASE_STEP').length > 0 ? stepAttachment.filter((attachment) => attachment.attachmentType === 'CASE_STEP').map((attachment) => (
               <div style={{
                 display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
               }}
@@ -182,8 +182,7 @@ class StepTable extends PureComponent {
                 <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
                 <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
               </div>
-            )) : '-'
-            }
+            )) : '-'}
           </div>
         );
       },
@@ -201,7 +200,7 @@ class StepTable extends PureComponent {
             originData={delta2Text(comment)}
           >
             <Text>
-              {data => (
+              {(data) => (
                 <div
                   className="c7ntest-text-wrap"
                   style={{ minHeight: 20 }}
@@ -223,7 +222,7 @@ class StepTable extends PureComponent {
       render(stepAttachment, record) {
         return (
           <UploadInTable
-            fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
+            fileList={stepAttachment.filter((attachment) => attachment.attachmentType === 'CYCLE_STEP')}
             onOk={ExecuteDetailStore.loadDetailList}
             enterLoad={ExecuteDetailStore.enterloading}
             leaveLoad={ExecuteDetailStore.unloading}

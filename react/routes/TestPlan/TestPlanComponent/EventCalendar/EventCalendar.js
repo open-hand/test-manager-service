@@ -1,3 +1,4 @@
+/* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
 import isEqual from 'react-fast-compare';
 import Moment from 'moment';
@@ -19,7 +20,7 @@ class EventCalendar extends Component {
     let endDate = moment();
     if (times && times.length > 0) {
       baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
-      endDate = moment.max(times.map(time => moment(time.end)));
+      endDate = moment.max(times.map((time) => moment(time.end)));
     }
 
     this.currentDate = baseDate;
@@ -27,8 +28,8 @@ class EventCalendar extends Component {
       baseDate, // 显示的开始时间
       endDate, // 显示的结束时间      
       mode: 'month',
-      width: 'auto',      
-    }; 
+      width: 'auto',
+    };
   }
 
 
@@ -43,12 +44,12 @@ class EventCalendar extends Component {
   componentDidUpdate(prevProps, prevState) {
     this.setSingleWidth();
   }
-  
 
-  setSingleWidth=() => {
+
+  setSingleWidth = () => {
     this.singleWidth = document.getElementsByClassName('CalendarBackItem')[0] ? document.getElementsByClassName('CalendarBackItem')[0].offsetWidth : 0;
   }
-  
+
   calculateTime = () => {
     const { baseDate, endDate } = this.state;
     const start = moment(baseDate).startOf('day');
@@ -57,7 +58,7 @@ class EventCalendar extends Component {
   }
 
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -157,7 +158,7 @@ class EventCalendar extends Component {
 
   render() {
     // console.log('render');
-    const { showMode, times } = this.props;  
+    const { showMode, times } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
@@ -166,17 +167,21 @@ class EventCalendar extends Component {
       <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
         {/* 头部 */}
         <div className="c7ntest-EventCalendar-header">
-          <div className="c7ntest-EventCalendar-header-title">计划日历</div>
-          <div className="c7ntest-flex-space" />
-          <div className="c7ntest-EventCalendar-header-skip">
-            <RangePicker
-              // placement="bottomRight"
-              onChange={this.handleRangeChange}
-              defaultValue={[start, end]}
-              format={dateFormat}
-            />
+          {/* <div className="c7ntest-EventCalendar-header-title">计划日历</div> */}
+          <div className="c7ntest-EventCalendar-header-title">
+            <div className="c7ntest-EventCalendar-header-skip">
+              <RangePicker
+                // placement="bottomRight"
+                onChange={this.handleRangeChange}
+                defaultValue={[start, end]}
+                format={dateFormat}
+              />
+            </div>
+
           </div>
-          <div className="c7ntest-EventCalendar-header-page">
+          <div className="c7ntest-flex-space" />
+
+          {/* <div className="c7ntest-EventCalendar-header-page">
             <Tooltip title="上个月">
               <Button type="circle" onClick={this.skipTo.bind(this, 'pre')} icon="keyboard_arrow_left" />
             </Tooltip>
@@ -187,15 +192,15 @@ class EventCalendar extends Component {
                 onClick={this.skipTo.bind(this, 'next')}
               />
             </Tooltip>
-          </div>
+          </div> */}
         </div>
-        <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>      
+        <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>
           <div style={{
             display: 'table', minWidth: '100%', minHeight: '100%', position: 'relative',
           }}
-          >   
-            <div className="c7ntest-EventCalendar-fixed-header">            
-              { timeArray.map((m, i) => (<CalendarBackItem date={m} />)) }            
+          >
+            <div className="c7ntest-EventCalendar-fixed-header">
+              {timeArray.map((m, i) => (<CalendarBackItem date={m} />))}
             </div>
             <div className="c7ntest-EventCalendar-eventContainer">
               <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
@@ -203,16 +208,16 @@ class EventCalendar extends Component {
                   timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
                 }
               </div>
-              {times.map(event => (
+              {times.map((event) => (
                 <EventItem
                   key={event.key}
                   onClick={this.props.onItemClick}
-                  itemRange={moment.range(event.start, event.end)}                  
+                  itemRange={moment.range(event.start, event.end)}
                   data={event}
-                  range={range}              
+                  range={range}
                 />
               ))}
-            </div>          
+            </div>
           </div>
         </div>
       </div>

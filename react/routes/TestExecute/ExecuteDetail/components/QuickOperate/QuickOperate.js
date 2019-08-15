@@ -1,7 +1,10 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Select } from 'choerodon-ui';
+import {
+  Select, Dropdown, Button, Menu, Icon,
+} from 'choerodon-ui';
 import { StatusTags } from '../../../../../components';
+import './QuickOperate.less';
 
 const { Option } = Select;
 const style = {
@@ -24,14 +27,27 @@ const QuickOperate = ({
   quickFail,
   onSubmit,
 }) => {
-  const options = statusList.map(status => (
-    <Option value={status.statusId} key={status.statusId}>
+  // const options = statusList.map((status) => (
+  //   <Option value={status.statusId} key={status.statusId}>
+  //     <StatusTags
+  //       color={status.statusColor}
+  //       name={status.statusName}
+  //     />
+  //   </Option>
+  // ));
+  const menuItems = statusList.map((item) => (
+    <Menu.Item key={item.statusId}>
       <StatusTags
-        color={status.statusColor}
-        name={status.statusName}
+        color={item.statusColor}
+        name={item.statusName}
       />
-    </Option>
+    </Menu.Item>
   ));
+  const menu = (
+    <Menu onClick={(item) => onSubmit({ executionStatus: item.key })}>
+      {menuItems}
+    </Menu>
+  );
   return (
     <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
       快速操作:
@@ -61,7 +77,7 @@ const QuickOperate = ({
       >
         失败
       </span>
-      <Select
+      {/* <Select
         className="c7ntest-select"
         placeholder="其他状态"
         value={null}
@@ -69,7 +85,13 @@ const QuickOperate = ({
         onChange={(id) => { onSubmit({ executionStatus: id }); }}
       >
         {options}
-      </Select>
+      </Select> */}
+      <Dropdown overlay={menu} trigger="click">
+        <a role="button" shape="circle" className="c7ntest-QuickOperate-Dropdown-a">
+          其它状态
+          <Icon type="arrow_drop_down" />
+        </a>
+      </Dropdown>
     </div>
   );
 };

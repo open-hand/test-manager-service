@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import {
-  Button, Icon, Card, Spin, Tooltip, 
+  Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
-import { Page, Header } from '@choerodon/boot';
+import { TabPage as Page, Header, Breadcrumb } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { StatusTags } from '../../../components';
 import {
-  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink, 
+  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink,
 } from '../../../common/utils';
 import {
   editCycle, removeDefect,
@@ -17,7 +17,7 @@ import {
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './ExecuteDetail.scss';
 import {
-  StepTable, ExecuteDetailSide, CreateBug, 
+  StepTable, ExecuteDetailSide, CreateBug,
 } from '../ExecuteComponent';
 import { QuickOperate, ExecuteHistoryTable } from './components';
 import ExecuteDetailStore from '../TestExecuteStore/ExecuteDetailStore';
@@ -63,7 +63,7 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.getInfo(id);
   }
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -91,7 +91,7 @@ class ExecuteDetail extends Component {
   handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
-      deleteAttachment(file.uid).then((data) => {     
+      deleteAttachment(file.uid).then((data) => {
         ExecuteDetailStore.getInfo();
       });
     }
@@ -132,11 +132,10 @@ class ExecuteDetail extends Component {
     delete newData.testCycleCaseStepES;
     delete newData.lastRank;
     delete newData.nextRank;
-
     editCycle(newData).then((Data) => {
       if (this.ExecuteDetailSide) {
         this.ExecuteDetailSide.HideFullEditor();
-      }      
+      }
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
       // console.log(error);
@@ -190,7 +189,7 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
-  handleBugCreate=() => {
+  handleBugCreate = () => {
     ExecuteDetailStore.setCreateBugShow(false);
     ExecuteDetailStore.getInfo();
   }
@@ -219,13 +218,21 @@ class ExecuteDetail extends Component {
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
-    
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header
           title={<FormattedMessage id="execute_detail" />}
-          backPath={disabled ? TestPlanLink() : TestExecuteLink()}
+        // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
+          {issueInfosVO && (
+            // <div style={{ display: 'flex', alignItems: 'center' }}>
+            <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide}>
+              {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
+              <Icon type="find_in_page" />
+              {visible ? '隐藏详情' : '查看详情'}
+            </Button>
+            // {/* </div> */}
+          )}
           <Button
             disabled={lastExecuteId === null}
             onClick={() => {
@@ -244,14 +251,17 @@ class ExecuteDetail extends Component {
             <span><FormattedMessage id="execute_next" /></span>
             <Icon type="navigate_next" />
           </Button>
-          <Button onClick={() => {
+          {/* <Button onClick={() => {
             ExecuteDetailStore.getInfo();
           }}
           >
             <Icon type="autorenew icon" />
             <span><FormattedMessage id="refresh" /></span>
-          </Button>
+          </Button> */}
+
         </Header>
+
+        <Breadcrumb title={issueInfosVO ? issueInfosVO.summary : null} />
         <Spin spinning={loading}>
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}
@@ -260,7 +270,7 @@ class ExecuteDetail extends Component {
                 flex: 1,
                 overflowX: 'hidden',
                 overflowY: 'auto',
-                padding: 20,          
+                padding: 20,
               }}
             >
               <div style={{ marginBottom: 24 }}>
@@ -272,28 +282,28 @@ class ExecuteDetail extends Component {
                       name={statusName}
                     />
                     <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
-                    <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
+                    {/* <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
                       <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
                       {visible ? '隐藏详情' : '打开详情'}
-                    </Button>
+                    </Button> */}
                   </div>
                 )}
               </div>
               {!disabled
                 && (
-                <QuickOperate 
-                  statusList={statusList}
-                  quickPass={this.quickPass}
-                  quickFail={this.quickFail}
-                  onSubmit={this.handleSubmit}
-                />
+                  <QuickOperate
+                    statusList={statusList}
+                    quickPass={this.quickPass}
+                    quickFail={this.quickFail}
+                    onSubmit={this.handleSubmit}
+                  />
                 )}
               <CardWrapper
                 style={{ margin: '24px 0' }}
                 title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
               >
                 <StepTable
-                  disabled={disabled} 
+                  disabled={disabled}
                   dataSource={detailList}
                   stepStatusList={stepStatusList}
                 />

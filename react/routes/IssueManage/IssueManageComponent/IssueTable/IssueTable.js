@@ -30,7 +30,7 @@ class IssueTable extends Component {
     });
   }
 
-  getComponents = columns => ({
+  getComponents = (columns) => ({
     table: () => {
       const table = (
         <table>
@@ -66,8 +66,8 @@ class IssueTable extends Component {
   }
 
   renderThead = (columns) => {
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
-    const ths = Columns.map(column => (
+    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const ths = Columns.map((column) => (
       <th style={{ flex: column.flex || 1 }}>
         {column.title}
         {' '}
@@ -80,8 +80,8 @@ class IssueTable extends Component {
     const {
       disabled, onRow, clickIssue,
     } = this.props;
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
-    const tds = index => Columns.map((column) => {
+    const Columns = columns.filter((column) => this.shouldColumnShow(column));
+    const tds = (index) => Columns.map((column) => {
       let renderedItem = null;
       const {
         dataIndex, key, flex, render,
@@ -229,7 +229,7 @@ class IssueTable extends Component {
   }
 
 
-  renderTable = columns => (
+  renderTable = (columns) => (
     <div className="c7ntest-issuetable">
       <Table
           // filterBar={false}
@@ -295,7 +295,7 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current, size);
   }
 
-  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
+  manageVisible = (columns) => columns.map((column) => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
 
 
   render() {
@@ -303,6 +303,13 @@ class IssueTable extends Component {
     const labels = IssueStore.getLabels;
     const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
+      {
+        title: '用例名称',
+        dataIndex: 'summary',
+        key: 'summary',
+        filters: [],
+        render: (summary, record) => renderSummary(summary),
+      },
       {
         title: '编号',
         dataIndex: 'issueNum',
@@ -316,13 +323,7 @@ class IssueTable extends Component {
         key: 'issueTypeVO',
         render: (issueTypeVO, record) => renderType(issueTypeVO, true),
       },
-      {
-        title: '概要',
-        dataIndex: 'summary',
-        key: 'summary',
-        filters: [],
-        render: (summary, record) => renderSummary(summary),
-      },
+ 
       {
         title: '版本',
         dataIndex: 'versionIssueRelVOList',
@@ -350,7 +351,7 @@ class IssueTable extends Component {
         title: '优先级',
         dataIndex: 'priorityId',
         key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+        filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
         filterMultiple: true,
         render: (priorityId, record) => renderPriority(record.priorityVO),
       },
@@ -369,7 +370,7 @@ class IssueTable extends Component {
         title: '状态',
         dataIndex: 'statusId',
         key: 'statusId',
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
+        filters: issueStatusList.map((status) => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusVO, record) => renderStatus(record.statusVO),
       },
@@ -377,7 +378,7 @@ class IssueTable extends Component {
         title: '标签',
         dataIndex: 'labelIssueRelVOList',
         key: 'labelIssueRelVOList',
-        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
+        filters: labels.map((label) => ({ text: label.labelName, value: label.labelId.toString() })),
         filterMultiple: true,
         render: (labelIssueRelVOList, record) => renderLabels(labelIssueRelVOList),
       },

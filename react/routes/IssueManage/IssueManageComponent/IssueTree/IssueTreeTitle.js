@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { stores, axios, Permission } from '@choerodon/boot';
@@ -14,7 +15,7 @@ import {
   editFolder, deleteFolder, moveIssues, copyIssues, exportIssuesFromFolder, exportIssuesFromVersion,
 } from '../../../../api/IssueManageApi';
 import IssueStore from '../../IssueManagestore/IssueStore';
-import './IssueTreeTitle.scss';
+import './IssueTreeTitle.less';
 
 const { AppState } = stores;
 const { confirm } = Modal;
@@ -150,7 +151,7 @@ class IssueTreeTitle extends Component {
     });
     // console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
     const isCopy = e.ctrlKey || e.metaKey;
-    const issueLinks = IssueStore.getDraggingTableItems.map(issue => ({
+    const issueLinks = IssueStore.getDraggingTableItems.map((issue) => ({
       issueId: issue.issueId,
       summary: issue.summary,
       objectVersionNumber: issue.objectVersionNumber,
@@ -180,7 +181,7 @@ class IssueTreeTitle extends Component {
     }
   }
 
-  exportIssueFromVersion=(data) => {
+  exportIssueFromVersion = (data) => {
     exportIssuesFromVersion(data.versionId).then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const fileName = `${AppState.currentMenuType.name}-${data.title}.xlsx`;
@@ -196,7 +197,7 @@ class IssueTreeTitle extends Component {
     const draggingItems = IssueTreeStore.getDraggingFolders;
 
     // 过滤，这里只要文件夹,显示时可以显示和当前版本一样的，但最终处理时过滤掉
-    const filteredItems = draggingItems.filter(item => item && item.cycleId);
+    const filteredItems = draggingItems.filter((item) => item && item.cycleId);
     const getMenu = () => {
       let items = [];
       // if (type === 'temp') {
@@ -289,7 +290,7 @@ class IssueTreeTitle extends Component {
               </SmartTooltip>
             </div>
           )}
-        <div role="none" className="c7ntest-issue-tree-title-actionButton" onClick={e => e.stopPropagation()}>
+        <div role="none" className="c7ntest-issue-tree-title-actionButton" onClick={(e) => e.stopPropagation()}>
           {/* {data.type === 'temp'
         ? null : */}
           {
@@ -302,9 +303,9 @@ class IssueTreeTitle extends Component {
           {
             type === 'cycle'
             && (
-            <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
-              <Button shape="circle" icon="more_vert" />
-            </Dropdown>
+              <Dropdown overlay={getMenu(data.type)} trigger={['click']}>
+                <Button shape="circle" icon="more_vert" />
+              </Dropdown>
             )
           }
         </div>
@@ -369,48 +370,44 @@ class IssueTreeTitle extends Component {
                         }}
                       >
                         {snapshotinner.isDragging
-                                && (
-                                  <div style={{
-                                    position: 'absolute',
-                                    width: 15,
-                                    height: 15,
-                                    fontSize: '12px',
-                                    lineHeight: '15px',
-                                    background: 'red',
-                                    textAlign: 'center',
-                                    color: 'white',
-                                    borderRadius: '50%',
-                                    top: 0,
-                                    left: -20,
-                                  }}
-                                  >
-                                    {filteredItems.length}
-                                  </div>
-                                )
-                              }
+                          && (
+                            <div style={{
+                              position: 'absolute',
+                              width: 15,
+                              height: 15,
+                              fontSize: '12px',
+                              lineHeight: '15px',
+                              background: 'red',
+                              textAlign: 'center',
+                              color: 'white',
+                              borderRadius: '50%',
+                              top: 0,
+                              left: -20,
+                            }}
+                            >
+                              {filteredItems.length}
+                            </div>
+                          )}
                         {treeTitle}
                         {snapshotinner.isDragging
-                        && (
-                          <div className="IssueTree-drag-prompt">
-                            <div>复制或移动文件夹</div>
-                            <div>按下ctrl/command复制</div>
-                            <div
-                              ref={(instance) => { this.instance = instance; }}
-                            >
-                              <div>
-                                {'当前状态：'}
-                                <span style={{ fontWeight: 500 }}>移动</span>
+                          && (
+                            <div className="IssueTree-drag-prompt">
+                              <div>复制或移动文件夹</div>
+                              <div>按下ctrl/command复制</div>
+                              <div
+                                ref={(instance) => { this.instance = instance; }}
+                              >
+                                <div>
+                                  {'当前状态：'}
+                                  <span style={{ fontWeight: 500 }}>移动</span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        )
-                      }
+                          )}
                       </div>
                     </div>
                   );
-                }
-
-                }
+                }}
               </Draggable>
               {provided.placeholder}
             </div>

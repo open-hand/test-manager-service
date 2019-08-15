@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
-  Page, Header, Content, Breadcrumb, 
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
@@ -88,7 +88,7 @@ export default class IssueManage extends Component {
   }
 
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -112,11 +112,12 @@ export default class IssueManage extends Component {
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
           <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
-            <Icon type="export icon" />
+            <Icon type="unarchive" />
             <FormattedMessage id="issue_export" />
           </Button>
           <Button className="leftBtn" onClick={() => this.importSide.open()}>
-            <Icon type="file_upload icon" />
+            {/* <Icon type="file_upload icon" /> */}
+            <Icon type="archive" />
             <FormattedMessage id="issue_import" />
           </Button>
           {/* <Button
@@ -168,7 +169,7 @@ export default class IssueManage extends Component {
           >
             <IssueTable
               clickIssue={clickIssue}
-              onRow={record => ({
+              onRow={(record) => ({
                 onClick: (event) => { this.handleTableRowClick(record); },
               })}
             />

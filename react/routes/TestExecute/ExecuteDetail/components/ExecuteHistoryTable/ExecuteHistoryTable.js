@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { Table, Tooltip } from 'choerodon-ui';
 import { delta2Html, delta2Text } from '../../../../../common/utils';
 import { RichTextShow, User } from '../../../../../components';
-import './ExecuteHistoryTable.scss';
+import './ExecuteHistoryTable.less';
 
 const propTypes = {
   dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
@@ -29,7 +29,7 @@ const ExecuteHistoryTable = ({
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     width: '25%',
-    render: lastUpdateDate => <div className="c7ntest-text-dot">{lastUpdateDate}</div>,
+    render: (lastUpdateDate) => <div className="c7ntest-text-dot">{lastUpdateDate}</div>,
   }, {
     title: '操作类型',
     dataIndex: 'field',
