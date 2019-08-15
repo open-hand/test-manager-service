@@ -19,7 +19,7 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.util.LongUtils;
-import io.choerodon.test.manager.infra.feign.UserFeignClient;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 
 /**
  * Created by 842767365@qq.com on 7/2/18.
@@ -28,18 +28,18 @@ import io.choerodon.test.manager.infra.feign.UserFeignClient;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserFeignClient userFeignClient;
+    private BaseFeignClient baseFeignClient;
 
     public Map<Long, UserDO> query(Long[] ids) {
         if (ObjectUtils.isEmpty(ids)) {
             return new HashMap<>();
         }
-        return userFeignClient.listUsersByIds(ids, false).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
+        return baseFeignClient.listUsersByIds(ids, false).getBody().stream().collect(Collectors.toMap(UserDO::getId, Function.identity()));
     }
 
     @Override
     public ResponseEntity<PageInfo<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
-        return userFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
+        return baseFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
     }
 
     public void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto) {
