@@ -48,11 +48,7 @@
     ],
     "react/**/*.scss": "stylelint --syntax scss"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+
   "peerDependencies": {
     "@choerodon/boot": "0.20.x",
     "@choerodon/master": "0.20.x"
