@@ -37,6 +37,7 @@
         <id column="created_by" property="createdBy"/>
         <id column="creation_date" property="creationDate"/>
         <id column="last_update_date" property="lastUpdateDate"/>
+        <!--<id column="status" property="status"/>-->
         <association property="testAppInstanceDTO" javaType="io.choerodon.test.manager.infra.dto.TestAppInstanceDTO">
             <id column="pod_status" property="podStatus"/>
             <id column="app_version_id" property="appVersionId"/>

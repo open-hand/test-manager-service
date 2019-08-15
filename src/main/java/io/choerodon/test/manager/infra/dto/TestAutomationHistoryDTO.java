@@ -33,6 +33,24 @@ public class TestAutomationHistoryDTO extends BaseDTO {
     private Date creationDate;
 
     @Override
+    public String toString() {
+        return "TestAutomationHistoryDTO{" +
+                "id=" + id +
+                ", framework='" + framework + '\'' +
+                ", testStatus=" + testStatus +
+                ", instanceId=" + instanceId +
+                ", projectId=" + projectId +
+                ", cycleIds='" + cycleIds + '\'' +
+                ", resultId=" + resultId +
+                ", lastUpdatedBy=" + lastUpdatedBy +
+                ", objectVersionNumber=" + objectVersionNumber +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", creationDate=" + creationDate +
+                ", testAppInstanceDTO=" + testAppInstanceDTO +
+                '}';
+    }
+
+    @Override
     public Date getCreationDate() {
         return creationDate;
     }

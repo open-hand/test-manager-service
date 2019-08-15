@@ -22,7 +22,7 @@
 //@PowerMockRunnerDelegate(Sputnik.class)
 //class TestCycleCaseAttachmentRelControllerSpec extends Specification {
 //
-//    ITestCycleCaseAttachmentRelService iservice
+////    ITestCycleCaseAttachmentRelService iservice
 //
 //    TestCycleCaseAttachmentRelService service
 //
