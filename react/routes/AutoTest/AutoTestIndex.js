@@ -3,7 +3,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import { asyncRouter, nomatch } from '@choerodon/boot';
+import { asyncRouter, nomatch } from '@choerodon/master';
 
 const CreateAutoTest = asyncRouter(() => (import('./CreateAutoTest')));
 const AutoTestList = asyncRouter(() => import('./AutoTestList'));

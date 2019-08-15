@@ -92,14 +92,14 @@ class TestStepTable extends Component {
 
   handleFileUpload = (propFileList) => {
     if (propFileList.length) {
-      const fileList = propFileList.filter((i) => !i.url);
+      const fileList = propFileList.filter(i => !i.url);
       const config = {
         attachmentLinkId: createStepId,
         attachmentType: 'CASE_STEP',
       };
-      if (fileList.some((one) => !one.url)) {
+      if (fileList.some(one => !one.url)) {
         // eslint-disable-next-line no-shadow
-        const fileList = propFileList.filter((i) => !i.url);
+        const fileList = propFileList.filter(i => !i.url);
         const formData = new FormData();
         fileList.forEach((file) => {
           // file.name = encodeURI(encodeURI(file.name));
@@ -273,7 +273,7 @@ class TestStepTable extends Component {
       isEditing, data, createStep, fileList,
     } = this.state;
 
-    const hasStepIsCreating = data.find((item) => item.stepIsCreating);
+    const hasStepIsCreating = data.find(item => item.stepIsCreating);
 
     const columns = [{
       title: null,
@@ -315,7 +315,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {(newValue) => (
+              {newValue => (
                 stepIsCreating
                   ? (
                     <span>
@@ -326,7 +326,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea autoFocus autosize placeholder="测试步骤" />
+              <TextArea maxLength={500} autoFocus autosize placeholder="测试步骤" />
             </Edit>
           </TextEditToggle>
         );
@@ -361,7 +361,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {(newValue) => (
+              {newValue => (
                 stepIsCreating
                   ? (
                     <span>
@@ -372,7 +372,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea autoFocus autosize />
+              <TextArea maxLength={500} autoFocus autosize />
               {/* <TextArea autoFocus autosize placeholder="测试数据" /> */}
             </Edit>
           </TextEditToggle>
@@ -409,7 +409,7 @@ class TestStepTable extends Component {
             }}
           >
             <Text>
-              {(newValue) => (
+              {newValue => (
                 stepIsCreating
                   ? (
                     <span>
@@ -420,7 +420,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea autoFocus autosize placeholder="预期结果" />
+              <TextArea maxLength={500} autoFocus autosize placeholder="预期结果" />
             </Edit>
           </TextEditToggle>
         );

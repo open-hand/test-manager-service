@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { stores, Content } from '@choerodon/boot';
+import { stores, Content } from '@choerodon/master';
 import { withRouter } from 'react-router-dom';
 import { find, debounce, map } from 'lodash';
 import {

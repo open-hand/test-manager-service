@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Content, stores, WSHandler } from '@choerodon/boot';
+import { Content, stores, WSHandler } from '@choerodon/master';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
