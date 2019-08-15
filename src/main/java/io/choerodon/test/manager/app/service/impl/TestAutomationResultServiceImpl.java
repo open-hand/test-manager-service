@@ -28,7 +28,7 @@ public class TestAutomationResultServiceImpl implements TestAutomationResultServ
     @Override
     public List<TestAutomationResultVO> query(TestAutomationResultVO testAutomationResultVO) {
         return modelMapper.map(testAutomationResultMapper.select(modelMapper.map(testAutomationResultVO,
-                TestAutomationResultDTO.class)), new TypeToken<List<TestAutomationResultDTO>>() {
+                TestAutomationResultDTO.class)), new TypeToken<List<TestAutomationResultVO>>() {
         }.getType());
     }
 

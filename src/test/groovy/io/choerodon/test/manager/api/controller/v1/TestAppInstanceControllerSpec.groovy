@@ -34,7 +34,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(IntegrationTestConfiguration)
-@Stepwise
+//@Stepwise
 class TestAppInstanceControllerSpec extends Specification {
 
     @Autowired
@@ -68,7 +68,7 @@ class TestAppInstanceControllerSpec extends Specification {
             "  \n" +
             "framework: moche";
     @Shared
-    String changedValues = "# Default values for api-gateway.\n" +
+    String  changedValues= "# Default values for api-gateway.\n" +
             "\n" +
             "image:\n" +
             "  repository: registry.choerodon.com.cn/choerodon/example-front\n" +
@@ -87,16 +87,20 @@ class TestAppInstanceControllerSpec extends Specification {
         def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
                 deployDTO, TestAppInstanceVO, 144L)
         then:
+        //模拟返回值，任何参数的这个方法调用都会返回ReplaceResult
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: values, deltaYaml: "")
         TestEnvCommandDTO insertCommand = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         TestAutomationHistoryDTO historyE = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche",
-                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
+//                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
+                instanceId: res.getBody().getId()))
+
         and:
         insertCommand.getCommandType().equals("create")
         insertCommand.valueId == null
         res.getBody().appId == 1L
         res.getBody().appVersionId == 1L
         historyE != null
+        historyE.testStatus == 0
         instanceIds.add(res.getBody().getId())
         deployDTO.setHistoryId(historyE.getId())
 
@@ -119,7 +123,8 @@ class TestAppInstanceControllerSpec extends Specification {
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
         TestEnvCommandDTO insertCommand3 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         TestAutomationHistoryDTO historyE3 = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche2",
-                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
+//                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
+                instanceId: res.getBody().getId()))
 
         and:
         insertCommand3.getCommandType().equals("create")
@@ -127,6 +132,7 @@ class TestAppInstanceControllerSpec extends Specification {
         res.getBody().appId == 2L
         res.getBody().appVersionId == 2L
         historyE3 != null
+        historyE3.testStatus == 0
 
         instanceIds.add(res.getBody().getId())
         deployDTO2.setHistoryId(historyE3.getId())

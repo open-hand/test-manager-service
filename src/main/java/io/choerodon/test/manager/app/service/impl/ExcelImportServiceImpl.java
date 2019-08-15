@@ -191,7 +191,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         finishImport(testFileLoadHistoryDTO, userId, status);
     }
 
-    private Workbook buildImportTemp(Long organizationId, Long projectId) {
+    public Workbook buildImportTemp(Long organizationId, Long projectId) {
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         List<PriorityVO> priorityVOList = issueFeignClient.queryByOrganizationIdList(organizationId).getBody();
         List<UserDTO> userDTOS = userService.list(new PageRequest(1, 99999), projectId, null, null).getBody().getList();
