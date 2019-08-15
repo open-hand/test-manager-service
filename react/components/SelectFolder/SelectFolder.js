@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { Component } from 'react';
 import { Select } from 'choerodon-ui';
 import { getFoldersByVersion } from '../../api/IssueManageApi';
@@ -5,10 +6,14 @@ import { getFoldersByVersion } from '../../api/IssueManageApi';
 const { Option } = Select;
 
 class SelectFolder extends Component {
-  state = {
-    loading: false,
-    List: [],
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      List: [],
+    };
   }
+
 
   componentWillReceiveProps(nextProps) {
     if (this.props.versionId && !nextProps.versionId) {
@@ -21,7 +26,7 @@ class SelectFolder extends Component {
   render() {
     const { versionId } = this.props;
     const { loading, List } = this.state;
-    const Options = List.map(item => (
+    const Options = List.map((item) => (
       <Option value={item.folderId} key={item.folderId}>
         {item.name}
       </Option>
@@ -37,7 +42,7 @@ class SelectFolder extends Component {
             this.setState({
               loading: true,
             });
-            getFoldersByVersion(versionId).then((Data) => {
+            getFoldersByVersion(versionId === 'all' ? null : versionId).then((Data) => {
               this.setState({
                 List: Data,
                 loading: false,
