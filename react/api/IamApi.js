@@ -8,7 +8,7 @@ import { getProjectId, getOrganizationId, request } from '../common/utils';
  * @returns
  */
 export function getSelf() {
-  return request.get('/iam/v1/users/self');
+  return request.get('/base/v1/users/self');
 }
 /**
  *获取指定用户
@@ -18,7 +18,7 @@ export function getSelf() {
  * @returns
  */
 export function getUser(userId) {
-  return request.get(`iam/v1/projects/${getProjectId()}/users?id=${userId}`);
+  return request.get(`base/v1/projects/${getProjectId()}/users?id=${userId}`);
 }
 /**
  *获取用户列表
@@ -29,13 +29,13 @@ export function getUser(userId) {
  */
 export function getUsers(param) {
   if (param) {
-    return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40&param=${param}`);
+    return request.get(`/base/v1/projects/${getProjectId()}/users?size=40&param=${param}`);
   }
-  return request.get(`/iam/v1/projects/${getProjectId()}/users?size=40`);
+  return request.get(`/base/v1/projects/${getProjectId()}/users?size=40`);
 }
 
 export function getUpdateProjectInfoPermission() {
-  return request.post('/iam/v1/permissions/checkPermission', [{
+  return request.post('/base/v1/permissions/checkPermission', [{
     code: 'agile-service.project-info.updateProjectInfo',
     organizationId: getOrganizationId(),
     projectId: getProjectId(),
