@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  Page, Header, Content, Breadcrumb,
+  TabPage as Page, Header, Content, Breadcrumb,
 } from '@choerodon/master';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
@@ -81,7 +81,7 @@ const TestExecuteHome = ({
           </span>
         </Button>
       </Header> */}
-      <Breadcrumb title="执行" />
+      <Breadcrumb title="" />
       <div className="breadcrumb-border" />
       <Content
         style={{
@@ -89,20 +89,20 @@ const TestExecuteHome = ({
         }}
       >
         <Spin spinning={loading}>
-          <div className="c7ntest-TestExecuteHome-container">          
-            <TestExecuteTreeToggle 
+          <div className="c7ntest-TestExecuteHome-container">
+            <TestExecuteTreeToggle
               leftVisible={leftVisible}
-              filterCycle={filterCycle}     
-              onTreeAssignedToChange={onTreeAssignedToChange}              
-              treeAssignedTo={treeAssignedTo}              
+              filterCycle={filterCycle}
+              onTreeAssignedToChange={onTreeAssignedToChange}
+              treeAssignedTo={treeAssignedTo}
               treeData={treeData}
-              treeSearchValue={treeSearchValue}             
+              treeSearchValue={treeSearchValue}
               selectedKeys={selectedKeys}
               expandedKeys={expandedKeys}
               onTreeNodeExpand={onTreeNodeExpand}
               onTreeNodeSelect={onTreeNodeSelect}
               autoExpandParent={autoExpandParent}
-            />          
+            />
             {cycleId ? (
               <div className="c7ntest-TestExecuteHome-right">
                 <ShowCycleData data={currentCycle} />
@@ -122,8 +122,8 @@ const TestExecuteHome = ({
                   pagination={executePagination}
                 />
               </div>
-            ) : <NoCycle />}    
-          </div>    
+            ) : <NoCycle />}
+          </div>
         </Spin>
       </Content>
     </Page>

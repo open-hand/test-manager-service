@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  Page, Header, Content, Breadcrumb, 
+  TabPage as Page, Header, Content, Breadcrumb, 
 } from '@choerodon/master';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -147,7 +147,7 @@ class TestPlanHome extends Component {
             <FormattedMessage id="refresh" />
           </Button> */}
         </Header>
-        <Breadcrumb title="计划" />
+        <Breadcrumb title="" />
         <div className="breadcrumb-border" />
         <Content
           title={null}

@@ -20,10 +20,13 @@ import IssueTreeStore from '../IssueManagestore/IssueTreeStore';
 
 @observer
 export default class IssueManage extends Component {
-  state = {
-    createIssueShow: false,
-    clickIssue: {},
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      createIssueShow: false,
+      clickIssue: {},
+    };
+  }
 
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);
@@ -133,7 +136,7 @@ export default class IssueManage extends Component {
             <FormattedMessage id="refresh" />
           </Button> */}
         </Header>
-        <Breadcrumb title="用例库" />
+        <Breadcrumb title="" />
         <div className="breadcrumb-border" />
         <Content className="c7ntest-issue-content" style={{ display: 'flex', padding: '0' }}>
           {/* <div className="c7ntest-chs-bar">
