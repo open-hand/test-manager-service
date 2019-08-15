@@ -1,12 +1,12 @@
 # 测试管理服务
-`Test-Manager Service` 是猪齿鱼核心服务之一 ，该服务是Choerodon微服务框架的测试管理中心。它的主要功能包括测试用例管理、测试循环、测试分析等。
+`Test Manager Service` 是猪齿鱼核心服务之一 ，该服务是Choerodon微服务框架的测试管理中心。它的主要功能包括测试用例管理、测试循环、测试报表分析、自动化测试等。
 
 ## 特点
 - **测试用例**（创建、查看和编辑测试用例、测试用例树、excel导入和导出等）
 - **测试计划**（创建测试循环、测试阶段以及批量克隆循环等）
 - **测试执行**（执行测试、搜索执行、记录步骤结果、查看执行测试详情、删除执行）
 - **自定义状态**（状态列表，创建状态）
-- **自动化测试**（执行自动化测试，查看测试结果）
+- **自动化测试**（自动化模板包括：`mocha`、`testNG`、`selenium`，编写测试内容，执行自动化测试，查看测试结果）
 - **设置**（自定义状态）
 
 ## 依赖
@@ -127,35 +127,25 @@ management:
 
 - 拉取当前项目到本地
 ```shell
-  git clone https://code.choerodon.com.cn/choerodon-agile/test-manager-service.git
+ git clone https://code.choerodon.com.cn/choerodon-agile/test-manager-service.git
 ```
 
-- 在Mysql数据库创建一个 `test_manager_service` 数据库
+- 初始化数据库，本地创建 `test-manager-service` 数据表，代码如下：
 
-```sql
-CREATE USER 'choerodon'@'%' IDENTIFIED BY "123456";
-CREATE DATABASE test_manager_service DEFAULT CHARACTER SET utf8;
-GRANT ALL PRIVILEGES ON test_manager_service.* TO choerodon@'%';
-FLUSH PRIVILEGES;
-```
-- 在 `test_manager_service` 项目根目录下创建 `init-local-database.sh` 数据初始化脚本文件
+  ```sql
+  CREATE USER 'choerodon'@'%' IDENTIFIED BY "123456";
+  CREATE DATABASE test_manager_service DEFAULT CHARACTER SET utf8;
+  GRANT ALL PRIVILEGES ON test_manager_service.* TO choerodon@'%';
+  FLUSH PRIVILEGES;
+  ```
 
+- 初始化 `test-manager-service` 数据表数据，运行项目根目录下的 `init-local-database.sh`，该脚本默认初始化数据库的地址为 `localhost`，若有变更需要修改脚本文件
 
-- 执行数据库初始化脚本
+  ```sh
+  sh init-local-database.sh
+  ```
 
-```sh
-sh init-local-database.sh
-```
-
-- 启动项目，在根目录文件下运行 `manager-service` 项目：
-
-```sh
-mvn spring-boot:run
-```
->或者在本地集成环境中运行 `SpringBoot` 启动类
-`\src\main\java\io\choerodon\test\manager\TestManagerServiceApplication.java`
-
-
+- 启动项目，项目根目录下运行 `mvn clean spring-boot:run` 命令，或者在本地集成环境中运行 `SpringBoot` 启动类 `/src/main/java/io/choerodon/buzz/TestManagerServiceApplication.java`
 
 ## 报告问题
 如果你发现任何缺陷或者bugs，请在[issue](https://github.com/choerodon/choerodon/issues/new?template=issue_template.md)上面描述并提交给我们。
