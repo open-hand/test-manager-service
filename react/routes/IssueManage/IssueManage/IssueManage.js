@@ -21,7 +21,7 @@ import IssueTreeStore from '../IssueManagestore/IssueTreeStore';
 @observer
 export default class IssueManage extends Component {
   constructor(props) {
-    // 更正state
+    // 更正state 
     super(props);
     this.state = {
       createIssueShow: false,
