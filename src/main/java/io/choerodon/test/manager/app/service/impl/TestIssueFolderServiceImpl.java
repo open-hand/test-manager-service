@@ -66,7 +66,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                 .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
         List<TestIssueFolderWithVersionNameVO> result = new ArrayList<>();
-        String versionName = testCaseService.getVersionInfo(projectId).get(versionId).getName();
+        String versionName = testCaseService.getVersionInfo(projectId).getOrDefault(versionId,new ProductVersionDTO()).getName();
 
         resultTemp.forEach(v -> {
             TestIssueFolderWithVersionNameVO t = new TestIssueFolderWithVersionNameVO();
