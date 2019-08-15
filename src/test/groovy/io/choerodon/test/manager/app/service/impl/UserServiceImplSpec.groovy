@@ -39,7 +39,7 @@ class UserServiceImplSpec extends Specification {
 
     def "List"() {
         given:
-        PageRequest pr = new PageRequest()
+        PageRequest pr = new PageRequest(1,1)
         UserDTO user = new UserDTO(id: 1L)
 
         PageInfo<UserDTO> page1 = new PageInfo<>(Lists.newArrayList(user))
@@ -47,7 +47,7 @@ class UserServiceImplSpec extends Specification {
         when:
         userService.list(pr, 1l, "参数", 2l)
         then:
-        1 * client.list(_, _, _, _, _) >> new ResponseEntity<>(page1, HttpStatus.OK)
+        1 * client.list(_, _, _) >> new ResponseEntity<>(page1, HttpStatus.OK)
     }
 
     def "populateUsersInHistory"() {

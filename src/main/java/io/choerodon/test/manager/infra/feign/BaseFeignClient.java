@@ -31,8 +31,8 @@ public interface BaseFeignClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/users")
     ResponseEntity<PageInfo<UserDTO>> list(@PathVariable(name = "project_id") Long id,
-                                           @RequestParam("page") int page,
-                                           @RequestParam("size") int size);
+                                           @RequestParam(value = "page") int page,
+                                           @RequestParam(value = "size") int size);
 
     @GetMapping(value = "/v1/projects/{project_id}")
     ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);

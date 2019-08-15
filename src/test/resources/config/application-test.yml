@@ -28,3 +28,7 @@ choerodon:
       thread-num: 5  # 消费线程数
       max-poll-size: 200 # 每次拉取的最大消息数量
       poll-interval-ms: 1000 # 拉取消息的间隔(毫秒)，默认1000毫秒
+
+
+testScanIgnore:
+  enabled: true
