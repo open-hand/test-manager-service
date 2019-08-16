@@ -363,4 +363,16 @@ public class TestCycleCaseVO {
     public String getStatusColor() {
         return statusColor;
     }
+
+    public List<TestCycleCaseDefectRelVO> getCaseDefect() {
+        return caseDefect;
+    }
+
+    public void setCaseDefect(List<TestCycleCaseDefectRelVO> caseDefect) {
+        this.caseDefect = caseDefect;
+    }
+
+    public void setCycleCaseStep(List<TestCycleCaseStepVO> cycleCaseStep) {
+        this.cycleCaseStep = cycleCaseStep;
+    }
 }
