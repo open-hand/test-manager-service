@@ -123,7 +123,7 @@ class TestCaseControllerSpec extends Specification {
         then:
         1 * testCaseService.getProjectInfo(_) >> projectDTO
         1 * testCaseService.getVersionIds(_) >> versionIds
-        1 * testCaseService.queryLookupValueByCode(_, _) >> lookupTypeWithValuesDTO
+        1 * testCaseService.queryLookupValueByCode(_) >> lookupTypeWithValuesDTO
         1 * userService.list(_, _, _, _) >> new ResponseEntity<PageInfo<UserDTO>>(pageInfo, HttpStatus.OK)
         1 * testCaseService.getVersionInfo(_) >> versionInfo
         1 * testCaseService.listStatusByProjectId(_) >> issueStatusDTOS

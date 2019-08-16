@@ -1,15 +1,13 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import java.util.List;
-
 import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.api.vo.*;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.choerodon.agile.api.vo.*;
+import java.util.List;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -93,7 +91,7 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(Long projectId, String typeCode) {
+    public ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(String typeCode) {
         throw new CommonException(QUERY_ERROR);
     }
 

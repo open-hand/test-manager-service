@@ -155,13 +155,8 @@ public interface TestCaseFeignClient {
     ResponseEntity<PageInfo<ComponentForListDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId,
                                                                   @RequestBody(required = false) SearchDTO searchDTO);
 
-
     @GetMapping(value = "/v1/projects/{project_id}/issue_labels")
     ResponseEntity<List<IssueLabelDTO>> listIssueLabel(@PathVariable(name = "project_id") Long projectId);
-
-    @GetMapping(value = "/v1/projects/{project_id}/lookup_values/{typeCode}")
-    ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(@PathVariable(name = "project_id") Long projectId,
-                                                                   @PathVariable(name = "typeCode") String typeCode);
 
     @GetMapping(value = "/v1/projects/{project_id}/issue_status/list")
     ResponseEntity<List<IssueStatusDTO>> listStatusByProjectId(@PathVariable(name = "project_id") Long projectId);
@@ -177,4 +172,7 @@ public interface TestCaseFeignClient {
                                                      @PathVariable(name = "project_id") Long projectId,
                                                      @ApiParam(value = "issue编号", required = true)
                                                      @RequestBody String issueNum);
+
+    @GetMapping(value = "/v1/lookup_values/{typeCode}")
+    ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(@PathVariable(name = "typeCode") String typeCode);
 }
