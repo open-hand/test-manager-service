@@ -13,9 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
  * Created by HuangFuqiang@choerodon.io on 2018/3/21.
  * Email: fuqianghuang01@gmail.com
  */
-@Component
 @FeignClient(value = "file-service", fallback = FileFeignClientFallback.class, configuration = FeignMultipartSupportConfig.class)
 public interface FileFeignClient {
+
     @PostMapping(value = "/v1/files",
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

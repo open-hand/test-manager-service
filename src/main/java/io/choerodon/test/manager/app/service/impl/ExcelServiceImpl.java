@@ -615,7 +615,7 @@ public class ExcelServiceImpl implements ExcelService {
         optionDTOS.add(new ExcelReadMeOptionVO("用例编号", false));
         optionDTOS.add(new ExcelReadMeOptionVO("优先级", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例描述", false));
-        optionDTOS.add(new ExcelReadMeOptionVO("经办人", false));
+        optionDTOS.add(new ExcelReadMeOptionVO("被指定人", false));
         optionDTOS.add(new ExcelReadMeOptionVO("状态", false));
         optionDTOS.add(new ExcelReadMeOptionVO("测试步骤", false));
         optionDTOS.add(new ExcelReadMeOptionVO("测试数据", false));

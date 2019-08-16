@@ -1,31 +1,35 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.github.pagehelper.Page;
-import io.choerodon.test.manager.infra.feign.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
-
 import io.choerodon.agile.api.vo.*;
+import io.choerodon.agile.infra.common.enums.IssueTypeCode;
+import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.domain.Sort;
 import io.choerodon.devops.api.dto.ApplicationRepDTO;
 import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
 import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.util.PageUtil;
-import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.infra.util.TypeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -149,8 +153,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public LookupTypeWithValuesDTO queryLookupValueByCode(Long projectId, String typeCode) {
-        return testCaseFeignClient.queryLookupValueByCode(projectId, typeCode).getBody();
+    public LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode) {
+        return testCaseFeignClient.queryLookupValueByCode(typeCode).getBody();
     }
 
 

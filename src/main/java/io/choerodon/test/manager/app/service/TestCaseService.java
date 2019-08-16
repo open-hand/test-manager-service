@@ -68,7 +68,7 @@ public interface TestCaseService {
 
     List<IssueLabelDTO> listIssueLabel(Long projectId);
 
-    LookupTypeWithValuesDTO queryLookupValueByCode(Long projectId, String typeCode);
+    LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode);
 
     List<IssueStatusDTO> listStatusByProjectId(Long projectId);
 
