@@ -106,7 +106,7 @@ class IssueStore {
     this.draggingTableItems = [];
     this.copy = false;
     this.tableDraging = false;
-    this.treeShow = false;
+    this.treeShow = true;
   }
 
   init() {
@@ -134,7 +134,7 @@ class IssueStore {
         this.setIssueTypes(issueTypes);
         // 设置测试类型
         const filter = this.getFilter;
-        filter.advancedSearchArgs.issueTypeId = issueTypes.map(type => type.id);
+        filter.advancedSearchArgs.issueTypeId = issueTypes.map((type) => type.id);
         this.setFilter(filter);
         const funcArr = [];
         funcArr.push(getProjectVersion());
@@ -165,7 +165,7 @@ class IssueStore {
             funcArr.push(getAllIssues(Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'topversion') {
             // 2.加载某一类versions
-            const versions = children.map(child => child.versionId);
+            const versions = children.map((child) => child.versionId);
             funcArr.push(getIssuesByVersion(versions,
               Page, size, this.getFilter, orderField, orderType));
           } else if (type === 'version') {
@@ -306,7 +306,7 @@ class IssueStore {
 
   @action setDraggingTableItems(draggingTableItems) {
     // console.log('set', draggingTableItems);
-    this.draggingTableItems = draggingTableItems.filter(issue => issue.typeCode !== 'issue_auto_test');
+    this.draggingTableItems = draggingTableItems.filter((issue) => issue.typeCode !== 'issue_auto_test');
   }
 
   @action setTableDraging(flag) {
