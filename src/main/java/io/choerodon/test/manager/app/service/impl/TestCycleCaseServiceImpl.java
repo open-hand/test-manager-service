@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.*;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,10 +26,6 @@ import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.base.domain.Sort;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
@@ -271,31 +268,46 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<TestCycleCaseDTO> list = queryWithAttachAndDefect(modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class), new PageRequest(1, 1));
         DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
 
-        TestCycleCaseVO dto = modelMapper.map(list.get(0), TestCycleCaseVO.class);
-        dto.setCaseAttachment(modelMapper.map(list.get(0).getCaseAttachment(), new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
-        }.getType()));
-        testCycleCaseDefectRelService.populateDefectAndIssue(dto, projectId, organizationId);
-        userService.populateTestCycleCaseDTO(dto);
+        TestCycleCaseDTO testCycleCaseDTO = list.get(0);
+        TestCycleCaseVO vo = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
+        if (testCycleCaseDTO.getCaseAttachment() != null && !testCycleCaseDTO.getCaseAttachment().isEmpty()) {
+            vo.setCaseAttachment(modelMapper.map(testCycleCaseDTO.getCaseAttachment(), new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+            }.getType()));
+        }
+        if (testCycleCaseDTO.getCaseDefect() != null && !testCycleCaseDTO.getCaseDefect().isEmpty()) {
+            vo.setCaseDefect(modelMapper.map(testCycleCaseDTO.getCaseDefect(), new TypeToken<List<TestCycleCaseDefectRelVO>>() {
+            }.getType()));
+        }
+        if (testCycleCaseDTO.getCycleCaseStep() != null && !testCycleCaseDTO.getCycleCaseStep().isEmpty()) {
+            vo.setCycleCaseStep(modelMapper.map(testCycleCaseDTO.getCycleCaseStep(), new TypeToken<List<TestCycleCaseStepVO>>() {
+            }.getType()));
+        }
+        if (testCycleCaseDTO.getSubStepDefects() != null && !testCycleCaseDTO.getSubStepDefects().isEmpty()) {
+            vo.setSubStepDefects(modelMapper.map(testCycleCaseDTO.getSubStepDefects(), new TypeToken<List<TestCycleCaseDefectRelDTO>>() {
+            }.getType()));
+        }
+        testCycleCaseDefectRelService.populateDefectAndIssue(vo, projectId, organizationId);
+        userService.populateTestCycleCaseDTO(vo);
 
         if (!testCycleES.isEmpty()) {
-            if (dto.getLastExecuteId() == null) {
+            if (vo.getLastExecuteId() == null) {
                 PageRequest pageRequest = new PageRequest(1, 400);
                 List<Sort.Order> sort = new ArrayList<>();
                 sort.add(new Sort.Order(Sort.Direction.ASC, "cycle_id"));
                 sort.add(new Sort.Order(Sort.Direction.DESC, "rank"));
                 pageRequest.setSort(new Sort(sort));
-                updateExecuteId(testCycleES, pageRequest, projectId, dto.getCycleId(), organizationId, dto, 0L);
+                updateExecuteId(testCycleES, pageRequest, projectId, vo.getCycleId(), organizationId, vo, 0L);
             }
-            if (dto.getNextExecuteId() == null) {
+            if (vo.getNextExecuteId() == null) {
                 PageRequest pageRequest = new PageRequest(1, 400);
                 List<Sort.Order> sort = new ArrayList<>();
                 sort.add(new Sort.Order(Sort.Direction.ASC, "cycle_id"));
                 sort.add(new Sort.Order(Sort.Direction.ASC, "rank"));
                 pageRequest.setSort(new Sort(sort));
-                updateExecuteId(testCycleES, pageRequest, projectId, dto.getCycleId(), organizationId, dto, 1L);
+                updateExecuteId(testCycleES, pageRequest, projectId, vo.getCycleId(), organizationId, vo, 1L);
             }
         }
-        return dto;
+        return vo;
     }
 
     private void updateExecuteId(List<TestCycleDTO> testCycleES, PageRequest pageRequest, Long projectId, Long cycleId, Long organizationId, TestCycleCaseVO dto, Long flag) {
