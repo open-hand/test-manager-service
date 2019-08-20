@@ -1,0 +1,26 @@
+@base: black;
+@baseblue: blue;
+
+.table-drop-menu-base {
+  & a {
+    color: @base;
+  }
+
+  & a:hover {
+    color: @baseblue;
+    text-decoration: underline;
+  }
+
+  &-notEdit {
+    & a {
+      color: @base;
+    }
+
+    & a:hover {
+      color: @base;
+      text-decoration: none;
+
+    }
+  }
+
+}

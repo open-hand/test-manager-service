@@ -104,12 +104,13 @@ class CreateIssueTiny extends Component {
       creating: false,
     });
   }
+  //               onBlur={this.onBlurCreateInput}
   render() {
     const { creating } = this.state;
     const versions = IssueStore.getVersions;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
     return creating ? (
-      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
+      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}  >
         <div className="c7ntest-add-select-version">
           {/* 创建issue选择版本 */}
           {
@@ -138,7 +139,6 @@ class CreateIssueTiny extends Component {
 
           <div style={{ marginLeft: 8, flexGrow: 1 }}>
             <Input
-              onBlur={this.onBlurCreateInput}
               autoFocus
               value={this.state.createIssueValue}
               // placeholder={<FormattedMessage id="issue_whatToDo" />}

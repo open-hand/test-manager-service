@@ -9,10 +9,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Tabs, Button, Spin, 
+  Tabs, Button, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { Page, Header, Content } from '@choerodon/master';
+import {
+  Page, Header, Content, Breadcrumb,
+} from '@choerodon/master';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
 import { getProjectName } from '../../../common/utils';
 
@@ -85,38 +87,31 @@ const CustomStatusHome = ({
           <FormattedMessage id="refresh" />
         </Button> */}
       </Header>
-      <Spin spinning={loading}>
-        <div style={{
-          fontSize: '20px', marginLeft: '24px', marginTop: '20px', color: '#F000000', 
-        }}
-        >
-          Choerodon敏捷管理 &gt; 设置 &gt; 测试（←面包屑导航预留处）
-        </div>
-        {/* <Content
-          title={<FormattedMessage id="status_custom_home_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="status_custom_home_description" />}
-          link="http://choerodon.io/zh/docs/user-guide/test-management/setting/status/"
-        > */}
-        <Content>
-          <Tabs activeKey={statusType} onChange={onTabChange}>
-            <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
-              <StatusTable          
+      <Breadcrumb title="" />
+
+      <Content>
+        <Tabs activeKey={statusType} onChange={onTabChange}>
+          <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
+            <Spin spinning={loading}>
+              <StatusTable
                 dataSource={statusList}
                 onDeleteOk={onDeleteOk}
                 onEditStatusClick={onEditStatusClick}
               />
-            </TabPane>
-            <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
-              <StatusTable              
+            </Spin>
+          </TabPane>
+          <TabPane tab={<FormattedMessage id="status_steptatus" />} key="CASE_STEP">
+            <Spin spinning={loading}>
+              <StatusTable
                 dataSource={statusList}
                 onDeleteOk={onDeleteOk}
                 onEditStatusClick={onEditStatusClick}
               />
-            </TabPane>
-          </Tabs>
-        </Content>
-        {/* </Content> */}
-      </Spin>
+            </Spin>
+          </TabPane>
+        </Tabs>
+      </Content>
+      {/* </Content> */}
     </Page>
   </div>
 );
