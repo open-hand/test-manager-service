@@ -8,15 +8,18 @@
 
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Table, Icon, Modal } from 'choerodon-ui';
+import {
+  Table, Icon, Modal, Menu,
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
+import TableDropMenu from '../TableDropMenu';
 
 const { confirm } = Modal;
-const propTypes = {  
-  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired, 
+const propTypes = {
+  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   onEditStatusClick: PropTypes.func.isRequired,
   onDeleteOk: PropTypes.func.isRequired,
- 
+
 };
 const StatusTable = ({
   dataSource,
@@ -29,20 +32,44 @@ const StatusTable = ({
       onOk: () => { onDeleteOk(data); },
     });
   };
+  const renderStatusName = (text, record) => {
+    const menu = (
+      <Menu>
+        <Menu.Item key="delete">
+          <Icon
+            type="delete_forever"
+            style={{ cursor: 'pointer', marginLeft: 10 }}
+            onClick={() => { deleteStatus(record); }}
+          />
+        </Menu.Item>
+      </Menu>
+    );
+    return (
+      <TableDropMenu
+        menu={menu}
+        text={text}
+        isHasMenu={record.projectId !== 0}
+        onClickEdit={onEditStatusClick.bind(this, record)}
+      />
+    );
+  };
   const columns = [{
     title: <FormattedMessage id="status_name" />,
     dataIndex: 'statusName',
     key: 'statusName',
     filters: [],
+    width: '40%',
     onFilter: (value, record) => {
       const reg = new RegExp(value, 'g');
       return reg.test(record.statusName);
     },
+    render: (text, record) => renderStatusName(text, record),
   }, {
     title: <FormattedMessage id="status_comment" />,
     dataIndex: 'description',
     key: 'description',
     filters: [],
+    width: '40%',
     onFilter: (value, record) => {
       const reg = new RegExp(value, 'g');
       return record.description && reg.test(record.description);
@@ -56,29 +83,31 @@ const StatusTable = ({
         <div style={{ width: 18, height: 18, background: statusColor }} />
       );
     },
-  }, {
-    title: '',
-    key: 'action',
-    render: (text, record) => (
-      record.projectId !== 0
-      && (
-        <div>
-          <Icon
-            type="mode_edit"
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              onEditStatusClick(record);
-            }}
-          />
-          <Icon
-            type="delete_forever"
-            style={{ cursor: 'pointer', marginLeft: 10 }}
-            onClick={() => { deleteStatus(record); }}
-          />
-        </div>
-      )
-    ),
-  }];
+  }, 
+  // {
+  //   title: '',
+  //   key: 'action',
+  //   render: (text, record) => (
+  //     record.projectId !== 0
+  //     && (
+  //       <div>
+  //         <Icon
+  //           type="mode_edit"
+  //           style={{ cursor: 'pointer' }}
+  //           onClick={() => {
+  //             onEditStatusClick(record);
+  //           }}
+  //         />
+  //         <Icon
+  //           type="delete_forever"
+  //           style={{ cursor: 'pointer', marginLeft: 10 }}
+  //           onClick={() => { deleteStatus(record); }}
+  //         />
+  //       </div>
+  //     )
+  //   ),
+  // }
+  ];
   return (
     <Table
       rowKey="statusId"

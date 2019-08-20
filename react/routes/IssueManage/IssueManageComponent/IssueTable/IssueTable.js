@@ -1,5 +1,5 @@
 
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
 import { Spin, Table, Pagination } from 'choerodon-ui';
@@ -18,11 +18,14 @@ import pic from '../../../../assets/testCaseEmpty.svg';
 
 @observer
 class IssueTable extends Component {
-  state = {
-    firstIndex: null,
-    filteredColumns: ['issueNum', 'issueTypeVO', 'summary', 'versionIssueRelVOList', 'folderName', 'reporter', 'priorityId'],
-  };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstIndex: null,
+      filteredColumns: ['issueNum', 'issueTypeVO', 'summary', 'versionIssueRelVOList', 'folderName', 'reporter', 'priorityId'],
+    };
+    this.createRef = React.createRef();
+  }
 
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
@@ -228,11 +231,22 @@ class IssueTable extends Component {
     });
   }
 
+  // 点击创建框外进行保存用例
+  outDivClickSave = (e) => {
+    const { onBlurCreateInput } = this.createRef.current;
+    if (onBlurCreateInput) {
+      onBlurCreateInput();
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('click', this.outDivClickSave);
+  }
 
   renderTable = (columns) => (
     <div className="c7ntest-issuetable">
       <Table
-          // filterBar={false}
+        // filterBar={false}
         columns={columns}
         dataSource={IssueStore.getIssues}
         components={this.getComponents(columns)}
@@ -249,7 +263,7 @@ class IssueTable extends Component {
             title={<FormattedMessage id="issue_noIssueTitle" />}
             des={<FormattedMessage id="issue_noIssueDescription" />}
           />
-          )}
+        )}
       />
     </div>
   )
@@ -308,6 +322,7 @@ class IssueTable extends Component {
         dataIndex: 'summary',
         key: 'summary',
         filters: [],
+        width: 400,
         render: (summary, record) => renderSummary(summary),
       },
       {
@@ -323,7 +338,7 @@ class IssueTable extends Component {
         key: 'issueTypeVO',
         render: (issueTypeVO, record) => renderType(issueTypeVO, true),
       },
- 
+
       {
         title: '版本',
         dataIndex: 'versionIssueRelVOList',
@@ -403,7 +418,14 @@ class IssueTable extends Component {
             {this.renderTable(columns)}
           </Spin>
 
-          <div className="c7ntest-backlog-sprintIssue">
+          <div
+            className="c7ntest-backlog-sprintIssue"
+            role="button"
+            onKeyDown={null}
+            onClick={(e) => {
+              e.nativeEvent.stopImmediatePropagation();
+            }}
+          >
             <div
               style={{
                 userSelect: 'none',
@@ -416,7 +438,9 @@ class IssueTable extends Component {
               }}
             >
               {/* table底部创建用例 */}
-              <CreateIssueTiny />
+              <CreateIssueTiny
+                ref={this.createRef}
+              />
             </div>
           </div>
           {
