@@ -5,7 +5,7 @@ import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { FormattedMessage } from 'react-intl';
 import { User, TestProgressLine } from '../../../../components';
-import './ShowCycleData.scss';
+import './ShowCycleData.less';
 
 const CardColumn = ({ children }) => (
   <div className="c7ntest-right-card-column">
@@ -73,6 +73,7 @@ const ShowCycleData = ({
   });
 
   return (
+    // eslint-disable-next-line react/jsx-fragments
     <Fragment>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ fontSize: '20px' }}>
