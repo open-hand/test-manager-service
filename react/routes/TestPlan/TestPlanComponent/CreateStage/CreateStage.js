@@ -82,7 +82,7 @@ class CreateStage extends Component {
     } = CreateStageIn;
     const { getFieldDecorator } = this.props.form;
     const { folders, loading, selectLoading } = this.state;
-    const options = folders.map(folder => (
+    const options = folders.map((folder) => (
       <Option value={folder.folderId} key={folder.folderId}>
         {folder.name}
       </Option>
@@ -104,14 +104,14 @@ class CreateStage extends Component {
             link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-plan/create-cycle/"
           >
             <Spin spinning={loading}>
-              <Form>                
+              <Form style={{ width: 500 }}>                
                 <FormItem>
                   {getFieldDecorator('cycleName', {
                     rules: [{
                       required: true, message: '请输入名称!',
                     }],
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,                    
+                    <Input maxLength={30} label={<FormattedMessage id="name" />} />,                    
                   )}
                 </FormItem>
                 <FormItem>
@@ -119,7 +119,7 @@ class CreateStage extends Component {
                   {getFieldDecorator('description', {
                   
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
+                    <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
                   )}
                 </FormItem>
                 <FormItem>

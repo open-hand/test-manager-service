@@ -186,7 +186,7 @@ const zhCN = {
   testPlan_EditStage_title: '编辑测试阶段',
   testPlan_EditStage: '编辑测试阶段“{cycleName}”',
   testPlan_creatCycle: '创建循环',
-  testPlan_export: '导出用例',
+  testPlan_export: '导出执行',
   // 测试循环
   cycle_title: '测试执行',
   cycle_name: '测试循环',

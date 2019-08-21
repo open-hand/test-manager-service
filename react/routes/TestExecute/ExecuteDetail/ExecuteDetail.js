@@ -63,7 +63,7 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.getInfo(id);
   }
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
