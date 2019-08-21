@@ -124,6 +124,7 @@ class CreateIssueTiny extends Component {
                   value={selectedVersion}
                   style={{ minWidth: 50, height: 36 }}
                   dropdownMatchSelectWidth={false}
+                  getPopupContainer={trigger=>trigger.parentNode}
                 >
                   {
                     versions.map(version => <Option value={version.versionId}>{version.name}</Option>)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
-  TabPage as Page, Header, Content, Breadcrumb, 
+  Page, Header, Content, Breadcrumb, 
 } from '@choerodon/master';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';

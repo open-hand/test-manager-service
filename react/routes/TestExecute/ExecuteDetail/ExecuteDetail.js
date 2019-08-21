@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
-import { TabPage as Page, Header, Breadcrumb } from '@choerodon/master';
+import { Page, Header, Breadcrumb } from '@choerodon/master';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -269,7 +269,7 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
-        <Spin spinning={loading}>
+        <Spin spinning={loading} style={{ display: 'flex' }}>
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}
             <div

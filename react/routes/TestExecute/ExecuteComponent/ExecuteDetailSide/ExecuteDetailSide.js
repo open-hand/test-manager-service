@@ -242,11 +242,20 @@ class ExecuteDetailSide extends Component {
     const props = {
       onRemove: onFileRemove,
     };
+    // 默认18个字启动省略
+    const renderIssueSummary = (text) => {
+      const ellipsis = "...";
+      const textArr = [...text];
+      return (
+        <Tooltip title={text}>
+          {textArr.length > 20 ? textArr.splice(0,20).join('')+ellipsis:text}
+        </Tooltip>
+      );
+
+    }
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {issue.issueNum}
-        {' '}
-        {issue.summary}
+        {renderIssueSummary(issue.issueNum+' '+issue.summary)}
       </Option>
     ));
     const userOptions = userList.map(user => (
@@ -307,16 +316,16 @@ class ExecuteDetailSide extends Component {
                     }}
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
-                      <span style={{marginLeft:5}}>相关用例:</span>
-                <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
+                      <span style={{ marginLeft: 5 }}>相关用例:</span>
+                      <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
                     </div>
-                   
+
                   </div>
                   <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
                     <span>隐藏详情</span>
                   </Button>
                 </div>
-                <div style={{ fontSize: '20px', marginRight: '5px'}}>
+                <div style={{ fontSize: '20px', marginRight: '5px' }}>
                   {summary}
                 </div>
               </div>
@@ -333,7 +342,7 @@ class ExecuteDetailSide extends Component {
                     <div className="c7ntest-item-one-line-right">
                       {statusColor && (
                         <StatusTags
-                          style={{ height: 20, fontSize:'12px',lineHeight: '20px', marginRight: 15}}
+                          style={{ height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15 }}
                           color={statusColor}
                           name={statusName}
                         />
