@@ -745,9 +745,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public List<TestCycleVO> getFolderByCycleId(Long cycleId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setCycleId(cycleId);
         testCycleDTO.setParentCycleId(cycleId);
         testCycleDTO.setType(TestCycleType.FOLDER);
+        List<TestCycleDTO> select = cycleMapper.select(testCycleDTO);
         return modelMapper.map(cycleMapper.select(testCycleDTO), new TypeToken<List<TestCycleVO>>() {
         }.getType());
     }
