@@ -146,39 +146,41 @@ class IssueTreeTitle extends Component {
   }
 
   moveIssues = (cycleId, versionId, e) => {
-    this.setState({
-      enter: false,
+    setTimeout(() => {
+      this.setState({
+        enter: false,
+      });
+      // console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
+      const isCopy = e.ctrlKey || e.metaKey;
+      const issueLinks = IssueStore.getDraggingTableItems.map((issue) => ({
+        issueId: issue.issueId,
+        summary: issue.summary,
+        objectVersionNumber: issue.objectVersionNumber,
+      }));
+      //
+      if (!isCopy) {
+        IssueStore.setLoading(true);
+        moveIssues(versionId, cycleId, issueLinks).then((res) => {
+          IssueStore.setDraggingTableItems([]);
+          IssueStore.loadIssues();
+        }).catch((err) => {
+          IssueStore.setLoading(false);
+          Choerodon.prompt('网络错误');
+        });
+      } else {
+        IssueStore.setLoading(true);
+        copyIssues(versionId, cycleId, issueLinks).then((res) => {
+          if (res.failed) {
+            Choerodon.prompt('存在同名文件夹');
+          }
+          IssueStore.setDraggingTableItems([]);
+          IssueStore.loadIssues();
+        }).catch((err) => {
+          IssueStore.setLoading(false);
+          Choerodon.prompt('网络错误');
+        });
+      }
     });
-    // console.log(e.ctrlKey, cycleId, IssueStore.getDraggingTableItems);
-    const isCopy = e.ctrlKey || e.metaKey;
-    const issueLinks = IssueStore.getDraggingTableItems.map((issue) => ({
-      issueId: issue.issueId,
-      summary: issue.summary,
-      objectVersionNumber: issue.objectVersionNumber,
-    }));
-    //
-    if (!isCopy) {
-      IssueStore.setLoading(true);
-      moveIssues(versionId, cycleId, issueLinks).then((res) => {
-        IssueStore.setDraggingTableItems([]);
-        IssueStore.loadIssues();
-      }).catch((err) => {
-        IssueStore.setLoading(false);
-        Choerodon.prompt('网络错误');
-      });
-    } else {
-      IssueStore.setLoading(true);
-      copyIssues(versionId, cycleId, issueLinks).then((res) => {
-        if (res.failed) {
-          Choerodon.prompt('存在同名文件夹');
-        }
-        IssueStore.setDraggingTableItems([]);
-        IssueStore.loadIssues();
-      }).catch((err) => {
-        IssueStore.setLoading(false);
-        Choerodon.prompt('网络错误');
-      });
-    }
   }
 
   exportIssueFromVersion = (data) => {

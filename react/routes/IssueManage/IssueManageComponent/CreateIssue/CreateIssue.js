@@ -182,7 +182,7 @@ class CreateIssue extends Component {
           beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, fileList, values.folderId));
         } else {
           extra.description = '';
-          this.handleSave(extra, values.folderId);
+          this.handleSave(extra, [], values.folderId);
         }
       }
       return null;
@@ -199,7 +199,7 @@ class CreateIssue extends Component {
             fileName: fileList[0].name,
             projectId: AppState.currentMenuType.id,
           };
-          if (fileList.some(one => !one.url)) {
+          if (fileList.some((one) => !one.url)) {
             handleFileUpload(fileList, () => { }, config);
           }
         }
@@ -213,7 +213,7 @@ class CreateIssue extends Component {
       initValue, visible, onCancel, onOk,
     } = this.props;
     const { originPriorities, folders, selectLoading } = this.state;
-    const priorityOptions = originPriorities.map(priority => (
+    const priorityOptions = originPriorities.map((priority) => (
       <Option key={priority.id} value={priority.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
           <div
@@ -231,7 +231,7 @@ class CreateIssue extends Component {
         </div>
       </Option>
     ));
-    const folderOptions = folders.map(folder => (
+    const folderOptions = folders.map((folder) => (
       <Option value={folder.folderId} key={folder.folderId}>
         {folder.name}
       </Option>
@@ -261,21 +261,21 @@ class CreateIssue extends Component {
                     required: true,
                     message: '请选择版本',
                   }, {
-                    transform: value => (value ? value.toString() : value),
+                    transform: (value) => (value ? value.toString() : value),
                   }],
               })(
                 <Select
                   label={<FormattedMessage id="issue_create_content_version" />}
                   // mode="tags"
                   loading={this.state.selectLoading}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   tokenSeparators={[',']}
                   onChange={() => {
                     const { resetFields } = this.props.form;
                     resetFields(['folderId']);
                   }}
                 >
-                  {this.state.originFixVersions.map(version => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
+                  {this.state.originFixVersions.map((version) => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
@@ -286,7 +286,7 @@ class CreateIssue extends Component {
               })(
                 <Select
                   label={<FormattedMessage id="issue_issueFilterByPriority" />}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 >
                   {priorityOptions}
                 </Select>,
@@ -322,14 +322,14 @@ class CreateIssue extends Component {
               {getFieldDecorator('assigneedId', {})(
                 <Select
                   label={<FormattedMessage id="issue_issueSortByPerson" />}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   loading={this.state.selectLoading}
                   filter
                   filterOption={false}
                   allowClear
                   onFilterChange={this.onFilterChange.bind(this)}
                 >
-                  {this.state.originUsers.map(user => (
+                  {this.state.originUsers.map((user) => (
                     <Option key={user.id} value={user.id}>
                       <UserHead
                         user={{
@@ -363,13 +363,13 @@ class CreateIssue extends Component {
             </FormItem>
             <FormItem>
               {getFieldDecorator('componentIssueRel', {
-                rules: [{ transform: value => (value ? value.toString() : value) }],
+                rules: [{ transform: (value) => (value ? value.toString() : value) }],
               })(
                 <Select
                   label={<FormattedMessage id="summary_component" />}
                   mode="tags"
                   loading={this.state.selectLoading}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   tokenSeparators={[',']}
                   onFocus={() => {
                     this.setState({
@@ -383,19 +383,19 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originComponents.map(component => <Option key={component.name} value={component.name}>{component.name}</Option>)}
+                  {this.state.originComponents.map((component) => <Option key={component.name} value={component.name}>{component.name}</Option>)}
                 </Select>,
               )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('issueLink', {
-                rules: [{ transform: value => (value ? value.toString() : value) }],
+                rules: [{ transform: (value) => (value ? value.toString() : value) }],
               })(
                 <Select
                   label={<FormattedMessage id="summary_label" />}
                   mode="tags"
                   loading={this.state.selectLoading}
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   tokenSeparators={[',']}
                   onFocus={() => {
                     this.setState({
@@ -409,7 +409,7 @@ class CreateIssue extends Component {
                     });
                   }}
                 >
-                  {this.state.originLabels.map(label => (
+                  {this.state.originLabels.map((label) => (
                     <Option
                       key={label.labelName}
                       value={label.labelName}
