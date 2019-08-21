@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import TimeAgo from 'timeago-react';
 import { TestExecuteLink, issueLink, executeDetailShowLink } from '../../../../common/utils';
-import './TestExecuteTable.scss';
+import './TestExecuteTable.less';
 import { editCycle } from '../../../../api/ExecuteDetailApi';
 import { StatusTags } from '../../../../components';
 
@@ -116,7 +116,7 @@ class TestExecuteTable extends Component {
   handleChangeExpand(id) {
     const theexpand = this.state.expand;
     let expand = theexpand.slice();
-    if (_.find(expand, v => v === id)) {
+    if (_.find(expand, (v) => v === id)) {
       expand = _.remove(expand, id);
       document.getElementsByClassName(`${id}-list`)[0].style.height = '34px';
     } else {

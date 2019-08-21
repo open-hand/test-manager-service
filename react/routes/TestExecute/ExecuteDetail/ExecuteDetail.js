@@ -200,6 +200,13 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
   }
 
+  // 默认只显示15个字其余用... 进行省略
+  renderBreadcrumbTitle = (text) => {
+    const ellipsis = '...';
+    const textArr = [...text];
+    return textArr.length > 15 ? textArr.slice(0, 15).join('') + ellipsis : text;
+  }
+
   render() {
     const { disabled } = this.props;
     const { loading } = ExecuteDetailStore;
@@ -261,7 +268,7 @@ class ExecuteDetail extends Component {
 
         </Header>
 
-        <Breadcrumb title={issueInfosVO ? issueInfosVO.summary : null} />
+        <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
         <Spin spinning={loading}>
           <div style={{ display: 'flex', width: '100%', height: '100%' }}>
             {/* 左边内容区域 */}

@@ -76,6 +76,7 @@ class EditStatus extends Component {
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
+          width={550}
         >
           <Content
             style={{

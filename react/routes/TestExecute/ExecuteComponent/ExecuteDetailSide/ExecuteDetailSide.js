@@ -281,7 +281,7 @@ class ExecuteDetailSide extends Component {
         >
 
           <div className="c7ntest-ExecuteDetailSide" ref={this.container}>
-            <div className="c7ntest-editIssue-divider" />
+            <div className="c7ntest-ExecuteDetailSide-divider" />
 
 
             {/* 
@@ -316,7 +316,7 @@ class ExecuteDetailSide extends Component {
                     <span>隐藏详情</span>
                   </Button>
                 </div>
-                <div style={{ fontSize: '20px' }}>
+                <div style={{ fontSize: '20px', marginRight: '5px'}}>
                   {summary}
                 </div>
               </div>
@@ -333,7 +333,7 @@ class ExecuteDetailSide extends Component {
                     <div className="c7ntest-item-one-line-right">
                       {statusColor && (
                         <StatusTags
-                          style={{ height: 20, fontSize:'12px',lineHeight: '20px', marginRight: 15,color:'black'}}
+                          style={{ height: 20, fontSize:'12px',lineHeight: '20px', marginRight: 15}}
                           color={statusColor}
                           name={statusName}
                         />
@@ -406,7 +406,7 @@ class ExecuteDetailSide extends Component {
                   style={{ padding: '0 15px 0 0' }}
                   action={(
                     <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                      <FormattedMessage id="execute_edit_fullScreen" />
+                      {/* <FormattedMessage id="execute_edit_fullScreen" /> */}
                     </Button>
                   )}
                 >
@@ -438,7 +438,7 @@ class ExecuteDetailSide extends Component {
                   action={(
                     <UploadButton handleUpload={onUpload}>
                       <Icon type="file_upload" />
-                      <FormattedMessage id="upload_attachment" />
+                      {/* <FormattedMessage id="upload_attachment" /> */}
                     </UploadButton>
                   )}
                 >
@@ -466,7 +466,7 @@ class ExecuteDetailSide extends Component {
                       <Text>
                         <Button className="leftBtn" type="primary" funcType="flat">
                           <Icon type="playlist_add" style={{ marginRight: 2 }} />
-                          <span>缺陷</span>
+                          {/* <span>缺陷</span> */}
                         </Button>
                       </Text>
                       <Edit>
