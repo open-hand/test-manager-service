@@ -454,6 +454,9 @@ class ExecuteDetailSide extends Component {
                       <WYSIWYGEditor
                         bottomBar
                         defaultValue={text2Delta(comment)}
+                        onChange={(value) => {                         
+                          this.editValue = value;
+                        }}
                         style={{ height: 200, width: '100%' }}
                         handleSave={this.handleCommentSave}
                         handleDelete={this.handleCommentCancel}
@@ -547,6 +550,19 @@ class ExecuteDetailSide extends Component {
 
               </div>
             </div>
+            {
+              FullEditorShow && <FullEditor
+                initValue={this.editValue || text2Delta(comment)}
+                visible={FullEditorShow}
+                onCancel={() => this.setState({ FullEditorShow: false })}
+                onOk={(value) => {
+                  this.setState({
+                    FullEditorShow: false,
+                  });
+                  this.handleCommentSave(value);
+                }}
+              />
+            }
           </div>
         </ResizeAble>
       </div>
