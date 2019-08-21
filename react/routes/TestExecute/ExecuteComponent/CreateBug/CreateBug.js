@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { stores, Content, axios } from '@choerodon/master';
 import _ from 'lodash';
 import {
-  Select, Form, Input, Button, Modal, Icon, Radio, Checkbox, Row, Col, 
+  Select, Form, Input, Button, Modal, Icon, Radio, Checkbox, Row, Col,
   TimePicker, DatePicker, InputNumber, Spin,
 } from 'choerodon-ui';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -41,7 +41,7 @@ class CreateIssue extends Component {
     this.setState({ selectLoading: true });
     getUsers(input).then((res) => {
       this.setState({
-        originUsers: res.list.filter(u => u.enabled),
+        originUsers: res.list.filter((u) => u.enabled),
         selectLoading: false,
       });
     });
@@ -103,7 +103,7 @@ class CreateIssue extends Component {
       });
       getUsers(input).then((res) => {
         this.setState({
-          originUsers: res.list.filter(u => u.enabled),
+          originUsers: res.list.filter((u) => u.enabled),
           selectLoading: false,
         });
       });
@@ -184,7 +184,7 @@ class CreateIssue extends Component {
             fileName: fileList[0].name,
             projectId: AppState.currentMenuType.id,
           };
-          if (fileList.some(one => !one.url)) {
+          if (fileList.some((one) => !one.url)) {
             handleFileUpload(fileList, callback, config);
           }
         }
@@ -194,7 +194,7 @@ class CreateIssue extends Component {
         });
         onOk(res);
       })
-      .catch(() => {     
+      .catch(() => {
         form.resetFields();
         this.setState({
           createLoading: false,
@@ -205,7 +205,7 @@ class CreateIssue extends Component {
 
   loadPriorities = () => {
     getPrioritys().then((res) => {
-      const defaultPriorities = res.filter(p => p.default);
+      const defaultPriorities = res.filter((p) => p.default);
       this.setState({
         originPriorities: res,
         defaultPriority: defaultPriorities.length ? defaultPriorities[0] : '',
@@ -217,7 +217,7 @@ class CreateIssue extends Component {
     axios.get(`/agile/v1/projects/${AppState.currentMenuType.projectId}/schemes/query_issue_types_with_sm_id?apply_type=agile`)
       .then((res) => {
         if (res && res.length) {
-          const story = res.filter(item => item.typeCode === 'bug');
+          const story = res.filter((item) => item.typeCode === 'bug');
           const defaultType = (story && story.length) ? story[0] : res[0];
           const param = {
             schemeCode: 'agile_issue',
@@ -283,7 +283,7 @@ class CreateIssue extends Component {
 
   transform = (links) => {
     // split active and passive
-    const active = links.map(link => ({
+    const active = links.map((link) => ({
       name: link.outWard,
       linkTypeId: link.linkTypeId,
     }));
@@ -315,10 +315,10 @@ class CreateIssue extends Component {
     } = this.state;
     form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        const { typeCode } = originIssueTypes.find(t => t.id === values.typeId);
+        const { typeCode } = originIssueTypes.find((t) => t.id === values.typeId);
         const exitComponents = originComponents;
         const componentIssueRelVOList = _.map(values.componentIssueRel
-          && values.componentIssueRel.filter(v => v && v.trim()), (component) => {
+          && values.componentIssueRel.filter((v) => v && v.trim()), (component) => {
           const target = _.find(exitComponents, { name: component.trim() });
           if (target) {
             return target;
@@ -343,7 +343,7 @@ class CreateIssue extends Component {
         });
         const exitFixVersions = originFixVersions;
         const fixVersionIssueRelVOList = _.map(values.fixVersionIssueRel
-          && values.fixVersionIssueRel.filter(v => v && v.trim()), (version) => {
+          && values.fixVersionIssueRel.filter((v) => v && v.trim()), (version) => {
           const target = _.find(exitFixVersions, { name: version.trim() });
           if (target) {
             return {
@@ -436,7 +436,7 @@ class CreateIssue extends Component {
     } = AppState.userInfo;
     const { originUsers } = this.state;
     const { form } = this.props;
-    const newUsers = originUsers.filter(user => user.id !== id);
+    const newUsers = originUsers.filter((user) => user.id !== id);
     this.setState({
       originUsers: [
         ...newUsers,
@@ -468,7 +468,7 @@ class CreateIssue extends Component {
             className="fieldWith"
           >
             {fieldOptions && fieldOptions.length > 0
-              && fieldOptions.filter(option => option.enabled).map(item => (
+              && fieldOptions.filter((option) => option.enabled).map((item) => (
                 <Radio
                   className="radioStyle"
                   value={item.id}
@@ -498,7 +498,7 @@ class CreateIssue extends Component {
           >
             <Row>
               {fieldOptions && fieldOptions.length > 0
-                && fieldOptions.filter(option => option.enabled).map(item => (
+                && fieldOptions.filter((option) => option.enabled).map((item) => (
                   <Col
                     span={24}
                     key={item.id}
@@ -562,7 +562,7 @@ class CreateIssue extends Component {
           allowClear={!required}
         >
           {field.fieldOptions && field.fieldOptions.length > 0
-            && field.fieldOptions.filter(option => option.enabled).map(item => (
+            && field.fieldOptions.filter((option) => option.enabled).map((item) => (
               <Option
                 value={item.id}
                 key={item.id}
@@ -581,7 +581,7 @@ class CreateIssue extends Component {
           className="fieldWith"
         >
           {field.fieldOptions && field.fieldOptions.length > 0
-            && field.fieldOptions.filter(option => option.enabled).map(item => (
+            && field.fieldOptions.filter((option) => option.enabled).map((item) => (
               <Option
                 value={item.id}
                 key={item.id}
@@ -619,7 +619,7 @@ class CreateIssue extends Component {
           allowClear
           onFilterChange={this.onFilterChangeAssignee.bind(this)}
         >
-          {originUsers.filter(user => (field.defaultValueObj ? user.id !== field.defaultValueObj.id : true) && user.enabled).concat(field.defaultValueObj || []).map(user => (
+          {originUsers.filter((user) => (field.defaultValueObj ? user.id !== field.defaultValueObj.id : true) && user.enabled).concat(field.defaultValueObj || []).map((user) => (
             <Option key={user.id} value={user.id}>
               <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
                 <UserHead
@@ -650,8 +650,8 @@ class CreateIssue extends Component {
     const createTypes = [];
     const { originIssueTypes } = this.state;
     return false
-      ? originIssueTypes.filter(type => (!['issue_epic', 'feature', 'sub_task'].includes(type.typeCode)))
-      : originIssueTypes.filter(type => (!['feature', 'sub_task'].includes(type.typeCode)));
+      ? originIssueTypes.filter((type) => (!['issue_epic', 'feature', 'sub_task'].includes(type.typeCode)))
+      : originIssueTypes.filter((type) => (!['feature', 'sub_task'].includes(type.typeCode)));
   }
 
   getFieldComponent = (field) => {
@@ -678,9 +678,9 @@ class CreateIssue extends Component {
                 <Select
                   disabled
                   label="问题类型"
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   onChange={((value) => {
-                    const { typeCode } = originIssueTypes.find(item => item.id === value);
+                    const { typeCode } = originIssueTypes.find((item) => item.id === value);
                     this.setState({
                       newIssueTypeCode: typeCode,
                     });
@@ -696,7 +696,7 @@ class CreateIssue extends Component {
                     });
                   })}
                 >
-                  {this.getIssueTypes().map(type => (
+                  {this.getIssueTypes().map((type) => (
                     <Option key={type.id} value={type.id}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
                         <TypeTag
@@ -717,7 +717,7 @@ class CreateIssue extends Component {
                 })(
                   <Select
                     label="特性类型"
-                    getPopupContainer={triggerNode => triggerNode.parentNode}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
                     <Option key="business" value="business">
                       特性
@@ -732,19 +732,19 @@ class CreateIssue extends Component {
         );
       case 'assignee':
         return (
-          <React.Fragment>
+          <>
             <FormItem label="经办人" style={{ width: 520, display: 'inline-block' }}>
               {getFieldDecorator('assigneedId', {})(
                 <Select
                   label="经办人"
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   loading={selectLoading}
                   filter
                   filterOption={false}
                   allowClear
                   onFilterChange={this.onFilterChangeAssignee.bind(this)}
                 >
-                  {originUsers.map(user => (
+                  {originUsers.map((user) => (
                     <Option key={user.id} value={user.id}>
                       <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
                         <UserHead
@@ -774,7 +774,7 @@ class CreateIssue extends Component {
             >
               {'分派给我'}
             </span>
-          </React.Fragment>
+          </>
         );
       case 'sprint':
         return (
@@ -789,7 +789,7 @@ class CreateIssue extends Component {
                     input.toLowerCase(),
                   ) >= 0
                 }
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 loading={selectLoading}
                 onFilterChange={() => {
                   this.setState({
@@ -803,7 +803,7 @@ class CreateIssue extends Component {
                   });
                 }}
               >
-                {originSprints.map(sprint => (
+                {originSprints.map((sprint) => (
                   <Option key={sprint.sprintId} value={sprint.sprintId}>
                     {sprint.sprintName}
                   </Option>
@@ -821,9 +821,9 @@ class CreateIssue extends Component {
             })(
               <Select
                 label="优先级"
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
               >
-                {originPriorities.filter(p => p.enable).map(priority => (
+                {originPriorities.filter((p) => p.enable).map((priority) => (
                   <Option key={priority.id} value={priority.id}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>
                       <span>{priority.name}</span>
@@ -838,14 +838,14 @@ class CreateIssue extends Component {
         return (
           <FormItem label="标签" style={{ width: 520 }}>
             {getFieldDecorator('issueLabel', {
-              rules: [{ transform: value => (value ? value.toString() : value) }],
-              normalize: value => (value ? value.map(s => s.toString().substr(0, 10)) : value), // 限制最长10位
+              rules: [{ transform: (value) => (value ? value.toString() : value) }],
+              normalize: (value) => (value ? value.map((s) => s.toString().substr(0, 10)) : value), // 限制最长10位
             })(
               <Select
                 label="标签"
                 mode="tags"
                 loading={selectLoading}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 tokenSeparators={[',']}
                 onFocus={() => {
                   this.setState({
@@ -859,7 +859,7 @@ class CreateIssue extends Component {
                   });
                 }}
               >
-                {originLabels.map(label => (
+                {originLabels.map((label) => (
                   <Option key={label.labelName} value={label.labelName}>
                     {label.labelName}
                   </Option>
@@ -872,13 +872,13 @@ class CreateIssue extends Component {
         return (
           <FormItem label="版本" style={{ width: 520 }}>
             {getFieldDecorator('fixVersionIssueRel', {
-              rules: [{ transform: value => (value ? value.toString() : value) }],
+              rules: [{ transform: (value) => (value ? value.toString() : value) }],
             })(
               <Select
                 label="版本"
                 mode="multiple"
                 loading={selectLoading}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 tokenSeparators={[',']}
                 onFocus={() => {
                   this.setState({
@@ -894,7 +894,7 @@ class CreateIssue extends Component {
               >
                 {
                   originFixVersions.map(
-                    version => (
+                    (version) => (
                       <Option
                         key={version.name}
                         value={version.name}
@@ -902,7 +902,8 @@ class CreateIssue extends Component {
                         {version.name}
                       </Option>
                     ),
-                  )}
+                  )
+}
               </Select>,
             )}
           </FormItem>
@@ -921,7 +922,7 @@ class CreateIssue extends Component {
                       input.toLowerCase(),
                     ) >= 0
                   }
-                  getPopupContainer={triggerNode => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   loading={selectLoading}
                   onFilterChange={() => {
                     this.setState({
@@ -936,7 +937,7 @@ class CreateIssue extends Component {
                   }}
                 >
                   {originEpics.map(
-                    epic => (
+                    (epic) => (
                       <Option
                         key={epic.issueId}
                         value={epic.issueId}
@@ -954,13 +955,13 @@ class CreateIssue extends Component {
         return (
           <FormItem label="模块" style={{ width: 520 }}>
             {getFieldDecorator('componentIssueRel', {
-              rules: [{ transform: value => (value ? value.toString() : value) }],
+              rules: [{ transform: (value) => (value ? value.toString() : value) }],
             })(
               <Select
                 label="模块"
                 mode="multiple"
                 loading={selectLoading}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 tokenSeparators={[',']}
                 onFocus={() => {
                   this.setState({
@@ -976,7 +977,7 @@ class CreateIssue extends Component {
               >
                 {
                   originComponents.map(
-                    component => (
+                    (component) => (
                       <Option
                         key={component.name}
                         value={component.name}
@@ -984,7 +985,8 @@ class CreateIssue extends Component {
                         {component.name}
                       </Option>
                     ),
-                  )}
+                  )
+}
               </Select>,
             )}
           </FormItem>
@@ -1020,7 +1022,7 @@ class CreateIssue extends Component {
               <Select
                 label="预估时间"
                 value={estimatedTime && estimatedTime.toString()}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 mode="combobox"
                 ref={(e) => {
                   this.componentRef = e;
@@ -1030,9 +1032,9 @@ class CreateIssue extends Component {
                 }}
                 tokenSeparators={[',']}
                 style={{ marginTop: 0, paddingTop: 0 }}
-                onChange={value => this.handleChangeEstimatedTime(value)}
+                onChange={(value) => this.handleChangeEstimatedTime(value)}
               >
-                {storyPointList.map(sp => (
+                {storyPointList.map((sp) => (
                   <Option key={sp.toString()} value={sp}>
                     {sp}
                   </Option>
@@ -1048,7 +1050,7 @@ class CreateIssue extends Component {
               <Select
                 label="故事点"
                 value={storyPoints && storyPoints.toString()}
-                getPopupContainer={triggerNode => triggerNode.parentNode}
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                 mode="combobox"
                 ref={(e) => {
                   this.componentRef = e;
@@ -1058,9 +1060,9 @@ class CreateIssue extends Component {
                 }}
                 tokenSeparators={[',']}
                 style={{ marginTop: 0, paddingTop: 0 }}
-                onChange={value => this.handleChangeStoryPoint(value)}
+                onChange={(value) => this.handleChangeStoryPoint(value)}
               >
-                {storyPointList.map(sp => (
+                {storyPointList.map((sp) => (
                   <Option key={sp.toString()} value={sp}>
                     {sp}
                   </Option>
@@ -1071,7 +1073,7 @@ class CreateIssue extends Component {
         );
       case 'description':
         return (
-          <div style={{ width: 520 }}>    
+          <div style={{ width: 520 }}>
             {
               !edit && (
                 <div className="clear-p-mw">
@@ -1141,6 +1143,7 @@ class CreateIssue extends Component {
         okText="创建"
         cancelText="取消"
         confirmLoading={createLoading}
+        width={580}
       >
         <Content
           title={`在项目“${AppState.currentMenuType.name}”中创建问题`}
@@ -1149,7 +1152,7 @@ class CreateIssue extends Component {
         >
           <Spin spinning={loading}>
             <Form layout="vertical">
-              {fields && fields.map(field => this.getFieldComponent(field))}
+              {fields && fields.map((field) => this.getFieldComponent(field))}
               {
                 newIssueTypeCode !== 'issue_epic' && (
                   issueLinkArr && issueLinkArr.length > 0 && (
@@ -1162,13 +1165,13 @@ class CreateIssue extends Component {
                               <Select
                                 label="关系"
                                 loading={selectLoading}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                                 tokenSeparators={[',']}
                                 onFocus={() => {
                                   this.getLinks();
                                 }}
                               >
-                                {links.map(link => (
+                                {links.map((link) => (
                                   <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
                                     {link.name}
                                   </Option>
@@ -1189,9 +1192,9 @@ class CreateIssue extends Component {
                                 filter
                                 filterOption={false}
                                 onFilterChange={this.onIssueSelectFilterChange.bind(this)}
-                                getPopupContainer={triggerNode => triggerNode.parentNode}
+                                getPopupContainer={(triggerNode) => triggerNode.parentNode}
                               >
-                                {originIssues.map(issue => (
+                                {originIssues.map((issue) => (
                                   <Option
                                     key={issue.issueId}
                                     value={issue.issueId}
@@ -1273,7 +1276,7 @@ class CreateIssue extends Component {
                 />
               </div>
             </div>
-          </Spin>          
+          </Spin>
         </Content>
       </Sidebar>
     );

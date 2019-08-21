@@ -45,9 +45,9 @@ const TestPlanTable = ({
       const { issueInfosVO } = record;
       return (
         issueInfosVO && (
-        <SmartTooltip style={{ color: '#3F51B5' }}>
-          {issueInfosVO.summary}
-        </SmartTooltip>
+          <SmartTooltip style={{ color: '#3F51B5' }}>
+            {issueInfosVO.summary}
+          </SmartTooltip>
         )
       );
     },
@@ -83,7 +83,7 @@ const TestPlanTable = ({
     title: <span>用例优先级</span>,
     dataIndex: 'priorityId',
     key: 'priorityId',
-    filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+    filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
     flex: 1,
     render(issueId, record) {
       const { issueInfosVO } = record;
@@ -95,17 +95,17 @@ const TestPlanTable = ({
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
     key: 'executionStatus',
-    filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
+    filters: statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
     flex: 1,
     render(executionStatus) {
       const statusColor = _.find(statusList, { statusId: executionStatus })
         ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
       return (
         _.find(statusList, { statusId: executionStatus }) && (
-        <StatusTags
-          color={statusColor}
-          name={_.find(statusList, { statusId: executionStatus }).statusName}
-        />
+          <StatusTags
+            color={statusColor}
+            name={_.find(statusList, { statusId: executionStatus }).statusName}
+          />
         )
       );
     },
@@ -115,29 +115,29 @@ const TestPlanTable = ({
     flex: 1,
     render: (text, record) => (
       record.projectId !== 0
-        && (
-          <div style={{ display: 'flex' }}>
-            <div className="c7ntest-flex-space" />
-            <Button
-              shape="circle"
-              funcType="flat"
-              icon="delete_forever"
-              style={{
-                marginRight: 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteExecute(record);
-              }}
-            />
-          </div>
-        )
+      && (
+        <div style={{ display: 'flex' }}>
+          <div className="c7ntest-flex-space" />
+          <Button
+            shape="circle"
+            funcType="flat"
+            icon="delete_forever"
+            style={{
+              marginRight: 10,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteExecute(record);
+            }}
+          />
+        </div>
+      )
     ),
   }];
 
   return (
     <div className="c7ntest-TestPlan-content-right-bottom">
-      <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
+      <div style={{ display: 'flex', margin: '20px 0px', alignItems: 'center' }}>
         <div style={{
           fontWeight: 600,
           marginRight: 10,
@@ -170,7 +170,7 @@ const TestPlanTable = ({
         dataSource={dataSource}
         columns={columns}
         onDragEnd={onDragEnd}
-        onRow={record => ({
+        onRow={(record) => ({
           onClick: (event) => { onTableRowClick(record); },
         })}
         dragKey="executeId"
