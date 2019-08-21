@@ -1,5 +1,6 @@
+/* eslint-disable react/jsx-fragments */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { stores, Content, axios } from '@choerodon/master';
 import _ from 'lodash';
 import {
@@ -732,7 +733,7 @@ class CreateIssue extends Component {
         );
       case 'assignee':
         return (
-          <>
+          <Fragment>
             <FormItem label="经办人" style={{ width: 520, display: 'inline-block' }}>
               {getFieldDecorator('assigneedId', {})(
                 <Select
@@ -774,7 +775,7 @@ class CreateIssue extends Component {
             >
               {'分派给我'}
             </span>
-          </>
+          </Fragment>
         );
       case 'sprint':
         return (
