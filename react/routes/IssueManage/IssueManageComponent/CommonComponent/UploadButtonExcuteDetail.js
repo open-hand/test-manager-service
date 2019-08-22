@@ -5,10 +5,11 @@ import {
   Upload, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import { stores } from '@choerodon/master';
-import { deleteAttachment } from '../../../../api/FileApi';
 
-import SingleFileUpload from './SingleFileUpload';
+import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
 import './UploadButtonNow.less';
+// D:\agile\agile-service\react\components\SingleFileUpload\index.js
+
 
 const { AppState } = stores;
 /**
