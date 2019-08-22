@@ -1,94 +1,113 @@
 package io.choerodon.test.manager.infra.feign;
 
-import java.util.List;
-import java.util.Map;
-
 import com.github.pagehelper.PageInfo;
+import io.choerodon.devops.api.vo.AppServiceDeployVO;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.devops.api.vo.ApplicationRepDTO;
+import io.choerodon.devops.api.vo.InstanceValueVO;
+import io.choerodon.test.manager.infra.feign.callback.ApplicationFeignClientFallback;
+import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.devops.api.dto.ApplicationRepDTO;
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
-import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
-import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zongw.lee@gmail.com
  * @since 2018/11/26
  */
 @Component
-@FeignClient(value = "devops-service", fallback = ScheduleFeignClientFallback.class)
+@FeignClient(value = "devops-service", fallback = ApplicationFeignClientFallback.class)
 public interface ApplicationFeignClient {
     /**
      * 根据版本id获取版本values
      *
-     * @param projectId    项目ID
-     * @param appVersionId 应用版本ID
+     * @param projectId 项目ID
+     * @param versionId 应用服务版本ID
      * @return String
      */
-    @GetMapping(value = "/v1/projects/{project_id}/app_versions/{app_verisonId}/queryValue")
+    @GetMapping(value = "/v1/projects/{project_id}/app_service_versions/{versionId}/queryValue")
     ResponseEntity<String> getVersionValue(@PathVariable(value = "project_id") Long projectId,
-                                           @PathVariable(value = "app_verisonId") Long appVersionId);
-
-    /**
-     * 项目下查询单个应用信息
-     *
-     * @param projectId     项目id
-     * @param applicationId 应用Id
-     * @return ApplicationRepDTO
-     */
-    @GetMapping("/v1/projects/{project_id}/apps/{applicationId}/detail")
-    ResponseEntity<ApplicationRepDTO> queryByAppId(
-            @PathVariable(value = "project_id") Long projectId,
-            @PathVariable(value = "applicationId") Long applicationId);
+                                           @PathVariable(value = "versionId") Long versionId);
 
     /**
      * 根据版本id查询版本信息
      *
-     * @param projectId     项目ID
-     * @param appVersionIds 应用版本ID
+     * @param projectId  项目ID
+     * @param versionIds 应用版本ID
      * @return ApplicationVersionRepDTO
      */
-    @PostMapping(value = "/v1/projects/{project_id}/app_versions/list_by_appVersionIds")
-    ResponseEntity<List<ApplicationVersionRepDTO>> getAppversion(
+    @PostMapping(value = "/v1/projects/{project_id}/app_service_versions/list_by_versionIds")
+    ResponseEntity<List<AppServiceVersionRespVO>> getAppversion(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestParam(value = "appVersionIds") Long[] appVersionIds);
+            @RequestParam(value = "versionIds") Long[] versionIds);
+
     /**
-     * @param projectId     项目id
-     * @param replaceResult 部署value
-     * @return ReplaceResult
+     * 分页查询服务版本
+     *
+     * @param projectId
+     * @param page
+     * @param size
+     * @param orders
+     * @param appServiceId
+     * @param searchParam
+     * @return
      */
-    @PostMapping("/v1/projects/{project_id}/app_instances/previewValue")
-    ResponseEntity<ReplaceResult> previewValues(
+    @PostMapping(value = "/v1/projects/{project_id}/app_service_versions/page_by_options")
+    ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(
             @PathVariable(value = "project_id") Long projectId,
-            @RequestBody ReplaceResult replaceResult,
-            @RequestParam(value = "appVersionId") Long appVersionId);
+            @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+            @RequestParam(name = "orders") String orders,
+            @RequestParam(required = false, name = "app_service_id") Long appServiceId,
+            @RequestBody(required = false) String searchParam);
+
+
+    /**
+     * 项目下查询单个应用服务信息
+     *
+     * @param projectId    项目id
+     * @param appServiceId 应用Id
+     * @return ApplicationRepDTO
+     */
+    @GetMapping("/v1/projects/{project_id}/app_service/{app_service_id}")
+    ResponseEntity<ApplicationRepDTO> queryByAppId(
+            @PathVariable(value = "project_id") Long projectId,
+            @PathVariable(value = "app_service_id") Long appServiceId);
+
+    /**
+     * 查询预览value
+     *
+     * @param projectId       项目id
+     * @param instanceValueVO 部署value
+     * @return InstanceValueVO
+     */
+    @PostMapping("/v1/projects/{project_id}/app_service_instances/preview_value")
+    ResponseEntity<InstanceValueVO> previewValues(
+            @PathVariable(value = "project_id") Long projectId,
+            @RequestBody InstanceValueVO instanceValueVO,
+            @RequestParam(value = "versionId") Long versionId);
 
     /**
      * 部署自动化测试应用
      *
-     * @param projectId            项目id
-     * @param applicationDeployDTO 部署信息
+     * @param projectId          项目id
+     * @param appServiceDeployVO 部署信息
      * @return ApplicationInstanceDTO
      */
-    @PostMapping("/v1/projects/{project_id}/app_instances/deploy_test_app")
+    @PostMapping("/v1/projects/{project_id}/app_service_instances/deploy_test_app")
     void deployTestApp(@PathVariable(value = "project_id") Long projectId,
-                       @RequestBody DevopsApplicationDeployDTO applicationDeployDTO);
+                       @RequestBody AppServiceDeployVO appServiceDeployVO);
 
+    /**
+     * 查询自动化测试应用实例状态
+     *
+     * @param testReleases
+     */
     @PostMapping("/webhook/get_test_status")
     void getTestStatus(
-            @RequestBody Map<Long, List<String>> releaseName);
-
-    @PostMapping(value = "/v1/projects/{project_id}/app_versions/list_by_options")
-    ResponseEntity<PageInfo<ApplicationVersionRepDTO>> pageByOptions(
-            @PathVariable(value = "project_id") Long projectId,
-            @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
-            @RequestParam(name = "orders") String orders,
-            @RequestParam(required = false, name = "appId") Long appId,
-            @RequestBody(required = false) String searchParam);
-
+            @RequestBody Map<Long, List<String>> testReleases);
 }
 

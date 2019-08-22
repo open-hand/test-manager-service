@@ -1,19 +1,18 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.api.vo.*;
+import io.choerodon.base.domain.PageRequest;
+import io.choerodon.devops.api.vo.AppServiceDeployVO;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.devops.api.vo.ApplicationRepDTO;
+import io.choerodon.devops.api.vo.InstanceValueVO;
+import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import org.springframework.http.ResponseEntity;
 
-import io.choerodon.devops.api.dto.ApplicationRepDTO;
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
-import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
-import io.choerodon.devops.api.dto.ReplaceResult;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.agile.api.vo.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -76,9 +75,9 @@ public interface TestCaseService {
 
     ApplicationRepDTO queryByAppId(Long projectId, Long applicationId);
 
-    List<ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionId);
+    List<AppServiceVersionRespVO> getAppversion(Long projectId, List<Long> appVersionId);
 
-    ReplaceResult previewValues(Long projectId, ReplaceResult replaceResult, Long appVersionId);
+    InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId);
 
-    void deployTestApp(Long projectId, DevopsApplicationDeployDTO applicationDeployDTO);
+    void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO);
 }

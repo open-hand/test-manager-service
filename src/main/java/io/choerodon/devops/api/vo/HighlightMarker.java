@@ -1,18 +1,25 @@
-package io.choerodon.devops.api.dto;
+package io.choerodon.devops.api.vo;
 
 /**
- * 文件替换
+ * 标记高亮
  *
  * @author crockitwood
  */
-public class ReplaceMarker {
+public class HighlightMarker {
     private int line;
+    private int endLine;
     private int startIndex;
     private int endIndex;
     private int startColumn;
     private int endColumn;
 
-    private String toReplace;
+    public int getEndLine() {
+        return endLine;
+    }
+
+    public void setEndLine(int endLine) {
+        this.endLine = endLine;
+    }
 
     public int getLine() {
         return line;
@@ -54,23 +61,14 @@ public class ReplaceMarker {
         this.endColumn = endColumn;
     }
 
-    public String getToReplace() {
-        return toReplace;
-    }
-
-    public void setToReplace(String toReplace) {
-        this.toReplace = toReplace;
-    }
-
     @Override
     public String toString() {
-        return "ReplaceMarker{"
-                + "line=" + line
-                + ", startIndex=" + startIndex
-                + ", endIndex=" + endIndex
-                + ", startColumn=" + startColumn
-                + ", endColumn=" + endColumn
-                + ", toReplace='" + toReplace + '\''
-                + '}';
+        return "HighlightMarker{" +
+                "line=" + line +
+                ", startIndex=" + startIndex +
+                ", endIndex=" + endIndex +
+                ", startColumn=" + startColumn +
+                ", endColumn=" + endColumn +
+                '}';
     }
 }

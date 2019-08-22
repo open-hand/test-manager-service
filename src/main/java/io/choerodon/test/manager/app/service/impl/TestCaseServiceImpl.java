@@ -6,10 +6,7 @@ import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.domain.Sort;
-import io.choerodon.devops.api.dto.ApplicationRepDTO;
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
-import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
-import io.choerodon.devops.api.dto.ReplaceResult;
+import io.choerodon.devops.api.vo.*;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
@@ -174,18 +171,18 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionId) {
+    public List<AppServiceVersionRespVO> getAppversion(Long projectId, List<Long> appVersionId) {
         return applicationFeignClient.getAppversion(projectId, TypeUtil.longsToArray(appVersionId)).getBody();
     }
 
     @Override
-    public ReplaceResult previewValues(Long projectId, ReplaceResult replaceResult, Long appVersionId) {
+    public InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId) {
         return applicationFeignClient.previewValues(projectId, replaceResult, appVersionId).getBody();
     }
 
     @Override
-    public void deployTestApp(Long projectId, DevopsApplicationDeployDTO applicationDeployDTO) {
-        applicationFeignClient.deployTestApp(projectId, applicationDeployDTO);
+    public void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO) {
+        applicationFeignClient.deployTestApp(projectId, appServiceDeployVO);
     }
 
     @Override

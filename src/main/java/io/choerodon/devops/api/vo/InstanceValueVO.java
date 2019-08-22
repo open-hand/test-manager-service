@@ -1,6 +1,4 @@
-package io.choerodon.devops.api.dto;
-
-import io.choerodon.devops.api.dto.ErrorLineDTO;
+package io.choerodon.devops.api.vo;
 
 import java.util.List;
 
@@ -9,14 +7,17 @@ import java.util.List;
  *
  * @author crockitwood
  */
-public class ReplaceResult {
+public class InstanceValueVO {
     private String yaml;
     private List<HighlightMarker> highlightMarkers;
     private Integer totalLine;
     private String errorMsg;
-    private List<ErrorLineDTO> errorLines;
+    private List<ErrorLineVO> errorLines;
     private List<Integer> newLines;
     private String deltaYaml;
+    private String name;
+    private Long id;
+    private Long objectVersionNumber;
 
     public String getYaml() {
         return yaml;
@@ -50,11 +51,11 @@ public class ReplaceResult {
         this.errorMsg = errorMsg;
     }
 
-    public List<ErrorLineDTO> getErrorLines() {
+    public List<ErrorLineVO> getErrorLines() {
         return errorLines;
     }
 
-    public void setErrorLines(List<ErrorLineDTO> errorLines) {
+    public void setErrorLines(List<ErrorLineVO> errorLines) {
         this.errorLines = errorLines;
     }
 
@@ -72,5 +73,29 @@ public class ReplaceResult {
 
     public void setDeltaYaml(String deltaYaml) {
         this.deltaYaml = deltaYaml;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }

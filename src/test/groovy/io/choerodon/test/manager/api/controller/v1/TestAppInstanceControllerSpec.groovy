@@ -3,9 +3,9 @@ package io.choerodon.test.manager.api.controller.v1
 import io.choerodon.asgard.api.dto.QuartzTask
 import io.choerodon.asgard.api.dto.ScheduleMethodDTO
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO
-import io.choerodon.devops.api.dto.ApplicationRepDTO
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
-import io.choerodon.devops.api.dto.ReplaceResult
+import io.choerodon.devops.api.vo.ApplicationRepDTO
+import io.choerodon.devops.api.vo.ApplicationVersionRepDTO
+import io.choerodon.devops.api.vo.ReplaceResult
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO
 import io.choerodon.test.manager.app.service.ScheduleService
@@ -25,7 +25,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
