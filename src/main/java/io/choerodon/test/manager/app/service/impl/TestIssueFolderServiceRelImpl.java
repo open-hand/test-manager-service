@@ -72,11 +72,13 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
         for (TestIssueFolderRelVO resultRelDTO : resultRelDTOS) {
             if (resultRelDTO != null && map.containsKey(resultRelDTO.getIssueId())) {
-                IssueComponentDetailFolderRelVO issueComponentDetailFolderRelVO = new IssueComponentDetailFolderRelVO(map.get(resultRelDTO.getIssueId()));
+                IssueInfosVO issueInfosVO = map.get(resultRelDTO.getIssueId());
+                IssueComponentDetailFolderRelVO issueComponentDetailFolderRelVO = new IssueComponentDetailFolderRelVO(issueInfosVO);
                 issueComponentDetailFolderRelVO.setObjectVersionNumber(resultRelDTO.getObjectVersionNumber());
                 TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(resultRelDTO.getFolderId());
                 issueComponentDetailFolderRelVO.setFolderId(resultRelDTO.getFolderId());
                 issueComponentDetailFolderRelVO.setFolderName(testIssueFolderDTO.getName());
+                issueComponentDetailFolderRelVO.setStatusVO(issueInfosVO.getStatusMapVO());
                 issueComponentDetailFolderRelVOS.add(issueComponentDetailFolderRelVO);
             }
         }
