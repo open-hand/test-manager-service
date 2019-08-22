@@ -29,7 +29,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
         style={{
           display: 'flex',
           alignItems: 'center',
-          padding: '8px 10px',
+          padding: '5px 0',
           cursor: 'pointer',
           borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
           borderTop: !index ? '1px solid rgba(0, 0, 0, 0.12)' : '',

@@ -362,10 +362,7 @@ class ImportIssue extends Component {
         <Content
           style={{
             padding: 1,
-          }}
-          title={<FormattedMessage id="upload_side_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="upload_side_content_description" />}
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management"
+          }}          
         >
           {this.renderForm()}
           <Modal
@@ -377,7 +374,7 @@ class ImportIssue extends Component {
             onOk={this.upload}
             onCancel={this.handleClose}
           >
-            <div className="c7ntest-center" style={{ marginBottom: 20 }}>
+            <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center' }}>
               <SelectVersion
                 value={version}
                 onChange={(versionId, option) => {
@@ -386,7 +383,7 @@ class ImportIssue extends Component {
                 style={{ width: 120 }}
               />
               <Input
-                style={{ width: 340, margin: '17px 0 0 18px' }}
+                style={{ width: 340, marginLeft: '18px' }}
                 value={file && file.name}
                 prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
                 suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { this.uploadInput.click(); }} /></Tooltip>}

@@ -34,7 +34,7 @@ class IssueTable extends Component {
     });
   }
 
-  getComponents = (columns) => ({
+  getComponents = columns => ({
     table: () => {
       const table = (
         <table>
@@ -70,8 +70,8 @@ class IssueTable extends Component {
   }
 
   renderThead = (columns) => {
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
-    const ths = Columns.map((column) => (
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
+    const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1 }}>
         {column.title}
         {' '}
@@ -84,8 +84,8 @@ class IssueTable extends Component {
     const {
       disabled, onRow, clickIssue,
     } = this.props;
-    const Columns = columns.filter((column) => this.shouldColumnShow(column));
-    const tds = (index) => Columns.map((column) => {
+    const Columns = columns.filter(column => this.shouldColumnShow(column));
+    const tds = index => Columns.map((column) => {
       let renderedItem = null;
       const {
         dataIndex, key, flex, render,
@@ -248,7 +248,7 @@ class IssueTable extends Component {
     document.removeEventListener('click', this.outDivClickSave);
   }
 
-  renderTable = (columns) => (
+  renderTable = columns => (
     <div className="c7ntest-issuetable">
       <Table
         // filterBar={false}
@@ -314,7 +314,7 @@ class IssueTable extends Component {
     IssueStore.loadIssues(current, size);
   }
 
-  manageVisible = (columns) => columns.map((column) => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
+  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
 
 
   render() {
@@ -371,7 +371,7 @@ class IssueTable extends Component {
         title: '优先级',
         dataIndex: 'priorityId',
         key: 'priorityId',
-        filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
+        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
         filterMultiple: true,
         render: (priorityId, record) => renderPriority(record.priorityVO),
       },
@@ -390,7 +390,7 @@ class IssueTable extends Component {
         title: '状态',
         dataIndex: 'statusId',
         key: 'statusId',
-        filters: issueStatusList.map((status) => ({ text: status.name, value: status.id.toString() })),
+        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusVO, record) => renderStatus(record.statusVO),
       },
@@ -398,7 +398,7 @@ class IssueTable extends Component {
         title: '标签',
         dataIndex: 'labelIssueRelVOList',
         key: 'labelIssueRelVOList',
-        filters: labels.map((label) => ({ text: label.labelName, value: label.labelId.toString() })),
+        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
         filterMultiple: true,
         render: (labelIssueRelVOList, record) => renderLabels(labelIssueRelVOList),
       },
@@ -432,11 +432,11 @@ class IssueTable extends Component {
               style={{
                 userSelect: 'none',
                 background: 'white',
-                padding: '12px 0 12px 20px',
+                padding: '12px 0 12px 12px',                
                 fontSize: 13,
                 display: 'flex',
-                alignItems: 'center',
-                borderBottom: '1px solid #e8e8e8',
+                alignItems: 'center',    
+                borderBottom: '1px solid #e8e8e8',            
               }}
             >
               {/* table底部创建用例 */}
@@ -448,7 +448,7 @@ class IssueTable extends Component {
           {
             IssueStore.issues.length !== 0 ? (
               <div style={{
-                display: 'flex', justifyContent: 'flex-end', marginTop: 16, marginBottom: 16,
+                display: 'flex', justifyContent: 'flex-end', marginBottom: 16,
               }}
               >
                 <Pagination

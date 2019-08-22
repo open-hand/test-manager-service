@@ -245,9 +245,7 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title="导出测试执行"
-          description={<FormattedMessage id="export_side_content_description" />}
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management"
+          title="导出测试执行"          
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>

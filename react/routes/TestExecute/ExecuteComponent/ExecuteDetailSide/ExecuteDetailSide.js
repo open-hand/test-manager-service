@@ -101,6 +101,7 @@ class ExecuteDetailSide extends Component {
 
   componentDidMount() {
     document.getElementById('scroll-area').addEventListener('scroll', this.handleScroll);
+    this.setQuery()
   }
 
   componentWillUnmount() {
@@ -342,11 +343,11 @@ class ExecuteDetailSide extends Component {
                     </div>
 
                   </div>
-                  <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
+                  <Button funcType="flat" icon="last_page" onClick={onClose}>
                     <span>隐藏详情</span>
                   </Button>
                 </div>
-                <div style={{ fontSize: '20px', marginRight: '5px' }}>
+                <div style={{ fontSize: '20px', marginRight: '5px', marginBottom: '15px' }}>
                   {summary}
                 </div>
               </div>
@@ -389,6 +390,7 @@ class ExecuteDetailSide extends Component {
                     <div className="c7ntest-item-one-line-left">被指定人：</div>
                     <div className="c7ntest-item-one-line-right">
                       <TextEditToggle
+                        style={{ maxWidth: 200 }}
                         disabled={!disabled}
                         formKey="assignedTo"
                         onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
@@ -411,7 +413,6 @@ class ExecuteDetailSide extends Component {
                             filterOption={false}
                             onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
                             loading={selectLoading}
-                            style={{ width: 200 }}
                           >
                             {userOptions}
                           </Select>
@@ -435,8 +436,7 @@ class ExecuteDetailSide extends Component {
                   title="描述"
                   style={{ padding: '0 15px 0 0' }}
                   action={(
-                    <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                      {/* <FormattedMessage id="execute_edit_fullScreen" /> */}
+                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
                     </Button>
                   )}
                 >
@@ -444,7 +444,6 @@ class ExecuteDetailSide extends Component {
                     ? (
                       <div
                         role="none"
-                        style={{ padding: '15px 15px 15px 23px' }}
                         onClick={this.enterEditing}
                       >
                         <RichTextShow data={delta2Html(comment)} />
@@ -454,6 +453,9 @@ class ExecuteDetailSide extends Component {
                       <WYSIWYGEditor
                         bottomBar
                         defaultValue={text2Delta(comment)}
+                        onChange={(value) => {
+                          this.editValue = value;
+                        }}
                         style={{ height: 200, width: '100%' }}
                         handleSave={this.handleCommentSave}
                         handleDelete={this.handleCommentCancel}
@@ -501,7 +503,7 @@ class ExecuteDetailSide extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        <Button className="leftBtn" type="primary" funcType="flat">
+                        <Button type="primary" funcType="flat">
                           <Icon type="playlist_add" style={{ marginRight: 2 }} />
                           {/* <span>缺陷</span> */}
                         </Button>
@@ -547,6 +549,19 @@ class ExecuteDetailSide extends Component {
 
               </div>
             </div>
+            {
+              FullEditorShow && <FullEditor
+                initValue={this.editValue || text2Delta(comment)}
+                visible={FullEditorShow}
+                onCancel={() => this.setState({ FullEditorShow: false })}
+                onOk={(value) => {
+                  this.setState({
+                    FullEditorShow: false,
+                  });
+                  this.handleCommentSave(value);
+                }}
+              />
+            }
           </div>
         </ResizeAble>
       </div>

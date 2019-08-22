@@ -91,79 +91,70 @@ class CreateCycle extends Component {
           visible={visible}
           onOk={this.onOk}
           onCancel={onCancel}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            /* title={<FormattedMessage id="cycle_create_content_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="cycle_create_content_description" />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-plan/create-cycle/" */
-          >
-            <Spin spinning={loading}>
-              <Form>
-                <FormItem>
-                  {getFieldDecorator('versionId', {
-                    rules: [{
-                      required: true, message: '请选择版本!',
-                    }],
-                    initialValue: versions && versions.length > 0 && TestPlanStore.exportVersionId,
-                  })(
-                    <Select
+          width={380}
+        >        
+          <Spin spinning={loading}>
+            <Form>
+              <FormItem>
+                {getFieldDecorator('versionId', {
+                  rules: [{
+                    required: true, message: '请选择版本!',
+                  }],
+                  initialValue: versions && versions.length > 0 && TestPlanStore.exportVersionId,
+                })(
+                  <Select
                       // loading={selectLoading}
-                      // onFocus={this.getProjectVersion}
-                      style={{ width: 340 }}
-                      label={<FormattedMessage id="version" />}
-                    >
-                      {options}
-                    </Select>,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('cycleName', {
+                      // onFocus={this.getProjectVersion}                   
+                    label={<FormattedMessage id="version" />}
+                  >
+                    {options}
+                  </Select>,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('cycleName', {
+                  rules: [{
+                    required: true, message: '请输入名称!',
+                  }],
+                })(
+                  <Input label={<FormattedMessage id="cycleName" />} />,
+                )}
+              </FormItem>
+              <FormItem>
+                <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
+                  <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请输入名称!',
+                      required: true, message: '请选择日期!',
                     }],
                   })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycleName" />} />,
+                    <RangePicker                                   
+                      format="YYYY-MM-DD"
+                      style={{ width: '100%' }}
+                    />,
                   )}
-                </FormItem>
-                <FormItem>
-                  <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
-                    {getFieldDecorator('range', {
-                      rules: [{
-                        required: true, message: '请选择日期!',
-                      }],
-                    })(
-                      <RangePicker                                   
-                        format="YYYY-MM-DD"
-                        style={{ width: 340 }}
-                      />,
-                    )}
-                  </span>
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('description', {
-                  })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="comment" />} />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('build', {
-                  })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycle_build" />} />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('environment', {
-                  })(
-                    <Input style={{ width: 340 }} label={<FormattedMessage id="cycle_environment" />} />,
-                  )}
-                </FormItem>
-              </Form>
-            </Spin>
-          </Content>
+                </span>
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('description', {
+                })(
+                  <Input label={<FormattedMessage id="comment" />} />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('build', {
+                })(
+                  <Input label={<FormattedMessage id="cycle_build" />} />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('environment', {
+                })(
+                  <Input label={<FormattedMessage id="cycle_environment" />} />,
+                )}
+              </FormItem>
+            </Form>
+          </Spin>          
         </Sidebar>
       </div>
     );

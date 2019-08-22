@@ -94,70 +94,62 @@ class CreateStage extends Component {
           visible={visible}
           onOk={this.onOk}
           onCancel={onCancel}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="testPlan_createStage" />}
-            description={<FormattedMessage id="testPlan_createStageIn" values={{ cycleName: title }} />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-plan/create-cycle/"
-          >
-            <Spin spinning={loading}>
-              <Form>                
-                <FormItem>
-                  {getFieldDecorator('cycleName', {
-                    rules: [{
-                      required: true, message: '请输入名称!',
-                    }],
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,                    
-                  )}
-                </FormItem>
-                <FormItem>
+          width={380}
+        >         
+          <Spin spinning={loading}>
+            <Form>                
+              <FormItem>
+                {getFieldDecorator('cycleName', {
+                  rules: [{
+                    required: true, message: '请输入名称!',
+                  }],
+                })(
+                  <Input maxLength={30} label={<FormattedMessage id="name" />} />,                    
+                )}
+              </FormItem>
+              <FormItem>
                 
-                  {getFieldDecorator('description', {
+                {getFieldDecorator('description', {
                   
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('folderId', {
+                })(
+                  <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('folderId', {
+                  rules: [{
+                    required: true, message: '请选择文件夹!',
+                  }],
+                })(
+                  <Select
+                    loading={selectLoading}
+                    onFilterChange={this.loadFolders}                      
+                    label={<FormattedMessage id="testPlan_linkFolder" />}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                    filter
+                  >
+                    {options}
+                  </Select>,                    
+                )}
+              </FormItem>
+              <FormItem>
+                <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
+                  <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请选择文件夹!',
+                      required: true, message: '请选择日期!',
                     }],
                   })(
-                    <Select
-                      loading={selectLoading}
-                      onFilterChange={this.loadFolders}                      
-                      label={<FormattedMessage id="testPlan_linkFolder" />}
-                      optionFilterProp="children"
-                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                      filter
-                    >
-                      {options}
-                    </Select>,                    
+                    <RangePicker                                   
+                      format="YYYY-MM-DD"
+                      style={{ width: '100%' }}
+                    />,
                   )}
-                </FormItem>
-                <FormItem>
-                  <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
-                    {getFieldDecorator('range', {
-                      rules: [{
-                        required: true, message: '请选择日期!',
-                      }],
-                    })(
-                      <RangePicker                                   
-                        format="YYYY-MM-DD"
-                        style={{ width: 500 }}
-                      />,
-                    )}
-                  </span>
-                </FormItem>
-              </Form>
-            </Spin>
-          </Content>
+                </span>
+              </FormItem>
+            </Form>
+          </Spin>          
         </Sidebar>
       </div>
     );

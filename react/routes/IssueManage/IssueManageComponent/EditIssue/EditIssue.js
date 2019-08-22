@@ -1235,7 +1235,7 @@ class EditIssueNarrow extends Component {
                       </TextEditToggle>
                       <div style={{ flexShrink: 0, color: 'rgba(0, 0, 0, 0.65)' }}>
                         {!disabled && (
-                          <Dropdown overlay={getMenu()} trigger={['click']}>
+                          <Dropdown overlay={getMenu()} trigger={['click']} placement="bottomRight">
                             <Button icon="more_vert" />
                           </Dropdown>
                         )}

@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
   Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
-import { Page, Header, Breadcrumb } from '@choerodon/master';
+import {
+  Page, Header, Content, Breadcrumb, 
+} from '@choerodon/master';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -63,7 +65,7 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.getInfo(id);
   }
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -281,19 +283,20 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
-        <Spin spinning={loading} style={{ display: 'flex' }}>
-          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            {/* 左边内容区域 */}
-            <div
-              style={{
-                flex: 1,
-                overflowX: 'hidden',
-                overflowY: 'auto',
-                padding: 20,
-              }}
-            >
-              <div style={{ marginBottom: 24 }}>
-                {issueInfosVO && (
+        <Content style={{ padding: 0 }}>
+          <Spin spinning={loading} style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+              {/* 左边内容区域 */}
+              <div
+                style={{
+                  flex: 1,
+                  overflowX: 'hidden',
+                  overflowY: 'auto',
+                  padding: 20,
+                }}
+              >
+                <div style={{ marginBottom: 24 }}>
+                  {issueInfosVO && (
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <StatusTags
                       style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
@@ -306,9 +309,9 @@ class ExecuteDetail extends Component {
                       {visible ? '隐藏详情' : '打开详情'}
                     </Button> */}
                   </div>
-                )}
-              </div>
-              {!disabled
+                  )}
+                </div>
+                {!disabled
                 && (
                   <QuickOperate
                     statusList={statusList}
@@ -317,28 +320,28 @@ class ExecuteDetail extends Component {
                     onSubmit={this.handleSubmit}
                   />
                 )}
-              <CardWrapper
-                style={{ margin: '24px 0' }}
-                title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
-              >
-                <StepTable
-                  disabled={disabled}
-                  dataSource={detailList}
-                  stepStatusList={stepStatusList}
-                />
-              </CardWrapper>
-              <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
-                <div style={{ padding: '0 20px' }}>
-                  <ExecuteHistoryTable
-                    dataSource={historyList}
-                    pagination={historyPagination}
-                    onChange={ExecuteDetailStore.loadHistoryList}
+                <CardWrapper
+                  style={{ margin: '24px 0' }}
+                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
+                >
+                  <StepTable
+                    disabled={disabled}
+                    dataSource={detailList}
+                    stepStatusList={stepStatusList}
                   />
-                </div>
-              </CardWrapper>
-            </div>
-            {/* 右侧侧边栏 */}
-            {visible && (
+                </CardWrapper>
+                <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
+                  <div style={{ padding: '0 20px' }}>
+                    <ExecuteHistoryTable
+                      dataSource={historyList}
+                      pagination={historyPagination}
+                      onChange={ExecuteDetailStore.loadHistoryList}
+                    />
+                  </div>
+                </CardWrapper>
+              </div>
+              {/* 右侧侧边栏 */}
+              {visible && (
               <ExecuteDetailSide
                 disabled={disabled}
                 ref={this.saveRef('ExecuteDetailSide')}
@@ -355,8 +358,8 @@ class ExecuteDetail extends Component {
                 onRemoveDefect={this.handleRemoveDefect}
                 onCreateBugShow={this.handleCreateBugShow}
               />
-            )}
-            {
+              )}
+              {
               createBugShow && (
                 <CreateBug
                   visible={createBugShow}
@@ -367,8 +370,10 @@ class ExecuteDetail extends Component {
                 />
               )
             }
-          </div>
-        </Spin>
+            </div>
+          </Spin>
+        </Content>
+        
       </Page>
     );
   }

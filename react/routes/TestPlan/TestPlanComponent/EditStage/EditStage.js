@@ -82,80 +82,73 @@ class EditStage extends Component {
           visible={visible}
           onOk={this.onOk}
           onCancel={this.onCancel}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="testPlan_EditStage" values={{ cycleName: title }} />}
-          >
-            <Spin spinning={loading}>
-              <Form>
-                <FormItem
+          width={380}
+        >         
+          <Spin spinning={loading}>
+            <Form>
+              <FormItem
                   // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('cycleName', {
-                    initialValue: title,
+                label={null}
+              >
+                {getFieldDecorator('cycleName', {
+                  initialValue: title,
+                  rules: [{
+                    required: true, message: '请输入名称!',
+                  }],
+                })(
+                  <Input maxLength={30} label={<FormattedMessage id="name" />} />,
+                )}
+              </FormItem>
+              <FormItem
+                  // {...formItemLayout}
+                label={null}
+              >
+                {getFieldDecorator('description', {
+                  initialValue: description,
+                  // rules: [{
+                  //   required: true, message: '请输入说明!',
+                  // }],
+                })(
+                  <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
+                )}
+              </FormItem>
+              <FormItem
+                  // {...formItemLayout}
+                label={null}
+              >
+                {getFieldDecorator('folderId', {
+                  initialValue: `${folderVersionName}-${folderName}`,
+                  rules: [{
+                    required: true, message: '请选择文件夹!',
+                  }],
+                })(
+                  <SelectFocusLoad
+                    type="folder"
+                    versionId={versionId}                  
+                    label={<FormattedMessage id="testPlan_linkFolder" />}
+                  />,
+                )}
+              </FormItem>
+              <FormItem>
+                <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
+                  <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请输入名称!',
+                      type: 'array',
+                      required: true,
+                      message: '请选择日期!',
                     }],
+                    initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="name" />} />,
-                  )}
-                </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('description', {
-                    initialValue: description,
-                    // rules: [{
-                    //   required: true, message: '请输入说明!',
-                    // }],
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                  )}
-                </FormItem>
-                <FormItem
-                  // {...formItemLayout}
-                  label={null}
-                >
-                  {getFieldDecorator('folderId', {
-                    initialValue: `${folderVersionName}-${folderName}`,
-                    rules: [{
-                      required: true, message: '请选择文件夹!',
-                    }],
-                  })(
-                    <SelectFocusLoad
-                      type="folder"
-                      versionId={versionId}
-                      style={{ width: 500 }}
-                      label={<FormattedMessage id="testPlan_linkFolder" />}
+                    <RangePicker
+                      format="YYYY-MM-DD"
+                      style={{ width: '100%' }}
                     />,
                   )}
-                </FormItem>
-                <FormItem>
-                  <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
-                    {getFieldDecorator('range', {
-                      rules: [{
-                        type: 'array',
-                        required: true,
-                        message: '请选择日期!',
-                      }],
-                      initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
-                    })(
-                      <RangePicker
-                        format="YYYY-MM-DD"
-                        style={{ width: 500 }}
-                      />,
-                    )}
-                  </span>
-                </FormItem>
-              </Form>
-            </Spin>
-          </Content>
+                </span>
+              </FormItem>
+            </Form>
+          </Spin>         
         </Sidebar>
       </div>
     );
