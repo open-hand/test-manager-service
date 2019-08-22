@@ -1,15 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.test.manager.app.service.DevopsService;
+import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper;
+import io.choerodon.test.manager.infra.util.LogUtils;
+import io.choerodon.test.manager.infra.util.TypeUtil;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,17 +16,17 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.devops.api.vo.ApplicationVersionRepDTO;
-import io.choerodon.test.manager.app.service.DevopsService;
-import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestAppInstanceMapper;
-import io.choerodon.test.manager.infra.util.LogUtils;
-import io.choerodon.test.manager.infra.util.TypeUtil;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class DevopsServiceImpl implements DevopsService {
@@ -49,6 +48,8 @@ public class DevopsServiceImpl implements DevopsService {
 
     @Autowired
     private TestAppInstanceMapper testAppInstanceMapper;
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     @Override
     public void getTestStatus(Map<Long, List<String>> releaseName) {
@@ -70,6 +71,10 @@ public class DevopsServiceImpl implements DevopsService {
 
     @Override
     public void getPodStatus() {
+        List<String> services = discoveryClient.getServices();
+        if (!services.contains("devops-service")) {
+            return;
+        }
         if (Thread.currentThread().isInterrupted())
             return;
 
