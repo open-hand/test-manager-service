@@ -20,6 +20,8 @@ import ExecuteDetailStore from '../../TestExecuteStore/ExecuteDetailStore';
 import TypeTag from '../../../IssueManage/IssueManageComponent/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
+import UploadButtonNow from '../../../IssueManage/IssueManageComponent/CommonComponent/UploadButtonNow';
+import UploadButtonExcuteDetail from '../../../IssueManage/IssueManageComponent/CommonComponent/UploadButtonExcuteDetail';
 
 
 const { Edit, Text } = TextEditToggle;
@@ -59,6 +61,23 @@ const Section = ({
 const defaultProps = {
   issueInfosVO: { issueTypeVO: {} },
 };
+const handleRemove = (file) => {
+  const index = fileList.indexOf(file);
+  const newFileList = fileList.slice();
+  if (onRemove) {
+    deleteFileAgile(file.uid)
+      .then((response) => {
+        if (response) {
+          newFileList.splice(index, 1);
+          onRemove(newFileList.reverse());
+          Choerodon.prompt('删除成功');
+        }
+      })
+      .catch(() => {
+        Choerodon.prompt('删除失败，请稍后重试');
+      });
+  }
+};
 const propTypes = {
   issueInfosVO: PropTypes.shape({}),
   cycleData: PropTypes.shape({}).isRequired,
@@ -71,6 +90,7 @@ const propTypes = {
   onRemoveDefect: PropTypes.func.isRequired,
   onCreateBugShow: PropTypes.func.isRequired,
 };
+// console.log('propTypes', propTypes);
 @observer
 class ExecuteDetailSide extends Component {
   constructor(props) {
@@ -224,9 +244,10 @@ class ExecuteDetailSide extends Component {
 
   render() {
     const {
-      issueInfosVO, cycleData, fileList, onFileRemove, status, onClose, onUpload,
+      issueInfosVO, cycleData, fileList, setFileList, onFileRemove, status, onClose, onUpload,
       onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit, disabled,
     } = this.props;
+    // console.log('render', this.props);
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const userList = ExecuteDetailStore.getUserList;
@@ -248,14 +269,14 @@ class ExecuteDetailSide extends Component {
       const textArr = [...text];
       return (
         <Tooltip title={text}>
-          {textArr.length > 20 ? textArr.splice(0,20).join('')+ellipsis:text}
+          {textArr.length > 20 ? textArr.splice(0, 20).join('') + ellipsis : text}
         </Tooltip>
       );
 
     }
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {renderIssueSummary(issue.issueNum+' '+issue.summary)}
+        {renderIssueSummary(issue.issueNum + ' ' + issue.summary)}
       </Option>
     ));
     const userOptions = userList.map(user => (
@@ -449,12 +470,19 @@ class ExecuteDetailSide extends Component {
                       <Icon type="file_upload" />
                       {/* <FormattedMessage id="upload_attachment" /> */}
                     </UploadButton>
+
                   )}
                 >
-                  <Upload
-                    {...props}
+                  {/* <Upload
                     fileList={fileList}
                     className="upload-button"
+                  /> */}
+                  <UploadButtonExcuteDetail
+                    {...props}
+                    // onRemove={handleRemove}
+                    onBeforeUpload={setFileList}
+                    updateNow={this.onChangeFileList}
+                    fileList={fileList}
                   />
                 </Section>
                 {/* 缺陷 */}

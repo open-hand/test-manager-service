@@ -5,7 +5,7 @@ import {
   Upload, Button, Icon, Tooltip,
 } from 'choerodon-ui';
 import { stores } from '@choerodon/master';
-import { deleteFileAgile } from '../../../../api/FileApi';
+import { deleteAttachment } from '../../../../api/FileApi';
 
 import SingleFileUpload from './SingleFileUpload';
 import './UploadButtonNow.less';
@@ -17,7 +17,7 @@ const { AppState } = stores;
  * 后续需要开启 则传入校验结果即可
  * 默认无传入校验结果时，不进行删除权限控制
  */
-class UploadButtonNow extends React.Component {
+class UploadButtonExcuteDetail extends React.Component {
   // static propTypes = {
   //   onRemove: PropTypes.func,
   //   beforeUpload: PropTypes.func,
@@ -64,37 +64,21 @@ class UploadButtonNow extends React.Component {
       },
 
     };
-
+    
     const handleRemove = (file) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
       if (onRemove) {
-        deleteFileAgile(file.uid)
-          .then((response) => {
-            if (response) {
-              newFileList.splice(index, 1);
-              onRemove(newFileList.reverse());
-              Choerodon.prompt('删除成功');
-            }
-          })
-          .catch(() => {
-            Choerodon.prompt('删除失败，请稍后重试');
-          });
+        onRemove(file);
       }
     };
 
     return (
       <div className="c7n-agile-uploadButtonNow">
-        <Upload
+        {/* <Upload
           {...props}
           className="upload-button"
         >
-          <Tooltip title="上传附件" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
-            <Button style={{ padding: '0 6px' }}>
-              <Icon type="file_upload" />
-            </Button>
-          </Tooltip>
-        </Upload>
+
+        </Upload> */}
         <div className="c7n-agile-uploadButtonNow-fileList">
           {
             fileList && fileList.length > 0 && fileList.map((item) => (
@@ -113,4 +97,4 @@ class UploadButtonNow extends React.Component {
   }
 }
 
-export default UploadButtonNow;
+export default UploadButtonExcuteDetail;

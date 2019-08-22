@@ -67,6 +67,12 @@ class ExecuteDetail extends Component {
     this[name] = ref;
   }
 
+  // setFileList = (fileList) => {
+  //   this.setState({
+  //     fileList,
+  //   });
+  // }
+
   goExecute = (mode) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     const { nextExecuteId, lastExecuteId } = cycleData;
@@ -88,11 +94,15 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setExecuteDetailSideVisible(!visible);
   }
 
+  // 用于文件移除。 传入ExcuteDeailSide组件内， 在UploadButtonExcuteDetail组件内进行调用
   handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
       deleteAttachment(file.uid).then((data) => {
         ExecuteDetailStore.getInfo();
+        Choerodon.prompt('删除成功');
+      }).catch((error) => {
+        Choerodon.prompt(`删除失败 ${error}`);
       });
     }
   }
@@ -225,6 +235,8 @@ class ExecuteDetail extends Component {
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    // const { fileList } = this.state;
+
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header
@@ -333,6 +345,7 @@ class ExecuteDetail extends Component {
                 issueInfosVO={issueInfosVO}
                 cycleData={cycleData}
                 fileList={fileList}
+                // setFileList={this.setFileList}
                 onFileRemove={this.handleFileRemove}
                 status={{ statusColor, statusName }}
                 onClose={this.handleToggleExecuteDetailSide}
