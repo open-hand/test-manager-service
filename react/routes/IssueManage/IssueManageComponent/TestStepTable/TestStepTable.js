@@ -326,7 +326,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea maxLength={500} autoFocus autosize placeholder="测试步骤" />
+              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="测试步骤" />
             </Edit>
           </TextEditToggle>
         );
@@ -372,7 +372,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea maxLength={500} autoFocus autosize />
+              <TextArea className="hidden-label" maxLength={500} autoFocus autosize />
               {/* <TextArea autoFocus autosize placeholder="测试数据" /> */}
             </Edit>
           </TextEditToggle>
@@ -420,7 +420,7 @@ class TestStepTable extends Component {
               )}
             </Text>
             <Edit>
-              <TextArea maxLength={500} autoFocus autosize placeholder="预期结果" />
+              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="预期结果" />
             </Edit>
           </TextEditToggle>
         );
