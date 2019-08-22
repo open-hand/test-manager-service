@@ -30,7 +30,7 @@ class TestPlanHome extends Component {
     this.refresh();
   }
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -155,17 +155,17 @@ class TestPlanHome extends Component {
           style={{ padding: 0, display: 'flex' }}
         >
           <Injecter store={TestPlanStore} item="loading">
-            {(loading) => <Loading loading={loading} />}
+            {loading => <Loading loading={loading} />}
           </Injecter>
           <div className="c7ntest-TestPlan-content">
             <Injecter store={TestPlanStore} item="EditCycleVisible">
-              {(visible) => <EditCycle visible={visible} />}
+              {visible => <EditCycle visible={visible} />}
             </Injecter>
             <Injecter store={TestPlanStore} item="EditStageVisible">
-              {(visible) => <EditStage visible={visible} />}
+              {visible => <EditStage visible={visible} />}
             </Injecter>
             <Injecter store={TestPlanStore} item="CreateCycleVisible">
-              {(visible) => (
+              {visible => (
                 <CreateCycle
                   visible={visible}
                   onCancel={() => { setCreateCycleVisible(false); }}
@@ -176,7 +176,7 @@ class TestPlanHome extends Component {
             <ExportSide ref={this.saveRef('ExportSide')} />
             <BatchClone ref={this.saveRef('BatchClone')} onOk={this.refresh} />
             <Injecter store={TestPlanStore} item="isTreeVisible">
-              {(isTreeVisible) => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
+              {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
             </Injecter>
             <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
               {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key && getTimesLength ? (

@@ -20,7 +20,7 @@ class EventCalendar extends Component {
     let endDate = moment();
     if (times && times.length > 0) {
       baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
-      endDate = moment.max(times.map((time) => moment(time.end)));
+      endDate = moment.max(times.map(time => moment(time.end)));
     }
 
     this.currentDate = baseDate;
@@ -58,7 +58,7 @@ class EventCalendar extends Component {
   }
 
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -208,7 +208,7 @@ class EventCalendar extends Component {
                   timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
                 }
               </div>
-              {times.map((event) => (
+              {times.map(event => (
                 <EventItem
                   key={event.key}
                   onClick={this.props.onItemClick}

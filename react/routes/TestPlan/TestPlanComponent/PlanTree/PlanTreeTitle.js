@@ -49,7 +49,7 @@ class PlanTreeTitle extends Component {
         break;
       }
       case 'edit': {
-        if (type === 'folder') {
+        if (type === 'folder') {        
           TestPlanStore.EditStage(data);
         } else if (type === 'cycle') {
           TestPlanStore.EditCycle(data);

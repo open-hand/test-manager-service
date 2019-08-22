@@ -260,7 +260,7 @@ class TestPlanStore extends BaseTreeProto {
 
   getParent = (key) => {
     const parentKey = this.getParentKey(key);
-    const arr = parentKey.split('-');
+    const arr = parentKey.split('-').slice(1);
     let temp = this.treeData;
     arr.forEach((index, i) => {
       // window.console.log(temp);
@@ -317,7 +317,7 @@ class TestPlanStore extends BaseTreeProto {
     this.filters = filters;
   }
 
-  @action setTimes = (times) => {
+  @action setTimes = (times) => { 
     this.times = times;
   }
 
