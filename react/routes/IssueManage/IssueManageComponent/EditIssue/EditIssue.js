@@ -1073,13 +1073,14 @@ class EditIssueNarrow extends Component {
     // console.log(width, parseInt(width / 100) * 100);
   }, 150)
 
+
   render() {
     const {
       FullEditorShow, createLinkTaskShow,
       currentNav, showMore, addingComment
     } = this.state;
     const {
-      loading, issueId, issueInfo, fileList, disabled, linkIssues, folderName, testStepData, testExecuteData
+      loading, issueId, issueInfo, fileList, setFileList, disabled, linkIssues, folderName, testStepData, testExecuteData
       , leaveLoad, enterLoad, reloadIssue } = this.props;
     const {
       issueNum, summary, creationDate, lastUpdateDate, description,
@@ -1097,8 +1098,13 @@ class EditIssueNarrow extends Component {
 
     // const currentCycle = IssueTreeStore.currentCycle;
     // const { cycleId } = currentCycle;
-
-
+    // const initialFileList = issueAttachmentVOList.map(issueAttachment => ({
+    //   uid: issueAttachment.attachmentId,
+    //   name: issueAttachment.fileName,
+    //   url: issueAttachment.url,
+    //   userId: issueAttachment.createdBy,
+    // }));
+    // ================
     const fixVersionsTotal = _.filter(versionIssueRelVOList, { relationType: 'fix' }) || [];
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
     const fixVersions = _.filter(fixVersionsTotal, v => v.statusCode !== 'archived') || [];
@@ -1450,8 +1456,8 @@ class EditIssueNarrow extends Component {
                           </div>
                           <div className="c7ntest-content-wrapper" style={{ marginTop: '-47px' }}>
                             <UploadButtonNow
-                              onRemove={this.setFileList}
-                              onBeforeUpload={this.setFileList}
+                              onRemove={setFileList}
+                              onBeforeUpload={setFileList}
                               updateNow={this.onChangeFileList}
                               fileList={fileList}
                             />

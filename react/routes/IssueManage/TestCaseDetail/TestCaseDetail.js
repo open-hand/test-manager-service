@@ -1,3 +1,4 @@
+/* eslint-disable react/state-in-constructor */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component, Fragment } from 'react';
 import { Page, Header } from '@choerodon/master';
@@ -83,7 +84,7 @@ class TestCaseDetail extends Component {
       const {
         issueAttachmentVOList,
       } = issue;
-      const fileList = _.map(issueAttachmentVOList, issueAttachment => ({
+      const fileList = _.map(issueAttachmentVOList, (issueAttachment) => ({
         uid: issueAttachment.attachmentId,
         name: issueAttachment.fileName,
         url: issueAttachment.url,
@@ -94,7 +95,7 @@ class TestCaseDetail extends Component {
         fileList,
         linkIssues,
         datalogs,
-        testStepData: testStepData.map(step => ({
+        testStepData: testStepData.map((step) => ({
           ...step,
           stepIsCreating: false,
         })),
@@ -150,6 +151,7 @@ class TestCaseDetail extends Component {
     const { issueId } = clickIssue;
     const { onClose } = this.props;
     return (
+      // eslint-disable-next-line react/jsx-fragments
       <Fragment>
         <div style={{ height: '100%' }}>
           <EditIssue
