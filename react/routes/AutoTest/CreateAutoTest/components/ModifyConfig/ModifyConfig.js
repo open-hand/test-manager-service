@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 
 import { YamlEditor } from '../../../../../components';
-import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../../../stores/CreateAutoTestStore';
 import { getYaml, checkYaml } from '../../../../../api/AutoTestApi';
 
 @injectIntl

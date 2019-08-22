@@ -14,7 +14,7 @@ import { getStatusList } from '../../../api/TestStatusApi';
 import { editCycle } from '../../../api/ExecuteDetailApi';
 import { getParams, executeDetailLink } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
-import TestExecuteStore from '../TestExecuteStore/TestExecuteStore';
+import TestExecuteStore from '../stores/TestExecuteStore';
 
 const { AppState } = stores;
 

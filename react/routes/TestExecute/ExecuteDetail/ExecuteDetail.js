@@ -20,9 +20,9 @@ import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './ExecuteDetail.scss';
 import {
   StepTable, ExecuteDetailSide, CreateBug,
-} from '../ExecuteComponent';
+} from '../components';
 import { QuickOperate, ExecuteHistoryTable } from './components';
-import ExecuteDetailStore from '../TestExecuteStore/ExecuteDetailStore';
+import ExecuteDetailStore from '../stores/ExecuteDetailStore';
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;

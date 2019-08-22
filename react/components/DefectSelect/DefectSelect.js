@@ -7,7 +7,7 @@ import { removeDefect } from '../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../api/agileApi';
 import './DefectSelect.less';
 // import ExecuteDetailStore from '../../store/ExecuteDetailStore';
-import ExecuteDetailStore from '../../routes/TestExecute/TestExecuteStore/ExecuteDetailStore';
+import ExecuteDetailStore from '../../routes/TestExecute/stores/ExecuteDetailStore';
 
 
 const { Option } = Select;

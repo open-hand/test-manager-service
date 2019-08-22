@@ -7,7 +7,7 @@ import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
-import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
+import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 
 const propTypes = {
   loading: PropTypes.bool.isRequired,

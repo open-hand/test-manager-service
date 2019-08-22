@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import { Icon, Input } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import TestExecuteStore from '../../../TestExecuteStore/TestExecuteStore';
+import TestExecuteStore from '../../../stores/TestExecuteStore';
 import { RadioButton } from '../../../../../components';
 import TestExecuteTree from '../TestExecuteTree';
 import './TestExecuteTreeToggle.scss';

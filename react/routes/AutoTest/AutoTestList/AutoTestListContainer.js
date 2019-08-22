@@ -8,8 +8,8 @@ import {
 } from '../../../api/AutoTestApi';
 import { commonLink, TestExecuteLink } from '../../../common/utils';
 import AutoTestList from './AutoTestList';
-import AutoListStore from '../AutoTestStore/AutoListStore';
-import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
+import AutoListStore from '../stores/AutoListStore';
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 
 const store = AutoListStore;
 @observer

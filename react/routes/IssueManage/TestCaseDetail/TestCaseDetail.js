@@ -13,10 +13,10 @@ import {
   loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import './TestCaseDetail.scss';
-import IssueStore from '../IssueManagestore/IssueStore';
-import TestStepTable from '../IssueManageComponent/TestStepTable/TestStepTable';
-import TestExecuteTable from '../IssueManageComponent/TestExecuteTable/TestExecuteTable';
-import EditIssue from '../IssueManageComponent/EditIssue/EditIssue';
+import IssueStore from '../stores/IssueStore';
+import TestStepTable from '../components/TestStepTable/TestStepTable';
+import TestExecuteTable from '../components/TestExecuteTable/TestExecuteTable';
+import EditIssue from '../components/EditIssue/EditIssue';
 
 const styles = {
   cardTitle: {

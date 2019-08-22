@@ -23,7 +23,7 @@ import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../comm
 import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
 import { SelectVariable, ModifyConfig, ConfirmInfo } from '../CreateAutoTest/components';
-import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 
 const { Option } = Select;
 const { SubMenu, Item: MenuItem } = Menu;

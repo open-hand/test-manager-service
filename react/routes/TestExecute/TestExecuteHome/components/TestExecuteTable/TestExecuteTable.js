@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
+import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../components';

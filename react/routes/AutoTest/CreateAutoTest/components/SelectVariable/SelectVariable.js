@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { SelectFocusLoad, SelectVersion } from '../../../../../components';
-import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../../../stores/CreateAutoTestStore';
 import { getAllEnvs } from '../../../../../api/AutoTestApi';
 import './SelectVariable.less';
 

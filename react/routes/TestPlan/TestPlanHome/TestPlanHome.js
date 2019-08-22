@@ -11,10 +11,10 @@ import {
 import { editExecuteDetail, deleteExecute } from '../../../api/cycleApi';
 import {
   EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
-} from '../TestPlanComponent';
+} from '../components';
 import { Injecter, NoCycle, Loading } from '../../../components';
 import { TestPlanTable, BatchClone } from './components';
-import TestPlanStore from '../TestPlanStore/TestPlanStore';
+import TestPlanStore from '../stores/TestPlanStore';
 import { executeDetailShowLink, getDragRank } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import './TestPlanHome.scss';
