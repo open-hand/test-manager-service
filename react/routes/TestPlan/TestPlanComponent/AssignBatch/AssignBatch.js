@@ -42,7 +42,7 @@ class AssignBatch extends PureComponent {
         confirmLoading={this.state.loading}
       >
         <SelectFocusLoad
-          style={{ width: '100%' }}
+          style={{ width: '100%', marginTop: 15 }}
           label="指派人"
           type="user"
           onChange={(value) => {
