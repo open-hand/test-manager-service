@@ -657,12 +657,7 @@ class EditIssueNarrow extends Component {
         <Text>
           {(data) => {
             const targetStatus = _.find(StatusList, { endStatusId: data });
-            return (
-              <div>
-                {<Tag status={targetStatus ? targetStatus.statusVO : statusVO} />
-                }
-              </div>
-            );
+            return (<Tag status={targetStatus ? targetStatus.statusVO : statusVO} />);
           }}
         </Text>
         <Edit>
@@ -718,14 +713,9 @@ class EditIssueNarrow extends Component {
         <Text>
           {(data) => {
             const targetPriority = _.find(priorityList, { id: data });
-            return (
-              <div>
-                {
-                  targetPriority ? (
-                    <PriorityTag priority={targetPriority} />
-                  ) : <PriorityTag priority={priorityVO || {}} />
-                }
-              </div>
+            return (targetPriority ? (
+              <PriorityTag priority={targetPriority} />
+            ) : <PriorityTag priority={priorityVO || {}} />
             );
           }}
         </Text>
@@ -1461,7 +1451,7 @@ class EditIssueNarrow extends Component {
                               onBeforeUpload={setFileList}
                               updateNow={this.onChangeFileList}
                               fileList={fileList}
-                      
+
                             />
                           </div>
                         </div>

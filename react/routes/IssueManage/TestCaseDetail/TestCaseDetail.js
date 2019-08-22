@@ -84,7 +84,7 @@ class TestCaseDetail extends Component {
       const {
         issueAttachmentVOList,
       } = issue;
-      const fileList = _.map(issueAttachmentVOList, (issueAttachment) => ({
+      const fileList = _.map(issueAttachmentVOList, issueAttachment => ({
         uid: issueAttachment.attachmentId,
         name: issueAttachment.fileName,
         url: issueAttachment.url,
@@ -95,7 +95,7 @@ class TestCaseDetail extends Component {
         fileList,
         linkIssues,
         datalogs,
-        testStepData: testStepData.map((step) => ({
+        testStepData: testStepData.map(step => ({
           ...step,
           stepIsCreating: false,
         })),
@@ -129,6 +129,10 @@ class TestCaseDetail extends Component {
     if (toTestCaseId) {
       history.replace(testCaseDetailLink(toTestCaseId, IssueStore.getIssueFolderNames[toTestCaseIdIndex]));
     }
+  }
+
+  handleUpdate=() => {
+    IssueStore.loadIssues();
   }
 
   render() {
@@ -178,6 +182,7 @@ class TestCaseDetail extends Component {
             disabled={disabled}
             reloadIssue={this.reloadIssue.bind(this, issueId)}
             onClose={onClose}
+            onUpdate={this.handleUpdate}
             mode="wide"
           />
         </div>
