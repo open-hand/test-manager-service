@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.vo.ApplicationVersionRepDTO;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
@@ -57,14 +58,14 @@ public class DevopsServiceImpl implements DevopsService {
     @Override
     public List<Long> getAppVersionId(String appName, Long projectId, Long appId) {
 
-        ResponseEntity<PageInfo<ApplicationVersionRepDTO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, "id", appId, appName);
-        return list.getBody().getList().stream().map(ApplicationVersionRepDTO::getId).collect(Collectors.toList());
+        ResponseEntity<PageInfo<AppServiceVersionRespVO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, "id", appId, appName);
+        return list.getBody().getList().stream().map(AppServiceVersionRespVO::getId).collect(Collectors.toList());
     }
 
     @Override
-    public Map<Long, ApplicationVersionRepDTO> getAppversion(Long projectId, List<Long> appVersionIds) {
+    public Map<Long, AppServiceVersionRespVO> getAppversion(Long projectId, List<Long> appVersionIds) {
         return applicationFeignClient.getAppversion(projectId, TypeUtil.longsToArray(appVersionIds)).getBody().stream()
-                .collect(Collectors.toMap(ApplicationVersionRepDTO::getId, Function.identity()));
+                .collect(Collectors.toMap(AppServiceVersionRespVO::getId, Function.identity()));
     }
 
     @Override

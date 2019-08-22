@@ -1,4 +1,4 @@
-package io.choerodon.devops.api.dto;
+package io.choerodon.devops.api.vo;
 
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 

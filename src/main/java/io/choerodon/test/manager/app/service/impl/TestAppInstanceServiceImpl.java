@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
 
+import io.choerodon.devops.api.vo.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,6 @@ import io.choerodon.base.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.devops.api.dto.DevopsApplicationDeployDTO;
-import io.choerodon.devops.api.dto.ErrorLineDTO;
-import io.choerodon.devops.api.dto.ReplaceResult;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
@@ -84,8 +82,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
      * @return
      */
     @Override
-    public ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
-        ReplaceResult replaceResult = new ReplaceResult();
+    public InstanceValueVO queryValues(Long projectId, Long appId, Long envId, Long appVersionId) {
+        InstanceValueVO replaceResult = new InstanceValueVO();
         //从devops取得value
         String versionValue = testCaseService.getVersionValue(projectId, appVersionId);
         try {
@@ -100,7 +98,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         String deployValue = FileUtil.checkValueFormat(testAppInstanceMapper.queryValueByEnvIdAndAppId(envId, appId));
         replaceResult.setYaml(versionValue);
         if (deployValue != null) {
-            ReplaceResult sendResult = new ReplaceResult();
+            InstanceValueVO sendResult = new InstanceValueVO();
             sendResult.setYaml(deployValue);
             replaceResult = testCaseService.previewValues(projectId, sendResult, appVersionId);
         }
@@ -171,8 +169,8 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         Yaml yaml = new Yaml();
         TestEnvCommandDTO envCommand;
         TestEnvCommandValueDTO commandValue;
-        ReplaceResult replaceResult = new ReplaceResult();
-        ReplaceResult sendResult = new ReplaceResult();
+        InstanceValueVO replaceResult = new InstanceValueVO();
+        InstanceValueVO sendResult = new InstanceValueVO();
 
         if (ObjectUtils.isEmpty(deployDTO.getHistoryId())) {
             sendResult.setYaml(deployDTO.getValues());
@@ -245,14 +243,14 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         }
 
         //开始部署
-        DevopsApplicationDeployDTO devopsDeployDTO = new DevopsApplicationDeployDTO(deployDTO, resultInstance.getId(), replaceResult.getYaml());
-        testCaseService.deployTestApp(projectId, devopsDeployDTO);
+        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(),deployDTO.getEnvironmentId(),deployDTO.getValues(),deployDTO.getAppId(),deployDTO.getCommandType(),resultInstance.getId());
+        testCaseService.deployTestApp(projectId, appServiceDeployVO);
 
         return modelMapper.map(resultInstance, TestAppInstanceVO.class);
     }
 
-    private List<ErrorLineDTO> getErrorLine(String value) {
-        List<ErrorLineDTO> errorLines = new ArrayList<>();
+    private List<ErrorLineVO> getErrorLine(String value) {
+        List<ErrorLineVO> errorLines = new ArrayList<>();
         List<Long> lineNumbers = new ArrayList<>();
         String[] errorMsg = value.split("\\^");
         for (int i = 0; i < value.length(); i++) {
@@ -264,7 +262,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
             }
         }
         for (int i = 0; i < lineNumbers.size(); i++) {
-            ErrorLineDTO errorLineDTO = new ErrorLineDTO();
+            ErrorLineVO errorLineDTO = new ErrorLineVO();
             errorLineDTO.setLineNumber(lineNumbers.get(i));
             errorLineDTO.setErrorMsg(errorMsg[i]);
             errorLines.add(errorLineDTO);

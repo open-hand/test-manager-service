@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.vo.ApplicationVersionRepDTO;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
-import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
@@ -66,7 +66,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     public void populateAPPVersion(Long projectId, PageInfo<TestAutomationHistoryVO> page) {
         if (ObjectUtils.isEmpty(page.getList()))
             return;
-        Map<Long, ApplicationVersionRepDTO> map =
+        Map<Long, AppServiceVersionRespVO> map =
                 devopsService.getAppversion(projectId, page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceVO()))
                         .map(v -> v.getTestAppInstanceVO().getAppVersionId()).distinct().collect(Collectors.toList()));
 

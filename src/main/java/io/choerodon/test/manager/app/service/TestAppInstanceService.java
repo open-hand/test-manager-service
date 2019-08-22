@@ -4,7 +4,8 @@ import java.util.Map;
 
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
-import io.choerodon.devops.api.dto.ReplaceResult;
+import io.choerodon.devops.api.vo.InstanceValueVO;
+import io.choerodon.devops.api.vo.ReplaceResult;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 
@@ -19,7 +20,7 @@ public interface TestAppInstanceService {
 
     QuartzTask createTimedTaskForDeploy(ScheduleTaskDTO taskDTO, Long projectId);
 
-    ReplaceResult queryValues(Long projectId, Long appId, Long envId, Long appVersionId);
+    InstanceValueVO queryValues(Long projectId, Long appId, Long envId, Long appVersionId);
 
     void updateInstance(String releaseNames, String podName, String conName);
 

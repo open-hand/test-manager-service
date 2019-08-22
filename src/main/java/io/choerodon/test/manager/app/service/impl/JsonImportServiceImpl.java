@@ -14,8 +14,8 @@ import io.choerodon.agile.infra.common.utils.AgileUtil;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.devops.api.dto.ApplicationRepDTO;
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.devops.api.vo.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.testng.TestNgCase;
@@ -520,8 +520,8 @@ public class JsonImportServiceImpl implements JsonImportService {
         try {
             Long[] appVersionIds = new Long[1];
             appVersionIds[0] = appVersionId;
-            ResponseEntity<List<ApplicationVersionRepDTO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
-            ApplicationVersionRepDTO response = responses.getBody().get(0);
+            ResponseEntity<List<AppServiceVersionRespVO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
+            AppServiceVersionRespVO response = responses.getBody().get(0);
             if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
                 throw new CommonException(ERROR_GET_APP_VERSION_NAME);
             }
