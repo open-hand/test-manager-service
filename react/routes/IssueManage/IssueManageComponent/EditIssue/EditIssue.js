@@ -8,8 +8,9 @@ import { throttle } from 'lodash';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon, Tabs
 } from 'choerodon-ui';
+import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
 import './EditIssue.scss';
-import { UploadButtonNow, IssueDescription } from '../CommonComponent';
+import { IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User, ResizeAble } from '../../../../components';
 import {
   delta2Html, handleFileUpload, text2Delta, beforeTextUpload, formatDate,
@@ -1460,6 +1461,7 @@ class EditIssueNarrow extends Component {
                               onBeforeUpload={setFileList}
                               updateNow={this.onChangeFileList}
                               fileList={fileList}
+                      
                             />
                           </div>
                         </div>
