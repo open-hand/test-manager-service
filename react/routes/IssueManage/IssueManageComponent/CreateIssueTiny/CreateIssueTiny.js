@@ -1,9 +1,8 @@
 /*eslint-disable */
 import React, { Component } from 'react';
 import {
-  /* Button, */ Input, Icon, Select,
+  Button, Input, Icon, Select,
 } from 'choerodon-ui';
-import { Button } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -154,12 +153,11 @@ class CreateIssueTiny extends Component {
             />
           </div>
           <div style={{
-            marginRight: '5%', display: 'flex',
+            display: 'flex',
           }}
           >
             <Button
-              /* type="primary"
-              funcType="flat" */
+              type="primary"
               funcType="raised"
               loading={this.state.createLoading}
               onClick={this.handleBlurCreateIssue.bind(this)}
@@ -168,7 +166,7 @@ class CreateIssueTiny extends Component {
               <FormattedMessage id="ok" />
             </Button>
             <Button
-              /* type="primary" */
+              style={{ marginLeft: 10 }}
               funcType="raised"
               onClick={this.onCancel}
             >

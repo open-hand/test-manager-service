@@ -92,7 +92,7 @@ export default class IssueManage extends Component {
   }
 
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -169,11 +169,12 @@ export default class IssueManage extends Component {
               display: 'block',
               overflowY: 'auto',
               overflowX: 'hidden',
+              padding: '0 20px',
             }}
           >
             <IssueTable
               clickIssue={clickIssue}
-              onRow={(record) => ({
+              onRow={record => ({
                 onClick: (event) => { this.handleTableRowClick(record); },
               })}
             />

@@ -95,68 +95,60 @@ class EditCycle extends Component {
           visible={visible}
           onOk={this.onOk}
           onCancel={this.onCancel}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            title={`在项目“${AppState.currentMenuType.name}”中修改测试循环`}
-            description="您可以更改一个测试循环的具体信息。"
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-cycle/"
-          >
-            <Spin spinning={loading}>
-              <Form>
-                <FormItem>
-                  {getFieldDecorator('cycleName', {
-                    initialValue: title,
+          width={380}
+        >          
+          <Spin spinning={loading}>
+            <Form>
+              <FormItem>
+                {getFieldDecorator('cycleName', {
+                  initialValue: title,
+                  rules: [{
+                    required: true, message: '请输入名称!',
+                  }],
+                })(
+                  <Input maxLength={30} label="名称" />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('description', {
+                  initialValue: description,
+                })(
+                  <Input maxLength={30} label="说明" />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('build', {
+                  initialValue: build,
+                })(
+                  <Input maxLength={30} label="构建号" />,
+                )}
+              </FormItem>
+              <FormItem>
+                {getFieldDecorator('environment', {
+                  initialValue: environment,
+                })(
+                  <Input maxLength={30} label="环境" />,
+                )}
+              </FormItem>
+              <FormItem>
+                <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
+                  <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
+                  {getFieldDecorator('range', {
                     rules: [{
-                      required: true, message: '请输入名称!',
+                      required: true,
+                      message: '请选择日期!',                      
                     }],
+                    initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
                   })(
-                    <Input style={{ width: 500 }} maxLength={30} label="名称" />,
+                    <RangePicker                                   
+                      format="YYYY-MM-DD"
+                      style={{ width: '100%' }}
+                    />,
                   )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('description', {
-                    initialValue: description,
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label="说明" />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('build', {
-                    initialValue: build,
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label="构建号" />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  {getFieldDecorator('environment', {
-                    initialValue: environment,
-                  })(
-                    <Input style={{ width: 500 }} maxLength={30} label="环境" />,
-                  )}
-                </FormItem>
-                <FormItem>
-                  <span className="c7n-input-wrapper c7n-input-has-value c7n-input-has-label">
-                    <div className="c7n-input-label" style={{ transform: 'none' }}><span>持续时间</span></div>
-                    {getFieldDecorator('range', {
-                      rules: [{
-                        required: true,
-                        message: '请选择日期!',                      
-                      }],
-                      initialValue: fromDate && toDate ? [moment(fromDate), moment(toDate)] : undefined,
-                    })(
-                      <RangePicker                                   
-                        format="YYYY-MM-DD"
-                        style={{ width: 500 }}
-                      />,
-                    )}
-                  </span>
-                </FormItem>
-              </Form>
-            </Spin>
-          </Content>
+                </span>
+              </FormItem>
+            </Form>
+          </Spin>         
         </Sidebar>
       </div>
     );

@@ -5,6 +5,7 @@
   width: 230px;
   display: flex;
   flex-direction: column;
+
   .c7ntest-treeTop {
     padding: 0 .1rem;
     font-size: 13px;
@@ -15,6 +16,10 @@
     .c7n-input-wrapper {
       .c7n-input-content {
         margin-bottom: 0;
+
+        .c7n-input-prefix {
+          margin-left: 3px;
+        }
       }
     }
 
@@ -29,10 +34,12 @@
     overflow-y: auto;
     padding-left: 12px;
     padding-top: 3px;
+
     .c7n-input {
       height: 32px;
 
-      & +.c7n-input-label-wrapper {
+      & + .c7n-input-label-wrapper {
+
         /* padding-left: 0 !important; */
         .c7n-input-label {
           margin-top: -4px;

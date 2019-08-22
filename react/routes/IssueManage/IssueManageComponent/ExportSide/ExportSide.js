@@ -166,7 +166,7 @@ class ExportSide extends Component {
       dataIndex: 'creationDate',
       key: 'creationDate',
       // width: 160,
-      render: (creationDate) => moment(creationDate).format('YYYY-MM-DD h:mm:ss'),
+      render: creationDate => moment(creationDate).format('YYYY-MM-DD h:mm:ss'),
     }, {
       title: '耗时',
       dataIndex: 'during',
@@ -180,7 +180,7 @@ class ExportSide extends Component {
       render: (rate, record) => (record.status === 2
         ? <div>已完成</div>
         : (
-          <Tooltip title={`进度：${rate ? rate.toFixed(1) : 0}%`} getPopupContainer={(ele) => ele.parentNode}>
+          <Tooltip title={`进度：${rate ? rate.toFixed(1) : 0}%`} getPopupContainer={ele => ele.parentNode}>
             <Progress percent={rate} showInfo={false} />
           </Tooltip>
         )),
@@ -190,7 +190,7 @@ class ExportSide extends Component {
       key: 'fileUrl',
       render: (fileUrl, record) => (
         <div style={{ textAlign: 'right' }}>
-          <Tooltip title={record.status === 3 ? '重试' : '下载文件'} getPopupContainer={(ele) => ele.parentNode}>
+          <Tooltip title={record.status === 3 ? '重试' : '下载文件'} getPopupContainer={ele => ele.parentNode}>
             <Button style={{ marginRight: -3 }} disabled={record.status === 1 || (record.status !== 3 && !fileUrl)} shape="circle" funcType="flat" icon={record.status === 3 ? 'refresh' : 'get_app'} onClick={this.handleDownload.bind(this, record)} />
           </Tooltip>
         </div>
@@ -206,9 +206,7 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="export_side_content_description" />}
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management"
+          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}         
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
