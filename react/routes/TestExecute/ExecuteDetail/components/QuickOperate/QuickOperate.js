@@ -35,8 +35,8 @@ const QuickOperate = ({
   //     />
   //   </Option>
   // ));
-  const menuItems = statusList.map((item) => (
-    <Menu.Item key={item.statusId}>
+  const menuItems = statusList.map(item => (
+    <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
       <StatusTags
         color={item.statusColor}
         name={item.statusName}
@@ -44,7 +44,7 @@ const QuickOperate = ({
     </Menu.Item>
   ));
   const menu = (
-    <Menu onClick={(item) => onSubmit({ executionStatus: item.key })}>
+    <Menu onClick={item => onSubmit({ executionStatus: item.key })}>
       {menuItems}
     </Menu>
   );
@@ -77,20 +77,11 @@ const QuickOperate = ({
       >
         失败
       </span>
-      {/* <Select
-        className="c7ntest-select"
-        placeholder="其他状态"
-        value={null}
-        style={{ width: 80, marginLeft: 20 }}
-        onChange={(id) => { onSubmit({ executionStatus: id }); }}
-      >
-        {options}
-      </Select> */}
       <Dropdown overlay={menu} trigger="click">
-        <a role="button" shape="circle" className="c7ntest-QuickOperate-Dropdown-a">
+        <Button style={{ padding: '0 5px', marginLeft: 15 }}>
           其它状态
           <Icon type="arrow_drop_down" />
-        </a>
+        </Button>
       </Dropdown>
     </div>
   );

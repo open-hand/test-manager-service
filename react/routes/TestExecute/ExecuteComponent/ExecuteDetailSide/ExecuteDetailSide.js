@@ -342,11 +342,11 @@ class ExecuteDetailSide extends Component {
                     </div>
 
                   </div>
-                  <Button className="leftBtn" funcType="flat" icon="last_page" onClick={onClose}>
+                  <Button funcType="flat" icon="last_page" onClick={onClose}>
                     <span>隐藏详情</span>
                   </Button>
                 </div>
-                <div style={{ fontSize: '20px', marginRight: '5px' }}>
+                <div style={{ fontSize: '20px', marginRight: '5px',marginBottom: '15px' }}>
                   {summary}
                 </div>
               </div>
@@ -435,16 +435,14 @@ class ExecuteDetailSide extends Component {
                   title="描述"
                   style={{ padding: '0 15px 0 0' }}
                   action={(
-                    <Button className="leftBtn" type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                      {/* <FormattedMessage id="execute_edit_fullScreen" /> */}
+                    <Button  type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>                     
                     </Button>
                   )}
                 >
                   {comment && !editing
                     ? (
                       <div
-                        role="none"
-                        style={{ padding: '15px 15px 15px 23px' }}
+                        role="none"                    
                         onClick={this.enterEditing}
                       >
                         <RichTextShow data={delta2Html(comment)} />
@@ -504,7 +502,7 @@ class ExecuteDetailSide extends Component {
                       onCancel={this.cancelEdit}
                     >
                       <Text>
-                        <Button className="leftBtn" type="primary" funcType="flat">
+                        <Button type="primary" funcType="flat">
                           <Icon type="playlist_add" style={{ marginRight: 2 }} />
                           {/* <span>缺陷</span> */}
                         </Button>

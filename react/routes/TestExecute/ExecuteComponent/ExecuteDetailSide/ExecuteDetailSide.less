@@ -1,5 +1,6 @@
 @baseBackGround: white;
 @base: black;
+
 .c7ntest-ExecuteDetailSide {
   width: 100%;
   background-color: @baseBackGround;
@@ -7,19 +8,19 @@
   position: relative;
   display: flex;
   overflow: hidden;
-  
+
   .c7ntest-content {
     flex: 1;
     height: 100%;
     display: flex;
-    flex-direction: column; // overflow: hidden;
-    padding: 8px 0 0 15px;
+    flex-direction: column; // overflow: hidden;    
     overflow: hidden;
 
     .c7ntest-content-top {
       box-sizing: border-box;
       width: 100%;
       flex-shrink: 0;
+      padding: 0 .2rem;
     }
 
     .c7ntest-content-bottom {
@@ -27,9 +28,11 @@
       // width: 370px;
       flex: 1;
       overflow-y: scroll;
+      overflow-x: hidden;
+      padding: 0 .2rem .2rem;
 
       .c7ntest-side-item-header {
-        margin-top: .15rem;
+        margin-bottom: .11rem;
         display: flex;
         align-items: center;
         font-size: 16px;
@@ -54,11 +57,21 @@
           margin: 30px 0px 20px;
         }
 
-        &-right {}
+        &-right {
+          .c7n-btn {
+            padding: 0 5px;
+            margin-left: auto;
+          }
+        }
       }
 
-      .c7ntest-side-item-content {
-        padding: 15px 15px 15px 23px;
+      
+
+      #detail {
+        .c7ntest-side-item-content {
+          display: flex;
+          flex-wrap: wrap;
+        }        
       }
 
       .c7ntest-button-defect-select {
@@ -90,24 +103,35 @@
   }
 
   .c7ntest-item-one-line {
+    width: 50%;
     display: flex;
     align-items: center;
-    margin: 10px 0;
-    color: fade(@base,65%);
+    margin-bottom: 10px;
+    color: fade(@base, 65%);
+
     &-left {
-      width: 45%;
+      width: 100px;
     }
 
     &-right {
       flex: 1;
-      
+
       .c7ntest-TextEditToggle-text {
         padding: 0;
       }
     }
   }
+
+  &[max-width~="600px"] {
+    #detail {
+      .c7ntest-item-one-line {
+        width: 100%;
+      }
+    }
+  }
+
   // .c7ntest-upload {
-    
+
   // }
   &-divider {
     position: relative;
