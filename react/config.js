@@ -1,3 +1,6 @@
+/* eslint-disable */
+const alias = require('../alias').webpack;
+
 const config = {
   server: 'http://api.staging.saas.hand-china.com',
   // server: 'http://api.alpha.saas.hand-china.com',
@@ -8,6 +11,10 @@ const config = {
   buildType: 'single',
   dashboard: {},
   webSocketServer: 'ws://10.211.111.134:18085',
+  webpackConfig(configs) {
+    configs.resolve.alias = alias;    
+    return configs;
+  },
 };
 
 module.exports = config;

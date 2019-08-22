@@ -3,16 +3,22 @@ const gulp = require('gulp');
 const rimraf = require('rimraf');
 const babel = require('gulp-babel');
 const through2 = require('through2');
-
+const alias = require('./alias').gulp;
 const cwd = process.cwd();
 const libDir = path.join(cwd, 'lib');
 
 function compileAssets() {
-  return gulp.src(['react/**/*.@(jpg|png|svg|scss|less|html|ico)']).pipe(gulp.dest(libDir));
+  return gulp.src(['react/**/*.@(jpg|png|gif|svg|scss|less|html|ico)']).pipe(gulp.dest(libDir));
 }
 
 function getBabelCommonConfig() {
   const plugins = [
+    [
+      require.resolve('babel-plugin-module-resolver'),
+      {
+        alias,
+      }
+    ],
     require.resolve('babel-plugin-syntax-dynamic-import'),
     require.resolve('babel-plugin-transform-decorators-legacy'),
     require.resolve('babel-plugin-transform-es3-member-expression-literals'),
@@ -24,7 +30,7 @@ function getBabelCommonConfig() {
       polyfill: false,
     }],
     [
-      require.resolve('babel-plugin-import'), 
+      require.resolve('babel-plugin-import'),
       [
         {
           libraryName: 'choerodon-ui',

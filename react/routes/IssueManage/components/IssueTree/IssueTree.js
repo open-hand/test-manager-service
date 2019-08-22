@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
+import { Permission } from '@choerodon/master';
 import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { getProjectId, getOrganizationId } from '@/common/utils';
 import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
@@ -103,7 +105,7 @@ class IssueTree extends Component {
     });
   }
 
-  renderTreeNodes = (data) => data.map((item, i) => {
+  renderTreeNodes = data => data.map((item, i) => {
     const { children, type } = item;
     const key = type === 'temp' ? `${item.key}temp` : item.key;
     const { searchValue } = this.state;
@@ -129,9 +131,9 @@ class IssueTree extends Component {
         <TreeNode
           className="hidden-hover"
           title={(
-            <div onClick={(e) => e.stopPropagation()} role="none">
+            <div onClick={e => e.stopPropagation()} role="none">
               <Input
-                className="hidden-label"              
+                className="hidden-label"
                 defaultValue={item.title}
                 autoFocus
                 onBlur={(e) => {
@@ -146,7 +148,7 @@ class IssueTree extends Component {
       );
     } else {
       return (
-        <TreeNode          
+        <TreeNode
           title={item.cycleId || item.versionId
             ? (
               <IssueTreeTitle
@@ -166,7 +168,7 @@ class IssueTree extends Component {
           {this.renderTreeNodes(children)}
         </TreeNode>
       );
-    } 
+    }
   });
 
   /**
@@ -187,14 +189,14 @@ class IssueTree extends Component {
       if (tempNode.children && tempNode.children) {
         tempNode.children.forEach((node, i) => {
           const {
-            key, title, versionId, cycleId, 
+            key, title, versionId, cycleId,
           } = node;
           // 树拖动之后versionId会更新，在这里更新右侧创建用例处的版本
           if (currentCycle.cycleId && currentCycle.cycleId === node.cycleId) {
             IssueTreeStore.setCurrentCycle(node);
           }
           dataList.push({
-            key, title, versionId, cycleId, 
+            key, title, versionId, cycleId,
           });
           stack.push(tempNode.children[i]);
         });
@@ -243,17 +245,17 @@ class IssueTree extends Component {
       if (this.multi) {
         // 增加
         if (selected) {
-          filteredKeys = [...new Set(preSelectedKeys.concat(newKey))].filter((key) => key.split('-').length === 4 && !reg.test(key));
+          filteredKeys = [...new Set(preSelectedKeys.concat(newKey))].filter(key => key.split('-').length === 4 && !reg.test(key));
         } else {
           // 减少
-          filteredKeys = preSelectedKeys.filter((key) => selectedKeys.includes(key));
+          filteredKeys = preSelectedKeys.filter(key => selectedKeys.includes(key));
           // preSelectedKeys.split(preSelectedKeys.indexOf(newKey), 1);
         }
         // 单击的处理
       } else if (selected) {
         filteredKeys = selectedKeys.length > 0 ? selectedKeys.slice(-1) : preSelectedKeys;
       } else {
-        filteredKeys = preSelectedKeys.filter((key) => !selectedKeys.includes(key));
+        filteredKeys = preSelectedKeys.filter(key => !selectedKeys.includes(key));
       }
       IssueTreeStore.setSelectedKeys(filteredKeys);
     }
@@ -264,7 +266,7 @@ class IssueTree extends Component {
 
   onDragStart = (source) => {
     const selectedKeys = IssueTreeStore.getSelectedKeys;
-    const draggingItems = selectedKeys.map((key) => IssueTreeStore.getItemByKey(key));
+    const draggingItems = selectedKeys.map(key => IssueTreeStore.getItemByKey(key));
     const { draggableId } = source;
     const item = JSON.parse(draggableId);
     if (!_.find(draggingItems, { cycleId: item.cycleId })) {
@@ -283,11 +285,11 @@ class IssueTree extends Component {
     const draggingItems = IssueTreeStore.getDraggingFolders;
 
     // 过滤，这里只要文件夹
-    const filteredItems = draggingItems.filter((item) => item && destination.droppableId !== item.versionId && item.cycleId);
+    const filteredItems = draggingItems.filter(item => item && destination.droppableId !== item.versionId && item.cycleId);
     // console.log(draggingItems, filteredItems);
     IssueTreeStore.setSelectedKeys([]);
     if (filteredItems.length > 0) {
-      const data = filteredItems.map((item) => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
+      const data = filteredItems.map(item => ({ versionId: destination.droppableId, folderId: item.cycleId, objectVersionNumber: item.objectVersionNumber }));
       // console.log(data);
       IssueTreeStore.setLoading(true);
       // 清掉之前的拖动数据
@@ -332,7 +334,7 @@ class IssueTree extends Component {
     const treeData = IssueTreeStore.getTreeData;
     const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
     const expandedKeys = IssueTreeStore.getExpandedKeys;
-    const selectedKeys = IssueTreeStore.getSelectedKeys;    
+    const selectedKeys = IssueTreeStore.getSelectedKeys;
     return (
       <div className="c7ntest-IssueTree">
         <div id="template_folder_copy" style={{ display: 'none' }}>
@@ -349,7 +351,7 @@ class IssueTree extends Component {
             prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,0.45)' }} />}
             placeholder="搜索"
             style={{ marginTop: 10, backgroundColor: 'rgba(0,0,0,0.06)', borderRadius: '2px' }}
-            onChange={(e) => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
+            onChange={e => _.debounce(this.filterCycle, 200).call(null, e.target.value)}
           />
           {/* <Icon type="close" className="c7ntest-pointer" onClick={onClose} /> */}
         </div>
@@ -371,6 +373,14 @@ class IssueTree extends Component {
                 >
                   {this.renderTreeNodes(treeData)}
                 </Tree>
+                <Permission
+                  type="project"
+                  projectId={getProjectId()}
+                  organizationId={getOrganizationId()}
+                  service={['agile-service.project-info.updateProjectInfo']}
+                >
+                  {null}
+                </Permission>
               </DragDropContext>
             )}
           </Spin>
