@@ -283,7 +283,7 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
-        <Content style={{ padding: 0 }}>
+        <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
           <Spin spinning={loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
