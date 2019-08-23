@@ -318,11 +318,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span>
+                    <span className="preWrapSpan">
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试步骤</span>}
                     </span>
                   )
-                  : <span>{newValue || '-'}</span>
+                  : <span className="preWrapSpan">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>
@@ -364,11 +364,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span>
+                    <span className="preWrapSpan">
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试数据</span>}
                     </span>
                   )
-                  : <span>{newValue || '-'}</span>
+                  : <span className="preWrapSpan">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>
@@ -412,11 +412,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span>
+                    <span className="preWrapSpan">
                       {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>预期结果</span>}
                     </span>
                   )
-                  : <span>{newValue || '-'}</span>
+                  : <span className="preWrapSpan">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>

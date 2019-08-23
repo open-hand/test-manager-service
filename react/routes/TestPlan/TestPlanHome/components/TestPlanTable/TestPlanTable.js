@@ -83,7 +83,7 @@ const TestPlanTable = ({
     title: <span>用例优先级</span>,
     dataIndex: 'priorityId',
     key: 'priorityId',
-    filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
+    filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
     flex: 1,
     render(issueId, record) {
       const { issueInfosVO } = record;
@@ -95,7 +95,7 @@ const TestPlanTable = ({
     title: <FormattedMessage id="status" />,
     dataIndex: 'executionStatus',
     key: 'executionStatus',
-    filters: statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
+    filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
     flex: 1,
     render(executionStatus) {
       const statusColor = _.find(statusList, { statusId: executionStatus })
@@ -151,6 +151,7 @@ const TestPlanTable = ({
           className="c7ntest-select"
           style={{ width: 200 }}
           placeholder={<FormattedMessage id="cycle_executeBy" />}
+          getPopupContainer={trigger => trigger.parentNode}
           type="user"
           onChange={onLastUpdatedByChange}
         />
@@ -159,6 +160,7 @@ const TestPlanTable = ({
           style={{ marginLeft: 20, width: 200 }}
           className="c7ntest-select"
           placeholder={<FormattedMessage id="cycle_assignedTo" />}
+          getPopupContainer={trigger => trigger.parentNode}
           type="user"
           onChange={onAssignedToChange}
         />
@@ -170,7 +172,7 @@ const TestPlanTable = ({
         dataSource={dataSource}
         columns={columns}
         onDragEnd={onDragEnd}
-        onRow={(record) => ({
+        onRow={record => ({
           onClick: (event) => { onTableRowClick(record); },
         })}
         dragKey="executeId"

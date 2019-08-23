@@ -29,6 +29,7 @@
     "@choerodon/agile": "0.19.x",
     "@choerodon/boot": "0.20.x",
     "@choerodon/master": "0.20.x",
+    "babel-plugin-module-resolver": "^3.2.0",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",

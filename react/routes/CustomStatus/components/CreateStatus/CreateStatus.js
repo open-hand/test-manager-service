@@ -90,14 +90,12 @@ class CreateStatus extends Component {
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
+          width={380}
         >
           <Content
             style={{
               padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="status_side_content_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="status_side_content_description" />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
+            }}            
           >
             <Form>
               <FormItem>
@@ -107,7 +105,7 @@ class CreateStatus extends Component {
                     required: true, message: '请选择类型!',
                   }],
                 })(
-                  <Select label={<FormattedMessage id="type" />} style={{ width: 500 }} onChange={this.handleStatusTypeChange}>
+                  <Select label={<FormattedMessage id="type" />} onChange={this.handleStatusTypeChange}>
                     <Option value="CYCLE_CASE">执行状态</Option>
                     <Option value="CASE_STEP">步骤状态</Option>
                   </Select>,
@@ -121,13 +119,13 @@ class CreateStatus extends Component {
                     validator: this.handleCheckStatusRepeat,
                   }],
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status_name" />} />,
+                  <Input maxLength={30} label={<FormattedMessage id="status_name" />} />,
                 )}
               </FormItem>
               <FormItem>
                 {getFieldDecorator('description', {
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
+                  <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
                 )}
               </FormItem>
               <FormItem>

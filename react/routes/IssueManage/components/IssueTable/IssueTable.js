@@ -24,10 +24,9 @@ class IssueTable extends Component {
       firstIndex: null,
       filteredColumns: ['issueNum', 'issueTypeVO', 'summary', 'versionIssueRelVOList', 'folderName', 'reporter', 'priorityId'],
     };
-    this.createRef = React.createRef();
     this.inDivRef = React.createRef();
   }
-
+  
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
@@ -232,21 +231,6 @@ class IssueTable extends Component {
     });
   }
 
-  // 点击创建框外进行保存用例
-  outDivClickSave = (e) => {
-    const { onBlurCreateInput } = this.createRef.current;
-    if (!this.inDivRef.current.contains(e.target)) {
-      onBlurCreateInput();
-    }
-  }
-
-  componentDidMount() {
-    document.addEventListener('click', this.outDivClickSave);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.outDivClickSave);
-  }
 
   renderTable = columns => (
     <div className="c7ntest-issuetable">
@@ -425,8 +409,7 @@ class IssueTable extends Component {
 
           <div
             className="c7ntest-backlog-sprintIssue"
-            role="button"
-            ref={this.inDivRef}
+            role="button"           
           >
             <div
               style={{
@@ -440,9 +423,7 @@ class IssueTable extends Component {
               }}
             >
               {/* table底部创建用例 */}
-              <CreateIssueTiny
-                ref={this.createRef}
-              />
+              <CreateIssueTiny />
             </div>
           </div>
           {

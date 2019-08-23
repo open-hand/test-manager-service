@@ -13,14 +13,40 @@ import IssueTreeStore from '../../stores/IssueTreeStore';
 import './CreateIssueTiny.less';
 
 const { Option } = Select;
-@observer
-class CreateIssueTiny extends Component {
-  state = {
-    creating: false,
-    createLoading: false,
-    createIssueValue: '',
+function contains(root, n) {
+  let node = n;
+  while (node) {
+    if (node === root) {
+      return true;
+    }
+    node = node.parentNode;
   }
 
+  return false;
+}
+@observer
+class CreateIssueTiny extends Component {
+  constructor() {
+    super();
+    this.containerRef = React.createRef();
+    this.state = {
+      creating: false,
+      createLoading: false,
+      createIssueValue: '',
+    }
+  }
+  addEventListener = () => {
+    document.addEventListener('click', this.handleDocumentClick)
+  }
+  removeEventListener = () => {
+    document.removeEventListener('click', this.handleDocumentClick)
+  }
+  handleDocumentClick = (e) => {
+    const { creating } = this.state;
+    if (!contains(this.containerRef.current, e.target)) {
+      this.onBlurCreateInput()
+    }
+  }
   handleBlurCreateIssue() {
     if (this.state.createIssueValue !== '') {
       const versionIssueRelVOList = [];
@@ -93,9 +119,12 @@ class CreateIssueTiny extends Component {
 
   onBlurCreateInput = () => {
     const { createIssueValue } = this.state;
-    if (createIssueValue !== '' && !createIssueValue.match(/^[ ]+$/))
+    this.removeEventListener()
+    if (createIssueValue !== '' && !createIssueValue.match(/^[ ]+$/)) {      
       this.handleBlurCreateIssue();
-    this.onCancel();
+    } else {
+      this.onCancel();
+    }
   }
 
   onCancel = () => {
@@ -109,7 +138,7 @@ class CreateIssueTiny extends Component {
     const versions = IssueStore.getVersions;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
     return creating ? (
-      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}  >
+      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }} ref={this.containerRef}>
         <div className="c7ntest-add-select-version">
           {/* 创建issue选择版本 */}
           {
@@ -123,7 +152,7 @@ class CreateIssueTiny extends Component {
                   value={selectedVersion}
                   style={{ minWidth: 50, height: 36 }}
                   dropdownMatchSelectWidth={false}
-                  getPopupContainer={trigger=>trigger.parentNode}
+                  getPopupContainer={trigger => trigger.parentNode}
                 >
                   {
                     versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
@@ -186,6 +215,7 @@ class CreateIssueTiny extends Component {
               creating: true,
               createIssueValue: '',
             });
+            this.addEventListener()
           }}
         >
           <Icon type="playlist_add icon" style={{ marginRight: -2 }} />

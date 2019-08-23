@@ -121,7 +121,7 @@ class CloneStage extends Component {
         onCancel={this.props.onCancel}
       >
         <Spin spinning={loading}>
-          <Form style={{ marginTop: 15 }}>
+          <Form style={{ marginTop: 20 }}>
             <FormItem>
               {getFieldDecorator('versionId', {
                 rules: [{

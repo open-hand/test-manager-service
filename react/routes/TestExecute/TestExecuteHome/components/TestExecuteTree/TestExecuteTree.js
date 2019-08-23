@@ -85,19 +85,20 @@ const TestExecuteTree = ({
   });
 
   return (
-    noVersion ? <NoVersion /> : (
-      <Tree
-        className="c7ntest-TestExecuteTree"
-        selectedKeys={selectedKeys}
-        expandedKeys={expandedKeys}
-        showIcon
-        onExpand={onTreeNodeExpand}
-        onSelect={onTreeNodeSelect}
-        autoExpandParent={autoExpandParent}
-      >
-        {renderTreeNodes(treeData)}
-      </Tree>
-    )
+    <div className="c7ntest-TestExecuteTree">
+      {noVersion ? <NoVersion /> : (
+        <Tree    
+          selectedKeys={selectedKeys}
+          expandedKeys={expandedKeys}
+          showIcon
+          onExpand={onTreeNodeExpand}
+          onSelect={onTreeNodeSelect}
+          autoExpandParent={autoExpandParent}
+        >
+          {renderTreeNodes(treeData)}
+        </Tree>
+      )}
+    </div>    
   );
 };
 

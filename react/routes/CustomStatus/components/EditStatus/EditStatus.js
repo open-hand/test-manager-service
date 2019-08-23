@@ -76,15 +76,12 @@ class EditStatus extends Component {
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
-          width={550}
+          width={380}
         >
           <Content
             style={{
               padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="status_side_edit_content_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="status_side_edit_content_description" />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
+            }}            
           >
             <Form>
               <FormItem>
@@ -95,13 +92,13 @@ class EditStatus extends Component {
                     validator: this.handleCheckStatusRepeat,
                   }],
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
+                  <Input maxLength={30} label={<FormattedMessage id="status" />} />,
                 )}
               </FormItem>
               <FormItem>
                 {getFieldDecorator('description', {
                 })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
+                  <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
                 )}
               </FormItem>
               <FormItem>
