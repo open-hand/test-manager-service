@@ -63,7 +63,7 @@ class TestExecuteTable extends Component {
         const { issueInfosVO } = record;
         return (
           issueInfosVO && (
-            <SmartTooltip style={{ color: '#3F51B5' }}>
+            <SmartTooltip>
               <span className="c7n-table-TestExcuteTable-table-p">
                 {issueInfosVO.summary}
               </span>
