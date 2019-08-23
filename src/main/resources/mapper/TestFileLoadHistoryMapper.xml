@@ -50,6 +50,7 @@
                 created_by = #{createdBy} AND action_type = #{actionType}
             </where>
             ) AND action_type = #{actionType}
+            AND project_id = #{projectId}
         </where>
     </select>
 

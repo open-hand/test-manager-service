@@ -104,10 +104,10 @@ public interface ApplicationFeignClient {
     /**
      * 查询自动化测试应用实例状态
      *
-     * @param testReleases
+     * @param releaseName
      */
     @PostMapping("/webhook/get_test_status")
     void getTestStatus(
-            @RequestBody Map<Long, List<String>> testReleases);
+            @RequestBody Map<Long, List<String>> releaseName);
 }
 
