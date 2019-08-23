@@ -83,7 +83,7 @@ class TestAppInstanceControllerSpec extends Specification {
                 environmentId: 2L, projectVersionId: 2L, code: "0.1.0-自动化测试部署测试2", values: values)
 
         when:
-        def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO, TestAppInstanceVO, 144L)
         then:
         //模拟返回值，任何参数的这个方法调用都会返回ReplaceResult
@@ -104,7 +104,7 @@ class TestAppInstanceControllerSpec extends Specification {
         deployDTO.setHistoryId(historyE.getId())
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
@@ -116,7 +116,7 @@ class TestAppInstanceControllerSpec extends Specification {
 
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO2, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
@@ -137,7 +137,7 @@ class TestAppInstanceControllerSpec extends Specification {
         deployDTO2.setHistoryId(historyE3.getId())
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO2, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
@@ -159,7 +159,7 @@ class TestAppInstanceControllerSpec extends Specification {
         taskDTO.setParams(Maps.newHashMap("deploy", deployDTO))
 
         when:
-        restTemplate.postForEntity("/v1/projects/{project_id}/app_instances/schedule",
+        restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances/schedule",
                 taskDTO, QuartzTask, 144L)
 
         then:
@@ -174,14 +174,14 @@ class TestAppInstanceControllerSpec extends Specification {
 
     def "QueryValues"() {
         when:
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1&envId=1&appVersionId=1",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=1&envId=1&appVersionId=1",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
         noExceptionThrown()
 
         when: "deployValue不为空"
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=2&envId=2&appVersionId=2",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=2&envId=2&appVersionId=2",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
@@ -189,7 +189,7 @@ class TestAppInstanceControllerSpec extends Specification {
         noExceptionThrown()
 
         when: "错误yaml格式"
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1111&envId=1111&appVersionId=1111",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=1111&envId=1111&appVersionId=1111",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
