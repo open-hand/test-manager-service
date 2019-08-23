@@ -318,11 +318,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span className="preWrapSpan">
-                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试步骤</span>}
+                    <span className="c7ntest-text-wrap">
+                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>测试步骤</span>}
                     </span>
                   )
-                  : <span className="preWrapSpan">{newValue || '-'}</span>
+                  : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>
@@ -364,11 +364,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span className="preWrapSpan">
-                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>测试数据</span>}
+                    <span className="c7ntest-text-wrap">
+                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>测试数据</span>}
                     </span>
                   )
-                  : <span className="preWrapSpan">{newValue || '-'}</span>
+                  : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>
@@ -412,11 +412,11 @@ class TestStepTable extends Component {
               {newValue => (
                 stepIsCreating
                   ? (
-                    <span className="preWrapSpan">
-                      {newValue || <span className="preWrapSpan" style={{ color: 'rgb(191, 191, 191)' }}>预期结果</span>}
+                    <span className="c7ntest-text-wrap">
+                      {newValue || <span style={{ color: 'rgb(191, 191, 191)', whiteSpace: 'nowrap' }}>预期结果</span>}
                     </span>
                   )
-                  : <span className="preWrapSpan">{newValue || '-'}</span>
+                  : <span className="c7ntest-text-wrap">{newValue || '-'}</span>
               )}
             </Text>
             <Edit>

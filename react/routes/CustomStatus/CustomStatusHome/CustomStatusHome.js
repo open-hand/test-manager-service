@@ -16,7 +16,6 @@ import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/master';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
-import { getProjectName } from '../../../common/utils';
 
 const { TabPane } = Tabs;
 const defaultProps = {
