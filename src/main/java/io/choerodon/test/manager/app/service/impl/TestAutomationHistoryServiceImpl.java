@@ -40,8 +40,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
 
     @Autowired
     private TestAutomationHistoryMapper testAutomationHistoryMapper;
-
-    private ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
