@@ -64,7 +64,7 @@ class TestExecuteTable extends Component {
         return (
           issueInfosVO && (
             <SmartTooltip>
-              <span>
+              <span className="c7n-table-TestExcuteTable-table-p">
                 {issueInfosVO.summary}
               </span>
 
