@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         }
         PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
                 pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
-        PageInfo<TestAutomationHistoryVO> list = modelMapper.map(serviceDOPage, new TypeToken<List<TestAutomationHistoryVO>>() {
-        }.getType());
+        PageInfo<TestAutomationHistoryVO> list = PageUtil.buildPageInfoWithPageInfoList(serviceDOPage, modelMapper.map(serviceDOPage.getList(), new TypeToken<List<TestAutomationHistoryVO>>() {
+        }.getType()));
         populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
         populateCycles(list);

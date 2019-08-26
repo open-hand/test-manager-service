@@ -150,9 +150,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseVO = Optional.ofNullable(testCycleCaseVO).orElseGet(TestCycleCaseVO::new);
         testCycleCaseVO.setCycleId(cycleId);
         PageInfo<TestCycleCaseDTO> serviceEPage = queryWithPageRequest(modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class), pageRequest);
-        PageInfo<TestCycleCaseVO> dots = modelMapper.map(serviceEPage, new TypeToken<List<TestCycleCaseVO>>() {
-        }.getType());
-
+        PageInfo<TestCycleCaseVO> dots = PageUtil.buildPageInfoWithPageInfoList(serviceEPage, modelMapper.map(serviceEPage.getList(), new TypeToken<List<TestCycleCaseVO>>() {
+        }.getType()));
         populateUsers(dots.getList());
         return dots;
     }
