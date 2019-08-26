@@ -65,6 +65,14 @@ class StepTable extends PureComponent {
     this.quickPassOrFail(stepData, '失败');
   }
 
+  // 约束附件名长度
+  limitAttachmentLength(text, length = 5) {
+    const name = text.substring(0, text.indexOf('.'));
+    const suffix = text.substring(text.indexOf('.'));
+    const ellipsis = '···';
+    const nameArr = [...name];
+    return nameArr.length > length ? nameArr.slice(0, length).join('') + ellipsis + suffix : text;
+  }
 
   render() {
     const that = this;
@@ -222,7 +230,22 @@ class StepTable extends PureComponent {
       render(stepAttachment, record) {
         return (
           <UploadInTable
-            fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')}
+            fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')
+              .map((attachment) => {
+                const attachmentName = this.limitAttachmentLength(attachment.attachmentName);
+                const {
+                  attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url, 
+                } = attachment;
+                return {
+                  attachmentName,
+                  attachmentLinkId,
+                  attachmentType,
+                  comment,
+                  id,
+                  objectVersionNumber,
+                  url,
+                };
+              })}
             onOk={ExecuteDetailStore.loadDetailList}
             enterLoad={ExecuteDetailStore.enterloading}
             leaveLoad={ExecuteDetailStore.unloading}
