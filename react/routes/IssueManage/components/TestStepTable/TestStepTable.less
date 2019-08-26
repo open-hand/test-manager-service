@@ -1,0 +1,62 @@
+.c7ntest-TestStepTable {
+  tbody {
+    tr {
+      // align-items: flex-start !important;
+    }
+
+    td {
+      line-height: 20px;
+
+      span {
+        word-break: break-word;
+      }
+
+    }
+
+    .attachmentsColumn {
+      padding-left: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+
+    td .c7ntest-text-dot {
+      line-height: 19px;
+      min-height: 19px;
+    }
+
+    td .c7ntest-text-wrap {
+      min-height: 19px;
+      line-height: 19px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    td {
+      .c7n-input-length-info {
+        display: none;
+      }
+    }
+  }
+}
+
+.attachmentsColumn {
+  .item-container-upload {
+    max-width: 100px;
+  }
+
+  .upload-button {
+    display: flex;
+    flex-direction: column-reverse;
+
+    button {
+      padding: 0 5px;
+      color: #3F51B5;
+    }
+
+    .c7n-upload-list-item-name {
+      color: #3F51B5;
+    }
+  }
+}

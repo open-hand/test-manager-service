@@ -20,9 +20,9 @@ import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './ExecuteDetail.scss';
 import {
   StepTable, ExecuteDetailSide, CreateBug,
-} from '../ExecuteComponent';
+} from '../components';
 import { QuickOperate, ExecuteHistoryTable } from './components';
-import ExecuteDetailStore from '../TestExecuteStore/ExecuteDetailStore';
+import ExecuteDetailStore from '../stores/ExecuteDetailStore';
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
@@ -283,7 +283,7 @@ class ExecuteDetail extends Component {
         </Header>
 
         <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
-        <Content style={{ padding: 0 }}>
+        <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
           <Spin spinning={loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}

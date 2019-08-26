@@ -9,9 +9,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Input, Modal } from 'choerodon-ui';
-import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
-import { getProjectName } from '../../../../common/utils';
 import { ColorPicker } from '../../../../components';
 import './EditStatus.less';
 
@@ -76,47 +74,38 @@ class EditStatus extends Component {
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
-          width={550}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="status_side_edit_content_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="status_side_edit_content_description" />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
-          >
-            <Form>
-              <FormItem>
-                {getFieldDecorator('statusName', {
-                  rules: [{
-                    required: true, message: '请输入状态!',
-                  }, {
-                    validator: this.handleCheckStatusRepeat,
-                  }],
-                })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status" />} />,
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('description', {
-                })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('statusColor', {
-                  rules: [{
-                    required: true, message: '请选择颜色',
-                  }, {
-                    validator: this.handleCheckColor,
-                  }],                 
-                })(
-                  <ColorPicker />,
-                )}
-              </FormItem>               
-            </Form>
-          </Content>
+          width={380}
+        >         
+          <Form>
+            <FormItem>
+              {getFieldDecorator('statusName', {
+                rules: [{
+                  required: true, message: '请输入状态!',
+                }, {
+                  validator: this.handleCheckStatusRepeat,
+                }],
+              })(
+                <Input maxLength={30} label={<FormattedMessage id="status" />} />,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('description', {
+              })(
+                <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('statusColor', {
+                rules: [{
+                  required: true, message: '请选择颜色',
+                }, {
+                  validator: this.handleCheckColor,
+                }],                 
+              })(
+                <ColorPicker />,
+              )}
+            </FormItem>               
+          </Form>   
         </Sidebar>
       </div>
     );

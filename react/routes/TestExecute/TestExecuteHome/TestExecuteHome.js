@@ -1,7 +1,7 @@
 
 import React from 'react';
 import {
-  TabPage as Page, Header, Content, Breadcrumb,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/master';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
@@ -10,7 +10,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import { ShowCycleData } from '../TestExecuteComponent';
+import { ShowCycleData } from './components';
 import { NoCycle } from '../../../components';
 import { TestExecuteTreeToggle } from './components';
 import { TestExecuteTable } from './components';

@@ -7,7 +7,7 @@ import {
 import { pull, pullAll, intersection } from 'lodash';
 import { getCycleTreeByVersionId, getLastCloneData, batchClone } from '../../../../../api/cycleApi';
 import { SelectFocusLoad } from '../../../../../components';
-import TestPlanStore from '../../../TestPlanStore/TestPlanStore';
+import TestPlanStore from '../../../stores/TestPlanStore';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;

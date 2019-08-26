@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
+import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../components';
@@ -63,8 +63,8 @@ class TestExecuteTable extends Component {
         const { issueInfosVO } = record;
         return (
           issueInfosVO && (
-            <SmartTooltip style={{ color: '#3F51B5' }}>
-              <span className="c7n-table-TestExcuteTable-table-p">
+            <SmartTooltip>
+              <span>
                 {issueInfosVO.summary}
               </span>
 
@@ -104,7 +104,7 @@ class TestExecuteTable extends Component {
       title: <span>优先级</span>,
       dataIndex: 'priorityId',
       key: 'priorityId',
-      filters: prioritys.map((priority) => ({ text: priority.name, value: priority.id.toString() })),
+      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
       render(issueId, record) {
         const { issueInfosVO } = record;
         return (
@@ -116,7 +116,7 @@ class TestExecuteTable extends Component {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',
       key: 'executionStatus',
-      filters: statusList.map((status) => ({ text: status.statusName, value: status.statusId.toString() })),
+      filters: statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
       render(executionStatus) {
         const statusColor = _.find(statusList, { statusId: executionStatus })
           ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
@@ -181,7 +181,7 @@ class TestExecuteTable extends Component {
             className="c7ntest-select"
             style={{ width: 200 }}
             placeholder={<FormattedMessage id="cycle_executeBy" />}
-            getPopupContainer={(ele) => ele.parentNode}
+            getPopupContainer={ele => ele.parentNode}
             type="user"
             onChange={onExecuteByChange}
           />
@@ -191,20 +191,20 @@ class TestExecuteTable extends Component {
               style={{ marginLeft: 20, width: 200 }}
               className="c7ntest-select"
               placeholder={<FormattedMessage id="cycle_assignedTo" />}
-              getPopupContainer={(ele) => ele.parentNode}
+              getPopupContainer={ele => ele.parentNode}
               type="user"
               onChange={onAssignedToChange}
             />
           )}
         </div>
         <Table
-          rowKey={(record) => record.executeId}
+          rowKey={record => record.executeId}
           pagination={pagination}
           loading={loading}
           onChange={onTableChange}
           dataSource={dataSource}
           columns={columns}
-          onRow={(record) => ({
+          onRow={record => ({
             onClick: (event) => { onTableRowClick(record); },
           })}
         />

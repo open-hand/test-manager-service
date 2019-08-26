@@ -11,11 +11,9 @@ import PropTypes from 'prop-types';
 import {
   Form, Input, Select, Modal,
 } from 'choerodon-ui';
-import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
 import { ColorPicker } from '../../../../components';
 import './CreateStatus.less';
-import { getProjectName } from '../../../../common/utils';
 
 const FormItem = Form.Item;
 const { Sidebar } = Modal;
@@ -90,60 +88,52 @@ class CreateStatus extends Component {
           onOk={this.handleOk}
           onCancel={onCancel}
           confirmLoading={loading}
-        >
-          <Content
-            style={{
-              padding: '0 0 10px 0',
-            }}
-            title={<FormattedMessage id="status_side_content_title" values={{ name: getProjectName() }} />}
-            description={<FormattedMessage id="status_side_content_description" />}
-            link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/setting/status/"
-          >
-            <Form>
-              <FormItem>
-                {getFieldDecorator('statusType', {
-                  initialValue: 'CYCLE_CASE',
-                  rules: [{
-                    required: true, message: '请选择类型!',
-                  }],
-                })(
-                  <Select label={<FormattedMessage id="type" />} style={{ width: 500 }} onChange={this.handleStatusTypeChange}>
-                    <Option value="CYCLE_CASE">执行状态</Option>
-                    <Option value="CASE_STEP">步骤状态</Option>
-                  </Select>,
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('statusName', {
-                  rules: [{
-                    required: true, message: '请输入状态名称',
-                  }, {
-                    validator: this.handleCheckStatusRepeat,
-                  }],
-                })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="status_name" />} />,
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('description', {
-                })(
-                  <Input style={{ width: 500 }} maxLength={30} label={<FormattedMessage id="comment" />} />,
-                )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('statusColor', {
-                  rules: [{
-                    required: true, message: '请选择颜色',
-                  }, {
-                    validator: this.handleCheckColor,
-                  }],
-                  initialValue: 'GRAY',
-                })(
-                  <ColorPicker />,
-                )}
-              </FormItem>    
-            </Form>
-          </Content>
+          width={380}
+        >         
+          <Form>
+            <FormItem>
+              {getFieldDecorator('statusType', {
+                initialValue: 'CYCLE_CASE',
+                rules: [{
+                  required: true, message: '请选择类型!',
+                }],
+              })(
+                <Select label={<FormattedMessage id="type" />} onChange={this.handleStatusTypeChange}>
+                  <Option value="CYCLE_CASE">执行状态</Option>
+                  <Option value="CASE_STEP">步骤状态</Option>
+                </Select>,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('statusName', {
+                rules: [{
+                  required: true, message: '请输入状态名称',
+                }, {
+                  validator: this.handleCheckStatusRepeat,
+                }],
+              })(
+                <Input maxLength={30} label={<FormattedMessage id="status_name" />} />,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('description', {
+              })(
+                <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('statusColor', {
+                rules: [{
+                  required: true, message: '请选择颜色',
+                }, {
+                  validator: this.handleCheckColor,
+                }],
+                initialValue: 'GRAY',
+              })(
+                <ColorPicker />,
+              )}
+            </FormItem>    
+          </Form>          
         </Sidebar>
       </div>
     );

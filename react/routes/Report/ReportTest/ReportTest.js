@@ -9,7 +9,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-import ReporterSwitcher from '../ReportComponent';
+import ReporterSwitcher from '../components';
 import { getReportsFromDefect, getReportsFromDefectByIssueIds } from '../../../api/reportApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getIssueTypes, getIssueStatus } from '../../../api/agileApi';
