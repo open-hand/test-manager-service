@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -65,8 +66,12 @@ public class DevopsServiceImpl implements DevopsService {
 
     @Override
     public Map<Long, AppServiceVersionRespVO> getAppversion(Long projectId, List<Long> appVersionIds) {
-        return applicationFeignClient.getAppversion(projectId, TypeUtil.longsToArray(appVersionIds)).getBody().stream()
-                .collect(Collectors.toMap(AppServiceVersionRespVO::getId, Function.identity()));
+        if (!appVersionIds.isEmpty()) {
+            return applicationFeignClient.getAppversion(projectId, TypeUtil.longsToArray(appVersionIds)).getBody().stream()
+                    .collect(Collectors.toMap(AppServiceVersionRespVO::getId, Function.identity()));
+        } else {
+            return new HashMap<>();
+        }
     }
 
     @Override
