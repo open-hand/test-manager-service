@@ -7,25 +7,27 @@ const defaultStyle = {
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 };
+const defaultProps = {
+  style: {},
+  placement: 'topLeft',
+};
 class SmartTooltip extends Component {
-  state = {
-    overflow: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      overflow: false,
+    };
   }
-
-  static defaultProps = {
-    style: {},
-    placement: 'topLeft',
-  };
 
   componentDidMount() {
     this.checkOverflow();
   }
-  
+
   componentDidUpdate(prevProps, prevState) {
     this.checkOverflow();
   }
 
-  checkOverflow=() => {
+  checkOverflow = () => {
     if (this.container) {
       const { scrollWidth, clientWidth } = this.container;
       const isOverflow = scrollWidth > clientWidth;
@@ -35,10 +37,10 @@ class SmartTooltip extends Component {
           overflow: isOverflow,
         });
       }
-    }    
+    }
   }
 
-  saveRef = name => (ref) => {
+  saveRef = (name) => (ref) => {
     this[name] = ref;
   }
 
@@ -46,12 +48,12 @@ class SmartTooltip extends Component {
     const {
       title, children, style, width, placement,
     } = this.props;
-    // console.log(this.props);
     const { overflow } = this.state;
+    // eslint-disable-next-line react/jsx-props-no-spreading
     const dom = <div {...this.props} style={{ ...defaultStyle, ...style, width }} title={null} ref={this.saveRef('container')} />;
     return overflow
       ? (
-        <Tooltip placement={placement} title={title || children}>
+        <Tooltip placement={placement} title={title || children.props.children}>
           {dom}
         </Tooltip>
       )
