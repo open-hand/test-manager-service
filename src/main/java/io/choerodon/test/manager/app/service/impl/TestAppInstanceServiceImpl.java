@@ -243,7 +243,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         }
 
         //开始部署
-        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(),deployDTO.getEnvironmentId(),deployDTO.getValues(),deployDTO.getAppId(),deployDTO.getCommandType(),resultInstance.getId());
+        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(),deployDTO.getEnvironmentId(),replaceResult.getYaml(),deployDTO.getAppId(),deployDTO.getCommandType(),resultInstance.getId());
         testCaseService.deployTestApp(projectId, appServiceDeployVO);
 
         return modelMapper.map(resultInstance, TestAppInstanceVO.class);
