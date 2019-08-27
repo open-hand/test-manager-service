@@ -1,21 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-
-import io.choerodon.devops.api.vo.*;
-import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-import org.yaml.snakeyaml.Yaml;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-
 import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
@@ -25,6 +13,9 @@ import io.choerodon.base.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.devops.api.vo.AppServiceDeployVO;
+import io.choerodon.devops.api.vo.ErrorLineVO;
+import io.choerodon.devops.api.vo.InstanceValueVO;
 import io.choerodon.devops.infra.common.utils.TypeUtil;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
@@ -36,6 +27,19 @@ import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.FileUtil;
 import io.choerodon.test.manager.infra.util.GenerateUUID;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
+import org.yaml.snakeyaml.Yaml;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zongw.lee@gmail.com on 22/11/2018
@@ -243,7 +247,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         }
 
         //开始部署
-        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(),deployDTO.getEnvironmentId(),replaceResult.getYaml(),deployDTO.getAppId(),deployDTO.getCommandType(),resultInstance.getId());
+        AppServiceDeployVO appServiceDeployVO = new AppServiceDeployVO(deployDTO.getAppVersionId(), deployDTO.getEnvironmentId(), replaceResult.getYaml(), deployDTO.getAppId(), deployDTO.getCommandType(), resultInstance.getId());
         testCaseService.deployTestApp(projectId, appServiceDeployVO);
 
         return modelMapper.map(resultInstance, TestAppInstanceVO.class);
@@ -300,7 +304,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
         if (testAppInstanceLogMapper.insert(logE) == 0) {
             throw new CommonException("error.ITestAppInstanceLogServiceImpl.insert");
         }
-        testAppInstanceDTO.setLogId(testAppInstanceLogMapper.selectByPrimaryKey(testAppInstanceDTO.getId()).getId());
+        testAppInstanceDTO.setLogId(logE.getId());
         testAppInstanceDTO.setLastUpdateDate(new Date());
         testAppInstanceMapper.closeInstance(testAppInstanceDTO);
     }
