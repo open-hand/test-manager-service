@@ -64,7 +64,10 @@ class CreateStatus extends Component {
     const { onSubmit } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        onSubmit(values);
+        onSubmit({
+          ...values,
+          statusName: values.statusName.trim(),
+        });
       }
     });
   }
@@ -107,7 +110,9 @@ class CreateStatus extends Component {
             <FormItem>
               {getFieldDecorator('statusName', {
                 rules: [{
-                  required: true, message: '请输入状态名称',
+                  required: true,
+                  whitespace: true,
+                  message: '请输入状态名称',
                 }, {
                   validator: this.handleCheckStatusRepeat,
                 }],
@@ -124,7 +129,8 @@ class CreateStatus extends Component {
             <FormItem>
               {getFieldDecorator('statusColor', {
                 rules: [{
-                  required: true, message: '请选择颜色',
+                  required: true,
+                  message: '请选择颜色',
                 }, {
                   validator: this.handleCheckColor,
                 }],

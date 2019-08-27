@@ -28,7 +28,7 @@ const StatusTable = ({
 }) => {
   const deleteStatus = (data) => {
     confirm({
-      title: '确定要删除状态?',
+      title: `确定要删除状态 ${data.statusName}?`,
       onOk: () => { onDeleteOk(data); },
     });
   };
@@ -39,7 +39,7 @@ const StatusTable = ({
     const menu = (
       <Menu>
         <Menu.Item key="delete">
-          <div role="none" onClick={deleteStatus}>删除</div>
+          <div role="none" onClick={deleteStatus.bind(this, record)}>删除</div>
         </Menu.Item>
       </Menu>
     );

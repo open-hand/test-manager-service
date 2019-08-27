@@ -165,7 +165,7 @@ class CustomStatusHomeContainer extends Component {
       statusName, statusColor, statusType, statusId, 
     } = status;
     getStatusList(statusType).then((statusList) => {
-      if (_.find(statusList, o => o.statusName === statusName && o.statusId !== statusId)) {
+      if (_.find(statusList, o => o.statusName === statusName.trim() && o.statusId !== statusId)) {
         callback('状态名称已存在');
       } else if (_.find(statusList, o => o.statusColor === statusColor && o.statusId !== statusId)) {
         callback('状态颜色已存在');

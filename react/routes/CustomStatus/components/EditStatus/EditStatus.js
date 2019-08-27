@@ -55,7 +55,8 @@ class EditStatus extends Component {
       if (!err) {
         onSubmit({
           ...initValue,
-          ...values,         
+          ...values,
+          statusName: values.statusName.trim() || initValue.statusName.trim(),
         });
       }
     });
@@ -80,7 +81,9 @@ class EditStatus extends Component {
             <FormItem>
               {getFieldDecorator('statusName', {
                 rules: [{
-                  required: true, message: '请输入状态!',
+                  required: true,
+                  whitespace: true,
+                  message: '请输入状态!',
                 }, {
                   validator: this.handleCheckStatusRepeat,
                 }],
