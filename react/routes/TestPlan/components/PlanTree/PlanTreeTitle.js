@@ -143,7 +143,7 @@ class PlanTreeTitle extends Component {
         {
           data.versionId ? (
             <Fragment>
-              <SmartTooltip width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
+              <SmartTooltip title={title} width={!data.type && '120px'} className="c7ntest-plan-tree-title-text">
                 {title}
               </SmartTooltip>
               {

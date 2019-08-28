@@ -45,7 +45,7 @@ const TestPlanTable = ({
       const { issueInfosVO } = record;
       return (
         issueInfosVO && (
-          <SmartTooltip style={{ color: '#3F51B5' }}>
+          <SmartTooltip title={issueInfosVO.summary} style={{ color: '#3F51B5' }}>
             {issueInfosVO.summary}
           </SmartTooltip>
         )

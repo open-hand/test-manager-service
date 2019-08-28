@@ -319,6 +319,19 @@ class EditIssueNarrow extends Component {
     }
   }
 
+  // 校验评论是否为空
+  verifyComment = (delta) => {
+    let result = false;
+    if (delta && delta.length) {
+      delta.forEach((item) => {
+        if (!result && item.insert && (item.insert.image || item.insert.trim())) {
+          result = true;
+        }
+      });
+    }
+    return result;
+  };
+
   /**
    * Comment
    */
@@ -326,11 +339,12 @@ class EditIssueNarrow extends Component {
     const { issueInfo } = this.props;
     const { issueId } = issueInfo;
     const extra = { issueId };
-    if (newComment) {
+    if (newComment && this.verifyComment(newComment)) {
       beforeTextUpload(newComment, extra, this.createCommit, 'commentText');
     } else {
-      extra.commentText = '';
-      this.createCommit(extra);
+      this.setState({
+        addingComment: false,
+      });
     }
   }
 

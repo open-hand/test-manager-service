@@ -40,7 +40,7 @@ class SmartTooltip extends Component {
     }
   }
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -53,7 +53,7 @@ class SmartTooltip extends Component {
     const dom = <div {...this.props} style={{ ...defaultStyle, ...style, width }} title={null} ref={this.saveRef('container')} />;
     return overflow
       ? (
-        <Tooltip placement={placement} title={title || children.props.children}>
+        <Tooltip placement={placement} title={title}>
           {dom}
         </Tooltip>
       )

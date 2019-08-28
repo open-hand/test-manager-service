@@ -74,6 +74,22 @@ class StepTable extends PureComponent {
     return nameArr.length > length ? nameArr.slice(0, length).join('') + ellipsis + suffix : text;
   }
 
+  getFileList = attachments => attachments.map((attachment) => {
+    const attachmentName = this.limitAttachmentLength(attachment.attachmentName);
+    const {
+      attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
+    } = attachment;
+    return {
+      attachmentName,
+      attachmentLinkId,
+      attachmentType,
+      comment,
+      id,
+      objectVersionNumber,
+      url,
+    };
+  });
+
   render() {
     const that = this;
     const { disabled, stepStatusList, dataSource } = this.props;
@@ -230,22 +246,7 @@ class StepTable extends PureComponent {
       render(stepAttachment, record) {
         return (
           <UploadInTable
-            fileList={stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP')
-              .map((attachment) => {
-                const attachmentName = this.limitAttachmentLength(attachment.attachmentName);
-                const {
-                  attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url, 
-                } = attachment;
-                return {
-                  attachmentName,
-                  attachmentLinkId,
-                  attachmentType,
-                  comment,
-                  id,
-                  objectVersionNumber,
-                  url,
-                };
-              })}
+            fileList={that.getFileList(stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
             onOk={ExecuteDetailStore.loadDetailList}
             enterLoad={ExecuteDetailStore.enterloading}
             leaveLoad={ExecuteDetailStore.unloading}
