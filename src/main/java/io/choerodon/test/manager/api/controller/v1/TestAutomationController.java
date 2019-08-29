@@ -1,8 +1,12 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
+import io.choerodon.base.annotation.Permission;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.app.service.JsonImportService;
+import io.choerodon.test.manager.app.service.TestAppInstanceService;
+import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
+import io.choerodon.test.manager.infra.util.FileUtil;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import io.swagger.annotations.ApiOperation;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.test.manager.app.service.JsonImportService;
-import io.choerodon.test.manager.app.service.TestAppInstanceService;
-import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.infra.util.FileUtil;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/v1/automation")

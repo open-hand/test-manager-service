@@ -548,17 +548,19 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     private TestIssueFolderProDTO getFolder(Long projectId, Long versionId, String folderName) {
         TestIssueFolderProDTO targetFolderE;
-        TestIssueFolderProDTO folderE = new TestIssueFolderProDTO();
+        TestIssueFolderDTO folderE = new TestIssueFolderDTO();
         folderE.setProjectId(projectId);
         folderE.setVersionId(versionId);
         folderE.setName(folderName);
-        targetFolderE = modelMapper.map(testIssueFolderMapper.selectOne(modelMapper.map(folderE, TestIssueFolderDTO.class)), TestIssueFolderProDTO.class);
-        if (targetFolderE == null) {
+        TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
+        if (select == null) {
             folderE.setType(TestIssueFolderType.TYPE_CYCLE);
             logger.info("{} 文件夹不存在，创建", folderName);
-            testIssueFolderMapper.insert(modelMapper.map(folderE, TestIssueFolderDTO.class));
-            folderE.setNewFolder(true);
+            testIssueFolderMapper.insert(folderE);
+            targetFolderE = modelMapper.map(folderE, TestIssueFolderProDTO.class);
+            targetFolderE.setNewFolder(true);
         } else {
+            targetFolderE = modelMapper.map(select, TestIssueFolderProDTO.class);
             targetFolderE.setNewFolder(false);
             logger.info("{} 文件夹已存在", folderName);
         }
