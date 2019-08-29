@@ -181,8 +181,7 @@ class IssueTree extends Component {
     if (!data) {
       return;
     }
-    const stack = [];
-    stack.push(data);
+    const stack = data;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     while (stack && stack.length > 0) {
       const tempNode = stack.pop();
@@ -213,7 +212,6 @@ class IssueTree extends Component {
   }
 
   filterCycle = (value) => {
-    // window.console.log(value);
     if (value !== '') {
       const expandedKeys = IssueTreeStore.dataList.map((item) => {
         if (item.title.indexOf(value) > -1) {

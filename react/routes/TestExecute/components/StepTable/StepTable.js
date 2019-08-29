@@ -192,54 +192,6 @@ class StepTable extends PureComponent {
         );
       },
     }, {
-      title: <FormattedMessage id="execute_stepAttachment" />,
-      dataIndex: 'stepAttachment',
-      key: 'stepAttachment',
-      render(stepAttachment) {
-        return (
-          <div>
-            {stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').length > 0 ? stepAttachment.filter(attachment => attachment.attachmentType === 'CASE_STEP').map(attachment => (
-              <div style={{
-                display: 'flex', fontSize: '12px', flexShrink: 0, margin: '5px 2px', alignItems: 'center',
-              }}
-              >
-                <Icon type="attach_file" style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }} />
-                <a className="c7ntest-text-dot" style={{ margin: '2px 5px', fontSize: '13px' }} href={attachment.url} target="_blank" rel="noopener noreferrer">{attachment.attachmentName}</a>
-              </div>
-            )) : '-'}
-          </div>
-        );
-      },
-    }, {
-      title: <FormattedMessage id="execute_comment" />,
-      dataIndex: 'comment',
-      key: 'comment',
-      render(comment, record) {
-        return (
-          <TextEditToggle
-            noButton
-            disabled={disabled}
-            formKey="comment"
-            onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
-            originData={delta2Text(comment)}
-          >
-            <Text>
-              {data => (
-                <div
-                  className="c7ntest-text-wrap"
-                  style={{ minHeight: 20 }}
-                >
-                  {delta2Text(data) === '' ? '-' : delta2Text(data)}
-                </div>
-              )}
-            </Text>
-            <Edit>
-              <TextArea autosize autoFocus />
-            </Edit>
-          </TextEditToggle>
-        );
-      },
-    }, {
       title: <FormattedMessage id="attachment" />,
       dataIndex: 'stepAttachment',
       key: 'caseAttachment',
@@ -300,8 +252,11 @@ class StepTable extends PureComponent {
                   style={{
                     width: 100,
                     height: 20,
+                    color: '#3f51b5',
                   }}
-                />
+                >
+                  添加缺陷
+                </div>
               )
             }
           </Text>
