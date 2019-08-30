@@ -12,6 +12,7 @@ import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -27,6 +28,8 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
+import javax.annotation.Resource;
+
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
@@ -39,7 +42,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
-    @Autowired
+    @Resource
     private TestCaseFeignClient testCaseFeignClient;
 
     @Autowired

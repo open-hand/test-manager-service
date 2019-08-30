@@ -5,12 +5,15 @@ import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
 import io.choerodon.test.manager.app.service.*
+import io.choerodon.test.manager.infra.feign.FileFeignClient
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil
 import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
@@ -54,7 +57,7 @@ class IntegrationTestConfiguration {
 
     @Bean
     @Primary
-    RedissonClient redissonClient(){
+    RedissonClient redissonClient() {
         detachedMockFactory.Mock(RedissonClient)
     }
 
@@ -63,21 +66,25 @@ class IntegrationTestConfiguration {
     TestCaseService createMock5() {
         return detachedMockFactory.Mock(TestCaseService)
     }
+
     @Bean
     @Primary
     UserService createMock6() {
         return detachedMockFactory.Mock(UserService)
     }
+
     @Bean
     @Primary
     FileService createMock7() {
         return detachedMockFactory.Mock(FileService)
     }
+
     @Bean
     @Primary
     NotifyService createMock8() {
         return detachedMockFactory.Mock(NotifyService)
     }
+
     @Bean
     @Primary
     ScheduleService createMock9() {
@@ -93,8 +100,14 @@ class IntegrationTestConfiguration {
     @Bean
     @Primary
     RedisTemplateUtil createMock11() {
-        return detachedMockFactory.Mock(RedisTemplateUtil);
+        return detachedMockFactory.Mock(RedisTemplateUtil)
     }
+
+    @MockBean(name = "fileFeignClient")
+    private FileFeignClient fileFeignClient
+
+    @MockBean(name = "testCaseFeignClient")
+    private TestCaseFeignClient testCaseFeignClient
 
     @PostConstruct
     void init() {

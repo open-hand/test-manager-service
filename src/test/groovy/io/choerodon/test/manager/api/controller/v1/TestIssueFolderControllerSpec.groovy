@@ -236,6 +236,9 @@ class TestIssueFolderControllerSpec extends Specification {
         List<TestIssueFolderVO> testIssueFolderDTOSException = Lists.newArrayList(testIssueFolderException)
         List<TestIssueFolderRelDTO> testIssueFolderRelDTOS = testIssueFolderRelMapper.selectAll()
         TestIssueFolderRelDTO testIssueFolderRelDTO=new TestIssueFolderRelDTO()
+        def all = testIssueFolderRelMapper.selectAll()
+
+        testIssueFolderRelMapper.updateVersionByFolderWithNoLock(testIssueFolderRelDTO)
 
         when: '向查询issueFolder的移动接口发请求'
         restTemplate.put('/v1/projects/{project_id}/issueFolder/move', testIssueFolderDTOS, projectId)

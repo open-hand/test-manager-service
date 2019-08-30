@@ -201,13 +201,12 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderRelVO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues) {
+    public void updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues) {
         TestIssueFolderRelDTO testIssueFolderRelDTO = modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class);
         testIssueFolderRelMapper.updateVersionByFolderWithNoLock(testIssueFolderRelDTO);
-        TestIssueFolderRelVO resTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
-                .selectByPrimaryKey(testIssueFolderRelDTO.getId()), TestIssueFolderRelVO.class);
+//        TestIssueFolderRelVO resTestIssueFolderRelVO = modelMapper.map(testIssueFolderRelMapper
+//                .selectByPrimaryKey(testIssueFolderRelDTO.getId()), TestIssueFolderRelVO.class);
         testCaseService.batchIssueToVersionTest(testIssueFolderRelVO.getProjectId(), testIssueFolderRelVO.getVersionId(), issues);
-        return resTestIssueFolderRelVO;
     }
 
     @Override
