@@ -23,7 +23,7 @@ import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../comm
 import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
 import { SelectVariable, ModifyConfig, ConfirmInfo } from '../CreateAutoTest/components';
-import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 
 const { Option } = Select;
 const { SubMenu, Item: MenuItem } = Menu;
@@ -47,7 +47,7 @@ const AutoTestList = ({
 }) => {
   const getMenu = record => (
     <Menu onClick={({ item, key, keyPath }) => { onItemClick(record, { item, key, keyPath }); }} style={{ margin: '10px 0 0 28px' }}>
-      <MenuItem key="log" disabled={record.testAppInstanceDTO.podStatus === 0 || (record.testAppInstanceDTO.podStatus !== 1 && !record.testAppInstanceDTO.logId)}>
+      <MenuItem key="log" disabled={record.testAppInstanceVO.podStatus === 0 || (record.testAppInstanceVO.podStatus !== 1 && !record.testAppInstanceVO.logId)}>
         查看日志
       </MenuItem>
       <MenuItem key="retry">
@@ -82,8 +82,8 @@ const AutoTestList = ({
     key: 'podStatus',
     filters: PODSTATUS,
     render: (status, record) => {
-      const { testAppInstanceDTO } = record;
-      const { podStatus } = testAppInstanceDTO || {};
+      const { testAppInstanceVO } = record;
+      const { podStatus } = testAppInstanceVO || {};
       return PodStatus(podStatus);
     },
   }, {
@@ -92,8 +92,8 @@ const AutoTestList = ({
     key: 'envId',
     filters: ENVS,
     render: (env, record) => {
-      const { testAppInstanceDTO } = record;
-      const { envId } = testAppInstanceDTO || {};
+      const { testAppInstanceVO } = record;
+      const { envId } = testAppInstanceVO || {};
       const target = _.find(envList, { id: envId });
       return <span>{target && target.name}</span>;
     },
@@ -113,8 +113,8 @@ const AutoTestList = ({
     key: 'version',
     filters: [],
     render: (version, record) => {
-      const { testAppInstanceDTO } = record;
-      const { appVersionName } = testAppInstanceDTO || {};
+      const { testAppInstanceVO } = record;
+      const { appVersionName } = testAppInstanceVO || {};
       return <span>{appVersionName}</span>;
     },
   }, {

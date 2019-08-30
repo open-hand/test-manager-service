@@ -44,6 +44,12 @@ export function delta2Html(description, config) {
   return text;
   // }
 }
+
+// 获取文件名后缀
+export function getFileSuffix(fileName) {
+  return fileName.replace(/.+\./, '').toLowerCase();
+}
+
 export function delta2Text(delta) {
   // console.log(delta2Html(delta, { encodeHtml: false }).replace(/<[^>]+>/g, ''));
   return delta2Html(delta, { encodeHtml: false }).replace(/<br\/>/g, '\n').replace(/<[^>]+>/g, '');
@@ -162,7 +168,7 @@ export function returnBeforeTextUpload(text, data, func, pro = 'description') {
  * @param {{issueType:string,issueId:number,fileName:string}} config 附件上传的额外信息
  */
 export function handleFileUpload(propFileList, func, config) {
-  const fileList = propFileList.filter(i => !i.url);
+  const fileList = propFileList.filter((i) => !i.url);
   const formData = new FormData();
   fileList.forEach((file) => {
     // file.name = encodeURI(encodeURI(file.name));

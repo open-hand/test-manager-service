@@ -28,19 +28,18 @@ const StatusTable = ({
 }) => {
   const deleteStatus = (data) => {
     confirm({
-      title: '确定要删除状态?',
+      title: `确定要删除状态 ${data.statusName}?`,
       onOk: () => { onDeleteOk(data); },
     });
   };
   const renderStatusName = (text, record) => {
+    if (record.projectId === 0) {
+      return text;
+    }
     const menu = (
       <Menu>
         <Menu.Item key="delete">
-          <Icon
-            type="delete_forever"
-            style={{ cursor: 'pointer', marginLeft: 10 }}
-            onClick={() => { deleteStatus(record); }}
-          />
+          <div role="none" onClick={deleteStatus.bind(this, record)}>删除</div>
         </Menu.Item>
       </Menu>
     );
@@ -84,29 +83,6 @@ const StatusTable = ({
       );
     },
   }, 
-  // {
-  //   title: '',
-  //   key: 'action',
-  //   render: (text, record) => (
-  //     record.projectId !== 0
-  //     && (
-  //       <div>
-  //         <Icon
-  //           type="mode_edit"
-  //           style={{ cursor: 'pointer' }}
-  //           onClick={() => {
-  //             onEditStatusClick(record);
-  //           }}
-  //         />
-  //         <Icon
-  //           type="delete_forever"
-  //           style={{ cursor: 'pointer', marginLeft: 10 }}
-  //           onClick={() => { deleteStatus(record); }}
-  //         />
-  //       </div>
-  //     )
-  //   ),
-  // }
   ];
   return (
     <Table

@@ -1,7 +1,7 @@
 {
   "name": "@choerodon/testmanager",
   "routeName": "testManager",
-  "version": "0.20.0",
+  "version": "0.19.0",
   "description": "",
   "main": "./lib/index.js",
   "files": [
@@ -26,8 +26,10 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@choerodon/agile": "0.19.0",
     "@choerodon/boot": "0.20.x",
     "@choerodon/master": "0.20.x",
+    "babel-plugin-module-resolver": "^3.2.0",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.1",

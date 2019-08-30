@@ -6,17 +6,17 @@ import {
 } from '@choerodon/master';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import IssueStore from '../IssueManagestore/IssueStore';
+import IssueStore from '../stores/IssueStore';
 import { commonLink, getParams, testCaseDetailLink } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
-import CreateIssue from '../IssueManageComponent/CreateIssue';
-import IssueTree from '../IssueManageComponent/IssueTree';
-import IssueTable from '../IssueManageComponent/IssueTable';
-import ExportSide from '../IssueManageComponent/ExportSide';
+import CreateIssue from '../components/CreateIssue';
+import IssueTree from '../components/IssueTree';
+import IssueTable from '../components/IssueTable';
+import ExportSide from '../components/ExportSide';
 import ImportSide from '../ImportIssue';
 import TestCaseDetail from '../TestCaseDetail';
 import './IssueManage.less';
-import IssueTreeStore from '../IssueManagestore/IssueTreeStore';
+import IssueTreeStore from '../stores/IssueTreeStore';
 
 @observer
 export default class IssueManage extends Component {
@@ -92,7 +92,7 @@ export default class IssueManage extends Component {
   }
 
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
 
@@ -169,11 +169,12 @@ export default class IssueManage extends Component {
               display: 'block',
               overflowY: 'auto',
               overflowX: 'hidden',
+              padding: '0 20px',
             }}
           >
             <IssueTable
               clickIssue={clickIssue}
-              onRow={(record) => ({
+              onRow={record => ({
                 onClick: (event) => { this.handleTableRowClick(record); },
               })}
             />

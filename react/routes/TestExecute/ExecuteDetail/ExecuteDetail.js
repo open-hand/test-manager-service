@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
   Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
-import { TabPage as Page, Header, Breadcrumb } from '@choerodon/master';
+import {
+  Page, Header, Content, Breadcrumb, 
+} from '@choerodon/master';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
@@ -18,9 +20,9 @@ import { uploadFile, deleteAttachment } from '../../../api/FileApi';
 import './ExecuteDetail.scss';
 import {
   StepTable, ExecuteDetailSide, CreateBug,
-} from '../ExecuteComponent';
+} from '../components';
 import { QuickOperate, ExecuteHistoryTable } from './components';
-import ExecuteDetailStore from '../TestExecuteStore/ExecuteDetailStore';
+import ExecuteDetailStore from '../stores/ExecuteDetailStore';
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
@@ -63,9 +65,15 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.getInfo(id);
   }
 
-  saveRef = (name) => (ref) => {
+  saveRef = name => (ref) => {
     this[name] = ref;
   }
+
+  // setFileList = (fileList) => {
+  //   this.setState({
+  //     fileList,
+  //   });
+  // }
 
   goExecute = (mode) => {
     const cycleData = ExecuteDetailStore.getCycleData;
@@ -88,11 +96,15 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setExecuteDetailSideVisible(!visible);
   }
 
+  // 用于文件移除。 传入ExcuteDeailSide组件内， 在UploadButtonExcuteDetail组件内进行调用
   handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
       deleteAttachment(file.uid).then((data) => {
         ExecuteDetailStore.getInfo();
+        Choerodon.prompt('删除成功');
+      }).catch((error) => {
+        Choerodon.prompt(`删除失败 ${error}`);
       });
     }
   }
@@ -200,6 +212,13 @@ class ExecuteDetail extends Component {
     ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
   }
 
+  // 默认只显示15个字其余用... 进行省略
+  renderBreadcrumbTitle = (text) => {
+    const ellipsis = '...';
+    const textArr = [...text];
+    return textArr.length > 15 ? textArr.slice(0, 15).join('') + ellipsis : text;
+  }
+
   render() {
     const { disabled } = this.props;
     const { loading } = ExecuteDetailStore;
@@ -218,6 +237,8 @@ class ExecuteDetail extends Component {
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    // const { fileList } = this.state;
+
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header
@@ -261,20 +282,21 @@ class ExecuteDetail extends Component {
 
         </Header>
 
-        <Breadcrumb title={issueInfosVO ? issueInfosVO.summary : null} />
-        <Spin spinning={loading}>
-          <div style={{ display: 'flex', width: '100%', height: '100%' }}>
-            {/* 左边内容区域 */}
-            <div
-              style={{
-                flex: 1,
-                overflowX: 'hidden',
-                overflowY: 'auto',
-                padding: 20,
-              }}
-            >
-              <div style={{ marginBottom: 24 }}>
-                {issueInfosVO && (
+        <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
+        <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
+          <Spin spinning={loading} style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+              {/* 左边内容区域 */}
+              <div
+                style={{
+                  flex: 1,
+                  overflowX: 'hidden',
+                  overflowY: 'auto',
+                  padding: 20,
+                }}
+              >
+                <div style={{ marginBottom: 24 }}>
+                  {issueInfosVO && (
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <StatusTags
                       style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
@@ -287,9 +309,9 @@ class ExecuteDetail extends Component {
                       {visible ? '隐藏详情' : '打开详情'}
                     </Button> */}
                   </div>
-                )}
-              </div>
-              {!disabled
+                  )}
+                </div>
+                {!disabled
                 && (
                   <QuickOperate
                     statusList={statusList}
@@ -298,34 +320,35 @@ class ExecuteDetail extends Component {
                     onSubmit={this.handleSubmit}
                   />
                 )}
-              <CardWrapper
-                style={{ margin: '24px 0' }}
-                title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
-              >
-                <StepTable
-                  disabled={disabled}
-                  dataSource={detailList}
-                  stepStatusList={stepStatusList}
-                />
-              </CardWrapper>
-              <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
-                <div style={{ padding: '0 20px' }}>
-                  <ExecuteHistoryTable
-                    dataSource={historyList}
-                    pagination={historyPagination}
-                    onChange={ExecuteDetailStore.loadHistoryList}
+                <CardWrapper
+                  style={{ margin: '24px 0' }}
+                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
+                >
+                  <StepTable
+                    disabled={disabled}
+                    dataSource={detailList}
+                    stepStatusList={stepStatusList}
                   />
-                </div>
-              </CardWrapper>
-            </div>
-            {/* 右侧侧边栏 */}
-            {visible && (
+                </CardWrapper>
+                <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
+                  <div style={{ padding: '0 20px' }}>
+                    <ExecuteHistoryTable
+                      dataSource={historyList}
+                      pagination={historyPagination}
+                      onChange={ExecuteDetailStore.loadHistoryList}
+                    />
+                  </div>
+                </CardWrapper>
+              </div>
+              {/* 右侧侧边栏 */}
+              {visible && (
               <ExecuteDetailSide
                 disabled={disabled}
                 ref={this.saveRef('ExecuteDetailSide')}
                 issueInfosVO={issueInfosVO}
                 cycleData={cycleData}
                 fileList={fileList}
+                // setFileList={this.setFileList}
                 onFileRemove={this.handleFileRemove}
                 status={{ statusColor, statusName }}
                 onClose={this.handleToggleExecuteDetailSide}
@@ -335,8 +358,8 @@ class ExecuteDetail extends Component {
                 onRemoveDefect={this.handleRemoveDefect}
                 onCreateBugShow={this.handleCreateBugShow}
               />
-            )}
-            {
+              )}
+              {
               createBugShow && (
                 <CreateBug
                   visible={createBugShow}
@@ -347,8 +370,10 @@ class ExecuteDetail extends Component {
                 />
               )
             }
-          </div>
-        </Spin>
+            </div>
+          </Spin>
+        </Content>
+        
       </Page>
     );
   }

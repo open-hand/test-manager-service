@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { getProjectVersion } from '../../../api/agileApi';
 import loadProgressByVersion from '../../../api/DashBoardApi';
 import { getCyclesByVersionId } from '../../../api/cycleApi';
-import ReporterSwitcher from '../ReportComponent';
+import ReporterSwitcher from '../components';
 import { getProjectName } from '../../../common/utils';
 import EmptyCase from '../../../assets/emptyCase.svg';
 

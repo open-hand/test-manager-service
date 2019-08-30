@@ -7,7 +7,7 @@ import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../../components';
 import { getUsers } from '../../../../../api/IamApi';
-import { renderPriority } from '../../../../IssueManage/IssueManageComponent/IssueTable/tags';
+import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 
 const propTypes = {
   loading: PropTypes.bool.isRequired,
@@ -45,9 +45,9 @@ const TestPlanTable = ({
       const { issueInfosVO } = record;
       return (
         issueInfosVO && (
-        <SmartTooltip style={{ color: '#3F51B5' }}>
-          {issueInfosVO.summary}
-        </SmartTooltip>
+          <SmartTooltip title={issueInfosVO.summary} style={{ color: '#3F51B5' }}>
+            {issueInfosVO.summary}
+          </SmartTooltip>
         )
       );
     },
@@ -102,10 +102,10 @@ const TestPlanTable = ({
         ? _.find(statusList, { statusId: executionStatus }).statusColor : '';
       return (
         _.find(statusList, { statusId: executionStatus }) && (
-        <StatusTags
-          color={statusColor}
-          name={_.find(statusList, { statusId: executionStatus }).statusName}
-        />
+          <StatusTags
+            color={statusColor}
+            name={_.find(statusList, { statusId: executionStatus }).statusName}
+          />
         )
       );
     },
@@ -115,29 +115,29 @@ const TestPlanTable = ({
     flex: 1,
     render: (text, record) => (
       record.projectId !== 0
-        && (
-          <div style={{ display: 'flex' }}>
-            <div className="c7ntest-flex-space" />
-            <Button
-              shape="circle"
-              funcType="flat"
-              icon="delete_forever"
-              style={{
-                marginRight: 10,
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteExecute(record);
-              }}
-            />
-          </div>
-        )
+      && (
+        <div style={{ display: 'flex' }}>
+          <div className="c7ntest-flex-space" />
+          <Button
+            shape="circle"
+            funcType="flat"
+            icon="delete_forever"
+            style={{
+              marginRight: 10,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteExecute(record);
+            }}
+          />
+        </div>
+      )
     ),
   }];
 
   return (
     <div className="c7ntest-TestPlan-content-right-bottom">
-      <div style={{ display: 'flex', marginBottom: 20, alignItems: 'center' }}>
+      <div style={{ display: 'flex', margin: '20px 0px', alignItems: 'center' }}>
         <div style={{
           fontWeight: 600,
           marginRight: 10,
@@ -151,6 +151,7 @@ const TestPlanTable = ({
           className="c7ntest-select"
           style={{ width: 200 }}
           placeholder={<FormattedMessage id="cycle_executeBy" />}
+          getPopupContainer={trigger => trigger.parentNode}
           type="user"
           onChange={onLastUpdatedByChange}
         />
@@ -159,6 +160,7 @@ const TestPlanTable = ({
           style={{ marginLeft: 20, width: 200 }}
           className="c7ntest-select"
           placeholder={<FormattedMessage id="cycle_assignedTo" />}
+          getPopupContainer={trigger => trigger.parentNode}
           type="user"
           onChange={onAssignedToChange}
         />

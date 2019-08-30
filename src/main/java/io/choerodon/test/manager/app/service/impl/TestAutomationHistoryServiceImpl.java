@@ -1,23 +1,14 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.github.pagehelper.PageHelper;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
-
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
 import io.choerodon.base.domain.PageRequest;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService;
-import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
@@ -25,6 +16,14 @@ import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.mapper.TestAutomationHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.test.manager.infra.util.PageUtil;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class TestAutomationHistoryServiceImpl implements TestAutomationHistoryService {
@@ -40,8 +39,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
 
     @Autowired
     private TestAutomationHistoryMapper testAutomationHistoryMapper;
-
-    private ModelMapper modelMapper = new ModelMapper();
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
@@ -55,8 +54,16 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         }
         PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
                 pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
-        PageInfo<TestAutomationHistoryVO> list = modelMapper.map(serviceDOPage, new TypeToken<List<TestAutomationHistoryVO>>() {
+        List<TestAutomationHistoryDTO> dtos = serviceDOPage.getList();
+        Map<Long, TestAutomationHistoryDTO> dtoMap = dtos.stream().collect(Collectors.toMap(TestAutomationHistoryDTO::getId, x -> x));
+        List<TestAutomationHistoryVO> vos = modelMapper.map(serviceDOPage.getList(), new TypeToken<List<TestAutomationHistoryVO>>() {
         }.getType());
+        for (TestAutomationHistoryVO vo : vos) {
+            if (dtoMap.get(vo.getId()).getTestAppInstanceDTO() != null) {
+                vo.setTestAppInstanceVO(modelMapper.map(dtoMap.get(vo.getId()).getTestAppInstanceDTO(), TestAppInstanceVO.class));
+            }
+        }
+        PageInfo<TestAutomationHistoryVO> list = PageUtil.buildPageInfoWithPageInfoList(serviceDOPage, vos);
         populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
         populateCycles(list);
@@ -66,7 +73,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     public void populateAPPVersion(Long projectId, PageInfo<TestAutomationHistoryVO> page) {
         if (ObjectUtils.isEmpty(page.getList()))
             return;
-        Map<Long, ApplicationVersionRepDTO> map =
+        Map<Long, AppServiceVersionRespVO> map =
                 devopsService.getAppversion(projectId, page.getList().stream().filter(u -> !ObjectUtils.isEmpty(u.getTestAppInstanceVO()))
                         .map(v -> v.getTestAppInstanceVO().getAppVersionId()).distinct().collect(Collectors.toList()));
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Page, Header, Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
 import { getProjectName, commonLink } from '../../../common/utils';
-import ReporterSwitcher from '../ReportComponent';
+import ReporterSwitcher from '../components';
 import Pic from './pic.svg';
 import Pic2 from './pic2.svg';
 import Pic3 from './pic3.svg';

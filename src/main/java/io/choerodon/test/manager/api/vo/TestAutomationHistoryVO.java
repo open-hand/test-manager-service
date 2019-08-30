@@ -125,10 +125,6 @@ public class TestAutomationHistoryVO extends BaseDTO {
         return testStatus;
     }
 
-    public void setTestStatus(Status status) {
-        this.testStatus = status.getStatus();
-    }
-
     public void setTestStatus(Long testStatus) {
         this.testStatus = testStatus;
     }

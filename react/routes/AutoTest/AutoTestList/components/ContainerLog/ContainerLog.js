@@ -27,11 +27,11 @@ class ContainerLog extends Component {
   }
 
   open = (data) => {
-    const { testAppInstanceDTO } = data;
-    if (testAppInstanceDTO) {
+    const { testAppInstanceVO } = data;
+    if (testAppInstanceVO) {
       const {
         envId, podName, podStatus, containerName, logId,
-      } = testAppInstanceDTO;
+      } = testAppInstanceVO;
       this.setState({
         envId,
         logType: podStatus === 1 ? 'socket' : 'local',

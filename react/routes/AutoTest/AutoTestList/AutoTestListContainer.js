@@ -8,8 +8,8 @@ import {
 } from '../../../api/AutoTestApi';
 import { commonLink, TestExecuteLink } from '../../../common/utils';
 import AutoTestList from './AutoTestList';
-import AutoListStore from '../AutoTestStore/AutoListStore';
-import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
+import AutoListStore from '../stores/AutoListStore';
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 
 const store = AutoListStore;
 @observer
@@ -28,7 +28,7 @@ class AutoTestListContainer extends Component {
     const { currentApp } = store;
     let searchParam = {};
     if (value !== '') {
-      searchParam = { name: [value] };
+      searchParam = { name: value };
     }
     store.Loading();
     store.setSelectLoading(true);
@@ -37,7 +37,7 @@ class AutoTestListContainer extends Component {
         page: 1,
         size: 10,
         sort: { field: 'id', order: 'desc' },
-        postData: { searchParam, param: '' },
+        postData: { searchParam, params: [] },
       }),
       getAllEnvs(),
     ]).then(([data, envs]) => {

@@ -7,7 +7,7 @@ import moment from 'moment';
 import YAML from 'yamljs';
 import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import CreateAutoTestStore from '../../../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../../../stores/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../components';
 import { commonLink } from '../../../../../common/utils';
 import {

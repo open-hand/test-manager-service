@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import { injectIntl } from 'react-intl';
 import { Steps, Modal, Button } from 'choerodon-ui';
 import './CreateAutoTest.less';
-import CreateAutoTestStore from '../AutoTestStore/CreateAutoTestStore';
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 import { SelectVariable, ModifyConfig, ConfirmInfo } from './components';
 
 const { Step } = Steps;

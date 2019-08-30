@@ -1,3 +1,4 @@
+/* eslint-disable react/state-in-constructor */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component, Fragment } from 'react';
 import { Page, Header } from '@choerodon/master';
@@ -12,10 +13,10 @@ import {
   loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, getIssueExecutes,
 } from '../../../api/IssueManageApi';
 import './TestCaseDetail.scss';
-import IssueStore from '../IssueManagestore/IssueStore';
-import TestStepTable from '../IssueManageComponent/TestStepTable/TestStepTable';
-import TestExecuteTable from '../IssueManageComponent/TestExecuteTable/TestExecuteTable';
-import EditIssue from '../IssueManageComponent/EditIssue/EditIssue';
+import IssueStore from '../stores/IssueStore';
+import TestStepTable from '../components/TestStepTable/TestStepTable';
+import TestExecuteTable from '../components/TestExecuteTable/TestExecuteTable';
+import EditIssue from '../components/EditIssue/EditIssue';
 
 const styles = {
   cardTitle: {
@@ -45,7 +46,6 @@ class TestCaseDetail extends Component {
     lasttestCaseId: null,
     nexttestCaseId: null,
     isExpand: false,
-    folderName: '',
   }
 
   componentDidMount() {
@@ -130,6 +130,10 @@ class TestCaseDetail extends Component {
     }
   }
 
+  handleUpdate=() => {
+    IssueStore.loadIssues();
+  }
+
   render() {
     const {
       testCaseId,
@@ -144,12 +148,13 @@ class TestCaseDetail extends Component {
       lasttestCaseId,
       nexttestCaseId,
       isExpand,
-      folderName,
+      // folderName,
     } = this.state;
     const { clickIssue } = this.props;
-    const { issueId } = clickIssue;
+    const { issueId, folderName } = clickIssue;
     const { onClose } = this.props;
     return (
+      // eslint-disable-next-line react/jsx-fragments
       <Fragment>
         <div style={{ height: '100%' }}>
           <EditIssue
@@ -176,6 +181,7 @@ class TestCaseDetail extends Component {
             disabled={disabled}
             reloadIssue={this.reloadIssue.bind(this, issueId)}
             onClose={onClose}
+            onUpdate={this.handleUpdate}
             mode="wide"
           />
         </div>

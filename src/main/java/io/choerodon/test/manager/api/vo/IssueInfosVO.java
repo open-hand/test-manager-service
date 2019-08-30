@@ -325,11 +325,11 @@ public class IssueInfosVO {
     }
 
 
-    public StatusVO getStatusMapVO() {
+    public StatusVO getStatusVO() {
         return statusVO;
     }
 
-    public void setStatusMapVO(StatusVO statusVO) {
+    public void setStatusVO(StatusVO statusVO) {
         this.statusVO = statusVO;
     }
 

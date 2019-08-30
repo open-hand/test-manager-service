@@ -12,10 +12,9 @@ import io.choerodon.agile.api.vo.VersionIssueRelVO;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.agile.infra.common.utils.AgileUtil;
 import io.choerodon.agile.infra.common.utils.RankUtil;
-import io.choerodon.core.convertor.ConvertHelper;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.devops.api.dto.ApplicationRepDTO;
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.devops.api.vo.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.testng.TestNgCase;
@@ -127,17 +126,17 @@ public class JsonImportServiceImpl implements JsonImportService {
     private ModelMapper modelMapper;
 
     private void createStepsAndBackfillStepIds(List<TestCycleCaseProDTO> cycleCases, Long createdBy, Long lastUpdatedBy) {
-        List<TestCaseStepProDTO> allSteps = new ArrayList<>();
+        List<TestCaseStepDTO> allSteps = new ArrayList<>();
         for (TestCycleCaseProDTO cycleCase : cycleCases) {
             for (TestCaseStepDTO testCaseStepE : cycleCase.getTestCaseSteps()) {
                 testCaseStepE.setCreatedBy(createdBy);
                 testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
-                allSteps.add(modelMapper.map(testCaseStepE, TestCaseStepProDTO.class));
+                allSteps.add(testCaseStepE);
             }
         }
 
         if (!allSteps.isEmpty()) {
-            List<TestCaseStepProDTO> createdSteps = createSteps(allSteps);
+            List<TestCaseStepDTO> createdSteps = createSteps(allSteps);
             for (int i = 0; i < allSteps.size(); i++) {
                 allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
             }
@@ -150,10 +149,10 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
     }
 
-    List<TestCaseStepProDTO> createSteps(List<TestCaseStepProDTO> testCaseSteps) {
-        TestCaseStepProDTO currentStep = testCaseSteps.get(0);
+    List<TestCaseStepDTO> createSteps(List<TestCaseStepDTO> testCaseSteps) {
+        TestCaseStepDTO currentStep = testCaseSteps.get(0);
         currentStep.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepMapper.getLastedRank(currentStep.getIssueId()), null));
-        TestCaseStepProDTO prevStep = currentStep;
+        TestCaseStepDTO prevStep = currentStep;
 
         for (int i = 1; i < testCaseSteps.size(); i++) {
             currentStep = testCaseSteps.get(i);
@@ -166,28 +165,25 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
 
         Date now = new Date();
-        for (TestCaseStepProDTO testCaseStep : testCaseSteps) {
+        for (TestCaseStepDTO testCaseStep : testCaseSteps) {
             if (testCaseStep == null || testCaseStep.getStepId() != null) {
                 throw new CommonException(ERROR_STEP_ID_NOT_NULL);
             }
             testCaseStep.setLastUpdateDate(now);
             testCaseStep.setCreationDate(now);
         }
-
-        testCaseStepMapper.batchInsertTestCaseSteps(modelMapper.map(testCaseSteps, new TypeToken<List<TestCaseStepDTO>>() {
-        }.getType()));
-
+        testCaseStepMapper.batchInsertTestCaseSteps(testCaseSteps);
         return testCaseSteps;
     }
 
     private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
-        List<TestCycleCaseProDTO> createdTestCycleCases = createCycleCases(testCycleCases, projectId);
+        List<TestCycleCaseProDTO> createdTestCycleCases = this.createCycleCases(testCycleCases, projectId);
         for (int i = 0; i < testCycleCases.size(); i++) {
             testCycleCases.get(i).setExecuteId(createdTestCycleCases.get(i).getExecuteId());
         }
     }
 
-    List<TestCycleCaseProDTO> createCycleCases(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
+    private List<TestCycleCaseProDTO> createCycleCases(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
         TestCycleCaseProDTO currentCycleCase = testCycleCases.get(0);
         currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(currentCycleCase.getCycleId()), null));
         TestCycleCaseProDTO prevCycleCase = currentCycleCase;
@@ -197,10 +193,9 @@ public class JsonImportServiceImpl implements JsonImportService {
             currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(prevCycleCase.getRank(), null));
             prevCycleCase = currentCycleCase;
         }
-
-        testCycleCaseService.batchCreateForAutoTest(ConvertHelper.convertList(testCycleCases, TestCycleCaseVO.class), projectId);
-
-        return testCycleCases;
+        return modelMapper.map(testCycleCaseService.batchCreateForAutoTest(modelMapper.map(testCycleCases, new TypeToken<List<TestCycleCaseVO>>() {
+        }.getType()), projectId), new TypeToken<List<TestCycleCaseProDTO>>() {
+        }.getType());
     }
 
     @Override
@@ -520,8 +515,8 @@ public class JsonImportServiceImpl implements JsonImportService {
         try {
             Long[] appVersionIds = new Long[1];
             appVersionIds[0] = appVersionId;
-            ResponseEntity<List<ApplicationVersionRepDTO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
-            ApplicationVersionRepDTO response = responses.getBody().get(0);
+            ResponseEntity<List<AppServiceVersionRespVO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
+            AppServiceVersionRespVO response = responses.getBody().get(0);
             if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
                 throw new CommonException(ERROR_GET_APP_VERSION_NAME);
             }
@@ -548,17 +543,19 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     private TestIssueFolderProDTO getFolder(Long projectId, Long versionId, String folderName) {
         TestIssueFolderProDTO targetFolderE;
-        TestIssueFolderProDTO folderE = new TestIssueFolderProDTO();
+        TestIssueFolderDTO folderE = new TestIssueFolderDTO();
         folderE.setProjectId(projectId);
         folderE.setVersionId(versionId);
         folderE.setName(folderName);
-        targetFolderE = modelMapper.map(testIssueFolderMapper.selectOne(modelMapper.map(folderE, TestIssueFolderDTO.class)), TestIssueFolderProDTO.class);
-        if (targetFolderE == null) {
+        TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
+        if (select == null) {
             folderE.setType(TestIssueFolderType.TYPE_CYCLE);
             logger.info("{} 文件夹不存在，创建", folderName);
-            testIssueFolderMapper.insert(modelMapper.map(folderE, TestIssueFolderDTO.class));
-            folderE.setNewFolder(true);
+            testIssueFolderMapper.insert(folderE);
+            targetFolderE = modelMapper.map(folderE, TestIssueFolderProDTO.class);
+            targetFolderE.setNewFolder(true);
         } else {
+            targetFolderE = modelMapper.map(select, TestIssueFolderProDTO.class);
             targetFolderE.setNewFolder(false);
             logger.info("{} 文件夹已存在", folderName);
         }

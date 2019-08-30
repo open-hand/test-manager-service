@@ -3,9 +3,10 @@ package io.choerodon.test.manager.api.controller.v1
 import io.choerodon.asgard.api.dto.QuartzTask
 import io.choerodon.asgard.api.dto.ScheduleMethodDTO
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO
-import io.choerodon.devops.api.dto.ApplicationRepDTO
-import io.choerodon.devops.api.dto.ApplicationVersionRepDTO
-import io.choerodon.devops.api.dto.ReplaceResult
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO
+import io.choerodon.devops.api.vo.ApplicationRepDTO
+import io.choerodon.devops.api.vo.InstanceValueVO
+import io.choerodon.devops.api.vo.ReplaceResult
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO
 import io.choerodon.test.manager.app.service.ScheduleService
@@ -25,7 +26,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import spock.lang.Shared
 import spock.lang.Specification
-import spock.lang.Stepwise
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
@@ -66,7 +66,7 @@ class TestAppInstanceControllerSpec extends Specification {
             "  repository: registry.choerodon.com.cn/choerodon/example-front\n" +
             "  pullPolicy: Always\n" +
             "  \n" +
-            "framework: moche";
+            "framework: moche"
     @Shared
     String  changedValues= "# Default values for api-gateway.\n" +
             "\n" +
@@ -74,7 +74,7 @@ class TestAppInstanceControllerSpec extends Specification {
             "  repository: registry.choerodon.com.cn/choerodon/example-front\n" +
             "  pullPolicy: Always\n" +
             "  \n" +
-            "framework: moche2";
+            "framework: moche2"
 
     def "Deploy"() {
         given:
@@ -84,11 +84,11 @@ class TestAppInstanceControllerSpec extends Specification {
                 environmentId: 2L, projectVersionId: 2L, code: "0.1.0-自动化测试部署测试2", values: values)
 
         when:
-        def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        def res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO, TestAppInstanceVO, 144L)
         then:
         //模拟返回值，任何参数的这个方法调用都会返回ReplaceResult
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: values, deltaYaml: "")
+        1 * testCaseService.previewValues(_, _, _) >> new InstanceValueVO(yaml: values, deltaYaml: "")
         TestEnvCommandDTO insertCommand = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         TestAutomationHistoryDTO historyE = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche",
 //                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
@@ -105,7 +105,7 @@ class TestAppInstanceControllerSpec extends Specification {
         deployDTO.setHistoryId(historyE.getId())
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO, TestAppInstanceVO, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
@@ -117,10 +117,10 @@ class TestAppInstanceControllerSpec extends Specification {
 
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO2, TestAppInstanceVO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new InstanceValueVO(yaml: changedValues, deltaYaml: changedValues)
         TestEnvCommandDTO insertCommand3 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         TestAutomationHistoryDTO historyE3 = historyMapper.selectOne(new TestAutomationHistoryDTO(projectId: 144L, framework: "moche2",
 //                instanceId: res.getBody().getId(), testStatus: TestAutomationHistoryDTO.Status.NONEXECUTION))
@@ -138,10 +138,10 @@ class TestAppInstanceControllerSpec extends Specification {
         deployDTO2.setHistoryId(historyE3.getId())
 
         when:
-        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_instances",
+        res = restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances",
                 deployDTO2, TestAppInstanceVO, 144L)
         then:
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: changedValues, deltaYaml: changedValues)
+        1 * testCaseService.previewValues(_, _, _) >> new InstanceValueVO(yaml: changedValues, deltaYaml: changedValues)
         TestEnvCommandDTO insertCommand4 = envCommandMapper.selectOne(new TestEnvCommandDTO(instanceId: res.getBody().getId()))
         and:
         insertCommand4.commandType.equals("restart")
@@ -160,13 +160,13 @@ class TestAppInstanceControllerSpec extends Specification {
         taskDTO.setParams(Maps.newHashMap("deploy", deployDTO))
 
         when:
-        restTemplate.postForEntity("/v1/projects/{project_id}/app_instances/schedule",
+        restTemplate.postForEntity("/v1/projects/{project_id}/app_service_instances/schedule",
                 taskDTO, QuartzTask, 144L)
 
         then:
         1 * scheduleService.getMethodByService(_, _) >> methodDTOS
         1 * testCaseService.queryByAppId(_, _) >> new ApplicationRepDTO(name: "定时任务测试应用")
-        1 * testCaseService.getAppversion(_, _) >> Lists.newArrayList(new ApplicationVersionRepDTO(version: "定时任务测试应用版本"))
+        1 * testCaseService.getAppversion(_, _) >> Lists.newArrayList(new AppServiceVersionRespVO(version: "定时任务测试应用版本"))
         1 * scheduleService.create(_, _) >> new QuartzTask()
 
         and:
@@ -174,23 +174,25 @@ class TestAppInstanceControllerSpec extends Specification {
     }
 
     def "QueryValues"() {
+        given:
+        print("Start QueryValues")
         when:
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1&envId=1&appVersionId=1",
-                ReplaceResult, 144L)
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=1&envId=1&versionId=1",
+                InstanceValueVO, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
         noExceptionThrown()
 
         when: "deployValue不为空"
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=2&envId=2&appVersionId=2",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=2&envId=2&versionId=2",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values
-        1 * testCaseService.previewValues(_, _, _) >> new ReplaceResult(yaml: values)
+        1 * testCaseService.previewValues(_, _, _) >> new InstanceValueVO(yaml: values)
         noExceptionThrown()
 
         when: "错误yaml格式"
-        restTemplate.getForEntity("/v1/projects/{project_id}/app_instances/value?appId=1111&envId=1111&appVersionId=1111",
+        restTemplate.getForEntity("/v1/projects/{project_id}/app_service_instances/value?appId=1111&envId=1111&versionId=1111",
                 ReplaceResult, 144L)
         then:
         1 * testCaseService.getVersionValue(_, _) >> values

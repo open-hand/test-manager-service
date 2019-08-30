@@ -70,7 +70,7 @@ export default {
       page,
       size: 20,
       sort: { field: 'id', order: 'desc' },
-      postData: { searchParam: { name: [filter] }, param: '' },
+      postData: { searchParam: { name: filter }, params: [] },
     }),
     render: app => <Option value={app.id} key={app.id}>{app.name}</Option>,
   },
@@ -81,7 +81,8 @@ export default {
       size: 20,
       sort: { field: 'id', order: 'desc' },
     },
-    { version: [filter] }),
+    // { version: filter }),
+      { }),
     render: appVersion => <Option value={appVersion.id} key={appVersion.id}>{appVersion.version}</Option>,
   },
 };

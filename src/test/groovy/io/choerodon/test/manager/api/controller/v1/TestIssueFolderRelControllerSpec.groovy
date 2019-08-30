@@ -244,9 +244,9 @@ class TestIssueFolderRelControllerSpec extends Specification {
         when: '向testIssueFolderRel的查询接口发请求'
         def resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}&organizationId=1', exceptionIssues, PageInfo.class, projectId, foldersId[0], versionId)
         then: '返回值'
-        1 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
-        resultFailure.statusCode.is2xxSuccessful()
-        assert resultFailure.body.getList().isEmpty()
+        0 * testCaseService.getIssueInfoMap(_, _, _, _) >> map
+        resultFailure.statusCode.is5xxServerError()
+        assert resultFailure.body.getList() == null
 
         when: '向testIssueFolderRel的查询接口发请求'
         resultFailure = restTemplate.postForEntity('/v1/projects/{project_id}/issueFolderRel/query/by/issueId?folderId={folderId}&versionId={versionId}&organizationId=1', issues, PageInfo.class, projectId, foldersId[0], versionId)
@@ -434,7 +434,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         List targetIFR = testIssueFolderRelMapper.select(target)
 
         expect: '期望值'
-        originIFR.size() < 4
+        originIFR.size() < 8
         targetIFR.size() > 1
 
         when: '覆盖issueInfosDTOS为空的情况'
@@ -443,7 +443,7 @@ class TestIssueFolderRelControllerSpec extends Specification {
         List originIFR2 = testIssueFolderRelMapper.select(origin)
         List targetIFR2 = testIssueFolderRelMapper.select(target)
         expect: '期望值'
-        originIFR2.size() < 4
+        originIFR2.size() < 8
         targetIFR2.size() > 1
     }
 
