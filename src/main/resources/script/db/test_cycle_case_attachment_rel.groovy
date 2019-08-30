@@ -55,4 +55,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-attach-column-comment') {
         renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case_attach_rel")
     }
+
+    changeSet(id: '2019-08-30-modify-column-type', author: 'fuqianghuang01@gmail.com') {
+        modifyDataType(tableName: 'test_cycle_case_attach_rel', columnName: 'attachment_name', newDataType: "VARCHAR(255)")
+    }
+
 }
