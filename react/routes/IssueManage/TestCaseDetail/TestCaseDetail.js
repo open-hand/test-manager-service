@@ -46,7 +46,6 @@ class TestCaseDetail extends Component {
     lasttestCaseId: null,
     nexttestCaseId: null,
     isExpand: false,
-    folderName: '',
   }
 
   componentDidMount() {
@@ -149,10 +148,10 @@ class TestCaseDetail extends Component {
       lasttestCaseId,
       nexttestCaseId,
       isExpand,
-      folderName,
+      // folderName,
     } = this.state;
     const { clickIssue } = this.props;
-    const { issueId } = clickIssue;
+    const { issueId, folderName } = clickIssue;
     const { onClose } = this.props;
     return (
       // eslint-disable-next-line react/jsx-fragments
