@@ -45,8 +45,8 @@ public class TestAutomationController {
             throw new CommonException("error.decompress.tarGz", e);
         }
         String xml = new String(bytes, StandardCharsets.UTF_8);
-        logger.info("releaseName:{}", releaseName);
-        logger.info("xml:{}", xml);
+//        logger.info("releaseName:{}", releaseName);
+//        logger.info("xml:{}", xml);
         try {
             return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {
@@ -68,8 +68,8 @@ public class TestAutomationController {
             throw new CommonException("error.decompress.tarGz", e);
         }
         String xml = new String(bytes, StandardCharsets.UTF_8);
-        logger.info("releaseName:{}", releaseName);
-        logger.info("xml:{}", xml);
+//        logger.info("releaseName:{}", releaseName);
+//        logger.info("xml:{}", xml);
         try {
             return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {
