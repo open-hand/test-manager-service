@@ -2,29 +2,18 @@ package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.agile.api.vo.IssueCreateDTO
 import io.choerodon.agile.api.vo.IssueDTO
-import io.choerodon.agile.api.vo.IssueInfoDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
-import io.choerodon.test.manager.app.service.impl.TestCycleCaseDefectRelServiceImpl
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode
-import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
-import javafx.beans.binding.When
-import org.mockito.Matchers
-import org.mockito.Mock
-import org.mockito.Mockito
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -224,48 +213,48 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
 
     }
 
-    def "QueryByBug"() {
-        given: '根据缺陷issueId查询测试步骤'
-        List<IssueInfoDTO> issueInfoDTOList = new ArrayList<IssueInfoDTO>()
-
-        IssueInfoDTO issueInfoDTO = new IssueInfoDTO()
-        issueInfoDTO.setIssueId(1L)
-        issueInfoDTO.setIssueNum("name1")
-        issueInfoDTO.setSummary("summary")
-        issueInfoDTOList.add(issueInfoDTO)
-
-        TestCycleCaseDefectRelDTO dto = new TestCycleCaseDefectRelDTO()
-        dto.setId(8L)
-        dto.setProjectId(1L)
-        dto.setIssueId(1L)
-        dto.setDefectType(TestCycleCaseDefectCode.CYCLE_CASE)
-        dto.setDefectLinkId(1L)
-        testCycleCaseDefectRelMapper.insert(dto)
-
-        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO()
-        testCycleCaseDTO.setId(1L)
-        testCycleCaseDTO.setProjectId(1L)
-        testCycleCaseDTO.setIssueId(1L)
-        testCycleCaseDTO.setExecuteId(1L)
-        testCycleCaseDTO.setExecutionStatus(1L)
-        testCycleCaseMapper.insert(testCycleCaseDTO)
-
-        def bug = testCycleCaseDefectRelMapper.queryByBug(1L, 1L)
-        def mockito = new Mockito()
-        List<TestCycleCaseVO> list = new ArrayList<>()
-        //TestCycleCaseDefectRelService testCycleCaseDefectRelService = Mock()
-        Mockito.when(testCycleCaseDefectRelService.queryByBug(Matchers.anyLong(), Matchers.anyLong())).thenReturn(list)
-        when:
-        def entity = restTemplate.exchange("/v1/projects/{project_id}/defect/query_by_bug?bugId=1",
-                HttpMethod.GET,
-                null,
-                List.class,
-                project_Id
-        )
-        then:
-        //1 * testCaseFeignClient.listByIssueIds(_, _) >> new ResponseEntity<List<IssueInfoDTO>>(issueInfoDTOList, HttpStatus.OK)
-        //1 * testCycleCaseDefectRelService.queryByBug(_, _) >> list
-        entity.statusCode.is2xxSuccessful()
-
-    }
+//    def "QueryByBug"() {
+//        given: '根据缺陷issueId查询测试步骤'
+//        List<IssueInfoDTO> issueInfoDTOList = new ArrayList<IssueInfoDTO>()
+//
+//        IssueInfoDTO issueInfoDTO = new IssueInfoDTO()
+//        issueInfoDTO.setIssueId(1L)
+//        issueInfoDTO.setIssueNum("name1")
+//        issueInfoDTO.setSummary("summary")
+//        issueInfoDTOList.add(issueInfoDTO)
+//
+//        TestCycleCaseDefectRelDTO dto = new TestCycleCaseDefectRelDTO()
+//        dto.setId(8L)
+//        dto.setProjectId(1L)
+//        dto.setIssueId(1L)
+//        dto.setDefectType(TestCycleCaseDefectCode.CYCLE_CASE)
+//        dto.setDefectLinkId(1L)
+//        testCycleCaseDefectRelMapper.insert(dto)
+//
+//        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO()
+//        testCycleCaseDTO.setId(1L)
+//        testCycleCaseDTO.setProjectId(1L)
+//        testCycleCaseDTO.setIssueId(1L)
+//        testCycleCaseDTO.setExecuteId(1L)
+//        testCycleCaseDTO.setExecutionStatus(1L)
+//        testCycleCaseMapper.insert(testCycleCaseDTO)
+//
+//        def bug = testCycleCaseDefectRelMapper.queryByBug(1L, 1L)
+//        def mockito = new Mockito()
+//        List<TestCycleCaseVO> list = new ArrayList<>()
+//        //TestCycleCaseDefectRelService testCycleCaseDefectRelService = Mock()
+//        Mockito.when(testCycleCaseDefectRelService.queryByBug(Matchers.anyLong(), Matchers.anyLong())).thenReturn(list)
+//        when:
+//        def entity = restTemplate.exchange("/v1/projects/{project_id}/defect/query_by_bug?bugId=1",
+//                HttpMethod.GET,
+//                null,
+//                List.class,
+//                project_Id
+//        )
+//        then:
+//        //1 * testCaseFeignClient.listByIssueIds(_, _) >> new ResponseEntity<List<IssueInfoDTO>>(issueInfoDTOList, HttpStatus.OK)
+//        //1 * testCycleCaseDefectRelService.queryByBug(_, _) >> list
+//        entity.statusCode.is2xxSuccessful()
+//
+//    }
 }
