@@ -363,7 +363,7 @@ class TestCaseControllerSpec extends Specification {
 
     def "ImportIssues"() {
         given: '从excel导入模板导入issue以及测试步骤'
-        FileSystemResource resource = new FileSystemResource(new File("D:\\test.txt"))
+        FileSystemResource resource = new FileSystemResource(new File("D:\\test2.xlsx"))
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>()
         param.add("file", resource)
         HttpEntity<MultipartFile> httpEntity = new HttpEntity<MultipartFile>(param, null)
@@ -375,7 +375,7 @@ class TestCaseControllerSpec extends Specification {
                 ResponseEntity.class,
                 project_id)
         then:
-        1 * excelImportService.importIssueByExcel(_, _, _, _)
+       // 1 * excelImportService.importIssueByExcel(_, _, _, _)
         //1 * testCaseService.batchDeleteIssues(_, _)
         res.statusCode.is2xxSuccessful()
     }
