@@ -32,7 +32,7 @@ public interface TestIssueFolderRelService {
 
     void copyIssue(Long projectId, Long versionId, Long folderId, List<IssueInfosVO> issueInfosVOS);
 
-    TestIssueFolderRelVO updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues);
+    void updateVersionByFolderWithoutLockAndChangeIssueVersion(TestIssueFolderRelVO testIssueFolderRelVO, List<Long> issues);
 
     List<TestIssueFolderRelVO> queryByFolder(TestIssueFolderRelVO testIssueFolderRelVO);
 

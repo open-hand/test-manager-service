@@ -1,10 +1,14 @@
 package groovy.io.choerodon.test.manager.config;
 
+import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.agile.api.vo.PriorityVO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.feign.callback.FileFeignClientFallback;
 import io.choerodon.test.manager.infra.feign.callback.IssueFeignClientFallback;
+import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
+import org.hamcrest.Matchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 
 /**
  * @author shinan.chen
@@ -57,4 +62,17 @@ public class MockConfiguration {
         Mockito.when(fileFeignClient.deleteFile(anyString(), anyString())).thenReturn(new ResponseEntity<>(HttpStatus.OK));
         return fileFeignClient;
     }
+//    @Bean
+//    @Primary
+//    TestCaseFeignClient testCaseFeignClient() {
+//        TestCaseFeignClient testCaseFeignClient = Mockito.mock(TestCaseFeignClientFallback.class);
+//        List<IssueInfoDTO> issueInfoDTOList = new ArrayList<IssueInfoDTO>();
+//        IssueInfoDTO issueInfoDTO = new IssueInfoDTO();
+//        issueInfoDTO.setIssueId(1L);
+//        issueInfoDTO.setIssueNum("name1");
+//        issueInfoDTO.setSummary("summary");
+//        issueInfoDTOList.add(issueInfoDTO);
+//        Mockito.when(testCaseFeignClient.listByIssueIds(anyLong(), anyList())).thenReturn(new ResponseEntity<>(issueInfoDTOList, HttpStatus.OK));
+//        return testCaseFeignClient;
+//    }
 }

@@ -44,7 +44,7 @@ class TestAppInstanceControllerSpec extends Specification {
     TestCaseService testCaseService
 
     @Autowired
-    ScheduleService scheduleService;
+    ScheduleService scheduleService
 
     @Autowired
     TestEnvCommandValueMapper envCommandValueMapper
