@@ -2,29 +2,18 @@ package io.choerodon.test.manager.api.controller.v1
 
 import io.choerodon.agile.api.vo.IssueCreateDTO
 import io.choerodon.agile.api.vo.IssueDTO
-import io.choerodon.agile.api.vo.IssueInfoDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
-import io.choerodon.test.manager.app.service.impl.TestCycleCaseDefectRelServiceImpl
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode
-import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
-import javafx.beans.binding.When
-import org.mockito.Matchers
-import org.mockito.Mock
-import org.mockito.Mockito
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 
 import org.springframework.boot.test.web.client.TestRestTemplate
