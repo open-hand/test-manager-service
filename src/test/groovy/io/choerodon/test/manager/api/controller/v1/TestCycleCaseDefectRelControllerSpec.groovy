@@ -6,38 +6,41 @@ import io.choerodon.agile.api.vo.IssueInfoDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO
 import io.choerodon.test.manager.app.service.TestCaseService
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseDefectRelServiceImpl
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO
-import io.choerodon.test.manager.infra.dto.TestStatusDTO
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode
-import io.choerodon.test.manager.infra.feign.FileFeignClient
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
-import org.assertj.core.util.Lists
+import javafx.beans.binding.When
+import org.mockito.Matchers
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
+
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.test.context.ActiveProfiles
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
-import static org.mockito.ArgumentMatchers.any
-import static org.mockito.ArgumentMatchers.anyList
-import static org.mockito.ArgumentMatchers.anyLong
-import static org.mockito.ArgumentMatchers.anyString
-import static org.mockito.ArgumentMatchers.anyString
+import javax.annotation.Resource
+
+
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
@@ -64,16 +67,18 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
     @Autowired
     TestCaseService testCaseService
 
-    @Autowired
-    @Qualifier("testCaseFeignClient")
+    @Resource
     TestCaseFeignClient testCaseFeignClient
-
 
     @Autowired
     TestCycleCaseMapper testCycleCaseMapper
 
     @Autowired
     TestStatusMapper testStatusMapper
+
+    @Autowired
+//    @Qualifier("testCycleCaseDefectRelService")
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService
 
     @Shared
     Long defectId
@@ -83,6 +88,11 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
 
     @Shared
     String issue_Num
+
+//    void setup() {
+//        testCycleCaseDefectRelService = new TestCycleCaseDefectRelServiceImpl(testCaseFeignClient: testCaseFeignClient)
+//
+//    }
 
 
     def "Insert"() {
@@ -241,9 +251,10 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
         testCycleCaseMapper.insert(testCycleCaseDTO)
 
         def bug = testCycleCaseDefectRelMapper.queryByBug(1L, 1L)
-
-        Mockito.when(testCaseFeignClient.listByIssueIds(anyLong(), anyList())).thenReturn(new ResponseEntity<>(issueInfoDTOList, HttpStatus.OK))
-
+        def mockito = new Mockito()
+        List<TestCycleCaseVO> list = new ArrayList<>()
+        //TestCycleCaseDefectRelService testCycleCaseDefectRelService = Mock()
+        Mockito.when(testCycleCaseDefectRelService.queryByBug(Matchers.anyLong(), Matchers.anyLong())).thenReturn(list)
         when:
         def entity = restTemplate.exchange("/v1/projects/{project_id}/defect/query_by_bug?bugId=1",
                 HttpMethod.GET,
@@ -252,8 +263,8 @@ class TestCycleCaseDefectRelControllerSpec extends Specification {
                 project_Id
         )
         then:
-//        1 * testCaseFeignClient.listByIssueIds(_, _) >> new ResponseEntity<List<IssueInfoDTO>>(issueInfoDTOList, HttpStatus.OK)
-
+        //1 * testCaseFeignClient.listByIssueIds(_, _) >> new ResponseEntity<List<IssueInfoDTO>>(issueInfoDTOList, HttpStatus.OK)
+        //1 * testCycleCaseDefectRelService.queryByBug(_, _) >> list
         entity.statusCode.is2xxSuccessful()
 
     }

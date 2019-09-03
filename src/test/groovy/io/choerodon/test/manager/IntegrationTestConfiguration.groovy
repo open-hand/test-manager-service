@@ -1,13 +1,20 @@
 package io.choerodon.test.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import feign.Target.HardCodedTarget
+import io.choerodon.agile.api.vo.IssueInfoDTO
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
 import io.choerodon.test.manager.app.service.*
+import io.choerodon.test.manager.app.service.impl.TestCycleCaseHistoryServiceImpl
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.FileFeignClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
+import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil
+import org.mockito.Matchers
+import org.mockito.Mock
 import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -18,7 +25,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
+import org.mockito.Mockito
 import org.springframework.http.HttpRequest
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.client.ClientHttpRequestExecution
 import org.springframework.http.client.ClientHttpRequestInterceptor
 import org.springframework.http.client.ClientHttpResponse
@@ -31,6 +41,8 @@ import spock.mock.DetachedMockFactory
 import javax.annotation.PostConstruct
 import java.time.LocalDateTime
 
+import static org.mockito.ArgumentMatchers.anyList
+import static org.mockito.ArgumentMatchers.anyLong
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 
 /**
@@ -103,11 +115,49 @@ class IntegrationTestConfiguration {
         return detachedMockFactory.Mock(RedisTemplateUtil)
     }
 
+    @Bean
+    @Primary
+    JsonImportService createMock12() {
+        return detachedMockFactory.Mock(JsonImportService)
+    }
+
+    @Bean
+    @Primary
+    ExcelImportService createMock13() {
+        return detachedMockFactory.Mock(ExcelImportService)
+    }
+
+//    @Bean
+//    @Primary
+//    TestCycleCaseDefectRelService createMock13() {
+//        return detachedMockFactory.Mock(TestCycleCaseDefectRelService)
+//    }
+
+
+
     @MockBean(name = "fileFeignClient")
     private FileFeignClient fileFeignClient
 
     @MockBean(name = "testCaseFeignClient")
     private TestCaseFeignClient testCaseFeignClient
+
+    @Mock
+    private ApplicationFeignClient applicationFeignClient
+
+
+//    @Bean("testCycleCaseHistoryService")
+////    @Primary
+////    TestCycleCaseHistoryService testCycleCaseHistoryService() {
+////        new TestCycleCaseHistoryServiceImpl(testCaseFeignClient)
+////    }
+
+//    @Bean("testCaseFeignClient")
+//    @Primary
+//    TestCaseFeignClient createMock12() {
+//        TestCaseFeignClient testCaseFeignClient = Mockito.mock(TestCaseFeignClient)
+//        Mockito.when(testCaseFeignClient.listByIssueIds(Matchers.anyLong(), Matchers.anyList())).thenReturn(new ResponseEntity<List<IssueInfoDTO>>())
+//        return testCaseFeignClient
+//    }
 
     @PostConstruct
     void init() {

@@ -66,13 +66,6 @@ class TestAutomationHistoryControllerSpec extends Specification {
         historyDTO.setInstanceId(1L)
         testAutomationHistoryMapper.insert(historyDTO)
 
-        TestAppInstanceDTO instanceDTO = new TestAppInstanceDTO()
-        instanceDTO.setId(1L)
-        instanceDTO.setProjectId(1L)
-        instanceDTO.setAppId(1L)
-        instanceDTO.setAppVersionId(1L)
-        instanceDTO.setLogId(1L)
-        testAppInstanceMapper.insert(instanceDTO)
 
         List<Long> versionIdList = new ArrayList<Long>()
         versionIdList.add(1L)

@@ -46,7 +46,7 @@ class TestAttachmentControllerSpec extends Specification {
     @Autowired
     TestCycleCaseAttachmentRelMapper attachmentRelMapper
 
-      @Autowired
+    @Autowired
     @Qualifier("fileFeignClient")
     private FileFeignClient fileFeignClient
 
