@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.vo.*
 import io.choerodon.base.domain.PageRequest
 import io.choerodon.base.domain.Sort
+import io.choerodon.test.manager.infra.feign.ApplicationFeignClient
 import io.choerodon.test.manager.infra.feign.BaseFeignClient
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient
@@ -23,25 +24,34 @@ class TestCaseServiceImplSpec extends Specification {
     BaseFeignClient baseFeignClient
     TestCaseFeignClient testCaseFeignClient
     ProductionVersionClient productionVersionClient
+//    ApplicationFeignClient applicationFeignClient
 
     def setup() {
         testCaseFeignClient = Mock(TestCaseFeignClient)
         productionVersionClient = Mock(ProductionVersionClient)
         baseFeignClient = Mock(BaseFeignClient)
-        service = new TestCaseServiceImpl(testCaseFeignClient: testCaseFeignClient, productionVersionClient: productionVersionClient, projectFeignClient: projectFeignClient)
+//        applicationFeignClient = Mock(ApplicationFeignClient)
+        service = new TestCaseServiceImpl(
+                testCaseFeignClient: testCaseFeignClient,
+                productionVersionClient: productionVersionClient,
+                baseFeignClient: baseFeignClient
+//                ApplicationFeignClient: ApplicationFeignClient
+        )
 
     }
 
     def "ListIssueWithoutSub"() {
+        Sort sort = new Sort("id")
         when:
-        service.listIssueWithoutSub(1L, new SearchDTO(), new PageRequest(sort: new Sort("id")), 1L)
+        service.listIssueWithoutSub(1L, new SearchDTO(), new PageRequest(1, 10, sort), 1L)
         then:
         1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(), HttpStatus.OK)
     }
 
     def "ListIssueWithoutSubDetail"() {
+        Sort sort = new Sort("id")
         when:
-        service.listIssueWithoutSubDetail(1L, new SearchDTO(), new PageRequest(sort: new Sort("id")), 1L)
+        service.listIssueWithoutSubDetail(1L, new SearchDTO(), new PageRequest(1, 10, sort), 1L)
         then:
         1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _)
     }
@@ -54,22 +64,24 @@ class TestCaseServiceImplSpec extends Specification {
     }
 
     def "GetIssueInfoMapAndPopulatePageInfo"() {
+        Sort sort = new Sort("id")
+
         when:
-        service.getIssueInfoMapAndPopulatePageInfo(1L, new SearchDTO(), new PageRequest(sort: new Sort("id")), new Page(), 1L)
+        service.getIssueInfoMapAndPopulatePageInfo(1L, new SearchDTO(), new PageRequest(1, 10, sort), new Page(), 1L)
         then:
         1 * testCaseFeignClient.listIssueWithLinkedIssues(_, _, _, _, _, _) >>
-        new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+                new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestWithSprintVersionDTO(issueId: 1L, statusVO: new StatusVO(code: "code")))), HttpStatus.OK)
     }
 
     def "GetIssueInfoMap1"() {
         when:
         service.getIssueInfoMap(1L, new SearchDTO(), true, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, statusVO: new StatusVO(code: "code")))), HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L, new SearchDTO(), false, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, statusVO: new StatusVO(code: "code")))), HttpStatus.OK)
 
     }
 
@@ -77,7 +89,7 @@ class TestCaseServiceImplSpec extends Specification {
         when:
         service.getIssueInfoMap(1L, [1, 2] as Long[], true, 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueComponentDetailVO(issueId: 1L, statusVO: new StatusVO(code: "code")))), HttpStatus.OK)
         when:
         service.getIssueInfoMap(1L, [] as Long[], true, 1L)
         then:
@@ -88,11 +100,11 @@ class TestCaseServiceImplSpec extends Specification {
 
     def "GetIssueInfoMap3"() {
         when:
-        service.getIssueInfoMap(1L, [1, 2] as Long[], new PageRequest(sort: new Sort("id")), 1L)
+        service.getIssueInfoMap(1L, [1, 2] as Long[], new PageRequest(1, 10, new Sort("id")), 1L)
         then:
-        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, StatusVO: new StatusVO(code: "code")))), HttpStatus.OK)
+        1 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _) >> new ResponseEntity<>(new PageInfo(Lists.newArrayList(new IssueListTestVO(issueId: 1L, statusVO: new StatusVO(code: "code")))), HttpStatus.OK)
         when:
-        service.getIssueInfoMap(1L, [] as Long[], new PageRequest(), 1L)
+        service.getIssueInfoMap(1L, [] as Long[], new PageRequest(1, 10, new Sort("id")), 1L)
         then:
         0 * testCaseFeignClient.listIssueWithoutSubDetail(_, _, _, _, _, _)
         0 * testCaseFeignClient.listIssueWithoutSubToTestComponent(_, _, _, _, _, _)
