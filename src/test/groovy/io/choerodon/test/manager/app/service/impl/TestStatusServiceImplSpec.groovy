@@ -5,12 +5,10 @@ import io.choerodon.test.manager.api.vo.TestStatusVO
 import io.choerodon.test.manager.app.service.TestStatusService
 import io.choerodon.test.manager.infra.dto.TestStatusDTO
 import io.choerodon.test.manager.infra.mapper.TestStatusMapper
-import org.assertj.core.util.Lists
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
-import org.springframework.ui.ModelMap
 import spock.lang.Specification
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -56,23 +54,30 @@ class TestStatusServiceImplSpec extends Specification {
         result.size() == 3
     }
 
-//    def "Delete"() {
-//        given:
-//        TestStatusVO statusDTO = new TestStatusVO(statusId: 1, statusColor: "red")
-//        when:
-//        service.delete(statusDTO)
-//        then:
-//        1 * iService.delete(_)
-//    }
-//
-//    def "Update"() {
-//        given:
-//        TestStatusVO statusDTO = new TestStatusVO(statusId: 1, statusColor: "red")
-//        when:
-//        def result = service.update(statusDTO)
-//        then:
-//        1 * iService.update(_) >> new TestStatusE(statusId: 1, statusColor: "red")
-//        and:
-//        result.getStatusColor() == "red"
-//    }
+    def "Delete"() {
+        given:
+        TestStatusVO statusDTO = new TestStatusVO(statusId: 7)
+        List<TestStatusDTO> selectAllPre = testStatusMapper.selectAll()
+        when:
+        service.delete(statusDTO)
+        then:
+        List<TestStatusDTO> selectAllAft = testStatusMapper.selectAll()
+        selectAllAft.size() == selectAllPre.size() - 1
+
+    }
+
+    def "Update"() {
+        given:
+        TestStatusVO statusDTO = new TestStatusVO(statusId: 2, statusColor: "red")
+        statusDTO.setObjectVersionNumber(1L)
+        statusDTO.setProjectId(1L)
+        statusDTO.setStatusType("CASE_STEP")
+        statusDTO.setStatusName("statusName")
+        when:
+        def result = service.update(statusDTO)
+        then:
+        //1 * iService.update(_) >> new TestStatusE(statusId: 1, statusColor: "red")
+
+        result.getStatusColor() == "red"
+    }
 }
