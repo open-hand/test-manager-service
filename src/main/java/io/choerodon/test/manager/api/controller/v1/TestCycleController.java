@@ -220,4 +220,23 @@ public class TestCycleController {
         testCycleService.batchChangeAssignedInOneCycle(projectId, userId, cycleId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("测试循环、阶段重名校验")
+    @GetMapping(value = "/check_name")
+    public ResponseEntity<Boolean> checkName(@ApiParam(value = "项目id", required = true)
+                                             @PathVariable(name = "project_id") Long projectId,
+                                             @ApiParam(value = "类型", required = true)
+                                             @RequestParam String type,
+                                             @ApiParam(value = "循环或阶段名字", required = true)
+                                             @RequestParam String cycleName,
+                                             @ApiParam(value = "版本id", required = true)
+                                             @RequestParam Long versionId,
+                                             @ApiParam(value = "父循环id", required = true)
+                                             @RequestParam Long parentCycleId) {
+        return Optional.ofNullable(testCycleService.checkName(projectId, type, cycleName, versionId,parentCycleId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.cycleName.check"));
+    }
+
 }
