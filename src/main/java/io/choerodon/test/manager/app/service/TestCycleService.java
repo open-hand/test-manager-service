@@ -64,5 +64,5 @@ public interface TestCycleService {
 
     void checkRank(TestCycleVO testCycleVO);
 
-    boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId);
+    Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId);
 }
