@@ -776,6 +776,21 @@ public class TestCycleServiceImpl implements TestCycleService {
         }
     }
 
+    @Override
+    public Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setProjectId(projectId);
+        testCycleDTO.setVersionId(versionId);
+        testCycleDTO.setCycleName(cycleName);
+        testCycleDTO.setType(type);
+        if (Objects.equals(type, TestCycleType.FOLDER) && !Objects.isNull(parentCycleId)) {
+            //如果是一个FOLDER类型，在一个父cycle下不能重名
+            testCycleDTO.setParentCycleId(parentCycleId);
+        }
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.select(testCycleDTO);
+        return testCycleDTOS != null && !testCycleDTOS.isEmpty();
+    }
+
     private Long getCount(TestCycleVO testCycleVO) {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
