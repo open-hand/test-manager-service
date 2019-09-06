@@ -783,7 +783,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setVersionId(versionId);
         testCycleDTO.setCycleName(cycleName);
         testCycleDTO.setType(type);
-        if (type.equals(TestCycleType.FOLDER) && !Objects.isNull(parentCycleId)) {
+        if (Objects.equals(type, TestCycleType.FOLDER) && !Objects.isNull(parentCycleId)) {
             //如果是一个FOLDER类型，在一个父cycle下不能重名
             testCycleDTO.setParentCycleId(parentCycleId);
         }
