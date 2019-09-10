@@ -1,3 +1,4 @@
+import querystring from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
 export function getCycleTree(assignedTo) {
@@ -107,4 +108,7 @@ export function getExportList() {
 }
 export function assignBatch(userId, cycleId) {
   return request.put(`test/v1/projects/${getProjectId()}/cycle/batch/change/cycleCase/assignedTo/${userId}/in/cycle/${cycleId}`);
+}
+export function checkCycleName(data) {
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/check_name?${querystring.stringify(data)}`);
 }

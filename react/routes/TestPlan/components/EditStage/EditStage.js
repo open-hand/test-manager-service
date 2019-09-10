@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Form, Input, Select, Modal, Spin, DatePicker,
+  Form, Input, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import moment from 'moment';
-import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
-import { editFolder } from '../../../../api/cycleApi';
-import { SelectFolder, SelectFocusLoad } from '../../../../components';
+import { editFolder, checkCycleName } from '../../../../api/cycleApi';
+import { SelectFocusLoad } from '../../../../components';
 import TestPlanStore from '../../stores/TestPlanStore';
 
 const FormItem = Form.Item;
@@ -62,6 +61,26 @@ class EditStage extends Component {
     });
   }
 
+  validateName = async (rule, name, callback) => {
+    const initialValue = TestPlanStore.CurrentEditStage;
+    const { title: cycleName, parentCycleId, versionId } = initialValue;
+    if (cycleName === name) {
+      callback();
+      return;
+    }
+    const hasSame = await checkCycleName({
+      type: 'folder',
+      cycleName: name,
+      versionId,
+      parentCycleId,
+    });
+    if (hasSame) {
+      callback('含有同名阶段');
+    } else {
+      callback();
+    }
+  }
+
   onCancel = () => {
     TestPlanStore.ExitEditStage();
   }
@@ -94,6 +113,8 @@ class EditStage extends Component {
                   initialValue: title,
                   rules: [{
                     required: true, message: '请输入名称!',
+                  }, {
+                    validator: this.validateName,
                   }],
                 })(
                   <Input maxLength={30} label={<FormattedMessage id="name" />} />,

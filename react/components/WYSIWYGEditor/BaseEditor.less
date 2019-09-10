@@ -1,7 +1,32 @@
+@import '~choerodon-ui/lib/style/themes/default';
+
 .c7n-quill-editor {
+  transition: box-shadow 0.1s ease-in;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.20);
+  width: calc(~'100% - 4px');
+  margin-left: 2px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:focus-within {
+    box-shadow: 0 0 0 2px @primary-color;
+  }
+
   .react-quill-editor {
     display: flex;
     flex-direction: column;
+
+    .ql-toolbar {
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+
+    .ql-container {
+      border-left: none;
+      border-right: none;
+    }
 
     .quill {
       height: auto !important;
@@ -10,7 +35,7 @@
     }
 
     img {
-      max-width: 400px !important;
+      max-width: 4rem !important;
     }
 
     .ql-snow .ql-picker.ql-expanded .ql-picker-options {

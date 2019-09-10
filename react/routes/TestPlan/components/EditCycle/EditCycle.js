@@ -6,7 +6,7 @@ import { Content, stores } from '@choerodon/master';
 import moment from 'moment';
 import { observer } from 'mobx-react';
 import { getProjectVersion } from '../../../../api/agileApi';
-import { editFolder } from '../../../../api/cycleApi';
+import { editFolder, checkCycleName } from '../../../../api/cycleApi';
 import TestPlanStore from '../../stores/TestPlanStore';
 
 const { Option } = Select;
@@ -31,6 +31,26 @@ class EditCycle extends Component {
   
   onCancel = () => {
     TestPlanStore.ExitEditCycle();
+  }
+
+  validateName = async (rule, name, callback) => {
+    const initialValue = TestPlanStore.CurrentEditCycle;
+    const { versionId, title: cycleName } = initialValue;
+    if (!versionId || cycleName === name) {
+      callback();
+      return;
+    }
+    const hasSame = await checkCycleName({
+      type: 'cycle',
+      cycleName: name,
+      versionId,
+      parentCycleId: 0,
+    });
+    if (hasSame) {
+      callback('含有同名循环');
+    } else {
+      callback();
+    }
   }
 
   onOk = () => {
@@ -104,6 +124,8 @@ class EditCycle extends Component {
                   initialValue: title,
                   rules: [{
                     required: true, message: '请输入名称!',
+                  }, {
+                    validator: this.validateName,
                   }],
                 })(
                   <Input maxLength={30} label="名称" />,

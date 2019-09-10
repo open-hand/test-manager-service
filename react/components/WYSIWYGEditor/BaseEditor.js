@@ -8,7 +8,7 @@ import LightBox from 'react-image-lightbox';
 import { randomWord } from '../../common/utils';
 import ImageDrop from './ImageDrop';
 import Link from './Link';
-import './BaseEditor.scss';
+import './BaseEditor.less';
 
 Quill.register('modules/imageDrop', ImageDrop);
 Quill.register('formats/link', Link);
@@ -177,28 +177,31 @@ class BaseEditor extends Component {
     const newStyle = { ...defaultStyle, ...style };
     const editHeight = newStyle.height === '100%' ? `calc(100% - ${toolbarHeight || '42px'})` : (newStyle.height - (toolbarHeight || 42));
     return (
-      <div className="c7n-quill-editor" style={{ width: '100%', height: '100%' }}>
-        <div style={newStyle} className={`react-quill-editor react-quill-editor-${mode}`}>
-          <ToolBar id={this.toolBarId} onFullScreenClick={onFullScreenClick} hideFullScreen={hideFullScreen} />
-          <ReactQuill
-            readOnly={readOnly}
-            ref={this.saveRef('editor')}
-            theme="snow"
-            modules={this.modules}
-            style={{ height: editHeight, width: '100%' }}
-            placeholder={placeholder || '描述'}
-            defaultValue={value}
-            onChange={this.handleChange}
-            bounds=".react-quill-editor"
-          />
+      <div
+        className="c7n-quill-editor"       
+      >
+        <div style={{ flex: 1 }}>
+          <div style={newStyle} className={`react-quill-editor react-quill-editor-${mode}`}>
+            <ToolBar id={this.toolBarId} onFullScreenClick={onFullScreenClick} hideFullScreen={hideFullScreen} />
+            <ReactQuill
+              readOnly={readOnly}
+              ref={this.saveRef('editor')}
+              theme="snow"
+              modules={this.modules}
+              style={{ height: editHeight, width: '100%' }}
+              placeholder={placeholder || '描述'}
+              defaultValue={value}
+              onChange={this.handleChange}
+              bounds=".react-quill-editor"
+            />
+          </div>
         </div>
         {
           bottomBar && !readOnly && (
             <div
+              className="c7n-quill-editor-bottomBar"
               style={{
-                padding: '0 8px',
-                border: '1px solid #ccc',
-                borderTop: 'none',
+                padding: '0 8px',                
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}
