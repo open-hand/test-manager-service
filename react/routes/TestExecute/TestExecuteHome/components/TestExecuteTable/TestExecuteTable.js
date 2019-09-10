@@ -207,6 +207,7 @@ class TestExecuteTable extends Component {
           onRow={record => ({
             onClick: (event) => { onTableRowClick(record); },
           })}
+          filterBarPlaceholder="过滤表"
         />
       </div>
     );

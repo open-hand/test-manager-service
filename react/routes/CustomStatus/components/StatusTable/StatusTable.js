@@ -13,6 +13,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import TableDropMenu from '../TableDropMenu';
+import './StatusTable.less';
 
 const { confirm } = Modal;
 const propTypes = {
@@ -86,6 +87,7 @@ const StatusTable = ({
   ];
   return (
     <Table
+      filterBarPlaceholder="过滤表"
       rowKey="statusId"
       columns={columns}
       dataSource={dataSource}

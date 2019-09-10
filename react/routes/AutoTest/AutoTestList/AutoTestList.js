@@ -197,7 +197,7 @@ const AutoTestList = ({
         >
           {appOptions}
         </Select>
-        <Table loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
+        <Table filterBarPlaceholder="过滤表" loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
         <ContainerLog            
           ref={onSaveLogRef('ContainerLog')}
         />

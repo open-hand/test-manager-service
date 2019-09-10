@@ -63,6 +63,7 @@ const CustomStatusHome = ({
 }) => (
   <div>
     <CreateStatus
+      activeKey={statusType}
       visible={createVisible}
       loading={CreateStatusLoading}
       onCancel={onCreateStatusCancel}
@@ -77,7 +78,7 @@ const CustomStatusHome = ({
       onCheckStatusRepeat={onCheckStatusRepeat}
       onSubmit={onEditStatusSubmit}
     />
-    <Page>
+    <Page className="c7ntest-custom-status">
       <Header>
         <Button icon="playlist_add" onClick={onShowCreateClick}>
           <FormattedMessage id="status_create" />

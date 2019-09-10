@@ -80,7 +80,7 @@ class CreateStatus extends Component {
 
   render() {
     const {
-      visible, onCancel, loading,
+      visible, onCancel, loading, activeKey,
     } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;    
     return (
@@ -96,7 +96,7 @@ class CreateStatus extends Component {
           <Form>
             <FormItem>
               {getFieldDecorator('statusType', {
-                initialValue: 'CYCLE_CASE',
+                initialValue: activeKey,
                 rules: [{
                   required: true, message: '请选择类型!',
                 }],

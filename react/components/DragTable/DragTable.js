@@ -196,6 +196,7 @@ class DragTable extends Component {
           dataSource={data}
           components={this.components}
           onColumnFilterChange={this.handleColumnFilterChange}
+          filterBarPlaceholder="过滤表"
         />
       </div>
     );
