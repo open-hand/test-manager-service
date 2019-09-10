@@ -16,6 +16,19 @@ import {
 import './IssueTable.scss';
 import pic from '../../../../assets/testCaseEmpty.svg';
 
+const versionStatus = [
+  {
+    name: '规划中',
+    code: 'version_planning',
+  }, {
+    name: '已归档',
+    code: 'archived',
+  }, {
+    name: '已发布',
+    code: 'released',
+  }
+];
+
 @observer
 class IssueTable extends Component {
   constructor(props) {
@@ -272,7 +285,7 @@ class IssueTable extends Component {
     }
 
     const {
-      statusId, priorityId, issueNum, summary, labelIssueRelVOList,
+      statusId, priorityId, issueNum, summary, labelIssueRelVOList, versionIssueRelVOList,
     } = filters;
     const search = {
       advancedSearchArgs: {
@@ -283,6 +296,7 @@ class IssueTable extends Component {
         label: labelIssueRelVOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
+        versionStatusCode: versionIssueRelVOList && versionIssueRelVOList.length ? versionIssueRelVOList[0] : '',
       },
     };
     IssueStore.setFilter(search);
@@ -332,6 +346,7 @@ class IssueTable extends Component {
         title: '版本',
         dataIndex: 'versionIssueRelVOList',
         key: 'versionIssueRelVOList',
+        filters: versionStatus.map(status => ({ text: status.name, value: status.code })),
         render: (versionIssueRelVOList, record) => renderVersions(versionIssueRelVOList),
       },
       {
