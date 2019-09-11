@@ -26,7 +26,7 @@ const versionStatus = [
   }, {
     name: '已发布',
     code: 'released',
-  }
+  },
 ];
 
 @observer
@@ -285,7 +285,8 @@ class IssueTable extends Component {
     }
 
     const {
-      statusId, priorityId, issueNum, summary, labelIssueRelVOList, versionIssueRelVOList,
+      statusId, priorityId, issueNum, summary,
+      labelIssueRelVOList, versionIssueRelVOList, componentIssueRelVOList,
     } = filters;
     const search = {
       advancedSearchArgs: {
@@ -293,6 +294,7 @@ class IssueTable extends Component {
         priorityId: priorityId || [],
       },
       otherArgs: {
+        componentIds: componentIssueRelVOList || [],
         label: labelIssueRelVOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
@@ -318,6 +320,7 @@ class IssueTable extends Component {
   render() {
     const prioritys = IssueStore.getPrioritys;
     const labels = IssueStore.getLabels;
+    const components = IssueStore.getComponents;
     const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
       {
@@ -392,6 +395,14 @@ class IssueTable extends Component {
         filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusVO, record) => renderStatus(record.statusVO),
+      },
+      {
+        title: '模块',
+        dataIndex: 'componentIssueRelVOList',
+        key: 'componentIssueRelVOList',
+        filters: components.map(component => ({ text: component.name, value: component.componentId.toString() })),
+        filterMultiple: true,
+        render: (componentIssueRelVOList, record) => renderComponents(componentIssueRelVOList),
       },
       {
         title: '标签',
