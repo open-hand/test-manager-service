@@ -16,7 +16,6 @@ Quill.register('formats/link', Link);
 const defaultStyle = {
   width: 498,
   height: 200,
-  borderRight: 'none',
 };
 const defaultProps = {
   mode: 'edit',
@@ -51,7 +50,7 @@ const ToolBar = ({ id, onFullScreenClick, hideFullScreen }) => (
     <button type="button" className="ql-list" value="ordered" />
     <button type="button" className="ql-list" value="bullet" />
     <button type="button" className="ql-image" />
-    <button type="button" className="ql-link" /> 
+    <button type="button" className="ql-link" />
     <select className="ql-color">
       {/* <option value="red" />
       <option value="green" />
@@ -60,7 +59,7 @@ const ToolBar = ({ id, onFullScreenClick, hideFullScreen }) => (
       <option value="violet" />
       <option value="#d0d1d2" />
       <option selected /> */}
-    </select> 
+    </select>
 
     {!hideFullScreen && (
       <button type="button" className="ql-fullScreen" style={{ outline: 'none' }} onClick={onFullScreenClick}>
@@ -113,12 +112,12 @@ class BaseEditor extends Component {
       this.editor.getEditor().setContents(value);
     }
   }
-  
+
   componentWillUnmount() {
     document.removeEventListener('click', this.handleOpenLightBox);
   }
 
-  setValue = (value) => {    
+  setValue = (value) => {
     // setContents会自动触发onChange
     this.editor.getEditor().setContents(value);
   }
@@ -177,26 +176,25 @@ class BaseEditor extends Component {
     const newStyle = { ...defaultStyle, ...style };
     const editHeight = newStyle.height === '100%' ? `calc(100% - ${toolbarHeight || '42px'})` : (newStyle.height - (toolbarHeight || 42));
     return (
-      <div
-        className="c7n-quill-editor"       
-      >
-        <div style={{ flex: 1 }}>
-          <div style={newStyle} className={`react-quill-editor react-quill-editor-${mode}`}>
-            <ToolBar id={this.toolBarId} onFullScreenClick={onFullScreenClick} hideFullScreen={hideFullScreen} />
-            <ReactQuill
-              readOnly={readOnly}
-              ref={this.saveRef('editor')}
-              theme="snow"
-              modules={this.modules}
-              style={{ height: editHeight, width: '100%' }}
-              placeholder={placeholder || '描述'}
-              defaultValue={value}
-              onChange={this.handleChange}
-              bounds=".react-quill-editor"
-            />
+      <div style={newStyle}>      
+        <div className="c7n-quill-editor">
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <div className={`react-quill-editor react-quill-editor-${mode}`}>
+              <ToolBar id={this.toolBarId} onFullScreenClick={onFullScreenClick} hideFullScreen={hideFullScreen} />
+              <ReactQuill
+                readOnly={readOnly}
+                ref={this.saveRef('editor')}
+                theme="snow"
+                modules={this.modules}
+                style={{ height: editHeight, width: '100%' }}
+                placeholder={placeholder || '描述'}
+                defaultValue={value}
+                onChange={this.handleChange}
+                bounds=".react-quill-editor"
+              />
+            </div>
           </div>
-        </div>
-        {
+          {
           bottomBar && !readOnly && (
             <div
               className="c7n-quill-editor-bottomBar"
@@ -222,7 +220,7 @@ class BaseEditor extends Component {
             </div>
           )
         }
-        {
+          {
           imgOpen && (
             <LightBox
               mainSrc={src}
@@ -231,6 +229,7 @@ class BaseEditor extends Component {
             />
           )
         }
+        </div>
       </div>
     );
   }
