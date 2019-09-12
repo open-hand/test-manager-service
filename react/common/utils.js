@@ -168,7 +168,7 @@ export function returnBeforeTextUpload(text, data, func, pro = 'description') {
  * @param {{issueType:string,issueId:number,fileName:string}} config 附件上传的额外信息
  */
 export function handleFileUpload(propFileList, func, config) {
-  const fileList = propFileList.filter((i) => !i.url);
+  const fileList = propFileList.filter(i => !i.url);
   const formData = new FormData();
   fileList.forEach((file) => {
     // file.name = encodeURI(encodeURI(file.name));
@@ -253,9 +253,9 @@ export function issueLink(issueId, typeCode, issueName = null) {
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
     return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else if (issueName) {
-    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
+    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {
-    return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
+    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
   }
 }
 export function createIssueLink() {
@@ -263,7 +263,7 @@ export function createIssueLink() {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/agile/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+  return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function agileVersionLink() {
   const menu = AppState.currentMenuType;
