@@ -426,36 +426,6 @@ class TestStepTable extends Component {
         );
       },
     },
-    // {
-    //   title: <FormattedMessage id="execute_stepAttachment" />,
-    //   dataIndex: 'attachments',
-    //   key: 'attachments',
-    //   flex: 2,
-    //   className: 'attachmentsColumn',
-    //   render: (attachments, record) => (
-    //     <div className="item-container item-container-upload">
-    //       {record.stepIsCreating ? (
-    //         <UploadButton
-    //           className="createUploadBtn"
-    //           onRemove={this.setFileList}
-    //           onBeforeUpload={this.setFileList}
-    //           fileList={fileList}
-    //         />
-    //       ) : (
-    //           <UploadInTable
-    //             fileList={attachments}
-    //             onOk={onOk}
-    //             enterLoad={enterLoad}
-    //             leaveLoad={leaveLoad}
-    //             config={{
-    //               attachmentLinkId: record.stepId,
-    //               attachmentType: 'CASE_STEP',
-    //             }}
-    //           />
-    //         )}
-    //     </div>
-    //   ),
-    // }, 
     {
       title: null,
       dataIndex: 'action',
@@ -500,6 +470,8 @@ class TestStepTable extends Component {
           dataSource={this.state.data}
           columns={columns}
           onDragEnd={this.onDragEnd}
+          createIssueStep={this.createIssueStep}
+          hasStepIsCreating={hasStepIsCreating}
           dragKey="stepId"
           customDragHandle
           scroll={{ x: true }}
