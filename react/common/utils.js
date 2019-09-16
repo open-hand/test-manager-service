@@ -270,7 +270,7 @@ export function agileVersionLink() {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/agile/release?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+  return encodeURI(`/agile/work-list/version?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
 }
 export function TestExecuteLink(cycleId) {
   const menu = AppState.currentMenuType;
