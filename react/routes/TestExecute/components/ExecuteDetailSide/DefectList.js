@@ -54,11 +54,9 @@ const DefectList = ({ defects, onRemoveDefect }) => {
             </p>
           </div>
         </Tooltip>
-        <div style={{ width: '34px', marginRight: '15px', overflow: 'hidden' }}>
+        <div style={{ marginRight: 12 }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-            <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityVO || {}} />
-            </div>
+            <PriorityTag priority={priorityVO || {}} style={{ maxWidth: '20px' }} />
           </Tooltip>
         </div>
         <div style={{

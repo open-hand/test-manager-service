@@ -1521,22 +1521,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </TabPane>
                       <TabPane tab="记录" key="log">
-                        {/* 修改日志 */}
-                        {/* <div id="data_log">
-                          <div className="c7ntest-title-wrapper">
-                            <div className="c7ntest-title-left">
-                              <FormattedMessage id="issue_edit_activeLog" />
-                            </div>
-                          </div> */}
                         {this.renderDataLogs()}
-                        {/* </div> */}
-                        {testExecuteData.length > 0 && <TestExecuteTable
-                          issueId={issueId}
-                          data={testExecuteData}
-                          enterLoad={enterLoad}
-                          leaveLoad={leaveLoad}
-                          onOk={reloadIssue}
-                        />}
                       </TabPane>
                     </Tabs>
                   </div>
