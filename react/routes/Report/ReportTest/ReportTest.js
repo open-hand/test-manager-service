@@ -551,7 +551,7 @@ class ReportTest extends Component {
       <Page className="c7ntest-report-test">
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
-          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
         >
           <ReporterSwitcher />
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
