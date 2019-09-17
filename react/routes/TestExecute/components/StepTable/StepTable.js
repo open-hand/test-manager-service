@@ -5,12 +5,13 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
+import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
 import { editCycleStep, addDefects } from '../../../../api/ExecuteDetailApi';
 import {
   TextEditToggle, UploadInTable, DefectSelect, StatusTags,
 } from '../../../../components';
 import { delta2Text } from '../../../../common/utils';
-import './StepTable.scss';
+import './StepTable.less';
 import ExecuteDetailStore from '../../stores/ExecuteDetailStore';
 
 const { TextArea } = Input;
@@ -80,6 +81,7 @@ class StepTable extends PureComponent {
       attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
     } = attachment;
     return {
+      name: attachment.attachmentName,
       attachmentName,
       attachmentLinkId,
       attachmentType,
@@ -207,6 +209,7 @@ class StepTable extends PureComponent {
               attachmentType: 'CYCLE_STEP',
             }}
           />
+
         );
       },
     },
@@ -255,7 +258,7 @@ class StepTable extends PureComponent {
                     color: '#3f51b5',
                   }}
                 >
-                  添加缺陷
+                    添加缺陷
                 </div>
               )
             }

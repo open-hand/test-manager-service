@@ -233,6 +233,7 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   editIssue = (newValue, done) => {
+    console.log('editIssue', newValue);
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const {
@@ -562,11 +563,14 @@ class EditIssueNarrow extends Component {
     }
     if (!description || editDescriptionShow) {
       delta = text2Delta(description);
+
+      console.log('delta', delta, description);
       return (
         editDescriptionShow && <div className="line-start mt-10">
           <WYSIWYGEditor
+            autoFocus
             bottomBar
-            defaultValue={text2Delta(description)}
+            defaultValue={delta}
             style={{ height: 200, width: '100%' }}
             handleDelete={() => {
               this.setState({
@@ -574,10 +578,10 @@ class EditIssueNarrow extends Component {
               });
             }}
             handleSave={(value) => {
+              this.editIssue({ description: value });
               this.setState({
                 editDescriptionShow: false,
               });
-              this.editIssue({ description: value });
             }}
           />
         </div>
@@ -968,7 +972,7 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
           >
             {userOptions}
           </Select>
@@ -1045,7 +1049,8 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
+          // size={'small '}
           >
             {userOptions}
           </Select>
@@ -1474,11 +1479,11 @@ class EditIssueNarrow extends Component {
                         <div id="link_task">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              关联问题
+                              问题链接
                         </div>
 
                             <div style={{ marginLeft: '14px' }}>
-                              <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <Tooltip title="问题链接" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                 <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
                               </Tooltip>
                             </div>
@@ -1492,6 +1497,7 @@ class EditIssueNarrow extends Component {
                         <div style={{ marginTop: 30 }}>
                           {addingComment ? <div className="line-start mt-10">
                             <WYSIWYGEditor
+                              autoFocus
                               bottomBar
                               style={{ height: 200, width: '100%' }}
                               handleDelete={() => {

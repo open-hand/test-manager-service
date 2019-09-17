@@ -151,6 +151,7 @@ class CreateLinkTask extends Component {
         okText={<FormattedMessage id="create" />}
         cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
+        width={380}
       >
         <Content
           style={{
@@ -180,7 +181,7 @@ class CreateLinkTask extends Component {
               )}
             </FormItem> */}
 
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('issues', {
                 rules: [{
                   required: true, message: '请选择问题!',

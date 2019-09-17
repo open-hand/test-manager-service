@@ -1,5 +1,13 @@
+@import '~choerodon-ui/lib/style/themes/default';
 @btncolor:#3F51B5;
+.c7ntest-upload-table {
+  .c7n-upload-list{
+    display: none;
+  }
+}
 .c7ntest-upload-reverse {
+
+
   display: flex;
   flex-direction: column-reverse;
   .c7n-upload-select {
@@ -16,14 +24,17 @@
       }
     }
   }
-  .c7n-upload-list {
-    display: flex;
-    flex-direction: column;
-    .c7n-upload-list-item .icon-close {
-      transform: none;
-      font-size: 0.14rem;
-      overflow: hidden;
-      max-width: 100%;
-    }
+  .c7n-upload-list{
+    display: none;
   }
+  // .c7n-upload-list {
+  //   display: flex;
+  //   flex-direction: column;
+  //   .c7n-upload-list-item .icon-close {
+  //     transform: none;
+  //     font-size: 0.14rem;
+  //     overflow: hidden;
+  //     max-width: 100%;
+  //   }
+  // }
 }
