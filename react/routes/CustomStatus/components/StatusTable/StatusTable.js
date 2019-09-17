@@ -88,6 +88,7 @@ const StatusTable = ({
   return (
     <Table
       filterBarPlaceholder="过滤表"
+      filterBar={false}
       rowKey="statusId"
       columns={columns}
       dataSource={dataSource}

@@ -16,6 +16,7 @@ import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/master';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
+import './CustomStatusHome.less';
 
 const { TabPane } = Tabs;
 const defaultProps = {
@@ -90,7 +91,7 @@ const CustomStatusHome = ({
       <Breadcrumb title="" />
 
       <Content>
-        <Tabs activeKey={statusType} onChange={onTabChange}>
+        <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
           <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
             <Spin spinning={loading}>
               <StatusTable
