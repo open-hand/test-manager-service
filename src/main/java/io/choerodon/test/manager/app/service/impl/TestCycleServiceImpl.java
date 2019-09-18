@@ -111,8 +111,11 @@ public class TestCycleServiceImpl implements TestCycleService {
             TestCycleDTO parentCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
             //如果父循环结束的时间，小于当前阶段时间，就更新
             if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()) {
-                parentCycleDTO.setToDate(testCycleVO.getToDate());
-                if (cycleMapper.updateByPrimaryKey(parentCycleDTO) != 1) {
+                TestCycleDTO testCycleDTO = new TestCycleDTO();
+                testCycleDTO.setCycleId(parentCycleDTO.getCycleId());
+                testCycleDTO.setObjectVersionNumber(parentCycleDTO.getObjectVersionNumber());
+                testCycleDTO.setToDate(testCycleVO.getToDate());
+                if (cycleMapper.updateByPrimaryKeySelective(parentCycleDTO) != 1) {
                     throw new CommonException("error.create.cycle");
                 }
             }
