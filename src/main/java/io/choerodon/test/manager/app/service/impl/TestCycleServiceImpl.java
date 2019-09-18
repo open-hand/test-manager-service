@@ -106,6 +106,20 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
+        if (Objects.equals(testCycleVO.getType(), TestCycleType.FOLDER)) {
+            //如果新增阶段，调整父循环的时间
+            TestCycleDTO parentCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
+            //如果父循环结束的时间，小于当前阶段时间，就更新
+            if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()) {
+                TestCycleDTO testCycleDTO = new TestCycleDTO();
+                testCycleDTO.setCycleId(parentCycleDTO.getCycleId());
+                testCycleDTO.setObjectVersionNumber(parentCycleDTO.getObjectVersionNumber());
+                testCycleDTO.setToDate(testCycleVO.getToDate());
+                if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
+                    throw new CommonException("error.update.cycle");
+                }
+            }
+        }
         if (testCycleVO.getFolderId() != null) {
             insertCaseToFolder(testCycleVO.getFolderId(), cycleDTO.getCycleId());
         }
