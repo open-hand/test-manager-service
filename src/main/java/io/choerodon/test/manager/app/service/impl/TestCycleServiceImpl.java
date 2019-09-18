@@ -115,8 +115,8 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testCycleDTO.setCycleId(parentCycleDTO.getCycleId());
                 testCycleDTO.setObjectVersionNumber(parentCycleDTO.getObjectVersionNumber());
                 testCycleDTO.setToDate(testCycleVO.getToDate());
-                if (cycleMapper.updateByPrimaryKeySelective(parentCycleDTO) != 1) {
-                    throw new CommonException("error.create.cycle");
+                if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
+                    throw new CommonException("error.update.cycle");
                 }
             }
         }
