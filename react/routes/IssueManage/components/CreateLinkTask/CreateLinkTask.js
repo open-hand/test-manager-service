@@ -144,7 +144,7 @@ class CreateLinkTask extends Component {
     return (
       <Sidebar
         className="c7ntest-newLink"
-        title="关联问题"
+        title="问题链接"
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
