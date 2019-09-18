@@ -563,8 +563,6 @@ class EditIssueNarrow extends Component {
     }
     if (!description || editDescriptionShow) {
       delta = text2Delta(description);
-
-      console.log('delta', delta, description);
       return (
         editDescriptionShow && <div className="line-start mt-10">
           <WYSIWYGEditor
@@ -593,11 +591,6 @@ class EditIssueNarrow extends Component {
           <div
             className="line-start mt-10 c7ntest-description"
             role="none"
-            onClick={() => {
-              this.setState({
-                editDescriptionShow: true,
-              });
-            }}
           >
             <IssueDescription data={delta} />
           </div>
