@@ -174,9 +174,7 @@ export default class IssueManage extends Component {
           >
             <IssueTable
               clickIssue={clickIssue}
-              onRow={record => ({
-                onClick: (event) => { this.handleTableRowClick(record); },
-              })}
+              onClick={this.handleTableRowClick}
             />
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />

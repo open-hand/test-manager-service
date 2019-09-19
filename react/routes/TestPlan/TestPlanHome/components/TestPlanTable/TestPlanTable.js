@@ -1,12 +1,13 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Button } from 'choerodon-ui';
+import { Tooltip, Menu } from 'choerodon-ui';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../../components';
-import { getUsers } from '../../../../../api/IamApi';
+import './TestPlanTable.less';
+import TableDropMenu from '../../../../../common/TableDropMenu';
 import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 
 const propTypes = {
@@ -35,22 +36,38 @@ const TestPlanTable = ({
   onTableRowClick,
   onDeleteExecute,
 }) => {
+  const renderMenu = (text, record) => {
+    const handleItemClick = ({ key }) => {
+      if (key === 'delete') {
+        onDeleteExecute(record);
+      }
+    };
+    const menu = (
+      <Menu onClick={handleItemClick}>
+        <Menu.Item key="delete">
+          <Tooltip placement="top" title={<FormattedMessage id="delete" />}>
+            <span style={{ cursor: 'pointer' }} role="none"><FormattedMessage id="delete" /></span>
+          </Tooltip>
+        </Menu.Item>
+      </Menu>
+    );
+    return (
+      <TableDropMenu
+        menu={menu}
+        text={text}
+        isHasMenu={record.projectId !== 0}
+        onClickEdit={onTableRowClick.bind(this, record)}
+      />
+    );
+  };
+
   const columns = [{
     title: <span>用例名称</span>,
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
     flex: 2,
-    render(issueId, record) {
-      const { issueInfosVO } = record;
-      return (
-        issueInfosVO && (
-          <SmartTooltip title={issueInfosVO.summary} style={{ color: '#3F51B5' }}>
-            {issueInfosVO.summary}
-          </SmartTooltip>
-        )
-      );
-    },
+    render: (text, record) => renderMenu(record.issueInfosVO.summary, record),
   }, {
     title: <FormattedMessage id="cycle_executeBy" />,
     dataIndex: 'lastUpdateUser',
@@ -109,30 +126,6 @@ const TestPlanTable = ({
         )
       );
     },
-  }, {
-    title: '',
-    key: 'action',
-    flex: 1,
-    render: (text, record) => (
-      record.projectId !== 0
-      && (
-        <div style={{ display: 'flex' }}>
-          <div className="c7ntest-flex-space" />
-          <Button
-            shape="circle"
-            funcType="flat"
-            icon="delete_forever"
-            style={{
-              marginRight: 10,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDeleteExecute(record);
-            }}
-          />
-        </div>
-      )
-    ),
   }];
 
   return (
@@ -172,9 +165,6 @@ const TestPlanTable = ({
         dataSource={dataSource}
         columns={columns}
         onDragEnd={onDragEnd}
-        onRow={record => ({
-          onClick: (event) => { onTableRowClick(record); },
-        })}
         dragKey="executeId"
       />
     </div>

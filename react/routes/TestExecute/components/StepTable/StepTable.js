@@ -251,15 +251,18 @@ class StepTable extends PureComponent {
                   ))}
                 </div>
               ) : (
-                <div
-                  style={{
-                    width: 100,
-                    height: 20,
-                    color: '#3f51b5',
-                  }}
-                >
-                    添加缺陷
-                </div>
+                disabled ?
+                  null : (
+                    <div
+                      style={{
+                        width: 100,
+                        height: 20,
+                        color: '#3f51b5',
+                      }}
+                    >
+                      添加缺陷
+                    </div>
+                  )
               )
             }
           </Text>

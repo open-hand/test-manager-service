@@ -1,0 +1,21 @@
+@base: black;
+@baseblue: #3F51B5;
+
+.c7n-table {
+  &-TestPlanTable-table {
+    &-p {
+      color: @base;
+    }
+
+    &-p:hover {
+      color: @baseblue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  &-TestPlanTable-table {
+    &-span {
+      color: fade(@base, 65%);
+    }
+  }
+}

@@ -10,7 +10,6 @@ import { renderPriority } from '../../../../IssueManage/components/IssueTable/ta
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../components';
-import { getUsers } from '../../../../../api/IamApi';
 import './TestExecuteTable.less';
 
 const propTypes = {
@@ -52,7 +51,6 @@ class TestExecuteTable extends Component {
     } = currentCycle;
     const prefix = <Icon type="filter_list" />;
 
-
     const columns = [{
       title: <span>用例名称</span>,
       dataIndex: 'summary',
@@ -64,7 +62,7 @@ class TestExecuteTable extends Component {
         return (
           issueInfosVO && (
             <SmartTooltip title={issueInfosVO.summary}>
-              <span className="c7n-table-TestExcuteTable-table-p">
+              <span onClick={() => onTableRowClick(record)} className="c7n-table-TestExcuteTable-table-p">
                 {issueInfosVO.summary}
               </span>
 
@@ -204,9 +202,6 @@ class TestExecuteTable extends Component {
           onChange={onTableChange}
           dataSource={dataSource}
           columns={columns}
-          onRow={record => ({
-            onClick: (event) => { onTableRowClick(record); },
-          })}
           filterBarPlaceholder="过滤表"
         />
       </div>

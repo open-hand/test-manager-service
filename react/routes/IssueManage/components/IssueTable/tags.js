@@ -42,15 +42,16 @@ export function renderIssueNum(issueNum) {
     </Tooltip>
   );
 }
-export function renderSummary(summary) {
+export function renderSummary(summary, record , onClick) {
   return (
     <div style={{ overflow: 'hidden' }}>
       <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
         <p
           style={{
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', cursor: 'pointer',
           }}
           className="c7n-table-issueTreeTtile-table-p"
+          onClick={() => onClick(record)}
         >
           {summary}
         </p>

@@ -279,7 +279,7 @@ class TestStepTable extends Component {
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
-      flex: 1,
+      flex: 0.2,
       width: 10,
       render(stepId, record, index) {
         return index + 1;
@@ -288,7 +288,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      flex: 2,
+      flex: 2.4,
       render: (testStep, record) => {
         const { stepIsCreating } = record;
         return (
@@ -382,7 +382,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      flex: 2,
+      flex: 2.4,
       render: (expectedResult, record) => {
         const { stepIsCreating } = record;
         return (

@@ -13,7 +13,7 @@ import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
   renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
 } from './tags';
-import './IssueTable.scss';
+import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
 
 const versionStatus = [
@@ -318,6 +318,7 @@ class IssueTable extends Component {
 
 
   render() {
+    const { onClick } = this.props;
     const prioritys = IssueStore.getPrioritys;
     const labels = IssueStore.getLabels;
     const components = IssueStore.getComponents;
@@ -329,7 +330,7 @@ class IssueTable extends Component {
         key: 'summary',
         filters: [],
         width: 400,
-        render: (summary, record) => renderSummary(summary),
+        render: (summary, record) => renderSummary(summary, record ,onClick),
       },
       {
         title: '编号',
