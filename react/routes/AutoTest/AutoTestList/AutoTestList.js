@@ -183,7 +183,7 @@ const AutoTestList = ({
           <span>添加测试</span>
         </Button>
       </Header>
-      <Breadcrumb title="自动化测试" />
+      <Breadcrumb />
       <Content>
         <Select
           label="选择应用"
