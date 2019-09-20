@@ -35,7 +35,7 @@ import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
 import TestStepTable from '../TestStepTable'
 import TestExecuteTable from '../TestExecuteTable'
-const { AppState } = stores;
+const { AppState, HeaderStore } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
@@ -1138,7 +1138,7 @@ class EditIssueNarrow extends Component {
       <div style={{
         position: 'fixed',
         right: 0,
-        top: 49,
+        top: HeaderStore.announcementClosed ? 50 : 100,
         bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
