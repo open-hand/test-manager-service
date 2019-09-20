@@ -237,6 +237,7 @@ class StepTable extends PureComponent {
         >
           <Text>
             {
+              // eslint-disable-next-line no-nested-ternary
               defects.length > 0 ? (
                 <div>
                   {defects.map((defect, i) => (
@@ -251,8 +252,8 @@ class StepTable extends PureComponent {
                   ))}
                 </div>
               ) : (
-                disabled ?
-                  null : (
+                disabled
+                  ? null : (
                     <div
                       style={{
                         width: 100,
@@ -289,7 +290,7 @@ class StepTable extends PureComponent {
     const actionColumn = {
       title: '',
       key: 'action',
-      width: 90,
+      width: 100,
       fixed: 'right',
       render: (text, record) => (
         record.projectId !== 0

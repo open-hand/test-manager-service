@@ -268,8 +268,9 @@ class TestExecuteHomeContainer extends Component {
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     const Filters = { ...filters };
+    // console.log(pagination, filters, sorter, barFilters);
     if (barFilters && barFilters.length > 0) {
-      Filters.summary = barFilters;
+      Filters.summary = barFilters.join('');
     }
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({
