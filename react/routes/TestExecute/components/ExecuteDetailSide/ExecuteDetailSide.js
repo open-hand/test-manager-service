@@ -8,6 +8,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload, Select,
 } from 'choerodon-ui';
+import { stores } from '@choerodon/master';
 import { find } from 'lodash';
 import { delta2Html, issueLink, text2Delta } from '../../../../common/utils';
 import {
@@ -22,7 +23,7 @@ import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
 import UploadButtonNow from '../../../IssueManage/components/CommonComponent/UploadButtonNow';
 import UploadButtonExcuteDetail from '../../../IssueManage/components/CommonComponent/UploadButtonExcuteDetail';
-
+const { HeaderStore } = stores;
 
 const { Edit, Text } = TextEditToggle;
 const { Option } = Select;
@@ -91,12 +92,12 @@ const propTypes = {
   onCreateBugShow: PropTypes.func.isRequired,
 };
 // console.log('propTypes', propTypes);
-@inject('HeaderStore')
 @observer
 class ExecuteDetailSide extends Component {
   constructor(props) {
     super(props);
     this.container = React.createRef();
+    console.log('HeaderStore', HeaderStore)
   }
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
 

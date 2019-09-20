@@ -62,7 +62,7 @@ class TestExecuteTable extends Component {
         return (
           issueInfosVO && (
             <SmartTooltip title={issueInfosVO.summary}>
-              <span onClick={() => onTableRowClick(record)} className="c7n-table-TestExcuteTable-table-p">
+              <span role="none" onClick={() => onTableRowClick(record)} className="c7n-table-TestExcuteTable-table-p">
                 {issueInfosVO.summary}
               </span>
 
