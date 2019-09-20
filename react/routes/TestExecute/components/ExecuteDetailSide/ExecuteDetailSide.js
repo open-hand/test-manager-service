@@ -97,7 +97,6 @@ class ExecuteDetailSide extends Component {
   constructor(props) {
     super(props);
     this.container = React.createRef();
-    console.log('HeaderStore', HeaderStore)
   }
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
 

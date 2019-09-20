@@ -3,7 +3,7 @@ import {
   Button, Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
 import {
-  Page, Header, Content, Breadcrumb, 
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/master';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
@@ -220,6 +220,7 @@ class ExecuteDetail extends Component {
   }
 
   render() {
+    // disabled 用于禁止action列
     const { disabled } = this.props;
     const { loading } = ExecuteDetailStore;
     const detailList = ExecuteDetailStore.getDetailList;
@@ -297,29 +298,29 @@ class ExecuteDetail extends Component {
               >
                 <div style={{ marginBottom: 24 }}>
                   {issueInfosVO && (
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <StatusTags
-                      style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
-                      color={statusColor}
-                      name={statusName}
-                    />
-                    <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
-                    {/* <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <StatusTags
+                        style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                        color={statusColor}
+                        name={statusName}
+                      />
+                      <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
+                      {/* <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
                       <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
                       {visible ? '隐藏详情' : '打开详情'}
                     </Button> */}
-                  </div>
+                    </div>
                   )}
                 </div>
                 {!disabled
-                && (
-                  <QuickOperate
-                    statusList={statusList}
-                    quickPass={this.quickPass}
-                    quickFail={this.quickFail}
-                    onSubmit={this.handleSubmit}
-                  />
-                )}
+                  && (
+                    <QuickOperate
+                      statusList={statusList}
+                      quickPass={this.quickPass}
+                      quickFail={this.quickFail}
+                      onSubmit={this.handleSubmit}
+                    />
+                  )}
                 <CardWrapper
                   style={{ margin: '24px 0' }}
                   title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
@@ -342,38 +343,38 @@ class ExecuteDetail extends Component {
               </div>
               {/* 右侧侧边栏 */}
               {visible && (
-              <ExecuteDetailSide
-                disabled={disabled}
-                ref={this.saveRef('ExecuteDetailSide')}
-                issueInfosVO={issueInfosVO}
-                cycleData={cycleData}
-                fileList={fileList}
-                // setFileList={this.setFileList}
-                onFileRemove={this.handleFileRemove}
-                status={{ statusColor, statusName }}
-                onClose={this.handleToggleExecuteDetailSide}
-                onUpload={this.handleUpload}
-                onSubmit={this.handleSubmit}
-                onCommentSave={this.handleCommentSave}
-                onRemoveDefect={this.handleRemoveDefect}
-                onCreateBugShow={this.handleCreateBugShow}
-              />
+                <ExecuteDetailSide
+                  disabled={disabled}
+                  ref={this.saveRef('ExecuteDetailSide')}
+                  issueInfosVO={issueInfosVO}
+                  cycleData={cycleData}
+                  fileList={fileList}
+                  // setFileList={this.setFileList}
+                  onFileRemove={this.handleFileRemove}
+                  status={{ statusColor, statusName }}
+                  onClose={this.handleToggleExecuteDetailSide}
+                  onUpload={this.handleUpload}
+                  onSubmit={this.handleSubmit}
+                  onCommentSave={this.handleCommentSave}
+                  onRemoveDefect={this.handleRemoveDefect}
+                  onCreateBugShow={this.handleCreateBugShow}
+                />
               )}
               {
-              createBugShow && (
-                <CreateBug
-                  visible={createBugShow}
-                  defectType={defectType}
-                  id={createDectTypeId}
-                  onCancel={this.handleHiddenCreateBug}
-                  onOk={this.handleBugCreate}
-                />
-              )
-            }
+                createBugShow && (
+                  <CreateBug
+                    visible={createBugShow}
+                    defectType={defectType}
+                    id={createDectTypeId}
+                    onCancel={this.handleHiddenCreateBug}
+                    onOk={this.handleBugCreate}
+                  />
+                )
+              }
             </div>
           </Spin>
         </Content>
-        
+
       </Page>
     );
   }
