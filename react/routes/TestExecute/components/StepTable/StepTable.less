@@ -20,17 +20,28 @@
     padding: 5px 12px;
   }
 
+  // .c7n-table-fixed-right {
+  //   colgroup {
+  //     background-color: rgba(0, 0, 0, 0.04);
+  //   }
+  // }
   .c7n-table-fixed-right {
-    colgroup {
-      background-color: rgba(0, 0, 0, 0.04);
+    table {
+      thead {
+        tr {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+      }
     }
+
   }
 
   // 强改样式 解决固定列表格右侧会有空白·
   .c7n-table-body-inner {
     background-color: rgba(0, 0, 0, 0.04);
+
     &:hover {
-        background-color: rgb(239, 239, 239);
+      background-color: rgb(239, 239, 239);
     }
   }
 }
