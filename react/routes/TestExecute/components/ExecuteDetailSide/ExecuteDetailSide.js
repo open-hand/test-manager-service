@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -91,6 +91,7 @@ const propTypes = {
   onCreateBugShow: PropTypes.func.isRequired,
 };
 // console.log('propTypes', propTypes);
+@inject('HeaderStore')
 @observer
 class ExecuteDetailSide extends Component {
   constructor(props) {
@@ -289,7 +290,7 @@ class ExecuteDetailSide extends Component {
       <div style={{
         position: 'fixed',
         right: 0,
-        top: 49,
+        top: HeaderStore.announcementClosed ? 50 : 100,
         bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
