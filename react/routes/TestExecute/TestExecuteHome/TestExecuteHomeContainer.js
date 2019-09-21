@@ -24,16 +24,19 @@ const dataList = [];
 function getParentKey(key) { return key.split('-').slice(0, -1).join('-'); }
 @observer
 class TestExecuteHomeContainer extends Component {
-  state = {
-    loading: false,
-    tableLoading: false,
-    testList: [],
-    autoExpandParent: true,
-    treeSearchValue: '',
-    statusList: [],
-    filters: {},
-    prioritys: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      tableLoading: false,
+      testList: [],
+      autoExpandParent: true,
+      treeSearchValue: '',
+      statusList: [],
+      filters: {},
+      prioritys: [],
+    };
+  }
 
   componentDidMount() {
     RunWhenProjectChange(TestExecuteStore.clearStore);
@@ -268,9 +271,8 @@ class TestExecuteHomeContainer extends Component {
 
   handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     const Filters = { ...filters };
-    // console.log(pagination, filters, sorter, barFilters);
     if (barFilters && barFilters.length > 0) {
-      Filters.summary = barFilters.join('');
+      Filters.summary = barFilters;
     }
     TestExecuteStore.setExecutePagination(pagination);
     this.setState({

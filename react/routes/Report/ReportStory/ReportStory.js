@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { Tags } from '../../../components';
-import { ReporterSwitcher } from '../components';
+import  ReporterSwitcher from '../components';
 import { getReportsFromStory } from '../../../api/reportApi';
 import {
   getIssueTypes, getIssueStatus, getProjectVersion, getSprints,
