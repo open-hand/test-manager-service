@@ -5,7 +5,7 @@ import { Tooltip } from 'choerodon-ui';
 const User = ({
   user,
 }) => (user ? (
-  <Tooltip title={`${user.loginName}${user.realName}`}>
+  <Tooltip title={`${user.loginName}(${user.realName})`}>
     <div
       style={{
         display: 'inline-block',
