@@ -36,7 +36,7 @@ const InnerTable = (TestClass) => {
           <div>
             {groups && <div>{`Group: ${groups.join(',')}`}</div>}
             {params && <div>{`[DATA] ${toArray(params.param).map(param => param.value).join(',')}`}</div>}
-            {exception && <div style={{ color: '#3F51B5' }}>{exception.message}</div>}
+            {exception && <div className="primary">{exception.message}</div>}
             {exception && <div style={{ whiteSpace: 'pre-wrap' }}>{exception['full-stacktrace']}</div>}
           </div>
         );

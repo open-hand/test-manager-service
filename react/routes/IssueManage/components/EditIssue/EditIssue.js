@@ -775,7 +775,7 @@ class EditIssueNarrow extends Component {
       >
         <Text>
           {data => (
-            <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+            <p className="primary" style={{ wordBreak: 'break-word', marginBottom: 0 }}>
               {this.transToArr(data, 'name')}
             </p>
           )}
@@ -1381,8 +1381,8 @@ class EditIssueNarrow extends Component {
                                     {this.renderSelectAssign()}
                                     <span
                                       role="none"
+                                      className="primary"
                                       style={{
-                                        color: '#3f51b5',
                                         cursor: 'pointer',
                                         marginLeft: 5,
                                         display: 'inline-block',

@@ -207,8 +207,7 @@ class CreateIssueTiny extends Component {
       </div>
     ) : (
         <Button
-          className="leftBtn"
-          style={{ color: '#3f51b5' }}
+          type="primary"
           funcType="flat"
           onClick={() => {
             this.setState({

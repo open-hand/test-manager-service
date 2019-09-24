@@ -42,8 +42,7 @@ class TestManagerIndex extends React.Component {
           </Switch>        
         </IntlProviderAsync>
         <ModalContainer />
-      </div>
-      
+      </div>      
     );
   }
 }

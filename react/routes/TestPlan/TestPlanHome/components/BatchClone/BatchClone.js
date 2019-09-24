@@ -248,7 +248,7 @@ class BatchClone extends Component {
           >
               确定
           </Button>,
-          <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
+          <Button type="primary" funcType="raised" onClick={this.close}>
               关闭
           </Button>]}
       >
