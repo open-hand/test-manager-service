@@ -340,7 +340,7 @@ class ExecuteDetailSide extends Component {
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
+                      <Link className="primary" style={{ marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
                     </div>
 
                   </div>
@@ -520,7 +520,8 @@ class ExecuteDetailSide extends Component {
                           dropdownClassName="dropdown"
                           footer={(
                             <div
-                              style={{ color: '#3f51b5', cursor: 'pointer' }}
+                              className="primary"
+                              style={{ cursor: 'pointer' }}
                               role="none"
                               onClick={() => {
                                 this.bugsToggle.handleSubmit();

@@ -465,8 +465,8 @@ class DataLog extends Component {
                         <UserHead
                           user={{
                             id: datalog.lastUpdatedBy,
-                            loginName: '',
-                            realName: datalog.name,
+                            loginName: datalog.loginName,
+                            realName: datalog.realName,
                             avatar: datalog.imageUrl,
                           }}
                           hiddenText

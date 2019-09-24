@@ -157,9 +157,9 @@ export function renderFolder(folderName) {
 export function renderComponents(components) {
   return (
     components.length > 0 ? (
-      <div style={{ margin: '0 5px', color: '#3F51B5', fontWeight: 500 }}>
+      <div className="primary" style={{ margin: '0 5px', fontWeight: 500 }}>
         {
-          components.map((component) => component.name).join(',')
+          components.map(component => component.name).join(',')
         }
       </div>
     ) : null
@@ -168,7 +168,7 @@ export function renderComponents(components) {
 export function renderLabels(labels) {
   if (labels.length > 0) {
     return (
-      <Tooltip title={labels.map((label) => label.labelName).join(',')}>
+      <Tooltip title={labels.map(label => label.labelName).join(',')}>
         <Tag
           color="blue"
           style={{

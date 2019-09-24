@@ -520,10 +520,11 @@ class ReportStory extends Component {
                             {defects.concat(subStepDefects).map((defect, i) => {
                               const { issueInfosVO } = defect;
                               return (
-                                <span style={{
-                                  fontSize: '13px',
-                                  color: '#3F51B5',
-                                }}
+                                <span
+                                  className="primary"
+                                  style={{
+                                    fontSize: '13px',
+                                  }}
                                 >
                                   <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)} target="_blank">
                                     {issueInfosVO && issueInfosVO.issueName}

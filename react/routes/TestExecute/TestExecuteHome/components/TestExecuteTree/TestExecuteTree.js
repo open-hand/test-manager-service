@@ -9,7 +9,7 @@ import './TestExecuteTree.scss';
 
 const { TreeNode } = Tree;
 const propTypes = {
-  treeSearchValue: PropTypes.string.isRequired,  
+  treeSearchValue: PropTypes.string.isRequired,
   autoExpandParent: PropTypes.bool.isRequired,
   treeData: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   expandedKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -42,7 +42,7 @@ const TestExecuteTree = ({
     const afterStr = item.title.substr(index + treeSearchValue.length);
     const icon = (
       <Icon
-        style={{ color: '#3F51B5' }}
+        className="primary"
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
@@ -58,7 +58,7 @@ const TestExecuteTree = ({
         <TreeNode
           title={item.cycleId
             ? (
-              <TreeTitle        
+              <TreeTitle
                 text={item.title}
                 key={key}
                 data={item}
@@ -87,7 +87,7 @@ const TestExecuteTree = ({
   return (
     <div className="c7ntest-TestExecuteTree">
       {noVersion ? <NoVersion /> : (
-        <Tree    
+        <Tree
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           showIcon
@@ -98,7 +98,7 @@ const TestExecuteTree = ({
           {renderTreeNodes(treeData)}
         </Tree>
       )}
-    </div>    
+    </div>
   );
 };
 

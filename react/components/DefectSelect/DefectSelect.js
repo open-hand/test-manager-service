@@ -140,7 +140,8 @@ class DefectSelect extends Component {
           defaultValue={defects.map(defect => defect.issueId.toString())}
           footer={(
             <div
-              style={{ color: '#3f51b5', cursor: 'pointer' }}
+              className="primary"
+              style={{ cursor: 'pointer' }}
               role="none"
               onClick={() => {
                 handleSubmit();

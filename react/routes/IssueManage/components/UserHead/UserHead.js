@@ -28,7 +28,7 @@ const UserHead = memo(({
   } = user;
   const img = avatar || imageUrl;
   return (
-    <Tooltip title={tooltip ? `${loginName || ''}${realName || ''}` : ''} mouseEnterDelay={0.5}>
+    <Tooltip title={tooltip ? `${realName || ''}(${loginName || ''})` : ''} mouseEnterDelay={0.5}>
       <div
         className="c7n-userHead"
         style={{

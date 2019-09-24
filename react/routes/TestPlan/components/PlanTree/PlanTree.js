@@ -119,7 +119,8 @@ class PlanTree extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (
       <Icon
-        style={{ color: '#3F51B5', marginRight: 5 }}
+        className="primary"
+        style={{ marginRight: 5 }}
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
