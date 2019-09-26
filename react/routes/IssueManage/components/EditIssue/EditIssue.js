@@ -907,7 +907,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { reporterId, reporterRealName, reporterLoginName, reporterImageUrl } = issueInfo;
+    const { reporterId, reporterName, reporterRealName, reporterLoginName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
