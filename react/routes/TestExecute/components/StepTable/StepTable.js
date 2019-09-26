@@ -224,6 +224,35 @@ class StepTable extends PureComponent {
 
           );
         },
+      }, {
+        title: <FormattedMessage id="execute_comment" />,
+        dataIndex: 'comment',
+        key: 'comment',
+        render(comment, record) {
+          return (
+            <TextEditToggle
+              noButton
+              disabled={disabled}
+              formKey="comment"
+              onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
+              originData={delta2Text(comment)}
+            >
+              <Text>
+                {data => (
+                  <div
+                    className="c7ntest-text-wrap"
+                    style={{ minHeight: 20 }}
+                  >
+                    {delta2Text(data) === '' ? '-' : delta2Text(data)}
+                  </div>
+                )}
+              </Text>
+              <Edit>
+                <TextArea autosize autoFocus />
+              </Edit>
+            </TextEditToggle>
+          );
+        },
       },
       // 缺陷
       {
@@ -326,6 +355,7 @@ class StepTable extends PureComponent {
         className="StepTable"
       >
         <Table
+          autoScroll={false}
           rowKey="executeStepId"
           filterBar={false}
           dataSource={dataSource}
