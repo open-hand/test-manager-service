@@ -74,8 +74,9 @@ class Comment extends Component {
               <UserHead
                 user={{
                   id: commit.userId,
-                  loginName: '',
-                  realName: commit.userName,
+                  name: commit.userName,
+                  loginName: commit.userLoginName,
+                  realName: commit.userRealName,
                   avatar: commit.imageUrl,
                 }}
                 color="#3f51b5"

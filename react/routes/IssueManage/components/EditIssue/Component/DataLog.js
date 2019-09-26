@@ -31,6 +31,8 @@ const PROP_SIMPLE = {
   task: '任务',
   sub_task: '子任务',
   feature: '特性',
+  issue_test: '测试用例',
+  issue_auto_test: '自动化测试用例',
   description: '描述',
   Attachment: '附件',
   timespent: '花费时间',
@@ -54,7 +56,7 @@ class DataLog extends Component {
     } = datalog;
     if ((!oldValue && oldValue !== 0) && (newValue || newValue === 0)) {
       // null -> xxx
-      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_epic', 'story', 'bug', 'task', 'sub_task', 'feature'].includes(field)) {
+      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_epic', 'story', 'bug', 'task', 'sub_task', 'issue_auto_test', 'issue_test', 'feature'].includes(field)) {
         return '添加';
       }
       if (['Attachment'].includes(field)) {
@@ -441,6 +443,72 @@ class DataLog extends Component {
     return str[0];
   }
 
+  renderOperator = (datalog) => {
+    const content = <span style={{ color: '#303f9f' }}>
+      {`${datalog.realName || '系统'} `}
+    </span>
+    if (datalog.realName) {
+      return <Popover
+        placement="bottomLeft"
+        content={(
+          <div style={{ padding: '5px 2px 0' }}>
+            <div
+              style={{
+                width: 62,
+                height: 62,
+                background: '#c5cbe8',
+                color: '#6473c3',
+                overflow: 'hidden',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                borderRadius: '50%',
+                fontSize: '28px',
+                margin: '0 auto',
+              }}
+            >
+              {
+                datalog.imageUrl ? (
+                  <img src={datalog.imageUrl} alt="" style={{ width: '100%' }} />
+                ) : (
+                    <span style={{
+                      width: 62, height: 62, lineHeight: '62px', textAlign: 'center', color: '#6473c3',
+                    }}
+                    >
+                      {this.getFirst(datalog.realName)}
+                    </span>
+                  )
+              }
+            </div>
+            <h1 style={{
+              margin: '8px auto 18px', fontSize: '13px', lineHeight: '20px', textAlign: 'center',
+            }}
+            >
+              {datalog.realName}
+            </h1>
+            <div style={{
+              color: 'rgba(0, 0, 0, 0.65)', fontSize: '13px', textAlign: 'center', display: 'flex',
+            }}
+            >
+              <Icon type="markunread" style={{ lineHeight: '20px' }} />
+              <span style={{
+                marginLeft: 6, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}
+              >
+                {datalog.email}
+              </span>
+            </div>
+          </div>
+        )}
+      >
+        {content}
+      </Popover>
+    }
+    return content;
+
+
+  }
   render() {
     const {
       datalog, i, origin, expand,
@@ -465,6 +533,7 @@ class DataLog extends Component {
                         <UserHead
                           user={{
                             id: datalog.lastUpdatedBy,
+                            name: datalog.name,
                             loginName: datalog.loginName,
                             realName: datalog.realName,
                             avatar: datalog.imageUrl,
@@ -479,66 +548,7 @@ class DataLog extends Component {
                 </div>
                 <div style={{ flex: 1, borderBottom: '1px solid rgba(0, 0, 0, 0.12)', padding: '8.5px 0' }}>
                   <div>
-                    {/* 操作人 */}
-                    <Popover
-                      placement="bottomLeft"
-                      content={(
-                        <div style={{ padding: '5px 2px 0' }}>
-                          <div
-                            style={{
-                              width: 62,
-                              height: 62,
-                              background: '#c5cbe8',
-                              color: '#6473c3',
-                              overflow: 'hidden',
-                              display: 'flex',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              textAlign: 'center',
-                              borderRadius: '50%',
-                              fontSize: '28px',
-                              margin: '0 auto',
-                            }}
-                          >
-                            {
-                              datalog.imageUrl ? (
-                                <img src={datalog.imageUrl} alt="" style={{ width: '100%' }} />
-                              ) : (
-                                <span style={{
-                                  width: 62, height: 62, lineHeight: '62px', textAlign: 'center', color: '#6473c3',
-                                }}
-                                >
-                                  {this.getFirst(datalog.name)}
-                                </span>
-                              )
-                            }
-                          </div>
-                          <h1 style={{
-                            margin: '8px auto 18px', fontSize: '13px', lineHeight: '20px', textAlign: 'center',
-                          }}
-                          >
-                            {datalog.name}
-                          </h1>
-                          <div style={{
-                            color: 'rgba(0, 0, 0, 0.65)', fontSize: '13px', textAlign: 'center', display: 'flex',
-                          }}
-                          >
-                            <Icon type="markunread" style={{ lineHeight: '20px' }} />
-                            <span style={{
-                              marginLeft: 6, lineHeight: '20px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                            }}
-                            >
-                              {datalog.email}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    >
-                      <span style={{ color: '#303f9f' }}>
-                        {`${datalog.name} `}
-                      </span>
-                    </Popover>
-
+                    {this.renderOperator(datalog)}
                     <div style={{ display: 'inline' }}>
                       <span>
                         {/* 操作 */}

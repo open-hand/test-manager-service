@@ -491,13 +491,14 @@ class EditIssueNarrow extends Component {
     const {
       createdBy,
       createrImageUrl, createrEmail,
-      createrName, creationDate, issueTypeVO = {},
+      createrName, createrRealName, creationDate, issueTypeVO = {},
     } = issueInfo;
     const createLog = {
       email: createrEmail,
       field: issueTypeVO.typeCode,
       imageUrl: createrImageUrl,
       name: createrName,
+      realName: createrRealName,
       lastUpdateDate: creationDate,
       lastUpdatedBy: createdBy,
       newString: 'issueNum',
@@ -921,6 +922,7 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: reporterId,
+            name: reporterName,
             loginName: reporterLoginName,
             realName: reporterRealName,
             avatar: reporterImageUrl,
@@ -984,7 +986,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { assigneeId, assigneeRealName, assigneeLoginName, assigneeImageUrl } = issueInfo;
+    const { assigneeId, assigneeName, assigneeRealName, assigneeLoginName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
@@ -998,6 +1000,7 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: assigneeId,
+            name: assigneeName,
             loginName: assigneeLoginName,
             realName: assigneeRealName,
             avatar: assigneeImageUrl,

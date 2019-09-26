@@ -39,7 +39,7 @@ class IssueTable extends Component {
     };
     this.inDivRef = React.createRef();
   }
-  
+
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
@@ -237,7 +237,7 @@ class IssueTable extends Component {
       }
     } else {
       IssueStore.setDraggingTableItems([]);
-      onRow(issue).onClick();
+      // onRow(issue).onClick();
     }
     this.setState({
       firstIndex: index,
@@ -330,7 +330,7 @@ class IssueTable extends Component {
         key: 'summary',
         filters: [],
         width: 400,
-        render: (summary, record) => renderSummary(summary, record ,onClick),
+        render: (summary, record) => renderSummary(summary, record, onClick),
       },
       {
         title: '编号',
@@ -365,9 +365,9 @@ class IssueTable extends Component {
         key: 'reporter',
         render: (assign, record) => {
           const {
-            reporterId, reporterLoginName, reporterRealName, reporterImageUrl,
+            reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl,
           } = record;
-          return renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl);
+          return renderReporter(reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl);
         },
       },
       {
@@ -384,9 +384,9 @@ class IssueTable extends Component {
         key: 'assign',
         render: (assign, record) => {
           const {
-            assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl,
+            assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl,
           } = record;
-          return renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl);
+          return renderAssigned(assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl);
         },
       },
       {
@@ -436,17 +436,17 @@ class IssueTable extends Component {
 
           <div
             className="c7ntest-backlog-sprintIssue"
-            role="button"           
+            role="button"
           >
             <div
               style={{
                 userSelect: 'none',
                 background: 'white',
-                padding: '12px 0 12px 12px',                
+                padding: '12px 0 12px 12px',
                 fontSize: 13,
                 display: 'flex',
-                alignItems: 'center',    
-                borderBottom: '1px solid #e8e8e8',            
+                alignItems: 'center',
+                borderBottom: '1px solid #e8e8e8',
               }}
             >
               {/* table底部创建用例 */}

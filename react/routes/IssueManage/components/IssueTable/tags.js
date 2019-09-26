@@ -42,11 +42,12 @@ export function renderIssueNum(issueNum) {
     </Tooltip>
   );
 }
-export function renderSummary(summary, record , onClick) {
+export function renderSummary(summary, record, onClick) {
   return (
     <div style={{ overflow: 'hidden' }}>
       <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
         <p
+          role="none"
           style={{
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, maxWidth: 'unset', cursor: 'pointer',
           }}
@@ -188,7 +189,7 @@ export function renderLabels(labels) {
     return null;
   }
 }
-export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, imageUrl, hiddenText) {
+export function renderAssigned(assigneeId, assigneeName, assigneeLoginName, assigneeRealName, imageUrl, hiddenText) {
   return (
     assigneeId ? (
       <div>
@@ -196,6 +197,7 @@ export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, 
           hiddenText={hiddenText}
           user={{
             id: assigneeId,
+            name: assigneeName,
             loginName: assigneeLoginName,
             realName: assigneeRealName,
             avatar: imageUrl,
@@ -205,7 +207,7 @@ export function renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, 
     ) : null
   );
 }
-export function renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl, hiddenText) {
+export function renderReporter(reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl, hiddenText) {
   return (
     reporterId ? (
       <div>
@@ -213,6 +215,7 @@ export function renderReporter(reporterId, reporterLoginName, reporterRealName, 
           hiddenText={hiddenText}
           user={{
             id: reporterId,
+            name: reporterName,
             loginName: reporterLoginName,
             realName: reporterRealName,
             avatar: reporterImageUrl,
