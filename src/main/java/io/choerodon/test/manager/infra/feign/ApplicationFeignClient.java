@@ -6,7 +6,6 @@ import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import io.choerodon.devops.api.vo.ApplicationRepDTO;
 import io.choerodon.devops.api.vo.InstanceValueVO;
 import io.choerodon.test.manager.infra.feign.callback.ApplicationFeignClientFallback;
-import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -60,6 +59,7 @@ public interface ApplicationFeignClient {
     ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(
             @PathVariable(value = "project_id") Long projectId,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
+            @RequestParam(value = "deploy_only") Boolean deployOnly,
             @RequestParam(name = "orders") String orders,
             @RequestParam(required = false, name = "app_service_id") Long appServiceId,
             @RequestBody(required = false) String searchParam);
