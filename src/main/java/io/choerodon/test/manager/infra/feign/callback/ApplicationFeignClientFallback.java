@@ -29,7 +29,7 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(Long projectId, int page, int size, String orders, Long appServiceId, String searchParam) {
+    public ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(Long projectId, int page, int size, Boolean deployOnly, String orders, Long appServiceId, String searchParam) {
         throw new CommonException("error.ApplicationFeignClient.pageByOptions");
     }
 
