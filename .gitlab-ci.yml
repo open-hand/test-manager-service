@@ -69,6 +69,7 @@ release:
   only:
     refs:
       - master
+      - /^release-.*$/
     variables:
       - $COMBINE == "true"
 
