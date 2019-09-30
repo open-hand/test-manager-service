@@ -58,6 +58,7 @@ build-combine:
   only:
     refs:
       - master
+      - /^release-.*$/
     variables:
       - $COMBINE == "true"
 
@@ -68,6 +69,7 @@ release:
   only:
     refs:
       - master
+      - /^release-.*$/
     variables:
       - $COMBINE == "true"
 
