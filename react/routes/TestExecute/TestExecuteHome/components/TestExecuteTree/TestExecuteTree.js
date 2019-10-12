@@ -27,6 +27,7 @@ const TestExecuteTree = ({
   onTreeNodeSelect,
   autoExpandParent,
   treeData,
+  loading,
 }) => {
   const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
   const renderTreeNodes = data => data.map((item) => {
@@ -86,7 +87,7 @@ const TestExecuteTree = ({
 
   return (
     <div className="c7ntest-TestExecuteTree">
-      {noVersion ? <NoVersion /> : (
+      {!loading && noVersion ? <NoVersion /> : (
         <Tree
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}

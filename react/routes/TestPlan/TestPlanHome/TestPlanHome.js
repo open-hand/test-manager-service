@@ -175,8 +175,8 @@ class TestPlanHome extends Component {
             </Injecter>              
             <ExportSide ref={this.saveRef('ExportSide')} />
             <BatchClone ref={this.saveRef('BatchClone')} onOk={this.refresh} />
-            <Injecter store={TestPlanStore} item="isTreeVisible">
-              {isTreeVisible => <TreeArea isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
+            <Injecter store={TestPlanStore} item={['loading', 'isTreeVisible']}>
+              {([loading, isTreeVisible]) => <TreeArea loading={loading} isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
             </Injecter>
             <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
               {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key && getTimesLength ? (
@@ -203,7 +203,7 @@ class TestPlanHome extends Component {
                   
                   )}
                 </div> 
-              ) : <NoCycle />)}
+              ) : !TestPlanStore.loading && <NoCycle />)}
             </Injecter>
           </div>
         </Content>

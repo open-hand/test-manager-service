@@ -358,7 +358,7 @@ class IssueTree extends Component {
           className="c7ntest-IssueTree-tree"
         >
           <Spin spinning={loading}>
-            {noVersion ? <NoVersion /> : (
+            {noVersion && !loading ? <NoVersion /> : (
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
                 <Tree
                   multiple
