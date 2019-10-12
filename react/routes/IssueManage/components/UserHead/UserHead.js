@@ -40,7 +40,7 @@ const UserHead = memo(({
       className="c7n-userHead"
       style={{
         ...style,
-        display: (id || loginName) ? 'flex' : 'none',
+        display: (id || loginName) ? 'inline-flex' : 'none',
         maxWidth: 108,
       }}
     >

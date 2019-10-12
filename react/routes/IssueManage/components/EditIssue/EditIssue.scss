@@ -61,11 +61,15 @@
   #detail {
     .line-start {
       width: 50%;
-      height: 32px;
+      min-height: 32px;
     }
 
     .c7n-value-wrapper {
       flex: 1;
+    }
+
+    .c7nagile-TextEditToggle {
+      max-width: 2rem;
     }
   }
 
@@ -318,6 +322,7 @@
 
       .c7ntest-value-wrapper {
         min-width: initial;
+        flex: 1;
         // white-space: nowrap;
       }
     }

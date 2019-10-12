@@ -264,7 +264,7 @@ class PlanTree extends Component {
   }
 
   render() {
-    const { onClose } = this.props;
+    const { loading } = this.props;
     const {
       autoExpandParent, CreateStageVisible, CreateStageIn, AssignBatchShow,
       CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage,
@@ -313,7 +313,7 @@ class PlanTree extends Component {
         </div>
 
         <div className="c7ntest-PlanTree-tree">
-          {noVersion ? <NoVersion /> : (
+          {!loading && noVersion ? <NoVersion /> : (
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <Tree
                 // draggable

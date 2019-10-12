@@ -91,6 +91,7 @@ const TestExecuteHome = ({
         <Spin spinning={loading}>
           <div className="c7ntest-TestExecuteHome-container">
             <TestExecuteTreeToggle
+              loading={loading}
               leftVisible={leftVisible}
               filterCycle={filterCycle}
               onTreeAssignedToChange={onTreeAssignedToChange}
@@ -122,7 +123,7 @@ const TestExecuteHome = ({
                   pagination={executePagination}
                 />
               </div>
-            ) : <NoCycle />}
+            ) : !loading && <NoCycle />}
           </div>
         </Spin>
       </Content>

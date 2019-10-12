@@ -932,6 +932,7 @@ class EditIssueNarrow extends Component {
     }
     return (
       <TextEditToggle
+        style={{ flex: 1 }}
         disabled={this.checkDisabledModifyOrDelete()}
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
@@ -1010,6 +1011,7 @@ class EditIssueNarrow extends Component {
     }
     return (
       <TextEditToggle
+        style={{ flex: 1 }}
         // disabled={disabled}
         formKey="assigneeId"
         onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}

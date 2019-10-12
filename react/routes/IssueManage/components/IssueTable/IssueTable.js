@@ -257,7 +257,7 @@ class IssueTable extends Component {
         pagination={false}
         filters={IssueStore.barFilters || []}
         filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-        empty={(
+        empty={!IssueStore.loading && (
           <EmptyBlock
             style={{ marginTop: 40 }}
             border
@@ -417,11 +417,11 @@ class IssueTable extends Component {
     return (
       <div className="c7ntest-issueArea">
         <div id="template_copy" style={{ display: 'none' }}>
-          {'当前状态：'}
+          当前状态：
           <span style={{ fontWeight: 500 }}>复制</span>
         </div>
         <div id="template_move" style={{ display: 'none' }}>
-          {'当前状态：'}
+          当前状态：
           <span style={{ fontWeight: 500 }}>移动</span>
         </div>
         <section

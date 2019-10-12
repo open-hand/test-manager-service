@@ -179,7 +179,7 @@ export default class IssueManage extends Component {
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           <ImportSide ref={this.saveRef('importSide')} />
-          {clickIssue.issueId && <TestCaseDetail clickIssue={clickIssue} onClose={this.handleClose} />}
+          <TestCaseDetail visible={clickIssue.issueId} clickIssue={clickIssue} onClose={this.handleClose} />
           {
             createIssueShow && (
               <CreateIssue

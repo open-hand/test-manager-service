@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Icon } from 'choerodon-ui';
 import PlanTree from '../PlanTree';
 
-const TreeArea = ({ isTreeVisible, setIsTreeVisible }) => (
+const TreeArea = ({ isTreeVisible, setIsTreeVisible, loading }) => (
   isTreeVisible
     ? (
       <div className="c7ntest-TestPlan-tree">
         <PlanTree          
           onClose={() => { setIsTreeVisible(false); }}
+          loading={loading}
         />
       </div>
     )
