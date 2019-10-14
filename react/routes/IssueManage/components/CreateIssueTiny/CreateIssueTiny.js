@@ -1,5 +1,6 @@
 /*eslint-disable */
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Button, Input, Icon, Select,
 } from 'choerodon-ui';

@@ -1,7 +1,8 @@
 /* eslint-disable */
 import React, { Component, Fragment } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
-import { stores, Permission } from '@choerodon/master';
+import { stores, Permission } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { throttle } from 'lodash';

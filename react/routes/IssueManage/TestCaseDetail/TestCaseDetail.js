@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import Animate from 'choerodon-ui/lib/animate';
 import _ from 'lodash';
 import {

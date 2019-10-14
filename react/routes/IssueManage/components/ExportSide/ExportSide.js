@@ -1,7 +1,7 @@
 /* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Content, stores, WSHandler } from '@choerodon/master';
+import { Content, stores, WSHandler } from '@choerodon/boot';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';

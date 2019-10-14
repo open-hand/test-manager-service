@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { Content } from '@choerodon/master';
+import { Content } from '@choerodon/boot';
 import { Tabs, Select } from 'choerodon-ui';
 import TestTable from './TestTable';
 import { toArray } from './utils';

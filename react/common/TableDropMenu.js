@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Button, Dropdown, Menu, Icon,
 } from 'choerodon-ui';
-import { Permission } from '@choerodon/master';
+import { Permission } from '@choerodon/boot';
 import './TableDropMenu.less';
 
 /**

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Choerodon } from '@choerodon/boot';
 import {
   Page, Header, Content, Breadcrumb, stores, 
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown, Switch, Steps,

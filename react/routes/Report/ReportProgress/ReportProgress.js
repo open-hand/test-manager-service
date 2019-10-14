@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Page, Header, Content, stores,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import {
   Tooltip, Button, Icon, Select, Spin,
 } from 'choerodon-ui';

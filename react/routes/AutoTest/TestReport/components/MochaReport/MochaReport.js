@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Icon } from 'choerodon-ui';
-import { Content } from '@choerodon/master';
+import { Content } from '@choerodon/boot';
 import ReactEcharts from 'echarts-for-react';
 import { observer } from 'mobx-react';
 import moment from 'moment';

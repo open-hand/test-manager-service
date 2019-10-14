@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { stores } from '@choerodon/master';
+import { stores } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 
 import _ from 'lodash';
 import moment from 'moment';

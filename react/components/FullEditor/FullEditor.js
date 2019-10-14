@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import { Form, Modal } from 'choerodon-ui';
 import WYSIWYGEditor from '../WYSIWYGEditor';

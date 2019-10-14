@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Choerodon } from '@choerodon/boot';
 import {
   Upload, Button, Icon, Tooltip,
 } from 'choerodon-ui';
-import { stores } from '@choerodon/master';
+import { stores } from '@choerodon/boot';
 import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
 import { deleteFileAgile } from '../../../../api/FileApi';
 

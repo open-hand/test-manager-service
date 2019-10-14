@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';

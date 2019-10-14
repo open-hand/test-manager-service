@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Icon } from 'choerodon-ui';
-import { stores } from '@choerodon/master';
+import { stores } from '@choerodon/boot';
 import { Tooltip } from 'choerodon-ui';
 import { getFileSuffix } from '../../../../../common/utils';
 import './SingleFileUpload.less';

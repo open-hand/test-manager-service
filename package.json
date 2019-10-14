@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@choerodon/agile": "0.19.0",
-    "@choerodon/boot": "0.20.x",
-    "@choerodon/master": "0.20.x",
+    "@choerodon/boot": "0.19.0",
+    "@choerodon/master": "0.19.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-preset-env": "^1.7.0",
     "gulp": "^3.9.1",
@@ -41,7 +41,7 @@
     "dist": "choerodon-front-boot dist --config ./react/config.js",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",
-    "compile": "gulp compile"
+    "compile": "choerodon-front-boot compile"
   },
   "author": "",
   "license": "ISC",
@@ -57,7 +57,7 @@
     }
   },
   "peerDependencies": {
-    "@choerodon/boot": "0.20.x",
-    "@choerodon/master": "0.20.x"
+    "@choerodon/boot": "0.19.0",
+    "@choerodon/master": "0.19.0"
   }
 }

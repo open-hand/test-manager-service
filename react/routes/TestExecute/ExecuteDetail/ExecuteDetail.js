@@ -4,7 +4,8 @@ import {
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';

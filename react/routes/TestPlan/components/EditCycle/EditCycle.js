@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
   Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
-import { Content, stores } from '@choerodon/master';
+import { Content, stores } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import moment from 'moment';
 import { observer } from 'mobx-react';
 import { getProjectVersion } from '../../../../api/agileApi';

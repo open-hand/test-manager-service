@@ -1,6 +1,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import { Choerodon } from '@choerodon/boot';
 import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';

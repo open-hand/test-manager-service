@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Choerodon } from '@choerodon/boot';
 import {
   Menu, Dropdown, Icon, Spin, Tooltip,
 } from 'choerodon-ui';
-import { DashBoardNavBar, DashBoardToolBar } from '@choerodon/master';
+import { DashBoardNavBar, DashBoardToolBar } from '@choerodon/boot';
 import ReactEcharts from 'echarts-for-react';
 import _ from 'lodash';
 import { getProjectVersion } from '../../api/agileApi';

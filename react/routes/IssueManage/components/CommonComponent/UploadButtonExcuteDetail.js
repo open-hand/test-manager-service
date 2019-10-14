@@ -1,14 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Upload, Button, Icon, Tooltip,
-} from 'choerodon-ui';
-import { stores } from '@choerodon/master';
+import { Choerodon } from '@choerodon/boot';
+import { stores } from '@choerodon/boot';
 
 import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
 import './UploadButtonNow.less';
-// D:\agile\agile-service\react\components\SingleFileUpload\index.js
 
 
 const { AppState } = stores;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { DashBoardNavBar } from '@choerodon/master';
+import { Choerodon } from '@choerodon/boot';
+import { DashBoardNavBar } from '@choerodon/boot';
 import ReactEcharts from 'echarts-for-react';
 import { getCaseNotPlain, getCaseNotRun, getCaseNum } from '../../api/summaryApi';
 import { getIssueCount } from '../../api/agileApi';

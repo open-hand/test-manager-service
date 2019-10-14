@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
   Table, Input, Icon, Select, Tooltip, Button,

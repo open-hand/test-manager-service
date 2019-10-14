@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Button, Upload } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 // import SingleFileUpload from '../../routes/IssueManage/components/CommonComponent/SingleFileUpload';

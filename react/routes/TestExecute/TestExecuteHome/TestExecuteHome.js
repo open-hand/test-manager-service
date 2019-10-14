@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import {

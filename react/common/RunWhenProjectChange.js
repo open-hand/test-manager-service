@@ -1,6 +1,6 @@
 import {
   stores,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import { autorun } from 'mobx';
 
 const { AppState } = stores;

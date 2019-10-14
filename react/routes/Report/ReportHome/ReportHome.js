@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Page, Header, Content } from '@choerodon/master';
+import { Page, Header, Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectName, commonLink } from '../../../common/utils';
 import ReporterSwitcher from '../components';
