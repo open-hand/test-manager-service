@@ -333,7 +333,7 @@ class ReportStory extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test',issue.issueName)} target="_blank">
                               {issue.issueName}
                             </Link>
                           </Tooltip>
