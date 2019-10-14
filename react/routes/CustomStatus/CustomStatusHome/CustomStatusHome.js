@@ -88,9 +88,9 @@ const CustomStatusHome = ({
           <FormattedMessage id="refresh" />
         </Button> */}
       </Header>
-      <Breadcrumb title="" />
+      <Breadcrumb />
 
-      <Content>
+      <Content style={{ paddingTop: 0 }}>
         <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
           <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
             <Spin spinning={loading}>
@@ -112,7 +112,6 @@ const CustomStatusHome = ({
           </TabPane>
         </Tabs>
       </Content>
-      {/* </Content> */}
     </Page>
   </div>
 );
