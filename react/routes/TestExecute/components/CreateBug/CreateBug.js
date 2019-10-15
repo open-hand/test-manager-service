@@ -1,6 +1,12 @@
 import React from 'react';
-import CreateIssue from '@choerodon/agile/lib/components/CreateIssue';
 import { addBugForExecuteOrStep } from '../../../../api/ExecuteDetailApi';
+
+let CreateIssue = null;
+try {
+  CreateIssue = require('@choerodon/agile-pro/lib/components/CreateIssue').default;
+} catch (error) {
+  CreateIssue = require('@choerodon/agile/lib/components/CreateIssue').default;
+}
 
 const CreateBug = ({
   onOk,

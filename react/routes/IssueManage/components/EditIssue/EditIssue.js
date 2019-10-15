@@ -9,7 +9,7 @@ import { throttle } from 'lodash';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon, Tabs
 } from 'choerodon-ui';
-import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
+import { UploadButtonNow } from '../CommonComponent';
 import './EditIssue.scss';
 import { IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User, ResizeAble } from '../../../../components';

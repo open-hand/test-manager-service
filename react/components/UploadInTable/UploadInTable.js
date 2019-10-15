@@ -4,7 +4,7 @@ import { Button, Upload } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 // import SingleFileUpload from '../../routes/IssueManage/components/CommonComponent/SingleFileUpload';
 // react/routes/IssueManage/components/CommonComponent/SingleFileUpload
-import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
+import SingleFileUpload from '@/components/SingleFileUpload';
 
 import { uploadFile, deleteAttachment } from '../../api/FileApi';
 import './UploadInTable.less';

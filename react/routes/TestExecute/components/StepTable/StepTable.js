@@ -6,7 +6,6 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
 import { editCycleStep, addDefects } from '../../../../api/ExecuteDetailApi';
 import {
   TextEditToggle, UploadInTable, DefectSelect, StatusTags,
