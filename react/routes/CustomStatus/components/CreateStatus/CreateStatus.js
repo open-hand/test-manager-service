@@ -126,7 +126,7 @@ class CreateStatus extends Component {
                 <Input maxLength={30} label={<FormattedMessage id="comment" />} />,
               )}
             </FormItem>
-            <FormItem>
+            <FormItem className="c7ntest-color-container">
               {getFieldDecorator('statusColor', {
                 rules: [{
                   required: true,
