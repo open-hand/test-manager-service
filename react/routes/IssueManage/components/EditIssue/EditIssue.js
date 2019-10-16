@@ -1279,7 +1279,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    {'状态：'}
+                                    {'状态'}
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1290,7 +1290,7 @@ class EditIssueNarrow extends Component {
                               {/* 优先级 */}
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">优先级：</span>
+                                  <span className="c7ntest-property">优先级</span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
                                   {this.renderSelectPriority()}
@@ -1301,8 +1301,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    <FormattedMessage id="issue_create_content_version" />
-                                    {'：'}
+                                    <FormattedMessage id="issue_create_content_version" />                           
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1326,8 +1325,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    <FormattedMessage id="issue_create_content_folder" />
-                                    {'：'}
+                                    <FormattedMessage id="issue_create_content_folder" />                              
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1343,7 +1341,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="summary_component" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper">
@@ -1356,7 +1353,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="summary_label" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper">
@@ -1369,7 +1365,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_reporter" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1380,7 +1375,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_manager" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1405,7 +1399,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_createDate" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>
@@ -1416,7 +1409,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_updateDate" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>

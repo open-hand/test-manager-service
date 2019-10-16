@@ -100,8 +100,8 @@ class ExportSide extends Component {
     }
   }
 
-  handleMessage = (data) => {
-    // console.log(data);
+  handleMessage = (message) => {    
+    const data = JSON.parse(message);
     const temp = this.state.exportList;
     const exportList = [...temp];
     const { id, rate } = data;
