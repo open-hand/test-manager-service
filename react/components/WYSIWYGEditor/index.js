@@ -1,8 +1,3 @@
-let WYSIWYGEditor = null;
-try {
-  WYSIWYGEditor = require('@choerodon/agile-pro/lib/components/WYSIWYGEditor').default;
-} catch (error) {
-  WYSIWYGEditor = require('@choerodon/agile/lib/components/WYSIWYGEditor').default;
-}
+import WYSIWYGEditor from '@choerodon/agile/lib/components/WYSIWYGEditor';
 
 export default WYSIWYGEditor;

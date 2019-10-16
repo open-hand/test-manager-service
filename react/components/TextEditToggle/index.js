@@ -1,8 +1,3 @@
-let TextEditToggle = null;
-try {
-  TextEditToggle = require('@choerodon/agile-pro/lib/components/TextEditToggle').default;
-} catch (error) {
-  TextEditToggle = require('@choerodon/agile/lib/components/TextEditToggle').default;
-}
+import TextEditToggle from '@choerodon/agile/lib/components/TextEditToggle';
 
 export default TextEditToggle;

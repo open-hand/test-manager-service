@@ -1,8 +1,3 @@
-let SingleFileUpload = null;
-try {
-  SingleFileUpload = require('@choerodon/agile-pro/lib/components/SingleFileUpload').default;
-} catch (error) {
-  SingleFileUpload = require('@choerodon/agile/lib/components/SingleFileUpload').default;
-}
+import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
 
 export default SingleFileUpload;
