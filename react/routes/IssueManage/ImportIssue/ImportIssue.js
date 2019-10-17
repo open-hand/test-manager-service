@@ -115,9 +115,9 @@ class ImportIssue extends Component {
               ? <React.Fragment>导入</React.Fragment>
               : (
                 <React.Fragment>
-                  {'导入到 '}
+                  导入到 
                   <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
-                  {' 版本'}
+                   版本
                 </React.Fragment>
               )
             }
@@ -129,7 +129,7 @@ class ImportIssue extends Component {
             {fileUrl
               ? (
                 <a href={fileUrl}>
-                  {' 点击下载失败详情'}
+                   点击下载失败详情
                 </a>
               ) : ''
             }
@@ -149,13 +149,13 @@ class ImportIssue extends Component {
             : ''
           }
           <span className="c7ntest-ImportIssue-text">
-            {'导入到 '}
+            导入到 
             <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
-            {' 版本成功 '}
+             版本成功 
             <span style={{ color: '#0000FF' }}>
               {successfulCount}
             </span>
-            {' 条用例'}
+             条用例
           </span>
         </div>
       );
@@ -178,7 +178,8 @@ class ImportIssue extends Component {
     }
   };
 
-  handleMessage = (data) => {
+  handleMessage = (res) => {
+    const data = JSON.parse(res);
     const { importRecord } = this.state;
     const {
       rate, id, status, fileUrl, 
@@ -311,7 +312,7 @@ class ImportIssue extends Component {
     } else {
       return (
         <div>
-          {'正在查询导入信息，请稍后'}
+          正在查询导入信息，请稍后
         </div>
       );
     }

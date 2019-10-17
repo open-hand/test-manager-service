@@ -179,18 +179,21 @@ class BatchClone extends Component {
     }
   }
 
-  handleMessage = (data) => {
+  handleMessage = (res) => {
     /* console.log(data); */
-    const { failedCount, rate, status } = data;
-    if (status === 3) {
-      Choerodon.prompt('循环或阶段时间范围不可为空');
-    }
-    this.setState({
-      cloningData: data,
-      cloning: status !== 3,
-    });
-    if (rate === 1 && this.state.visible) {
-      this.handleDone();
+    if (res !== 'ok') {
+      const data = JSON.parse(res);
+      const { failedCount, rate, status } = data;
+      if (status === 3) {
+        Choerodon.prompt('循环或阶段时间范围不可为空');
+      }
+      this.setState({
+        cloningData: data,
+        cloning: status !== 3,
+      });
+      if (rate === 1 && this.state.visible) {
+        this.handleDone();
+      }
     }
   }
 
