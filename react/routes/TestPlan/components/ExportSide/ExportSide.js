@@ -145,6 +145,9 @@ class ExportSide extends Component {
   }
 
   handleMessage = (res) => {
+    if (res === 'ok') {
+      return;
+    }
     const data = JSON.parse(res);
     // console.log(data);
     const theexportList = this.state.exportList;

@@ -100,7 +100,10 @@ class ExportSide extends Component {
     }
   }
 
-  handleMessage = (message) => {    
+  handleMessage = (message) => {
+    if (message === 'ok') {
+      return;
+    }
     const data = JSON.parse(message);
     const temp = this.state.exportList;
     const exportList = [...temp];
@@ -206,7 +209,7 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}         
+          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
