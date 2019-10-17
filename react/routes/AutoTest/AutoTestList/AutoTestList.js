@@ -59,14 +59,14 @@ const AutoTestList = ({
           {
           record.cycleDTOS.map(cycle => (
             <MenuItem>
-              <Link to={TestExecuteLink(cycle.cycleId)} target="_blank">{cycle.cycleName}</Link>
+              <Link to={TestExecuteLink(cycle.cycleId)}>{cycle.cycleName}</Link>
             </MenuItem>
           ))
         }   
         </SubMenu>
       ) : (
         <MenuItem key="cycle" disabled={!record.cycleIds}>
-          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)} target="_blank">测试循环</Link> : '测试循环'}        
+          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)}>测试循环</Link> : '测试循环'}        
         </MenuItem>
       )}      
       <MenuItem key="report" disabled={!record.resultId}>

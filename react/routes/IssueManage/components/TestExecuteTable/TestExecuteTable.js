@@ -117,7 +117,7 @@ class TestExecuteTable extends Component {
   handleChangeExpand(id) {
     const theexpand = this.state.expand;
     let expand = theexpand.slice();
-    if (_.find(expand, (v) => v === id)) {
+    if (_.find(expand, v => v === id)) {
       expand = _.remove(expand, id);
       document.getElementsByClassName(`${id}-list`)[0].style.height = '34px';
     } else {
@@ -140,7 +140,7 @@ class TestExecuteTable extends Component {
       render: (cycleName, item) => (
         <div className="c7ntest-text-dot">
           <Tooltip title={cycleName} placement="topLeft">
-            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)}>
               {cycleName || ''}
             </Link>
           </Tooltip>
@@ -153,7 +153,7 @@ class TestExecuteTable extends Component {
       render: (folderName, item) => (
         <div className="c7ntest-text-dot">
           <Tooltip title={item.folderName} placement="topLeft">
-            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)} target="_blank">
+            <Link className="c7ntest-showId" to={TestExecuteLink(item.cycleId)}>
               {item.folderName || ''}
             </Link>
           </Tooltip>
@@ -202,8 +202,7 @@ class TestExecuteTable extends Component {
                             style={{
                               color: 'white',
                             }}
-                            to={issueLink(issueId, typeCode)}
-                            target="_blank"
+                            to={issueLink(issueId, typeCode)}                 
                           >
                             {issueName}
                           </Link>

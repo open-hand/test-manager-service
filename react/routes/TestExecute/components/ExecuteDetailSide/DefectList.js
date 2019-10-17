@@ -49,7 +49,7 @@ const DefectList = ({ defects, onRemoveDefect }) => {
               }}
               role="none"
             >
-              <Link to={issueLink(issueId, typeCode, issueNum)} target="_blank">
+              <Link to={issueLink(issueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>

@@ -59,7 +59,7 @@ class LinkList extends Component {
             //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
             // }}
             >
-              <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)} target="_blank">
+              <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>

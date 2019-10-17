@@ -278,7 +278,7 @@ class ReportStory extends Component {
                 </div>
               )}
               >
-                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
+                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)}>
                   {issueName}
                 </Link>
               </Tooltip>
@@ -333,7 +333,7 @@ class ReportStory extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test',issue.issueName)} target="_blank">
+                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test',issue.issueName)}>
                               {issue.issueName}
                             </Link>
                           </Tooltip>
@@ -383,7 +383,7 @@ class ReportStory extends Component {
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)} target="_blank">
+                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)}>
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
@@ -472,7 +472,6 @@ class ReportStory extends Component {
                                         className="c7ntest-showId"
                                         to={issueLink(issueInfosVO && issueInfosVO.issueId,
                                           issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)}
-                                        target="_blank"
                                       >
                                         {issueInfosVO && issueInfosVO.issueName}
                                       </Link>
@@ -526,7 +525,7 @@ class ReportStory extends Component {
                                     fontSize: '13px',
                                   }}
                                 >
-                                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)} target="_blank">
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)}>
                                     {issueInfosVO && issueInfosVO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}

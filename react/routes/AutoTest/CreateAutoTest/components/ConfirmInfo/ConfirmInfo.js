@@ -228,7 +228,7 @@ class ConfirmInfo extends Component {
       content = (
         <div className="c7ntest-task-deatil-cron-container-empty">
           <FormattedMessage id={`${intlPrefix}.cron.tip`} />
-          <a href={intl.formatMessage({ id: `${intlPrefix}.cron.tip.link` })} target="_blank" rel="noopener noreferrer">
+          <a href={intl.formatMessage({ id: `${intlPrefix}.cron.tip.link` })} rel="noopener noreferrer">
             <span>{intl.formatMessage({ id: 'learnmore' })}</span>
             <Icon type="open_in_new" style={{ fontSize: '13px' }} />
           </a>
@@ -475,7 +475,7 @@ class ConfirmInfo extends Component {
             <div>
               <div className="deployApp-title">
                 <span className="deployApp-title-text">
-                  {'应用名称：'}
+                  应用名称：
                 </span>
               </div>
               <div className="deployApp-text">
@@ -488,7 +488,7 @@ class ConfirmInfo extends Component {
             <div>
               <div className="deployApp-title">
                 <span className="deployApp-title-text">
-                  {'应用版本：'}
+                  应用版本：
                 </span>
               </div>
               <div className="deployApp-text">
@@ -498,7 +498,7 @@ class ConfirmInfo extends Component {
             <div>
               <div className="deployApp-title">
                 <span className="deployApp-title-text">
-                  {'目标版本：'}
+                  目标版本：
                 </span>
               </div>
               <div className="deployApp-text">
@@ -516,13 +516,13 @@ class ConfirmInfo extends Component {
             </div>
             {data && (
             <div>
-              {<YamlEditor
+              <YamlEditor
                 options={options}
                 newLines={data.newLines}
                 readOnly
                 value={data.yaml}
                 highlightMarkers={data.highlightMarkers}
-              />}
+              />
             </div>
             )}
           </div>

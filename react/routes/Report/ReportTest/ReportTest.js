@@ -241,7 +241,7 @@ class ReportTest extends Component {
                   <div className="c7ntest-collapse-show-item">
                     <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                     <Tooltip title={issueName}>
-                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
+                      <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)}>
                         {issueName}
                       </Link>
                     </Tooltip>
@@ -297,7 +297,7 @@ class ReportTest extends Component {
             <div className="c7ntest-cycle-show-container">
               <div>
                 <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={TestExecuteLink(execute.cycleId)} target="_blank">
+                  <Link className="c7ntest-showId" style={{ display: 'inline-block' }} to={TestExecuteLink(execute.cycleId)}>
                     {execute.cycleName}
                     {execute.folderName ? `/${execute.folderName}` : ''}
                   </Link>
@@ -390,7 +390,7 @@ class ReportTest extends Component {
             <div className="c7ntest-issue-show-container">
               <div className="c7ntest-collapse-show-item">
                 <Tooltip title={issueName}>
-                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, typeCode, issueName)} target="_blank">
+                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, typeCode, issueName)}>
                     {issueName}
                   </Link>
                 </Tooltip>
@@ -441,7 +441,7 @@ class ReportTest extends Component {
               <div className="c7ntest-issue-show-container">
                 <div className="c7ntest-collapse-show-item">
                   <Tooltip title={issueNum}>
-                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode, issueName)} target="_blank">
+                    <Link className="c7ntest-showId" to={issueLink(link.linkedIssueId, link.typeCode, issueName)}>
                       {issueNum}
                     </Link>
                   </Tooltip>
