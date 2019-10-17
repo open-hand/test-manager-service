@@ -107,6 +107,7 @@ class CreateIssueTiny extends Component {
           this.setState({
             createIssueValue: '',
             createLoading: false,
+            creating: false,
           });
         })
         .catch((error) => {
