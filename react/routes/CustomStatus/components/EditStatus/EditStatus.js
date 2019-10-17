@@ -70,7 +70,7 @@ class EditStatus extends Component {
     return (
       <div>
         <Sidebar
-          title={`编辑“${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
+          title={`编辑${initValue.statusType === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
           onOk={this.handleOk}
           onCancel={onCancel}

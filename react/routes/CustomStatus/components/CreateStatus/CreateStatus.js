@@ -86,7 +86,7 @@ class CreateStatus extends Component {
     return (
       <div>
         <Sidebar
-          title={`创建“${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}”状态`}
+          title={`创建${getFieldValue('statusType') === 'CYCLE_CASE' ? '执行' : '步骤'}状态`}
           visible={visible}
           onOk={this.handleOk}
           onCancel={onCancel}
