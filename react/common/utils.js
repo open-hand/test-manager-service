@@ -8,13 +8,25 @@ import humanize from './humanizeDuration';
 const { AppState } = stores;
 
 export function text2Delta(description) {
+  // eslint-disable-next-line no-restricted-globals
+  if (!isNaN(description)) {
+    return String(description);
+  }
   let temp = description;
   try {
-    temp = JSON.parse(description);
+    temp = JSON.parse(description.replace(/\\n/g, '\\n')
+      .replace(/\\'/g, "\\'")
+      .replace(/\\"/g, '\\"')
+      .replace(/\\&/g, '\\&')
+      .replace(/\\r/g, '\\r')
+      .replace(/\\t/g, '\\t')
+      .replace(/\\b/g, '\\b')
+      .replace(/\\f/g, '\\f'));
   } catch (error) {
     temp = description;
   }
-  return temp;
+  // return temp;
+  return temp || '';
 }
 /**
  * 将quill特有的文本结构转为html
