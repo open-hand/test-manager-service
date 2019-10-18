@@ -90,7 +90,7 @@ class TestPlanHome extends Component {
       },
     }).then((res) => {
       TestPlanStore.reloadCycle();
-    }).catch((err) => {
+    }).catch((err) => {    
       Choerodon.prompt('网络错误');
       TestPlanStore.rightLeaveLoading();
     });
