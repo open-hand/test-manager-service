@@ -1142,7 +1142,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setBuild(Optional.ofNullable(newTestCycleVO.getBuild()).orElse(proto.getBuild()));
         testCycleDTO.setEnvironment(Optional.ofNullable(newTestCycleVO.getEnvironment()).orElse(proto.getEnvironment()));
         testCycleDTO.setFromDate(Optional.ofNullable(newTestCycleVO.getFromDate()).orElse(proto.getFromDate()));
-        testCycleDTO.setToDate(Optional.ofNullable(newTestCycleVO.getToDate()).orElse(proto.getToDate()));
+        testCycleDTO.setToDate(Optional.ofNullable(newTestCycleVO.getToDate()).orElse(TestDateUtil.formatDate(proto.getToDate())));
         testCycleDTO.setType(Optional.ofNullable(newTestCycleVO.getType()).orElse(proto.getType()));
         testCycleDTO.setFolderId(Optional.ofNullable(newTestCycleVO.getFolderId()).orElse(proto.getFolderId()));
         testCycleDTO.setRank(Optional.ofNullable(newTestCycleVO.getRank()).orElse(proto.getRank()));
