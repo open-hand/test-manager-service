@@ -19,7 +19,7 @@ public class ExcelTitleUtil {
     public Cell getCell(String titleName, Row row) {
         Integer location = headerLocationMap.get(titleName);
         if (location != null) {
-            row.getCell(location);
+            return row.getCell(location);
         }
         return null;
     }
