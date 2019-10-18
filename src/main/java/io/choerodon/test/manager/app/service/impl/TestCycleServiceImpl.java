@@ -746,6 +746,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         newTestCycleE.setCycleName(cycleName);
         newTestCycleE.setVersionId(versionId);
         newTestCycleE.setType(TestCycleType.CYCLE);
+        List<TestCycleDTO> checkCycleExistList = cycleMapper.select(modelMapper.map(newTestCycleE, TestCycleDTO.class));
+        if (checkCycleExistList != null && !checkCycleExistList.isEmpty()) {
+            throw new CommonException("error.testCycle.exist");
+        }
         return modelMapper.map(baseCloneCycle(protoTestCycleDTO, newTestCycleE, projectId), TestCycleVO.class);
     }
 
@@ -1142,7 +1146,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setBuild(Optional.ofNullable(newTestCycleVO.getBuild()).orElse(proto.getBuild()));
         testCycleDTO.setEnvironment(Optional.ofNullable(newTestCycleVO.getEnvironment()).orElse(proto.getEnvironment()));
         testCycleDTO.setFromDate(Optional.ofNullable(newTestCycleVO.getFromDate()).orElse(proto.getFromDate()));
-        testCycleDTO.setToDate(Optional.ofNullable(newTestCycleVO.getToDate()).orElse(TestDateUtil.formatDate(proto.getToDate())));
+        testCycleDTO.setToDate(Optional.ofNullable(newTestCycleVO.getToDate()).orElse(proto.getToDate()));
         testCycleDTO.setType(Optional.ofNullable(newTestCycleVO.getType()).orElse(proto.getType()));
         testCycleDTO.setFolderId(Optional.ofNullable(newTestCycleVO.getFolderId()).orElse(proto.getFolderId()));
         testCycleDTO.setRank(Optional.ofNullable(newTestCycleVO.getRank()).orElse(proto.getRank()));
