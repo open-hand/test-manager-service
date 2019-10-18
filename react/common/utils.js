@@ -8,6 +8,9 @@ import humanize from './humanizeDuration';
 const { AppState } = stores;
 
 export function text2Delta(description) {
+  if (!description) {
+    return undefined;
+  }
   // eslint-disable-next-line no-restricted-globals
   if (!isNaN(description)) {
     return String(description);
