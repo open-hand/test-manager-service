@@ -60,6 +60,7 @@ build-combine:
       - master
       - tags
       - /^release-.*$/
+      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 
@@ -72,6 +73,7 @@ release:
       - master
       - tags
       - /^release-.*$/
+      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 
