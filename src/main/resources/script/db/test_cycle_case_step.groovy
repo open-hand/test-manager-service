@@ -36,10 +36,6 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case_step")
     }
 
-    changeSet(author: 'jialongzuo@hang-china.com', id: '2018-09-18-change-step-column-comment') {
-        renameColumn(columnDataType:'text',newColumnName:'description',oldColumnName:'comment',tableName:"test_cycle_case_step")
-    }
-
     changeSet(id: '2019-10-21-add-index-page-id', author: 'shinan.chenX@gmail.com') {
         createIndex(tableName: "test_cycle_case_step", indexName: "idx_stepid_executeid") {
             column(name: "step_id")
