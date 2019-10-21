@@ -258,7 +258,7 @@ export function commonLink(link) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&name=${name}`);
+  return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&orgId=${organizationId}&name=${name}`);
 }
 export function issueLink(issueId, typeCode, issueName = null) {
   const menu = AppState.currentMenuType;
@@ -266,11 +266,11 @@ export function issueLink(issueId, typeCode, issueName = null) {
     type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else if (issueName) {
-    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
+    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {
-    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&paramIssueId=${issueId}`);
+    return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}`);
   }
 }
 export function createIssueLink() {
@@ -278,14 +278,14 @@ export function createIssueLink() {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+  return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}`);
 }
 export function agileVersionLink() {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/agile/work-list/version?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}`);
+  return encodeURI(`/agile/work-list/version?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}`);
 }
 export function TestExecuteLink(cycleId) {
   const menu = AppState.currentMenuType;
@@ -293,7 +293,7 @@ export function TestExecuteLink(cycleId) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
+  return encodeURI(`/testManager/TestExecute?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
 export function TestPlanLink(cycleId) {
   const menu = AppState.currentMenuType;
@@ -301,14 +301,14 @@ export function TestPlanLink(cycleId) {
     type, id: projectId, name, organizationId,
   } = menu;
 
-  return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
+  return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
 export function executeDetailLink(executeId, cycleId) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}${`&cycleId=${cycleId || 0}`}`);
+  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`&cycleId=${cycleId || 0}`}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
@@ -318,7 +318,7 @@ export function testCaseDetailLink(testCaseId, folderName) {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&folderName=${folderName || ''}`);
+  return encodeURI(`/testManager/IssueManage/testCase/${testCaseId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&folderName=${folderName || ''}`);
 }
 export function testCaseTableLink(params) {
   return commonLink('/IssueManage');
