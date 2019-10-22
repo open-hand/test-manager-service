@@ -151,8 +151,6 @@ class TestPlanHome extends Component {
         <Breadcrumb title="" />
         <div className="breadcrumb-border" />
         <Content
-          title={null}
-          description={null}
           style={{ padding: 0, display: 'flex' }}
         >
           <Injecter store={TestPlanStore} item="loading">

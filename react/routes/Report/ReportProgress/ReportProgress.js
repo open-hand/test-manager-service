@@ -230,11 +230,7 @@ class ReportProgress extends Component {
             </span>
           </Button>
         </Header>
-        <Content
-          title={<FormattedMessage id="report_progress_content_title" values={{ name: getProjectName() }} />}
-          description={<FormattedMessage id="report_progress_content_description" />}
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-        >
+        <Content>
           <div className="c7ntest-switch">
             <div className="c7ntest-switchVersion">
               <Select

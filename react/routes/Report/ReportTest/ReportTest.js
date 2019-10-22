@@ -562,11 +562,7 @@ class ReportTest extends Component {
             </span>
           </Button>
         </Header>
-        <Content
-          title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-          description="可跟踪性报告：缺陷 -> 执行 -> 测试 -> 要求，根据缺陷追溯缺陷的测试情况和需求点。"
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-        >
+        <Content>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-test-filter-table">
             <Table

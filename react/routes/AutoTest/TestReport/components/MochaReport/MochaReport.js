@@ -148,11 +148,7 @@ class MochaReport extends Component {
     } = stats;    
     const { suites } = tests[0] || { suites: [] };    
     return (
-      <Content 
-        title={`项目“${getProjectName()}”的测试报告`}
-        description="您可以在此页面一目了然地了解测试报告详情。"
-        link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management"
-      >    
+      <Content>    
         <div className="c7ntest-mochaReport">
           <div style={{ display: 'flex' }}>
             <span style={{ fontSize: '14px', fontWeight: 500 }}>测试统计</span>

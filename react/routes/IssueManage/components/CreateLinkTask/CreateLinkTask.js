@@ -157,8 +157,6 @@ class CreateLinkTask extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title="对用例进行问题关联"
-          description="请在下面选中要关联的问题"
         >
           <Form layout="vertical">
             {/* <FormItem style={{ width: 520 }}>

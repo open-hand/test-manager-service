@@ -207,9 +207,8 @@ class ExportSide extends Component {
       >
         <Content
           style={{
-            padding: '0 0 10px 0',
+            padding: '5px 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>

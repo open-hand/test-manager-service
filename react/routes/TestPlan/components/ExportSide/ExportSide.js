@@ -250,7 +250,6 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title="导出测试执行"          
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
