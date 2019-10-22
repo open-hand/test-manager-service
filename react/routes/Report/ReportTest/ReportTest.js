@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores,
+  Page, Header, Content, stores, Breadcrumb,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
@@ -44,8 +44,8 @@ class ReportTest extends Component {
     openId: [],
     issueIds: [],
     search: {
-      advancedSearchArgs: { },
-      searchArgs: { },
+      advancedSearchArgs: {},
+      searchArgs: {},
     },
   }
 
@@ -552,7 +552,7 @@ class ReportTest extends Component {
       <Page className="c7ntest-report-test">
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
-          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}
         >
           <ReporterSwitcher />
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
@@ -562,6 +562,7 @@ class ReportTest extends Component {
             </span>
           </Button>
         </Header>
+        <Breadcrumb title="可跟踪性报告：缺陷 -> 执行 -> 测试 -> 要求" />
         <Content>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-test-filter-table">

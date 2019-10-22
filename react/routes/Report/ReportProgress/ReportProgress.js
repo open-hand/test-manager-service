@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores,
+  Page, Header, Content, stores, Breadcrumb,
 } from '@choerodon/boot';
 import {
   Tooltip, Button, Icon, Select, Spin,
@@ -220,7 +220,7 @@ class ReportProgress extends Component {
       <Page className="c7ntest-report-progress">
         <Header
           title={<FormattedMessage id="report_defectToProgress" />}
-          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}
         >
           <ReporterSwitcher />
           <Button onClick={this.loadData} style={{ marginLeft: 30 }}>
@@ -230,6 +230,7 @@ class ReportProgress extends Component {
             </span>
           </Button>
         </Header>
+        <Breadcrumb title={<FormattedMessage id="report_progress_content_title" values={{ name: getProjectName() }} />} />
         <Content>
           <div className="c7ntest-switch">
             <div className="c7ntest-switchVersion">

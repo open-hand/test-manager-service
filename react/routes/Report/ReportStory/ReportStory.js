@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores,
+  Page, Header, Content, stores, Breadcrumb
 } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import {
@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { Tags } from '../../../components';
-import  ReporterSwitcher from '../components';
+import ReporterSwitcher from '../components';
 import { getReportsFromStory } from '../../../api/reportApi';
 import {
   getIssueTypes, getIssueStatus, getProjectVersion, getSprints,
@@ -333,7 +333,7 @@ class ReportStory extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test',issue.issueName)}>
+                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test', issue.issueName)}>
                               {issue.issueName}
                             </Link>
                           </Tooltip>
@@ -547,7 +547,7 @@ class ReportStory extends Component {
       <Page className="c7ntest-report-story">
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
-          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}
         >
           <ReporterSwitcher />
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
@@ -557,6 +557,7 @@ class ReportStory extends Component {
             </span>
           </Button>
         </Header>
+        <Breadcrumb title="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷" />
         <Content>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-story-filter-table">
