@@ -1,14 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Upload, Button, Icon, Tooltip,
-} from 'choerodon-ui';
-import { stores } from '@choerodon/master';
+import { Choerodon } from '@choerodon/boot';
+import { stores } from '@choerodon/boot';
 
-import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
+import SingleFileUpload from '@/components/SingleFileUpload';
 import './UploadButtonNow.less';
-// D:\agile\agile-service\react\components\SingleFileUpload\index.js
 
 
 const { AppState } = stores;
@@ -82,7 +78,7 @@ class UploadButtonExcuteDetail extends React.Component {
         </Upload> */}
         <div className="c7n-agile-uploadButtonNow-fileList">
           {
-            fileList && fileList.length > 0 && fileList.map((item) => (
+            fileList && fileList.length > 0 && fileList.map(item => (
               <SingleFileUpload
                 key={item.uid}
                 url={item.url}

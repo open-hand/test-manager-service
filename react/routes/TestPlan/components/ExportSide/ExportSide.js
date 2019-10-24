@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Content, stores, WSHandler } from '@choerodon/master';
+import { Content, stores, WSHandler } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Select,
@@ -143,7 +144,11 @@ class ExportSide extends Component {
     }
   }
 
-  handleMessage = (data) => {
+  handleMessage = (res) => {
+    if (res === 'ok') {
+      return;
+    }
+    const data = JSON.parse(res);
     // console.log(data);
     const theexportList = this.state.exportList;
     const exportList = [...theexportList];
@@ -245,7 +250,6 @@ class ExportSide extends Component {
           style={{
             padding: '0 0 10px 0',
           }}
-          title="导出测试执行"          
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';

@@ -7,6 +7,7 @@
  */
 
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import {
   getStatusList, createStatus, editStatus, deleteStatus,

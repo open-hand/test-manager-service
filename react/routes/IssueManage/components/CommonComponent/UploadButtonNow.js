@@ -1,39 +1,45 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Choerodon } from '@choerodon/boot';
 import {
   Upload, Button, Icon, Tooltip,
 } from 'choerodon-ui';
-import { stores } from '@choerodon/master';
-import SingleFileUpload from '@choerodon/agile/lib/components/SingleFileUpload';
+import { stores } from '@choerodon/boot';
+import SingleFileUpload from '@/components/SingleFileUpload';
 import { deleteFileAgile } from '../../../../api/FileApi';
 
 import './UploadButtonNow.less';
 
 const { AppState } = stores;
+
 /**
- * hasPermission 校验是否有权限删除
- * 参数类型 Boolean
- * 后续需要开启 则传入校验结果即可
- * 默认无传入校验结果时，不进行删除权限控制
+ * 
+ * hasPermission 进行删除权限控制，无传入，则默认为true
  */
-class UploadButtonNow extends React.Component {
-  // static propTypes = {
-  //   onRemove: PropTypes.func,
-  //   beforeUpload: PropTypes.func,
-  // };
+function UploadButtonNow(props) {
+  const {
+    fileList, updateNow, onRemove, onBeforeUpload, hasPermission = true,
+  } = props;
+  const handleRemove = (file) => {
+    const index = fileList.indexOf(file);
+    const newFileList = fileList.slice();
+    if (onRemove) {
+      deleteFileAgile(file.uid)
+        .then((response) => {
+          if (response) {
+            newFileList.splice(index, 1);
+            onRemove(newFileList.reverse());
+            Choerodon.prompt('删除成功');
+          }
+        })
+        .catch(() => {
+          Choerodon.prompt('删除失败，请稍后重试');
+        });
+    }
+  };
 
-  constructor(props, context) {
-    super(props, context);
-    this.state = {};
-  }
-
-  render() {
-    const {
-      fileList, updateNow, onRemove, onBeforeUpload, hasPermission = true,
-    } = this.props;
-    const props = {
-      action: '//jsonplaceholder.typicode.com/posts/',
+  const render = () => {
+    const config = {
       multiple: true,
       beforeUpload: (file) => {
         if (file.size > 1024 * 1024 * 30) {
@@ -52,7 +58,7 @@ class UploadButtonNow extends React.Component {
         } else {
           const tmp = file;
           tmp.status = 'done';
-          if (updateNow) {
+          if (onBeforeUpload) {
             if (fileList.length > 0) {
               updateNow(fileList.slice().concat(file));
             } else {
@@ -64,32 +70,13 @@ class UploadButtonNow extends React.Component {
       },
 
     };
-
-    const handleRemove = (file) => {
-      const index = fileList.indexOf(file);
-      const newFileList = fileList.slice();
-      if (onRemove) {
-        deleteFileAgile(file.uid)
-          .then((response) => {
-            if (response) {
-              newFileList.splice(index, 1);
-              onRemove(newFileList.reverse());
-              Choerodon.prompt('删除成功');
-            }
-          })
-          .catch(() => {
-            Choerodon.prompt('删除失败，请稍后重试');
-          });
-      }
-    };
-
     return (
       <div className="c7n-agile-uploadButtonNow">
         <Upload
-          {...props}
+          {...config}
           className="upload-button"
         >
-          <Tooltip title="上传附件" getPopupContainer={(triggerNode) => triggerNode.parentNode}>
+          <Tooltip title="上传附件" placement="topRight" autoAdjustOverflow={false} getPopupContainer={triggerNode => triggerNode.parentNode}>
             <Button style={{ padding: '0 6px' }}>
               <Icon type="file_upload" />
             </Button>
@@ -97,7 +84,7 @@ class UploadButtonNow extends React.Component {
         </Upload>
         <div className="c7n-agile-uploadButtonNow-fileList">
           {
-            fileList && fileList.length > 0 && fileList.map((item) => (
+            fileList && fileList.length > 0 && fileList.map(item => (
               <SingleFileUpload
                 key={item.uid}
                 url={item.url}
@@ -110,7 +97,10 @@ class UploadButtonNow extends React.Component {
         </div>
       </div>
     );
-  }
+  };
+
+  return render();
 }
+
 
 export default UploadButtonNow;

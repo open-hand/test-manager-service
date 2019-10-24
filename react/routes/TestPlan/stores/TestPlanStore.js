@@ -1,6 +1,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import { Choerodon } from '@choerodon/boot';
 import moment from 'moment';
 import { getCycleTree, getExecutesByCycleId } from '../../../api/cycleApi';
 import { getStatusList } from '../../../api/TestStatusApi';
@@ -144,7 +145,7 @@ class TestPlanStore extends BaseTreeProto {
         this.selectDefaultNode(data.versions[0]);
       }
       resolve();
-    }).catch((err) => {
+    }).catch((err) => {     
       Choerodon.prompt('网络错误');
     }).finally(() => {
       this.leaveLoading();
@@ -349,8 +350,8 @@ class TestPlanStore extends BaseTreeProto {
             ...node,
             // children, 不需要编辑，不用限制时间的选择，所有不用传children
             type: 'topversion',
-            start: moment.min(starts),
-            end: moment.max(ends),
+            start: `${moment(moment.min(starts)).format('YYYY-MM-DD')} 00:00:00`,
+            end: `${moment(moment.max(ends)).format('YYYY-MM-DD')} 23:59:59`,
           });
         }
       } else if (versionId && !cycleId && children.length > 0) {
@@ -363,16 +364,16 @@ class TestPlanStore extends BaseTreeProto {
             ...node,
             // children,
             type: 'version',
-            start: moment.min(starts),
-            end: moment.max(ends),
+            start: `${moment(moment.min(starts)).format('YYYY-MM-DD')} 00:00:00`,
+            end: `${moment(moment.max(ends)).format('YYYY-MM-DD')} 23:59:59`,
           });
         }
       } else if (fromDate && toDate) {
         times.push({
           ...node,
           children,
-          start: moment(fromDate),
-          end: moment(toDate),
+          start: `${moment(moment.min(fromDate)).format('YYYY-MM-DD')} 00:00:00`,
+          end: `${moment(moment.max(toDate)).format('YYYY-MM-DD')} 23:59:59`,          
         });
       }
 

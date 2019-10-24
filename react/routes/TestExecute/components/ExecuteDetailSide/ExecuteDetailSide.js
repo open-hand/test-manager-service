@@ -1,5 +1,6 @@
 /* eslint-disable*/
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
@@ -8,7 +9,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload, Select,
 } from 'choerodon-ui';
-import { stores } from '@choerodon/master';
+import { stores } from '@choerodon/boot';
 import { find } from 'lodash';
 import { delta2Html, issueLink, text2Delta } from '../../../../common/utils';
 import {
@@ -340,7 +341,7 @@ class ExecuteDetailSide extends Component {
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      <Link className="primary" style={{ marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
+                      <Link className="primary" style={{ marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
                     </div>
 
                   </div>

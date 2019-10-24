@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Permission } from '@choerodon/master';
+import { Permission } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';

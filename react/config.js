@@ -3,18 +3,18 @@ const alias = require('../alias').webpack;
 
 const config = {
   server: 'http://api.staging.saas.hand-china.com',
-  // server: 'http://api.alpha.saas.hand-china.com',
-  // server: 'http://10.211.102.55:8080', // 陈士男
-  // server: 'http://10.211.111.134:8080', // 王喆
   master: './node_modules/@choerodon/master/lib/master.js',
   projectType: 'choerodon',
   buildType: 'single',
   dashboard: {},
-  webSocketServer: 'ws://10.211.111.134:18085',
+  webSocketServer: 'ws://notify.staging.saas.hand-china.com',
   webpackConfig(configs) {
     configs.resolve.alias = alias;    
     return configs;
   },
+  modules: [
+    '.',
+  ],
 };
 
 module.exports = config;

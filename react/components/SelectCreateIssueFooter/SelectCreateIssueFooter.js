@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import { createIssueLink } from '../../../common/utils';
 
 const SelectCreateIssueFooter = () => (
-  <Link className="primary" to={createIssueLink()} target="_blank">
+  <Link className="primary" to={createIssueLink()}>
     <FormattedMessage id="issue_create_bug" />
   </Link>
 );

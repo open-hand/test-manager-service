@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import {
   Page, Header, Content, WSHandler, stores,
-} from '@choerodon/master';
+} from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import {
   Table, Button, Input, Dropdown, Menu, Pagination, Modal, Progress,
   Spin, Icon, Select, Divider, Tooltip,
@@ -114,9 +115,9 @@ class ImportIssue extends Component {
               ? <React.Fragment>导入</React.Fragment>
               : (
                 <React.Fragment>
-                  {'导入到 '}
+                  导入到
                   <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
-                  {' 版本'}
+                  版本
                 </React.Fragment>
               )
             }
@@ -128,7 +129,7 @@ class ImportIssue extends Component {
             {fileUrl
               ? (
                 <a href={fileUrl}>
-                  {' 点击下载失败详情'}
+                  点击下载失败详情
                 </a>
               ) : ''
             }
@@ -148,13 +149,13 @@ class ImportIssue extends Component {
             : ''
           }
           <span className="c7ntest-ImportIssue-text">
-            {'导入到 '}
+            导入到
             <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
-            {' 版本成功 '}
+            版本成功
             <span style={{ color: '#0000FF' }}>
               {successfulCount}
             </span>
-            {' 条用例'}
+            条用例
           </span>
         </div>
       );
@@ -177,24 +178,27 @@ class ImportIssue extends Component {
     }
   };
 
-  handleMessage = (data) => {
-    const { importRecord } = this.state;
-    const {
-      rate, id, status, fileUrl, 
-    } = data;
-    if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
-      return;
+  handleMessage = (res) => {
+    if (res !== 'ok') {
+      const data = JSON.parse(res);
+      const { importRecord } = this.state;
+      const {
+        rate, id, status, fileUrl,
+      } = data;
+      if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
+        return;
+      }
+      if (fileUrl) {
+        window.location.href = fileUrl;
+      }
+      this.setState({
+        /* progress: rate.toFixed(1), */
+        importRecord: data,
+      });
     }
-    if (fileUrl) {
-      window.location.href = fileUrl;
-    }
-    this.setState({
-      /* progress: rate.toFixed(1), */
-      importRecord: data,
-    });
   };
 
-  handleCancelImport=() => {
+  handleCancelImport = () => {
     const { importRecord } = this.state;
     cancelImport(importRecord.id).then((res) => {
       this.handleImportClose();
@@ -310,7 +314,7 @@ class ImportIssue extends Component {
     } else {
       return (
         <div>
-          {'正在查询导入信息，请稍后'}
+          正在查询导入信息，请稍后
         </div>
       );
     }
@@ -362,7 +366,7 @@ class ImportIssue extends Component {
         <Content
           style={{
             padding: 1,
-          }}          
+          }}
         >
           {this.renderForm()}
           <Modal

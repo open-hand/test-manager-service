@@ -66,41 +66,25 @@ class ColorPicker extends Component {
     return (
       <div
         role="none"
-        className="c7ntest-CreateStatus-color-picker-container"
+        className="issue-color-picker"
         onClick={(e) => {
           e.nativeEvent.stopImmediatePropagation();
           e.stopPropagation(); 
         }}
       >
-        <FormattedMessage id="color" />
-        {'：'}
-        <div
-          className="c7ntest-CreateStatus-color-picker-show"
-          role="none"
-          onClick={(e) => {
-            e.nativeEvent.stopImmediatePropagation();
-            e.stopPropagation();
-            this.handleVisibleChange(true);
-          }}
-        >
-          <div style={{ background: color }}>
-            <div className="c7ntest-CreateStatus-color-picker-show-rec-con">
-              <div className="c7ntest-CreateStatus-color-picker-show-rec" />
+        <div className="issue-priority-swatch" onClick={() => this.handleVisibleChange(true)} role="none">
+          <div className="issue-priority-color" style={{ background: color }} />
+        </div>
+        {
+        visible
+          ? (
+            <div className="popover">
+              <div className="cover" onClick={() => this.handleVisibleChange(false)} role="none" />
+              <CompactPicker color={color} onChange={this.handleColorChange} />
             </div>
-          </div>
-        </div>
-        <div
-          style={visible
-            ? {
-              display: 'block', position: 'absolute', bottom: 20, left: 60,
-            }
-            : { display: 'none' }}
-        >
-          <CompactPicker
-            color={color}
-            onChangeComplete={this.handleColorChange}
-          />
-        </div>
+          )
+          : null
+      }
       </div>
     );
   }

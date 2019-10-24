@@ -746,6 +746,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         newTestCycleE.setCycleName(cycleName);
         newTestCycleE.setVersionId(versionId);
         newTestCycleE.setType(TestCycleType.CYCLE);
+        List<TestCycleDTO> checkCycleExistList = cycleMapper.select(modelMapper.map(newTestCycleE, TestCycleDTO.class));
+        if (checkCycleExistList != null && !checkCycleExistList.isEmpty()) {
+            throw new CommonException("error.testCycle.exist");
+        }
         return modelMapper.map(baseCloneCycle(protoTestCycleDTO, newTestCycleE, projectId), TestCycleVO.class);
     }
 

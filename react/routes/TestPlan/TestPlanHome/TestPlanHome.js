@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import {
   Page, Header, Content, Breadcrumb, 
-} from '@choerodon/master';
+} from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -89,7 +90,7 @@ class TestPlanHome extends Component {
       },
     }).then((res) => {
       TestPlanStore.reloadCycle();
-    }).catch((err) => {
+    }).catch((err) => {    
       Choerodon.prompt('网络错误');
       TestPlanStore.rightLeaveLoading();
     });
@@ -150,8 +151,6 @@ class TestPlanHome extends Component {
         <Breadcrumb title="" />
         <div className="breadcrumb-border" />
         <Content
-          title={null}
-          description={null}
           style={{ padding: 0, display: 'flex' }}
         >
           <Injecter store={TestPlanStore} item="loading">

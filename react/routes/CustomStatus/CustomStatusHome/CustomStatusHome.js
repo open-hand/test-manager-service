@@ -14,7 +14,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
 import './CustomStatusHome.less';
 

@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import { Draggable } from 'react-beautiful-dnd';
 import {

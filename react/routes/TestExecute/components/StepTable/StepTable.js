@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
   Table, Input, Icon, Select, Tooltip, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
 import { editCycleStep, addDefects } from '../../../../api/ExecuteDetailApi';
 import {
   TextEditToggle, UploadInTable, DefectSelect, StatusTags,

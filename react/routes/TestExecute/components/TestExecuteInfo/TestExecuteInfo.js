@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Button, Icon, Select, Upload,
 } from 'choerodon-ui';

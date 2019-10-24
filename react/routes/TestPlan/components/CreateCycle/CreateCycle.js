@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';

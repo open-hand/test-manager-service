@@ -58,7 +58,9 @@ build-combine:
   only:
     refs:
       - master
+      - tags
       - /^release-.*$/
+      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 
@@ -69,7 +71,9 @@ release:
   only:
     refs:
       - master
+      - tags
       - /^release-.*$/
+      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 

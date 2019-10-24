@@ -1,7 +1,7 @@
 /* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Content, stores, WSHandler } from '@choerodon/master';
+import { Content, stores, WSHandler } from '@choerodon/boot';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
@@ -100,8 +100,11 @@ class ExportSide extends Component {
     }
   }
 
-  handleMessage = (data) => {
-    // console.log(data);
+  handleMessage = (message) => {
+    if (message === 'ok') {
+      return;
+    }
+    const data = JSON.parse(message);
     const temp = this.state.exportList;
     const exportList = [...temp];
     const { id, rate } = data;
@@ -204,9 +207,8 @@ class ExportSide extends Component {
       >
         <Content
           style={{
-            padding: '0 0 10px 0',
+            padding: '5px 0 10px 0',
           }}
-          title={<FormattedMessage id="export_side_content_title" values={{ name: getProjectName() }} />}         
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>

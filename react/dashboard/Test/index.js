@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { DashBoardNavBar } from '@choerodon/master';
+import { Choerodon } from '@choerodon/boot';
+import { DashBoardNavBar } from '@choerodon/boot';
 
 import './index.scss';
 

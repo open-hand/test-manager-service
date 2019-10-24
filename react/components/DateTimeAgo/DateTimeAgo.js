@@ -1,4 +1,5 @@
 import React from 'react';
+import { Choerodon } from '@choerodon/boot';
 import TimeAgo from 'timeago-react';
 import { Tooltip } from 'choerodon-ui';
 
