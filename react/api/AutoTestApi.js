@@ -32,7 +32,7 @@ export function getApps({
 }
 export function getAppVersions(appId, pagination, filter) {
   const { page, size } = pagination;
-  return request.post(`/devops/v1/projects/${getProjectId()}/app_service_versions/page_by_options?app_service_id=${appId}&page=${page}&size=${size}&sort=id,desc`, { searchParam: filter , params:[]});
+  return request.post(`/devops/v1/projects/${getProjectId()}/app_service_versions/page_by_options?app_service_id=${appId}&deploy_only=true&page=${page}&size=${size}&sort=id,desc`, { searchParam: filter , params:[]});
 }
 export function getEnvs() {
   return request.post(

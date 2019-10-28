@@ -1,6 +1,6 @@
 /* eslint-disable react/no-find-dom-node */
 import React, { Component } from 'react';
-import isEqual from 'react-fast-compare';
+import { Choerodon } from '@choerodon/boot';
 import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import Moment from 'moment';

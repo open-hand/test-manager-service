@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import isEqual from 'react-fast-compare';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
-import { Button, Tooltip } from 'choerodon-ui';
-import _ from 'lodash';
 import { DatePicker } from 'choerodon-ui';
 import './EventCalendar.scss';
 import CalendarBackItem from './CalendarBackItem';

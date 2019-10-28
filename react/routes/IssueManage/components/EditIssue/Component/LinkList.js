@@ -50,15 +50,16 @@ class LinkList extends Component {
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
           <div style={{ marginLeft: 8, flex: 1, overflow: 'hidden' }}>
             <p
+              className="primary"
               style={{
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, color: 'rgb(63, 81, 181)',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0,
               }}
               role="none"
             // onClick={() => {
             //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
             // }}
             >
-              <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)} target="_blank">
+              <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>

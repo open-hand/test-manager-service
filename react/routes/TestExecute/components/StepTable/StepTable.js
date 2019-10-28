@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
   Table, Input, Icon, Select, Tooltip, Button,
@@ -10,7 +11,7 @@ import {
   TextEditToggle, UploadInTable, DefectSelect, StatusTags,
 } from '../../../../components';
 import { delta2Text } from '../../../../common/utils';
-import './StepTable.scss';
+import './StepTable.less';
 import ExecuteDetailStore from '../../stores/ExecuteDetailStore';
 
 const { TextArea } = Input;
@@ -80,6 +81,7 @@ class StepTable extends PureComponent {
       attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
     } = attachment;
     return {
+      name: attachment.attachmentName,
       attachmentName,
       attachmentLinkId,
       attachmentType,
@@ -92,7 +94,7 @@ class StepTable extends PureComponent {
 
   render() {
     const that = this;
-    const { disabled, stepStatusList, dataSource } = this.props;
+    const { stepStatusList, dataSource, disabled } = this.props;
     const options = stepStatusList.map((status) => {
       const { statusName, statusId, statusColor } = status;
       return (
@@ -104,186 +106,234 @@ class StepTable extends PureComponent {
         </Option>
       );
     });
-    const columns = [{
-      title: '步骤',
-      dataIndex: 'order',
-      key: 'order',
-      width: 60,
-      render: (order, record, index) => (
-        <div
-          className="c7ntest-text-wrap"
-        >
-          {index + 1}
-        </div>
-      ),
-    }, {
-      title: <FormattedMessage id="execute_testStep" />,
-      dataIndex: 'testStep',
-      key: 'testStep',
-      render: testStep => (
-        <div
-          className="c7ntest-text-wrap"
-        >
-          {testStep}
-        </div>
-      ),
-    }, {
-      title: <FormattedMessage id="execute_testData" />,
-      dataIndex: 'testData',
-      key: 'testData',
-      render: testData => (
-        <div
-          className="c7ntest-text-wrap"
-        >
-          {testData}
-        </div>
-      ),
-    }, {
-      title: <FormattedMessage id="execute_expectedOutcome" />,
-      dataIndex: 'expectedResult',
-      key: 'expectedResult',
-      render: expectedResult => (
-        <div
-          className="c7ntest-text-wrap"
-        >
-          {expectedResult}
-        </div>
-      ),
-    },
-    {
-      title: <FormattedMessage id="execute_stepStatus" />,
-      dataIndex: 'stepStatus',
-      key: 'stepStatus',
-      render(stepStatus, record) {
-        return (
-          <div style={{ width: 85 }}>
+    const columns = [
+      {
+        title: '步骤',
+        dataIndex: 'order',
+        key: 'order',
+        width: 60,
+        render: (order, record, index) => (
+          <div
+            className="c7ntest-text-wrap"
+          >
+            {index + 1}
+          </div>
+        ),
+      },
+      {
+        title: <FormattedMessage id="execute_testStep" />,
+        dataIndex: 'testStep',
+        key: 'testStep',
+        width: 190,
+        render: testStep => (
+          <div
+            className="c7ntest-text-wrap"
+          >
+            {testStep}
+          </div>
+        ),
+      },
+      {
+        title: <FormattedMessage id="execute_testData" />,
+        dataIndex: 'testData',
+        key: 'testData',
+        width: 190,
+        render: testData => (
+          <div
+            className="c7ntest-text-wrap"
+          >
+            {testData}
+          </div>
+        ),
+      },
+      {
+        title: <FormattedMessage id="execute_expectedOutcome" />,
+        dataIndex: 'expectedResult',
+        key: 'expectedResult',
+        width: 190,
+        render: expectedResult => (
+          <div
+            className="c7ntest-text-wrap"
+          >
+            {expectedResult}
+          </div>
+        ),
+      },
+      // 状态
+      {
+        title: <FormattedMessage id="execute_stepStatus" />,
+        dataIndex: 'stepStatus',
+        key: 'stepStatus',
+        width: 100,
+        render(stepStatus, record) {
+          return (
+            <div style={{ width: 85 }}>
+              <TextEditToggle
+                noButton
+                disabled={disabled}
+                formKey="stepStatus"
+                onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
+                originData={stepStatus}
+              >
+                <Text>
+                  {(data) => {
+                    const targetStatus = _.find(stepStatusList, { statusId: data });
+                    const statusColor = targetStatus && targetStatus.statusColor;
+                    const statusName = targetStatus && targetStatus.statusName;
+                    return (
+                      <StatusTags
+                        color={statusColor}
+                        name={statusName}
+                      />
+                    );
+                  }}
+
+                </Text>
+                <Edit>
+                  <Select
+                    autoFocus
+                    defaultOpen
+                    getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
+                  >
+                    {options}
+                  </Select>
+                </Edit>
+              </TextEditToggle>
+            </div>
+          );
+        },
+      },
+      // 附件
+      {
+        title: <FormattedMessage id="attachment" />,
+        dataIndex: 'stepAttachment',
+        key: 'caseAttachment',
+        width: 190,
+        render(stepAttachment, record) {
+          return (
+            <UploadInTable
+              fileList={that.getFileList(stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
+              onOk={ExecuteDetailStore.loadDetailList}
+              enterLoad={ExecuteDetailStore.enterloading}
+              leaveLoad={ExecuteDetailStore.unloading}
+              config={{
+                attachmentLinkId: record.executeStepId,
+                attachmentType: 'CYCLE_STEP',
+              }}
+            />
+
+          );
+        },
+      }, {
+        title: <FormattedMessage id="execute_comment" />,
+        dataIndex: 'comment',
+        key: 'comment',
+        render(comment, record) {
+          return (
             <TextEditToggle
               noButton
               disabled={disabled}
-              formKey="stepStatus"
-              onSubmit={value => that.editCycleStep({ ...record, stepStatus: value })}
-              originData={stepStatus}
+              formKey="comment"
+              onSubmit={(value) => { that.editCycleStep({ ...record, comment: value }); }}
+              originData={delta2Text(comment)}
             >
               <Text>
-                {(data) => {
-                  const targetStatus = _.find(stepStatusList, { statusId: data });
-                  const statusColor = targetStatus && targetStatus.statusColor;
-                  const statusName = targetStatus && targetStatus.statusName;
-                  return (
-                    <StatusTags
-                      color={statusColor}
-                      name={statusName}
-                    />
-                  );
-                }}
-
+                {data => (
+                  <div
+                    className="c7ntest-text-wrap"
+                    style={{ minHeight: 20 }}
+                  >
+                    {delta2Text(data) === '' ? '-' : delta2Text(data)}
+                  </div>
+                )}
               </Text>
               <Edit>
-                <Select
-                  autoFocus
-                  defaultOpen
-                  getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
-                >
-                  {options}
-                </Select>
+                <TextArea autosize autoFocus />
               </Edit>
             </TextEditToggle>
-          </div>
-        );
+          );
+        },
       },
-    }, {
-      title: <FormattedMessage id="attachment" />,
-      dataIndex: 'stepAttachment',
-      key: 'caseAttachment',
-      render(stepAttachment, record) {
-        return (
-          <UploadInTable
-            fileList={that.getFileList(stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
-            onOk={ExecuteDetailStore.loadDetailList}
-            enterLoad={ExecuteDetailStore.enterloading}
-            leaveLoad={ExecuteDetailStore.unloading}
-            config={{
-              attachmentLinkId: record.executeStepId,
-              attachmentType: 'CYCLE_STEP',
-            }}
-          />
-        );
-      },
-    },
-    {
-      title: <FormattedMessage id="bug" />,
-      dataIndex: 'defects',
-      key: 'defects',
-      render: (defects, record) => (
-        <TextEditToggle
-          noButton
-          saveRef={(bugsToggle) => { this[`bugsToggle_${record.stepId}`] = bugsToggle; }}
-          disabled={disabled}
-          onSubmit={() => {
-            if (that.needAdd.length > 0) {
-              ExecuteDetailStore.enterloading();
-              addDefects(that.needAdd).then((res) => {
+      // 缺陷
+      {
+        title: <FormattedMessage id="bug" />,
+        dataIndex: 'defects',
+        key: 'defects',
+        width: 190,
+        render: (defects, record) => (
+          <TextEditToggle
+            noButton
+            saveRef={(bugsToggle) => { this[`bugsToggle_${record.stepId}`] = bugsToggle; }}
+            disabled={disabled}
+            onSubmit={() => {
+              if (that.needAdd.length > 0) {
+                ExecuteDetailStore.enterloading();
+                addDefects(that.needAdd).then((res) => {
+                  ExecuteDetailStore.loadDetailList();
+                });
+              } else {
                 ExecuteDetailStore.loadDetailList();
-              });
-            } else {
-              ExecuteDetailStore.loadDetailList();
-            }
-          }}
-          originData={{ defects }}
-          onCancel={ExecuteDetailStore.loadDetailList}
-        >
-          <Text>
-            {
-              defects.length > 0 ? (
-                <div>
-                  {defects.map((defect, i) => (
-                    <div
-                      key={defect.id}
-                      style={{
-                        fontSize: '13px',
-                      }}
-                    >
-                      {defect.issueInfosVO && defect.issueInfosVO.issueName}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: 100,
-                    height: 20,
-                    color: '#3f51b5',
-                  }}
-                >
-                  添加缺陷
-                </div>
-              )
-            }
-          </Text>
-          <Edit>
-            <div onScroll={(e) => {
-              e.stopPropagation();
+              }
             }}
-            >
-              <DefectSelect
-                defaultOpen
-                getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
-                defects={defects}
-                setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
-                executeStepId={record.executeStepId}
-                bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
-              />
-            </div>
-          </Edit>
+            originData={{ defects }}
+            onCancel={ExecuteDetailStore.loadDetailList}
+          >
+            <Text>
+              {
+                // eslint-disable-next-line no-nested-ternary
+                defects.length > 0 ? (
+                  <div>
+                    {defects.map((defect, i) => (
+                      <div
+                        key={defect.id}
+                        style={{
+                          fontSize: '13px',
+                        }}
+                      >
+                        {defect.issueInfosVO && defect.issueInfosVO.issueName}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  disabled
+                    ? null : (
+                      <div
+                        style={{
+                          width: 100,
+                          height: 20,
+                          color: '#3f51b5',
+                        }}
+                      >
+                          添加缺陷
+                      </div>
+                    )
+                )
+              }
+            </Text>
+            <Edit>
+              <div onScroll={(e) => {
+                e.stopPropagation();
+              }}
+              >
+                <DefectSelect
+                  defaultOpen
+                  getPopupContainer={() => document.getElementsByClassName('StepTable')[0]}
+                  defects={defects}
+                  setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+                  executeStepId={record.executeStepId}
+                  bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+                />
+              </div>
+            </Edit>
 
-        </TextEditToggle>
-      ),
-    },
+          </TextEditToggle>
+        ),
+      },
     ];
     const actionColumn = {
       title: '',
       key: 'action',
-      width: 90,
+      width: 100,
       fixed: 'right',
       render: (text, record) => (
         record.projectId !== 0
@@ -299,15 +349,18 @@ class StepTable extends PureComponent {
         )
       ),
     };
+    const newColumns = !disabled && dataSource.length > 0 ? [...columns, actionColumn] : columns;
     return (
       <div
         className="StepTable"
       >
         <Table
+          autoScroll={false}
           rowKey="executeStepId"
           filterBar={false}
           dataSource={dataSource}
-          columns={disabled ? columns : [...columns, actionColumn]}
+          // columns={visibleAction ? [...columns, actionColumn] : columns}
+          columns={newColumns}
           pagination={false}
           scroll={{ x: 1300, y: 400 }}
         />

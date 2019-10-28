@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Form, Input, Select, Modal, Spin, DatePicker, 
 } from 'choerodon-ui';
-import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
-import { addFolder } from '../../../../api/cycleApi';
+import { addFolder, checkCycleName } from '../../../../api/cycleApi';
 import { getFoldersByVersion } from '../../../../api/IssueManageApi';
 
 const { Option } = Select;
@@ -55,6 +55,22 @@ class CreateStage extends Component {
     });
   }
 
+  validateName = async (rule, name, callback) => {
+    const { CreateStageIn } = this.props;
+    const { cycleId, versionId } = CreateStageIn;
+    const hasSame = await checkCycleName({
+      type: 'folder',
+      cycleName: name,
+      versionId,
+      parentCycleId: cycleId,
+    });
+    if (hasSame) {
+      callback('含有同名阶段');
+    } else {
+      callback();
+    }
+  }
+
   loadFolders = (value) => {
     if (value !== '') {
       return;
@@ -102,6 +118,8 @@ class CreateStage extends Component {
                 {getFieldDecorator('cycleName', {
                   rules: [{
                     required: true, message: '请输入名称!',
+                  }, {
+                    validator: this.validateName,
                   }],
                 })(
                   <Input maxLength={30} label={<FormattedMessage id="name" />} />,                    

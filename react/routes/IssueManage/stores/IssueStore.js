@@ -8,7 +8,7 @@ import {
   getIssuesByVersion, getAllIssues,
 } from '../../../api/IssueManageApi';
 import {
-  getProjectVersion, getPrioritys, getIssueTypes, getIssueStatus, getLabels,
+  getProjectVersion, getPrioritys, getIssueTypes, getIssueStatus, getLabels, getModules,
 } from '../../../api/agileApi';
 import IssueTreeStore from './IssueTreeStore';
 
@@ -22,6 +22,8 @@ class IssueStore {
   @observable prioritys = [];
 
   @observable labels = [];
+
+  @observable components = [];
 
   @observable issueTypes = [];
 
@@ -141,6 +143,7 @@ class IssueStore {
         funcArr.push(getPrioritys());
         funcArr.push(getIssueStatus());
         funcArr.push(getLabels());
+        funcArr.push(getModules());
         const { currentCycle } = IssueTreeStore;
         // 树的每一层的类型
         const types = ['all', 'topversion', 'version', 'folder'];
@@ -182,11 +185,12 @@ class IssueStore {
           }
         }
 
-        Promise.all(funcArr).then(([versions, prioritys, issueStatusList, labels, res]) => {
+        Promise.all(funcArr).then(([versions, prioritys, issueStatusList, labels, components, res]) => {
           this.setVersions(_.reverse(versions));
           this.setPrioritys(prioritys);
           this.setIssueStatusList(issueStatusList);
           this.setLabels(labels);
+          this.setComponents(components);
           if (versions && versions.length > 0) {
             this.selectVersion(versions[0].versionId);
           }
@@ -249,6 +253,10 @@ class IssueStore {
 
   @action setLabels(labels) {
     this.labels = labels;
+  }
+
+  @action setComponents(components) {
+    this.components = components;
   }
 
   @action setIssueTypes(issueTypes) {
@@ -331,6 +339,10 @@ class IssueStore {
 
   @computed get getLabels() {
     return toJS(this.labels);
+  }
+
+  @computed get getComponents() {
+    return toJS(this.components);
   }
 
   @computed get getDefaultPriority() {

@@ -63,4 +63,6 @@ public interface TestCycleService {
     TestFileLoadHistoryVO queryLatestBatchCloneHistory(Long projectId);
 
     void checkRank(TestCycleVO testCycleVO);
+
+    Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId);
 }

@@ -1,47 +1,5 @@
-@border:#E0E0E0;
-@bordertop:black;
-.c7ntest-EditStatus-color-picker-container {
-    display: flex;
-    align-items: center;
-    margin-top: 0.15rem;
-}
-
-.c7ntest-EditStatus-color-picker {
-    margin-top: 0.05rem;
-    margin-left: 0.1rem;
-}
-
-.c7ntest-EditStatus-color-picker-show {
-    position: relative;
-    border: 0.03rem solid @border;
-    border-radius: 0.02rem;
-    width: 0.18rem;
-    height: 0.18rem;
-    >div {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        .c7ntest-EditStatus-color-picker-show-rec-con {
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 0.06rem;
-            height: 0.06rem;
-            background: @border;
-        }
-    }
-}
-
-.c7ntest-EditStatus-color-picker-show-rec {
-    position: absolute;
-    right: 0;
-    bottom: -0.01rem;
-    height: 0rem;
-    width: 0rem;
-    border-top: 0.03rem solid @bordertop;
-    border-left: 0.03rem solid transparent;
-    border-bottom: 0.03rem solid transparent;
-    border-right: 0.03rem solid transparent;
+.c7ntest-color-container {
+  .c7n-form-item-children:after {
+    display: none!important;
+  }
 }

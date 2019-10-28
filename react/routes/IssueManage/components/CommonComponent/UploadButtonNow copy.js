@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
   Upload, Button, Icon, Tooltip, 

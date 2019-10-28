@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Page, Header, Content } from '@choerodon/master';
+import { Page, Header, Content } from '@choerodon/boot';
 import { FormattedMessage } from 'react-intl';
 import { getProjectName, commonLink } from '../../../common/utils';
 import ReporterSwitcher from '../components';
@@ -41,11 +41,7 @@ const ReportHome = () => (
     <Header title={<FormattedMessage id="report_title" />}>
       <ReporterSwitcher isHome />
     </Header>
-    <Content         
-      title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-      description={<FormattedMessage id="report_content_description" />}
-      link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-    >
+    <Content>
       <div style={{ display: 'flex' }}>
         <Link to={commonLink('/report/story')}>
           <div style={styles.itemContainer}>

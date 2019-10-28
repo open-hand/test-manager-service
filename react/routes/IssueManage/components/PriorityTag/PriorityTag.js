@@ -20,6 +20,7 @@ const PriorityTag = ({ style, priority }) => {
         lineHeight: '20px',
         fontSize: '13px',
         textAlign: 'center',
+        verticalAlign: 'middle',
       }}
     >
       {name || ''}

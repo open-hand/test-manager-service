@@ -5,7 +5,7 @@ import io.choerodon.test.manager.app.service.impl.ExcelServiceImpl
 import spock.lang.Shared
 import spock.lang.Specification
 
-class ICycleCaseExcelServiceImplSpec extends Specification {
+class   ICycleCaseExcelServiceImplSpec extends Specification {
 
     @Shared
     ExcelServiceImpl service=new ExcelServiceImpl()

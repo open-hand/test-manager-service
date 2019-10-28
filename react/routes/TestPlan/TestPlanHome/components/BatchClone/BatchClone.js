@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { Content, stores, WSHandler } from '@choerodon/master';
+import { Choerodon } from '@choerodon/boot';
+import { Content, stores, WSHandler } from '@choerodon/boot';
 import {
   Modal, Progress, Table, Button, Icon, Tooltip, Spin,
 } from 'choerodon-ui';
@@ -179,18 +179,21 @@ class BatchClone extends Component {
     }
   }
 
-  handleMessage = (data) => {
+  handleMessage = (res) => {
     /* console.log(data); */
-    const { failedCount, rate, status } = data;
-    if (status === 3) {
-      Choerodon.prompt('循环或阶段时间范围不可为空');
-    }
-    this.setState({
-      cloningData: data,
-      cloning: status !== 3,
-    });
-    if (rate === 1 && this.state.visible) {
-      this.handleDone();
+    if (res !== 'ok') {
+      const data = JSON.parse(res);
+      const { failedCount, rate, status } = data;
+      if (status === 3) {
+        Choerodon.prompt('循环或阶段时间范围不可为空');
+      }
+      this.setState({
+        cloningData: data,
+        cloning: status !== 3,
+      });
+      if (rate === 1 && this.state.visible) {
+        this.handleDone();
+      }
     }
   }
 
@@ -248,7 +251,7 @@ class BatchClone extends Component {
           >
               确定
           </Button>,
-          <Button style={{ color: '#3F51B5' }} funcType="raised" onClick={this.close}>
+          <Button type="primary" funcType="raised" onClick={this.close}>
               关闭
           </Button>]}
       >

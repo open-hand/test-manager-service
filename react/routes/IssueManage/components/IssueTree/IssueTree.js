@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { Permission } from '@choerodon/master';
+import { Permission } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
@@ -115,7 +116,7 @@ class IssueTree extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (
       <Icon
-        style={{ color: '#3F51B5' }}
+        className="primary"
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
@@ -358,7 +359,7 @@ class IssueTree extends Component {
           className="c7ntest-IssueTree-tree"
         >
           <Spin spinning={loading}>
-            {noVersion ? <NoVersion /> : (
+            {noVersion && !loading ? <NoVersion /> : (
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
                 <Tree
                   multiple

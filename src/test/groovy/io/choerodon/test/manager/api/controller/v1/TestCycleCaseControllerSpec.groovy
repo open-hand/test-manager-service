@@ -21,6 +21,7 @@ import io.choerodon.test.manager.app.service.FileService
 import io.choerodon.test.manager.app.service.NotifyService
 import io.choerodon.test.manager.app.service.TestCaseService
 import io.choerodon.test.manager.app.service.TestCaseStepService
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService
 import io.choerodon.test.manager.app.service.TestCycleCaseService
 import io.choerodon.test.manager.app.service.TestCycleService
 import io.choerodon.test.manager.app.service.TestFileLoadHistoryService
@@ -117,6 +118,9 @@ class TestCycleCaseControllerSpec extends Specification {
     TestIssueFolderMapper folderMapper
 
     @Autowired
+    TestCycleCaseDefectRelService testCycleCaseDefectRelService
+
+    @Autowired
 //    ITestCycleService iTestCycleService
     TestCycleService testCycleService
 
@@ -210,8 +214,10 @@ class TestCycleCaseControllerSpec extends Specification {
         when:
         def result = restTemplate.getForEntity("/v1/projects/{project_id}/cycle/case/query/one/{executeId}?cycleId=0&organizationId=1", TestCycleCaseVO, 142, caseDTO.get(0).executeId)
         then:
+        //0 * testCycleCaseDefectRelService.populateDefectAndIssue(_, _, _)
         1 * testCaseService.getIssueInfoMap(_, _, _, _) >> Maps.newHashMap(98L, new IssueInfosVO())
         1 * userService.populateTestCycleCaseDTO(_)
+
         and:
         result.body.cycleId == cycleIds.get(0)
     }
@@ -430,7 +436,6 @@ class TestCycleCaseControllerSpec extends Specification {
 //        1 * testCaseService.getProjectInfo(_) >> new ProjectDTO(name: "project1")
 //        1 * fileService.uploadFile(_, _, _) >> new ResponseEntity<String>(new String(), HttpStatus.OK)
 //    }
-
 
 //    def "QuerySubStep"() {
 //

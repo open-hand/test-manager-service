@@ -106,6 +106,26 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
+        if (Objects.equals(testCycleVO.getType(), TestCycleType.FOLDER)) {
+            //如果新增阶段，调整父循环的时间
+            TestCycleDTO parentCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
+            //扩充父循环的时间
+            if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()
+                    || parentCycleDTO.getFromDate().getTime() > testCycleVO.getFromDate().getTime()) {
+                TestCycleDTO testCycleDTO = new TestCycleDTO();
+                testCycleDTO.setCycleId(parentCycleDTO.getCycleId());
+                testCycleDTO.setObjectVersionNumber(parentCycleDTO.getObjectVersionNumber());
+                if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()) {
+                    testCycleDTO.setToDate(testCycleVO.getToDate());
+                }
+                if (parentCycleDTO.getFromDate().getTime() > testCycleVO.getFromDate().getTime()) {
+                    testCycleDTO.setFromDate(testCycleVO.getFromDate());
+                }
+                if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
+                    throw new CommonException("error.update.cycle");
+                }
+            }
+        }
         if (testCycleVO.getFolderId() != null) {
             insertCaseToFolder(testCycleVO.getFolderId(), cycleDTO.getCycleId());
         }
@@ -726,6 +746,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         newTestCycleE.setCycleName(cycleName);
         newTestCycleE.setVersionId(versionId);
         newTestCycleE.setType(TestCycleType.CYCLE);
+        List<TestCycleDTO> checkCycleExistList = cycleMapper.select(modelMapper.map(newTestCycleE, TestCycleDTO.class));
+        if (checkCycleExistList != null && !checkCycleExistList.isEmpty()) {
+            throw new CommonException("error.testCycle.exist");
+        }
         return modelMapper.map(baseCloneCycle(protoTestCycleDTO, newTestCycleE, projectId), TestCycleVO.class);
     }
 
@@ -774,6 +798,21 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (getCount(testCycleVO) != 0 && StringUtils.isEmpty(getLastedRank(testCycleVO))) {
             fixRank(testCycleVO);
         }
+    }
+
+    @Override
+    public Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setProjectId(projectId);
+        testCycleDTO.setVersionId(versionId);
+        testCycleDTO.setCycleName(cycleName);
+        testCycleDTO.setType(type);
+        if (Objects.equals(type, TestCycleType.FOLDER) && !Objects.isNull(parentCycleId)) {
+            //如果是一个FOLDER类型，在一个父cycle下不能重名
+            testCycleDTO.setParentCycleId(parentCycleId);
+        }
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.select(testCycleDTO);
+        return testCycleDTOS != null && !testCycleDTOS.isEmpty();
     }
 
     private Long getCount(TestCycleVO testCycleVO) {

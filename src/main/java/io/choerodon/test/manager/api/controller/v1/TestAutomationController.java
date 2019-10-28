@@ -44,10 +44,11 @@ public class TestAutomationController {
         } catch (IOException e) {
             throw new CommonException("error.decompress.tarGz", e);
         }
-
+        String xml = new String(bytes, StandardCharsets.UTF_8);
+//        logger.info("releaseName:{}", releaseName);
+//        logger.info("xml:{}", xml);
         try {
-            return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName,
-                    new String(bytes, StandardCharsets.UTF_8)), HttpStatus.CREATED);
+            return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {
             appInstanceService.updateStatus(Long.parseLong(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入mocha测试报告失败，测试状态置为失败", e);
@@ -67,8 +68,8 @@ public class TestAutomationController {
             throw new CommonException("error.decompress.tarGz", e);
         }
         String xml = new String(bytes, StandardCharsets.UTF_8);
-        logger.info("releaseName:{}",releaseName);
-        logger.info("xml:{}",xml);
+//        logger.info("releaseName:{}", releaseName);
+//        logger.info("xml:{}", xml);
         try {
             return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, xml), HttpStatus.CREATED);
         } catch (Throwable e) {

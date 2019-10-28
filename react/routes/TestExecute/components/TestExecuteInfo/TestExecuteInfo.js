@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Button, Icon, Select, Upload,
 } from 'choerodon-ui';
@@ -375,7 +376,8 @@ class TestExecuteInfo extends Component {
                     loading={selectLoading}
                     footer={(
                       <div 
-                        style={{ color: '#3f51b5', cursor: 'pointer' }}
+                        className="primary"
+                        style={{ cursor: 'pointer' }}
                         role="none"
                         onClick={() => {
                           this.bugsToggle.handleSubmit();

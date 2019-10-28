@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import 'codemirror/lib/codemirror.css';

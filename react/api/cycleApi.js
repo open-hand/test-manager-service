@@ -1,3 +1,4 @@
+import querystring from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
 export function getCycleTree(assignedTo) {
@@ -17,8 +18,8 @@ export function getExecutesByCycleId(pagination, cycleId, filters, type) {
       },
       searchArgs: {
         issueNum: '',
-        summary: '',
       },
+      contents: [],
     },
   };
   if (Filters) {
@@ -27,7 +28,8 @@ export function getExecutesByCycleId(pagination, cycleId, filters, type) {
       if (['priorityId'].includes(filter)) {
         Filters.searchDTO.advancedSearchArgs[filter] = Filters[filter];
       } else if (['summary'].includes(filter)) {
-        [Filters.searchDTO.searchArgs[filter]] = Filters[filter];
+        Filters.searchDTO.contents = Filters[filter];
+        Filters[filter] = '';
       } else {
         [Filters[filter]] = Filters[filter];
       }
@@ -107,4 +109,7 @@ export function getExportList() {
 }
 export function assignBatch(userId, cycleId) {
   return request.put(`test/v1/projects/${getProjectId()}/cycle/batch/change/cycleCase/assignedTo/${userId}/in/cycle/${cycleId}`);
+}
+export function checkCycleName(data) {
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/check_name?${querystring.stringify(data)}`);
 }

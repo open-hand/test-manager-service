@@ -43,22 +43,21 @@ const DefectList = ({ defects, onRemoveDefect }) => {
         <Tooltip title={`编号概要： ${issueNum} ${summary}`}>
           <div style={{ marginLeft: 8, flex: 1, overflow: 'hidden' }}>
             <p
+              className="primary"
               style={{
-                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0, color: 'rgb(63, 81, 181)',
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0,
               }}
               role="none"
             >
-              <Link to={issueLink(issueId, typeCode, issueNum)} target="_blank">
+              <Link to={issueLink(issueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>
           </div>
         </Tooltip>
-        <div style={{ width: '34px', marginRight: '15px', overflow: 'hidden' }}>
+        <div style={{ marginRight: 12 }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
-            <div style={{ marginRight: 12 }}>
-              <PriorityTag priority={priorityVO || {}} />
-            </div>
+            <PriorityTag priority={priorityVO || {}} style={{ maxWidth: '20px' }} />
           </Tooltip>
         </div>
         <div style={{

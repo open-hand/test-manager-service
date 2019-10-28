@@ -13,8 +13,21 @@ import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
   renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
 } from './tags';
-import './IssueTable.scss';
+import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
+
+const versionStatus = [
+  {
+    name: '规划中',
+    code: 'version_planning',
+  }, {
+    name: '已归档',
+    code: 'archived',
+  }, {
+    name: '已发布',
+    code: 'released',
+  },
+];
 
 @observer
 class IssueTable extends Component {
@@ -26,7 +39,7 @@ class IssueTable extends Component {
     };
     this.inDivRef = React.createRef();
   }
-  
+
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
@@ -224,7 +237,7 @@ class IssueTable extends Component {
       }
     } else {
       IssueStore.setDraggingTableItems([]);
-      onRow(issue).onClick();
+      // onRow(issue).onClick();
     }
     this.setState({
       firstIndex: index,
@@ -244,7 +257,7 @@ class IssueTable extends Component {
         pagination={false}
         filters={IssueStore.barFilters || []}
         filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-        empty={(
+        empty={!IssueStore.loading && (
           <EmptyBlock
             style={{ marginTop: 40 }}
             border
@@ -272,7 +285,8 @@ class IssueTable extends Component {
     }
 
     const {
-      statusId, priorityId, issueNum, summary, labelIssueRelVOList,
+      statusId, priorityId, issueNum, summary,
+      labelIssueRelVOList, versionIssueRelVOList, componentIssueRelVOList,
     } = filters;
     const search = {
       advancedSearchArgs: {
@@ -280,9 +294,11 @@ class IssueTable extends Component {
         priorityId: priorityId || [],
       },
       otherArgs: {
+        componentIds: componentIssueRelVOList || [],
         label: labelIssueRelVOList || [],
         issueNum: issueNum && issueNum.length ? issueNum[0] : '',
         summary: summary && summary.length ? summary[0] : '',
+        versionStatusCode: versionIssueRelVOList && versionIssueRelVOList.length ? versionIssueRelVOList[0] : '',
       },
     };
     IssueStore.setFilter(search);
@@ -302,8 +318,10 @@ class IssueTable extends Component {
 
 
   render() {
+    const { onClick } = this.props;
     const prioritys = IssueStore.getPrioritys;
     const labels = IssueStore.getLabels;
+    const components = IssueStore.getComponents;
     const issueStatusList = IssueStore.getIssueStatus;
     const columns = this.manageVisible([
       {
@@ -312,7 +330,7 @@ class IssueTable extends Component {
         key: 'summary',
         filters: [],
         width: 400,
-        render: (summary, record) => renderSummary(summary),
+        render: (summary, record) => renderSummary(summary, record, onClick),
       },
       {
         title: '编号',
@@ -332,6 +350,7 @@ class IssueTable extends Component {
         title: '版本',
         dataIndex: 'versionIssueRelVOList',
         key: 'versionIssueRelVOList',
+        filters: versionStatus.map(status => ({ text: status.name, value: status.code })),
         render: (versionIssueRelVOList, record) => renderVersions(versionIssueRelVOList),
       },
       {
@@ -346,9 +365,9 @@ class IssueTable extends Component {
         key: 'reporter',
         render: (assign, record) => {
           const {
-            reporterId, reporterLoginName, reporterRealName, reporterImageUrl,
+            reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl,
           } = record;
-          return renderReporter(reporterId, reporterLoginName, reporterRealName, reporterImageUrl);
+          return renderReporter(reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl);
         },
       },
       {
@@ -365,9 +384,9 @@ class IssueTable extends Component {
         key: 'assign',
         render: (assign, record) => {
           const {
-            assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl,
+            assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl,
           } = record;
-          return renderAssigned(assigneeId, assigneeLoginName, assigneeRealName, assigneeImageUrl);
+          return renderAssigned(assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl);
         },
       },
       {
@@ -377,6 +396,14 @@ class IssueTable extends Component {
         filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
         filterMultiple: true,
         render: (statusVO, record) => renderStatus(record.statusVO),
+      },
+      {
+        title: '模块',
+        dataIndex: 'componentIssueRelVOList',
+        key: 'componentIssueRelVOList',
+        filters: components.map(component => ({ text: component.name, value: component.componentId.toString() })),
+        filterMultiple: true,
+        render: (componentIssueRelVOList, record) => renderComponents(componentIssueRelVOList),
       },
       {
         title: '标签',
@@ -390,11 +417,11 @@ class IssueTable extends Component {
     return (
       <div className="c7ntest-issueArea">
         <div id="template_copy" style={{ display: 'none' }}>
-          {'当前状态：'}
+          当前状态：
           <span style={{ fontWeight: 500 }}>复制</span>
         </div>
         <div id="template_move" style={{ display: 'none' }}>
-          {'当前状态：'}
+          当前状态：
           <span style={{ fontWeight: 500 }}>移动</span>
         </div>
         <section
@@ -409,17 +436,17 @@ class IssueTable extends Component {
 
           <div
             className="c7ntest-backlog-sprintIssue"
-            role="button"           
+            role="button"
           >
             <div
               style={{
                 userSelect: 'none',
                 background: 'white',
-                padding: '12px 0 12px 12px',                
+                padding: '12px 0 12px 12px',
                 fontSize: 13,
                 display: 'flex',
-                alignItems: 'center',    
-                borderBottom: '1px solid #e8e8e8',            
+                alignItems: 'center',
+                borderBottom: '1px solid #e8e8e8',
               }}
             >
               {/* table底部创建用例 */}

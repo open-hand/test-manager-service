@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/state-in-constructor */
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
@@ -279,7 +280,7 @@ class TestStepTable extends Component {
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
-      flex: 1,
+      flex: 0.2,
       width: 10,
       render(stepId, record, index) {
         return index + 1;
@@ -288,7 +289,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_testStep" />,
       dataIndex: 'testStep',
       key: 'testStep',
-      flex: 2,
+      flex: 2.4,
       render: (testStep, record) => {
         const { stepIsCreating } = record;
         return (
@@ -382,7 +383,7 @@ class TestStepTable extends Component {
       title: <FormattedMessage id="execute_expectedOutcome" />,
       dataIndex: 'expectedResult',
       key: 'expectedResult',
-      flex: 2,
+      flex: 2.4,
       render: (expectedResult, record) => {
         const { stepIsCreating } = record;
         return (
@@ -426,36 +427,6 @@ class TestStepTable extends Component {
         );
       },
     },
-    // {
-    //   title: <FormattedMessage id="execute_stepAttachment" />,
-    //   dataIndex: 'attachments',
-    //   key: 'attachments',
-    //   flex: 2,
-    //   className: 'attachmentsColumn',
-    //   render: (attachments, record) => (
-    //     <div className="item-container item-container-upload">
-    //       {record.stepIsCreating ? (
-    //         <UploadButton
-    //           className="createUploadBtn"
-    //           onRemove={this.setFileList}
-    //           onBeforeUpload={this.setFileList}
-    //           fileList={fileList}
-    //         />
-    //       ) : (
-    //           <UploadInTable
-    //             fileList={attachments}
-    //             onOk={onOk}
-    //             enterLoad={enterLoad}
-    //             leaveLoad={leaveLoad}
-    //             config={{
-    //               attachmentLinkId: record.stepId,
-    //               attachmentType: 'CASE_STEP',
-    //             }}
-    //           />
-    //         )}
-    //     </div>
-    //   ),
-    // }, 
     {
       title: null,
       dataIndex: 'action',
@@ -500,6 +471,8 @@ class TestStepTable extends Component {
           dataSource={this.state.data}
           columns={columns}
           onDragEnd={this.onDragEnd}
+          createIssueStep={this.createIssueStep}
+          hasStepIsCreating={hasStepIsCreating}
           dragKey="stepId"
           customDragHandle
           scroll={{ x: true }}

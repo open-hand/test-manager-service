@@ -1,13 +1,15 @@
 /* eslint-disable*/
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   Button, Tooltip, Icon, Upload, Select,
 } from 'choerodon-ui';
+import { stores } from '@choerodon/boot';
 import { find } from 'lodash';
 import { delta2Html, issueLink, text2Delta } from '../../../../common/utils';
 import {
@@ -22,7 +24,7 @@ import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
 import UploadButtonNow from '../../../IssueManage/components/CommonComponent/UploadButtonNow';
 import UploadButtonExcuteDetail from '../../../IssueManage/components/CommonComponent/UploadButtonExcuteDetail';
-
+const { HeaderStore } = stores;
 
 const { Edit, Text } = TextEditToggle;
 const { Option } = Select;
@@ -289,7 +291,7 @@ class ExecuteDetailSide extends Component {
       <div style={{
         position: 'fixed',
         right: 0,
-        top: 49,
+        top: HeaderStore.announcementClosed ? 50 : 100,
         bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
@@ -339,7 +341,7 @@ class ExecuteDetailSide extends Component {
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      <Link style={{ color: '#3F51B5', marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)} target="_blank">{issueNum}</Link>
+                      <Link className="primary" style={{ marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
                     </div>
 
                   </div>
@@ -519,7 +521,8 @@ class ExecuteDetailSide extends Component {
                           dropdownClassName="dropdown"
                           footer={(
                             <div
-                              style={{ color: '#3f51b5', cursor: 'pointer' }}
+                              className="primary"
+                              style={{ cursor: 'pointer' }}
                               role="none"
                               onClick={() => {
                                 this.bugsToggle.handleSubmit();

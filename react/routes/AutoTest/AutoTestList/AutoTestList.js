@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Choerodon } from '@choerodon/boot';
 import {
-  Page, Header, Content, Breadcrumb, stores, 
-} from '@choerodon/master';
+  Page, Header, Content, Breadcrumb, stores,
+} from '@choerodon/boot';
 import moment from 'moment';
 import {
   Icon, Button, Table, Select, Menu, Dropdown, Switch, Steps,
@@ -28,12 +29,12 @@ import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 const { Option } = Select;
 const { SubMenu, Item: MenuItem } = Menu;
 const AutoTestList = ({
-  loading, 
-  appList, 
-  selectLoading, 
+  loading,
+  appList,
+  selectLoading,
   autoRefresh,
-  currentApp, 
-  historyList,   
+  currentApp,
+  historyList,
   envList,
   pagination,
   toCreateAutoTest,
@@ -56,18 +57,18 @@ const AutoTestList = ({
       {record.moreCycle ? (
         <SubMenu title="测试循环">
           {
-          record.cycleDTOS.map(cycle => (
-            <MenuItem>
-              <Link to={TestExecuteLink(cycle.cycleId)} target="_blank">{cycle.cycleName}</Link>
-            </MenuItem>
-          ))
-        }   
+            record.cycleDTOS.map(cycle => (
+              <MenuItem>
+                <Link to={TestExecuteLink(cycle.cycleId)}>{cycle.cycleName}</Link>
+              </MenuItem>
+            ))
+          }
         </SubMenu>
       ) : (
         <MenuItem key="cycle" disabled={!record.cycleIds}>
-          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)} target="_blank">测试循环</Link> : '测试循环'}        
+          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)}>测试循环</Link> : '测试循环'}
         </MenuItem>
-      )}      
+      )}
       <MenuItem key="report" disabled={!record.resultId}>
         测试报告
       </MenuItem>
@@ -86,7 +87,21 @@ const AutoTestList = ({
       const { podStatus } = testAppInstanceVO || {};
       return PodStatus(podStatus);
     },
-  }, {
+  },
+  {
+    title: '',
+    dataIndex: 'action',
+    key: 'action',
+    render: (action, record) => (
+      <div style={{ display: 'flex' }}>
+        <div className="c7ntest-flex-space" />
+        <Dropdown overlay={getMenu(record)} trigger={['click']}>
+          <Button shape="circle" icon="more_vert" style={{ marginRight: -5 }} />
+        </Dropdown>
+      </div>
+    ),
+  },
+  {
     title: '环境',
     dataIndex: 'envId',
     key: 'envId',
@@ -97,17 +112,20 @@ const AutoTestList = ({
       const target = _.find(envList, { id: envId });
       return <span>{target && target.name}</span>;
     },
-  }, {
+  },
+  {
     title: '执行方',
     dataIndex: 'createUser',
     key: 'createUser',
     render: createUser => <User user={createUser} />,
-  }, {
+  }, 
+  {
     title: '测试框架',
     dataIndex: 'framework',
     key: 'framework',
     filters: [],
-  }, {
+  }, 
+  {
     title: '应用版本',
     dataIndex: 'version',
     key: 'version',
@@ -117,7 +135,8 @@ const AutoTestList = ({
       const { appVersionName } = testAppInstanceVO || {};
       return <span>{appVersionName}</span>;
     },
-  }, {
+  }, 
+  {
     title: '时长',
     dataIndex: 'during',
     key: 'during',
@@ -128,7 +147,8 @@ const AutoTestList = ({
         ? humanizeDuration(diff)
         : null;
     },
-  }, {
+  }, 
+  {
     title: '执行时间',
     dataIndex: 'creationDate',
     key: 'creationDate',
@@ -138,24 +158,13 @@ const AutoTestList = ({
         locale={Choerodon.getMessage('zh_CN', 'en')}
       />
     ),
-  }, {
+  }, 
+  {
     title: '测试结果',
     dataIndex: 'testStatus',
     key: 'testStatus',
     filters: TESTRESULT,
     render: testStatus => TestResult(testStatus),
-  }, {
-    title: '',
-    dataIndex: 'action',
-    key: 'action',
-    render: (action, record) => (
-      <div style={{ display: 'flex' }}>
-        <div className="c7ntest-flex-space" />
-        <Dropdown overlay={getMenu(record)} trigger={['click']}>
-          <Button shape="circle" icon="more_vert" style={{ marginRight: -5 }} />
-        </Dropdown>            
-      </div>
-    ),
   }];
 
   const ModalContent = ({ modal }) => (
@@ -183,7 +192,7 @@ const AutoTestList = ({
           <span>添加测试</span>
         </Button>
       </Header>
-      <Breadcrumb title="自动化测试" />
+      <Breadcrumb />
       <Content>
         <Select
           label="选择应用"
@@ -197,8 +206,8 @@ const AutoTestList = ({
         >
           {appOptions}
         </Select>
-        <Table loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
-        <ContainerLog            
+        <Table filterBarPlaceholder="过滤表" loading={loading} columns={columns} dataSource={historyList} pagination={pagination} onChange={onTableChange} />
+        <ContainerLog
           ref={onSaveLogRef('ContainerLog')}
         />
         <CreateAutoTest />

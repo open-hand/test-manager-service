@@ -76,11 +76,14 @@
     }
 
     .c7n-select-selection-selected-value {
-      margin-top: 2px;
+      vertical-align: text-bottom;
     }
+  }
 
-    .c7n-select-clear {
-      margin-top: 2px;
+  .c7ntest-select.c7n-select-focused {
+    .c7n-select-label-wrapper {
+      transition: none;
+      display: none;
     }
   }
 
@@ -124,6 +127,9 @@
     .c7n-input-length-info {
       display: none;
     }
+  }
+  .primary {
+    color: #3F51B5;
   }
 }
 

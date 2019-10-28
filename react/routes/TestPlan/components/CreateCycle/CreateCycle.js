@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Form, Input, Select, Modal, Spin, DatePicker,
 } from 'choerodon-ui';
-import { Content } from '@choerodon/master';
 import { FormattedMessage } from 'react-intl';
 import { getProjectVersion } from '../../../../api/agileApi';
-import { addCycle } from '../../../../api/cycleApi';
-import { getProjectName } from '../../../../common/utils';
+import { addCycle, checkCycleName } from '../../../../api/cycleApi';
 import TestPlanStore from '../../stores/TestPlanStore';
 import './CreateCycle.less';
 
@@ -17,13 +16,12 @@ const { RangePicker } = DatePicker;
 class CreateCycle extends Component {
   state = {
     versions: [],
-    selectLoading: false,
     loading: false,
   }
 
   componentWillReceiveProps(nextProps) {
-    const { resetFields } = this.props.form;
-    if (this.props.visible === false && nextProps.visible === true) {
+    const { form: { resetFields }, visible } = this.props;
+    if (visible === false && nextProps.visible === true) {
       resetFields();
     }
   }
@@ -62,23 +60,45 @@ class CreateCycle extends Component {
   }
 
   getProjectVersion = () => {
-    this.setState({
-      selectLoading: true,
-    });
     getProjectVersion().then((versions) => {
       this.setState({
         versions,
-        selectLoading: false,
       });
     });
-  } 
+  }
+
+  validateName = async (rule, name, callback) => {
+    const { form: { getFieldValue } } = this.props;
+    const versionId = getFieldValue('versionId');
+    if (!versionId) {
+      callback();
+      return;
+    }
+    const hasSame = await checkCycleName({
+      type: 'cycle',
+      cycleName: name,
+      versionId,
+      parentCycleId: 0,
+    });
+    if (hasSame) {
+      callback('含有同名循环');
+    } else {
+      callback();
+    }
+  }
+
+  handleVersionChange = () => {   
+    const { form: { validateFields } } = this.props;
+    setTimeout(() => {
+      validateFields(['cycleName'], { force: true });
+    });
+  }
 
   render() {
     const {
-      visible, onOk, onCancel, type,
+      visible, onCancel, form: { getFieldDecorator },
     } = this.props;
-    const { getFieldDecorator } = this.props.form;
-    const { versions, loading, selectLoading } = this.state;
+    const { versions, loading } = this.state;
     const options = versions.map(version => (
       <Option value={version.versionId} key={version.versionId}>
         {version.name}
@@ -92,7 +112,7 @@ class CreateCycle extends Component {
           onOk={this.onOk}
           onCancel={onCancel}
           width={380}
-        >        
+        >
           <Spin spinning={loading}>
             <Form>
               <FormItem>
@@ -103,8 +123,7 @@ class CreateCycle extends Component {
                   initialValue: versions && versions.length > 0 && TestPlanStore.exportVersionId,
                 })(
                   <Select
-                      // loading={selectLoading}
-                      // onFocus={this.getProjectVersion}                   
+                    onChange={this.handleVersionChange}
                     label={<FormattedMessage id="version" />}
                   >
                     {options}
@@ -115,6 +134,8 @@ class CreateCycle extends Component {
                 {getFieldDecorator('cycleName', {
                   rules: [{
                     required: true, message: '请输入名称!',
+                  }, {
+                    validator: this.validateName,
                   }],
                 })(
                   <Input label={<FormattedMessage id="cycleName" />} />,
@@ -128,7 +149,7 @@ class CreateCycle extends Component {
                       required: true, message: '请选择日期!',
                     }],
                   })(
-                    <RangePicker                                   
+                    <RangePicker
                       format="YYYY-MM-DD"
                       style={{ width: '100%' }}
                     />,
@@ -154,7 +175,7 @@ class CreateCycle extends Component {
                 )}
               </FormItem>
             </Form>
-          </Spin>          
+          </Spin>
         </Sidebar>
       </div>
     );

@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
-import { stores } from '@choerodon/master';
+import { stores } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 
 import _ from 'lodash';
 import moment from 'moment';
@@ -24,16 +25,19 @@ const dataList = [];
 function getParentKey(key) { return key.split('-').slice(0, -1).join('-'); }
 @observer
 class TestExecuteHomeContainer extends Component {
-  state = {
-    loading: false,
-    tableLoading: false,
-    testList: [],
-    autoExpandParent: true,
-    treeSearchValue: '',
-    statusList: [],
-    filters: {},
-    prioritys: [],
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      tableLoading: false,
+      testList: [],
+      autoExpandParent: true,
+      treeSearchValue: '',
+      statusList: [],
+      filters: {},
+      prioritys: [],
+    };
+  }
 
   componentDidMount() {
     RunWhenProjectChange(TestExecuteStore.clearStore);

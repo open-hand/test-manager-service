@@ -14,8 +14,9 @@ import {
 import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import { CreateStatus, EditStatus, StatusTable } from '../components';
+import './CustomStatusHome.less';
 
 const { TabPane } = Tabs;
 const defaultProps = {
@@ -63,6 +64,7 @@ const CustomStatusHome = ({
 }) => (
   <div>
     <CreateStatus
+      activeKey={statusType}
       visible={createVisible}
       loading={CreateStatusLoading}
       onCancel={onCreateStatusCancel}
@@ -77,7 +79,7 @@ const CustomStatusHome = ({
       onCheckStatusRepeat={onCheckStatusRepeat}
       onSubmit={onEditStatusSubmit}
     />
-    <Page>
+    <Page className="c7ntest-custom-status">
       <Header>
         <Button icon="playlist_add" onClick={onShowCreateClick}>
           <FormattedMessage id="status_create" />
@@ -86,10 +88,10 @@ const CustomStatusHome = ({
           <FormattedMessage id="refresh" />
         </Button> */}
       </Header>
-      <Breadcrumb title="" />
+      <Breadcrumb />
 
-      <Content>
-        <Tabs activeKey={statusType} onChange={onTabChange}>
+      <Content style={{ paddingTop: 0 }}>
+        <Tabs activeKey={statusType} onChange={onTabChange} className="test-manager-custom-status-home">
           <TabPane tab={<FormattedMessage id="status_executeStatus" />} key="CYCLE_CASE">
             <Spin spinning={loading}>
               <StatusTable
@@ -110,7 +112,6 @@ const CustomStatusHome = ({
           </TabPane>
         </Tabs>
       </Content>
-      {/* </Content> */}
     </Page>
   </div>
 );

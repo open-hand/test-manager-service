@@ -238,7 +238,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
 
         // 创建循环
-        TestCycleProDTO testCycleE = modelMapper.map(getCycle(projectId, versionId, "自动化测试"), TestCycleProDTO.class);
+        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
 
         // 创建阶段
         TestCycleVO testStage = getStage(projectId,

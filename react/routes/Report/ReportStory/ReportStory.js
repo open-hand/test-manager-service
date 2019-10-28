@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import {
-  Page, Header, Content, stores,
-} from '@choerodon/master';
+  Page, Header, Content, stores, Breadcrumb
+} from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import {
   Table, Button, Icon, Collapse, Tooltip,
@@ -11,7 +11,7 @@ import {
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { Tags } from '../../../components';
-import { ReporterSwitcher } from '../components';
+import ReporterSwitcher from '../components';
 import { getReportsFromStory } from '../../../api/reportApi';
 import {
   getIssueTypes, getIssueStatus, getProjectVersion, getSprints,
@@ -278,7 +278,7 @@ class ReportStory extends Component {
                 </div>
               )}
               >
-                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)} target="_blank">
+                <Link className="c7ntest-showId" to={issueLink(issueId, typeCode, issueName)}>
                   {issueName}
                 </Link>
               </Tooltip>
@@ -333,7 +333,7 @@ class ReportStory extends Component {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <Icon type="navigate_next" className="c7ntest-collapse-icon" />
                           <Tooltip title={issue.issueName}>
-                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test')} target="_blank">
+                            <Link className="c7ntest-text-dot" to={issueLink(issue.issueId, 'issue_test', issue.issueName)}>
                               {issue.issueName}
                             </Link>
                           </Tooltip>
@@ -383,7 +383,7 @@ class ReportStory extends Component {
                       }}
                     >
                       <Tooltip title={`${execute.cycleName}${execute.folderName ? `/${execute.folderName}` : ''}`}>
-                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)} target="_blank">
+                        <Link className="c7ntest-showId" to={TestExecuteLink(execute.cycleId)}>
                           {execute.cycleName}
                           {execute.folderName ? `/${execute.folderName}` : ''}
                         </Link>
@@ -472,7 +472,6 @@ class ReportStory extends Component {
                                         className="c7ntest-showId"
                                         to={issueLink(issueInfosVO && issueInfosVO.issueId,
                                           issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)}
-                                        target="_blank"
                                       >
                                         {issueInfosVO && issueInfosVO.issueName}
                                       </Link>
@@ -520,12 +519,13 @@ class ReportStory extends Component {
                             {defects.concat(subStepDefects).map((defect, i) => {
                               const { issueInfosVO } = defect;
                               return (
-                                <span style={{
-                                  fontSize: '13px',
-                                  color: '#3F51B5',
-                                }}
+                                <span
+                                  className="primary"
+                                  style={{
+                                    fontSize: '13px',
+                                  }}
                                 >
-                                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)} target="_blank">
+                                  <Link className="c7ntest-showId" to={issueLink(issueInfosVO && issueInfosVO.issueId, issueInfosVO && issueInfosVO.typeCode, issueInfosVO && issueInfosVO.issueName)}>
                                     {issueInfosVO && issueInfosVO.issueName}
                                   </Link>
                                   {i === defects.concat(subStepDefects).length - 1 ? null : '，'}
@@ -547,7 +547,7 @@ class ReportStory extends Component {
       <Page className="c7ntest-report-story">
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
-          backPath={`/testManager/report?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}`}
+          backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}
         >
           <ReporterSwitcher />
           <Button onClick={this.getInfo} style={{ marginLeft: 30 }}>
@@ -557,11 +557,8 @@ class ReportStory extends Component {
             </span>
           </Button>
         </Header>
-        <Content
-          title={<FormattedMessage id="report_content_title" values={{ name: getProjectName() }} />}
-          description="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷，根据需求追溯测试用例、执行情况和执行结果。"
-          link="http://v0-16.choerodon.io/zh/docs/user-guide/test-management/test-report/report/"
-        >
+        <Breadcrumb title="可跟踪性报告：要求 -> 测试 -> 执行 -> 缺陷" />
+        <Content>
           <div style={{ display: 'flex' }} />
           <div className="c7ntest-report-story-filter-table">
             <Table

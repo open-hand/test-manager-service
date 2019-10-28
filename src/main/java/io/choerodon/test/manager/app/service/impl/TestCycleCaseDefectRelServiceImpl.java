@@ -8,7 +8,6 @@ import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -46,6 +46,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     private ModelMapper modelMapper;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override

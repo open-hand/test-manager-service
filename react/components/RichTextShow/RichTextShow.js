@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import Lightbox from 'react-image-lightbox';
 import './RichTextShow.less';
 

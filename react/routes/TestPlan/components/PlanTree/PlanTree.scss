@@ -32,10 +32,10 @@
 
   .c7n-tree li .c7n-tree-node-content-wrapper {
     width: calc(100% - 22px);
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
-    height: 30px;
-    line-height: 30px;
+    height: 30px !important;
+    line-height: 30px !important;
     padding-left: 0 !important;
   }
 

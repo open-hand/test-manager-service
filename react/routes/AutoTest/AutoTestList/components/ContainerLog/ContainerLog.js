@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Content } from '@choerodon/master';
+import { Content } from '@choerodon/boot';
 import { Button, Select, Modal } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';

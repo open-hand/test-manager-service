@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Tree, Input, Icon } from 'choerodon-ui';
 import { observer } from 'mobx-react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -119,7 +120,8 @@ class PlanTree extends Component {
     const afterStr = item.title.substr(index + searchValue.length);
     const icon = (
       <Icon
-        style={{ color: '#3F51B5', marginRight: 5 }}
+        className="primary"
+        style={{ marginRight: 5 }}
         type={expandedKeys.includes(item.key) ? 'folder_open2' : 'folder_open'}
       />
     );
@@ -263,7 +265,7 @@ class PlanTree extends Component {
   }
 
   render() {
-    const { onClose } = this.props;
+    const { loading } = this.props;
     const {
       autoExpandParent, CreateStageVisible, CreateStageIn, AssignBatchShow,
       CloneCycleVisible, currentCloneCycle, CloneStageVisible, currentCloneStage,
@@ -312,7 +314,7 @@ class PlanTree extends Component {
         </div>
 
         <div className="c7ntest-PlanTree-tree">
-          {noVersion ? <NoVersion /> : (
+          {!loading && noVersion ? <NoVersion /> : (
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <Tree
                 // draggable

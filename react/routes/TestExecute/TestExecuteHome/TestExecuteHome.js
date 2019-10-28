@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import {
@@ -91,6 +91,7 @@ const TestExecuteHome = ({
         <Spin spinning={loading}>
           <div className="c7ntest-TestExecuteHome-container">
             <TestExecuteTreeToggle
+              loading={loading}
               leftVisible={leftVisible}
               filterCycle={filterCycle}
               onTreeAssignedToChange={onTreeAssignedToChange}
@@ -122,7 +123,7 @@ const TestExecuteHome = ({
                   pagination={executePagination}
                 />
               </div>
-            ) : <NoCycle />}
+            ) : !loading && <NoCycle />}
           </div>
         </Spin>
       </Content>

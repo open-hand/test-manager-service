@@ -60,7 +60,7 @@ public class DevopsServiceImpl implements DevopsService {
     @Override
     public List<Long> getAppVersionId(String appName, Long projectId, Long appId) {
 
-        ResponseEntity<PageInfo<AppServiceVersionRespVO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, "id", appId, appName);
+        ResponseEntity<PageInfo<AppServiceVersionRespVO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, true, "id", appId, appName);
         return list.getBody().getList().stream().map(AppServiceVersionRespVO::getId).collect(Collectors.toList());
     }
 

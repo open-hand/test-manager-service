@@ -1,5 +1,6 @@
 /*eslint-disable */
 import React, { Component } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import {
   Button, Input, Icon, Select,
 } from 'choerodon-ui';
@@ -106,6 +107,7 @@ class CreateIssueTiny extends Component {
           this.setState({
             createIssueValue: '',
             createLoading: false,
+            creating: false,
           });
         })
         .catch((error) => {
@@ -207,8 +209,7 @@ class CreateIssueTiny extends Component {
       </div>
     ) : (
         <Button
-          className="leftBtn"
-          style={{ color: '#3f51b5' }}
+          type="primary"
           funcType="flat"
           onClick={() => {
             this.setState({

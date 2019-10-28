@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { Modal } from 'choerodon-ui';
 import { SelectFocusLoad } from '../../../../components';
 import { assignBatch } from '../../../../api/cycleApi';

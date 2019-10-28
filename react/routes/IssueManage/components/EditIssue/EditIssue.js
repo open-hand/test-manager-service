@@ -1,14 +1,15 @@
 /* eslint-disable */
 import React, { Component, Fragment } from 'react';
+import { Choerodon } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
-import { stores, Permission } from '@choerodon/master';
+import { stores, Permission } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import { throttle } from 'lodash';
 import {
   Select, Input, Button, Modal, Tooltip, Dropdown, Menu, Spin, Icon, Tabs
 } from 'choerodon-ui';
-import { UploadButtonNow } from '@choerodon/agile/lib/components/CommonComponent';
+import { UploadButtonNow } from '../CommonComponent';
 import './EditIssue.scss';
 import { IssueDescription } from '../CommonComponent';
 import { TextEditToggle, User, ResizeAble } from '../../../../components';
@@ -35,7 +36,7 @@ import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
 import TestStepTable from '../TestStepTable'
 import TestExecuteTable from '../TestExecuteTable'
-const { AppState } = stores;
+const { AppState, HeaderStore } = stores;
 const { Option } = Select;
 const { TextArea } = Input;
 const { confirm } = Modal;
@@ -233,6 +234,7 @@ class EditIssueNarrow extends Component {
    * @memberof EditIssueNarrow
    */
   editIssue = (newValue, done) => {
+    console.log('editIssue', newValue);
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const {
@@ -490,13 +492,14 @@ class EditIssueNarrow extends Component {
     const {
       createdBy,
       createrImageUrl, createrEmail,
-      createrName, creationDate, issueTypeVO = {},
+      createrName, createrRealName, creationDate, issueTypeVO = {},
     } = issueInfo;
     const createLog = {
       email: createrEmail,
       field: issueTypeVO.typeCode,
       imageUrl: createrImageUrl,
       name: createrName,
+      realName: createrRealName,
       lastUpdateDate: creationDate,
       lastUpdatedBy: createdBy,
       newString: 'issueNum',
@@ -565,8 +568,9 @@ class EditIssueNarrow extends Component {
       return (
         editDescriptionShow && <div className="line-start mt-10">
           <WYSIWYGEditor
+            autoFocus
             bottomBar
-            defaultValue={text2Delta(description)}
+            defaultValue={delta}
             style={{ height: 200, width: '100%' }}
             handleDelete={() => {
               this.setState({
@@ -574,10 +578,10 @@ class EditIssueNarrow extends Component {
               });
             }}
             handleSave={(value) => {
+              this.editIssue({ description: value });
               this.setState({
                 editDescriptionShow: false,
               });
-              this.editIssue({ description: value });
             }}
           />
         </div>
@@ -589,11 +593,6 @@ class EditIssueNarrow extends Component {
           <div
             className="line-start mt-10 c7ntest-description"
             role="none"
-            onClick={() => {
-              this.setState({
-                editDescriptionShow: true,
-              });
-            }}
           >
             <IssueDescription data={delta} />
           </div>
@@ -778,7 +777,7 @@ class EditIssueNarrow extends Component {
       >
         <Text>
           {data => (
-            <p style={{ color: '#3f51b5', wordBreak: 'break-word', marginBottom: 0 }}>
+            <p className="primary" style={{ wordBreak: 'break-word', marginBottom: 0 }}>
               {this.transToArr(data, 'name')}
             </p>
           )}
@@ -909,7 +908,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { reporterId, reporterRealName, reporterLoginName, reporterImageUrl } = issueInfo;
+    const { reporterId, reporterName, reporterRealName, reporterLoginName, reporterImageUrl } = issueInfo;
 
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
@@ -924,6 +923,7 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: reporterId,
+            name: reporterName,
             loginName: reporterLoginName,
             realName: reporterRealName,
             avatar: reporterImageUrl,
@@ -933,6 +933,7 @@ class EditIssueNarrow extends Component {
     }
     return (
       <TextEditToggle
+        style={{ flex: 1 }}
         disabled={this.checkDisabledModifyOrDelete()}
         formKey="reporterId"
         onSubmit={(id, done) => { this.editIssue({ reporterId: id || 0 }, done); }}
@@ -968,7 +969,7 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
           >
             {userOptions}
           </Select>
@@ -987,7 +988,7 @@ class EditIssueNarrow extends Component {
       userList, selectLoading, disabled,
     } = this.state;
     const { issueInfo } = this.props;
-    const { assigneeId, assigneeRealName, assigneeLoginName, assigneeImageUrl } = issueInfo;
+    const { assigneeId, assigneeName, assigneeRealName, assigneeLoginName, assigneeImageUrl } = issueInfo;
     const userOptions = userList.map(user => (
       <Option key={user.id} value={user.id}>
         <User user={user} />
@@ -1001,6 +1002,7 @@ class EditIssueNarrow extends Component {
         <UserHead
           user={{
             id: assigneeId,
+            name: assigneeName,
             loginName: assigneeLoginName,
             realName: assigneeRealName,
             avatar: assigneeImageUrl,
@@ -1010,6 +1012,7 @@ class EditIssueNarrow extends Component {
     }
     return (
       <TextEditToggle
+        style={{ flex: 1 }}
         // disabled={disabled}
         formKey="assigneeId"
         onSubmit={(id, done) => { this.editIssue({ assigneeId: id || 0 }, done); }}
@@ -1045,7 +1048,8 @@ class EditIssueNarrow extends Component {
               });
             }}
             loading={selectLoading}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
+          // size={'small '}
           >
             {userOptions}
           </Select>
@@ -1140,7 +1144,7 @@ class EditIssueNarrow extends Component {
       <div style={{
         position: 'fixed',
         right: 0,
-        top: 49,
+        top: HeaderStore.announcementClosed ? 50 : 100,
         bottom: 0,
         zIndex: 101,
         overflowY: 'hidden',
@@ -1275,7 +1279,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    {'状态：'}
+                                    {'状态'}
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1286,7 +1290,7 @@ class EditIssueNarrow extends Component {
                               {/* 优先级 */}
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
-                                  <span className="c7ntest-property">优先级：</span>
+                                  <span className="c7ntest-property">优先级</span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
                                   {this.renderSelectPriority()}
@@ -1297,8 +1301,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    <FormattedMessage id="issue_create_content_version" />
-                                    {'：'}
+                                    <FormattedMessage id="issue_create_content_version" />                           
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1322,8 +1325,7 @@ class EditIssueNarrow extends Component {
                               <div className="line-start mt-10">
                                 <div className="c7ntest-property-wrapper">
                                   <span className="c7ntest-property">
-                                    <FormattedMessage id="issue_create_content_folder" />
-                                    {'：'}
+                                    <FormattedMessage id="issue_create_content_folder" />                              
                                   </span>
                                 </div>
                                 <div className="c7ntest-value-wrapper">
@@ -1339,7 +1341,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="summary_component" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper">
@@ -1352,7 +1353,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="summary_label" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper">
@@ -1365,7 +1365,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_reporter" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1376,15 +1375,14 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_manager" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                                     {this.renderSelectAssign()}
                                     <span
                                       role="none"
+                                      className="primary"
                                       style={{
-                                        color: '#3f51b5',
                                         cursor: 'pointer',
                                         marginLeft: 5,
                                         display: 'inline-block',
@@ -1401,7 +1399,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_createDate" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>
@@ -1412,7 +1409,6 @@ class EditIssueNarrow extends Component {
                                   <div className="c7ntest-property-wrapper">
                                     <span className="c7ntest-property">
                                       <FormattedMessage id="issue_edit_updateDate" />
-                                      {'：'}
                                     </span>
                                   </div>
                                   <div className="c7ntest-value-wrapper" style={{ marginLeft: 6 }}>
@@ -1474,11 +1470,11 @@ class EditIssueNarrow extends Component {
                         <div id="link_task">
                           <div className="c7ntest-title-wrapper">
                             <div className="c7ntest-title-left">
-                              关联问题
+                              问题链接
                         </div>
 
                             <div style={{ marginLeft: '14px' }}>
-                              <Tooltip title="关联问题" getPopupContainer={triggerNode => triggerNode.parentNode}>
+                              <Tooltip title="问题链接" getPopupContainer={triggerNode => triggerNode.parentNode}>
                                 <Button icon="playlist_add" onClick={() => this.setState({ createLinkTaskShow: true })} />
                               </Tooltip>
                             </div>
@@ -1492,6 +1488,7 @@ class EditIssueNarrow extends Component {
                         <div style={{ marginTop: 30 }}>
                           {addingComment ? <div className="line-start mt-10">
                             <WYSIWYGEditor
+                              autoFocus
                               bottomBar
                               style={{ height: 200, width: '100%' }}
                               handleDelete={() => {
@@ -1521,22 +1518,7 @@ class EditIssueNarrow extends Component {
                         </div>
                       </TabPane>
                       <TabPane tab="记录" key="log">
-                        {/* 修改日志 */}
-                        {/* <div id="data_log">
-                          <div className="c7ntest-title-wrapper">
-                            <div className="c7ntest-title-left">
-                              <FormattedMessage id="issue_edit_activeLog" />
-                            </div>
-                          </div> */}
                         {this.renderDataLogs()}
-                        {/* </div> */}
-                        {testExecuteData.length > 0 && <TestExecuteTable
-                          issueId={issueId}
-                          data={testExecuteData}
-                          enterLoad={enterLoad}
-                          leaveLoad={leaveLoad}
-                          onOk={reloadIssue}
-                        />}
                       </TabPane>
                     </Tabs>
                   </div>

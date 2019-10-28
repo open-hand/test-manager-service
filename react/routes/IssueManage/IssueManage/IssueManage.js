@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
   Page, Header, Content, Breadcrumb,
-} from '@choerodon/master';
+} from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
@@ -174,14 +174,12 @@ export default class IssueManage extends Component {
           >
             <IssueTable
               clickIssue={clickIssue}
-              onRow={record => ({
-                onClick: (event) => { this.handleTableRowClick(record); },
-              })}
+              onClick={this.handleTableRowClick}
             />
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           <ImportSide ref={this.saveRef('importSide')} />
-          {clickIssue.issueId && <TestCaseDetail clickIssue={clickIssue} onClose={this.handleClose} />}
+          <TestCaseDetail visible={clickIssue.issueId} clickIssue={clickIssue} onClose={this.handleClose} />
           {
             createIssueShow && (
               <CreateIssue

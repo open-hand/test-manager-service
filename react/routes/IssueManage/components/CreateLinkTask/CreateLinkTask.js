@@ -1,6 +1,6 @@
 /*eslint-disable */
 import React, { Component } from 'react';
-import { stores, axios, Content } from '@choerodon/master';
+import { stores, axios, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -144,20 +144,19 @@ class CreateLinkTask extends Component {
     return (
       <Sidebar
         className="c7ntest-newLink"
-        title="关联问题"
+        title="问题链接"
         visible={visible || false}
         onOk={this.handleCreateIssue}
         onCancel={onCancel}
         okText={<FormattedMessage id="create" />}
         cancelText={<FormattedMessage id="cancel" />}
         confirmLoading={this.state.createLoading}
+        width={380}
       >
         <Content
           style={{
             padding: '0 0 10px 0',
           }}
-          title="对用例进行问题关联"
-          description="请在下面选中要关联的问题"
         >
           <Form layout="vertical">
             {/* <FormItem style={{ width: 520 }}>
@@ -180,7 +179,7 @@ class CreateLinkTask extends Component {
               )}
             </FormItem> */}
 
-            <FormItem style={{ width: 520 }}>
+            <FormItem>
               {getFieldDecorator('issues', {
                 rules: [{
                   required: true, message: '请选择问题!',
