@@ -10,7 +10,7 @@ const NoVersion = () => (
     marginRight: 10,
     marginTop: 10,
     padding: 15,
-    border: '1px dashed rgba(0,0,0,0.54)',
+    // border: '1px dashed rgba(0,0,0,0.54)',
   }}
   >
     <img src={noVersion} alt="" />
