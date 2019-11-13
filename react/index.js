@@ -18,31 +18,33 @@ const IssueManageIndex = asyncRouter(() => import('./routes/IssueManage'));
 const AutoTestIndex = asyncRouter(() => import('./routes/AutoTest'));
 @inject('AppState')
 class TestManagerIndex extends React.Component {
-  render() {   
+  render() {
     const { match, AppState } = this.props;
     const langauge = AppState.currentLanguage;
     // const langauge = 'en_US';
     if (langauge === 'zh_CN') {
       moment.locale('zh-cn');
     }
-    
+
     const IntlProviderAsync = asyncLocaleProvider(langauge, () => import(`./locale/${langauge}`));
     return (
       <div className="testManager">
         <IntlProviderAsync>
-          <Switch>
-            {/* <Route path={`${match.url}/summary`} component={SummaryIndex} /> */}
-            <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
-            <Route path={`${match.url}/TestExecute`} component={TestExecuteIndex} />
-            <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
-            <Route path={`${match.url}/report`} component={ReportIndex} />
-            <Route path={`${match.url}/status`} component={CustomStatusIndex} />
-            <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
-            <Route path="*" component={nomatch} />
-          </Switch>        
+          <React.Fragment>
+            <Switch>
+              {/* <Route path={`${match.url}/summary`} component={SummaryIndex} /> */}
+              <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
+              <Route path={`${match.url}/TestExecute`} component={TestExecuteIndex} />
+              <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />
+              <Route path={`${match.url}/report`} component={ReportIndex} />
+              <Route path={`${match.url}/status`} component={CustomStatusIndex} />
+              <Route path={`${match.url}/AutoTest`} component={AutoTestIndex} />
+              <Route path="*" component={nomatch} />
+            </Switch>
+            <ModalContainer />
+          </React.Fragment>
         </IntlProviderAsync>
-        <ModalContainer />
-      </div>      
+      </div>
     );
   }
 }
