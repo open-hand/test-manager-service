@@ -1,0 +1,59 @@
+.c7nIssueManage-Tree {
+  width: 240px;
+  padding-left: 10px;
+
+  &-icon {
+    font-size: 22px;
+    cursor: pointer;
+    transition: all 450ms cubic-bezier(.23, 1, .32, 1) 0ms;
+
+    &-expanded {
+      transform: rotate(90deg);
+    }
+
+    &-folder {
+      margin-right: 5px;
+    }
+
+    &-primary {
+      font-size: 18px;
+      color: #3f51b5;
+    }
+  }
+
+  &-tree-item {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    &-selected {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    &-prefix {
+      display: flex;
+      align-items: center;
+    }
+
+    &-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-action {
+      margin-left: auto;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    &:hover &-action {
+      display: flex;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
