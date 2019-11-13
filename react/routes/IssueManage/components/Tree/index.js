@@ -61,6 +61,8 @@ export default function PureTree() {
       <Tree
         tree={tree}
         renderItem={renderItem}
+        onExpand={onExpand}
+        onCollapse={onCollapse}
         onDragEnd={onDragEnd}
         offsetPerLevel={PADDING_PER_LEVEL}
         isDragEnabled
