@@ -6,19 +6,32 @@ import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.domain.Sort;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.vo.*;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCaseStepService;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.TypeUtil;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.info.GitInfoContributor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -46,6 +59,15 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
+
+    @Autowired
+    private TestCaseMapper testCaseMapper;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private TestCaseStepService testCaseStepService;
 
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
@@ -186,6 +208,20 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
+    public TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO) {
+        testCaseVO.setProjectId(projectId);
+        TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
+        List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
+        if(!CollectionUtils.isEmpty(caseStepVOS)){
+            caseStepVOS.forEach(v -> {
+                v.setIssueId(testCaseDTO.getCaseId());
+                testCaseStepService.changeStep(v,projectId);
+            });
+        }
+        return testCaseVO;
+    }
+
+    @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
                 .filter(u -> u.getTypeCode().matches(IssueTypeCode.ISSUE_TEST + "|" + IssueTypeCode.ISSUE_AUTO_TEST)).collect(Collectors.toList());
@@ -260,5 +296,20 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
         return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
+    }
+
+    private TestCaseDTO voToDto(TestCaseVO testCaseVO) {
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        BeanUtils.copyProperties(testCaseVO,testCaseDTO);
+        return testCaseDTO;
+    }
+
+    private TestCaseDTO baseInsert(TestCaseVO testCaseVO) {
+        if (testCaseVO == null || testCaseVO.getCaseId() != null) {
+            throw new CommonException("error.test.case.insert.caseId.should.be.null");
+        }
+        TestCaseDTO testCaseDTO = modelMapper.map(testCaseVO, TestCaseDTO.class);
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::insert, testCaseDTO, 1, "error.testcase.insert");
+        return testCaseDTO;
     }
 }

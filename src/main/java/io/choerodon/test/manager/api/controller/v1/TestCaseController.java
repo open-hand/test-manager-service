@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class TestCaseController {
 
     @Autowired
     ExcelService excelService;
+
+    @Autowired
+    private TestCaseService testCaseService;
 
     private ExcelServiceHandler excelServiceHandler;
 
@@ -179,5 +184,13 @@ public class TestCaseController {
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("创建测试用例")
+    @PostMapping("/create")
+    public ResponseEntity<TestCaseVO> createTestCase(@PathVariable("project_id") Long projectId,
+                                                     @RequestBody
+                                                     TestCaseVO testCaseVO){
+        return new ResponseEntity<>(testCaseService.createTestCase(projectId,testCaseVO),HttpStatus.OK);
     }
 }

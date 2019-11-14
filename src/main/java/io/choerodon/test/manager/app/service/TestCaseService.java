@@ -9,6 +9,7 @@ import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import io.choerodon.devops.api.vo.ApplicationRepDTO;
 import io.choerodon.devops.api.vo.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -80,4 +81,12 @@ public interface TestCaseService {
     InstanceValueVO previewValues(Long projectId, InstanceValueVO replaceResult, Long appVersionId);
 
     void deployTestApp(Long projectId, AppServiceDeployVO appServiceDeployVO);
+
+    /**
+     * 创建用例
+     * @param projectId
+     * @param testCaseVO
+     * @return
+     */
+    TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO);
 }
