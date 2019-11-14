@@ -22,9 +22,11 @@
   }
 
   &-tree-item {
+    margin: 4px 5px;
     height: 30px;
     display: flex;
     align-items: center;
+    transition: all .3s;
     &-selected {
       background: rgba(0, 0, 0, 0.04);
     }
@@ -44,8 +46,8 @@
     &-action {
       margin-left: auto;
       cursor: pointer;
-      display: flex;
-      align-items: center;
+      display: none;
+      align-items: center;      
     }
 
     &:hover &-action {

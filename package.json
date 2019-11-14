@@ -40,7 +40,7 @@
     "through2": "^2.0.3"
   },
   "scripts": {
-    "start": "choerodon-front-boot start --config ./react/config.js",
+    "start": "node --max_old_space_size=4096 node_modules/@choerodon/boot/bin/choerodon-front-boot-start --config ./react/config.js",
     "dist": "choerodon-front-boot dist --config ./react/config.js",
     "lint-staged": "lint-staged",
     "lint-staged:es": "eslint",

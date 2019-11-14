@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
-  Icon, Button, Menu, Dropdown, 
+  Icon, Button, TextField,
 } from 'choerodon-ui/pro';
+import { Menu, Dropdown } from 'choerodon-ui';
 
 const PreTextIcon = styled.span`
   display: inline-block;
@@ -12,16 +13,7 @@ const PreTextIcon = styled.span`
   justify-content: center;
   cursor: pointer;
 `;
-const menu = (
-  <Menu>
-    <Menu.Item>
-      重命名
-    </Menu.Item>
-    <Menu.Item>
-      删除
-    </Menu.Item>
-  </Menu>
-);
+
 const prefix = 'c7nIssueManage-Tree';
 const getIcon = (
   item,
@@ -38,7 +30,7 @@ const getIcon = (
           onCollapse(item.id);
         } else {
           onExpand(item.id);
-        }        
+        }
       }}
     />
   );
@@ -53,32 +45,80 @@ const getIcon = (
   }
   return [<PreTextIcon>&bull;</PreTextIcon>, folderIcon];
 };
-const getAction = item => (
-  <div role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
-    <Icon type="create_new_folder" style={{ marginRight: 6 }} />
-    <Dropdown overlay={menu} trigger="click" getPopupContainer={trigger => trigger.parentNode}>
-      <Button funcType="flat" icon="more_vert" />
-    </Dropdown>
-  </div>
-);
+const getAction = (item, onMenuClick) => {
+  const menu = (
+    <Menu onClick={(target) => { onMenuClick(item, target); }}>
+      <Menu.Item key="rename">
+        重命名
+      </Menu.Item>
+      <Menu.Item key="delete">
+        删除
+      </Menu.Item>
+    </Menu>
+  );
+  return (
+    <div role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
+      <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />
+      <Dropdown overlay={menu} trigger="click" getPopupContainer={trigger => trigger.parentNode}>
+        <Button funcType="flat" icon="more_vert" size="small" />
+      </Dropdown>
+    </div>
+  );
+};
+
 
 export default function TreeNode(props) {
   const {
-    provided, onSelect, item, onExpand, onCollapse, 
+    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit,
   } = props;
-
-  return (
+  const onSave = (e) => {
+    if (item.id === 'new') {
+      onCreate(e.target.value, path);
+    } else {
+      onEdit(e.target.value, item);
+    }
+  };
+  const renderEditing = () => (
+    <div
+      role="none"
+      className={`${prefix}-tree-item`}
+    >
+      <TextField defaultValue={item.data.title} onBlur={onSave} autoFocus />
+    </div>
+  );
+  const renderTitle = () => {
+    const { title } = item.data;
+    const index = title.indexOf(search);
+    const beforeStr = title.substr(0, index);
+    const afterStr = title.substr(index + search.length);
+    const result = index > -1 ? (
+      <span>
+        {beforeStr}
+        <span style={{ color: '#f50' }}>{search}</span>
+        {afterStr}
+      </span>
+    ) : title;
+    return result;
+  };
+  const renderContent = () => (
     <div
       role="none"
       className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
       onClick={() => { onSelect(item.id); }}
+    >
+      <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
+      <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
+      {getAction({ ...item, path }, onMenuClick)}
+    </div>
+  );
+  // console.log(path);
+  return (
+    <div
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
-      <span className={`${prefix}-tree-item-title`}>{item.data ? item.data.title : ''}</span>
-      {getAction(item)}
+      {item.isEditing ? renderEditing() : renderContent()}      
     </div>
   );
 }
