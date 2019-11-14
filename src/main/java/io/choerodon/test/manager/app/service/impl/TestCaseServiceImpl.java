@@ -212,10 +212,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseVO.setProjectId(projectId);
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
-        if(!CollectionUtils.isEmpty(caseStepVOS)){
+        if (!CollectionUtils.isEmpty(caseStepVOS)) {
             caseStepVOS.forEach(v -> {
                 v.setIssueId(testCaseDTO.getCaseId());
-                testCaseStepService.changeStep(v,projectId);
+                testCaseStepService.changeStep(v, projectId);
             });
         }
         return testCaseVO;
@@ -296,12 +296,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithLinkedIssues.param.projectId.not.null");
         Assert.notNull(pageRequest, "error.TestCaseService.listIssueWithLinkedIssues.param.pageRequest.not.null");
         return testCaseFeignClient.listIssueWithLinkedIssues(pageRequest.getPage(), pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()), projectId, searchDTO, organizationId);
-    }
-
-    private TestCaseDTO voToDto(TestCaseVO testCaseVO) {
-        TestCaseDTO testCaseDTO = new TestCaseDTO();
-        BeanUtils.copyProperties(testCaseVO,testCaseDTO);
-        return testCaseDTO;
     }
 
     private TestCaseDTO baseInsert(TestCaseVO testCaseVO) {
