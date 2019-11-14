@@ -3,9 +3,9 @@ package script.db
 /**
  * @author zhaotianxin* @since 2019/11/14
  */
-databaseChangeLog(logicalFilePath : "script/db/test_data_log.groovy"){
-    changeSet(author: 'zhaotianxin', id: '2019-11-14-init_table_test_data_log'){
-        createTable(tableName: "test_data_log",remarks: "测试日志"){
+databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
+    changeSet(author: 'zhaotianxin', id: '2019-11-14-init_table_test_data_log') {
+        createTable(tableName: "test_data_log", remarks: "测试日志") {
             column(name: 'log_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: 'log id') {
                 constraints(primaryKey: true)
             }
