@@ -12,6 +12,7 @@ import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -108,10 +109,17 @@ public interface TestCaseService {
     void deleteCase(Long projectId, Long caseId);
 
     /**
-     * 查询文件夹下面的所有用例
+     * 查询当前文件夹下面所有子文件夹的用例
      * @param projectId 项目Id
      * @param folderId 文件夹Id
      * @return
      */
-    List<TestCaseRepVO> listCaseByFolderId(Long projectId, Long folderId);
+    List<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId);
+
+    /**
+     * 查询单个文件夹下的用例
+     * @param folderId
+     * @return
+     */
+    List<TestCaseDTO> listCaseByFolderId(Long folderId);
 }

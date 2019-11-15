@@ -213,10 +213,10 @@ public class TestCaseController {
         return new ResponseEntity(HttpStatus.OK);
     }
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询文件夹下面的所有用例")
+    @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @GetMapping("/list_by_folder_id")
     public ResponseEntity<List<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id")Long projectId,
                                                                   @RequestParam(name = "folder_id") Long folderId){
-        return new ResponseEntity<>(testCaseService.listCaseByFolderId(projectId,folderId),HttpStatus.OK);
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId,folderId),HttpStatus.OK);
     }
 }

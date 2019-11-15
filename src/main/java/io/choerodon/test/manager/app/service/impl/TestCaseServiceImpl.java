@@ -270,17 +270,16 @@ public class TestCaseServiceImpl implements TestCaseService {
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
          testCaseStepService.removeStepByIssueId(caseId);
-        // 删除问题链接
+        //TODO 删除问题链接
 
-        // 删除测试循环
-
-        // 删除测试用例相关的dataLog
+        //TODO 删除测试用例相关的dataLog
 
         // 删除测试用例
+        testCaseMapper.deleteByPrimaryKey(caseId);
     }
 
     @Override
-    public List<TestCaseRepVO> listCaseByFolderId(Long projectId, Long folderId) {
+    public List<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId) {
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId,folderIds);
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds);
@@ -294,6 +293,13 @@ public class TestCaseServiceImpl implements TestCaseService {
             return  testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<TestCaseDTO> listCaseByFolderId(Long folderId) {
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        testCaseDTO.setFolderId(folderId);
+        return testCaseMapper.select(testCaseDTO);
     }
 
 
