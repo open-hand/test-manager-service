@@ -129,16 +129,21 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Async
     @Override
-    public void importIssueByExcel(Long organizationId, Long projectId, Long versionId, Long userId, Workbook issuesWorkbook) {
-        TestIssueFolderDTO testIssueFolderDTO = getFolder(projectId, versionId, "导入");
-        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, testIssueFolderDTO.getFolderId(), userId);
+    public void importIssueByExcel(Long organizationId, Long projectId, Long folderId, Long versionId, Long userId, Workbook issuesWorkbook) {
+        // 默认是导入到导入文件夹，不存在则创建
+//        TestIssueFolderDTO testIssueFolderDTO = getFolder(projectId, versionId, "导入");
+//        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, testIssueFolderDTO.getFolderId(), userId);
+
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
 
+        // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
-
+        //测试用例页为空，则更新文件导入历史之后直接返回
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
+            // 更新创建历史记录
             finishImport(testFileLoadHistoryDTO, userId, status);
             return;
         }
@@ -154,6 +159,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         IssueDTO issueDTO = null;
         Row currentRow;
         logger.info("开始导入");
+        //更新文件和用例的关联表
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
 
@@ -169,7 +175,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
 
             if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
-                issueDTO = processIssueHeaderRow(currentRow, organizationId, projectId, versionId, testIssueFolderDTO.getFolderId(), excelTitleUtil);
+                issueDTO = processIssueHeaderRow(currentRow, organizationId, projectId, versionId, folderId, excelTitleUtil);
                 if (issueDTO == null) {
                     failedCount++;
                 } else {
@@ -493,31 +499,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             return null;
         }
 
-        Long priorityId;
-        if (ExcelUtil.isBlank(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row))) {
-            priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId, issueFeignClient);
-        } else {
-            List<PriorityVO> priorityVOList = issueFeignClient.queryByOrganizationIdList(organizationId).getBody();
-            Map<String, Long> priorityNameIdMap = new HashMap<>();
-            for (PriorityVO priorityVO : priorityVOList) {
-                if (priorityVO.getEnable()) {
-                    priorityNameIdMap.put(priorityVO.getName(), priorityVO.getId());
-                }
-            }
-            if (priorityNameIdMap.get(ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row))) == null) {
-                markAsError(row, "优先级有误，请检查导入模板是否为最新数据。");
-                return null;
-            }
-            priorityId = priorityNameIdMap.get(ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row)));
-        }
-
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
 
         IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
         issueCreateDTO.setProjectId(projectId);
-        issueCreateDTO.setPriorityCode("priority-" + priorityId);
-        issueCreateDTO.setPriorityId(priorityId);
         issueCreateDTO.setSummary(summary);
         issueCreateDTO.setDescription(description);
         issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_TEST);

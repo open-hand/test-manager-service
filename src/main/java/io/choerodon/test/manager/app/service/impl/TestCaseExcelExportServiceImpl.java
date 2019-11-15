@@ -96,6 +96,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             return 0;
         }
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
+        // 生成Excel头部项目名称
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
         String versionName = "版本";
         String versionJson = "";
@@ -105,6 +106,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
                     WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
         }
+        //Todo: 此处删除版本名称，根据所选的文件夹查出父文件夹
         ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
         ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
         return 2;
@@ -191,6 +193,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO())) {
             Optional.ofNullable(folderRel.getIssueInfosVO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosVO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
+            // Todo: 生成excel后不生成优先级字段了
             if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO().getPriorityVO())) {
                 Optional.ofNullable(folderRel.getIssueInfosVO().getPriorityVO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
             }
@@ -312,6 +315,8 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         List<IssueStatusDTO> issueStatusDTOS = excelLookupCaseVO.getIssueStatusDTOS();
 
+        //生成每一列的列名
+        //Todo: 优先级需要删除
         column += populateLookupHeader(sheet, column, rowStyle, "优先级");
         for (LookupValueDTO v : lookupValueDTOS) {
             column += populateLookupValue(sheet, column, v, rowStyle);
