@@ -219,7 +219,16 @@ public class TestCaseController {
     @GetMapping("/list_by_folder_id")
     public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id")Long projectId,
                                                        @RequestParam(name = "folder_id") Long folderId,
-                                                                      Pageable pageable){
+                                                               @SortDefault Pageable pageable){
         return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId,folderId,pageable),HttpStatus.OK);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("修改测试用例")
+    @PutMapping("/update")
+    public ResponseEntity<TestCaseRepVO> updateCase(@PathVariable("project_id")Long projectId,
+                                                @RequestBody TestCaseRepVO testCaseRepVO){
+        return new ResponseEntity<>(testCaseService.updateCase(projectId,testCaseRepVO),HttpStatus.OK);
+    }
+
 }

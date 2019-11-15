@@ -125,5 +125,11 @@ public interface TestCaseService {
      */
     List<TestCaseDTO> listCaseByFolderId(Long folderId);
 
+    /**
+     * 修改测试用例的信息
+     * @param projectId
+     * @param testCaseRepVO
+     * @return
+     */
     TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO);
 }

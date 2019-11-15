@@ -312,7 +312,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         if(ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())){
             throw new CommonException("error.case.is.not.null");
         }
-        return modelMapper.map(baseUpdate(modelMapper.map(testCaseRepVO, TestCaseDTO.class)),TestCaseRepVO.class);
+        TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
+        testCaseMapper.updateByPrimaryKeySelective(map);
+        return modelMapper.map(testCaseMapper.selectByPrimaryKey(map.getCaseId()),TestCaseRepVO.class);
     }
 
 

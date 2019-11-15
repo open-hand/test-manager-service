@@ -36,6 +36,9 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "修改时间")
     private Date lastUpdateDate;
 
+    @ApiModelProperty(value = "乐观锁")
+    private Long objectVersionNumber;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -106,5 +109,13 @@ public class TestCaseRepVO {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }
