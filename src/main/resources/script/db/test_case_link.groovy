@@ -10,7 +10,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_case_link.groovy") {
                 constraints(primaryKey: true)
             }
             column(name: 'link_case_id', type: "BIGINT UNSIGNED", remarks: 'link case 编号')
-            column(name: 'case_id', type: "BIGINT UNSIGNED", remarks: '用例编号')
+            column(name: 'issue_id', type: "BIGINT UNSIGNED", remarks: '用例编号')
             column(name: 'link_type_id', type: "BIGINT UNSIGNED", remarks: 'link type 编号')
             column(name: 'project_id', type: "BIGINT UNSIGNED", remarks: '项目编号')
 

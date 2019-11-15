@@ -5,6 +5,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -76,5 +77,28 @@ public class UserServiceImpl implements UserService {
                 v.setCreateUser(user.get(v.getCreatedBy()));
             }
         });
+    }
+
+    @Override
+    public Map<Long, UserMessageDTO> queryUsersMap(List<Long> assigneeIdList, Boolean withLoginName) {
+        if (assigneeIdList == null) {
+            return new HashMap<>();
+        }
+        Map<Long, UserMessageDTO> userMessageMap = new HashMap<>(assigneeIdList.size());
+        if (!assigneeIdList.isEmpty()) {
+            Long[] assigneeIds = new Long[assigneeIdList.size()];
+            assigneeIdList.toArray(assigneeIds);
+            List<UserDO> userDTOS = baseFeignClient.listUsersByIds(assigneeIds, false).getBody();
+            if (withLoginName) {
+                userDTOS.forEach(userDO -> {
+                    String ldapName = userDO.getRealName() + "（" + userDO.getLoginName() + "）";
+                    String noLdapName = userDO.getRealName() + "（" + userDO.getEmail() + "）";
+                    userMessageMap.put(userDO.getId(), new UserMessageDTO(userDO.getLdap() ? ldapName : noLdapName , userDO.getLoginName(), userDO.getRealName(), userDO.getImageUrl(), userDO.getEmail(), userDO.getLdap()));
+                });
+            } else {
+                userDTOS.forEach(userDO -> userMessageMap.put(userDO.getId(), new UserMessageDTO(userDO.getRealName(), userDO.getLoginName(), userDO.getRealName(), userDO.getImageUrl(), userDO.getEmail(), userDO.getLdap())));
+            }
+        }
+        return userMessageMap;
     }
 }

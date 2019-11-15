@@ -1,36 +1,51 @@
 package io.choerodon.test.manager.api.vo;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.List;
+import java.util.Date;
+import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author zhaotianxin
  * @since 2019/11/14
  */
-public class TestCaseVO {
+public class TestCaseInfoVO {
+
     @ApiModelProperty(value = "用例Id")
     private Long caseId;
+
     @ApiModelProperty(value = "用例编号")
-    private Long caseNum;
+    private String caseNum;
+
     @ApiModelProperty(value = "概要")
     private String summary;
+
     @ApiModelProperty(value = "用例详情")
     private String description;
+
     @ApiModelProperty(value = "rank")
     private String rank;
-    @ApiModelProperty(value = "文件夹Id")
-    private Long folderId;
+
+    @ApiModelProperty(value = "文件夹")
+    private String folder;
+
     @ApiModelProperty(value = "版本Id")
     private Long versionId;
+
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
-    @ApiModelProperty(value = "乐观锁版本号")
-    private Long objectVersionNumber;
-    @ApiModelProperty(value = "用例步骤")
-    private List<TestCaseStepVO> caseStepVOS;
+
+    @ApiModelProperty(value = "创建人")
+    private UserMessageDTO createUser;
+
+    @ApiModelProperty(value = "最后修改人")
+    private UserMessageDTO lastUpdateUser;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date creationDate;
+
+    @ApiModelProperty(value = "修改时间")
+    private Date lastUpdateDate;
 
     public Long getCaseId() {
         return caseId;
@@ -40,11 +55,11 @@ public class TestCaseVO {
         this.caseId = caseId;
     }
 
-    public Long getCaseNum() {
+    public String getCaseNum() {
         return caseNum;
     }
 
-    public void setCaseNum(Long caseNum) {
+    public void setCaseNum(String caseNum) {
         this.caseNum = caseNum;
     }
 
@@ -72,12 +87,12 @@ public class TestCaseVO {
         this.rank = rank;
     }
 
-    public Long getFolderId() {
-        return folderId;
+    public String getFolder() {
+        return folder;
     }
 
-    public void setFolderId(Long folderId) {
-        this.folderId = folderId;
+    public void setFolder(String folder) {
+        this.folder = folder;
     }
 
     public Long getVersionId() {
@@ -96,19 +111,35 @@ public class TestCaseVO {
         this.projectId = projectId;
     }
 
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
+    public UserMessageDTO getCreateUser() {
+        return createUser;
     }
 
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
+    public void setCreateUser(UserMessageDTO createUser) {
+        this.createUser = createUser;
     }
 
-    public List<TestCaseStepVO> getCaseStepVOS() {
-        return caseStepVOS;
+    public UserMessageDTO getLastUpdateUser() {
+        return lastUpdateUser;
     }
 
-    public void setCaseStepVOS(List<TestCaseStepVO> caseStepVOS) {
-        this.caseStepVOS = caseStepVOS;
+    public void setLastUpdateUser(UserMessageDTO lastUpdateUser) {
+        this.lastUpdateUser = lastUpdateUser;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

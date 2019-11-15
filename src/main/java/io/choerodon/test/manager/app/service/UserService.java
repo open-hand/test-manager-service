@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.springframework.http.ResponseEntity;
 import com.github.pagehelper.PageInfo;
 
@@ -26,5 +27,7 @@ public interface UserService {
     void populateTestCycleCaseDTO(TestCycleCaseVO dto);
 
     void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto);
+
+    Map<Long, UserMessageDTO> queryUsersMap(List<Long> assigneeIdList, Boolean withLoginName);
 
 }

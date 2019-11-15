@@ -17,7 +17,7 @@ public class TestProjectInfoDTO extends BaseDTO {
     private Long infoId;
     private Long projectId;
     private String projectCode;
-    private String caseMaxNum;
+    private Long caseMaxNum;
 
     public Long getInfoId() {
         return infoId;
@@ -43,11 +43,11 @@ public class TestProjectInfoDTO extends BaseDTO {
         this.projectCode = projectCode;
     }
 
-    public String getCaseMaxNum() {
+    public Long getCaseMaxNum() {
         return caseMaxNum;
     }
 
-    public void setCaseMaxNum(String caseMaxNum) {
+    public void setCaseMaxNum(Long caseMaxNum) {
         this.caseMaxNum = caseMaxNum;
     }
 }

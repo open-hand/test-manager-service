@@ -16,7 +16,7 @@ public class TestCaseLinkDTO extends BaseDTO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long linkId;
     private Long linkCaseId;
-    private Long caseId;
+    private Long issueId;
     private Long linkTypeId;
     private Long projectId;
 
@@ -36,12 +36,12 @@ public class TestCaseLinkDTO extends BaseDTO {
         this.linkCaseId = linkCaseId;
     }
 
-    public Long getCaseId() {
-        return caseId;
+    public Long getIssueId() {
+        return issueId;
     }
 
-    public void setCaseId(Long caseId) {
-        this.caseId = caseId;
+    public void setIssueId(Long issueId) {
+        this.issueId = issueId;
     }
 
     public Long getLinkTypeId() {

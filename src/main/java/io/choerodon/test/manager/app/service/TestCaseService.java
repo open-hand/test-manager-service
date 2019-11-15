@@ -9,6 +9,8 @@ import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import io.choerodon.devops.api.vo.ApplicationRepDTO;
 import io.choerodon.devops.api.vo.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
+import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import org.springframework.http.ResponseEntity;
 
@@ -89,4 +91,27 @@ public interface TestCaseService {
      * @return
      */
     TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO);
+
+    /**
+     * 查询用例详情
+     * @param projectId
+     * @param caseId
+     * @return
+     */
+    TestCaseInfoVO queryCaseInfo(Long projectId, Long caseId);
+
+    /**
+     * 删除测试用例
+     * @param projectId
+     * @param caseId
+     */
+    void deleteCase(Long projectId, Long caseId);
+
+    /**
+     * 查询文件夹下面的所有用例
+     * @param projectId 项目Id
+     * @param folderId 文件夹Id
+     * @return
+     */
+    List<TestCaseRepVO> listCaseByFolderId(Long projectId, Long folderId);
 }
