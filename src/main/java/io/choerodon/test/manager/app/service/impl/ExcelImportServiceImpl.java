@@ -50,7 +50,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String HIDDEN_PRIORITY = "hidden_priority";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_COMPONENT = "hidden_component";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[9];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[8];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -58,13 +58,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     static {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
         README_OPTIONS[1] = new ExcelReadMeOptionVO("用例描述", false);
-        README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("被指定人", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("模块", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("关联的issue", false);
-        README_OPTIONS[6] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[7] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[8] = new ExcelReadMeOptionVO("预期结果", false);
+        //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
+        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("关联的issue", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[6] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[7] = new ExcelReadMeOptionVO("预期结果", false);
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
             EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepDTO();
@@ -199,18 +199,20 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         finishImport(testFileLoadHistoryDTO, userId, status);
     }
 
+    // Todo：重构，导入用例模板不需要优先级
     public Workbook buildImportTemp(Long organizationId, Long projectId) {
+
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        List<PriorityVO> priorityVOList = issueFeignClient.queryByOrganizationIdList(organizationId).getBody();
+//        List<PriorityVO> priorityVOList = issueFeignClient.queryByOrganizationIdList(organizationId).getBody();
         List<UserDTO> userDTOS = userService.list(new PageRequest(1, 99999), projectId, null, null).getBody().getList();
         List<ComponentForListDTO> componentForListDTOS = testCaseService.listByProjectId(projectId).getList();
 
-        List<String> priorityList = new ArrayList<>();
-        for (PriorityVO priorityVO : priorityVOList) {
-            if (priorityVO.getEnable()) {
-                priorityList.add(priorityVO.getName());
-            }
-        }
+//        List<String> priorityList = new ArrayList<>();
+//        for (PriorityVO priorityVO : priorityVOList) {
+//            if (priorityVO.getEnable()) {
+//                priorityList.add(priorityVO.getName());
+//            }
+//        }
 
         List<String> userNameList = new ArrayList<>();
         for (UserDTO userDTO : userDTOS) {
@@ -222,7 +224,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             componentList.add(componentForListDTO.getName());
         }
         addReadMeSheet(importTemp);
-        addTestCaseSheet(importTemp, priorityList, userNameList, componentList);
+        addTestCaseSheet(importTemp, userNameList, componentList);
 
         return importTemp;
     }
@@ -235,16 +237,16 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         setReadMeSheetStyle(readMeSheet);
     }
 
-    private void addTestCaseSheet(Workbook workbook, List<String> priorityList, List<String> userNameList, List<String> componentList) {
+    private void addTestCaseSheet(Workbook workbook, List<String> userNameList, List<String> componentList) {
         Sheet testCaseSheet = workbook.createSheet("测试用例");
         workbook.setSheetOrder("测试用例", 1);
 
         fillTestCaseSheet(testCaseSheet);
         setTestCaseSheetStyle(testCaseSheet);
 
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityList, 1, 500, 2, 2, HIDDEN_PRIORITY, 2);
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 3, 3, HIDDEN_USER, 3);
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, componentList, 1, 500, 4, 4, HIDDEN_COMPONENT, 4);
+        //ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityList, 1, 500, 2, 2, HIDDEN_PRIORITY, 2);
+        ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 2, 2, HIDDEN_USER, 2);
+        ExcelUtil.dropDownList2007(workbook, testCaseSheet, componentList, 1, 500, 3, 3, HIDDEN_COMPONENT, 3);
     }
 
     // 填充测试用例页内容
@@ -334,16 +336,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
         row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
         row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
-        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("高");
-        row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("1234张三");
-        row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue("测试模块");
-        row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue("XX-111");
+        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("1234张三");
+        row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("测试模块");
+        row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue("XX-111");
 
         for (int i = 0; i < steps.length; i++) {
             row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
-            row.createCell(colNum + 6, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
-            row.createCell(colNum + 7, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
-            row.createCell(colNum + 8, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+            row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 6, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 7, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
         }
     }
 

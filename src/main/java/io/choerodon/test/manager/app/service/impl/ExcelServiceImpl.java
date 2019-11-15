@@ -372,6 +372,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
+        // 将workbook上载到对象存储服务中
         downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
     }
 
@@ -454,6 +455,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
+            //返回上载结果
             ResponseEntity<String> res = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, fileName, file);
 
             //判断是否返回是url

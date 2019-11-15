@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
 
+import io.choerodon.core.exception.CommonException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -95,20 +96,33 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
             return 0;
         }
+        StringBuilder stringBuilder = new StringBuilder(folder.getName());
+        // 生成文件的目录结构
+        Long parentId = folder.getParentId();
+        TestIssueFolderDTO testIssueFolderDTO;
+        do {
+             testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
+             parentId = testIssueFolderDTO.getParentId();
+             if (testIssueFolderDTO == null){
+                 throw new CommonException("error.folder.not.exist");
+             }
+             stringBuilder.append("-").append(testIssueFolderDTO.getName());
+        }while (testIssueFolderDTO.getParentId() == 0);
+
+
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
         // 生成Excel头部项目名称
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
-        String versionName = "版本";
-        String versionJson = "";
-        if (folder.getVersionId() != null) {
-            versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
-            versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
-            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
-                    WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
-        }
-        //Todo: 此处删除版本名称，根据所选的文件夹查出父文件夹
-        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
-        ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
+//        String versionName = "版本";
+//        String versionJson = "";
+//        if (folder.getVersionId() != null) {
+//            versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
+//            versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
+//            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
+//                    WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
+//        }
+        //Todo: 此处删除版本名称，换成文件夹的目录结构
+        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, stringBuilder.substring(0,stringBuilder.length()-1));
         return 2;
     }
 
@@ -318,10 +332,10 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         //生成每一列的列名
         //Todo: 优先级需要删除
-        column += populateLookupHeader(sheet, column, rowStyle, "优先级");
-        for (LookupValueDTO v : lookupValueDTOS) {
-            column += populateLookupValue(sheet, column, v, rowStyle);
-        }
+//        column += populateLookupHeader(sheet, column, rowStyle, "优先级");
+//        for (LookupValueDTO v : lookupValueDTOS) {
+//            column += populateLookupValue(sheet, column, v, rowStyle);
+//        }
 
         column += populateLookupHeader(sheet, column, rowStyle, "版本");
         for (ProductVersionDTO v : productVersionDTOS) {

@@ -138,11 +138,12 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Todo：只导出选择文件夹下的所有用例
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
-                                           @RequestParam(name = "folderId") Long folderId,
+                                           @RequestParam(name = "folder_id") Long folderId,
                                            HttpServletRequest request,
                                            HttpServletResponse response,
                                            @RequestParam Long organizationId) {
