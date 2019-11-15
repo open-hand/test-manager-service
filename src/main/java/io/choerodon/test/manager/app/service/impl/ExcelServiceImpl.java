@@ -353,7 +353,7 @@ public class ExcelServiceImpl implements ExcelService {
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         ExcelExportService service = new <TestIssueFolderVO, TestIssueFolderRelVO>TestCaseExcelExportServiceImpl();
 
-        //表格头部生成文件夹名和当前项目名称
+        //表格头部生成当前项目名称所属文件夹目录
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));

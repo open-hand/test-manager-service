@@ -34,7 +34,9 @@ public abstract class AbstarctExcelExportServiceImpl<T, R> implements ExcelExpor
 
         populateSheetStyle(sheet);
 
+        //生成excel头部
         int i = populateVersionHeader(sheet, projectName, cycle, headerRowStyle);
+        // 生成列名
         i = populateHeader(sheet, i, cycle, headerRowStyle);
         Iterator<Map.Entry<Long, List<R>>> iterator = cycleCaseMap.entrySet().iterator();
         if (log.isDebugEnabled()) {

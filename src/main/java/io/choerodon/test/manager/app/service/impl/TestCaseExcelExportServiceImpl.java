@@ -75,7 +75,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String USERS = "users";
 
     private enum CaseHeader {
-        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级"), COLUMN5("用例描述"),
+        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN5("用例描述"),
         COLUMN6("被指定人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
         COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)");
         private String chinese;
@@ -125,6 +125,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             setLookupData(sheet, rowNum, rowStyle);
         } else {
             setAllNameMapping(sheet, folder);
+            //迭代生成列名
             for (CaseHeader value : CaseHeader.values()) {
                 ExcelUtil.createCell(row, i++, ExcelUtil.CellType.TEXT, value.getValue());
             }
@@ -136,9 +137,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     public int populateBody(Sheet sheet, int column, List<TestIssueFolderRelVO> folderRelDTOS, Queue<CellStyle> rowStyles) {
         if (sheet.getWorkbook().getNumberOfSheets() != 1) {
             //设置下拉框的值
-            setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
-            setDataValidationByFormula(sheet, STATUS, 6, 6);
-            setDataValidationByFormula(sheet, USERS, 5, 5);
+             // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
+            setDataValidationByFormula(sheet, STATUS, 5, 5);
+            setDataValidationByFormula(sheet, USERS, 6, 6);
 
             for (TestIssueFolderRelVO folderRel : folderRelDTOS) {
                 CellStyle style;
@@ -194,24 +195,24 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             Optional.ofNullable(folderRel.getIssueInfosVO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosVO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
             // Todo: 生成excel后不生成优先级字段了
-            if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO().getPriorityVO())) {
-                Optional.ofNullable(folderRel.getIssueInfosVO().getPriorityVO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-            }
+//            if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO().getPriorityVO())) {
+//                Optional.ofNullable(folderRel.getIssueInfosVO().getPriorityVO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+//            }
             //接口修改后，改成描述
-            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosVO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosVO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosVO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosVO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(folderRel.getIssueInfosVO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(folderRel.getIssueInfosVO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         }
-        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
 
-        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
 
-        ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
 
-        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 13, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, v));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, folderRel.getTestCaseStepVOS(), rowStyles) + 1;
     }
