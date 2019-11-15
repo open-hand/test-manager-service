@@ -186,7 +186,7 @@ public class DemoServiceImpl implements DemoService {
         testIssueFolderVO.setVersionId(versionId);
         testIssueFolderVO.setType("cycle");
 
-        return testIssueFolderService.insert(testIssueFolderVO).getFolderId();
+        return testIssueFolderService.create(projectId,testIssueFolderVO).getFolderId();
     }
 
     private void initIssueSteps(List<Long> testIssueIds, Long projectId, Long userId, Date date) {

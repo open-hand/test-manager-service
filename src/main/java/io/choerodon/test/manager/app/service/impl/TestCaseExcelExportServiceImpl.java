@@ -252,7 +252,6 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        testIssueFolderDTO.setVersionId(folder.getVersionId());
 
         List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(testIssueFolderDTO),
                 new TypeToken<List<TestIssueFolderVO>>() {

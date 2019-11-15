@@ -345,7 +345,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public TestIssueFolderDTO getFolder(Long projectId, Long versionId, String folderName) {
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        testIssueFolderDTO.setVersionId(versionId);
         testIssueFolderDTO.setName(folderName);
 
         TestIssueFolderDTO targetTestIssueFolderDTO = testIssueFolderMapper.selectOne(testIssueFolderDTO);

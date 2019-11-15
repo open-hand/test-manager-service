@@ -248,7 +248,6 @@ public class ExcelServiceImpl implements ExcelService {
         Map<Long, List<TestIssueFolderRelVO>> allRelMaps = new HashMap<>();
         //分别导出版本到各个sheet页中
         for (Long versionId : versionsId) {
-            testIssueFolderDTO.setVersionId(versionId);
             Map<Long, List<TestIssueFolderRelVO>> everyRelMaps = populateFolder(testIssueFolderDTO, userId,
                     5 + (versionOffset * (i++)), versionOffset, testFileLoadHistoryWithRateVO, organizationId);
             allRelMaps.putAll(everyRelMaps);
@@ -295,7 +294,6 @@ public class ExcelServiceImpl implements ExcelService {
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        testIssueFolderDTO.setVersionId(versionId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
@@ -412,7 +410,6 @@ public class ExcelServiceImpl implements ExcelService {
                 modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         for (Long versionId : versionsId) {
             Object needMap = ((HashMap<Long, List<TestIssueFolderRelVO>>) map).clone();
-            testIssueFolderDTO.setVersionId(versionId);
             service.exportWorkBookWithOneSheet((Map<Long, List>) needMap, projectName,
                     modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         }
@@ -559,9 +556,6 @@ public class ExcelServiceImpl implements ExcelService {
                 folderRelDTOS.add(needRel);
             }
 
-            if (testIssueFolderDTO.getVersionId() == null && testIssueFolderDTO.getFolderId() != null) {
-                testIssueFolderDTO.setVersionId(folder.getVersionId());
-            }
             folderRelMap.put(folder.getFolderId(), folderRelDTOS);
         }
         testFileLoadHistoryWithRateVO.setRate(startRate + offset);
