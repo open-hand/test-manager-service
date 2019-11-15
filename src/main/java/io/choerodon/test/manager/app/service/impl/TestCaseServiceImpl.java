@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.base.domain.PageRequest;
@@ -25,9 +27,11 @@ import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.TypeUtil;
 import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.GitInfoContributor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -248,7 +252,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> ids = new HashSet<>();
         ids.add(testCaseDTO.getCreatedBy());
         ids.add(testCaseDTO.getLastUpdatedBy());
-        List<Long> collect = ids.stream().collect(Collectors.toList());
+        List<Long> collect = modelMapper.map(ids,new TypeToken<List<Long>>(){}.getType());
         Map<Long, UserMessageDTO> UserMessageDTOMap = userService.queryUsersMap(collect, true);
         if(!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setCreateUser(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()));
@@ -279,7 +283,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId) {
+    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable) {
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId,folderIds);
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds);
@@ -290,9 +294,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         });
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
         if(!CollectionUtils.isEmpty(testCaseDTOS)){
-            return  testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
+            List<TestCaseRepVO> collect = testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
+            return PageUtil.createPageFromList(collect,pageable);
         }
-        return new ArrayList<>();
+        return new PageInfo<>(new ArrayList<>());
     }
 
     @Override
@@ -300,6 +305,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseDTO testCaseDTO = new TestCaseDTO();
         testCaseDTO.setFolderId(folderId);
         return testCaseMapper.select(testCaseDTO);
+    }
+
+    @Override
+    public TestCaseRepVO updateCase(Long projectId, TestCaseRepVO testCaseRepVO) {
+        if(ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())){
+            throw new CommonException("error.case.is.not.null");
+        }
+        return modelMapper.map(baseUpdate(modelMapper.map(testCaseRepVO, TestCaseDTO.class)),TestCaseRepVO.class);
     }
 
 
@@ -406,5 +419,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         return testCaseRepVO;
+    }
+
+    private TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO){
+        if(ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
+            throw new CommonException("error.case.is.not.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKey, testCaseDTO, 1, "error.testcase.update");
+        return testCaseDTO;
     }
 }
