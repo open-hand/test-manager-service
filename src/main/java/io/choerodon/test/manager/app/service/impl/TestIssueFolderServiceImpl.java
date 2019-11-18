@@ -233,7 +233,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             TestIssueFolderVO returnTestIssueFolderVO = create(projectId,resTestIssueFolderVO);
             //复制issue到目的文件夹
             //todo 复制文件夹下的case到新文件夹
-            List<TestCaseRepVO> testCaseRepVOS = testCaseService.listAllCaseByFolderId(projectId, folderId);
+//            List<TestCaseRepVO> testCaseRepVOS = testCaseService.listAllCaseByFolderId(projectId, folderId);
 //            TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, null, null, null, null);
 //            List<IssueInfosVO> issueInfosVOS = new ArrayList<>();
 //            List<TestIssueFolderRelVO> resTestIssueFolderRelVOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO);
