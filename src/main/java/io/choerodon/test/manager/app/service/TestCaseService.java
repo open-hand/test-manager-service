@@ -13,6 +13,7 @@ import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -110,11 +111,12 @@ public interface TestCaseService {
 
     /**
      * 查询当前文件夹下面所有子文件夹的用例
-     * @param projectId 项目Id
-     * @param folderId 文件夹Id
+     * @param projectId
+     * @param folderId
+     * @param pageable
      * @return
      */
-    List<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId);
+    PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable);
 
     /**
      * 查询单个文件夹下的用例
@@ -122,4 +124,12 @@ public interface TestCaseService {
      * @return
      */
     List<TestCaseDTO> listCaseByFolderId(Long folderId);
+
+    /**
+     * 修改测试用例的信息
+     * @param projectId
+     * @param testCaseRepVO
+     * @return
+     */
+    TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO);
 }

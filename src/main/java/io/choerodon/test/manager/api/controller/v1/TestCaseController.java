@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
+import com.github.pagehelper.PageInfo;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
@@ -12,6 +13,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -215,8 +217,18 @@ public class TestCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @GetMapping("/list_by_folder_id")
-    public ResponseEntity<List<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id")Long projectId,
-                                                                  @RequestParam(name = "folder_id") Long folderId){
-        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId,folderId),HttpStatus.OK);
+    public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id")Long projectId,
+                                                       @RequestParam(name = "folder_id") Long folderId,
+                                                               @SortDefault Pageable pageable){
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId,folderId,pageable),HttpStatus.OK);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("修改测试用例")
+    @PutMapping("/update")
+    public ResponseEntity<TestCaseRepVO> updateCase(@PathVariable("project_id")Long projectId,
+                                                @RequestBody TestCaseRepVO testCaseRepVO){
+        return new ResponseEntity<>(testCaseService.updateCase(projectId,testCaseRepVO),HttpStatus.OK);
+    }
+
 }
