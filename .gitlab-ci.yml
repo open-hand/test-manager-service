@@ -69,11 +69,11 @@ release:
   script:
     - chart_build
   only:
-    refs:
-      - master
-      - tags
-      - /^release-.*$/
-      - /^hotfix-.*$/
+#    refs:
+#      - master
+#      - tags
+#      - /^release-.*$/
+#      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 
