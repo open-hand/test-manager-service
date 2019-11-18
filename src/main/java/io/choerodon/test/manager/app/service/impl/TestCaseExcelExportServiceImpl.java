@@ -100,15 +100,14 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         // 生成文件的目录结构
         Long parentId = folder.getParentId();
         TestIssueFolderDTO testIssueFolderDTO;
-        do {
-             testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
-             parentId = testIssueFolderDTO.getParentId();
-             if (testIssueFolderDTO == null){
-                 throw new CommonException("error.folder.not.exist");
-             }
-             stringBuilder.append("-").append(testIssueFolderDTO.getName());
-        }while (testIssueFolderDTO.getParentId() == 0);
-
+        while (parentId != 0){
+            testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
+            if(testIssueFolderDTO == null){
+                throw new CommonException("error.folder.not.exists");
+            }
+            parentId = testIssueFolderDTO.getParentId();
+            stringBuilder.append("-").append(testIssueFolderDTO.getName());
+        }
 
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
         // 生成Excel头部项目名称
