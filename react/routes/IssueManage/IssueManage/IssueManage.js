@@ -10,8 +10,7 @@ import IssueStore from '../stores/IssueStore';
 import { commonLink, getParams, testCaseDetailLink } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import CreateIssue from '../components/CreateIssue';
-// import IssueTree from '../components/IssueTree';
-import IssueTree from '../components/Tree';
+import IssueTree from '../components/IssueTree';
 import IssueTable from '../components/IssueTable';
 import ExportSide from '../components/ExportSide';
 import ImportSide from '../ImportIssue';
@@ -31,8 +30,8 @@ export default class IssueManage extends Component {
   }
 
   componentDidMount() {
-    RunWhenProjectChange(IssueStore.clearStore);
-    this.getInit();
+    RunWhenProjectChange(IssueStore.clearStore);    
+    // this.getInit();
   }
 
   getInit() {
@@ -103,6 +102,10 @@ export default class IssueManage extends Component {
     });
   }
 
+  handleAddFolderClick = () => {   
+    IssueTreeStore.treeRef.current.addFirstLevelItem();
+  }
+
   render() {
     const { createIssueShow, clickIssue } = this.state;
     const { treeShow } = IssueStore;
@@ -112,47 +115,22 @@ export default class IssueManage extends Component {
         <Header
           title={<FormattedMessage id="issue_name" />}
         >
-          <Button className="leftBtn" onClick={() => this.setState({ createIssueShow: true })}>
-            <Icon type="playlist_add icon" />
+          <Button icon="playlist_add" onClick={() => this.setState({ createIssueShow: true })}>
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.ExportSide.open()}>
-            <Icon type="unarchive" />
+          <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
+            创建一级目录
+          </Button>
+          <Button icon="unarchive" onClick={() => this.ExportSide.open()}>
             <FormattedMessage id="issue_export" />
           </Button>
-          <Button className="leftBtn" onClick={() => this.importSide.open()}>
-            {/* <Icon type="file_upload icon" /> */}
-            <Icon type="archive" />
+          <Button icon="archive" onClick={() => this.importSide.open()}>
             <FormattedMessage id="issue_import" />
           </Button>
-          {/* <Button
-            onClick={() => {
-              const { current, pageSize } = IssueStore.pagination;
-              if (this.tree) {
-                this.tree.getTree();
-              }
-              IssueStore.loadIssues(current - 1, pageSize);
-            }}
-          >
-            <Icon type="autorenew icon" />
-            <FormattedMessage id="refresh" />
-          </Button> */}
         </Header>
         <Breadcrumb title="" />
         <div className="breadcrumb-border" />
         <Content className="c7ntest-issue-content" style={{ display: 'flex', padding: '0' }}>
-          {/* <div className="c7ntest-chs-bar">
-            {!treeShow && (
-              <p
-                role="none"
-                onClick={() => {
-                  IssueStore.setTreeShow(true);
-                }}
-              >
-                <FormattedMessage id="issue_repository" />
-              </p>
-            )}
-          </div> */}
           <div className="c7ntest-issue-tree">
             {treeShow && (
               <IssueTree

@@ -21,12 +21,16 @@
     }
   }
 
+  &-tree-item-wrapper {
+    padding: 4px 5px;
+  }
+
   &-tree-item {
-    margin: 4px 5px;
     height: 30px;
     display: flex;
     align-items: center;
     transition: all .3s;
+
     &-selected {
       background: rgba(0, 0, 0, 0.04);
     }
@@ -44,14 +48,20 @@
     }
 
     &-action {
+      .icon-create_new_folder {
+        display: none;
+      }
+
       margin-left: auto;
       cursor: pointer;
-      display: none;
-      align-items: center;      
+
+      align-items: center;
     }
 
     &:hover &-action {
-      display: flex;
+      .icon-create_new_folder {
+        display: inline-block;
+      }
     }
 
     &:hover {

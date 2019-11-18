@@ -73,7 +73,7 @@ export default function TreeNode(props) {
   } = props;
   const onSave = (e) => {
     if (item.id === 'new') {
-      onCreate(e.target.value, path);
+      onCreate(e.target.value, path, item);
     } else {
       onEdit(e.target.value, item);
     }
@@ -83,33 +83,36 @@ export default function TreeNode(props) {
       role="none"
       className={`${prefix}-tree-item`}
     >
-      <TextField defaultValue={item.data.title} onBlur={onSave} autoFocus />
+      <TextField style={{ marginLeft: 20 }} defaultValue={item.data.name} onBlur={onSave} autoFocus />
     </div>
   );
   const renderTitle = () => {
-    const { title } = item.data;
-    const index = title.indexOf(search);
-    const beforeStr = title.substr(0, index);
-    const afterStr = title.substr(index + search.length);
+    const { name } = item.data;
+    const index = name.indexOf(search);
+    const beforeStr = name.substr(0, index);
+    const afterStr = name.substr(index + search.length);
     const result = index > -1 ? (
       <span>
         {beforeStr}
         <span style={{ color: '#f50' }}>{search}</span>
         {afterStr}
       </span>
-    ) : title;
+    ) : name;
     return result;
   };
   const renderContent = () => (
-    <div
-      role="none"
-      className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
-      onClick={() => { onSelect(item.id); }}
-    >
-      <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
-      <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
-      {getAction({ ...item, path }, onMenuClick)}
+    <div className={`${prefix}-tree-item-wrapper`}>
+      <div
+        role="none"
+        className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
+        onClick={() => { onSelect(item.id); }}
+      >
+        <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
+        <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
+        {getAction({ ...item, path }, onMenuClick)}
+      </div>
     </div>
+
   );
   // console.log(path);
   return (
@@ -118,7 +121,7 @@ export default function TreeNode(props) {
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      {item.isEditing ? renderEditing() : renderContent()}      
+      {item.isEditing ? renderEditing() : renderContent()}
     </div>
   );
 }

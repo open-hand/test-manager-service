@@ -6,6 +6,9 @@ import { debounce } from 'lodash';
 const hasLoadedChildren = item => !!item.hasChildren && item.children.length > 0;
 
 const isLeafItem = item => !item.hasChildren;
+export function getRootNode(tree) {
+  return tree.items['0'];
+}
 // 选中一项
 export function selectItem(tree, id, previous) {
   let newTree = tree;
@@ -64,6 +67,10 @@ export function addItem(
     isExpanded: true,
   });
 }
+export function getItemByPosition(tree, position) {
+  const id = tree.items[position.parentId].children[position.index];
+  return tree.items[id];
+}
 // 更新自身，并且更新父元素的children里的id
 export function createItem(tree, path, item) {
   // 先移除临时的
@@ -72,7 +79,7 @@ export function createItem(tree, path, item) {
   const position = getTreePosition(newTree, path);
   // 再添加新的
   const sourceParent = newTree.items[position.parentId];
-  newTree = addItem(newTree, sourceParent, item);  
+  newTree = addItem(newTree, sourceParent, item);
   return newTree;
 }
 // 根据搜索的值，展开父元素
@@ -98,7 +105,7 @@ export function expandTreeBySearch(tree, search) {
       }
     }
   });
-  
+
   return newTree;
 }
 // 根据id获取数据
