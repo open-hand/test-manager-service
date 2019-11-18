@@ -19,5 +19,25 @@
             <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
                  #{folderId}
             </foreach>
+            <include refid="sqlParam"/>
     </select>
+
+    <sql id="sqlParam">
+        <if test="searchDTO != null">
+            <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
+                AND
+                <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
+                    (summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                </foreach>
+            </if>
+            <if test="searchDTO.searchArgs != null">
+                <if test='searchDTO.searchArgs.summary != null'>
+                    AND summary = #{searchDTO.searchArgs.summary}
+                </if>
+                <if test="searchDTO.searchArgs.caseNum != null">
+                    AND case_num = #{searchDTO.searchArgs.caseNum}
+                </if>
+            </if>
+        </if>
+    </sql>
 </mapper>

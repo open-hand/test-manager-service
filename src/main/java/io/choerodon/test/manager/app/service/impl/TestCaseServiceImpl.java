@@ -12,6 +12,7 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.vo.*;
 import io.choerodon.mybatis.entity.Criteria;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -22,10 +23,7 @@ import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
+import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.TypeUtil;
@@ -86,6 +84,12 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseLinkMapper testCaseLinkMapper;
+
+    @Autowired
+    private TestDataLogMapper testDataLogMapper;
+
+    @Autowired
+    private TestCaseLinkService testCaseLinkService;
 
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
@@ -269,7 +273,10 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
         }
+        // TODO 获取用例的标签
 
+        // 用例的问题链接
+        testCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(projectId,caseId));
         // 查询测试用例所属的文件夹
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCaseDTO.getFolderId());
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
@@ -279,18 +286,20 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
         testCaseStepService.removeStepByIssueId(caseId);
-
         // 删除问题链接
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setLinkCaseId(caseId);
         testCaseLinkDTO.setProjectId(projectId);
         testCaseLinkMapper.delete(testCaseLinkDTO);
-        //TODO 删除测试用例相关的dataLog
-
+        // 删除测试用例相关的dataLog
+        TestDataLogDTO testDataLogDTO = new TestDataLogDTO();
+        testDataLogDTO.setProjectId(projectId);
+        testDataLogDTO.setCaseId(caseId);
+        testDataLogMapper.delete(testDataLogDTO);
         //TODO 删除测试用例关联的标签
 
         //TODO 删除附件信息
@@ -300,21 +309,25 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable) {
+    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable,SearchDTO searchDTO) {
+        // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId, folderIds);
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds);
+
+        // 查询文件夹下的的用例
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds,searchDTO);
+        if (CollectionUtils.isEmpty(testCaseDTOS)) {
+            return new PageInfo<>(new ArrayList<>());
+        }
         List<Long> userIds = new ArrayList<>();
         testCaseDTOS.forEach(v -> {
             userIds.add(v.getCreatedBy());
             userIds.add(v.getLastUpdatedBy());
         });
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
-            List<TestCaseRepVO> collect = testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
-            return PageUtil.createPageFromList(collect, pageable);
-        }
-        return new PageInfo<>(new ArrayList<>());
+        List<TestCaseRepVO> collect = testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
+        return PageUtil.createPageFromList(collect, pageable);
+
     }
 
     @Override

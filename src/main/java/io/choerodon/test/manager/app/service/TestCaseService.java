@@ -116,7 +116,7 @@ public interface TestCaseService {
      * @param pageable
      * @return
      */
-    PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable);
+    PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable,SearchDTO searchDTO);
 
     /**
      * 查询单个文件夹下的用例
