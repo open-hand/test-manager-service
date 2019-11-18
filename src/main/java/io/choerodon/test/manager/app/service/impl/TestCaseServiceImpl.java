@@ -10,10 +10,13 @@ import io.choerodon.base.domain.PageRequest;
 import io.choerodon.base.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.vo.*;
+import io.choerodon.mybatis.entity.Criteria;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.infra.annotation.DataLog;
+import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
@@ -83,6 +86,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseLinkMapper testCaseLinkMapper;
+
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
@@ -249,19 +253,20 @@ public class TestCaseServiceImpl implements TestCaseService {
     public TestCaseInfoVO queryCaseInfo(Long projectId, Long caseId) {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
         if (ObjectUtils.isEmpty(testCaseDTO)) {
-           throw new CommonException("error.test.case.is.not.exist");
+            throw new CommonException("error.test.case.is.not.exist");
         }
-        TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO,TestCaseInfoVO.class);
+        TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO, TestCaseInfoVO.class);
         // 获取用户信息
         Set<Long> ids = new HashSet<>();
         ids.add(testCaseDTO.getCreatedBy());
         ids.add(testCaseDTO.getLastUpdatedBy());
-        List<Long> collect = modelMapper.map(ids,new TypeToken<List<Long>>(){}.getType());
+        List<Long> collect = modelMapper.map(ids, new TypeToken<List<Long>>() {
+        }.getType());
         Map<Long, UserMessageDTO> UserMessageDTOMap = userService.queryUsersMap(collect, true);
-        if(!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
+        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setCreateUser(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()));
         }
-        if(!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
+        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
         }
 
@@ -277,7 +282,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Transactional
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
-         testCaseStepService.removeStepByIssueId(caseId);
+        testCaseStepService.removeStepByIssueId(caseId);
 
         // 删除问题链接
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
@@ -297,7 +302,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable) {
         Set<Long> folderIds = new HashSet<>();
-        queryAllFolderIds(folderId,folderIds);
+        queryAllFolderIds(folderId, folderIds);
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds);
         List<Long> userIds = new ArrayList<>();
         testCaseDTOS.forEach(v -> {
@@ -305,9 +310,9 @@ public class TestCaseServiceImpl implements TestCaseService {
             userIds.add(v.getLastUpdatedBy());
         });
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        if(!CollectionUtils.isEmpty(testCaseDTOS)){
+        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             List<TestCaseRepVO> collect = testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
-            return PageUtil.createPageFromList(collect,pageable);
+            return PageUtil.createPageFromList(collect, pageable);
         }
         return new PageInfo<>(new ArrayList<>());
     }
@@ -320,13 +325,19 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public TestCaseRepVO updateCase(Long projectId, TestCaseRepVO testCaseRepVO) {
-        if(ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())){
+    @Transactional
+    @DataLog(type = DataLogConstants.CASE_UPDATE)
+    public TestCaseRepVO updateCase(Long projectId, TestCaseRepVO testCaseRepVO,String[] fieldList) {
+        if (ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        testCaseMapper.updateByPrimaryKeySelective(map);
-        return modelMapper.map(testCaseMapper.selectByPrimaryKey(map.getCaseId()),TestCaseRepVO.class);
+        Criteria criteria = new Criteria();
+        criteria.update(fieldList);
+        if (testCaseMapper.updateByPrimaryKeyOptions(map,criteria) != 1) {
+           throw new CommonException("error.update.case");
+        }
+        return modelMapper.map(testCaseMapper.selectByPrimaryKey(map.getCaseId()), TestCaseRepVO.class);
     }
 
 
@@ -416,27 +427,27 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseDTO;
     }
 
-    private void queryAllFolderIds(Long folderId,Set<Long> folderIds){
+    private void queryAllFolderIds(Long folderId, Set<Long> folderIds) {
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
         folderIds.add(folderId);
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setParentId(folderId);
         List<TestIssueFolderDTO> folderDTOS = testIssueFolderMapper.select(testIssueFolder);
-        if(!CollectionUtils.isEmpty(folderDTOS)) {
-          folderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(),folderIds));
+        if (!CollectionUtils.isEmpty(folderDTOS)) {
+            folderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds));
         }
     }
 
-    private TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO,Map<Long,UserMessageDTO> map){
+    private TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO, Map<Long, UserMessageDTO> map) {
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
-        modelMapper.map(testCaseDTO,testCaseRepVO);
+        modelMapper.map(testCaseDTO, testCaseRepVO);
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         return testCaseRepVO;
     }
 
-    private TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO){
-        if(ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
+    private TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO) {
+        if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKey, testCaseDTO, 1, "error.testcase.update");

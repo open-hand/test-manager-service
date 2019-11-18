@@ -131,5 +131,5 @@ public interface TestCaseService {
      * @param testCaseRepVO
      * @return
      */
-    TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO);
+    TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO,String[] fieldList);
 }

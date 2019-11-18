@@ -24,6 +24,9 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
 
+    @ApiModelProperty(value = "文件夹Id")
+    private Long folderId;
+
     @ApiModelProperty(value = "创建人")
     private UserMessageDTO createUser;
 
@@ -113,6 +116,14 @@ public class TestCaseRepVO {
 
     public Long getObjectVersionNumber() {
         return objectVersionNumber;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 
     public void setObjectVersionNumber(Long objectVersionNumber) {

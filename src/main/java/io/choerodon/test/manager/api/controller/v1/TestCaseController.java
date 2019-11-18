@@ -5,11 +5,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,9 @@ public class TestCaseController {
     private TestCaseService testCaseService;
 
     private ExcelServiceHandler excelServiceHandler;
+
+    @Autowired
+    private VerifyUpdateUtil verifyUpdateUtil;
 
     @Autowired
     public TestCaseController(ExcelServiceHandler excelServiceHandler) {
@@ -232,8 +237,10 @@ public class TestCaseController {
     @ApiOperation("修改测试用例")
     @PutMapping("/update")
     public ResponseEntity<TestCaseRepVO> updateCase(@PathVariable("project_id")Long projectId,
-                                                @RequestBody TestCaseRepVO testCaseRepVO){
-        return new ResponseEntity<>(testCaseService.updateCase(projectId,testCaseRepVO),HttpStatus.OK);
+                                                @RequestBody JSONObject caseUpdate ){
+        TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
+        List<String> fieldList = verifyUpdateUtil.verifyUpdateData(caseUpdate, testCaseRepVO);
+        return new ResponseEntity<>(testCaseService.updateCase(projectId,testCaseRepVO,fieldList.toArray(new String[fieldList.size()])),HttpStatus.OK);
     }
 
 }
