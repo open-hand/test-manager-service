@@ -211,6 +211,7 @@ export default class IssueManage extends Component {
               padding: '0 20px',
             }}
           >
+            <div className="c7ntest-content-issueFolderName">choerodon 框架</div>
             <IssueTable
               clickIssue={clickIssue}
               onClick={this.handleTableRowClick}
