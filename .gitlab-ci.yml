@@ -56,11 +56,11 @@ build-combine:
 #    - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile-combine -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
     - kaniko -c $PWD/docker -f $PWD/docker/Dockerfile -d ${DOCKER_REGISTRY}/${GROUP_NAME}/${PROJECT_NAME}:${CI_COMMIT_TAG}
   only:
-    refs:
-      - master
-      - tags
-      - /^release-.*$/
-      - /^hotfix-.*$/
+#    refs:
+#      - master
+#      - tags
+#      - /^release-.*$/
+#      - /^hotfix-.*$/
     variables:
       - $COMBINE == "true"
 
