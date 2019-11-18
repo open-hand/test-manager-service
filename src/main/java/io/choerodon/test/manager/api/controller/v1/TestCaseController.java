@@ -115,6 +115,7 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
+    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
@@ -126,6 +127,7 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
@@ -138,11 +140,12 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Todo：只导出选择文件夹下的所有用例
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
-                                           @RequestParam(name = "folderId") Long folderId,
+                                           @RequestParam(name = "folder_id") Long folderId,
                                            HttpServletRequest request,
                                            HttpServletResponse response,
                                            @RequestParam Long organizationId) {
@@ -178,14 +181,16 @@ public class TestCaseController {
         excelImportService.downloadImportTemp(request, response, organizationId, projectId);
     }
 
+    // Todo: 重构，导入用例不需要指定版本号
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
-                                       @RequestParam Long versionId,
                                        @RequestParam("file") MultipartFile excelFile,
+                                       @RequestParam("folder_id") Long folderId,
+                                       @RequestParam("version_id") Long versionId,
                                        @RequestParam Long organizationId) {
-        excelImportService.importIssueByExcel(organizationId, projectId, versionId,
+        excelImportService.importIssueByExcel(organizationId, projectId, folderId,versionId,
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
         return new ResponseEntity(HttpStatus.NO_CONTENT);

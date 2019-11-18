@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
 
+import io.choerodon.core.exception.CommonException;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -75,7 +76,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     private static final String USERS = "users";
 
     private enum CaseHeader {
-        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN4("优先级"), COLUMN5("用例描述"),
+        COLUMN1("文件夹*"), COLUMN2("用例概要*"), COLUMN3("用例编号"), COLUMN5("用例描述"),
         COLUMN6("被指定人"), COLUMN7("状态"), COLUMN8("测试步骤"), COLUMN9("测试数据"), COLUMN10("预期结果"),
         COLUMN11("文件夹ID(系统自动生成)"), COLUMN12("优先级valueCode(系统自动生成)*"), COLUMN13("经办人ID(系统自动生成)");
         private String chinese;
@@ -95,18 +96,33 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
             return 0;
         }
+        StringBuilder stringBuilder = new StringBuilder(folder.getName());
+        // 生成文件的目录结构
+        Long parentId = folder.getParentId();
+        TestIssueFolderDTO testIssueFolderDTO;
+        do {
+             testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(parentId);
+             parentId = testIssueFolderDTO.getParentId();
+             if (testIssueFolderDTO == null){
+                 throw new CommonException("error.folder.not.exist");
+             }
+             stringBuilder.append("-").append(testIssueFolderDTO.getName());
+        }while (testIssueFolderDTO.getParentId() == 0);
+
+
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
+        // 生成Excel头部项目名称
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
-        String versionName = "版本";
-        String versionJson = "";
-        if (folder.getVersionId() != null) {
-            versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
-            versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
-            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
-                    WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
-        }
-        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, versionName);
-        ExcelUtil.createCell(row1, 14, ExcelUtil.CellType.TEXT, versionJson);
+//        String versionName = "版本";
+//        String versionJson = "";
+//        if (folder.getVersionId() != null) {
+//            versionName = versionName + versionInfo.get(folder.getVersionId()).getName();
+//            versionJson = JSON.toJSONString(versionInfo.get(folder.getVersionId()));
+//            sheet.getWorkbook().setSheetName(sheet.getWorkbook().getSheetIndex(sheet),
+//                    WorkbookUtil.createSafeSheetName(versionName.replace('-', '_').replace(' ', '_'), '_'));
+//        }
+        //Todo: 此处删除版本名称，换成文件夹的目录结构
+        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, stringBuilder.substring(0,stringBuilder.length()-1));
         return 2;
     }
 
@@ -123,6 +139,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             setLookupData(sheet, rowNum, rowStyle);
         } else {
             setAllNameMapping(sheet, folder);
+            //迭代生成列名
             for (CaseHeader value : CaseHeader.values()) {
                 ExcelUtil.createCell(row, i++, ExcelUtil.CellType.TEXT, value.getValue());
             }
@@ -134,9 +151,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     public int populateBody(Sheet sheet, int column, List<TestIssueFolderRelVO> folderRelDTOS, Queue<CellStyle> rowStyles) {
         if (sheet.getWorkbook().getNumberOfSheets() != 1) {
             //设置下拉框的值
-            setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
-            setDataValidationByFormula(sheet, STATUS, 6, 6);
-            setDataValidationByFormula(sheet, USERS, 5, 5);
+             // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
+            setDataValidationByFormula(sheet, STATUS, 5, 5);
+            setDataValidationByFormula(sheet, USERS, 6, 6);
 
             for (TestIssueFolderRelVO folderRel : folderRelDTOS) {
                 CellStyle style;
@@ -191,24 +208,25 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO())) {
             Optional.ofNullable(folderRel.getIssueInfosVO().getIssueNum()).ifPresent(v -> ExcelUtil.createCell(row, 2, ExcelUtil.CellType.TEXT, v));
             Optional.ofNullable(folderRel.getIssueInfosVO().getSummary()).ifPresent(v -> ExcelUtil.createCell(row, 1, ExcelUtil.CellType.TEXT, v));
-            if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO().getPriorityVO())) {
-                Optional.ofNullable(folderRel.getIssueInfosVO().getPriorityVO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
-            }
+            // Todo: 生成excel后不生成优先级字段了
+//            if (!ObjectUtils.isEmpty(folderRel.getIssueInfosVO().getPriorityVO())) {
+//                Optional.ofNullable(folderRel.getIssueInfosVO().getPriorityVO().getName()).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+//            }
             //接口修改后，改成描述
-            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosVO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosVO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
-            Optional.ofNullable(folderRel.getIssueInfosVO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 6, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(ExcelUtil.getColumnWithoutRichText(folderRel.getIssueInfosVO().getDescription())).ifPresent(v -> ExcelUtil.createCell(row, 3, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(folderRel.getIssueInfosVO().getAssigneeName()).ifPresent(v -> ExcelUtil.createCell(row, 4, ExcelUtil.CellType.TEXT, v));
+            Optional.ofNullable(folderRel.getIssueInfosVO().getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 5, ExcelUtil.CellType.TEXT, v));
         }
-        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 9, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("A" + (row.getRowNum() + 1), statusEnd + 2, folderEnd, 2));
 
-        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 10, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("D" + (row.getRowNum() + 1), 2, lookEnd, 2));
 
-        ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, "").setCellFormula(
+        ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, "").setCellFormula(
                 getLookupString("F" + (row.getRowNum() + 1), folderEnd + 2, userEnd, 2));
 
-        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 13, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(folderRel.getErrorInfo()).ifPresent(v -> ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, v));
 
         return columnNum + populateCycleCaseStep(sheet, columnNum, folderRel.getTestCaseStepVOS(), rowStyles) + 1;
     }
@@ -312,10 +330,12 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         List<IssueStatusDTO> issueStatusDTOS = excelLookupCaseVO.getIssueStatusDTOS();
 
-        column += populateLookupHeader(sheet, column, rowStyle, "优先级");
-        for (LookupValueDTO v : lookupValueDTOS) {
-            column += populateLookupValue(sheet, column, v, rowStyle);
-        }
+        //生成每一列的列名
+        //Todo: 优先级需要删除
+//        column += populateLookupHeader(sheet, column, rowStyle, "优先级");
+//        for (LookupValueDTO v : lookupValueDTOS) {
+//            column += populateLookupValue(sheet, column, v, rowStyle);
+//        }
 
         column += populateLookupHeader(sheet, column, rowStyle, "版本");
         for (ProductVersionDTO v : productVersionDTOS) {

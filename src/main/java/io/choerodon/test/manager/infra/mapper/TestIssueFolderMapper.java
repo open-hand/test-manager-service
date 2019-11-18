@@ -15,4 +15,6 @@ public interface TestIssueFolderMapper extends Mapper<TestIssueFolderDTO> {
     void updateAuditFields(@Param("folderIds") Long[] folderId, @Param("userId") Long userId, @Param("date") Date date);
 
     List<TestIssueFolderDTO> selectChildrenByParentId(@Param("parentId") Long parentId);
+
+
 }

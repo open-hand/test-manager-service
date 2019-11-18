@@ -335,23 +335,25 @@ public class ExcelServiceImpl implements ExcelService {
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
-
+        //插入导出历史
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, folderId,
                 TestFileLoadHistoryEnums.Source.FOLDER, TestFileLoadHistoryEnums.Action.DOWNLOAD_ISSUE);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
+        //根据文件夹id查出当前文件夹名称
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
         testIssueFolderDTO.setFolderId(folderId);
         testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
         String folderName = testIssueFolderDTO.getName();
         testFileLoadHistoryWithRateVO.setName(folderName);
-
+        // 创建excel表格
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         ExcelExportService service = new <TestIssueFolderVO, TestIssueFolderRelVO>TestCaseExcelExportServiceImpl();
 
+        //表格头部生成当前项目名称所属文件夹目录
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
@@ -362,6 +364,7 @@ public class ExcelServiceImpl implements ExcelService {
         for (List<TestIssueFolderRelVO> list : everyRelMaps.values()) {
             sum += list.size();
         }
+        //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(everyRelMaps, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
 
         workbook.setSheetHidden(0, true);
@@ -369,6 +372,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
+        // 将workbook上载到对象存储服务中
         downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
     }
 
@@ -451,6 +455,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
+            //返回上载结果
             ResponseEntity<String> res = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, fileName, file);
 
             //判断是否返回是url
@@ -607,7 +612,7 @@ public class ExcelServiceImpl implements ExcelService {
         optionDTOS.add(new ExcelReadMeOptionVO("文件夹", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例概要", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例编号", false));
-        optionDTOS.add(new ExcelReadMeOptionVO("优先级", true));
+        //optionDTOS.add(new ExcelReadMeOptionVO("优先级", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例描述", false));
         optionDTOS.add(new ExcelReadMeOptionVO("被指定人", false));
         optionDTOS.add(new ExcelReadMeOptionVO("状态", false));
