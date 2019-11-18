@@ -545,7 +545,6 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestIssueFolderProDTO targetFolderE;
         TestIssueFolderDTO folderE = new TestIssueFolderDTO();
         folderE.setProjectId(projectId);
-        folderE.setVersionId(versionId);
         folderE.setName(folderName);
         TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
         if (select == null) {

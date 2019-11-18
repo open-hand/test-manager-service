@@ -82,7 +82,7 @@ public class TestManagerEventHandler {
         testIssueFolderVO.setProjectId(versionEvent.getProjectId());
         testIssueFolderVO.setVersionId(versionEvent.getVersionId());
         testIssueFolderVO.setName("临时");
-        testIssueFolderService.insert(testIssueFolderVO);
+        testIssueFolderService.create(versionEvent.getProjectId(),testIssueFolderVO);
         return versionEvent;
     }
 

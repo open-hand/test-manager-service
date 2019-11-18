@@ -27,6 +27,8 @@ public class TestIssueFolderDTO extends BaseDTO {
 
     private Long objectVersionNumber;
 
+    private Long parentId;
+
     @Override
     public Long getObjectVersionNumber() {
         return objectVersionNumber;
@@ -75,6 +77,14 @@ public class TestIssueFolderDTO extends BaseDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     @Override

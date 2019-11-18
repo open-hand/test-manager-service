@@ -10,6 +10,9 @@ public class TestIssueFolderVO {
     @ApiModelProperty(value = "文件夹ID")
     private Long folderId;
 
+    @ApiModelProperty(value = "父级文件夹ID,无父级目录id传0")
+    private Long parentId;
+
     @ApiModelProperty(value = "文件夹名")
     private String name;
 
@@ -94,6 +97,15 @@ public class TestIssueFolderVO {
     }
 
     public void setType(String type) {
+
         this.type = type;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 }

@@ -22,4 +22,6 @@ public interface TestCaseStepService {
     List<TestCaseStepVO> batchClone(TestCaseStepVO testCaseStepVO, Long issueId, Long projectId);
 
     TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO);
+
+    void removeStepByIssueId(Long caseId);
 }

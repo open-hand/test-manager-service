@@ -2,8 +2,13 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +45,9 @@ public class TestCaseController {
 
     @Autowired
     ExcelService excelService;
+
+    @Autowired
+    private TestCaseService testCaseService;
 
     private ExcelServiceHandler excelServiceHandler;
 
@@ -179,5 +187,36 @@ public class TestCaseController {
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("创建测试用例")
+    @PostMapping("/create")
+    public ResponseEntity<TestCaseVO> createTestCase(@PathVariable("project_id") Long projectId,
+                                                     @RequestBody
+                                                     TestCaseVO testCaseVO){
+        return new ResponseEntity<>(testCaseService.createTestCase(projectId,testCaseVO),HttpStatus.OK);
+    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询用例详情")
+    @GetMapping("{case_id}/info")
+    public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id")Long projectId,
+                                                        @PathVariable(name = "case_id",required = true) Long caseId){
+        return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId,caseId),HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("删除测试用例")
+    @DeleteMapping("{case_id}/delete")
+    public ResponseEntity deleteCase(@PathVariable("project_id")Long projectId,
+                                     @PathVariable(name = "case_id",required = true) Long caseId){
+        testCaseService.deleteCase(projectId,caseId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
+    @GetMapping("/list_by_folder_id")
+    public ResponseEntity<List<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id")Long projectId,
+                                                                  @RequestParam(name = "folder_id") Long folderId){
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId,folderId),HttpStatus.OK);
     }
 }

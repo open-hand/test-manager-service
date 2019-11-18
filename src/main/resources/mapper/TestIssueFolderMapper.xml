@@ -4,6 +4,7 @@
 
     <resultMap type="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO" id="BaseResultMap">
         <id column="folder_id" property="folderId"/>
+        <id column="parent_id" property="parentId"/>
         <id column="name" property="name"/>
         <id column="version_id" property="versionId"/>
         <id column="project_id" property="projectId"/>
@@ -19,4 +20,7 @@
             #{item}
         </foreach>
     </update>
+    <select id="selectChildrenByParentId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
+        SELECT  folder_id,name FROM test_issue_folder WHERE parent_id=#{parentId}
+    </select>
 </mapper>

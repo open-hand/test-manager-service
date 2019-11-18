@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ch.qos.logback.core.pattern.ConverterUtil;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -27,6 +29,7 @@ import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -152,6 +155,20 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
         testCaseStepProDTO.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         return baseInsert(testCaseStepProDTO);
+    }
+
+    @Override
+    public void removeStepByIssueId(Long caseId) {
+        // 查询是否含有步骤，又步骤再删除
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+        testCaseStepDTO.setIssueId(caseId);
+        List<TestCaseStepDTO> list = testCaseStepMapper.query(testCaseStepDTO);
+        if(CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        list.forEach(v -> {
+            removeStep(modelMapper.map(v,TestCaseStepVO.class));
+        });
     }
 
     private String getLastedStepRank(Long issueId) {
