@@ -2,7 +2,9 @@
 import React, { Component, useRef } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react';
-import { Spin, Table, Pagination } from 'choerodon-ui';
+import {
+  Spin, Table, Pagination, Icon,
+} from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { FormattedMessage } from 'react-intl';
 import EmptyBlock from '../EmptyBlock';
@@ -11,7 +13,7 @@ import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
 import {
   renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
-  renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
+  renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter, renderAction,
 } from './tags';
 import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
@@ -316,9 +318,12 @@ class IssueTable extends Component {
 
   manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
 
+  reLoadTable() {
+    IssueStore.loadIssues();
+  }
 
   render() {
-    const { onClick } = this.props;
+    const { onClick, history } = this.props;
     const prioritys = IssueStore.getPrioritys;
     const labels = IssueStore.getLabels;
     const components = IssueStore.getComponents;
@@ -330,7 +335,12 @@ class IssueTable extends Component {
         key: 'summary',
         filters: [],
         width: 400,
-        render: (summary, record) => renderSummary(summary, record, onClick),
+        render: (summary, record) => renderSummary(summary, record, onClick, history),
+      },
+      {
+        key: 'action',
+        width: 30,
+        render: (text, record) => renderAction(record, history, this.reLoadTable),
       },
       {
         title: '编号',

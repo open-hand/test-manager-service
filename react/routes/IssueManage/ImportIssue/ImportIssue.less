@@ -7,19 +7,23 @@
 @progress-area-box-shadow3: rgba(0, 0, 0, 0.12);
 @progress-area-text: #000000;
 @fileName-background: #F3F3F3;
-@fileName-color: rgba(0,0,0,0.54);
+@fileName-color: rgba(0, 0, 0, 0.54);
 
 .c7ntest-ImportIssue {
+
   .c7n-progress-circle-trail {
     stroke: @circle-trail-stroke;
   }
+
   .c7n-progress-circle-path {
     stroke: @circle-path-stroke;
   }
+
   .c7n-progress-text {
     font-size: 0.16rem;
     color: @progress-text-color;
   }
+
   &-progress-area {
     background: @progress-area-background;
     box-shadow: 0 0.03rem 0.01rem -0.02rem @progress-area-box-shadow1, 0 0.02rem 0.02rem 0 @progress-area-box-shadow2, 0 0.01rem 0.05rem 0 @progress-area-box-shadow3;
@@ -28,20 +32,24 @@
     height: 1.93rem;
     text-align: center;
     padding-top: 0.18rem;
+
     &-text {
       font-size: 0.2rem;
       color: @progress-area-text;
       line-height: 0.28rem;
       margin: 0.16rem 0;
     }
+
     &-prompt {
       font-size: 0.13rem;
       line-height: 0.2rem;
     }
   }
+
   &-record-normal-text {
     margin-top: 0.1rem;
   }
+
   &-fileName {
     background-color: @fileName-background;
     border-radius: 0.02rem;
@@ -55,21 +63,25 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   &-text {
     margin-right: 0.1rem;
     display: inline-block;
     vertical-align: top;
     margin-top: 0.07rem;
   }
+
   &-progress {
     width: 2rem;
     vertical-align: top;
     margin-top: 0.07rem;
   }
+
   &-icon {
     vertical-align: sub;
     margin-right: 0.05rem;
   }
+
   &-version {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -77,5 +89,34 @@
     max-width: 1rem;
     display: inline-block;
     vertical-align: top;
+  }
+
+  &-form {
+    .c7n-divider {
+      width: 3.8rem;
+      margin-left: -.24rem;
+      margin-bottom: .195rem;
+    }
+    &-one{
+      &-title {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.87);
+        line-height: 24px;
+      }
+  
+      &-content {
+        display: block;
+        margin: .16rem 0;
+        font-size: 13px;
+        color: rgba(0, 0, 0, 0.65);
+        line-height: 20px;
+      }
+  
+      button {
+        padding-left: 0;
+      }
+    }
+ 
+
   }
 }

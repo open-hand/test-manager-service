@@ -7,7 +7,7 @@ import {
   Input, Modal, Collapse,
 } from 'choerodon-ui';
 import {
-  Form, TextField, Select, TextArea, DataSet, Icon,
+  Form, TextField, Select, TextArea, DataSet, Icon, Tree,
 } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import { UploadButton } from '../CommonComponent';
@@ -25,11 +25,12 @@ import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import TestStepTable from '../TestStepTable';
-
+import SelectTree from '../CommonComponent/SelectTree';
 import './CreateIssue.less';
 
 const { AppState } = stores;
 const { Option } = Select;
+const { TreeNode } = Tree;
 
 let sign = false;
 function CreateIssue(props) {
@@ -41,7 +42,11 @@ function CreateIssue(props) {
   const [originFixVersions, setOriginFixVersions] = useState([]);
   const [originUsers, setOriginUsers] = useState([]);
   const [folders, setFolders] = useState([]);
+
   const [visibleDetail, setVisibleDetail] = useState(true);
+
+  const { intl } = props;
+  const createDataset = new DataSet(CreateIssueDataSet('issue', intl));
   const loadVersions = () => {
     const { setFieldsValue, defaultVersion } = props.form;
     getProjectVersion().then((res) => {
@@ -192,13 +197,12 @@ function CreateIssue(props) {
   useEffect(() => {
     // 初始化属性
     loadPrioritys();
+    props.modal.handleOk(handleCreateIssue);
   }, []);
 
   function render() {
-    const { intl } = props;
-    const dataset = new DataSet(CreateIssueDataSet('issue', intl));
     return (
-      <Form dataSet={dataset} className="test-create-issue-form">
+      <Form dataSet={createDataset} className="test-create-issue-form">
         <TextField name="summary" />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-create-issue-line" />
@@ -209,19 +213,19 @@ function CreateIssue(props) {
 
             用例详细信息
           </span>
-          <div style={{ display: 'block' }} className="test-create-issue-form-detail">
 
-            {/** 这里逻辑待处理， DataSet提交 */}
-            {visibleDetail && <TextArea name="description" />}
-          </div>
+        </div>
+        {/** 这里逻辑待处理， DataSet提交 */}
+
+        {visibleDetail && [
+          <TextArea name="description" />,
           <div className="test-create-issue-form-file">
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
-          </div>
-          <Select name="folderId" />
-          <Select name="issueLink" />
-        </div>
-
+          </div>,
+          <SelectTree name="folderId" pDataSet={createDataset} />,
+          <Select name="issueLink" />]
+        }
         <div className="test-create-issue-form-step">
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">测试步骤</span>
@@ -230,9 +234,9 @@ function CreateIssue(props) {
             issueId={0}
             data={[]}
             intl={intl}
-            // enterLoad={() => console.log('enterLoad')}
-            // leaveLoad={() => console.log('leaveLoad')}
-            // onOk={() => console.log('onOk')}
+          // enterLoad={() => console.log('enterLoad')}
+          // leaveLoad={() => console.log('leaveLoad')}
+          // onOk={() => console.log('onOk')}
           />
         </div>
       </Form>

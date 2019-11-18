@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, {
+  Component, useState, useRef, useEffect,
+} from 'react';
 import {
   Page, Header, Content, WSHandler, stores,
 } from '@choerodon/boot';
@@ -19,67 +21,62 @@ import './ImportIssue.less';
 const { AppState } = stores;
 const { confirm, Sidebar } = Modal;
 
-class ImportIssue extends Component {
-  state = {
-    visible: false,
-    importVisible: false,
-    uploading: false,
-    /* progress: 0, */
-    importRecord: null,
-    file: null,
-    version: null,
-    step: 1,
-    fileName: false,
-    versionName: false,
-  };
+function ImportIssue(props) {
+  const [visible, setVisible] = useState(false);
+  const [importVisible, setImportVisible] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [importRecord, setImportRecord] = useState(null);
+  const [file, setFile] = useState(null);
+  const [version, setVersion] = useState(null);
+  const [step, setStep] = useState(1);
 
-  getImportHistory = () => {
+  const [fileName, setFileName] = useState(false);
+  const [versionName, setVersionName] = useState(false);
+
+  const uploadInput = useRef(null);
+
+  const loadImportHistory = () => {
     getImportHistory().then((data) => {
-      this.setState({
-        importRecord: data,
-        step: data.status === 1 ? 3 : 1,
-      });
+      setImportRecord(data);
+      setStep(data.status === 1 ? 3 : 1);
     });
   };
 
-  handleClose = () => {
-    this.setState({
-      visible: false,
-    });
+  const handleClose = () => {
+    setVisible(false);
   };
 
-  upload = () => {
-    const { file, version, importRecord } = this.state;
+  const changeStep = (value) => {
+    setStep(step + value);
+  };
+
+  const upload = () => {
     if (!file || !version) {
       Choerodon.prompt('请选择文件和目标版本');
       return;
     }
     const formData = new FormData();
     formData.append('file', file);
-    this.setState({
-      uploading: true,
-    });
+    setUploading(true);
     importIssue(formData, version).then(() => {
-      this.uploadInput.value = '';
-      this.changeStep(1);
-      this.setState({
-        file: null,
-        uploading: false,
-        visible: false,
-        importRecord: {
-          ...importRecord,
-          status: 1,
-        },
+      uploadInput.current.value = '';
+      changeStep(1);
+
+      setFile(null);
+      setUploading(false);
+      setVisible(false);
+      setImportRecord({
+        ...importRecord,
+        status: 1,
       });
     }).catch((e) => {
-      this.setState({
-        uploading: false,
-      });
+      setUploading(false);
       Choerodon.prompt('网络错误');
     });
   };
 
-  humanizeDuration = (record) => {
+
+  const onHumanizeDuration = (record) => {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
@@ -90,13 +87,12 @@ class ImportIssue extends Component {
       : null;
   };
 
-  renderRecord = (tag) => {
-    const { importRecord, fileName, versionName } = this.state;
+  const renderRecord = (tag) => {
     if (!importRecord) {
       return '';
     }
     const {
-      versionName: version, failedCount, fileUrl, successfulCount,
+      versionName: newVersion, failedCount, fileUrl, successfulCount,
     } = importRecord;
     if (failedCount) {
       return (
@@ -111,12 +107,12 @@ class ImportIssue extends Component {
             : ''
           }
           <span className="c7ntest-ImportIssue-text">
-            {!version && !versionName
+            {!newVersion && !versionName
               ? <React.Fragment>导入</React.Fragment>
               : (
                 <React.Fragment>
                   导入到
-                  <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
+                  <span className="c7ntest-ImportIssue-version">{newVersion || versionName}</span>
                   版本
                 </React.Fragment>
               )
@@ -150,7 +146,7 @@ class ImportIssue extends Component {
           }
           <span className="c7ntest-ImportIssue-text">
             导入到
-            <span className="c7ntest-ImportIssue-version">{version || versionName}</span>
+            <span className="c7ntest-ImportIssue-version">{newVersion || versionName}</span>
             版本成功
             <span style={{ color: '#0000FF' }}>
               {successfulCount}
@@ -163,25 +159,20 @@ class ImportIssue extends Component {
     return '';
   };
 
-  handleOk = () => {
-    this.setState({
-      visible: false,
-    });
+  const handleOk = () => {
+    setVisible(false);
   };
 
-  beforeUpload = (e) => {
+  const beforeUpload = (e) => {
     if (e.target.files[0]) {
-      this.setState({
-        file: e.target.files[0],
-        fileName: e.target.files[0].name,
-      });
+      setFile(e.target.files[0]);
+      setFileName(e.target.files[0]);
     }
   };
 
-  handleMessage = (res) => {
+  const handleMessage = (res) => {
     if (res !== 'ok') {
       const data = JSON.parse(res);
-      const { importRecord } = this.state;
       const {
         rate, id, status, fileUrl,
       } = data;
@@ -191,98 +182,80 @@ class ImportIssue extends Component {
       if (fileUrl) {
         window.location.href = fileUrl;
       }
-      this.setState({
-        /* progress: rate.toFixed(1), */
-        importRecord: data,
-      });
+      setImportRecord(data);
     }
   };
 
-  handleCancelImport = () => {
-    const { importRecord } = this.state;
+
+  const open = () => {
+    setImportVisible(true);
+    loadImportHistory();
+  };
+
+  const handleImportClose = () => {
+    setVisible(false);
+    setImportRecord(null);
+    setImportVisible(false);
+    setFile(null);
+    setVersionName(false);
+    setVersion(null);
+    setStep(1);
+    setFileName(false);
+  };
+
+  const handleCancelImport = () => {
     cancelImport(importRecord.id).then((res) => {
-      this.handleImportClose();
+      handleImportClose();
     });
   };
 
-  open = () => {
-    this.setState({
-      importVisible: true,
-    });
-    this.getImportHistory();
-  };
 
-  handleImportClose = () => {
-    this.setState({
-      visible: false,
-      importVisible: false,
-      uploading: false,
-      /* progress: 0, */
-      importRecord: null,
-      file: null,
-      version: null,
-      step: 1,
-      versionName: false,
-      fileName: false,
-    });
-  };
-
-  exportExcel = () => {
+  const exportExcel = () => {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const fileName = '导入模板.xlsx';
-      FileSaver.saveAs(blob, fileName);
+      const oneFileName = '导入模板.xlsx';
+      FileSaver.saveAs(blob, oneFileName);
     });
   };
 
-  importExcel = () => {
-    this.setState({
-      visible: true,
-    });
+  const importExcel = () => {
+    setVisible(true);
   };
 
-  changeStep = (value) => {
-    const { step } = this.state;
-    this.setState({
-      step: step + value,
-    });
-  };
 
-  footer = () => {
-    const { step, importRecord } = this.state;
+  const footer = () => {
     const { status } = importRecord || {};
     if (step === 1) {
       return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(1)}>
+        <Button type="primary" funcType="raised" onClick={() => changeStep(1)}>
           <FormattedMessage id="next" />
         </Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>
+        <Button funcType="raised" onClick={handleImportClose}>
           <FormattedMessage id="cancel" />
         </Button>,
       ];
     } else if (step === 2) {
       return [
-        <Button type="primary" funcType="raised" onClick={() => this.changeStep(-1)}>
+        <Button type="primary" funcType="raised" onClick={() => changeStep(-1)}>
           <FormattedMessage id="previous" />
         </Button>,
-        <Button funcType="raised" onClick={this.handleImportClose}>
+        <Button funcType="raised" onClick={handleImportClose}>
           <FormattedMessage id="cancel" />
         </Button>,
       ];
     } else {
       return [
-        <Button type="primary" funcType="raised" onClick={this.handleImportClose}>
+        <Button type="primary" funcType="raised" onClick={handleImportClose}>
           <FormattedMessage id="finish" />
         </Button>,
-        <Button funcType="raised" disabled={status && status !== 1} onClick={this.handleCancelImport}>
+        <Button funcType="raised" disabled={status && status !== 1} onClick={handleCancelImport}>
           <FormattedMessage id="issue_import_cancel" />
         </Button>,
       ];
     }
   };
 
-  renderProgress = () => {
-    const { importRecord, fileName } = this.state;
+  const renderProgress = () => {
     const {
       rate = 0,
       status,
@@ -310,7 +283,7 @@ class ImportIssue extends Component {
         </div>
       );
     } else if (status === 2) {
-      return this.renderRecord(true);
+      return renderRecord(true);
     } else {
       return (
         <div>
@@ -319,95 +292,83 @@ class ImportIssue extends Component {
       );
     }
   };
+  // import Divider from './Component/Divider';
+  const renderOneForm = (title, content, button) => (
+    <div className="c7ntest-ImportIssue-form-one">
+      <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
+      <span className="c7ntest-ImportIssue-form-one-content">{content}</span>
+      {button}
+    </div>
+  );
+  const renderForm = () => (
+    <div className="c7ntest-ImportIssue-form">
+      {renderOneForm('下载模板', '您必须使用模版文件，录入用例信息',
+        <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
+          <Icon type="get_app icon" />
+          <FormattedMessage id="issue_download_tpl" />
+        </Button>)}
 
-  renderForm = () => {
-    const { step, uploading, importRecord } = this.state;
-    if (step === 1) {
-      return (
-        <React.Fragment>
-          <Button type="primary" funcType="flat" onClick={() => this.exportExcel()}>
-            <Icon type="get_app icon" />
-            <FormattedMessage id="issue_download_tpl" />
-          </Button>
-          {this.renderRecord()}
-        </React.Fragment>
-      );
-    } else if (step === 2) {
-      return (
-        <Button loading={uploading} type="primary" funcType="flat" onClick={() => this.importExcel()}>
+      <Divider />
+      {renderOneForm('导入测试用例', renderRecord(),
+        <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
           <Icon type="archive icon" />
           <FormattedMessage id="issue_import" />
-        </Button>
-      );
-    } else {
-      return (
-        <WSHandler
+        </Button>)}
+      {/* <WSHandler
           messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
-          onMessage={this.handleMessage}
+          onMessage={handleMessage}
         >
-          {this.renderProgress()}
-        </WSHandler>
-      );
-    }
-  };
+          {renderProgress()}
+        </WSHandler> */}
+    </div>
+  );
 
-  render() {
-    const {
-      visible, uploading, file, version, importVisible,
-    } = this.state;
+  useEffect(() => {
+    loadImportHistory();
+  }, []);
+
+  function render() {
     return (
-      <Sidebar
-        title="导入用例"
-        visible={importVisible}
-        footer={this.footer()}
-        onCancel={this.handleImportClose}
-        destroyOnClose
-      >
-        <Content
-          style={{
-            padding: 1,
-          }}
+      <React.Fragment>
+        {renderForm()}
+        <Modal
+          title="导入用例"
+          visible={visible}
+          okText={<FormattedMessage id="upload" />}
+          confirmLoading={uploading}
+          cancelText={<FormattedMessage id="close" />}
+          onOk={upload}
+          onCancel={handleClose}
         >
-          {this.renderForm()}
-          <Modal
-            title="导入用例"
-            visible={visible}
-            okText={<FormattedMessage id="upload" />}
-            confirmLoading={uploading}
-            cancelText={<FormattedMessage id="close" />}
-            onOk={this.upload}
-            onCancel={this.handleClose}
-          >
-            <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center' }}>
-              <SelectVersion
-                value={version}
-                onChange={(versionId, option) => {
-                  this.setState({ version: versionId, versionName: option.props.children });
-                }}
-                style={{ width: 120 }}
-              />
-              <Input
-                style={{ width: 340, marginLeft: '18px' }}
-                value={file && file.name}
-                prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
-                suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { this.uploadInput.click(); }} /></Tooltip>}
-
-              />
-            </div>
-            <input
-              ref={
-                (uploadInput) => { this.uploadInput = uploadInput; }
-              }
-              type="file"
-              onChange={this.beforeUpload}
-              style={{ display: 'none' }}
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center' }}>
+            <SelectVersion
+              value={version}
+              onChange={(versionId, option) => {
+                setVersion(versionId);
+                setVersionName(option.props.children);
+              }}
+              style={{ width: 120 }}
             />
-          </Modal>
-        </Content>
-      </Sidebar>
+            <Input
+              style={{ width: 340, marginLeft: '18px' }}
+              value={file && file.name}
+              prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
+              suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { uploadInput.current.click(); }} /></Tooltip>}
+
+            />
+          </div>
+          <input
+            ref={uploadInput}
+            type="file"
+            onChange={beforeUpload}
+            style={{ display: 'none' }}
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          />
+        </Modal>
+      </React.Fragment>
     );
   }
+  return render();
 }
 
 

@@ -33,6 +33,7 @@ function CreateIssueDataSet(intlPrefix, intl) {
     return {
         autoQuery: false,
         selection: false,
+        autoCreate: true,
         paging: false,
         dataKey: null,
         fields: [
@@ -41,10 +42,18 @@ function CreateIssueDataSet(intlPrefix, intl) {
             },
             { name: 'description', type: 'string', label: description },
             {
-                name: 'fileList', type: 'string', label: '附件',
+                name: 'fileList',
+                type: 'object',
+                label: '附件',
+
             },
             {
-                name: 'folderId', type: 'string', label: folderId, required: true,
+                name: 'folderId',
+                type: 'object',
+                label: folderId,
+                required: true,
+                textField: 'fileName',
+                valueField: 'fileId',
             },
             {
                 name: 'issueLink',
