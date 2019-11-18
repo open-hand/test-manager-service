@@ -19,6 +19,7 @@ import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
@@ -79,6 +80,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private TestCaseLinkMapper testCaseLinkMapper;
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
@@ -274,9 +278,17 @@ public class TestCaseServiceImpl implements TestCaseService {
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
          testCaseStepService.removeStepByIssueId(caseId);
-        //TODO 删除问题链接
 
+        // 删除问题链接
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setLinkCaseId(caseId);
+        testCaseLinkDTO.setProjectId(projectId);
+        testCaseLinkMapper.delete(testCaseLinkDTO);
         //TODO 删除测试用例相关的dataLog
+
+        //TODO 删除测试用例关联的标签
+
+        //TODO 删除附件信息
 
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
