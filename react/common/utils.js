@@ -468,13 +468,13 @@ export function validateFile(rule, fileList, callback) {
     fileList.forEach((file) => {
       if (file.size > 1024 * 1024 * 30) {
         callback('文件不能超过30M');
-      } else if (file.name && encodeURI(file.name).length > 210) {    
+      } else if (file.name && encodeURI(file.name).length > 210) {
         callback('文件名过长');
       }
     });
-    callback(); 
+    callback();
   } else {
-    callback(); 
+    callback();
   }
 }
 export function normFile(e) {
@@ -482,4 +482,14 @@ export function normFile(e) {
     return e;
   }
   return e && e.fileList;
+}
+export function handleRequestFailed(promise) {
+  return promise.then((res) => {
+    if (res.failed) {
+      Choerodon.prompt(res.message, 'error');
+      throw new Error(res.message);
+    } else {
+      return res;
+    }
+  });
 }

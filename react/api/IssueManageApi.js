@@ -387,7 +387,7 @@ export function moveFolders(data) {
  * @returns
  */
 export function copyFolders(data, versionId) {
-  const folderIds = data.map((item) => item.folderId);
+  const folderIds = data.map(item => item.folderId);
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/copy?versionId=${versionId}`, folderIds);
 }
 /**
