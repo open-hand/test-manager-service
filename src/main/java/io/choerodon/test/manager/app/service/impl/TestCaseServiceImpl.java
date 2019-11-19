@@ -353,6 +353,43 @@ public class TestCaseServiceImpl implements TestCaseService {
         return modelMapper.map(testCaseMapper.selectByPrimaryKey(map.getCaseId()), TestCaseRepVO.class);
     }
 
+    @Override
+    public void batchMove(Long projectId, Long folderId, Long[] caseIds) {
+        if(ObjectUtils.isEmpty(caseIds) || caseIds.length == 0){
+            return;
+        }
+        if(ObjectUtils.isEmpty(testIssueFolderMapper.selectByPrimaryKey(folderId))){
+            throw new CommonException("error.query.folder.not.exist");
+        }
+        for (Long caseId : caseIds) {
+            TestCaseDTO testCaseDTO = new TestCaseDTO();
+            testCaseDTO.setFolderId(folderId);
+            testCaseDTO.setCaseId(caseId);
+            DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective,testCaseDTO,1,"error.update.case");
+        }
+
+    }
+
+    @Override
+    public void batchCopy(Long projectId, Long folderId, Long[] caseIds) {
+        if(ObjectUtils.isEmpty(caseIds) || caseIds.length == 0){
+            return;
+        }
+        if(ObjectUtils.isEmpty(testIssueFolderMapper.selectByPrimaryKey(folderId))){
+            throw new CommonException("error.query.folder.not.exist");
+        }
+        // 复制用例
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId,caseIds);
+        //List<TestCaseRepVO> list = modelMapper.map(testCaseDTOS,new TypeToken<TestCaseRepVO>(){});
+        // 复制用例步骤
+
+        // 复制用例链接
+
+        // 复制标签
+
+        // 复制附件
+    }
+
 
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
@@ -454,6 +491,11 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO, Map<Long, UserMessageDTO> map) {
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
         modelMapper.map(testCaseDTO, testCaseRepVO);
+        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+        testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
+        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+        String issue = String.format("%s-%s",testProjectInfo.getProjectCode(),testCaseDTO.getCaseNum());
+        testCaseRepVO.setIssueNum(issue);
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         return testCaseRepVO;

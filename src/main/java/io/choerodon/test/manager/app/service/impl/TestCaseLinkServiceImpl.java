@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -11,6 +12,7 @@ import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author zhaotianxin
@@ -25,12 +27,16 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     private TestCaseFeignClient testCaseFeignClient;
     @Override
     public void delete(Long project, Long linkId) {
-
+      testCaseLinkMapper.deleteByPrimaryKey(linkId);
     }
 
     @Override
     public void create(Long project, TestCaseLinkDTO testCaseLinkDTO) {
-
+        if(!ObjectUtils.isEmpty(testCaseLinkDTO.getLinkId())){
+            throw new CommonException("error.insert.link.id.not.null");
+        }
+        testCaseLinkDTO.setProjectId(project);
+        testCaseLinkMapper.insertSelective(testCaseLinkDTO);
     }
 
     @Override

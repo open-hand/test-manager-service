@@ -22,6 +22,24 @@
             <include refid="sqlParam"/>
     </select>
 
+    <select id="listCopyCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
+        SELECT
+        summary,
+        description,
+        rank,
+        folder_id,
+        project_id
+        FROM
+        test_case
+        WHERE
+        project_id = #{projectId}
+        AND
+        case_id IN
+        <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </select>
+
     <sql id="sqlParam">
         <if test="searchDTO != null">
             <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
