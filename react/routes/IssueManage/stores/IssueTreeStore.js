@@ -4,63 +4,67 @@ import {
 } from 'mobx';
 
 class IssueTreeStore {
+  // @observable treeData = {
+  //   rootIds: ['1-1', '1-2'],
+  //   treeFolder: [{
+  //     id: '1-1',
+  //     children: ['1-1-1', '1-1-2'],
+  //     hasChildren: true,
+  //     isExpanded: true,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon',
+  //     },
+  //   }, {
+  //     id: '1-2',
+  //     children: ['1-2-1', '1-2-2'],
+  //     hasChildren: true,
+  //     isExpanded: true,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon2',
+  //     },
+  //   }, {
+  //     id: '1-1-1',
+  //     children: [],
+  //     hasChildren: false,
+  //     isExpanded: false,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon敏捷',
+  //     },
+  //   }, {
+  //     id: '1-1-2',
+  //     children: [],
+  //     hasChildren: false,
+  //     isExpanded: false,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon测试',
+  //     },
+  //   }, {
+  //     id: '1-2-1',
+  //     children: [],
+  //     hasChildren: false,
+  //     isExpanded: false,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon敏捷',
+  //     },
+  //   }, {
+  //     id: '1-2-2',
+  //     children: [],
+  //     hasChildren: false,
+  //     isExpanded: false,
+  //     isChildrenLoading: false,
+  //     data: {
+  //       name: 'Choerodon测试',
+  //     },
+  //   }],
+  // }
   @observable treeData = {
-    rootIds: ['1-1', '1-2'],
-    treeFolder: [{
-      id: '1-1',
-      children: ['1-1-1', '1-1-2'],
-      hasChildren: true,
-      isExpanded: true,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon',
-      },
-    }, {
-      id: '1-2',
-      children: ['1-2-1', '1-2-2'],
-      hasChildren: true,
-      isExpanded: true,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon2',
-      },
-    }, {
-      id: '1-1-1',
-      children: [],
-      hasChildren: false,
-      isExpanded: false,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon敏捷',
-      },
-    }, {
-      id: '1-1-2',
-      children: [],
-      hasChildren: false,
-      isExpanded: false,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon测试',
-      },
-    }, {
-      id: '1-2-1',
-      children: [],
-      hasChildren: false,
-      isExpanded: false,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon敏捷',
-      },
-    }, {
-      id: '1-2-2',
-      children: [],
-      hasChildren: false,
-      isExpanded: false,
-      isChildrenLoading: false,
-      data: {
-        name: 'Choerodon测试',
-      },
-    }],
+    rootIds: [],
+    treeFolder: [],
   }
 
   @observable expandedKeys = ['0-0'];

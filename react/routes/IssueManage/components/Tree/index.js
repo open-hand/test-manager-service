@@ -148,9 +148,10 @@ function PureTree({
     if (value.trim()) {
       try {
         const newItem = await onCreate(value, item.parentId);
+        const { folderId, name, objectVersionNumber } = newItem;
         setTree(oldTree => createItem(oldTree, path, {
-          id: Math.random(),
-          data: { name: value },
+          id: folderId,
+          data: { name, objectVersionNumber },
           children: [],
           hasChildren: false,
           isExpanded: false,

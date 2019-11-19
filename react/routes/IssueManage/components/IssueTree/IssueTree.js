@@ -25,7 +25,7 @@ class IssueTree extends Component {
 
 
   componentDidMount() {
-    // this.getTree();
+    this.getTree();
   }
 
   getTree = () => {
@@ -44,7 +44,7 @@ class IssueTree extends Component {
     const data = {
       parentId,
       name: value,
-      type: 'folder',
+      type: 'cycle',
     };
     return handleRequestFailed(addFolder(data));
   }
