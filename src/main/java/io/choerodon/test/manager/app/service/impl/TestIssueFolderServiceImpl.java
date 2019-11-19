@@ -137,12 +137,16 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
                 .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
-
         Set<Long> projectFolderIds = testIssueFolderVOS.stream().map(TestIssueFolderVO::getProjectId).collect(Collectors.toSet());
         projectFolderIds.forEach(projectFolderId -> {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
             Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e->e.getName()!=null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-            List<TestIssueFolderVO> testIssueProjectFolderVOs = testIssueFolderVOS.stream().filter(testIssueFolderVO -> testIssueFolderVO.getProjectId() == projectFolderId).collect(Collectors.toList());
+//            List<TestIssueFolderVO> testIssueProjectFolderVOs = testIssueFolderVOS.stream().filter(testIssueFolderVO -> testIssueFolderVO.getProjectId() == projectFolderId).collect(Collectors.toList());
+            TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+            testIssueFolderDTO.setProjectId(projectFolderId);
+            List<TestIssueFolderVO> testIssueProjectFolderVOs = modelMapper.map(testIssueFolderMapper.select(modelMapper
+                    .map(testIssueFolderDTO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+            }.getType());
             //以version区分
             Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e -> e.getVersionId() != null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
             for (Map.Entry<Long, List<TestIssueFolderVO>> entry : projectVersionFolderVOs.entrySet()) {
@@ -156,10 +160,12 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                     newFolderVO.setType("cycle");
                     TestIssueFolderVO testIssueFolderVO = create(projectFolderId, newFolderVO);
                     //2.更新二级目录
-                    entry.getValue().stream().forEach(folderVO -> {
-                        folderVO.setParentId(testIssueFolderVO.getFolderId());
-                        update(folderVO);
-                    });
+                    if (!CollectionUtils.isEmpty(entry.getValue())) {
+                        entry.getValue().stream().forEach(folderVO -> {
+                            folderVO.setParentId(testIssueFolderVO.getFolderId());
+                            update(folderVO);
+                        });
+                    }
                 }
             }
             logger.info("project:{} copy successed",projectFolderId);
