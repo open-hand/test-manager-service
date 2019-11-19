@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  */
 
 @Component
+@Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
@@ -232,7 +233,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     @Transactional
-    public TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO) {
+    public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
@@ -251,7 +252,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
-        return testCaseVO;
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(testCaseDTO.getCreatedBy());
+        userIds.add(testCaseDTO.getLastUpdatedBy());
+        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
+        TestCaseRepVO testCaseRepVO = dtoToRepVo(testCaseDTO, userMessageDTOMap);
+        return testCaseRepVO;
     }
 
     @Override
@@ -388,8 +394,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
             testCaseStepVO.setIssueId(oldCaseId);
             testCaseStepService.batchClone(testCaseStepVO, testCaseDTO.getCaseId(), projectId);
-            //TODO 复制用例链接
-
+            // 复制用例链接
+            testCaseLinkService.copyByCaseId(projectId, testCaseDTO.getCaseId(), oldCaseId);
             //TODO 复制标签
 
             //TODO 复制附件

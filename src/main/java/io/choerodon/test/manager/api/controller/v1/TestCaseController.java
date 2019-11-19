@@ -204,7 +204,7 @@ public class TestCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试用例")
     @PostMapping("/create")
-    public ResponseEntity<TestCaseVO> createTestCase(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<TestCaseRepVO> createTestCase(@PathVariable("project_id") Long projectId,
                                                      @RequestBody
                                                              TestCaseVO testCaseVO) {
         return new ResponseEntity<>(testCaseService.createTestCase(projectId, testCaseVO), HttpStatus.OK);

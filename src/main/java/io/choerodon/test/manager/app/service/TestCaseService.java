@@ -92,7 +92,7 @@ public interface TestCaseService {
      * @param testCaseVO
      * @return
      */
-    TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO);
+    TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO);
 
     /**
      * 查询用例详情

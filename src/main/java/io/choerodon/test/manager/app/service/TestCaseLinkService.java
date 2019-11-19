@@ -22,7 +22,7 @@ public interface TestCaseLinkService {
      * @param project
      * @param testCaseLinkDTO
      */
-    void create(Long project,TestCaseLinkDTO testCaseLinkDTO);
+    TestCaseLinkDTO create(Long project,TestCaseLinkDTO testCaseLinkDTO);
 
     /**
      * 查询case关联的issue信息
@@ -31,4 +31,6 @@ public interface TestCaseLinkService {
      * @return
      */
     List<IssueInfoDTO> listIssueInfo(Long projectId,Long caseId);
+
+    void copyByCaseId(Long projectId, Long caseId, Long oldCaseId);
 }
