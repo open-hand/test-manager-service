@@ -8,7 +8,10 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -35,10 +38,11 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
 
+    private Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
     @Autowired
     private TestCycleService testCycleService;
-    @Autowired
-    private TestIssueFolderRelService testIssueFolderRelService;
+//    @Autowired
+//    private TestIssueFolderRelService testIssueFolderRelService;
     @Autowired
     private TestCaseService testCaseService;
     @Autowired
@@ -127,39 +131,39 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Override
     @Transactional
-    public Boolean fixVersionFolder() {
+    @Async
+    public void fixVersionFolder() {
         TestIssueFolderVO testIssueFolder = new TestIssueFolderVO();
         List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
                 .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
 
         Set<Long> projectFolderIds = testIssueFolderVOS.stream().map(TestIssueFolderVO::getProjectId).collect(Collectors.toSet());
-        projectFolderIds.forEach(projectFolderId->{
+        projectFolderIds.forEach(projectFolderId -> {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
+            Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e->e.getName()!=null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
             List<TestIssueFolderVO> testIssueProjectFolderVOs = testIssueFolderVOS.stream().filter(testIssueFolderVO -> testIssueFolderVO.getProjectId() == projectFolderId).collect(Collectors.toList());
             //以version区分
-            Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e->e.getVersionId()!=null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
-
+            Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e -> e.getVersionId() != null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
             for (Map.Entry<Long, List<TestIssueFolderVO>> entry : projectVersionFolderVOs.entrySet()) {
-                productVersionDTOList.stream().filter(e->e.getVersionId()==entry.getKey()).findAny().ifPresent(e->{
-                    //1.创建版本文件夹
+                //1.创建版本文件目录
+                String folderName = versionNameMap.get(entry.getKey());
+                if(!StringUtils.isEmpty(folderName)){
                     TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
-                    newFolderVO.setName(e.getName());
+                    newFolderVO.setName(folderName);
                     newFolderVO.setParentId(0L);
                     newFolderVO.setProjectId(projectFolderId);
                     newFolderVO.setType("cycle");
                     TestIssueFolderVO testIssueFolderVO = create(projectFolderId, newFolderVO);
                     //2.更新二级目录
-                    entry.getValue().stream().forEach(folderVO->{
+                    entry.getValue().stream().forEach(folderVO -> {
                         folderVO.setParentId(testIssueFolderVO.getFolderId());
                         update(folderVO);
                     });
-                });
-
+                }
             }
+            logger.info("project:{} copy successed",projectFolderId);
         });
-
-        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -198,9 +202,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         TestCycleVO testCycleVO = new TestCycleVO();
         testCycleVO.setFolderId(folderId);
 
-        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO).stream()
-                .map(TestIssueFolderRelVO::getIssueId).collect(Collectors.toList());
-        testCaseService.batchDeleteIssues(projectId, issuesId);
+//        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO).stream()
+//                .map(TestIssueFolderRelVO::getIssueId).collect(Collectors.toList());
+//        testCaseService.batchDeleteIssues(projectId, issuesId);
         testIssueFolderMapper.delete(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class));
         testCycleService.delete(testCycleVO, projectId);
     }
@@ -210,10 +214,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
-        testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO);
-//        if ( != 1) {
-//            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
-//        }
+        if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
+            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
+        }
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 

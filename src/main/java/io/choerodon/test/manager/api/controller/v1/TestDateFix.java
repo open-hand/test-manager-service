@@ -20,14 +20,14 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
  * @description:
  */
 @RestController
-@RequestMapping(value = "/v1/projects/{project_id}/issueFolderFix")
-public class TestIssueFolderFixController {
+@RequestMapping(value = "/v1/projects/fix")
+public class TestDateFix {
     @Autowired
     private TestIssueFolderService testIssueFolderService;
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("修复数据")
+    @ApiOperation("迁移issueFolder数据")
     @GetMapping
-    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId) {
+    public ResponseEntity delete() {
         testIssueFolderService.fixVersionFolder();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
