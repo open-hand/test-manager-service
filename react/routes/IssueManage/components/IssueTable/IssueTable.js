@@ -16,7 +16,7 @@ import {
 } from './tags';
 import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
-import  useAvoidClosure from '@/hooks/index';
+import useAvoidClosure from '@/hooks/useAvoidClosure';
 
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
@@ -164,7 +164,7 @@ export default observer((props) => {
     document.addEventListener('keyup', leaveCopy);
   };
 
-  const getComponents =  useAvoidClosure(columns => ({
+  const getComponents = useAvoidClosure(columns => ({
     table: () => {
       const table = (
         <table>
