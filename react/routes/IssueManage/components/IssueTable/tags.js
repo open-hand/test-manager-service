@@ -1,11 +1,21 @@
 import React, { Fragment } from 'react';
-import { Tooltip, Tag } from 'choerodon-ui';
+import { Choerodon } from '@choerodon/boot';
+import {
+  Tooltip, Tag, Menu, Modal, Dropdown, Icon,
+} from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import UserHead from '../UserHead';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
+import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
+import {
+  commonLink, testCaseTableLink,
+} from '../../../../common/utils';
+import TableDropMenu from '../../../../common/TableDropMenu';
 import './tags.less';
+
+const { confirm } = Modal;
 
 const styles = {
   issueNum: {
@@ -42,6 +52,79 @@ export function renderIssueNum(issueNum) {
     </Tooltip>
   );
 }
+/**
+ *  自动化测试无法复制与删除
+ * @param {*} record 
+ * @param {*} history 
+ * @param {*} reLoadTable 
+ */
+export function renderAction(record, history, reLoadTable) {
+  const { issueId, issueNum, typeCode } = record;
+
+  const handleLinkToTestCase = () => {
+    history.push(testCaseTableLink());
+  };
+
+  const handleDeleteIssue = () => {
+    confirm({
+      width: 560,
+      title: `删除测试用例${issueNum}`,
+      content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
+      onOk: () => deleteIssue(issueId)
+        .then((res) => {
+          reLoadTable();
+          Choerodon.prompt('删除成功');
+        }),
+      okText: '删除',
+      okType: 'danger',
+    });
+  };
+
+  function handleItemClick(e) {
+    // const { issueInfo, enterLoad, leaveLoad, history } = this.props;
+    switch (e.key) {
+      case 'copy': {
+        const copyConditionVO = {
+          issueLink: false,
+          sprintValues: false,
+          subTask: false,
+          summary: false,
+        };
+        cloneIssue(issueId, copyConditionVO).then((res) => {
+          reLoadTable();
+          Choerodon.prompt('复制成功');
+        }).catch((err) => {
+          Choerodon.prompt('网络错误');
+        });
+        break;
+      }
+      case 'delete': {
+        handleDeleteIssue(issueId);
+        break;
+      }
+      default: break;
+    }
+  }
+
+  const menu = (
+    <Menu onClick={handleItemClick}>
+      <Menu.Item key="copy">
+        复制用例
+      </Menu.Item>
+      <Menu.Item key="delete">
+        删除
+      </Menu.Item>
+    </Menu>
+  );
+  return (
+    (typeCode !== 'issue_auto_test')
+    && (
+      <Dropdown overlay={menu} trigger="click" className="test-issue-tags-drop-dwon">
+        <Icon shape="circle" type="more_vert" style={{ cursor: 'pointer' }} />
+      </Dropdown>
+    )
+  );
+}
 export function renderSummary(summary, record, onClick) {
   return (
     <div style={{ overflow: 'hidden' }}>
@@ -54,6 +137,7 @@ export function renderSummary(summary, record, onClick) {
           className="c7n-table-issueTreeTtile-table-p"
           onClick={() => onClick(record)}
         >
+
           {summary}
         </p>
       </Tooltip>

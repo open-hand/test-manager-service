@@ -65,6 +65,7 @@ class DragTable extends Component {
         fromIndex,
         toIndex,
       );
+      // console.log('onDragEnd01', result);
       this.setState({ data });
       const { onDragEnd } = this.props;
       if (onDragEnd) {

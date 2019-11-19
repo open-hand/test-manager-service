@@ -1,10 +1,11 @@
 /*eslint-disable */
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Button, Input, Icon, Select,
 } from 'choerodon-ui';
-import { observer } from 'mobx-react';
+import { TextField } from 'choerodon-ui/pro'
+import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { getProjectId } from '../../../../common/utils';
@@ -14,42 +15,26 @@ import IssueTreeStore from '../../stores/IssueTreeStore';
 import './CreateIssueTiny.less';
 
 const { Option } = Select;
-function contains(root, n) {
-  let node = n;
-  while (node) {
-    if (node === root) {
-      return true;
-    }
-    node = node.parentNode;
+
+export default observer(() => {
+  const [ creating, setCreating] = useState(false);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createIssueValue, setCreateIssueValue] = useState('');
+
+  const onCancel = () => {
+    setCreating(false);
+    setCreateIssueValue('');
   }
 
-  return false;
-}
-@observer
-class CreateIssueTiny extends Component {
-  constructor() {
-    super();
-    this.containerRef = React.createRef();
-    this.state = {
-      creating: false,
-      createLoading: false,
-      createIssueValue: '',
+  const handleBlurCreateIssue = (e) => {
+    let createValue = '';
+    if(e.target.value) { // 如果是textField enterDown
+      setCreateIssueValue(e.target.value);
+      createValue = e.target.value;
+    } else {
+      createValue = createIssueValue;
     }
-  }
-  addEventListener = () => {
-    document.addEventListener('click', this.handleDocumentClick)
-  }
-  removeEventListener = () => {
-    document.removeEventListener('click', this.handleDocumentClick)
-  }
-  handleDocumentClick = (e) => {
-    const { creating } = this.state;
-    if (!contains(this.containerRef.current, e.target)) {
-      this.onBlurCreateInput()
-    }
-  }
-  handleBlurCreateIssue() {
-    if (this.state.createIssueValue !== '') {
+    if (createValue !== '' && createValue.trim() !== '') {  // 不等于''并且 不能只是空格
       const versionIssueRelVOList = [];
       const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
       const folderId = IssueTreeStore.currentCycle.cycleId;
@@ -76,14 +61,12 @@ class CreateIssueTiny extends Component {
         issueTypeId: testType,
         projectId: getProjectId(),
         sprintId: 0,
-        summary: this.state.createIssueValue,
+        summary: createValue,
         epicId: 0,
         parentIssueId: 0,
         versionIssueRelVOList,
       };
-      this.setState({
-        createLoading: true,
-      });
+      setCreateLoading(true);
       createIssue(data, folderId)
         .then((res) => {
           let targetCycle = null;
@@ -104,82 +87,33 @@ class CreateIssueTiny extends Component {
             IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
           }
           IssueStore.loadIssues();
-          this.setState({
-            createIssueValue: '',
-            createLoading: false,
-            creating: false,
-          });
+          setCreating(false);
+          setCreateLoading(false);
+          setCreateIssueValue('');
         })
         .catch((error) => {
           console.log(error);
-          this.setState({
-            createLoading: false,
-          });
+          setCreateLoading(false);
         });
-    }
-  }
-
-  onBlurCreateInput = () => {
-    const { createIssueValue } = this.state;
-    this.removeEventListener()
-    if (createIssueValue !== '' && !createIssueValue.match(/^[ ]+$/)) {      
-      this.handleBlurCreateIssue();
     } else {
-      this.onCancel();
+      onCancel();
     }
   }
 
-  onCancel = () => {
-    this.setState({
-      creating: false,
-    });
-  }
-  //               onBlur={this.onBlurCreateInput}
-  render() {
-    const { creating } = this.state;
     const versions = IssueStore.getVersions;
     const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
     return creating ? (
-      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }} ref={this.containerRef}>
+      <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
         <div className="c7ntest-add-select-version">
-          {/* 创建issue选择版本 */}
-          {
-            _.find(versions, { versionId: selectedVersion })
-              ? (
-                <Select
-                  disabled={IssueTreeStore.currentCycle.versionId}
-                  onChange={(value) => {
-                    IssueStore.selectVersion(value);
-                  }}
-                  value={selectedVersion}
-                  style={{ minWidth: 50, height: 36 }}
-                  dropdownMatchSelectWidth={false}
-                  getPopupContainer={trigger => trigger.parentNode}
-                >
-                  {
-                    versions.map(version => <Option value={version.versionId}>{version.name}</Option>)
-                  }
-                </Select>
-              )
-              : (
-                <div style={{ color: 'gray', marginTop: -3 }}>
-                  {'暂无版本'}
-                </div>
-              )
-          }
-
           <div style={{ marginLeft: 8, flexGrow: 1 }}>
-            <Input
+            <TextField
               autoFocus
-              value={this.state.createIssueValue}
-              // placeholder={<FormattedMessage id="issue_whatToDo" />}
-              onChange={(e) => {
-                this.setState({
-                  createIssueValue: e.target.value,
-                });
+              placeholder="请输入问题概要"
+              onChange={(value) => { // 失焦才会触发onChange
+                setCreateIssueValue(value);
               }}
               maxLength={44}
-              onPressEnter={this.handleBlurCreateIssue.bind(this)}
+              onEnterDown={handleBlurCreateIssue}
               style={{ width: '97%' }}
             />
           </div>
@@ -190,8 +124,8 @@ class CreateIssueTiny extends Component {
             <Button
               type="primary"
               funcType="raised"
-              loading={this.state.createLoading}
-              onClick={this.handleBlurCreateIssue.bind(this)}
+              loading={createLoading}
+              onClick={handleBlurCreateIssue}
               color="blue"
             >
               <FormattedMessage id="ok" />
@@ -199,7 +133,7 @@ class CreateIssueTiny extends Component {
             <Button
               style={{ marginLeft: 10 }}
               funcType="raised"
-              onClick={this.onCancel}
+              onClick={onCancel}
             >
               <FormattedMessage id="cancel" />
             </Button>
@@ -212,11 +146,7 @@ class CreateIssueTiny extends Component {
           type="primary"
           funcType="flat"
           onClick={() => {
-            this.setState({
-              creating: true,
-              createIssueValue: '',
-            });
-            this.addEventListener()
+            setCreating(true);
           }}
         >
           <Icon type="playlist_add icon" style={{ marginRight: -2 }} />
@@ -224,6 +154,4 @@ class CreateIssueTiny extends Component {
         </Button>
       );
   }
-}
-
-export default CreateIssueTiny;
+)

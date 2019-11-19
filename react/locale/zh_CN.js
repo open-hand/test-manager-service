@@ -315,7 +315,7 @@ const zhCN = {
   issue_edit_createDate: '创建时间',
   issue_edit_updateDate: '更新时间',
   issue_edit_testDetail: '测试详细信息',
-  issue_edit_addTestDetail: '添加测试信息',
+  issue_edit_addTestDetail: '添加步骤',
   issue_edit_comment: '评论',
   issue_edit_addComment: '添加评论',
   issue_edit_workLog: '工作日志',

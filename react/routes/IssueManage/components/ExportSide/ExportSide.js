@@ -212,9 +212,9 @@ class ExportSide extends Component {
         >
           <div className="c7ntest-ExportSide">
             <div style={{ marginBottom: 24 }}>
-              <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange}>
+              {/* <SelectVersion allowClear value={versionId} onChange={this.handleVersionChange}>
                 <Option value="all" key="all">所有版本</Option>
-              </SelectVersion>
+              </SelectVersion> */}
               <SelectFolder style={{ width: 200, margin: '0 24px' }} label="文件夹" disabled={!versionId} versionId={versionId} value={folderId} allowClear onChange={this.handleFolderChange} />
               <Button type="primary" icon="playlist_add" onClick={this.createExport}>新建导出</Button>
             </div>

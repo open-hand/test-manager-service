@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
 import { find, debounce, map } from 'lodash';
 import {
-  Select, Form, Input, Modal,
+  Input, Modal, Collapse,
 } from 'choerodon-ui';
+import {
+  Form, TextField, Select, TextArea, DataSet, Icon, Tree,
+} from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
-import './CreateIssue.scss';
 import { UploadButton } from '../CommonComponent';
 import {
   handleFileUpload, beforeTextUpload, validateFile, normFile,
@@ -21,110 +23,108 @@ import { getUsers } from '../../../../api/IamApi';
 import { WYSIWYGEditor } from '../../../../components';
 import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
+import CreateIssueDataSet from './store/CreateIssueDataSet';
+import TestStepTable from '../TestStepTable';
+import SelectTree from '../CommonComponent/SelectTree';
+import './CreateIssue.less';
 
 const { AppState } = stores;
-const { Sidebar } = Modal;
 const { Option } = Select;
-const FormItem = Form.Item;
+const { TreeNode } = Tree;
 
 let sign = false;
+function CreateIssue(props) {
+  const [createLoading, setCreateLoading] = useState(false);
+  const [selectLoading, setSelectLoading] = useState(false);
+  const [originLabels, setOriginLabels] = useState([]);
+  const [originComponents, setOriginComponents] = useState([]);
+  const [originPriorities, setOriginPriorities] = useState([]);
+  const [originFixVersions, setOriginFixVersions] = useState([]);
+  const [originUsers, setOriginUsers] = useState([]);
+  const [folders, setFolders] = useState([]);
 
-class CreateIssue extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      createLoading: false,
-      selectLoading: false,
-      originLabels: [],
-      originComponents: [],
-      originPriorities: [],
-      originFixVersions: [],
-      originUsers: [],
-      // origin: {},
-      folders: [],
-    };
-  }
-
-  componentDidMount() {
-    this.getPrioritys();
-    this.loadVersions();
-  }
-
-  loadVersions = () => {
+  const [visibleDetail, setVisibleDetail] = useState(true);
+  const [testStepData, setTestStepData] = useState([]);
+  const { intl } = props;
+  const createDataset = new DataSet(CreateIssueDataSet('issue', intl));
+  const loadVersions = () => {
+    const { setFieldsValue, defaultVersion } = props.form;
     getProjectVersion().then((res) => {
-      this.setState({
-        originFixVersions: res,
-        selectLoading: false,
-      });
-      const { setFieldsValue } = this.props.form;
-      if (find(res, { versionId: this.props.defaultVersion })) {
-        setFieldsValue({ versionId: this.props.defaultVersion });
+      setOriginFixVersions(res);
+      setSelectLoading(false);
+      if (find(res, { versionId: defaultVersion })) {
+        setFieldsValue({ versionId: defaultVersion });
       }
     });
-  }
+  };
 
-  onFilterChange(input) {
-    if (!sign) {
-      this.setState({
-        selectLoading: true,
-      });
-      getUsers(input).then((res) => {
-        this.setState({
-          originUsers: res.list,
-          selectLoading: false,
-        });
-      });
-      sign = true;
-    } else {
-      this.debounceFilterIssues(input);
-    }
-  }
-
-  debounceFilterIssues = debounce((input) => {
-    this.setState({
-      selectLoading: true,
-    });
+  const debounceFilterIssues = debounce((input) => {
+    setSelectLoading(true);
     getUsers(input).then((res) => {
-      this.setState({
-        originUsers: res.list,
-        selectLoading: false,
-      });
+      setOriginUsers(res.list);
+      setSelectLoading(false);
     });
   }, 500);
 
-
-  getPrioritys() {
-    getPrioritys().then((priorities) => {
-      const defaultPriority = find(priorities, { default: true });
-      if (defaultPriority) {
-        this.props.form.setFieldsValue({ priorityId: defaultPriority.id });
-      }
-      this.setState({
-        originPriorities: priorities,
+  function onFilterChange(input) {
+    if (!sign) {
+      setSelectLoading(true);
+      getUsers(input).then((res) => {
+        setOriginUsers(res.list);
+        setSelectLoading(false);
       });
-    });
-  }
-
-  loadFolders = () => {
-    const { getFieldValue } = this.props.form;
-    if (getFieldValue('versionId')) {
-      this.setState({
-        selectLoading: true,
-      });
-      getFoldersByVersion(getFieldValue('versionId')).then((folders) => {
-        this.setState({
-          folders,
-          selectLoading: false,
-        });
-      });
+      sign = true;
+    } else {
+      debounceFilterIssues(input);
     }
   }
 
-  handleCreateIssue = () => {
-    this.props.form.validateFields((err, values) => {
+
+  function loadPrioritys() {
+    getPrioritys().then((priorities) => {
+      const defaultPriority = find(priorities, { default: true });
+      if (defaultPriority) {
+        props.form.setFieldsValue({ priorityId: defaultPriority.id });
+      }
+      setOriginPriorities(priorities);
+    });
+  }
+
+  const loadFolders = () => {
+    const { getFieldValue } = props.form;
+    if (getFieldValue('versionId')) {
+      setSelectLoading(true);
+      getFoldersByVersion(getFieldValue('versionId')).then((res) => {
+        setFolders(res);
+        setSelectLoading(false);
+      });
+    }
+  };
+
+
+  const handleSave = (data, fileList, folderId) => {
+    createIssue(data, folderId)
+      .then((res) => {
+        if (fileList.length > 0) {
+          const config = {
+            issueType: res.statusId,
+            issueId: res.issueId,
+            fileName: fileList[0].name,
+            projectId: AppState.currentMenuType.id,
+          };
+          if (fileList.some(one => !one.url)) {
+            handleFileUpload(fileList, () => { }, config);
+          }
+        }
+        props.onOk(data, folderId);
+      });
+  };
+
+  const handleCreateIssue = () => {
+    props.form.validateFields((err, values) => {
       if (!err) {
         const { description, fileList } = values;
-        const exitComponents = this.state.originComponents;
+        const exitComponents = originComponents;
         const componentIssueRelVOList = map(values.componentIssueRel, (component) => {
           const target = find(exitComponents, { name: component });
           if (target) {
@@ -136,7 +136,7 @@ class CreateIssue extends Component {
             });
           }
         });
-        const exitLabels = this.state.originLabels;
+        const exitLabels = originLabels;
         const labelIssueRelVOList = map(values.issueLink, (label) => {
           const target = find(exitLabels, { labelName: label });
           if (target) {
@@ -148,7 +148,7 @@ class CreateIssue extends Component {
             });
           }
         });
-        const exitFixVersions = this.state.originFixVersions;
+        const exitFixVersions = originFixVersions;
         const version = values.versionId;
         const target = find(exitFixVersions, { versionId: version });
         let fixVersionIssueRelVOList = [];
@@ -177,255 +177,71 @@ class CreateIssue extends Component {
           versionIssueRelVOList: fixVersionIssueRelVOList,
           componentIssueRelVOList,
         };
-        this.setState({ createLoading: true });
+        setCreateLoading(true);
         const deltaOps = description;
         if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, this.handleSave.bind(this, extra, fileList, values.folderId));
+          beforeTextUpload(deltaOps, extra, handleSave.bind(this, extra, fileList, values.folderId));
         } else {
           extra.description = '';
-          this.handleSave(extra, [], values.folderId);
+          handleSave(extra, [], values.folderId);
         }
       }
       return null;
     });
   };
+  // const renderOptions = ({ record, text, value })=>{
 
-  handleSave = (data, fileList, folderId) => {
-    createIssue(data, folderId)
-      .then((res) => {
-        if (fileList.length > 0) {
-          const config = {
-            issueType: res.statusId,
-            issueId: res.issueId,
-            fileName: fileList[0].name,
-            projectId: AppState.currentMenuType.id,
-          };
-          if (fileList.some((one) => !one.url)) {
-            handleFileUpload(fileList, () => { }, config);
-          }
-        }
-        this.props.onOk(data, folderId);
-      });
-  };
+  //   console.log('renderOptions',record,value);
+  //   return <span>009</span>
+  // }
+  useEffect(() => {
+    // 初始化属性
+    loadPrioritys();
+    props.modal.handleOk(handleCreateIssue);
+  }, []);
 
-  render() {
-    const { getFieldDecorator } = this.props.form;
-    const {
-      initValue, visible, onCancel, onOk,
-    } = this.props;
-    const { originPriorities, folders, selectLoading } = this.state;
-    const priorityOptions = originPriorities.map((priority) => (
-      <Option key={priority.id} value={priority.id}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', padding: '2px' }}>
-          <div
-            className="c7ntest-level"
-            style={{
-              // backgroundColor: priorityColor,
-              color: priority.colour,
-              borderRadius: '2px',
-              padding: '0 8px',
-              display: 'inline-block',
-            }}
-          >
-            {priority.name}
-          </div>
-        </div>
-      </Option>
-    ));
-    const folderOptions = folders.map((folder) => (
-      <Option value={folder.folderId} key={folder.folderId}>
-        {folder.name}
-      </Option>
-    ));
-
+  function render() {
     return (
-      <Sidebar
-        className="c7ntest-createIssue"
-        title={<FormattedMessage id="issue_create_name" />}
-        visible={visible || false}
-        onOk={this.handleCreateIssue}
-        onCancel={onCancel}
-        okText="创建"
-        cancelText="取消"
-        confirmLoading={this.state.createLoading}
-      >
-        <Content
-          style={{
-            padding: '1px 0 10px 0',
-          }}
-        >
-          <Form layout="vertical" style={{ width: 670 }} className="c7ntest-form">
-            <FormItem>
-              {getFieldDecorator('versionId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择版本',
-                  }, {
-                    transform: (value) => (value ? value.toString() : value),
-                  }],
-              })(
-                <Select
-                  label={<FormattedMessage id="issue_create_content_version" />}
-                  // mode="tags"
-                  loading={this.state.selectLoading}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  tokenSeparators={[',']}
-                  onChange={() => {
-                    const { resetFields } = this.props.form;
-                    resetFields(['folderId']);
-                  }}
-                >
-                  {this.state.originFixVersions.map((version) => <Option key={version.name} value={version.versionId}>{version.name}</Option>)}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('priorityId', {
-                rules: [{ required: true, message: '优先级为必选项' }],
-                // initialValue: this.state.origin.defaultPriorityCode,
-              })(
-                <Select
-                  label={<FormattedMessage id="issue_issueFilterByPriority" />}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                >
-                  {priorityOptions}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem className="c7ntest-line">
-              {getFieldDecorator('summary', {
-                rules: [{ required: true, message: '概要为必输项' }],
-              })(
-                <Input label={<FormattedMessage id="issue_issueFilterBySummary" />} maxLength={44} />,
-              )}
-            </FormItem>
-            <FormItem className="c7ntest-line">
-              {getFieldDecorator('description')(
-                <WYSIWYGEditor
-                  style={{ height: 200, width: '100%' }}
-                />,
-              )}
-            </FormItem>
-            <FormItem style={{ display: 'block' }}>
-              {getFieldDecorator('fileList', {
-                initialValue: [],
-                valuePropName: 'fileList',
-                getValueFromEvent: normFile,
-                rules: [{
-                  validator: validateFile,
-                }],
-              })(
-                <UploadButton />,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('assigneedId', {})(
-                <Select
-                  label={<FormattedMessage id="issue_issueSortByPerson" />}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  loading={this.state.selectLoading}
-                  filter
-                  filterOption={false}
-                  allowClear
-                  onFilterChange={this.onFilterChange.bind(this)}
-                >
-                  {this.state.originUsers.map((user) => (
-                    <Option key={user.id} value={user.id}>
-                      <UserHead
-                        user={{
-                          id: user.id,
-                          loginName: user.loginName,
-                          realName: user.realName,
-                          avatar: user.imageUrl,
-                        }}
-                      />
-                    </Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem
-              label={null}
-            >
-              {getFieldDecorator('folderId', {
-                rules: [{
-                  required: true, message: '请选择文件夹!',
-                }],
-              })(
-                <Select
-                  loading={selectLoading}
-                  onFocus={this.loadFolders}
-                  label={<FormattedMessage id="issue_folder" />}
-                >
-                  {folderOptions}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('componentIssueRel', {
-                rules: [{ transform: (value) => (value ? value.toString() : value) }],
-              })(
-                <Select
-                  label={<FormattedMessage id="summary_component" />}
-                  mode="tags"
-                  loading={this.state.selectLoading}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  tokenSeparators={[',']}
-                  onFocus={() => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getModules().then((res) => {
-                      this.setState({
-                        originComponents: res,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
-                >
-                  {this.state.originComponents.map((component) => <Option key={component.name} value={component.name}>{component.name}</Option>)}
-                </Select>,
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('issueLink', {
-                rules: [{ transform: (value) => (value ? value.toString() : value) }],
-              })(
-                <Select
-                  label={<FormattedMessage id="summary_label" />}
-                  mode="tags"
-                  loading={this.state.selectLoading}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  tokenSeparators={[',']}
-                  onFocus={() => {
-                    this.setState({
-                      selectLoading: true,
-                    });
-                    getLabels().then((res) => {
-                      this.setState({
-                        originLabels: res,
-                        selectLoading: false,
-                      });
-                    });
-                  }}
-                >
-                  {this.state.originLabels.map((label) => (
-                    <Option
-                      key={label.labelName}
-                      value={label.labelName}
-                    >
-                      {label.labelName}
+      <Form dataSet={createDataset} className="test-create-issue-form">
+        <TextField name="summary" />
+        <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
+          <div className="test-create-issue-line" />
+          <span className="test-create-issue-head">
+            {
+              visibleDetail ? <Icon type="expand_less" /> : <Icon type="expand_more" />
+            }
 
-                    </Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem>
-          </Form>
-        </Content>
-      </Sidebar>
+            用例详细信息
+          </span>
+
+        </div>
+        {/** 这里逻辑待处理， DataSet提交 */}
+
+        {visibleDetail && [
+          <TextArea name="description" />,
+          <div className="test-create-issue-form-file">
+            <span className="test-create-issue-head">附件</span>
+            <UploadButton />
+          </div>,
+          <SelectTree name="folderId" pDataSet={createDataset} />,
+          <Select name="issueLink" />]
+        }
+        <div className="test-create-issue-form-step">
+          <div className="test-create-issue-line" />
+          <span className="test-create-issue-head">测试步骤</span>
+          <TestStepTable
+            disabled={false}
+            data={testStepData}
+            intl={intl}
+          // enterLoad={() => console.log('enterLoad')}
+          // leaveLoad={() => console.log('leaveLoad')}
+          // onOk={() => console.log('onOk')}
+          />
+        </div>
+      </Form>
     );
   }
+
+  return render();
 }
-export default Form.create({})(withRouter(CreateIssue));
+export default withRouter(CreateIssue);

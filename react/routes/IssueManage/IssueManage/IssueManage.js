@@ -5,7 +5,8 @@ import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
-import { FormattedMessage } from 'react-intl';
+import { Modal } from 'choerodon-ui/pro/lib';
+import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
 import { commonLink, getParams, testCaseDetailLink } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
@@ -18,6 +19,7 @@ import TestCaseDetail from '../TestCaseDetail';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
 
+@injectIntl
 @observer
 export default class IssueManage extends Component {
   constructor(props) {
@@ -102,8 +104,41 @@ export default class IssueManage extends Component {
     });
   }
 
-  handleAddFolderClick = () => {   
-    IssueTreeStore.treeRef.current.addFirstLevelItem();
+  handleOpenCreateIssue = () => {
+    const { intl } = this.props;
+    Modal.open({
+      key: 'createIssue',
+      // title:<FormattedMessage id='issue_create_name'  />,
+      title: intl.formatMessage({ id: 'issue_create_name' }),
+      drawer: true,
+      style: {
+        width: 740,
+      },
+      children: (
+        <CreateIssue
+          onOk={this.handleCreateIssue.bind(this)}
+          intl={intl}
+        />
+      ),
+      okText: '创建',
+    });
+  }
+
+  handleOpenImportIssue = () => {
+    const { intl } = this.props;
+    Modal.open({
+      key: 'createIssue',
+      // title:<FormattedMessage id='issue_create_name'  />,
+      title: '导入用例',
+      drawer: true,
+      style: {
+        width: 380,
+      },
+      children: (
+        <ImportSide />
+      ),
+      // onOk: this.handleCreateIssue.bind(this),
+    });
   }
 
   render() {
@@ -115,7 +150,8 @@ export default class IssueManage extends Component {
         <Header
           title={<FormattedMessage id="issue_name" />}
         >
-          <Button icon="playlist_add" onClick={() => this.setState({ createIssueShow: true })}>
+          <Button className="leftBtn" onClick={() => this.handleOpenCreateIssue()}>
+            <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
           <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
@@ -124,7 +160,9 @@ export default class IssueManage extends Component {
           <Button icon="unarchive" onClick={() => this.ExportSide.open()}>
             <FormattedMessage id="issue_export" />
           </Button>
-          <Button icon="archive" onClick={() => this.importSide.open()}>
+          <Button className="leftBtn" onClick={this.handleOpenImportIssue}>
+            {/* <Icon type="file_upload icon" /> */}
+            <Icon type="archive" />
             <FormattedMessage id="issue_import" />
           </Button>
         </Header>
@@ -151,15 +189,15 @@ export default class IssueManage extends Component {
               padding: '0 20px',
             }}
           >
+            <div className="c7ntest-content-issueFolderName">choerodon 框架</div>
             <IssueTable
               clickIssue={clickIssue}
               onClick={this.handleTableRowClick}
             />
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
-          <ImportSide ref={this.saveRef('importSide')} />
           <TestCaseDetail visible={clickIssue.issueId} clickIssue={clickIssue} onClose={this.handleClose} />
-          {
+          {/* {
             createIssueShow && (
               <CreateIssue
                 visible={createIssueShow}
@@ -168,7 +206,7 @@ export default class IssueManage extends Component {
                 defaultVersion={currentCycle.versionId}
               />
             )
-          }
+          } */}
         </Content>
       </Page>
     );

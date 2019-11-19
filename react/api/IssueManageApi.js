@@ -310,6 +310,29 @@ export function getIssuesByVersion(versionIds, page = 1, size = 10, search, orde
     },
   });
 }
+// /**
+//  *获取文件夹中的用例
+//  *
+//  * @export
+//  * @param {*} folderId
+//  * @param {number} [page=0]
+//  * @param {number} [size=10]
+//  * @param {*} search
+//  * @param {*} orderField
+//  * @param {*} orderType
+//  * @returns
+//  */
+// export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderField, orderType) {
+//   const searchDTO = { ...search, otherArgs: search.searchArgs };
+//   // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
+
+//   return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO: search }, {
+//     params: {
+//       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
+//     },
+//   });
+// }
+
 /**
  *获取文件夹中的用例
  *
@@ -324,14 +347,13 @@ export function getIssuesByVersion(versionIds, page = 1, size = 10, search, orde
  */
 export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search, otherArgs: search.searchArgs };
-  // searchDTO.advancedSearchArgs.typeCode = ['issue_test'];
-
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/query?folderId=${folderId}&page=${page}&size=${size}`, { versionIds: [], searchDTO: search }, {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folderId=1235&page=${page}&size=${size}`, { searchArgs: search }, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
   });
 }
+
 /**
  *通过issueid换取issue信息
  *

@@ -1,20 +1,19 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable react/state-in-constructor */
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-// import {
-//   cloneStep, updateStep, deleteStep, createIssueStep,
-// } from '../../../../api/IssueManageApi';
+import {
+  cloneStep, updateStep, deleteStep, createIssueStep,
+} from '../../../../api/IssueManageApi';
+import { uploadFile } from '../../../../api/FileApi';
 import { DragTable } from '../../../../components';
 import { TextEditToggle, UploadInTable } from '../../../../components';
+import UploadButton from '../CommonComponent/UploadButton';
 import './TestStepTable.less';
 
 const { confirm } = Modal;
@@ -22,60 +21,51 @@ const { Text, Edit } = TextEditToggle;
 const { TextArea } = Input;
 let didCreatedFlag = false;
 let createStepId;
+class TestStepTable extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      isEditing: [],
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+      },
+      fileList: [],
+      createdStepInfo: {
+      },
+    };
+  }
 
-/**
- * 测试步骤组件
- * @param  data 数据源
- * @function updateStep(newData) 远程更新测试步骤 
- * @function createIssueStep(newData) 远程创建测试步骤 
- * @function cloneStep(stepId) 远程克隆测试步骤 
- * @function deleteStep(stepId) 远程刪除测试步骤 
- * @function onOk 本地数据操作回调函数  
- */
-let stepId = 0;
-function TestStepTable(props) {
-  // console.log('TestStepTable', props);
-  const [data, setData] = useState(props.data);
-  const [isEditing, setIsEditing] = useState([]);
-  // useReducer 
-  const [createStep, setCreateStep] = useState({
-    testStep: '',
-    testData: '',
-    expectedResult: '',
-  });
-  const [createdStepInfo, setCreatedStepInfo] = useState({});
-  // rank 用于内部rank排序
-  const [rank, setRank] = useState([]);
-  useEffect(() => {
-    setData(props.data);
-    console.log('u2', props.data);
-  }, [props.data]);
-
-  useEffect(() => {
-    setIsEditing(_.map(data, (item, index) => (
-      {
-        stepId: item.stepId,
-        index,
-        isStepNameEditing: false,
-        isStepDataEditing: false,
-        isStepExpectedResultEditing: false,
-      }
-    )));
-    console.log('useEffect', data);
-  }, [data]);
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data && nextProps.data) {
+      this.setState({
+        data: nextProps.data,
+        isEditing: _.map(nextProps.data, (item, index) => (
+          {
+            stepId: item.stepId,
+            index,
+            isStepNameEditing: false,
+            isStepDataEditing: false,
+            isStepExpectedResultEditing: false,
+          }
+        )),
+      });
+    }
+  }
 
 
-  const onDragEnd = (sourceIndex, targetIndex) => {
-    const arr = data.slice();
+  onDragEnd = (sourceIndex, targetIndex) => {
+    const thedata = this.state.data;
+    const arr = thedata.slice();
     if (sourceIndex === targetIndex) {
       return;
     }
     const drag = arr[sourceIndex];
     arr.splice(sourceIndex, 1);
     arr.splice(targetIndex, 0, drag);
-    setData(arr);
-
-    /**  编辑保存
+    this.setState({ data: arr });
     // arr此时是有序的，取toIndex前后两个的rank
     const lastRank = targetIndex === 0 ? null : arr[targetIndex - 1].rank;
     const nextRank = targetIndex === arr.length - 1 ? null : arr[targetIndex + 1].rank;
@@ -86,24 +76,67 @@ function TestStepTable(props) {
       lastRank,
       nextRank,
     };
-
     updateStep(testCaseStepDTO).then((res) => {
       // save success
-      const Data = [...data];
+      const thedata2 = this.state.data;
+      const Data = [...thedata2];
       Data[targetIndex] = res;
-
-      setData(Data);
+      this.setState({
+        data: Data,
+      });
     });
-     */
-  };
+  }
 
+  setFileList = (data) => {
+    this.setState({ fileList: data });
+  }
 
-  const handleClickCreate = () => {
-    const { data: propsData } = props;
-    const lastRank = propsData.length
-      ? propsData[propsData.length - 1].rank : null;
+  handleFileUpload = (propFileList) => {
+    if (propFileList.length) {
+      const fileList = propFileList.filter(i => !i.url);
+      const config = {
+        attachmentLinkId: createStepId,
+        attachmentType: 'CASE_STEP',
+      };
+      if (fileList.some(one => !one.url)) {
+        // eslint-disable-next-line no-shadow
+        const fileList = propFileList.filter(i => !i.url);
+        const formData = new FormData();
+        fileList.forEach((file) => {
+          // file.name = encodeURI(encodeURI(file.name));
+          formData.append('file', file);
+        });
+        if (createStepId) {
+          uploadFile(formData, config).then((res) => {
+            if (res.failed) {
+              this.props.leaveLoad();
+              Choerodon.prompt('不能有重复附件');
+            } else {
+              createStepId = undefined;
+              this.props.onOk();
+            }
+          }).catch((error) => {
+            window.console.log(error);
+            this.props.leaveLoad();
+            Choerodon.prompt('网络错误');
+          });
+        }
+        return false;
+      }
+    } else {
+      this.props.onOk();
+    }
+    return false;
+  }
+
+  handleClickCreate = () => {
+    const { issueId, data } = this.props;
+    const { isEditing } = this.state;
+    const lastRank = data.length
+      ? data[data.length - 1].rank : null;
     const testCaseStepDTO = {
       attachments: [],
+      issueId,
       lastRank,
       nextRank: null,
       testStep: '',
@@ -112,147 +145,135 @@ function TestStepTable(props) {
       stepIsCreating: true,
     };
     didCreatedFlag = false;
-    setData([...propsData, testCaseStepDTO]);
-    setIsEditing([...isEditing, {
-      stepId: undefined,
-      index: propsData.length,
-      isStepNameEditing: false,
-      isStepDataEditing: false,
-      isStepExpectedResultEditing: false,
-    }]);
-    setCreateStep({
-      testStep: '',
-      testData: '',
-      expectedResult: '',
+    this.setState({
+      data: [...data, testCaseStepDTO],
+      isEditing: [...isEditing, {
+        stepId: undefined,
+        index: data.length,
+        isStepNameEditing: false,
+        isStepDataEditing: false,
+        isStepExpectedResultEditing: false,
+      }],
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+      },
+      fileList: [],
+      createdStepInfo: {},
     });
-    setCreatedStepInfo({});
-  };
+  }
 
-  const editStep = (record, func) => {
-    console.lorg('editStep', record, data);
-
-    /** 远程编辑
-    updateStep(record).then((res) => {
-      if (func) {
-        func();
-      } else {
-        props.onOk();
-      }
-    });
-    */
-  };
-
-  const onCeateIssueStep = (index) => {
-    const { data: propsData } = props;
+  createIssueStep = () => {
+    const { issueId, data } = this.props;
+    const { createStep, fileList } = this.state;
     const { expectedResult, testStep } = createStep;
     if (expectedResult && testStep) {
-      const lastRank = propsData.length
-        ? propsData[propsData.length - 1].rank : null;
+      const lastRank = data.length
+        ? data[data.length - 1].rank : null;
       const testCaseStepDTO = {
-        stepId,
+        issueId,
         lastRank,
         nextRank: null,
         ...createStep,
       };
-      stepId += 1;
       if (!didCreatedFlag) {
         didCreatedFlag = true;
-        // stepIsCreating
-        propsData[index] = {
-          ...testCaseStepDTO,
-        };
-        setData(propsData);
-        console.log('onCeateIssueStep', index, testCaseStepDTO, data);
-        /** 远程创建
         createIssueStep(testCaseStepDTO).then((res) => {
           createStepId = res.stepId;
-
-          setCreatedStepInfo(res);
+          this.setState({
+            createdStepInfo: res,
+          });
+          this.handleFileUpload(fileList);
         });
-        */
       } else {
         setTimeout(() => {
-          setCreatedStepInfo({
+          let { createdStepInfo } = this.state;
+          createdStepInfo = {
             ...createdStepInfo,
             ...createStep,
             objectVersionNumber: createdStepInfo.objectVersionNumber || 1,
-          });
-          editStep(createdStepInfo);
+          };
+          this.editStep(createdStepInfo, this.handleFileUpload.bind(this, fileList));
         }, 300);
       }
     } else {
       Choerodon.prompt('测试步骤和预期结果均为必输项');
     }
+  }
+
+  editStep = (record, func) => {
+    updateStep(record).then((res) => {
+      if (func) {
+        func();
+      } else {
+        this.props.onOk();
+      }
+    });
   };
 
-
-  const onCloneStep = (stepId, index) => {
+  cloneStep = (stepId, index) => {
+    const { data } = this.state;
     const lastRank = data[index].rank;
     const nextRank = data[index + 1] ? data[index + 1].rank : null;
-    props.enterLoad();
-
-    /** 远程克隆
+    this.props.enterLoad();
     cloneStep({
       lastRank,
       nextRank,
       stepId,
-      issueId: props.issueId,
+      issueId: this.props.issueId,
     }).then((res) => {
-      props.onOk();
+      this.props.onOk();
     })
       .catch((error) => {
-        props.leaveLoad();
+        this.props.leaveLoad();
       });
-      */
-  };
+  }
 
-  const handleDeleteTestStep = (index, stepId) => {
-    const { data: propsData } = props;
+  handleDeleteTestStep = (stepId) => {
+    const that = this;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
       content:
-        // eslint-disable-next-line react/jsx-indent
-        <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-        </div>,
+  <div style={{ marginBottom: 32 }}>
+    {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+  </div>,
       onOk() {
-        console.log('handleDeleteTestStep', index, propsData);
-        propsData.splice(index, 1);
-        setData(propsData);
-        console.log('data', data);
-        /** 远程删除
         return deleteStep({ data: { stepId } })
           .then((res) => {
             that.props.onOk();
           });
-           */
       },
       onCancel() { },
       okText: Choerodon.getMessage('删除', 'Delete'),
       okType: 'danger',
     });
-  };
+  }
 
 
-  const cancelCreateStep = (index) => {
-    const { data: propsData } = props;
-    console.log('propsData', propsData);
-    // const newData = _.remove(propsData, (item, i) => index !== i);
-    propsData.splice(index, 1);
-    console.log('cancel', propsData);
-    setData(propsData);
-    setCreateStep({
-      testStep: '',
-      testData: '',
-      expectedResult: '',
+  cancelCreateStep = (index) => {
+    const { data } = this.state;
+    const cancelStep = _.remove(data, (item, i) => index === i);
+    this.setState({
+      data,
+      createStep: {
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+      },
     });
-  };
+  }
 
-  function render() {
+  render() {
     const {
       onOk, enterLoad, leaveLoad, disabled,
-    } = props;
+    } = this.props;
+
+    const {
+      isEditing, data, createStep, fileList,
+    } = this.state;
+
     const hasStepIsCreating = data.find(item => item.stepIsCreating);
 
     const columns = [{
@@ -280,12 +301,14 @@ function TestStepTable(props) {
             // rules={[{ required: true, message: '请输入测试步骤' }]}
             onSubmit={(value) => {
               if (stepIsCreating) {
-                setCreateStep({
-                  ...createStep,
-                  testStep: value,
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    testStep: value,
+                  },
                 });
               } else {
-                editStep({
+                this.editStep({
                   ...record,
                   testStep: value,
                 });
@@ -324,12 +347,14 @@ function TestStepTable(props) {
             formKey="testData"
             onSubmit={(value) => {
               if (stepIsCreating) {
-                setCreateStep({
-                  ...createStep,
-                  testData: value,
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    testData: value,
+                  },
                 });
               } else {
-                editStep({
+                this.editStep({
                   ...record,
                   testData: value,
                 });
@@ -370,12 +395,14 @@ function TestStepTable(props) {
             // rules={[{ required: true, message: '请输入预期结果' }]}
             onSubmit={(value) => {
               if (stepIsCreating) {
-                setCreateStep({
-                  ...createStep,
-                  expectedResult: value,
+                this.setState({
+                  createStep: {
+                    ...createStep,
+                    expectedResult: value,
+                  },
                 });
               } else {
-                editStep({
+                this.editStep({
                   ...record,
                   expectedResult: value,
                 });
@@ -417,18 +444,18 @@ function TestStepTable(props) {
               <Icon type="open_with" {...provided.dragHandleProps} style={{ marginRight: 7 }} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_copy" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ color: 'black' }} onClick={() => onCloneStep(record.stepId, index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="library_books" style={{ color: 'black' }} onClick={() => this.cloneStep(record.stepId, index)} />
             </Tooltip>
-            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => handleDeleteTestStep(index, record.stepId)} />
+            <Button disabled={disabled} shape="circle" funcType="flat" icon="delete_forever" style={{ color: 'black' }} onClick={() => this.handleDeleteTestStep(record.stepId)} />
           </div>
         ) : (
           <div>
             <div {...provided.dragHandleProps} />
             <Tooltip title={<FormattedMessage id="excute_save" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => onCeateIssueStep(index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="done" style={{ margin: '0 -5px 5px', color: 'black' }} onClick={() => this.createIssueStep()} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="excute_cancel" />}>
-              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => cancelCreateStep(index)} />
+              <Button disabled={disabled} shape="circle" funcType="flat" icon="close" style={{ margin: '0 5px', color: 'black' }} onClick={() => this.cancelCreateStep(index)} />
             </Tooltip>
           </div>
         );
@@ -441,24 +468,23 @@ function TestStepTable(props) {
           disabled={disabled}
           pagination={false}
           filterBar={false}
-          dataSource={data}
+          dataSource={this.state.data}
           columns={columns}
-          onDragEnd={onDragEnd}
-          createIssueStep={onCeateIssueStep}
+          onDragEnd={this.onDragEnd}
+          createIssueStep={this.createIssueStep}
           hasStepIsCreating={hasStepIsCreating}
           dragKey="stepId"
           customDragHandle
           scroll={{ x: true }}
         />
         <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
-          <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={handleClickCreate}>
+          <Button disabled={disabled || hasStepIsCreating} style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }} icon="playlist_add" className="leftBtn" funcTyp="flat" onClick={this.handleClickCreate}>
             <FormattedMessage id="issue_edit_addTestDetail" />
           </Button>
         </div>
       </div>
     );
   }
-  return render();
 }
 
 export default TestStepTable;
