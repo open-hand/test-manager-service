@@ -202,9 +202,6 @@ class EditIssueNarrow extends Component {
 
   handleCreateLinkIssue() {
     this.props.reloadIssue();
-    this.setState({
-      createLinkTaskShow: false,
-    });
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
@@ -533,6 +530,7 @@ class EditIssueNarrow extends Component {
                           reloadIssue={reloadIssue}
                           folderName={folderName}
                           issueInfo={issueInfo}
+                          createLinkIssue={this.handleCreateLinkIssue.bind(this)}
                           checkDisabledModifyOrDelete={this.checkDisabledModifyOrDelete}
                           editIssue={this.editIssue}
                           setFileList={setFileList}
@@ -547,32 +545,6 @@ class EditIssueNarrow extends Component {
                 </section>
               </div>
             </div>
-
-            {
-              FullEditorShow && (
-                <FullEditor
-                  initValue={description}
-                  visible={FullEditorShow}
-                  onCancel={() => this.setState({ FullEditorShow: false })}
-                  onOk={(value) => {
-                    this.setState({
-                      FullEditorShow: false,
-                    });
-                    this.editIssue({ description: value });
-                  }}
-                />
-              )
-            }
-            {
-              createLinkTaskShow ? (
-                <CreateLinkTask
-                  issueId={issueId}
-                  visible={createLinkTaskShow}
-                  onCancel={() => this.setState({ createLinkTaskShow: false })}
-                  onOk={this.handleCreateLinkIssue.bind(this)}
-                />
-              ) : null
-            }
           </div>
         </ResizeAble>
       </div>
