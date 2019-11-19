@@ -15,11 +15,11 @@
     }
   },
   "plugins": [
-    "react"
+    "react",
+    "react-hooks"
   ],
   "extends": "airbnb",
   "rules": {
-    "no-console":"off",
     "react/jsx-no-bind": [
       "error",
       {
@@ -64,9 +64,8 @@
           "invalidHref"
         ]
       }
-    ]
-  },
-  "globals": {
-    "Choerodon": true
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }
