@@ -25,7 +25,7 @@ public class TestDataFix {
     @Autowired
     private TestIssueFolderService testIssueFolderService;
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("迁移issueFolder数据")
+    @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fixIssueFolder() {
         testIssueFolderService.fixVersionFolder();
