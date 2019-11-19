@@ -83,7 +83,7 @@ export default function TreeNode(props) {
       role="none"
       className={`${prefix}-tree-item`}
     >
-      <TextField style={{ marginLeft: 38 }} defaultValue={item.data.name} autoFocus />
+      <TextField style={{ marginLeft: 38 }} defaultValue={item.data.name} onBlur={onSave} autoFocus />
     </div>
   );
   const renderTitle = () => {
