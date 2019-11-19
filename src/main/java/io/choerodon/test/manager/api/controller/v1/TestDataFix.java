@@ -21,7 +21,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
  */
 @RestController
 @RequestMapping(value = "/v1/projects/fix")
-public class TestDateFix {
+public class TestDataFix {
     @Autowired
     private TestIssueFolderService testIssueFolderService;
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
