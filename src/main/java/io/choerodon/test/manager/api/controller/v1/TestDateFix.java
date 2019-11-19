@@ -27,7 +27,7 @@ public class TestDateFix {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("迁移issueFolder数据")
     @GetMapping
-    public ResponseEntity delete() {
+    public ResponseEntity fixIssueFolder() {
         testIssueFolderService.fixVersionFolder();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
