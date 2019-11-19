@@ -1,7 +1,18 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
@@ -12,20 +23,8 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.A;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -47,9 +46,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private ProductionVersionClient productionVersionClient;
     @Override
     public TestIssueFolderDTO baseInsert(TestIssueFolderDTO insert) {
-        insert.setVersionId(0L);
         if (testIssueFolderMapper.insert(insert) != 1) {
             throw new CommonException("error.issueFolder.insert");
         }
@@ -101,14 +101,20 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         List<TestTreeFolderVO> list = new ArrayList<>();
         testIssueFolderVOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
-            List<TestIssueFolderVO> collect = testIssueFolderVOS.stream().filter(e -> e.getParentId() == testIssueFolderVO.getFolderId()).collect(Collectors.toList());
-            List<Long> ids = collect.stream().map(TestIssueFolderVO::getFolderId).collect(Collectors.toList());
+            List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectChildrenByParentId(testIssueFolderVO.getFolderId());
+//            List<TestIssueFolderVO> collect = testIssueFolderVOS.stream().filter(issueFolderVO -> issueFolderVO.getParentId() ==folderId ).collect(Collectors.toList());
+            List<Long> ids = new ArrayList<>();
+            if(testIssueFolderDTOS!=null){
+                 ids = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
+            }
+
             folderVO.setId(testIssueFolderVO.getFolderId());
             folderVO.setIssueFolderVO(testIssueFolderVO);
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
             if (CollectionUtils.isEmpty(ids)) {
                 folderVO.setHasChildren(false);
+                folderVO.setChildren(ids);
             } else {
                 folderVO.setChildren(ids);
                 folderVO.setHasChildren(true);
@@ -117,6 +123,43 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         });
         List<TestTreeFolderVO> treeFolderVOS = list.stream().sorted(Comparator.comparing(TestTreeFolderVO::getId)).collect(Collectors.toList());
         return new TestTreeIssueFolderVO(rootFolderId, treeFolderVOS);
+    }
+
+    @Override
+    @Transactional
+    public Boolean fixVersionFolder() {
+        TestIssueFolderVO testIssueFolder = new TestIssueFolderVO();
+        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
+                .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+        }.getType());
+
+        Set<Long> projectFolderIds = testIssueFolderVOS.stream().map(TestIssueFolderVO::getProjectId).collect(Collectors.toSet());
+        projectFolderIds.forEach(projectFolderId->{
+            List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
+            List<TestIssueFolderVO> testIssueProjectFolderVOs = testIssueFolderVOS.stream().filter(testIssueFolderVO -> testIssueFolderVO.getProjectId() == projectFolderId).collect(Collectors.toList());
+            //以version区分
+            Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e->e.getVersionId()!=null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
+
+            for (Map.Entry<Long, List<TestIssueFolderVO>> entry : projectVersionFolderVOs.entrySet()) {
+                productVersionDTOList.stream().filter(e->e.getVersionId()==entry.getKey()).findAny().ifPresent(e->{
+                    //1.创建版本文件夹
+                    TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
+                    newFolderVO.setName(e.getName());
+                    newFolderVO.setParentId(0L);
+                    newFolderVO.setProjectId(projectFolderId);
+                    newFolderVO.setType("cycle");
+                    TestIssueFolderVO testIssueFolderVO = create(projectFolderId, newFolderVO);
+                    //2.更新二级目录
+                    entry.getValue().stream().forEach(folderVO->{
+                        folderVO.setParentId(testIssueFolderVO.getFolderId());
+                        update(folderVO);
+                    });
+                });
+
+            }
+        });
+
+        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -167,9 +210,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
-        if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
-            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
-        }
+        testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO);
+//        if ( != 1) {
+//            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
+//        }
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
