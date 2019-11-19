@@ -25,7 +25,7 @@ class IssueTree extends Component {
 
 
   componentDidMount() {
-    this.getTree();
+    // this.getTree();
   }
 
   getTree = () => {
@@ -57,19 +57,25 @@ class IssueTree extends Component {
     // console.log(sourceItem, destination);
   }
 
+  setSelected=(item) => {
+    IssueTreeStore.setCurrentCycle(item);
+  }
+
   render() {
     const { loading } = IssueTreeStore;
     const treeData = IssueTreeStore.getTreeData;
     const noVersion = treeData.rootIds.length === 0;
 
     return (
-      <div className="c7ntest-IssueTree">
+      <div className="c7ntest-IssueTree">        
         <Tree
           ref={this.treeRef}
           data={treeData}
           onCreate={this.handleCreate}
           onEdit={this.handleEdit}
           afterDrag={this.handleDrag}
+          selected={IssueTreeStore.getCurrentCycle}
+          setSelected={this.setSelected}
         />
       </div>
     );

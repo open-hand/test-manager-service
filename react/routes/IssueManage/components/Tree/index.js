@@ -44,19 +44,19 @@ function PureTree({
   data,
   onCreate,
   afterDrag,
+  selected,
+  setSelected,
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
   useEffect(() => {
     setTree(mapDataToTree(data));
   }, [data]);
-  const [selected, setSelected] = useState();
   const [search, setSearch] = useState('');
   const previous = usePrevious(selected);
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
-    if (selected) {
-      // console.log(selected);
-      setTree(oldTree => selectItem(oldTree, selected, previous));
+    if (selected.id) {
+      setTree(oldTree => selectItem(oldTree, selected.id, previous.id));
     }
   }, [selected]);
   const addFirstLevelItem = () => {
@@ -77,9 +77,9 @@ function PureTree({
   useImperativeHandle(ref, () => ({
     addFirstLevelItem,
   }));
-  const onSelect = (itemId) => {
+  const onSelect = (item) => {
     // console.log('select', itemId)
-    setSelected(itemId);
+    setSelected(item);
   };
   const filterTree = useCallback((value) => {
     setTree(oldTree => expandTreeBySearch(oldTree, value || ''));

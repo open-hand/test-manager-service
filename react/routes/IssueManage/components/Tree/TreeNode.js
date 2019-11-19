@@ -105,7 +105,7 @@ export default function TreeNode(props) {
       <div
         role="none"
         className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
-        onClick={() => { onSelect(item.id); }}
+        onClick={() => { onSelect(item); }}
       >
         <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
         <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
