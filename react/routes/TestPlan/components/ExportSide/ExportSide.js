@@ -9,7 +9,6 @@ import {
 import _ from 'lodash';
 import moment from 'moment';
 import { getProjectVersion } from '../../../../api/agileApi';
-import { SelectVersion, SelectFolder, SimpleSelect } from '../../../../components';
 import {
   getCyclesByVersionId, getExportList, getFoldersByCycleId, exportCycle,
 } from '../../../../api/cycleApi';

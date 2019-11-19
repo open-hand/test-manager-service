@@ -7,9 +7,8 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import ReactEcharts from 'echarts-for-react';
-import _ from 'lodash';
 import { getProjectVersion } from '../../../api/agileApi';
-import loadProgressByVersion from '../../../api/DashBoardApi';
+import { loadProgressByVersion } from '../../../api/reportApi';
 import { getCyclesByVersionId } from '../../../api/cycleApi';
 import ReporterSwitcher from '../components';
 import { getProjectName } from '../../../common/utils';
