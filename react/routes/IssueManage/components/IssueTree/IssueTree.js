@@ -6,7 +6,7 @@ import { getProjectId, getOrganizationId, handleRequestFailed } from '@/common/u
 import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  getIssueTree, addFolder, moveFolders, copyFolders, editFolder, deleteFolder,
+  getIssueTree, addFolder, copyFolders, editFolder, deleteFolder, moveFolders,
 } from '../../../../api/IssueManageApi';
 import IssueStore from '../../stores/IssueStore';
 import { NoVersion } from '../../../../components';
@@ -46,9 +46,8 @@ class IssueTree extends Component {
 
   handleDelete = item => handleRequestFailed(deleteFolder(item.id))
 
-  handleDrag = (sourceItem, destination) => {
-    // console.log(sourceItem, destination);
-  }
+  handleDrag = (sourceItem, destination) => handleRequestFailed(moveFolders([sourceItem.id], destination.parentId))
+  
 
   setSelected = (item) => {
     IssueTreeStore.setCurrentCycle(item);
