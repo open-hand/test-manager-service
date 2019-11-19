@@ -210,7 +210,7 @@ public class TestCaseController {
     }
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询用例详情")
-    @GetMapping("{case_id}/info")
+    @GetMapping("/{case_id}/info")
     public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id")Long projectId,
                                                         @PathVariable(name = "case_id",required = true) Long caseId){
         return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId,caseId),HttpStatus.OK);
@@ -218,7 +218,7 @@ public class TestCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除测试用例")
-    @DeleteMapping("{case_id}/delete")
+    @DeleteMapping("/{case_id}/delete")
     public ResponseEntity deleteCase(@PathVariable("project_id")Long projectId,
                                      @PathVariable(name = "case_id",required = true) Long caseId){
         testCaseService.deleteCase(projectId,caseId);
