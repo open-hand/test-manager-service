@@ -3,8 +3,11 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
+import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.api.vo.SearchDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +32,13 @@ public class TestFileLoadHistoryController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询issue上传历史")
-    @GetMapping("/issue")
-    public ResponseEntity<List<TestFileLoadHistoryVO>> queryIssues(@PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testFileLoadHistoryService.queryIssues(projectId))
+    @PostMapping("/issue")
+    public ResponseEntity<PageInfo<TestFileLoadHistoryVO>> queryIssues(
+            @PathVariable(name = "project_id") Long projectId,
+            @RequestParam("folder_id")Long folderId,
+            Pageable pageable,
+            @RequestBody SearchDTO searchDTO) {
+        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,folderId,searchDTO,pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.filehistory.query"));
     }

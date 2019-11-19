@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
@@ -33,6 +30,9 @@ public class TestFileLoadHistoryDTO extends BaseDTO {
     private byte[] fileStream;
 
     private Long createdBy;
+
+    @Transient
+    private String name;
 
     @Override
     public Long getCreatedBy() {
@@ -122,5 +122,13 @@ public class TestFileLoadHistoryDTO extends BaseDTO {
 
     public void setFileStream(byte[] fileStream) {
         this.fileStream = fileStream;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
