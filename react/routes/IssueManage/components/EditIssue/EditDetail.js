@@ -34,7 +34,6 @@ import Divider from './Component/Divider';
 import PriorityTag from '../PriorityTag';
 import StatusTag from '../StatusTag';
 import TypeTag from '../TypeTag';
-import TestStepTable from '../TestStepTable'
 import TestExecuteTable from '../TestExecuteTable'
 import './EditDetail.less';
 

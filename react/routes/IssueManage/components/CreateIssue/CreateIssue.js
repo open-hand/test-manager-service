@@ -44,7 +44,7 @@ function CreateIssue(props) {
   const [folders, setFolders] = useState([]);
 
   const [visibleDetail, setVisibleDetail] = useState(true);
-
+  const [testStepData, setTestStepData] = useState([]);
   const { intl } = props;
   const createDataset = new DataSet(CreateIssueDataSet('issue', intl));
   const loadVersions = () => {
@@ -231,8 +231,7 @@ function CreateIssue(props) {
           <span className="test-create-issue-head">测试步骤</span>
           <TestStepTable
             disabled={false}
-            issueId={0}
-            data={[]}
+            data={testStepData}
             intl={intl}
           // enterLoad={() => console.log('enterLoad')}
           // leaveLoad={() => console.log('leaveLoad')}
