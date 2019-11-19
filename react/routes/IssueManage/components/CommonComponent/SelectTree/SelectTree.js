@@ -1,6 +1,6 @@
 
 import React, {
-  Component, useState, useEffect, useMemo, 
+  Component, useState, useEffect, useMemo,
 } from 'react';
 import { Select, Icon, Tree } from 'choerodon-ui/pro';
 import treeDataSet from './treeDataSet';
@@ -15,6 +15,7 @@ function SelectTree(props) {
   const {
     name, renderSelect, pDataSet, ...restProps
   } = props;
+  const dataSet = useMemo(() => treeDataSet(pDataSet, name), []);
   /**
     * 渲染树节点
     * @param {*} record  
@@ -41,7 +42,7 @@ function SelectTree(props) {
     // console.log('renderTree', treeDataSet);
     return (
       <Tree
-        dataSet={treeDataSet(pDataSet, name)}
+        dataSet={dataSet}
         renderer={renderNode}
       />
     );
