@@ -13,7 +13,7 @@ import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  renderIssueNum, renderSummary, renderAssigned, renderReporter, renderAction,
+  renderIssueNum, renderSummary, renderUser, renderAction,
 } from './tags';
 import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
@@ -38,7 +38,8 @@ export default observer((props) => {
   const renderThead = (columns) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
-      <th style={{ flex: column.flex || 1 }}>
+      // <th style={{ flex: column.flex || 1 }} >
+      <th style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }} >
         {column.title}
         {' '}
       </th>
@@ -97,7 +98,8 @@ export default observer((props) => {
         renderedItem = data[index][dataIndex];
       }
       return (
-        <td style={{ flex: flex || 1 }}>
+        // <td style={{ flex: flex || 1 }} >
+        <td style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }} >
           {renderedItem}
         </td>
       );
@@ -109,7 +111,7 @@ export default observer((props) => {
         return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} ref={instance} onRow={onRow}>
+          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} ref={instance} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -192,14 +194,28 @@ export default observer((props) => {
     },
   }));
 
+  const transformFilters = (filters) => {
+    let transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
+    const res = {}; 
+    transformedFilters.map(item => {
+      if(item[0] === 'summary') {
+        res.summary = item[1][0];
+      } else if(item[0] === 'issueNum') {
+        res.issueNum = item[1][0]
+      }
+    })
+    return res;
+  };
+
   const handleFilterChange = (pagination, filters, sorter, barFilters) => {
+    console.log(filters, barFilters);
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,
       pageSize: IssueStore.pagination.pageSize,
       total: IssueStore.pagination.total,
     });
-    IssueStore.setFilteredInfo(filters);
+    IssueStore.setFilteredInfo(transformFilters(filters));
     IssueStore.setBarFilters(barFilters);
     // window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {
@@ -276,13 +292,12 @@ export default observer((props) => {
       dataIndex: 'summary',
       key: 'summary',
       filters: [],
-      width: 400,
       render: (summary, record) => renderSummary(summary, record, onClick, history),
     },
     {
       key: 'action',
-      width: 30,
       render: (text, record) => renderAction(record, history, reLoadTable),
+      width: '0.6rem',
     },
     {
       title: '用例编号',
@@ -293,14 +308,15 @@ export default observer((props) => {
     },
     {
       title: '创建人',
-      dataIndex: 'reporter',
-      key: 'reporter',
-      render: (assign, record) => {
+      dataIndex: 'createUser',
+      key: 'createUser',
+      render: (createUser, record) => {
         const {
-          reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl,
-        } = record;
-        return renderReporter(reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl);
+          name, loginName, realName, imageUrl,
+        } = createUser;
+        return renderUser(name, loginName, realName, imageUrl);
       },
+      width: '1rem',
     },
     {
       title: '创建时间',
@@ -310,14 +326,15 @@ export default observer((props) => {
     },
     {
       title: '更新人',
-      dataIndex: 'assigneeId',
-      key: 'assigneeId',
-      render: (assign, record) => {
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',
+      render: (lastUpdateUser, record) => {
         const {
-          assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl,
-        } = record;
-        return renderAssigned(assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl);
+          name, loginName, realName, imageUrl,
+        } = lastUpdateUser;
+        return renderUser(name, loginName, realName, imageUrl);
       },
+      width: '1rem',
     },
     {
       title: '更新时间',
@@ -328,7 +345,6 @@ export default observer((props) => {
   ]);
 
   const { currentCycle } = IssueTreeStore;
-  console.log(currentCycle);
 
   return (
     <div className="c7ntest-issueArea">

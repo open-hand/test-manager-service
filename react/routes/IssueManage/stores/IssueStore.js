@@ -17,7 +17,6 @@ class IssueStore {
 
   @observable filter = {
     advancedSearchArgs: {},
-    searchArgs: {},
   };
 
   @observable filteredInfo = {};
@@ -52,7 +51,6 @@ class IssueStore {
     };
     this.filter = {
       advancedSearchArgs: {},
-      searchArgs: {},
     };
     this.filteredInfo = {};
     this.order = {
@@ -76,13 +74,11 @@ class IssueStore {
     });
     this.setFilter({
       advancedSearchArgs: {
-        // issueTypeId: [18],
-        // typeCode: ['issue_test']
+      
       },
-      searchArgs: {},
     });
     this.setFilteredInfo({});
-    // this.loadIssues();
+    this.setBarFilters([]);
   }
 
   loadIssues = (page, size = this.pagination.pageSize) => {
@@ -194,10 +190,11 @@ class IssueStore {
     return {
       ...filter,
       contents: this.barFilters,
-      otherArgs: {
-        ...filter.otherArgs,
-        issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
-      },
+      searchArgs: this.filteredInfo,
+      // otherArgs: {
+      //   ...filter.otherArgs,
+      //   issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
+      // },
     };
   }
 

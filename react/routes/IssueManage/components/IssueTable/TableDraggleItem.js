@@ -11,16 +11,16 @@ export default observer((props) => {
   const {
     issue, index, handleClickIssue, clickIssue,
   } = props;
-  const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.issueId });
+  const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.caseId });
   return (
-    <Draggable key={issue.issueId} draggableId={issue.issueId} index={index} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
+    <Draggable key={issue.caseId} draggableId={issue.caseId} index={index} >
       {(provided, snapshotinner) => (
         <tr
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={{
-            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
+            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.caseId }) && 'rgb(235, 242, 249)',
             position: 'relative',
             ...provided.draggableProps.style,
           }}

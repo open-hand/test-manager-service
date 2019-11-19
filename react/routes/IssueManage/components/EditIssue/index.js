@@ -1,3 +1,3 @@
-import EditIssue from './EditIssue';
+import EditIssue from './EditIssue1';
 
 export default EditIssue;

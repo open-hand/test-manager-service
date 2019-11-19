@@ -108,7 +108,7 @@ export function updateIssue(data) {
  * @returns
  */
 export function deleteIssue(issueId) {
-  return request.delete(`/agile/v1/projects/${getProjectId()}/issues/${issueId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/case/${issueId}/delete`);
 }
 /**
  *删除用例关联
