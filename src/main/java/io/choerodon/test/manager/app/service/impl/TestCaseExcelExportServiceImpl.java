@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.alibaba.fastjson.JSON;
@@ -24,8 +25,8 @@ import io.choerodon.agile.api.vo.IssueStatusDTO;
 import io.choerodon.agile.api.vo.LookupValueDTO;
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.agile.api.vo.UserDTO;
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.ExcelLookupCaseVO;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
@@ -259,9 +260,9 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
 
         List<LookupValueDTO> lookupValueDTOS = testCaseService.queryLookupValueByCode("priority").getLookupValues();
 
-        PageRequest pageRequest = new PageRequest(1, 999999999, Sort.Direction.ASC, "componentId");
+        Pageable pageable = PageRequest.of(1, 999999999, Sort.Direction.ASC, "componentId");
 
-        List<UserDTO> userDTOS = userService.list(pageRequest, projectId, null, null).getBody().getList();
+        List<UserDTO> userDTOS = userService.list(pageable, projectId, null, null).getBody().getList();
 
         userDTOS.forEach(v -> v.setLoginName(v.getLoginName() + v.getRealName()));
 

@@ -9,7 +9,7 @@ import com.github.pagehelper.PageInfo;
 
 import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.agile.api.vo.UserDTO;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
@@ -20,7 +20,7 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 public interface UserService {
     Map<Long, UserDO> query(Long[] ids);
 
-    ResponseEntity<PageInfo<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId);
+    ResponseEntity<PageInfo<UserDTO>> list(Pageable pageable, Long projectId, String param, Long userId);
 
     void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto);
 

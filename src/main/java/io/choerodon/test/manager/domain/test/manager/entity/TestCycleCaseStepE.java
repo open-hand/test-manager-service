@@ -3,7 +3,7 @@
 //import io.choerodon.core.convertor.ConvertHelper;
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.infra.util.SpringUtil;
 //import io.choerodon.test.manager.infra.vo.TestCycleCaseAttachmentRelDTO;
 //import io.choerodon.test.manager.infra.vo.TestCycleCaseDefectRelDTO;
@@ -78,8 +78,8 @@
 //    @Autowired
 //    private TestCycleCaseStepRepository testCycleCaseStepRepository;
 //
-//    public PageInfo<TestCycleCaseStepE> querySelf(PageRequest pageRequest) {
-//        return testCycleCaseStepRepository.query(this, pageRequest);
+//    public PageInfo<TestCycleCaseStepE> querySelf(Pageable pageable) {
+//        return testCycleCaseStepRepository.query(this, pageable);
 //    }
 //
 //

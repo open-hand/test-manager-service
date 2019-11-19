@@ -2,7 +2,7 @@
 //
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //
 //import java.util.List;
 //
@@ -22,9 +22,9 @@
 //	void delete(TestCycleCaseE testCycleCaseE);
 //
 //
-//    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseES, PageRequest pageRequest);
+//    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseES, Pageable pageable);
 //
-//	PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
+//	PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, Pageable pageable);
 //
 //	TestCycleCaseE cloneCycleCase(TestCycleCaseE testCycleCaseE, Long projectId);
 //

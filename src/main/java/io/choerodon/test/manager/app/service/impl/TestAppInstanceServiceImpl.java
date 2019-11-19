@@ -8,8 +8,9 @@ import io.choerodon.asgard.api.dto.QuartzTask;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.base.domain.Sort;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -320,9 +321,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     private List<TestEnvCommandDTO> queryEnvCommand(TestEnvCommandDTO envCommand) {
-        PageRequest pageRequest = new PageRequest(1, 99999999, Sort.Direction.DESC, "creation_date");
-        PageInfo<TestEnvCommandDTO> pageInfo = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
+        Pageable pageable = PageRequest.of(1, 99999999, Sort.Direction.DESC, "creation_date");
+        PageInfo<TestEnvCommandDTO> pageInfo = PageHelper.startPage(pageable.getPageNumber(),
+                pageable.getPageSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
 
         return pageInfo.getList();
     }

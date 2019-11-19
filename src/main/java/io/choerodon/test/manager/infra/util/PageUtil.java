@@ -6,7 +6,8 @@ import java.util.List;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.domain.Sort;
+import io.choerodon.web.util.PageableHelper;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -18,7 +19,7 @@ public class PageUtil {
         if (sort == null) {
             return "";
         } else {
-            return sort.toSql();
+            return PageableHelper.getSortSql(sort);
         }
     }
 

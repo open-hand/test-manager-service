@@ -14,7 +14,7 @@
 //import io.choerodon.core.convertor.ConvertHelper;
 //import io.choerodon.core.convertor.ConvertPageHelper;
 //import io.choerodon.core.exception.CommonException;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.repository.TestCycleRepository;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 //import io.choerodon.test.manager.domain.test.manager.factory.TestCycleEFactory;
@@ -58,11 +58,11 @@
 //
 //
 //    @Override
-//    public PageInfo<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest) {
+//    public PageInfo<TestCycleE> query(TestCycleE testCycleE, Pageable pageable) {
 //        TestCycleDTO convert = modeMapper.map(testCycleE, TestCycleDTO.class);
 //
-//        PageInfo<TestCycleDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-//                pageRequest.getSize()).doSelectPageInfo(() -> cycleMapper.select(convert));
+//        PageInfo<TestCycleDTO> serviceDOPage = PageHelper.startPage(pageable.getPageNumber(),
+//                pageable.getPageSize()).doSelectPageInfo(() -> cycleMapper.select(convert));
 //
 //        return ConvertPageHelper.convertPageInfo(serviceDOPage, TestCycleE.class);
 //    }

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.PageInfo;
 
 import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
@@ -49,11 +49,11 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    public PageInfo<TestCycleCaseHistoryVO> query(Long cycleCaseId, PageRequest pageRequest) {
+    public PageInfo<TestCycleCaseHistoryVO> query(Long cycleCaseId, Pageable pageable) {
         TestCycleCaseHistoryVO historyVO = new TestCycleCaseHistoryVO();
         historyVO.setExecuteId(cycleCaseId);
-        PageInfo<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTOPageInfo = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(()
+        PageInfo<TestCycleCaseHistoryDTO> testCycleCaseHistoryDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(),
+                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(()
                 -> testCycleCaseHistoryMapper.query(modelMapper.map(historyVO, TestCycleCaseHistoryDTO.class)));
         List<TestCycleCaseHistoryVO> testCycleCaseHistoryVOS = modelMapper.map(testCycleCaseHistoryDTOPageInfo.getList(),
                 new TypeToken<List<TestCycleCaseHistoryVO>>() {

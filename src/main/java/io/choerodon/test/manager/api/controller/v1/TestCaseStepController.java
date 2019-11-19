@@ -9,12 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.base.annotation.Permission;
+import io.choerodon.core.annotation.Permission;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

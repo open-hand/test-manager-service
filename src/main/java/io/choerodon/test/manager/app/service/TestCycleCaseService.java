@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 
@@ -15,9 +15,9 @@ public interface TestCycleCaseService {
 
     void delete(Long cycleCaseId, Long projectId);
 
-    PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, PageRequest pageRequest, Long projectId, Long organizationId);
+    PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, Pageable pageable, Long projectId, Long organizationId);
 
-    PageInfo<TestCycleCaseVO> queryByCycleWithFilterArgs(Long cycleId, PageRequest pageRequest, Long projectId, TestCycleCaseVO searchDTO);
+    PageInfo<TestCycleCaseVO> queryByCycleWithFilterArgs(Long cycleId, Pageable pageable, Long projectId, TestCycleCaseVO searchDTO);
 
     TestCycleCaseVO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
 
@@ -63,5 +63,5 @@ public interface TestCycleCaseService {
 
     void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 
-    List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, PageRequest pageRequest);
+    List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable);
 }

@@ -15,7 +15,7 @@
 //import io.choerodon.core.convertor.ConvertHelper;
 //import io.choerodon.core.convertor.ConvertPageHelper;
 //import io.choerodon.core.exception.CommonException;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 //import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -61,41 +61,41 @@
 //    }
 //
 //    @Override
-//    public PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
+//    public PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, Pageable pageable) {
 //        TestCycleCaseDTO convert = modeMapper.map(testCycleCaseE, TestCycleCaseDTO.class);
-//        List<TestCycleCaseDTO> vo = queryWithAttachAndDefect(convert, pageRequest);
+//        List<TestCycleCaseDTO> vo = queryWithAttachAndDefect(convert, pageable);
 ////        Long total = 0L;
 ////        if (vo != null && !vo.isEmpty()) {
 ////            total = testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
 ////        }
-////        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+////        PageInfo info = new PageInfo(pageable.getPageNumber(), pageable.getPageSize());
 //        PageInfo<TestCycleCaseDTO> page = new PageInfo<>(Optional.ofNullable(vo).orElseGet(ArrayList::new));
 //        return ConvertPageHelper.convertPageInfo(page, TestCycleCaseE.class);
 //    }
 //
 //    @Override
-//    public PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
+//    public PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, Pageable pageable) {
 //        List<TestCycleCaseDTO> converts = ConvertHelper.convertList(testCycleCaseES, TestCycleCaseDTO.class);
-//        List<TestCycleCaseDTO> dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
+//        List<TestCycleCaseDTO> dtos = queryByFatherCycleWithDataBase(converts, pageable);
 //        Long total = 0L;
 //        for (TestCycleCaseDTO convert : converts) {
 //            total += testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
 //        }
 //        if (dtos.isEmpty() && total != 0L) {
-//            pageRequest.setPage((total.intValue() / pageRequest.getSize()) - 1);
-//            dtos = queryByFatherCycleWithDataBase(converts, pageRequest);
+//            pageable.setPage((total.intValue() / pageable.getPageSize()) - 1);
+//            dtos = queryByFatherCycleWithDataBase(converts, pageable);
 //        }
-////        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
-//        Page page = new Page<>(pageRequest.getPage(), pageRequest.getSize());
+////        PageInfo info = new PageInfo(pageable.getPageNumber(), pageable.getPageSize());
+//        Page page = new Page<>(pageable.getPageNumber(), pageable.getPageSize());
 //        page.setTotal(total);
 //        page.addAll(dtos);
 //        return ConvertPageHelper.convertPageInfo(page.toPageInfo(), TestCycleCaseE.class);
 //    }
 //
-//    private List<TestCycleCaseDTO> queryByFatherCycleWithDataBase(List<TestCycleCaseDTO> converts, PageRequest pageRequest) {
+//    private List<TestCycleCaseDTO> queryByFatherCycleWithDataBase(List<TestCycleCaseDTO> converts, Pageable pageable) {
 //        return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,
-//                (pageRequest.getPage() - 1) * pageRequest.getSize(),
-//                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort()));
+//                (pageable.getPageNumber()- 1) * pageable.getPageSize(),
+//                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort()));
 //    }
 //
 //    @Override
@@ -104,15 +104,15 @@
 //        return ConvertHelper.convertList(testCycleCaseMapper.select(convert), TestCycleCaseE.class);
 //    }
 //
-//    private List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, PageRequest pageRequest) {
-//        return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageRequest.getPage() - 1) * pageRequest.getSize(), pageRequest.getSize());
+//    private List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable) {
+//        return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageable.getPageNumber()- 1) * pageable.getPageSize(), pageable.getPageSize());
 //    }
 //
 //    @Override
 //    public TestCycleCaseE queryOne(TestCycleCaseE testCycleCaseE) {
 //        TestCycleCaseDTO convert = modeMapper.map(testCycleCaseE, TestCycleCaseDTO.class);
 //
-//        List<TestCycleCaseDTO> list = queryWithAttachAndDefect(convert, new PageRequest(1, 1));
+//        List<TestCycleCaseDTO> list = queryWithAttachAndDefect(convert, PageRequest.of(1, 1));
 //        DBValidateUtil.executeAndvalidateUpdateNum(list::size, 1, "error.cycle.case.query.not.found");
 //        return modeMapper.map(list.get(0), TestCycleCaseE.class);
 //    }

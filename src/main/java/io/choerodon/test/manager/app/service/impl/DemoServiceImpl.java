@@ -5,15 +5,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.github.pagehelper.PageHelper;
+import io.choerodon.web.util.PageableHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
@@ -363,10 +366,7 @@ public class DemoServiceImpl implements DemoService {
         List<Long> executionIdsTwo = new ArrayList<>();
         List<Long> executionIdsThree = new ArrayList<>();
 
-        PageRequest pageRequest = new PageRequest(1, 30);
-        List<Sort.Order> sort = new ArrayList<>();
-        sort.add(new Sort.Order(Sort.Direction.ASC, "cycle_id"));
-        pageRequest.setSort(new Sort(sort));
+        Pageable pageable = PageRequest.of(1, 30,new Sort(Sort.Direction.ASC, "cycle_id"));
 
         List<Long> phaseIdsOne = phaseIdsMap.get(0L);
         List<Long> phaseIdsTwo = phaseIdsMap.get(1L);
@@ -374,7 +374,7 @@ public class DemoServiceImpl implements DemoService {
 
         for (Long phaseId : phaseIdsOne) {
             testCycleCaseVO.setCycleId(phaseId);
-            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageRequest, projectId, organizationId);
+            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageable, projectId, organizationId);
 
             for (TestCycleCaseVO executionDTO : executionDTOs.getList()) {
                 if (executionDTO.getIssueId().equals(testIssueIds.get(2))) {
@@ -399,7 +399,7 @@ public class DemoServiceImpl implements DemoService {
 
         for (Long phaseId : phaseIdsTwo) {
             testCycleCaseVO.setCycleId(phaseId);
-            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageRequest, projectId, organizationId);
+            PageInfo<TestCycleCaseVO> executionDTOs = testCycleCaseService.queryByCycle(testCycleCaseVO, pageable, projectId, organizationId);
 
             for (TestCycleCaseVO executionDTO : executionDTOs.getList()) {
                 executionIdsThree.add(executionDTO.getExecuteId());

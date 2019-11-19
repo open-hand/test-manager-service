@@ -2,7 +2,7 @@
 //
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseHistoryRepository;
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Scope;
 //import org.springframework.stereotype.Component;
@@ -35,8 +35,8 @@
 //    @Autowired
 //    private TestCycleCaseHistoryRepository testCycleCaseHistoryRepository;
 //
-//    public PageInfo<TestCycleCaseHistoryE> querySelf(PageRequest pageRequest) {
-//        return testCycleCaseHistoryRepository.query(this, pageRequest);
+//    public PageInfo<TestCycleCaseHistoryE> querySelf(Pageable pageable) {
+//        return testCycleCaseHistoryRepository.query(this, pageable);
 //    }
 //
 //	public String getField() {

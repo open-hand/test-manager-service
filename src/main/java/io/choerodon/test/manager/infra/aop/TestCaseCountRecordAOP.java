@@ -16,12 +16,13 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.TestStatusService;
@@ -32,7 +33,7 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
-import io.choerodon.base.domain.Sort;
+import org.springframework.data.domain.Sort;
 
 /**
  * Created by 842767365@qq.com on 8/20/18.
@@ -73,7 +74,7 @@ public class TestCaseCountRecordAOP {
     public Object updateTestCase(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO, Long projectId) throws Throwable {
         TestCycleCaseDTO case1 = new TestCycleCaseDTO();
         case1.setExecuteId(testCycleCaseDTO.getExecuteId());
-        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, new PageRequest(1, 1)).get(0);
+        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, PageRequest.of(1, 1)).get(0);
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         testStatusService.populateStatus(beforeCeaseDTO);
         Object o = pjp.proceed();
@@ -113,7 +114,7 @@ public class TestCaseCountRecordAOP {
     public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
         TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setExecuteId(cycleCaseId);
-        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, new PageRequest(1, 1)).get(0);
+        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, PageRequest.of(1, 1)).get(0);
         Object o = pjp.proceed();
         countCaseToRedis(oldCase, projectId);
         return o;
@@ -146,10 +147,9 @@ public class TestCaseCountRecordAOP {
         e.setExecuteId(executeId);
         e.setOldValue(TestStatusType.STATUS_UN_EXECUTED);
         e.setField(FIELD_STATUS);
-        PageRequest pageRequest = new PageRequest(1, 1);
-        pageRequest.setSort(new Sort(Sort.Direction.DESC, "id"));
-        PageInfo<TestCycleCaseHistoryDTO> page = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(e));
+        Pageable pageable = PageRequest.of(1, 1,new Sort(Sort.Direction.DESC, "id"));
+        PageInfo<TestCycleCaseHistoryDTO> page = PageHelper.startPage(pageable.getPageNumber(),
+                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(e));
         if (page != null && !page.getList().isEmpty()) {
             time = LocalDateTime.ofInstant(page.getList().get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());
         }

@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 
 import io.choerodon.agile.api.vo.IssueLinkDTO;
 import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ReporterFormService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -51,9 +51,9 @@ public class ReporterFormServiceImpl implements ReporterFormService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public PageInfo<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    public PageInfo<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
         Page page = new Page();
-        Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageRequest, page, organizationId);
+        Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMapAndPopulatePageInfo(projectId, searchDTO, pageable, page, organizationId);
         List<ReporterFormVO> reporterFormES = doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
         page.addAll(reporterFormES);
         return page.toPageInfo();
@@ -93,7 +93,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
 
     @Override
-    public PageInfo<ReporterFormVO> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId) {
+    public PageInfo<ReporterFormVO> createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
         List<Long> issueIdsList = testCycleCaseDefectRelMapper.queryIssueIdAndDefectId(projectId);
         if (ObjectUtils.isEmpty(issueIdsList)) {
             return new PageInfo<>(new ArrayList<>());
@@ -110,8 +110,8 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         if (ObjectUtils.isEmpty(allFilteredIssues)) {
             return new PageInfo<>(new ArrayList<>());
         }
-        int pageNum = pageRequest.getPage() - 1;
-        int pageSize = pageRequest.getSize();
+        int pageNum = pageable.getPageNumber()- 1;
+        int pageSize = pageable.getPageSize();
         int highPage = (pageNum + 1) * pageSize - 1;
         int lowPage = pageNum * pageSize;
         //创建一个Long数组，将对应分页的issuesId传给它

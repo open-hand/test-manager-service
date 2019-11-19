@@ -1,10 +1,7 @@
 package io.choerodon.test.manager.app.service.impl
 
-import io.choerodon.base.domain.PageRequest
 import io.choerodon.devops.api.vo.AppServiceVersionRespVO
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.vo.TestAppInstanceVO
-import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO
 import io.choerodon.test.manager.app.service.DevopsService
 import io.choerodon.test.manager.app.service.TestAutomationHistoryService
 import io.choerodon.test.manager.app.service.UserService
@@ -16,6 +13,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import spock.lang.Shared
 import spock.lang.Specification
 

@@ -3,7 +3,7 @@ package io.choerodon.test.manager.app.service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.agile.api.vo.*;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.devops.api.vo.AppServiceDeployVO;
 import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import io.choerodon.devops.api.vo.ApplicationRepDTO;
@@ -24,21 +24,21 @@ import java.util.Map;
  */
 public interface TestCaseService {
 
-    ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
 
-    ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    ResponseEntity<PageInfo<IssueComponentDetailVO>> listIssueWithoutSubDetail(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
 
     ResponseEntity<IssueDTO> queryIssue(Long projectId, Long issueId, Long organizationId);
 
-    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
+    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
 
-    <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Page page, Long organizationId);
+    <T> Map<Long, IssueInfosVO> getIssueInfoMapAndPopulatePageInfo(Long projectId, SearchDTO searchDTO, Pageable pageable, Page page, Long organizationId);
 
     Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId);
 
     Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, boolean needDetail, Long organizationId);
 
-    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, PageRequest pageRequest, Long organizationId);
+    Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, Long[] issueIds, Pageable pageable, Long organizationId);
 
     List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId);
 

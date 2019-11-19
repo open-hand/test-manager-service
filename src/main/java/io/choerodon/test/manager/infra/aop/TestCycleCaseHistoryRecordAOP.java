@@ -10,9 +10,10 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
@@ -64,7 +65,7 @@ public class TestCycleCaseHistoryRecordAOP {
     public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO, Long projectId) throws Throwable {
         TestCycleCaseDTO case1 = new TestCycleCaseDTO();
         case1.setExecuteId(testCycleCaseVO.getExecuteId());
-        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, new PageRequest(1, 1)).get(0);
+        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, PageRequest.of(1, 1)).get(0);
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         testStatusService.populateStatus(beforeCeaseDTO);
         Object o = pjp.proceed();

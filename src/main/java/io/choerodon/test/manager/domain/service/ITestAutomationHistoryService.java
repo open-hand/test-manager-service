@@ -1,7 +1,7 @@
 //package io.choerodon.test.manager.domain.service;
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 //import io.choerodon.test.manager.infra.vo.TestAutomationHistoryDTO;
 //
@@ -22,5 +22,5 @@
 //
 //    void shutdownInstance(Long instanceId,Long status);
 //
-//    PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest);
+//    PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, Pageable pageable);
 //}
