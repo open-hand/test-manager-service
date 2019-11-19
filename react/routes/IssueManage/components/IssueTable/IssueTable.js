@@ -11,6 +11,7 @@ import EmptyBlock from '../EmptyBlock';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
+import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
   renderIssueNum, renderSummary, renderAssigned, renderReporter, renderAction,
 } from './tags';
@@ -326,6 +327,9 @@ export default observer((props) => {
     },
   ]);
 
+  const { currentCycle } = IssueTreeStore;
+  console.log(currentCycle);
+
   return (
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>
@@ -362,7 +366,9 @@ export default observer((props) => {
             }}
           >
             {/* table底部创建用例 */}
-            <CreateIssueTiny />
+            {
+              currentCycle && currentCycle.children && currentCycle.children.length === 0 ? <CreateIssueTiny /> : null
+            }
           </div>
         </div>
         {
