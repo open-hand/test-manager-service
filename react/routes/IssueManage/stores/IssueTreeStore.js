@@ -127,7 +127,7 @@ class IssueTreeStore {
     };
     // 默认选中第一个
     if (!this.currentCycle.id && rootIds.length > 0) {
-      this.setCurrentCycle(find(treeFolder, { id: rootIds[0] }));
+      this.setCurrentCycle(find(this.treeData.treeFolder, { id: rootIds[0] }));
     }
   }
 
