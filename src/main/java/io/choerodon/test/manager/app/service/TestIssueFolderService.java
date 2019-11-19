@@ -36,9 +36,6 @@ public interface TestIssueFolderService {
 
     TestTreeIssueFolderVO queryTreeFolder(Long projectId);
 
-
-    Boolean fixVersionFolder();
-
     /**
      * 根据某一级文件夹查询下面所有的最低层文件夹
      * @param folderId
@@ -46,4 +43,5 @@ public interface TestIssueFolderService {
      */
     List<TestIssueFolderDTO> queryChildFolder(Long folderId);
 
+    void fixVersionFolder();
 }

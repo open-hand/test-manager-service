@@ -3,18 +3,17 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.choerodon.core.annotation.Permission;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
 /**
