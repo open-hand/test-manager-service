@@ -29,6 +29,7 @@ import Comment from './Component/Comment';
 import DataLogs from './Component/DataLogs';
 import TypeTag from '../TypeTag';
 import TestStepTable from '../TestStepTable';
+import EditTestStepTable from './Component/EditTestStepTable';
 import EditDetail from './EditDetail';
 
 const { AppState, HeaderStore } = stores;
@@ -201,9 +202,6 @@ class EditIssueNarrow extends Component {
 
   handleCreateLinkIssue() {
     this.props.reloadIssue();
-    this.setState({
-      createLinkTaskShow: false,
-    });
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
@@ -227,69 +225,6 @@ class EditIssueNarrow extends Component {
   handleLinkToNewIssue = (issueId) => {
     const { history, folderName } = this.props;
     history.push(testCaseDetailLink(issueId, folderName));
-  }
-
-  // 校验评论是否为空 废弃
-  verifyComment = (delta) => {
-    let result = false;
-    if (delta && delta.length) {
-      delta.forEach((item) => {
-        if (!result && item.insert && (item.insert.image || item.insert.trim())) {
-          result = true;
-        }
-      });
-    }
-    return result;
-  };
-
-  /**
-   * Comment 废弃
-   */
-  handleCreateCommit(newComment) {
-    const { issueInfo } = this.props;
-    const { issueId } = issueInfo;
-    const extra = { issueId };
-    if (newComment && this.verifyComment(newComment)) {
-      beforeTextUpload(newComment, extra, this.createCommit, 'commentText');
-    } else {
-      this.setState({
-        addingComment: false,
-      });
-    }
-  }
-
-  /**
-   * Comment 废弃
-   */
-  createCommit = (commit) => {
-    createCommit(commit).then((res) => {
-      this.props.reloadIssue();
-      this.setState({
-        addingComment: false,
-      });
-    });
-  }
-
-  /**
-   * Comment 废弃
-   */
-  renderCommits() {
-    const { addingComment } = this.state;
-    const { issueCommentVOList } = this.props.issueInfo;
-    return (
-      <div>
-        {
-          issueCommentVOList && issueCommentVOList.map(comment => (
-            <Comment
-              key={comment.commentId}
-              comment={comment}
-              onDeleteComment={() => this.props.reloadIssue()}
-              onUpdateComment={() => this.props.reloadIssue()}
-            />
-          ))
-        }
-      </div>
-    );
   }
 
   /**
@@ -320,28 +255,6 @@ class EditIssueNarrow extends Component {
       />
     );
   }
-
-
-  /**
-   *左侧导航锚点
-   *
-   * @memberof EditIssueNarrow
-   */
-  renderNavs = () => navs.map(nav => (
-    <Tooltip placement="right" title={nav.tooltip}>
-      <li id="DETAILS-nav" className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
-        <Icon
-          type={`${nav.icon} c7ntest-icon-li`}
-          role="none"
-          onClick={() => {
-            this.setState({ currentNav: nav.code });
-            this.scrollToAnchor(nav.code);
-          }}
-        />
-      </li>
-    </Tooltip>
-  ))
-
 
   checkDisabledModifyOrDelete = () => {
     const loginUserId = AppState.userInfo.id;
@@ -479,9 +392,7 @@ class EditIssueNarrow extends Component {
       type: statusCode,
     } = statusVO || {};
     const { colour: priorityColor } = priorityVO || {};
-    const typeCode = issueTypeVO ? issueTypeVO.typeCode : '';
-    const typeColor = issueTypeVO ? issueTypeVO.colour : '#fab614';
-    const typeIcon = issueTypeVO ? issueTypeVO.icon : 'help';
+
 
     const fixVersionsTotal = _.filter(versionIssueRelVOList, { relationType: 'fix' }) || [];
     const fixVersionsFixed = _.filter(fixVersionsTotal, { statusCode: 'archived' }) || [];
@@ -604,13 +515,13 @@ class EditIssueNarrow extends Component {
                   <div className="c7ntest-content-editIssue">
                     <Tabs>
                       <TabPane tab="步骤" key="test">
-                        <TestStepTable
+                        <EditTestStepTable
                           disabled={disabled}
                           issueId={issueId}
                           data={testStepData}
                           enterLoad={enterLoad}
                           leaveLoad={leaveLoad}
-                          onOk={reloadIssue}
+                          reloadIssue={reloadIssue}
                         />
                       </TabPane>
                       <TabPane tab="详情" key="detail">
@@ -619,6 +530,7 @@ class EditIssueNarrow extends Component {
                           reloadIssue={reloadIssue}
                           folderName={folderName}
                           issueInfo={issueInfo}
+                          createLinkIssue={this.handleCreateLinkIssue.bind(this)}
                           checkDisabledModifyOrDelete={this.checkDisabledModifyOrDelete}
                           editIssue={this.editIssue}
                           setFileList={setFileList}
@@ -633,32 +545,6 @@ class EditIssueNarrow extends Component {
                 </section>
               </div>
             </div>
-
-            {
-              FullEditorShow && (
-                <FullEditor
-                  initValue={description}
-                  visible={FullEditorShow}
-                  onCancel={() => this.setState({ FullEditorShow: false })}
-                  onOk={(value) => {
-                    this.setState({
-                      FullEditorShow: false,
-                    });
-                    this.editIssue({ description: value });
-                  }}
-                />
-              )
-            }
-            {
-              createLinkTaskShow ? (
-                <CreateLinkTask
-                  issueId={issueId}
-                  visible={createLinkTaskShow}
-                  onCancel={() => this.setState({ createLinkTaskShow: false })}
-                  onOk={this.handleCreateLinkIssue.bind(this)}
-                />
-              ) : null
-            }
           </div>
         </ResizeAble>
       </div>

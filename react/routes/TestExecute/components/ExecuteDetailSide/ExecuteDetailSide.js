@@ -316,21 +316,6 @@ class ExecuteDetailSide extends Component {
           <div className="c7ntest-ExecuteDetailSide" ref={this.container}>
             <div className="c7ntest-ExecuteDetailSide-divider" />
 
-
-            {/* 
-      <div className="c7ntest-nav">
-        {/* 左上角类型图标 *
-        <div style={{
-          height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
-        >
-          <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
-        </div>
-        {/* 下方锚点列表 
-        <ul className="c7ntest-nav-ul">
-          {this.renderNavs()}
-        </ul>
-      </div>*/}
             <div className="c7ntest-content" >
               <div className="c7ntest-content-top">
                 <div className="c7ntest-between-center">

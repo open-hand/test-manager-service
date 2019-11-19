@@ -220,16 +220,6 @@ export default class IssueManage extends Component {
           </div>
           <ExportSide ref={this.saveRef('ExportSide')} />
           <TestCaseDetail visible={clickIssue.issueId} clickIssue={clickIssue} onClose={this.handleClose} />
-          {/* {
-            createIssueShow && (
-              <CreateIssue
-                visible={createIssueShow}
-                onCancel={() => this.setState({ createIssueShow: false })}
-                onOk={this.handleCreateIssue.bind(this)}
-                defaultVersion={currentCycle.versionId}
-              />
-            )
-          } */}
         </Content>
       </Page>
     );
