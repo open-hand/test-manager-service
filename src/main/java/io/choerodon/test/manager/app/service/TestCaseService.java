@@ -133,7 +133,7 @@ public interface TestCaseService {
      */
     TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO,String[] fieldList);
 
-    void batchMove(Long projectId,Long folderId,Long[] caseIds);
+    void batchMove(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
 
     void batchCopy(Long projectId,Long folderId,Long[] caseIds);
 }

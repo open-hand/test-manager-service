@@ -24,6 +24,7 @@
 
     <select id="listCopyCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
         SELECT
+        case_id,
         summary,
         description,
         rank,
