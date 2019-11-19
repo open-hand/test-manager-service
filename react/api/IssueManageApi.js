@@ -18,12 +18,11 @@ const { AppState } = stores;
  * @param {*} folderId
  * @returns
  */
-export function createIssue(issueObj, folderId) {
+export function createIssue(issueObj) {
   const issue = {
     ...issueObj,
   };
-  const { versionId } = issue.versionIssueRelVOList[0];
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolderRel/testAndRelationship?versionId=${versionId}${folderId ? `&folderId=${folderId}` : ''}&applyType=test`, issue);
+  return request.post(`/test/v1/projects/${getProjectId()}/case/create`, issue);
 }
 /**
  *创建评论
@@ -347,11 +346,12 @@ export function getIssuesByVersion(versionIds, page = 1, size = 10, search, orde
  */
 export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderField, orderType) {
   const searchDTO = { ...search, otherArgs: search.searchArgs };
-  return request.post(`/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folderId=${folderId}&page=${page}&size=${size}`, searchDTO, {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}&page=${page}&size=${size}`, searchDTO, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
   });
+  // return request.post(`/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}&page=${page}&size=${size}`, {});
 }
 
 /**

@@ -110,7 +110,10 @@ class IssueStore {
         }
         resolve(res);
         this.setLoading(false);
-      });
+      }).catch(e => {
+        console.log(e);
+        this.setLoading(false);
+      })
     });
   }
 

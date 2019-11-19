@@ -38,7 +38,7 @@ export default class IssueManage extends Component {
     this.getInit();
   }
 
-  getInit() {
+  getInit = () => {
     const Request = getParams(this.props.location.search);
     const { paramName, paramIssueId } = Request;
     IssueStore.setParamName(paramName);

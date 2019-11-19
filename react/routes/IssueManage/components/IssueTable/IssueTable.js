@@ -16,6 +16,7 @@ import {
 } from './tags';
 import './IssueTable.less';
 import pic from '../../../../assets/testCaseEmpty.svg';
+import  useAvoidClosure from '@/hooks/index';
 
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
@@ -163,7 +164,7 @@ export default observer((props) => {
     document.addEventListener('keyup', leaveCopy);
   };
 
-  const getComponents = columns => ({
+  const getComponents =  useAvoidClosure(columns => ({
     table: () => {
       const table = (
         <table>
@@ -188,7 +189,7 @@ export default observer((props) => {
         </DragDropContext>
       );
     },
-  });
+  }));
 
   const handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页

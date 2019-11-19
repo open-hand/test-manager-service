@@ -37,30 +37,17 @@ export default observer(() => {
     if (createValue !== '' && createValue.trim() !== '') {  // 不等于''并且 不能只是空格
       const folderId = IssueTreeStore.currentCycle.id;
       const data = {
-        projectId: getProjectId(),
+        folderId,
         summary: createValue,
       };
       setCreateLoading(true);
-      createIssue(data, folderId)
+      createIssue(data)
         .then((res) => {
-          let targetCycle = null;
-          // 如果指定了文件夹就设置文件夹，否则设置版本
-          if (folderId) {
-            targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
-          } else {
-            const { versionId } = data.versionIssueRelVOList[0];
-            targetCycle = _.find(IssueTreeStore.dataList, { versionId });
-          }
-          if (targetCycle) {
-            const expandKeys = IssueTreeStore.getExpandedKeys;
-            // 设置当前选中项
-            IssueTreeStore.setCurrentCycle(targetCycle);
-            // 设置当前选中项
-            IssueTreeStore.setSelectedKeys([targetCycle.key]);
-            // 设置展开项，展开父元素
-            IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
-          }
-          IssueStore.loadIssues();
+          const { issues } = IssueStore;
+          issues.unshift(res); // 直接在store中添加一条，省得重新加载一遍
+          IssueStore.setIssues(issues); 
+          // IssueStore.loadIssues();
+
           setCreating(false);
           setCreateLoading(false);
           setCreateIssueValue('');
@@ -74,8 +61,6 @@ export default observer(() => {
     }
   }
 
-    const versions = IssueStore.getVersions;
-    const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
     return creating ? (
       <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
         <div className="c7ntest-add-select-version">
