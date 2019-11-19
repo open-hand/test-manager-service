@@ -23,22 +23,6 @@ class IssueTree extends Component {
     };
   }
 
-
-  componentDidMount() {
-    this.getTree();
-  }
-
-  getTree = () => {
-    IssueTreeStore.setLoading(true);
-    getIssueTree().then((data) => {
-      IssueTreeStore.setTreeData(data);
-      IssueTreeStore.setLoading(false);
-    }).catch(() => {
-      IssueTreeStore.setLoading(false);
-      Choerodon.prompt('网络错误');
-    });
-  }
-
   handleCreate = (value, parentId) => {
     // console.log(value, parentId);
     const data = {
@@ -68,6 +52,7 @@ class IssueTree extends Component {
 
   setSelected = (item) => {
     IssueTreeStore.setCurrentCycle(item);
+    IssueStore.loadIssues();
   }
 
   render() {

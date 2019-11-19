@@ -35,36 +35,10 @@ export default observer(() => {
       createValue = createIssueValue;
     }
     if (createValue !== '' && createValue.trim() !== '') {  // 不等于''并且 不能只是空格
-      const versionIssueRelVOList = [];
-      const selectedVersion = IssueTreeStore.currentCycle.versionId || IssueStore.getSeletedVersion;
-      const folderId = IssueTreeStore.currentCycle.cycleId;
-      // 判断是否选择版本
-      const versions = IssueStore.getVersions;
-      if (!selectedVersion || !_.find(versions, { versionId: selectedVersion })) {
-        Choerodon.prompt('请选择版本');
-        return;
-      }
-      versionIssueRelVOList.push({
-        versionId: selectedVersion,
-        relationType: 'fix',
-      });
-      const testType = IssueStore.getTestType;
-      const defaultPriority = IssueStore.getDefaultPriority;
-      if (!defaultPriority) {
-        Choerodon.prompt('未找到优先级');
-        return;
-      }
+      const folderId = IssueTreeStore.currentCycle.id;
       const data = {
-        priorityCode: `priority-${defaultPriority}`,
-        priorityId: defaultPriority,
-        typeCode: 'issue_test',
-        issueTypeId: testType,
         projectId: getProjectId(),
-        sprintId: 0,
         summary: createValue,
-        epicId: 0,
-        parentIssueId: 0,
-        versionIssueRelVOList,
       };
       setCreateLoading(true);
       createIssue(data, folderId)

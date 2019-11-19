@@ -10,7 +10,6 @@ import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
 import { getRootNode } from './utils';
 import TreeNode from './TreeNode';
-
 import {
   selectItem, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
 } from './utils';

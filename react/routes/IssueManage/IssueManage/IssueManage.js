@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
+import { toJS } from 'mobx';
 import {
-  Page, Header, Content, Breadcrumb,
+  Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
 import { commonLink, getParams, testCaseDetailLink } from '../../../common/utils';
+import { getIssueTree } from '../../../api/IssueManageApi';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
@@ -33,7 +35,7 @@ export default class IssueManage extends Component {
 
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);    
-    // this.getInit();
+    this.getInit();
   }
 
   getInit() {
@@ -52,7 +54,24 @@ export default class IssueManage extends Component {
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
     IssueStore.init();
-    IssueStore.loadIssues();
+    this.getTestCase();
+  }
+
+  getTestCase = () => {
+    IssueTreeStore.setLoading(true);
+    getIssueTree().then((data) => {
+      IssueTreeStore.setTreeData(data);
+      IssueTreeStore.setLoading(false);
+
+      const { currentCycle } = IssueTreeStore;
+      const { id } = currentCycle;
+      if (id) {
+        IssueStore.loadIssues();
+      }
+    }).catch(() => {
+      IssueTreeStore.setLoading(false);
+      Choerodon.prompt('网络错误');
+    });
   }
 
   /**
@@ -189,7 +208,11 @@ export default class IssueManage extends Component {
               padding: '0 20px',
             }}
           >
-            <div className="c7ntest-content-issueFolderName">choerodon 框架</div>
+            <div className="c7ntest-content-issueFolderName">
+              {
+                currentCycle.id ? currentCycle.data.name : ''
+              }
+            </div>
             <IssueTable
               clickIssue={clickIssue}
               onClick={this.handleTableRowClick}
