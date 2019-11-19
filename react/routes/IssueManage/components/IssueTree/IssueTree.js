@@ -6,7 +6,7 @@ import { getProjectId, getOrganizationId, handleRequestFailed } from '@/common/u
 import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  getIssueTree, addFolder, moveFolders, copyFolders,
+  getIssueTree, addFolder, moveFolders, copyFolders, editFolder, deleteFolder,
 } from '../../../../api/IssueManageApi';
 import IssueStore from '../../stores/IssueStore';
 import { NoVersion } from '../../../../components';
@@ -49,15 +49,24 @@ class IssueTree extends Component {
     return handleRequestFailed(addFolder(data));
   }
 
-  handleEdit = () => {
-
+  handleEdit = (newName, item) => {
+    const { objectVersionNumber } = item.data;
+    const data = {
+      folderId: item.id,
+      objectVersionNumber,
+      name: newName,
+      type: 'cycle',
+    };
+    return handleRequestFailed(editFolder(data));
   }
+
+  handleDelete = item => handleRequestFailed(deleteFolder(item.id))
 
   handleDrag = (sourceItem, destination) => {
     // console.log(sourceItem, destination);
   }
 
-  setSelected=(item) => {
+  setSelected = (item) => {
     IssueTreeStore.setCurrentCycle(item);
   }
 
@@ -67,12 +76,14 @@ class IssueTree extends Component {
     const noVersion = treeData.rootIds.length === 0;
 
     return (
-      <div className="c7ntest-IssueTree">        
+      <div className="c7ntest-IssueTree">
+        {/* {IssueTreeStore.getCurrentCycle.id && IssueTreeStore.getCurrentCycle.data.name} */}
         <Tree
           ref={this.treeRef}
           data={treeData}
           onCreate={this.handleCreate}
           onEdit={this.handleEdit}
+          onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
           selected={IssueTreeStore.getCurrentCycle}
           setSelected={this.setSelected}

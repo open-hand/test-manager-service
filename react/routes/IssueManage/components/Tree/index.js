@@ -7,6 +7,7 @@ import Tree, {
 } from '@atlaskit/tree';
 import { flattenTree, getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
+import { Modal } from 'choerodon-ui/pro';
 import { getRootNode } from './utils';
 import TreeNode from './TreeNode';
 
@@ -43,6 +44,8 @@ function mapDataToTree(data) {
 function PureTree({
   data,
   onCreate,
+  onEdit,
+  onDelete,
   afterDrag,
   selected,
   setSelected,
@@ -55,9 +58,7 @@ function PureTree({
   const previous = usePrevious(selected);
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
-    if (selected.id) {
-      setTree(oldTree => selectItem(oldTree, selected.id, previous.id));
-    }
+    setTree(oldTree => selectItem(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [selected]);
   const addFirstLevelItem = () => {
     const newChild = {
@@ -112,6 +113,17 @@ function PureTree({
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };
+  const handleDelete = async (item) => {
+    try {
+      await onDelete(item);
+      setTree(oldTree => removeItem(oldTree, item.path));
+      if (selected.id === item.id) {
+        setSelected({});
+      }
+    } catch (error) {
+      // console.log(error);
+    } 
+  };
   const handleMenuClick = useCallback((node, { item, key, keyPath }) => {
     switch (key) {
       case 'rename': {
@@ -121,7 +133,13 @@ function PureTree({
       }
       case 'delete': {
         // console.log('delete', node);
-        setTree(oldTree => removeItem(oldTree, node.path));
+        Modal.confirm({
+          title: '确认删除文件夹',
+        }).then((button) => {
+          if (button === 'ok') {
+            handleDelete(node);
+          }
+        });               
         break;
       }
       case 'add': {
@@ -164,13 +182,18 @@ function PureTree({
       setTree(oldTree => removeItem(oldTree, path));
     }
   };
-  const handleEdit = (value, item) => {
+  const handleEdit = async (value, item) => {
     // 值未变，或为空，不编辑，还原
     if (!value.trim() || value === item.data.name) {
       setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
     } else {
-      // await
-      setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false, data: { name: value } }));
+      try {
+        const newItem = await onEdit(value, item);
+        const { name, objectVersionNumber } = newItem;
+        setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false, data: { name, objectVersionNumber } }));
+      } catch (error) {
+        setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
+      } 
     }
   };
   const renderItem = ({

@@ -16,8 +16,9 @@ export function selectItem(tree, id, previous) {
     // const previousItem = tree.items[previous];
     newTree = mutateTree(newTree, previous, { selected: false });
   }
-  // const item = tree.items[id];
-  newTree = mutateTree(newTree, id, { selected: true });
+  if (id) {
+    newTree = mutateTree(newTree, id, { selected: true });
+  }  
   return newTree;
 }
 // 从树中删除一项
