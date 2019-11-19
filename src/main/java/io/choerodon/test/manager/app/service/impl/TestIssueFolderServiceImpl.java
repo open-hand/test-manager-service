@@ -308,4 +308,23 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
     }
 
+    @Override
+    public List<TestIssueFolderDTO> queryChildFolder(Long folderId) {
+        List<TestIssueFolderDTO> folders = new ArrayList<>();
+        return recurisionQuery(folderId,folders);
+    }
+
+    // 递归查询最底层文件夹
+    private List<TestIssueFolderDTO> recurisionQuery(Long parentId, List<TestIssueFolderDTO> folders) {
+        List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
+        if (tmpList == null) {
+            folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
+            return folders;
+        } else {
+            for (TestIssueFolderDTO tmp : tmpList) {
+                recurisionQuery(tmp.getFolderId(), folders);
+            }
+        }
+        return folders;
+    }
 }

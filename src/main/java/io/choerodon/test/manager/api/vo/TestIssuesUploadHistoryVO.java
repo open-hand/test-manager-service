@@ -15,7 +15,7 @@ public class TestIssuesUploadHistoryVO {
     @ApiModelProperty(value = "操作类型：导入用例(1L), 导出用例(2L), 导出循环、阶段(3L)")
     private Long actionType;
 
-    @ApiModelProperty(value = "数据源类型：PROJECT(1L), VERSION(2L), CYCLE(3L), FOLDER(4L)")
+    @ApiModelProperty(value = "数据源类型：FOLDER(4L)")
     private Long sourceType;
 
     @ApiModelProperty(value = "数据源关联ID")
@@ -48,7 +48,7 @@ public class TestIssuesUploadHistoryVO {
     @ApiModelProperty(value = "最后更新日期")
     private Date lastUpdateDate;
 
-    @ApiModelProperty(value = "数据源名称")
+    @ApiModelProperty(value = "文件夹名称")
     private String name;
 
     @ApiModelProperty(value = "敏捷版本名称")

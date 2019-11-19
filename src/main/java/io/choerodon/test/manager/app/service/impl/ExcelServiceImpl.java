@@ -86,6 +86,9 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private  TestIssueFolderService testIssueFolderService;
+
     /**
      * 失败导出重试
      *
@@ -519,7 +522,14 @@ public class ExcelServiceImpl implements ExcelService {
      * @return 适用于装载excel的Map
      */
     private Map<Long, List<TestIssueFolderRelVO>> populateFolder(TestIssueFolderDTO testIssueFolderDTO, Long userId, double startRate, double offset, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long organizationId) {
-        List<TestIssueFolderDTO> folders = Optional.ofNullable(testIssueFolderMapper.select(testIssueFolderDTO)).orElseGet(ArrayList::new);
+        // TODO：重构，取消项目和版本之后，假如选择的是父文件夹，那么要生成多个子文件夹
+        List<TestIssueFolderDTO> folders;
+        if (testIssueFolderDTO == null){
+            throw  new CommonException("error.issue.folder.is.null");
+        }
+        folders = testIssueFolderService.queryChildFolder(testIssueFolderDTO.getFolderId());
+
+        //List<TestIssueFolderDTO> folders = Optional.ofNullable(testIssueFolderMapper.select(testIssueFolderDTO)).orElseGet(ArrayList::new);
 
         //后面一个循环中使用了 两次进度增加 所以/2
         double folderOffset = offset / (folders.size() * 2);

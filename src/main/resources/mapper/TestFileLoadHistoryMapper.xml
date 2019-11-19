@@ -8,7 +8,7 @@
         <id column="action_type" property="actionType"/>
         <id column="source_type" property="sourceType"/>
         <id column="object_version_number" property="objectVersionNumber"/>
-        <id column="link_id" property="linkId"/>
+        <id column="link_id" property="linkedId"/>
         <id column="file_url" property="fileUrl"/>
         <id column="status" property="status"/>
         <id column="successful_count" property="successfulCount"/>
@@ -54,7 +54,7 @@
         </where>
     </select>
 
-    <select id="queryLoadHistoryStatus" resultType="_long">
+    <select id="queryLoadHistoryStatus" resultType="Long">
         SELECT status FROM test_fileload_history WHERE id = #{id}
     </select>
 
@@ -65,4 +65,42 @@
             id = #{id} AND action_type = 1
         </where>
     </update>
+
+    <select id="queryLatestHistoryByOptions" resultType="io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO">
+        SELECT tfh.id,
+               tfh.project_id,
+               tfh.action_type,
+               tfh.source_type,
+               tfh.object_version_number,
+               tfh.linked_id,
+               tfh.file_url,
+               tfh.file_stream,
+               tfh.status,
+               tfh.successful_count,
+               tfh.failed_count,
+               tfh.created_by,
+               tfh.creation_date,
+               tfh.last_update_date,
+               tif.name
+        FROM test_fileload_history tfh,
+             test_issue_folder tif
+        WHERE tfh.linked_id = tif.folder_id
+        <if test='advancedSearchArgs != null'>
+          <if test='advancedSearchArgs.name != null and advancedSearchArgs.name.length > 0'>
+              AND
+              tif.name LIKE CONCAT(CONCAT('%',#{advancedSearchArgs.name, jdbcType=VARCHAR}),'%')
+          </if>
+          <if test="advancedSearchArgs.status != null">
+              AND
+              tfh.status = #{advancedSearchArgs.status}
+          </if>
+        </if>
+        <if test='folderIds != null and folderIds.size > 0'>
+            AND
+            tfh.linked_id IN
+            <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
+                #{folderId}
+            </foreach>
+        </if>
+    </select>
 </mapper>
