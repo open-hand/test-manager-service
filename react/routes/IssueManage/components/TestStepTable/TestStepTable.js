@@ -1,8 +1,4 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-console */
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/state-in-constructor */
+
 import React, { Component, useState, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
@@ -10,9 +6,7 @@ import {
 } from 'choerodon-ui';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
-// import {
-//   cloneStep, updateStep, deleteStep, createIssueStep,
-// } from '../../../../api/IssueManageApi';
+
 import { DragTable } from '../../../../components';
 import { TextEditToggle, UploadInTable } from '../../../../components';
 import './TestStepTable.less';
@@ -20,81 +14,73 @@ import './TestStepTable.less';
 const { confirm } = Modal;
 const { Text, Edit } = TextEditToggle;
 const { TextArea } = Input;
-let didCreatedFlag = false;
 let createStepId;
 
 /**
  * 测试步骤组件
  * @param  data 数据源
- * @function updateStep(newData) 远程更新测试步骤 
- * @function createIssueStep(newData) 远程创建测试步骤 
- * @function cloneStep(stepId) 远程克隆测试步骤 
- * @function deleteStep(stepId) 远程刪除测试步骤 
- * @function onOk 本地数据操作回调函数  
+ * @function updateStep(newData) 远程更新测试步骤 覆盖本地数据操作
+ * @function createIssueStep(newData) 远程创建测试步骤 覆盖本地数据操作
+ * @function cloneStep(newData) 远程克隆测试步骤 覆盖本地数据操作
+ * @function deleteStep(newData) 远程刪除测试步骤 覆盖本地数据操作
+ * @function onOk 数据操作回调函数  
  */
-let stepId = 0;
+let localStepId = 0;
 function TestStepTable(props) {
   // console.log('TestStepTable', props);
   const [data, setData] = useState(props.data);
-  const [isEditing, setIsEditing] = useState([]);
+  // const [isEditing, setIsEditing] = useState([]);
   // useReducer 
   const [createStep, setCreateStep] = useState({
     testStep: '',
     testData: '',
     expectedResult: '',
   });
+  const [didCreatedFlag, setDidCreatedFlag] = useState(false);
   const [createdStepInfo, setCreatedStepInfo] = useState({});
   // rank 用于内部rank排序
   const [rank, setRank] = useState([]);
+  // 测试远程加载数据清空 
   useEffect(() => {
     setData(props.data);
-    console.log('u2', props.data);
   }, [props.data]);
 
-  useEffect(() => {
-    setIsEditing(_.map(data, (item, index) => (
-      {
-        stepId: item.stepId,
-        index,
-        isStepNameEditing: false,
-        isStepDataEditing: false,
-        isStepExpectedResultEditing: false,
-      }
-    )));
-    console.log('useEffect', data);
-  }, [data]);
+  // useEffect(() => {
+  //   setIsEditing(_.map(data, (item, index) => (
+  //     {
+  //       stepId: item.stepId,
+  //       index,
+  //       isStepNameEditing: false,
+  //       isStepDataEditing: false,
+  //       isStepExpectedResultEditing: false,
+  //     }
+  //   )));
+  //   console.log('useEffect', data);
+  // }, [data]);
 
 
   const onDragEnd = (sourceIndex, targetIndex) => {
-    const arr = data.slice();
+    const { data: propsData, updateStep } = props;
     if (sourceIndex === targetIndex) {
       return;
     }
-    const drag = arr[sourceIndex];
-    arr.splice(sourceIndex, 1);
-    arr.splice(targetIndex, 0, drag);
-    setData(arr);
-
-    /**  编辑保存
-    // arr此时是有序的，取toIndex前后两个的rank
-    const lastRank = targetIndex === 0 ? null : arr[targetIndex - 1].rank;
-    const nextRank = targetIndex === arr.length - 1 ? null : arr[targetIndex + 1].rank;
-    const dragCopy = { ...drag };
-    delete dragCopy.attachments;
-    const testCaseStepDTO = {
-      ...dragCopy,
-      lastRank,
-      nextRank,
-    };
-
-    updateStep(testCaseStepDTO).then((res) => {
-      // save success
-      const Data = [...data];
-      Data[targetIndex] = res;
-
-      setData(Data);
-    });
-     */
+    const drag = propsData[sourceIndex];
+    propsData.splice(sourceIndex, 1);
+    propsData.splice(targetIndex, 0, drag);
+    setData(propsData);
+    if (updateStep) {
+      const lastRank = targetIndex === 0 ? null : propsData[targetIndex - 1].rank;
+      const nextRank = targetIndex === propsData.length - 1 ? null : propsData[targetIndex + 1].rank;
+      const dragCopy = { ...drag };
+      delete dragCopy.attachments;
+      const testCaseStepDTO = {
+        ...dragCopy,
+        lastRank,
+        nextRank,
+        stepIsCreating: false,
+      };
+      updateStep(testCaseStepDTO);
+    }
   };
 
 
@@ -111,15 +97,15 @@ function TestStepTable(props) {
       expectedResult: '',
       stepIsCreating: true,
     };
-    didCreatedFlag = false;
+    setDidCreatedFlag(false);
     setData([...propsData, testCaseStepDTO]);
-    setIsEditing([...isEditing, {
-      stepId: undefined,
-      index: propsData.length,
-      isStepNameEditing: false,
-      isStepDataEditing: false,
-      isStepExpectedResultEditing: false,
-    }]);
+    // setIsEditing([...isEditing, {
+    //   stepId: undefined,
+    //   index: propsData.length,
+    //   isStepNameEditing: false,
+    //   isStepDataEditing: false,
+    //   isStepExpectedResultEditing: false,
+    // }]);
     setCreateStep({
       testStep: '',
       testData: '',
@@ -129,47 +115,37 @@ function TestStepTable(props) {
   };
 
   const editStep = (record, func) => {
-    console.lorg('editStep', record, data);
-
-    /** 远程编辑
-    updateStep(record).then((res) => {
-      if (func) {
-        func();
-      } else {
-        props.onOk();
-      }
-    });
-    */
+    const { updateStep } = props;
+    /** 远程编辑   */
+    if (updateStep) {
+      updateStep(record);
+    }
   };
 
   const onCeateIssueStep = (index) => {
-    const { data: propsData } = props;
+    const { data: propsData, createIssueStep } = props;
     const { expectedResult, testStep } = createStep;
     if (expectedResult && testStep) {
       const lastRank = propsData.length
         ? propsData[propsData.length - 1].rank : null;
       const testCaseStepDTO = {
-        stepId,
+        stepId: localStepId,
         lastRank,
         nextRank: null,
         ...createStep,
       };
-      stepId += 1;
+      localStepId += 1;
       if (!didCreatedFlag) {
-        didCreatedFlag = true;
+        setDidCreatedFlag(true);
         // stepIsCreating
         propsData[index] = {
           ...testCaseStepDTO,
         };
         setData(propsData);
-        console.log('onCeateIssueStep', index, testCaseStepDTO, data);
-        /** 远程创建
-        createIssueStep(testCaseStepDTO).then((res) => {
-          createStepId = res.stepId;
-
-          setCreatedStepInfo(res);
-        });
-        */
+        if (createIssueStep) {
+          delete testCaseStepDTO.stepId;
+          createIssueStep(testCaseStepDTO);
+        }
       } else {
         setTimeout(() => {
           setCreatedStepInfo({
@@ -187,60 +163,71 @@ function TestStepTable(props) {
 
 
   const onCloneStep = (stepId, index) => {
-    const lastRank = data[index].rank;
-    const nextRank = data[index + 1] ? data[index + 1].rank : null;
-    props.enterLoad();
+    const { data: propsData, cloneStep } = props;
+    const lastRank = propsData[index].rank;
+    const nextRank = propsData[index + 1] ? propsData[index + 1].rank : null;
+    setCreateStep({
+      testStep: '',
+      testData: '',
+      expectedResult: '',
+    });
 
-    /** 远程克隆
-    cloneStep({
-      lastRank,
-      nextRank,
-      stepId,
-      issueId: props.issueId,
-    }).then((res) => {
-      props.onOk();
-    })
-      .catch((error) => {
-        props.leaveLoad();
+    if (cloneStep) {
+      cloneStep({
+        lastRank,
+        nextRank,
+        stepId,
       });
-      */
+    } else {
+      // 本地数据操作
+      const oneData = data[index];
+      propsData.push({
+        ...oneData,
+        stepId: localStepId,
+      });
+      setData(propsData);
+      localStepId += 1;
+    }
   };
 
   const handleDeleteTestStep = (index, stepId) => {
-    const { data: propsData } = props;
-    confirm({
-      width: 560,
-      title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
-      content:
-        // eslint-disable-next-line react/jsx-indent
-        <div style={{ marginBottom: 32 }}>
-          {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
-        </div>,
-      onOk() {
-        console.log('handleDeleteTestStep', index, propsData);
-        propsData.splice(index, 1);
-        setData(propsData);
-        console.log('data', data);
-        /** 远程删除
-        return deleteStep({ data: { stepId } })
-          .then((res) => {
-            that.props.onOk();
-          });
-           */
-      },
-      onCancel() { },
-      okText: Choerodon.getMessage('删除', 'Delete'),
-      okType: 'danger',
-    });
+    const { data: propsData, deleteStep, onOk } = props;
+    if (deleteStep) {
+      confirm({
+        width: 560,
+        title: Choerodon.getMessage('确认删除吗？', 'Confirm delete'),
+        content:
+          // eslint-disable-next-line react/jsx-indent
+          <div style={{ marginBottom: 32 }}>
+            {Choerodon.getMessage('当你点击删除后，所有与之关联的测试步骤将删除!', 'When you click delete, after which the data will be permanently deleted and irreversible!')}
+          </div>,
+        onOk() {
+          /** 远程删除 */
+          deleteStep({ data: { stepId } });
+          // return deleteStep({ data: { stepId } })
+          //   .then((res) => {
+          //     onOk();
+          //   });
+        },
+        onCancel() { },
+        okText: Choerodon.getMessage('删除', 'Delete'),
+        okType: 'danger',
+      });
+    } else {
+      propsData.splice(index, 1);
+      setData(propsData);
+      setCreateStep({
+        testStep: '',
+        testData: '',
+        expectedResult: '',
+      });
+    }
   };
 
 
   const cancelCreateStep = (index) => {
     const { data: propsData } = props;
-    console.log('propsData', propsData);
-    // const newData = _.remove(propsData, (item, i) => index !== i);
     propsData.splice(index, 1);
-    console.log('cancel', propsData);
     setData(propsData);
     setCreateStep({
       testStep: '',
