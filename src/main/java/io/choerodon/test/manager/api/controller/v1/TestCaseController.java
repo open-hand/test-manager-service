@@ -229,7 +229,7 @@ public class TestCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
-    @GetMapping("/list_by_folder_id")
+    @PostMapping("/list_by_folder_id")
     public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
                                                                       @RequestParam(name = "folder_id") Long folderId,
                                                                       @SortDefault Pageable pageable,
@@ -245,6 +245,17 @@ public class TestCaseController {
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
         List<String> fieldList = verifyUpdateUtil.verifyUpdateData(caseUpdate, testCaseRepVO);
         return new ResponseEntity<>(testCaseService.updateCase(projectId, testCaseRepVO, fieldList.toArray(new String[fieldList.size()])), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量移动测试用例")
+    @PutMapping("/batch_move")
+    public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
+                                        @RequestParam(name = "folder_id") Long folderId,
+                                         @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
+
+        testCaseService.batchMove(projectId, folderId,testCaseRepVOS);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

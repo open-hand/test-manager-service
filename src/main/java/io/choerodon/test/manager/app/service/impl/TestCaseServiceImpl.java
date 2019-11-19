@@ -355,17 +355,16 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public void batchMove(Long projectId, Long folderId, Long[] caseIds) {
-        if (ObjectUtils.isEmpty(caseIds) || caseIds.length == 0) {
+    @Transactional(rollbackFor = Exception.class)
+    public void batchMove(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
+        if (ObjectUtils.isEmpty(testCaseRepVOS)) {
             return;
         }
         if (ObjectUtils.isEmpty(testIssueFolderMapper.selectByPrimaryKey(folderId))) {
             throw new CommonException("error.query.folder.not.exist");
         }
-        for (Long caseId : caseIds) {
-            TestCaseDTO testCaseDTO = new TestCaseDTO();
-            testCaseDTO.setFolderId(folderId);
-            testCaseDTO.setCaseId(caseId);
+        for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
+            TestCaseDTO testCaseDTO = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
             DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
         }
 
@@ -381,14 +380,21 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         // 复制用例
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, caseIds);
-        //List<TestCaseRepVO> list = modelMapper.map(testCaseDTOS,new TypeToken<TestCaseRepVO>(){});
-        // 复制用例步骤
+        for (TestCaseDTO testCaseDTO : testCaseDTOS) {
+            Long oldCaseId = testCaseDTO.getCaseId();
+            testCaseDTO.setCaseId(null);
+            testCaseMapper.insertSelective(testCaseDTO);
+            // 复制用例步骤
+            TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
+            testCaseStepVO.setIssueId(oldCaseId);
+            testCaseStepService.batchClone(testCaseStepVO, testCaseDTO.getCaseId(), projectId);
+            //TODO 复制用例链接
 
-        // 复制用例链接
+            //TODO 复制标签
 
-        // 复制标签
+            //TODO 复制附件
+        }
 
-        // 复制附件
     }
 
 
