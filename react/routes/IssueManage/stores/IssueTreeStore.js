@@ -2,6 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import { find } from 'lodash';
 
 class IssueTreeStore {
   // @observable treeData = {
@@ -124,6 +125,10 @@ class IssueTreeStore {
         };
       }),
     };
+    // 默认选中第一个
+    if (!this.currentCycle.id && rootIds.length > 0) {
+      this.setCurrentCycle(find(treeFolder, { id: rootIds[0] }));
+    }
   }
 
   @action setCurrentCycle(currentCycle) {
