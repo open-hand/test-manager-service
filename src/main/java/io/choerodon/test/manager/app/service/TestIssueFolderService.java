@@ -35,4 +35,6 @@ public interface TestIssueFolderService {
     List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId);
 
     TestTreeIssueFolderVO queryTreeFolder(Long projectId);
+
+    Boolean fixVersionFolder();
 }
