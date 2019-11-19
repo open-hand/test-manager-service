@@ -11,7 +11,7 @@
 //
 //import io.choerodon.core.convertor.ConvertPageHelper;
 //import io.choerodon.core.exception.CommonException;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 //import io.choerodon.test.manager.domain.service.ITestAutomationHistoryService;
 //import io.choerodon.test.manager.infra.vo.TestAutomationHistoryDTO;
@@ -30,9 +30,9 @@
 //    }
 //
 //    @Override
-//    public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest) {
-//        PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-//                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
+//    public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, Pageable pageable) {
+//        PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageable.getPageNumber(),
+//                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
 //        return ConvertPageHelper.convertPageInfo(serviceDOPage, TestAutomationHistoryVO.class);
 //    }
 //

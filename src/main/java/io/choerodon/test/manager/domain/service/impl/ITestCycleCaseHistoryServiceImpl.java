@@ -1,7 +1,7 @@
 //package io.choerodon.test.manager.domain.service.impl;
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.service.ITestCycleCaseHistoryService;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 //import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@
 //
 //
 //    @Override
-//    public PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
-//        return testCycleCaseHistoryE.querySelf(pageRequest);
+//    public PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, Pageable pageable) {
+//        return testCycleCaseHistoryE.querySelf(pageable);
 //    }
 //}

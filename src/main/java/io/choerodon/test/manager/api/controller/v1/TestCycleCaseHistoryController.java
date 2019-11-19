@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.enums.ResourceType;
+import org.springframework.data.domain.Sort;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.mybatis.annotation.SortDefault;
+import org.springframework.data.domain.Pageable;
+import io.choerodon.core.annotation.Permission;
+import org.springframework.data.web.SortDefault;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
 
@@ -42,10 +42,10 @@ public class TestCycleCaseHistoryController {
                                                                   @ApiIgnore
                                                                   @ApiParam(value = "分页信息", required = true)
                                                                   @SortDefault(value = "id", direction = Sort.Direction.DESC)
-                                                                          PageRequest pageRequest,
+                                                                          Pageable pageable,
                                                                   @PathVariable(name = "cycleCaseId") Long cycleCaseId) {
 
-        return Optional.ofNullable(testCycleCaseHistoryService.query(cycleCaseId, pageRequest))
+        return Optional.ofNullable(testCycleCaseHistoryService.query(cycleCaseId, pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.history.query"));
     }

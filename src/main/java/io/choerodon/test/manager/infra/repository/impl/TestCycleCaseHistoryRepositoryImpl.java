@@ -7,7 +7,7 @@
 //
 //import io.choerodon.core.convertor.ConvertHelper;
 //import io.choerodon.core.convertor.ConvertPageHelper;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseHistoryRepository;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 //import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -32,11 +32,11 @@
 //    }
 //
 //    @Override
-//    public PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest) {
+//    public PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, Pageable pageable) {
 //        TestCycleCaseHistoryDTO convert = modeMapper.map(testCycleCaseHistoryE, TestCycleCaseHistoryDTO.class);
 //
-//        PageInfo<TestCycleCaseAttachmentRelDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-//                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
+//        PageInfo<TestCycleCaseAttachmentRelDTO> serviceDOPage = PageHelper.startPage(pageable.getPageNumber(),
+//                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(() -> testCycleCaseHistoryMapper.query(convert));
 //
 //        return ConvertPageHelper.convertPageInfo(serviceDOPage, TestCycleCaseHistoryE.class);
 //    }

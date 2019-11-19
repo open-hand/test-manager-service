@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.annotation.Permission;
+import org.springframework.data.domain.Sort;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.mybatis.annotation.SortDefault;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
@@ -64,11 +64,11 @@ public class TestCycleCaseController {
                                                                   @ApiIgnore
                                                                   @ApiParam(value = "分页信息", required = true)
                                                                   @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
-                                                                          PageRequest pageRequest,
+                                                                          Pageable pageable,
                                                                   @RequestBody TestCycleCaseVO dto,
                                                                   @RequestParam Long organizationId) {
         Assert.notNull(dto.getCycleId(), "error.queryByCycle.cycleId.not.null");
-        return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageRequest, projectId, organizationId))
+        return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageable, projectId, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
     }
@@ -82,8 +82,8 @@ public class TestCycleCaseController {
                                                                                 @ApiIgnore
                                                                                 @ApiParam(value = "分页信息", required = true)
                                                                                 @SortDefault(value = "rank", direction = Sort.Direction.ASC)
-                                                                                        PageRequest pageRequest) {
-        return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageRequest, projectId, searchDTO))
+                                                                                        Pageable pageable) {
+        return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageable, projectId, searchDTO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
     }

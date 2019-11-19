@@ -2,7 +2,7 @@
 //
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseHistoryE;
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //
 //import java.util.List;
 //
@@ -12,6 +12,6 @@
 //public interface TestCycleCaseHistoryRepository {
 //    TestCycleCaseHistoryE insert(TestCycleCaseHistoryE testCycleCaseHistoryE);
 //
-//    PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, PageRequest pageRequest);
+//    PageInfo<TestCycleCaseHistoryE> query(TestCycleCaseHistoryE testCycleCaseHistoryE, Pageable pageable);
 //
 //}

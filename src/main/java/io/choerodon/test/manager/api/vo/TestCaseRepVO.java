@@ -15,6 +15,9 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "用例编号")
     private Long caseNum;
 
+    @ApiModelProperty(value = "用例拼接编号")
+    private String issueNum;
+
     @ApiModelProperty(value = "概要")
     private String summary;
 
@@ -23,6 +26,9 @@ public class TestCaseRepVO {
 
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
+
+    @ApiModelProperty(value = "文件夹Id")
+    private Long folderId;
 
     @ApiModelProperty(value = "创建人")
     private UserMessageDTO createUser;
@@ -53,6 +59,14 @@ public class TestCaseRepVO {
 
     public void setCaseNum(Long caseNum) {
         this.caseNum = caseNum;
+    }
+
+    public String getIssueNum() {
+        return issueNum;
+    }
+
+    public void setIssueNum(String issueNum) {
+        this.issueNum = issueNum;
     }
 
     public String getSummary() {
@@ -113,6 +127,14 @@ public class TestCaseRepVO {
 
     public Long getObjectVersionNumber() {
         return objectVersionNumber;
+    }
+
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
     }
 
     public void setObjectVersionNumber(Long objectVersionNumber) {

@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.enums.ResourceType;
+import org.springframework.data.domain.Sort;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.mybatis.annotation.SortDefault;
+import org.springframework.data.domain.Pageable;
+import io.choerodon.core.annotation.Permission;
+import org.springframework.data.web.SortDefault;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.test.manager.api.vo.TestFolderRelQueryVO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderRelVO;
@@ -39,9 +39,9 @@ public class TestIssueFolderRelController {
                                                  @RequestParam(name = "folderId", required = false) Long folderId,
                                                  @RequestBody
                                                          TestFolderRelQueryVO testFolderRelQueryVO,
-                                                 @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
+                                                 @SortDefault(value = "issueId", direction = Sort.Direction.DESC) Pageable pageable,
                                                  @RequestParam Long organizationId) {
-        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, testFolderRelQueryVO, pageRequest, organizationId))
+        return Optional.ofNullable(testIssueFolderRelService.query(projectId, folderId, testFolderRelQueryVO, pageable, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolderRel.query"));
     }

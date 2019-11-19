@@ -1,7 +1,7 @@
 //package io.choerodon.test.manager.domain.service.impl;
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 //import io.choerodon.test.manager.domain.service.ITestStatusService;
 //import io.choerodon.test.manager.domain.test.manager.entity.*;
@@ -69,10 +69,10 @@
 //
 //
 //    @Override
-//    public PageInfo<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, PageRequest pageRequest, Long projectId) {
+//    public PageInfo<TestCycleCaseStepE> querySubStep(TestCycleCaseE testCycleCaseE, Pageable pageable, Long projectId) {
 //        TestCycleCaseStepE testCycleCaseStepE = TestCycleCaseStepEFactory.create();
 //        testCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-//        return testCycleCaseStepE.querySelf(pageRequest);
+//        return testCycleCaseStepE.querySelf(pageable);
 //    }
 //
 //

@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.base.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
@@ -43,7 +43,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
     private ModelMapper modelMapper;
 
     @Override
-    public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId) {
+    public PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, Pageable pageable, Long projectId) {
         map.put("projectId", projectId);
         if (map.containsKey("filter")) {
             List<Long> versionId = devopsService.getAppVersionId(map.get("filter").toString(), projectId, Long.valueOf(map.get("appId").toString()));
@@ -52,8 +52,8 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
             }
             map.put("appVersionId", versionId);
         }
-        PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize(), PageUtil.sortToSql(pageRequest.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
+        PageInfo<TestAutomationHistoryDTO> serviceDOPage = PageHelper.startPage(pageable.getPageNumber(),
+                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort())).doSelectPageInfo(() -> testAutomationHistoryMapper.queryWithInstance(map));
         List<TestAutomationHistoryDTO> dtos = serviceDOPage.getList();
         Map<Long, TestAutomationHistoryDTO> dtoMap = dtos.stream().collect(Collectors.toMap(TestAutomationHistoryDTO::getId, x -> x));
         List<TestAutomationHistoryVO> vos = modelMapper.map(serviceDOPage.getList(), new TypeToken<List<TestAutomationHistoryVO>>() {

@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.base.annotation.Permission;
+import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.JsonImportService;
 import io.choerodon.test.manager.app.service.TestAppInstanceService;

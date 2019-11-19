@@ -2,7 +2,7 @@
 //
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.app.service.TestCaseService;
 //import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseRepository;
@@ -78,13 +78,13 @@
 //
 //
 //    @Override
-//    public PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest) {
-//        return testCycleCaseRepository.query(testCycleCaseE, pageRequest);
+//    public PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, Pageable pageable) {
+//        return testCycleCaseRepository.query(testCycleCaseE, pageable);
 //    }
 //
 //    @Override
-//    public PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest) {
-//        return testCycleCaseRepository.queryByFatherCycle(testCycleCaseES, pageRequest);
+//    public PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, Pageable pageable) {
+//        return testCycleCaseRepository.queryByFatherCycle(testCycleCaseES, pageable);
 //    }
 //
 //    @Override

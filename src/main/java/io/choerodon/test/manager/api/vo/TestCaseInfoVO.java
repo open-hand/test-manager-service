@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
+import java.util.List;
+import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.agile.api.vo.UserDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
@@ -46,6 +48,9 @@ public class TestCaseInfoVO {
 
     @ApiModelProperty(value = "修改时间")
     private Date lastUpdateDate;
+
+    @ApiModelProperty(value = "用例关联的问题链接")
+    private List<IssueInfoDTO> issuesInfos;
 
     public Long getCaseId() {
         return caseId;
@@ -141,5 +146,13 @@ public class TestCaseInfoVO {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public List<IssueInfoDTO> getIssuesInfos() {
+        return issuesInfos;
+    }
+
+    public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
+        this.issuesInfos = issuesInfos;
     }
 }

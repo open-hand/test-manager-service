@@ -12,7 +12,7 @@
 //import io.choerodon.core.convertor.ConvertHelper;
 //import io.choerodon.core.convertor.ConvertPageHelper;
 //import io.choerodon.core.exception.CommonException;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.repository.TestCycleCaseStepRepository;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseStepE;
 //import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -58,29 +58,29 @@
 //    }
 //
 //    @Override
-//    public PageInfo<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, PageRequest pageRequest) {
+//    public PageInfo<TestCycleCaseStepE> query(TestCycleCaseStepE testCycleCaseStepE, Pageable pageable) {
 //        if (!(testCycleCaseStepE != null && testCycleCaseStepE.getExecuteId() != null)) {
 //            throw new CommonException("error.test.cycle.case.step.caseId.not.null");
 //        }
 //        TestCycleCaseStepDTO convert = modeMapper.map(testCycleCaseStepE, TestCycleCaseStepDTO.class);
 //
-//        List<TestCycleCaseStepDTO> vo = LiquibaseHelper.executeBiFunctionByMysqlOrOracle(this::queryWithTestCaseStep_mysql, this::queryWithTestCaseStep_oracle, dsUrl, convert, pageRequest);
+//        List<TestCycleCaseStepDTO> vo = LiquibaseHelper.executeBiFunctionByMysqlOrOracle(this::queryWithTestCaseStep_mysql, this::queryWithTestCaseStep_oracle, dsUrl, convert, pageable);
 //        Long total = 0L;
 //        if (vo != null && !vo.isEmpty()) {
 //            total = testCycleCaseStepMapper.queryWithTestCaseStep_count(testCycleCaseStepE.getExecuteId());
 //        }
-////        PageInfo info = new PageInfo(pageRequest.getPage(), pageRequest.getSize());
+////        PageInfo info = new PageInfo(pageable.getPageNumber(), pageable.getPageSize());
 //        PageInfo<TestCycleCaseStepDTO> page = new PageInfo<>(Optional.ofNullable(vo).orElseGet(ArrayList::new));
 //
 //        return ConvertPageHelper.convertPageInfo(page, TestCycleCaseStepE.class);
 //    }
 //
-//    private List<TestCycleCaseStepDTO> queryWithTestCaseStep_mysql(TestCycleCaseStepDTO convert, PageRequest pageRequest) {
-//        return testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//    private List<TestCycleCaseStepDTO> queryWithTestCaseStep_mysql(TestCycleCaseStepDTO convert, Pageable pageable) {
+//        return testCycleCaseStepMapper.queryWithTestCaseStep(convert, pageable.getPageNumber()* pageable.getPageSize(), pageable.getPageSize());
 //    }
 //
-//    private List<TestCycleCaseStepDTO> queryWithTestCaseStep_oracle(TestCycleCaseStepDTO convert, PageRequest pageRequest) {
-//        return testCycleCaseStepMapper.queryWithTestCaseStep_oracle(convert, pageRequest.getPage() * pageRequest.getSize(), pageRequest.getSize());
+//    private List<TestCycleCaseStepDTO> queryWithTestCaseStep_oracle(TestCycleCaseStepDTO convert, Pageable pageable) {
+//        return testCycleCaseStepMapper.queryWithTestCaseStep_oracle(convert, pageable.getPageNumber()* pageable.getPageSize(), pageable.getPageSize());
 //    }
 //
 //    @Override

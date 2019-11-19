@@ -1,7 +1,7 @@
 //package io.choerodon.test.manager.domain.repository;
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleCaseE;
 //import io.choerodon.test.manager.infra.vo.TestCycleCaseDTO;
 //
@@ -18,9 +18,9 @@
 //
 //    TestCycleCaseE update(TestCycleCaseE testCycleCaseE);
 //
-//    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, PageRequest pageRequest);
+//    PageInfo<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE, Pageable pageable);
 //
-//    PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, PageRequest pageRequest);
+//    PageInfo<TestCycleCaseE> queryByFatherCycle(List<TestCycleCaseE> testCycleCaseES, Pageable pageable);
 //
 //    List<TestCycleCaseE> query(TestCycleCaseE testCycleCaseE);
 //

@@ -1,7 +1,7 @@
 //package io.choerodon.test.manager.domain.repository;
 //
 //import com.github.pagehelper.PageInfo;
-//import io.choerodon.base.domain.PageRequest;
+//import org.springframework.data.domain.Pageable;
 //import io.choerodon.test.manager.domain.test.manager.entity.TestCycleE;
 //
 //import java.util.List;
@@ -16,7 +16,7 @@
 //
 //    TestCycleE update(TestCycleE testCycleE);
 //
-//    PageInfo<TestCycleE> query(TestCycleE testCycleE, PageRequest pageRequest);
+//    PageInfo<TestCycleE> query(TestCycleE testCycleE, Pageable pageable);
 //
 //    List<TestCycleE> query(TestCycleE testCycleE);
 //
