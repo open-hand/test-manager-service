@@ -247,7 +247,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(caseStepVOS)) {
             caseStepVOS.forEach(v -> {
                 v.setIssueId(testCaseDTO.getCaseId());
-                testCaseStepService.changeStep(v, projectId);
+                testCaseStepService.changeStep(v, projectId,false);
             });
         }
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
@@ -351,7 +351,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
+        TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
+        map.setCaseNum(testCaseDTO.getCaseNum() +1);
         Criteria criteria = new Criteria();
         criteria.update(fieldList);
         if (testCaseMapper.updateByPrimaryKeyOptions(map, criteria) != 1) {
@@ -370,25 +372,29 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.folder.not.exist");
         }
         for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
-            TestCaseDTO testCaseDTO = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-            DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
+            TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
+            TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
+            map.setVersionNum(testCaseDTO.getVersionNum() + 1);
+            DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, map, 1, "error.update.case");
         }
 
     }
 
     @Override
-    public void batchCopy(Long projectId, Long folderId, Long[] caseIds) {
-        if (ObjectUtils.isEmpty(caseIds) || caseIds.length == 0) {
+    public void batchCopy(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
+        if (CollectionUtils.isEmpty(testCaseRepVOS)) {
             return;
         }
         if (ObjectUtils.isEmpty(testIssueFolderMapper.selectByPrimaryKey(folderId))) {
             throw new CommonException("error.query.folder.not.exist");
         }
         // 复制用例
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, caseIds);
+        Long[] caseIds = (Long[]) testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList()).toArray();
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId,caseIds );
         for (TestCaseDTO testCaseDTO : testCaseDTOS) {
             Long oldCaseId = testCaseDTO.getCaseId();
             testCaseDTO.setCaseId(null);
+            testCaseDTO.setObjectVersionNumber(null);
             testCaseMapper.insertSelective(testCaseDTO);
             // 复制用例步骤
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
@@ -401,6 +407,13 @@ public class TestCaseServiceImpl implements TestCaseService {
             //TODO 复制附件
         }
 
+    }
+
+    @Override
+    public void updateVersionNum(Long caseId) {
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
+        testCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
     }
 
 
@@ -520,5 +533,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKey, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
+    }
+
+    private TestCaseDTO baseQuery(Long caseId){
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
+        if (ObjectUtils.isEmpty(testCaseDTO)) {
+            throw new CommonException("error.case.is.not.exist");
+        }
+        return  testCaseDTO;
     }
 }

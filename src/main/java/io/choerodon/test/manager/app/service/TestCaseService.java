@@ -133,7 +133,25 @@ public interface TestCaseService {
      */
     TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO,String[] fieldList);
 
+    /**
+     * 移动测试用例
+     * @param projectId
+     * @param folderId
+     * @param testCaseRepVOS
+     */
     void batchMove(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
 
-    void batchCopy(Long projectId,Long folderId,Long[] caseIds);
+    /**
+     * 克隆测试用例
+     * @param projectId
+     * @param folderId
+     * @param testCaseRepVOS
+     */
+    void batchCopy(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
+
+    /**
+     * 更新version_num
+     * @param caseId
+     */
+    void updateVersionNum(Long caseId);
 }

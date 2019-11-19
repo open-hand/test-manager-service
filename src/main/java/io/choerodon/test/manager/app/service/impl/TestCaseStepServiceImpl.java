@@ -6,6 +6,9 @@ import java.util.Optional;
 
 import ch.qos.logback.core.pattern.ConverterUtil;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -19,10 +22,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
@@ -54,6 +53,9 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private TestCaseService testCaseService;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void removeStep(TestCaseStepVO testCaseStepVO) {
@@ -64,8 +66,8 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
                     attachmentRelService.delete(v.getStepId(), TestAttachmentCode.ATTACHMENT_CASE_STEP);
                 })
         );
-
         testCaseStepMapper.delete(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));
+        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
     }
 
 
@@ -78,7 +80,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId) {
+    public TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum) {
         Assert.notNull(testCaseStepVO, "error.case.change.step.param.not.null");
         TestCaseStepProDTO testCaseStepProDTO = modelMapper.map(testCaseStepVO, TestCaseStepProDTO.class);
         TestCaseStepDTO testCaseStepDTO;
@@ -87,6 +89,10 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         } else {
             testCaseStepDTO = changeOneStep(testCaseStepProDTO);
         }
+        if (changeVersionNum) {
+           testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
+        }
+        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
     }
 
@@ -102,7 +108,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseStepProDTO.setObjectVersionNumber(null);
         testCaseStepProDTO.setLastRank(testCaseStepVO.getLastRank());
         testCaseStepProDTO.setNextRank(testCaseStepVO.getNextRank());
-        return changeStep(modelMapper.map(testCaseStepProDTO, TestCaseStepVO.class), projectId);
+        return changeStep(modelMapper.map(testCaseStepProDTO, TestCaseStepVO.class), projectId,false);
     }
 
     /**
@@ -119,7 +125,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
             v.setStepId(null);
             v.setIssueId(issueId);
             v.setObjectVersionNumber(null);
-            TestCaseStepVO resCaseStepDTO = changeStep(modelMapper.map(v, TestCaseStepVO.class), projectId);
+            TestCaseStepVO resCaseStepDTO = changeStep(modelMapper.map(v, TestCaseStepVO.class), projectId,false);
             testCaseStepVOS.add(resCaseStepDTO);
         });
         return testCaseStepVOS;
@@ -152,7 +158,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         if (testCaseStepProDTO.getLastRank() == null) {
             testCaseStepProDTO.setLastRank(getLastedStepRank(testCaseStepProDTO.getIssueId()));
         }
-
         testCaseStepProDTO.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         return baseInsert(testCaseStepProDTO);
     }
