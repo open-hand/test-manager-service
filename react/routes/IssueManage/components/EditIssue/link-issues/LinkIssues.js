@@ -7,14 +7,12 @@ import LinkList from '../Component/LinkList';
  * 
  * @param {*} linkIssues  问题链接集
  * @param {*} reloadIssue 重载问题函数
- * 
+ * @param {*} issueId 
  */
 const LinkIssues = (props) => {
   const { linkIssues, reloadIssue } = props;
-
   const renderLinkList = (link, i) => {
-    const { issueInfo } = props;
-    const { issueId } = issueInfo;
+    const { issueId } = props;
     return (
       <LinkList
         key={link.linkId}
