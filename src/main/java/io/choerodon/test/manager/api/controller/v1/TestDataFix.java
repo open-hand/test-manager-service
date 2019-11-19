@@ -27,7 +27,7 @@ public class TestDataFix {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("迁移数据")
     @GetMapping
-    public ResponseEntity fixIssueFolder() {
+    public ResponseEntity fix() {
         testIssueFolderService.fixVersionFolder();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
