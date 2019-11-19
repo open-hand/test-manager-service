@@ -160,6 +160,10 @@ export default class IssueManage extends Component {
     });
   }
 
+  handleAddFolderClick = () => {   
+    IssueTreeStore.treeRef.current.addFirstLevelItem();
+  }
+
   render() {
     const { createIssueShow, clickIssue } = this.state;
     const { treeShow } = IssueStore;

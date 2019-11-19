@@ -203,6 +203,16 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/update`, data);
 }
 /**
+ *移动文件夹
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function moveFolders(folderIds, targetFolderId) {
+  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move?targetFolderId=${targetFolderId}`, folderIds);
+}
+/**
  *删除文件夹
  *
  * @export
@@ -389,16 +399,6 @@ export function moveIssues(versionId, folderId, issueLinks) {
  */
 export function copyIssues(versionId, folderId, issueLinks) {
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolderRel/copy?versionId=${versionId}&folderId=${folderId}`, issueLinks);
-}
-/**
- *文件夹移动
- *
- * @export
- * @param {*} data
- * @returns
- */
-export function moveFolders(data) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move`, data);
 }
 /**
  *文件夹克隆
