@@ -20,7 +20,7 @@ public class TestCaseDTO extends BaseDTO {
     private String description;
     private String rank;
     private Long folderId;
-    private Long versionId;
+    private Long versionNum;
     private Long projectId;
 
     public Long getCaseId() {
@@ -71,12 +71,12 @@ public class TestCaseDTO extends BaseDTO {
         this.folderId = folderId;
     }
 
-    public Long getVersionId() {
-        return versionId;
+    public Long getVersionNum() {
+        return versionNum;
     }
 
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
     }
 
     public Long getProjectId() {

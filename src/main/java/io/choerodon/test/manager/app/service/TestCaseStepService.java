@@ -15,7 +15,7 @@ public interface TestCaseStepService {
 
     void removeStep(TestCaseStepVO testCaseStepVO);
 
-    TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId);
+    TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum);
 
     TestCaseStepVO clone(TestCaseStepVO testCaseStepVO, Long projectId);
 

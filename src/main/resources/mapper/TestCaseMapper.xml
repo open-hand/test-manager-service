@@ -20,6 +20,7 @@
                  #{folderId}
             </foreach>
             <include refid="sqlParam"/>
+            order by  last_update_date DESC
     </select>
 
     <select id="listCopyCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">

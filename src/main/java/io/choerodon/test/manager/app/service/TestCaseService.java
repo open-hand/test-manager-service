@@ -92,7 +92,7 @@ public interface TestCaseService {
      * @param testCaseVO
      * @return
      */
-    TestCaseVO createTestCase(Long projectId, TestCaseVO testCaseVO);
+    TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO);
 
     /**
      * 查询用例详情
@@ -114,6 +114,7 @@ public interface TestCaseService {
      * @param projectId
      * @param folderId
      * @param pageable
+     * @param searchDTO
      * @return
      */
     PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable,SearchDTO searchDTO);
@@ -133,7 +134,25 @@ public interface TestCaseService {
      */
     TestCaseRepVO  updateCase(Long projectId,TestCaseRepVO testCaseRepVO,String[] fieldList);
 
+    /**
+     * 移动测试用例
+     * @param projectId
+     * @param folderId
+     * @param testCaseRepVOS
+     */
     void batchMove(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
 
-    void batchCopy(Long projectId,Long folderId,Long[] caseIds);
+    /**
+     * 克隆测试用例
+     * @param projectId
+     * @param folderId
+     * @param testCaseRepVOS
+     */
+    void batchCopy(Long projectId,Long folderId,List<TestCaseRepVO> testCaseRepVOS);
+
+    /**
+     * 更新version_num
+     * @param caseId
+     */
+    void updateVersionNum(Long caseId);
 }

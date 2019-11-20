@@ -47,7 +47,7 @@ public class TestCaseStepController {
                                                         @RequestBody TestCaseStepVO testCaseStepVO) {
 
 
-        return Optional.ofNullable(testCaseStepService.changeStep(testCaseStepVO, projectId))
+        return Optional.ofNullable(testCaseStepService.changeStep(testCaseStepVO, projectId,true))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }

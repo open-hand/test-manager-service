@@ -25,5 +25,9 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
         }
     }
 
+    changeSet(author: 'zhaotianxin', id: '2019-11-19-rename-colume-version-num') {
+        renameColumn(columnDataType: 'BIGINT UNSIGNED', newColumnName: 'version_num', oldColumnName: 'version_id',defaultValue: "1",tableName: "test_case")
+    }
+
 }
 

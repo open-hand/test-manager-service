@@ -31,12 +31,13 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     }
 
     @Override
-    public void create(Long project, TestCaseLinkDTO testCaseLinkDTO) {
+    public TestCaseLinkDTO create(Long project, TestCaseLinkDTO testCaseLinkDTO) {
         if(!ObjectUtils.isEmpty(testCaseLinkDTO.getLinkId())){
             throw new CommonException("error.insert.link.id.not.null");
         }
         testCaseLinkDTO.setProjectId(project);
         testCaseLinkMapper.insertSelective(testCaseLinkDTO);
+        return  testCaseLinkDTO;
     }
 
     @Override
@@ -50,5 +51,24 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         }
         List<Long> collect = testCaseLinkDTOS.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
         return testCaseFeignClient.listByIssueIds(projectId, collect).getBody();
+    }
+
+    @Override
+    public void copyByCaseId(Long projectId, Long caseId, Long oldCaseId) {
+        // 查询原关联的问题链接信息
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setLinkCaseId(caseId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> list = testCaseLinkMapper.select(testCaseLinkDTO);
+        if(CollectionUtils.isEmpty(list)){
+         return;
+        }
+        // 替换新的测试用例ID，并插入数据库
+        for (TestCaseLinkDTO testCaseLink: list) {
+            testCaseLink.setLinkId(null);
+            testCaseLink.setObjectVersionNumber(null);
+            testCaseLink.setLinkCaseId(caseId);
+            testCaseLinkMapper.insert(testCaseLink);
+        }
     }
 }

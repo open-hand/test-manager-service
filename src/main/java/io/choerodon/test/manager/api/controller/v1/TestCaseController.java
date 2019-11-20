@@ -204,9 +204,8 @@ public class TestCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建测试用例")
     @PostMapping("/create")
-    public ResponseEntity<TestCaseVO> createTestCase(@PathVariable("project_id") Long projectId,
-                                                     @RequestBody
-                                                             TestCaseVO testCaseVO) {
+    public ResponseEntity<TestCaseRepVO> createTestCase(@PathVariable("project_id") Long projectId,
+                                                     @RequestBody TestCaseVO testCaseVO) {
         return new ResponseEntity<>(testCaseService.createTestCase(projectId, testCaseVO), HttpStatus.OK);
     }
 
@@ -258,4 +257,14 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量复制测试用例")
+    @PutMapping("/batch_clone")
+    public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,
+                                        @RequestParam(name = "folder_id") Long folderId,
+                                        @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
+
+        testCaseService.batchCopy(projectId, folderId,testCaseRepVOS);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

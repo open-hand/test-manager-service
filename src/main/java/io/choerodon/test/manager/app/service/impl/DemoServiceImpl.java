@@ -236,7 +236,7 @@ public class DemoServiceImpl implements DemoService {
         testCaseStepVO.setTestData(testData);
         testCaseStepVO.setExpectedResult(expectedResult);
 
-        testCaseStepService.changeStep(testCaseStepVO, projectId);
+        testCaseStepService.changeStep(testCaseStepVO, projectId,false);
     }
 
     private void initIssueFolderRels(List<Long> issueFolderIds, List<Long> testIssueIds, Long projectId, Long versionId, Long userId, Date date) {
