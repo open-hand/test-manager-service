@@ -1,7 +1,6 @@
 // 可拖动table
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import onClickOutside from 'react-onclickoutside';
 import { Table } from 'choerodon-ui';
 import './DragTable.less';
 
@@ -28,15 +27,6 @@ class DragTable extends Component {
     }
   }
 
-  handleClickOutside = (e) => {
-    const { createIssueStep, hasStepIsCreating } = this.props;
-    // 编辑框失焦后才更新值
-    setTimeout(() => {
-      if (createIssueStep && hasStepIsCreating) {
-        createIssueStep();
-      }
-    }, 0);
-  };
 
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
@@ -215,4 +205,4 @@ class DragTable extends Component {
   }
 }
 
-export default onClickOutside(DragTable);
+export default DragTable;
