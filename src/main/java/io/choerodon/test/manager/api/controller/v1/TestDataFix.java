@@ -36,11 +36,16 @@ public class TestDataFix {
     @Autowired
     private DataMigrationService dataMigrationService;
 
+    @Autowired
+    private TestCaseLabelRelService testCaseLabelRelService;
+
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fix() {
-        testIssueFolderService.fixVersionFolder();
+//        testIssueFolderService.fixVersionFolder();
+
+        testCaseLabelRelService.fixLabelCaseRel();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 

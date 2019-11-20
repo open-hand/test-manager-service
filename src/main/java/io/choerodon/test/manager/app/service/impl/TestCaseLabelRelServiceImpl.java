@@ -61,6 +61,47 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         });
 
     }
+    private Logger logger = LoggerFactory.getLogger(TestCaseLabelRelServiceImpl.class);
+
+    @Autowired
+    private TestIssueLabelRelFeignClient testIssueLabelRelFeignClient;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private TestCaseLabelRelMapper testCaseLabelRelMapper;
+    @Autowired
+    private TestCaseService testCaseService;
+    @Override
+    public void fixLabelCaseRel() {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
+        Set<Long> projectIds = testCaseDTOS.stream().map(TestCaseDTO::getProjectId).collect(Collectors.toSet());
+        projectIds.forEach(projectId->{
+            List<LabelIssueRelDTO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
+            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
+            testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOS);
+            logger.info("========================> project: {} copy successed", projectId);
+        });
+
+    }
+
+    @Override
+    public Boolean baseCreate(TestCaseLabelRelDTO testCaseLabelRelDTO){
+       if( testCaseLabelRelMapper.insert(testCaseLabelRelDTO)!=1){
+           throw new CommonException("error.insert.testCaseLabelRel");
+       }
+        return true;
+    }
+
+    @Override
+    public void batchInsert(List<TestCaseLabelRelDTO> testCaseLabelRelDTOList) {
+        testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOList);
+    }
+    private TestCaseLabelRelDTO caseIssueDtoTocaseDto( LabelIssueRelDTO labelIssueRelDTO){
+        TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+        BeanUtils.copyProperties(labelIssueRelDTO,testCaseLabelRelDTO);
+        testCaseLabelRelDTO.setCaseId(labelIssueRelDTO.getIssueId());
+        return testCaseLabelRelDTO;
+    }
 
     @Override
     @Transactional
