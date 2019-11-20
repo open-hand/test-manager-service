@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { toJS } from 'mobx';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
@@ -9,7 +8,7 @@ import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
-import { commonLink, getParams, testCaseDetailLink } from '../../../common/utils';
+import { getParams } from '../../../common/utils';
 import { getIssueTree } from '../../../api/IssueManageApi';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import CreateIssue from '../components/CreateIssue';
@@ -28,7 +27,6 @@ export default class IssueManage extends Component {
     // 更正state 
     super(props);
     this.state = {
-      createIssueShow: false,
       clickIssue: {},
     };
   }
@@ -82,7 +80,6 @@ export default class IssueManage extends Component {
    * @memberof IssueManage
    */
   handleCreateIssue(issue, folderId) {
-    this.setState({ createIssueShow: false });
     let targetCycle = null;
     // 如果指定了文件夹就设置文件夹，否则设置版本
     if (folderId) {
@@ -165,8 +162,7 @@ export default class IssueManage extends Component {
   }
 
   render() {
-    const { createIssueShow, clickIssue } = this.state;
-    const { treeShow } = IssueStore;
+    const { clickIssue } = this.state;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
       <Page className="c7ntest-Issue c7ntest-region">

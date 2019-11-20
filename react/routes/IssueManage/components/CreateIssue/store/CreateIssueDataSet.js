@@ -62,12 +62,12 @@ function CreateIssueDataSet(intlPrefix, intl) {
                 type: 'number',
                 bind: 'folder.folderId',
             },
-            {
-                name: 'versionId',
-                type: 'number',
-                bind: 'folder.versionId',
-                ignore: 'never',
-            },
+            // {
+            //     name: 'versionId',
+            //     type: 'number',
+            //     bind: 'folder.versionId',
+            //     ignore: 'never',
+            // },
             {
                 name: 'issueLink',
                 type: 'object',
