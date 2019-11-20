@@ -21,7 +21,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestIssueFolderRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
@@ -168,7 +167,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                     }
                 }
             }
-            logger.info("project:{} copy successed",projectFolderId);
+            logger.info("=============================>project:{} copy successed",projectFolderId);
         });
     }
 
@@ -190,29 +189,20 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long projectId, Long folderId) {
-        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
-        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectChildrenByParentId(testIssueFolderDTO.getFolderId());
-        if(!CollectionUtils.isEmpty(testIssueFolderDTOS)){
-            throw new CommonException("error.issueFolder.has.children.folder");
+        List<TestIssueFolderDTO> folderList = new ArrayList<>();
+        List<TestCaseRepVO> testCaseVOs = testCaseService.listAllCaseByFolderId(projectId, folderId, null, null).getList();
+        Set<TestIssueFolderDTO> folderList1 = new HashSet<>();
+        Set<TestIssueFolderDTO> testIssueFolderDTOS = findchildFolder(folderId, folderList1);
+        //删除文件夹下用例
+        if (!CollectionUtils.isEmpty(testCaseVOs)) {
+            testCaseVOs.forEach(e -> {
+                testCaseService.deleteCase(projectId, e.getCaseId());
+            });
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(folderId);
-        if(!CollectionUtils.isEmpty(testCaseDTOS)){
-            throw new CommonException("error.issueFolder.has.case");
-        }
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-        testIssueFolderVO.setFolderId(folderId);
-
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
-        testIssueFolderRelVO.setFolderId(folderId);
-
-        TestCycleVO testCycleVO = new TestCycleVO();
-        testCycleVO.setFolderId(folderId);
-
-//        List<Long> issuesId = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO).stream()
-//                .map(TestIssueFolderRelVO::getIssueId).collect(Collectors.toList());
-//        testCaseService.batchDeleteIssues(projectId, issuesId);
-        testIssueFolderMapper.delete(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class));
-        testCycleService.delete(testCycleVO, projectId);
+        //删除文件夹
+        testIssueFolderDTOS.forEach(e -> {
+            testIssueFolderMapper.delete(modelMapper.map(e, TestIssueFolderDTO.class));
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -326,12 +316,27 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     // 递归查询最底层文件夹
     private List<TestIssueFolderDTO> recurisionQuery(Long parentId, List<TestIssueFolderDTO> folders) {
         List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
-        if (tmpList == null) {
+        if (CollectionUtils.isEmpty(tmpList)) {
             folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
             return folders;
         } else {
             for (TestIssueFolderDTO tmp : tmpList) {
                 recurisionQuery(tmp.getFolderId(), folders);
+            }
+        }
+        return folders;
+    }
+    // 递归查询子文件夹
+    private Set<TestIssueFolderDTO> findchildFolder(Long parentId, Set<TestIssueFolderDTO> folders) {
+        List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
+        if (CollectionUtils.isEmpty(tmpList)) {
+            folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
+            return folders;
+        } else {
+            for (TestIssueFolderDTO tmp : tmpList) {
+                folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
+                folders.addAll(tmpList);
+                findchildFolder(tmp.getFolderId(), folders);
             }
         }
         return folders;
