@@ -21,6 +21,6 @@
         </foreach>
     </update>
     <select id="selectChildrenByParentId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
-        SELECT  folder_id,name FROM test_issue_folder WHERE parent_id=#{parentId}
+        SELECT  *  FROM test_issue_folder WHERE parent_id=#{parentId}
     </select>
 </mapper>
