@@ -2,7 +2,9 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import com.google.common.reflect.TypeToken;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.agile.api.vo.IssueLinkDTO;
 import io.choerodon.core.exception.CommonException;
@@ -12,6 +14,8 @@ import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.TokenType;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +36,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     @Override
     public void delete(Long project, Long linkId) {
@@ -44,6 +51,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             throw new CommonException("error.insert.link.id.not.null");
         }
         testCaseLinkDTO.setProjectId(project);
+        if (!testCaseLinkMapper.select(testCaseLinkDTO).isEmpty()){
+            return new TestCaseLinkDTO();
+        }
         testCaseLinkMapper.insertSelective(testCaseLinkDTO);
         return  testCaseLinkDTO;
     }
@@ -89,10 +99,15 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         if(CollectionUtils.isEmpty(caseLinkList)){
             return  new ArrayList<>();
         }
+        Map<Long, List<TestCaseLinkDTO>> collect = caseLinkList.stream().collect(Collectors.groupingBy(TestCaseLinkDTO::getIssueId));
         List<Long> issueIds = caseLinkList.stream().map(TestCaseLinkDTO::getIssueId).collect(Collectors.toList());
         List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, issueIds).getBody();
-        List<IssueLinkVO> issueLinkVOList = new ArrayList<>();
-        issueInfos.stream().forEach(v -> v.setLinkCaseId(caseId));
+        issueInfos.forEach(v -> {
+            v.setLinkId(collect.get(v.getIssueId()).get(0).getLinkId());
+            v.setLinkCaseId(caseId);
+
+        });
+
         return issueInfos;
     }
 }

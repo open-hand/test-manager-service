@@ -251,7 +251,7 @@ public class TestCaseServiceImpl implements TestCaseService {
                 testCaseStepService.changeStep(v, projectId,false);
             });
         }
-        // 创建标签
+        // 关联测试用例与标签
 
 
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
@@ -368,6 +368,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DataLog(type = DataLogConstants.BATCH_MOVE,single = false)
     public void batchMove(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
         if (ObjectUtils.isEmpty(testCaseRepVOS)) {
             return;
@@ -378,6 +379,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
+            map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
             map.setVersionNum(testCaseDTO.getVersionNum() + 1);
             DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, map, 1, "error.update.case");
         }

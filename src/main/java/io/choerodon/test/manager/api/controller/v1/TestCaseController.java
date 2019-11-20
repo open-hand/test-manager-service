@@ -248,7 +248,7 @@ public class TestCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("批量移动测试用例")
-    @PutMapping("/batch_move")
+    @PostMapping("/batch_move")
     public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
                                         @RequestParam(name = "folder_id") Long folderId,
                                          @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
@@ -259,7 +259,7 @@ public class TestCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("批量复制测试用例")
-    @PutMapping("/batch_clone")
+    @PostMapping("/batch_clone")
     public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,
                                         @RequestParam(name = "folder_id") Long folderId,
                                         @RequestBody List<TestCaseRepVO> testCaseRepVOS) {

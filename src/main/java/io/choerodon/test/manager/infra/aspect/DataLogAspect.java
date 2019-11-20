@@ -27,6 +27,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -40,7 +41,7 @@ public class DataLogAspect {
     private static final String SUMMARY_FIELD = "summary";
     private static final String DESCRIPTION = "description";
     private static final String FIELD_DESCRIPTION_NULL = "[{\"insert\":\"\n\"}]";
-    private static final String FIELD_FOLDER = "folderId";
+    private static final String FIELD_FOLDER = "Folder Link";
 
     @Autowired
     private ModelMapper modelMapper;
@@ -86,6 +87,13 @@ public class DataLogAspect {
                         break;
                 }
             }
+            else {
+                switch(dataLog.type()) {
+                    case DataLogConstants.BATCH_MOVE:
+                        handleCaseMoveFolder(args);
+                        break;
+                }
+            }
         }
         try {
             // 一切正常的情况下，继续执行被拦截的方法
@@ -96,6 +104,45 @@ public class DataLogAspect {
             throw new CommonException("error.dataLogEpic.methodExecute", e);
         }
         return result;
+    }
+
+    @SuppressWarnings("checkstyle:LineLength")
+    private void handleCaseMoveFolder(Object[] args) {
+        try{
+            Long projectId = null;
+            Long folderId = null;
+            List<TestCaseRepVO> testCaseRepVOS = null;
+            int i = 0;
+            for(Object arg : args){
+               if (arg instanceof Long){
+                   if(i == 0){
+                       projectId = (Long) arg;
+                   }
+                   else {
+                       folderId = (Long) arg;
+                   }
+               }
+               else if (arg instanceof List) {
+                   testCaseRepVOS = (List<TestCaseRepVO>) arg;
+               }
+               i++;
+            }
+            if(!CollectionUtils.isEmpty(testCaseRepVOS)) {
+                TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
+                Long finalProjectId = projectId;
+                Long finalFolderId = folderId;
+                testCaseRepVOS.forEach(v -> {
+                    TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(v.getCaseId());
+                    Long oldFolderId = testCaseDTO.getFolderId();
+                    TestIssueFolderDTO olderFolder = testIssueFolderMapper.selectByPrimaryKey(oldFolderId);
+                    createDataLog(finalProjectId,v.getCaseId(),FIELD_FOLDER,olderFolder.getName(),testIssueFolderDTO.getName(),String.valueOf(oldFolderId), String.valueOf(finalFolderId));
+                });
+            }
+
+        }
+        catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
     }
 
     private void handleCaseDataLog(Object[] args) {
