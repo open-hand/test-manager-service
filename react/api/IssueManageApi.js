@@ -266,7 +266,7 @@ export function getIssueExecutes(issueId) {
  * @returns
  */
 export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderField, orderType) {
-  const searchDTO = { ...search, otherArgs: search.searchArgs };
+  const searchDTO = { ...search };
   return request.post(`/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}&page=${page}&size=${size}`, searchDTO, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,

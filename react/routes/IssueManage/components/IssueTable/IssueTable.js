@@ -1,9 +1,9 @@
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import _ from 'lodash';
 import { observer } from 'mobx-react-lite';
 import {
-  Spin, Table, Pagination, Icon, Tooltip,
+  Spin, Table, Pagination, Tooltip,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { FormattedMessage } from 'react-intl';
@@ -22,7 +22,7 @@ import useAvoidClosure from '@/hooks/useAvoidClosure';
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
   const [filteredColumns, setFilteredColumns] = useState([]);
-  const instance = useRef(null);
+  const instance = useRef();
 
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
@@ -39,7 +39,7 @@ export default observer((props) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
       // <th style={{ flex: column.flex || 1 }} >
-      <th style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }} >
+      <th style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
         {column.title}
         {' '}
       </th>
@@ -48,8 +48,6 @@ export default observer((props) => {
   };
 
   const handleClickIssue = (issue, index, e) => {
-    const { onRow } = props;
-    // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
     if (e.shiftKey || e.ctrlKey || e.metaKey) {
       if (e.shiftKey) {
         if (firstIndex !== null) {
@@ -90,7 +88,7 @@ export default observer((props) => {
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
       const {
-        dataIndex, key, flex, render,
+        dataIndex, render,
       } = column;
       if (render) {
         renderedItem = render(data[index][dataIndex], data[index], index);
@@ -99,7 +97,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }} >
+        <td style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -111,7 +109,7 @@ export default observer((props) => {
         return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} ref={instance} onRow={onRow}>
+          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -127,7 +125,6 @@ export default observer((props) => {
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-
       if (instance.current.firstElementChild) {
         instance.current.replaceChild(templateCopy, instance.current.firstElementChild);
       } else {
@@ -195,15 +192,17 @@ export default observer((props) => {
   }));
 
   const transformFilters = (filters) => {
-    let transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
+    const transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
     const res = {}; 
-    transformedFilters.map(item => {
-      if(item[0] === 'summary') {
+    transformedFilters.forEach((item) => {
+      if (item[0] === 'summary') {
+        // eslint-disable-next-line prefer-destructuring
         res.summary = item[1][0];
-      } else if(item[0] === 'issueNum') {
-        res.issueNum = item[1][0]
+      } else if (item[0] === 'issueNum') {
+        // eslint-disable-next-line prefer-destructuring
+        res.issueNum = item[1][0];
       }
-    })
+    });
     return res;
   };
 
@@ -214,7 +213,7 @@ export default observer((props) => {
       pageSize: IssueStore.pagination.pageSize,
       total: IssueStore.pagination.total,
     });
-    IssueStore.setFilteredInfo(transformFilters(filters));
+    IssueStore.setFilter({ searchArgs: transformFilters(filters) });
     IssueStore.setBarFilters(barFilters);
     // window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {
@@ -284,13 +283,13 @@ export default observer((props) => {
       dataIndex: 'issueNum',
       key: 'issueNum',
       filters: [],
-      render: (issueNum, record) => renderIssueNum(issueNum),
+      render: issueNum => renderIssueNum(issueNum),
     },
     {
       title: '创建人',
       dataIndex: 'createUser',
       key: 'createUser',
-      render: (createUser, record) => {
+      render: (createUser) => {
         const {
           name, loginName, realName, imageUrl,
         } = createUser;
@@ -302,13 +301,13 @@ export default observer((props) => {
       title: '创建时间',
       dataIndex: 'creationDate',
       key: 'creationDate',
-      render: (creationDate, record) => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
+      render: creationDate => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
     },
     {
       title: '更新人',
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
-      render: (lastUpdateUser, record) => {
+      render: (lastUpdateUser) => {
         const {
           name, loginName, realName, imageUrl,
         } = lastUpdateUser;
@@ -320,7 +319,7 @@ export default observer((props) => {
       title: '更新时间',
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
-      render: (lastUpdateDate, record) => <Tooltip title={lastUpdateDate}><span>{lastUpdateDate}</span></Tooltip>,
+      render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span>{lastUpdateDate}</span></Tooltip>,
     },
   ]);
 
@@ -360,9 +359,8 @@ export default observer((props) => {
               alignItems: 'center',
             }}
           >
-            {/* table底部创建用例 */}
             {
-              currentCycle && currentCycle.children && currentCycle.children.length === 0 ? <CreateIssueTiny /> : null
+              currentCycle && currentCycle.children && currentCycle.children.length === 0 ? <CreateIssueTiny key={currentCycle.id} /> : null
             }
           </div>
         </div>

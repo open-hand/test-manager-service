@@ -63,8 +63,8 @@ export default observer(() => {
 
     return creating ? (
       <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
-        <div className="c7ntest-add-select-version">
-          <div style={{ marginLeft: 8, flexGrow: 1 }}>
+        <div className="c7ntest-add-testCase">
+          <div style={{ flexGrow: 1 }}>
             <TextField
               autoFocus
               placeholder="请输入问题概要"
