@@ -114,6 +114,7 @@ public interface TestCaseService {
      * @param projectId
      * @param folderId
      * @param pageable
+     * @param searchDTO
      * @return
      */
     PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable,SearchDTO searchDTO);

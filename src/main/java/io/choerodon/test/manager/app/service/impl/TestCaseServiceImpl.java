@@ -412,6 +412,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     public void updateVersionNum(Long caseId) {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
+        if (ObjectUtils.isEmpty(testCaseDTO)) {
+            throw new CommonException("error.query.case.not.exist");
+        }
         testCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
     }
