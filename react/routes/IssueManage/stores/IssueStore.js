@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import _ from 'lodash';
+import { findIndex } from 'lodash';
 import { getIssuesByFolder } from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
@@ -40,8 +40,6 @@ class IssueStore {
 
   @observable tableDraging = false;
 
-  @observable treeShow = true;
-
   @action clearStore = () => {
     this.issues = [];
     this.pagination = {
@@ -64,7 +62,6 @@ class IssueStore {
     this.draggingTableItems = [];
     this.copy = false;
     this.tableDraging = false;
-    this.treeShow = true;
   }
 
   init() {
@@ -106,10 +103,9 @@ class IssueStore {
         }
         resolve(res);
         this.setLoading(false);
-      }).catch(e => {
-        console.log(e);
+      }).catch((e) => {        
         this.setLoading(false);
-      })
+      });
     });
   }
 
@@ -123,7 +119,7 @@ class IssueStore {
    */
   @action updateSingleIssue(data) {
     const originIssues = this.issues;
-    const index = _.findIndex(originIssues, { issueId: data.issueId });
+    const index = findIndex(originIssues, { issueId: data.issueId });
     originIssues[index] = { ...originIssues[index], ...data };
   }
 
@@ -175,10 +171,6 @@ class IssueStore {
 
   @action setTableDraging(flag) {
     this.tableDraging = flag;
-  }
-
-  @action setTreeShow(flag) {
-    this.treeShow = flag;
   }
 
   @computed get getIssues() {
