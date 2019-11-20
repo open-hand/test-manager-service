@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.test.manager.app.service.DataMigrationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,13 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 @RestController
 @RequestMapping(value = "/v1/projects/fix")
 public class TestDataFix {
+
     @Autowired
     private TestIssueFolderService testIssueFolderService;
+
+    @Autowired
+    private DataMigrationService dataMigrationService;
+
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("迁移数据")
     @GetMapping
@@ -31,4 +37,14 @@ public class TestDataFix {
         testIssueFolderService.fixVersionFolder();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("迁移用例数据")
+    @GetMapping("/migrate_issue")
+    public ResponseEntity fixIssue() {
+        dataMigrationService.migrateIssue();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }

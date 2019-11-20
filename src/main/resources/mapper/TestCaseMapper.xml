@@ -60,4 +60,13 @@
             </if>
         </if>
     </sql>
+
+    <insert id="batchInsertTestCase" parameterType="io.choerodon.test.manager.api.vo.TestCaseMigrateVO">
+        <if test="testCaseMigrateVO != null">
+            insert into test_case (case_id, case_num, summary, description, `rank`, folder_id, version_id, project_id,
+            object_version_number, created_by, creation_date, last_updated_by, last_update_date)
+            values (#{caseId}, #{caseNum}, #{summary}, #{description}, #{rank}, #{folderId}, #{versionId}, #{projectId},
+            #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate};
+        </if>
+    </insert>
 </mapper>
