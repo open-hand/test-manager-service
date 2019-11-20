@@ -14,7 +14,7 @@ const PreTextIcon = styled.span`
   cursor: pointer;
 `;
 
-const prefix = 'c7nIssueManage-Tree';
+const prefix = 'c7ntest-tree';
 const getIcon = (
   item,
   onExpand,

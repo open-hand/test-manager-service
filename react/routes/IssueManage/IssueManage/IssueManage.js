@@ -189,19 +189,14 @@ export default class IssueManage extends Component {
             <FormattedMessage id="issue_import" />
           </Button>
         </Header>
-        <Breadcrumb title="" />
-        <div className="breadcrumb-border" />
-        <Content className="c7ntest-issue-content" style={{ display: 'flex', padding: '0' }}>
-          <div className="c7ntest-issue-tree">
-            {treeShow && (
-              <IssueTree
-                ref={(tree) => { this.tree = tree; }}
-                onClose={() => {
-                  IssueStore.setTreeShow(false);
-                }}
-              />
-            )}
-          </div>
+        <Breadcrumb />
+        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
+          <IssueTree
+            ref={(tree) => { this.tree = tree; }}
+            onClose={() => {
+              IssueStore.setTreeShow(false);
+            }}
+          />  
           <div
             className="c7ntest-content-issue"
             style={{

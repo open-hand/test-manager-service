@@ -17,7 +17,7 @@ import FilterInput from './FilterInput';
 import './index.less';
 
 const PADDING_PER_LEVEL = 16;
-const prefix = 'c7nIssueManage-Tree';
+const prefix = 'c7ntest-tree';
 function mapDataToTree(data) {
   const { rootIds, treeFolder } = data;
   const treeData = {
@@ -58,7 +58,7 @@ function PureTree({
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
     setTree(oldTree => selectItem(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
-  }, [selected]);
+  }, [previous, selected]);
   const addFirstLevelItem = () => {
     const newChild = {
       id: 'new',
@@ -84,7 +84,7 @@ function PureTree({
   const filterTree = useCallback((value) => {
     setTree(oldTree => expandTreeBySearch(oldTree, value || ''));
     setSearch(value || '');
-  }, [tree]);
+  }, []);
 
   const getItem = id => tree.items[id];
   const onExpand = (itemId) => {
@@ -160,7 +160,7 @@ function PureTree({
       }
       default: break;
     }
-  }, [tree]);
+  }, [handleDelete]);
   const handleCreate = async (value, path, item) => {
     if (value.trim()) {
       try {
