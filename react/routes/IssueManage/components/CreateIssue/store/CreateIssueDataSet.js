@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { DataSet } from 'choerodon-ui/pro/lib';
 import { stores } from '@choerodon/boot';
+import { getProjectId } from '../../../../../common/utils';
 
 const { AppState } = stores;
 const linkOptions = new DataSet({
@@ -48,12 +49,24 @@ function CreateIssueDataSet(intlPrefix, intl) {
 
             },
             {
-                name: 'folderId',
+                name: 'folder',
                 type: 'object',
                 label: folderId,
                 required: true,
                 textField: 'fileName',
-                valueField: 'fileId',
+                valueField: 'folderId',
+                ignore: 'always',
+            },
+            {
+                name: 'folderId',
+                type: 'number',
+                bind: 'folder.folderId',
+            },
+            {
+                name: 'versionId',
+                type: 'number',
+                bind: 'folder.versionId',
+                ignore: 'never',
             },
             {
                 name: 'issueLink',
@@ -65,17 +78,24 @@ function CreateIssueDataSet(intlPrefix, intl) {
                 // options: linkOptions,
                 lookupUrl: `agile/v1/projects/${AppState.currentMenuType.id}/issue_labels`,
             },
+            {
+                name: 'caseStepVOS',
+                type: 'object',
+            },
 
         ],
 
-        // transport: {
-        //  return request.get(`/test/v1/projects/${getProjectId()}/issueFolder/query/all${versionId ? `?versionId=${versionId}` : ''}`);
-
-        //   submit: ({ data }) => ({
-        //     method: 'put',
-        //     data: data[0],
-        //   }),
-        // },
+        transport: {
+            // eslint-disable-next-line arrow-body-style
+            submit: ({ data, dataSet }) => {
+                // console.log('submit', data, dataSet);
+                return ({
+                    url: `/v1/projects/${getProjectId()}/case/create`,
+                    method: 'post',
+                    data: data[0],
+                });
+            },
+        },
     };
 }
 export default CreateIssueDataSet;

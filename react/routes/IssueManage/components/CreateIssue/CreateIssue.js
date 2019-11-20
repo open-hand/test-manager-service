@@ -1,4 +1,5 @@
-import React, { Component, useState, useEffect } from 'react';
+/* eslint-disable object-curly-newline */
+import React, { Component, useState, useEffect, useMemo } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { stores, Content } from '@choerodon/boot';
 import { withRouter } from 'react-router-dom';
@@ -24,7 +25,7 @@ import { WYSIWYGEditor } from '../../../../components';
 import UserHead from '../UserHead';
 import { getProjectName } from '../../../../common/utils';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
-import TestStepTable from '../TestStepTable';
+import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../CommonComponent/SelectTree';
 import './CreateIssue.less';
 
@@ -44,9 +45,8 @@ function CreateIssue(props) {
   const [folders, setFolders] = useState([]);
 
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const [testStepData, setTestStepData] = useState([]);
   const { intl } = props;
-  const createDataset = new DataSet(CreateIssueDataSet('issue', intl));
+  const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), []);
   const loadVersions = () => {
     const { setFieldsValue, defaultVersion } = props.form;
     getProjectVersion().then((res) => {
@@ -119,76 +119,23 @@ function CreateIssue(props) {
         props.onOk(data, folderId);
       });
   };
-
-  const handleCreateIssue = () => {
-    props.form.validateFields((err, values) => {
-      if (!err) {
-        const { description, fileList } = values;
-        const exitComponents = originComponents;
-        const componentIssueRelVOList = map(values.componentIssueRel, (component) => {
-          const target = find(exitComponents, { name: component });
-          if (target) {
-            return target;
-          } else {
-            return ({
-              name: component,
-              projectId: AppState.currentMenuType.id,
-            });
-          }
-        });
-        const exitLabels = originLabels;
-        const labelIssueRelVOList = map(values.issueLink, (label) => {
-          const target = find(exitLabels, { labelName: label });
-          if (target) {
-            return target;
-          } else {
-            return ({
-              labelName: label,
-              projectId: AppState.currentMenuType.id,
-            });
-          }
-        });
-        const exitFixVersions = originFixVersions;
-        const version = values.versionId;
-        const target = find(exitFixVersions, { versionId: version });
-        let fixVersionIssueRelVOList = [];
-        if (target) {
-          fixVersionIssueRelVOList = [{
-            ...target,
-            relationType: 'fix',
-          }];
-        } else {
-          Choerodon.prompt('版本错误');
-          return null;
-        }
-        const testType = IssueStore.getTestType;
-        const extra = {
-          typeCode: 'issue_test',
-          issueTypeId: testType,
-          summary: values.summary,
-          priorityCode: `priority-${values.priorityId}`,
-          priorityId: values.priorityId,
-          sprintId: values.sprintId || 0,
-          epicId: values.epicId || 0,
-          epicName: values.epicName,
-          parentIssueId: 0,
-          assigneeId: values.assigneedId,
-          labelIssueRelVOList,
-          versionIssueRelVOList: fixVersionIssueRelVOList,
-          componentIssueRelVOList,
-        };
-        setCreateLoading(true);
-        const deltaOps = description;
-        if (deltaOps) {
-          beforeTextUpload(deltaOps, extra, handleSave.bind(this, extra, fileList, values.folderId));
-        } else {
-          extra.description = '';
-          handleSave(extra, [], values.folderId);
-        }
+  
+  async function handleCreateIssue() {
+    if (!createDataset.isModified()) {
+      return true;
+    }
+    try {
+      if ((await createDataset.submit())) {
+        // setTimeout(() => { window.location.reload(true); }, 1000);
+        // context.sendSettingDataSet.query();
+        return true;
+      } else {
+        return false;
       }
-      return null;
-    });
-  };
+    } catch (e) {
+      return false;
+    }
+  }
   // const renderOptions = ({ record, text, value })=>{
 
   //   console.log('renderOptions',record,value);
@@ -223,20 +170,13 @@ function CreateIssue(props) {
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
           </div>,
-          <SelectTree name="folderId" pDataSet={createDataset} />,
+          <SelectTree name="folder" pDataSet={createDataset} />,
           <Select name="issueLink" />]
         }
         <div className="test-create-issue-form-step">
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">测试步骤</span>
-          <TestStepTable
-            disabled={false}
-            data={testStepData}
-            intl={intl}
-          // enterLoad={() => console.log('enterLoad')}
-          // leaveLoad={() => console.log('leaveLoad')}
-          // onOk={() => console.log('onOk')}
-          />
+          <CreateTestStepTable name="caseStepVOS" pDataSet={createDataset} />
         </div>
       </Form>
     );

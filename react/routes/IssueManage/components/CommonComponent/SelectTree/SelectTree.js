@@ -21,7 +21,7 @@ function SelectTree(props) {
     * @param {*} record  
   */
   const renderNode = ({ record }) => {
-    const fileName = record.get('fileName');
+    const fileName = record.get('name');
     return (
       <div className="test-select-tree">
         <Icon
