@@ -74,7 +74,7 @@ function TestStepTable(props) {
       ? data[data.length - 1].rank : null;
     const testCaseStepDTO = {
       stepId: localStepId,
-      attachments: [],
+      // attachments: [],
       lastRank,
       nextRank: null,
       testStep: '',
@@ -94,11 +94,19 @@ function TestStepTable(props) {
   const onCreateStep = async (newStep, index) => {
     const { expectedResult, testStep } = newStep;
     // eslint-disable-next-line no-param-reassign
-    delete newStep.stepIsCreating;
+    
     if (expectedResult && testStep) {
-      const newStepResult = await onCreate(newStep, index);
-      data[index] = newStepResult;
-      setData([...data]);
+      try {
+        const newStepResult = await onCreate(newStep, index);
+        if (newStepResult) {
+          delete newStepResult.stepIsCreating;
+          data[index] = newStepResult;
+          setData([...data]);
+        }
+      } catch (error) {
+        // 
+      }
+      
       // 清除当前创建的值
     } else {
       Choerodon.prompt('测试步骤和预期结果均为必输项');

@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { Choerodon } from '@choerodon/boot';
 import {
   observable, action, computed, toJS,
 } from 'mobx';
@@ -61,6 +62,7 @@ class EditIssueStore {
       this.setLoading(false);
       return result;
     } catch (error) {
+      Choerodon.prompt(error.message, 'error');
       this.setLoading(false);
     }
     return null;
