@@ -7,16 +7,9 @@ import TestStepTable from '../TestStepTable';
 function CreateTestStepTable(props) {
   const { name, pDataSet } = props;
   const [testStepData, setTestStepData] = useState([]);
-  //   useEffect(() => {
-  //     pDataSet.current.set(name, testStepData);
-  //     console.log('pDataSet', pDataSet.current, pDataSet.current.get(name));
-  //   }, [name, pDataSet, testStepData]);
   useEffect(() => {
-    console.log(' useEffect pDataSet', testStepData);
-  }, [testStepData]);
-  useEffect(() => {
-    console.log(' useEffect ');
-  }, []);
+    pDataSet.current.set(name, testStepData);
+  }, [name, pDataSet, testStepData]);
   return (
     <TestStepTable
       disabled={false}

@@ -143,7 +143,7 @@ export default class IssueManage extends Component {
   handleOpenImportIssue = () => {
     const { intl } = this.props;
     Modal.open({
-      key: 'createIssue',
+      key: 'importIssue',
       // title:<FormattedMessage id='issue_create_name'  />,
       title: '导入用例',
       drawer: true,
@@ -154,6 +154,20 @@ export default class IssueManage extends Component {
         <ImportSide />
       ),
       // onOk: this.handleCreateIssue.bind(this),
+    });
+  }
+
+  handleOpenExportIssue = () => {
+    Modal.open({
+      key: 'exportIssue',
+      title: '导出用例',
+      drawer: true,
+      style: {
+        width: 1090,
+      },
+      children: (
+        <ExportSide />
+      ),
     });
   }
 
@@ -176,7 +190,7 @@ export default class IssueManage extends Component {
           <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
             创建一级目录
           </Button>
-          <Button icon="unarchive" onClick={() => this.ExportSide.open()}>
+          <Button icon="unarchive" onClick={this.handleOpenExportIssue}>
             <FormattedMessage id="issue_export" />
           </Button>
           <Button className="leftBtn" onClick={this.handleOpenImportIssue}>
@@ -213,7 +227,6 @@ export default class IssueManage extends Component {
               onClick={this.handleTableRowClick}
             />
           </div>
-          <ExportSide ref={this.saveRef('ExportSide')} />
           <TestCaseDetail visible={clickIssue.caseId} clickIssue={clickIssue} onClose={this.handleClose} />
         </Content>
       </Page>

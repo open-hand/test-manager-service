@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from 'react';
-import _ from 'lodash';
+import React from 'react';
+import { map } from 'lodash';
 import LinkList from '../Component/LinkList';
 
 /**
@@ -22,6 +22,6 @@ const LinkIssues = (props) => {
       />
     );
   };
-  return _.map(linkIssues, (linkIssue, i) => renderLinkList(linkIssue, i));
+  return map(linkIssues, (linkIssue, i) => renderLinkList(linkIssue, i));
 };
 export default LinkIssues;

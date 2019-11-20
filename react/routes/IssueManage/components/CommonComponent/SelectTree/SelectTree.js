@@ -17,8 +17,8 @@ function SelectTree(props) {
   } = props;
   const dataSet = useMemo(() => treeDataSet(pDataSet, name), []);
   /**
-    * 渲染树节点
-    * @param {*} record  
+  * 渲染树节点
+  * @param {*} record  
   */
   const renderNode = ({ record }) => {
     const fileName = record.get('name');
@@ -35,9 +35,9 @@ function SelectTree(props) {
   };
 
   /**
-         * 渲染树
-         * @param {*} content 
-         */
+  * 渲染树
+  * @param {*} content 
+  */
   function renderTree(content) {
     // console.log('renderTree', treeDataSet);
     return (

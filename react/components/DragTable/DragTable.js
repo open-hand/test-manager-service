@@ -27,7 +27,6 @@ class DragTable extends Component {
     }
   }
 
-
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
       filteredColumns: selectedKeys,
