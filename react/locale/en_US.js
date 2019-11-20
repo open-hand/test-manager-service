@@ -176,6 +176,12 @@ const enUS = {
   testPlan_createStageIn: 'add test stage in cycle “{cycleName}”',
   testPlan_EditStage_title: 'EditStage',
   testPlan_EditStage: 'edit stage “{cycleName}”',
+
+  testPlan_createPlan: 'create Plan',
+  testPlan_editPlan: 'edit Paln',
+  testPlan_manualTest: 'Manual test',
+  testPlan_autoTest: 'automatic test',
+
   // 测试执行
   cycle_title: 'Test Execute',
   cycle_name: 'Test cycle',
