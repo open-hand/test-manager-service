@@ -189,10 +189,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long projectId, Long folderId) {
-        List<TestIssueFolderDTO> folderList = new ArrayList<>();
         List<TestCaseRepVO> testCaseVOs = testCaseService.listAllCaseByFolderId(projectId, folderId, null, null).getList();
-        Set<TestIssueFolderDTO> folderList1 = new HashSet<>();
-        Set<TestIssueFolderDTO> testIssueFolderDTOS = findchildFolder(folderId, folderList1);
+        Set<TestIssueFolderDTO> folderDTOSet = new HashSet<>();
+        folderDTOSet.add(testIssueFolderMapper.selectByPrimaryKey(folderId));
+        Set<TestIssueFolderDTO> testIssueFolderDTOS = findchildFolder(folderId, folderDTOSet);
         //删除文件夹下用例
         if (!CollectionUtils.isEmpty(testCaseVOs)) {
             testCaseVOs.forEach(e -> {
@@ -330,12 +330,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     private Set<TestIssueFolderDTO> findchildFolder(Long parentId, Set<TestIssueFolderDTO> folders) {
         List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
         if (CollectionUtils.isEmpty(tmpList)) {
-            folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
             return folders;
         } else {
+            folders.addAll(tmpList);
             for (TestIssueFolderDTO tmp : tmpList) {
-                folders.add(testIssueFolderMapper.selectByPrimaryKey(parentId));
-                folders.addAll(tmpList);
                 findchildFolder(tmp.getFolderId(), folders);
             }
         }
