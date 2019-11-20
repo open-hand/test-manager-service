@@ -11,16 +11,16 @@ import io.choerodon.mybatis.entity.BaseDTO;
  */
 @Table(name = "test_case_label_rel")
 public class TestCaseLabelRelDTO extends BaseDTO {
-    private Long case_id;
+    private Long caseId;
     private Long labelId;
     private Long projectId;
 
-    public Long getCase_id() {
-        return case_id;
+    public Long getCaseId() {
+        return caseId;
     }
 
-    public void setCase_id(Long case_id) {
-        this.case_id = case_id;
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 
     public Long getLabelId() {
