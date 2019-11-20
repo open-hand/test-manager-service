@@ -1,6 +1,8 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import com.netflix.discovery.converters.Auto;
 import io.swagger.annotations.ApiOperation;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.test.manager.app.service.TestCaseLabelRelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
 /**
@@ -24,11 +27,18 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 public class TestDataFix {
     @Autowired
     private TestIssueFolderService testIssueFolderService;
+    @Autowired
+    private TestCaseLabelRelService testCaseLabelRelService;
+
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fix() {
-        testIssueFolderService.fixVersionFolder();
+//        testIssueFolderService.fixVersionFolder();
+
+        testCaseLabelRelService.fixLabelCaseRel();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+
     }
 }
