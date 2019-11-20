@@ -419,6 +419,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
     }
 
+    @Override
+    public List<TestCaseDTO> queryAllCase() {
+        return testCaseMapper.selectAll();
+    }
+
 
     @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
