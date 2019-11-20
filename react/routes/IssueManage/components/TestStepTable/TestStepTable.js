@@ -21,6 +21,7 @@ const propTypes = {
   onDelete: PropTypes.func,
   onUpdate: PropTypes.func,
   onClone: PropTypes.func,
+  onDrag: PropTypes.func,
 };
 const defaultProps = {
   onCreate: newStep => newStep,
@@ -57,7 +58,7 @@ function TestStepTable(props) {
         nextRank,
         stepIsCreating: false,
       };
-      const result = await onDrag(testCaseStepDTO);
+      const result = await onDrag(testCaseStepDTO);  
       data[targetIndex] = result;
       setData([...data]);
     } catch (error) {

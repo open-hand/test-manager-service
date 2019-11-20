@@ -1,4 +1,3 @@
-/* eslint-disable*/
 import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
@@ -22,8 +21,8 @@ import ExecuteDetailStore from '../../stores/ExecuteDetailStore';
 import TypeTag from '../../../IssueManage/components/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
-import UploadButtonNow from '../../../IssueManage/components/CommonComponent/UploadButtonNow';
 import UploadButtonExcuteDetail from '../../../IssueManage/components/CommonComponent/UploadButtonExcuteDetail';
+
 const { HeaderStore } = stores;
 
 const { Edit, Text } = TextEditToggle;
@@ -43,42 +42,25 @@ const Section = ({
   children,
   style,
 }) => (
-    <section id={id}>
-      <div className="c7ntest-side-item-header">
-        <div className="c7ntest-side-item-header-left">
-          {/* <Icon type={icon} /> */}
-          <span>{title}</span>
-        </div>
-        <div className="c7ntest-side-item-header-right">
-          {action}
-        </div>
+  <section id={id}>
+    <div className="c7ntest-side-item-header">
+      <div className="c7ntest-side-item-header-left">
+        {/* <Icon type={icon} /> */}
+        <span>{title}</span>
       </div>
-      <div className="c7ntest-side-item-content" style={style}>
-        {children}
+      <div className="c7ntest-side-item-header-right">
+        {action}
       </div>
-      <div className="c7ntest-side-item-header-line" />
+    </div>
+    <div className="c7ntest-side-item-content" style={style}>
+      {children}
+    </div>
+    <div className="c7ntest-side-item-header-line" />
 
-    </section>
-  );
+  </section>
+);
 const defaultProps = {
   issueInfosVO: { issueTypeVO: {} },
-};
-const handleRemove = (file) => {
-  const index = fileList.indexOf(file);
-  const newFileList = fileList.slice();
-  if (onRemove) {
-    deleteFileAgile(file.uid)
-      .then((response) => {
-        if (response) {
-          newFileList.splice(index, 1);
-          onRemove(newFileList.reverse());
-          Choerodon.prompt('删除成功');
-        }
-      })
-      .catch(() => {
-        Choerodon.prompt('删除失败，请稍后重试');
-      });
-  }
 };
 const propTypes = {
   issueInfosVO: PropTypes.shape({}),
@@ -99,11 +81,12 @@ class ExecuteDetailSide extends Component {
     super(props);
     this.container = React.createRef();
   }
+
   state = { currentNav: 'detail', FullEditorShow: false, editing: false }
 
   componentDidMount() {
     document.getElementById('scroll-area').addEventListener('scroll', this.handleScroll);
-    this.setQuery()
+    this.setQuery();
   }
 
   componentWillUnmount() {
@@ -268,18 +251,17 @@ class ExecuteDetailSide extends Component {
     };
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
-      const ellipsis = "...";
+      const ellipsis = '...';
       const textArr = [...text];
       return (
         <Tooltip title={text}>
           {textArr.length > 20 ? textArr.splice(0, 20).join('') + ellipsis : text}
         </Tooltip>
       );
-
-    }
+    };
     const defectsOptions = issueList.map(issue => (
       <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {renderIssueSummary(issue.issueNum + ' ' + issue.summary)}
+        {renderIssueSummary(`${issue.issueNum} ${issue.summary}`)}
       </Option>
     ));
     const userOptions = userList.map(user => (
@@ -316,7 +298,7 @@ class ExecuteDetailSide extends Component {
           <div className="c7ntest-ExecuteDetailSide" ref={this.container}>
             <div className="c7ntest-ExecuteDetailSide-divider" />
 
-            <div className="c7ntest-content" >
+            <div className="c7ntest-content">
               <div className="c7ntest-content-top">
                 <div className="c7ntest-between-center">
                   <div style={{ fontSize: '16px', fontWeight: 500 }}>
@@ -326,7 +308,7 @@ class ExecuteDetailSide extends Component {
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      <Link className="primary" style={{ marginLeft: 5 }} className="c7ntest-text-dot" to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
+                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
                     </div>
 
                   </div>
@@ -351,7 +333,9 @@ class ExecuteDetailSide extends Component {
                     <div className="c7ntest-item-one-line-right">
                       {statusColor && (
                         <StatusTags
-                          style={{ height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15 }}
+                          style={{
+                            height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15, 
+                          }}
                           color={statusColor}
                           name={statusName}
                         />
@@ -381,6 +365,7 @@ class ExecuteDetailSide extends Component {
                         disabled={!disabled}
                         formKey="assignedTo"
                         onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
+                        // eslint-disable-next-line no-nested-ternary
                         originData={assigneeUser
                           ? find(userList, { id: assigneeUser.id })
                             ? assigneeUser.id
@@ -423,8 +408,7 @@ class ExecuteDetailSide extends Component {
                   title="描述"
                   style={{ padding: '0 15px 0 0' }}
                   action={(
-                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor}>
-                    </Button>
+                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor} />
                   )}
                 >
                   {comment && !editing
@@ -538,7 +522,8 @@ class ExecuteDetailSide extends Component {
               </div>
             </div>
             {
-              FullEditorShow && <FullEditor
+              FullEditorShow && (
+              <FullEditor
                 initValue={this.editValue || text2Delta(comment)}
                 visible={FullEditorShow}
                 onCancel={() => this.setState({ FullEditorShow: false })}
@@ -549,6 +534,7 @@ class ExecuteDetailSide extends Component {
                   this.handleCommentSave(value);
                 }}
               />
+              )
             }
           </div>
         </ResizeAble>

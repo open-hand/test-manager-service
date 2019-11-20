@@ -1,58 +1,48 @@
-import React, { Component, Fragment } from 'react';
+import React, { useContext } from 'react';
+import { observer } from 'mobx-react-lite';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
-} from '../../../../../api/IssueManageApi';
+} from '@/api/IssueManageApi';
 import TestStepTable from '../../TestStepTable';
+import EditIssueContext from '../stores';
 
-function EditTestStepTable(props) {
+function EditTestStepTable() {
   const {
-    disabled, issueId, data, reloadIssue, enterLoad, leaveLoad,
-  } = props;
-
-  const onUpdateStep = (newData) => {
-    enterLoad();
-    updateStep(newData).then((res) => {
-      reloadIssue();
-      leaveLoad();
-    });
-  };
-  const onCreateIssueStep = (newData) => {
-    enterLoad();
+    store, disabled, caseId, prefixCls, 
+  } = useContext(EditIssueContext);
+  const { issueSteps } = store;
+  const onUpdateStep = newData => store.loadWithLoading(
+    updateStep(newData),
+  );
+  const onCreateIssueStep = newData => store.loadWithLoading(
     createIssueStep({
-      issueId,
+      caseId,
       ...newData,
-    }).then((res) => {
-      reloadIssue();
-      leaveLoad();
-    });
-  };
-  const onCloneStep = (newData) => {
+    }),
+  );
+  const onCloneStep = newData => store.loadWithLoading(
     cloneStep({
-      issueId,
+      caseId,
       ...newData,
-    }).then((res) => {
-      reloadIssue();
-    //   leaveLoad();
-    })
-      .catch((error) => {
-        leaveLoad();
-      });
-  };
-  const onDeleteStep = (newData) => {
-    deleteStep(newData)
-      .then((res) => {
-        reloadIssue();
-      });
+    }),
+  );
+  const onDeleteStep = async (newData) => {
+    await deleteStep(newData);
+    store.loadIssueData();
   };
   return (
     <TestStepTable
       disabled={disabled}
-      data={data}
-      updateStep={onUpdateStep}
-      createIssueStep={onCreateIssueStep}
-      cloneStep={onCloneStep}
-      deleteStep={onDeleteStep}
+      data={issueSteps}
+      setData={(newSteps) => {
+        store.setIssueSteps(newSteps);
+      }}
+      onUpdate={onUpdateStep}
+      onCreate={onCreateIssueStep}
+      onClone={onCloneStep}
+      onDelete={onDeleteStep}
+      onDrag={onUpdateStep}
     />
   );
 }
-export default EditTestStepTable;
+export default observer(EditTestStepTable);
