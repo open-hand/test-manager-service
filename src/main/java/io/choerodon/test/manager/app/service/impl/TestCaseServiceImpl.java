@@ -241,7 +241,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.project.info.null");
         }
         testCaseVO.setProjectId(projectId);
-        testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
+        testCaseVO.setCaseNum(1L);
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
         if (!CollectionUtils.isEmpty(caseStepVOS)) {
