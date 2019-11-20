@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { DataSet } from 'choerodon-ui/pro/lib';
 import { stores } from '@choerodon/boot';
-import { getProjectId } from '../../../../../common/utils';
+import { getProjectId, beforeTextUpload } from '../../../../../common/utils';
 
 const { AppState } = stores;
 const linkOptions = new DataSet({
@@ -41,7 +41,7 @@ function CreateIssueDataSet(intlPrefix, intl) {
             {
                 name: 'summary', type: 'string', label: summary, required: true,
             },
-            { name: 'description', type: 'string', label: description },
+            { name: 'description', type: 'object', label: description },
             {
                 name: 'fileList',
                 type: 'object',
@@ -86,13 +86,13 @@ function CreateIssueDataSet(intlPrefix, intl) {
                 const newData = {
                     ...data[0],
                     caseStepVOS: data[0].caseStepVOS.map(i => ({
-                            testStep: i.testStep,
-                            testData: i.testData,
-                            expectedResult: i.expectedResult,
-                        })),
+                        testStep: i.testStep,
+                        testData: i.testData,
+                        expectedResult: i.expectedResult,
+                    })),
                 };
                 return ({
-                    url: `/v1/projects/${getProjectId()}/case/create`,
+                    url: `test/v1/projects/${getProjectId()}/case/create`,
                     method: 'post',
                     data: newData,
                 });
