@@ -241,7 +241,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.project.info.null");
         }
         testCaseVO.setProjectId(projectId);
-        testCaseVO.setCaseNum(1L);
+        testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
         if (!CollectionUtils.isEmpty(caseStepVOS)) {
@@ -502,6 +502,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.test.case.insert.caseId.should.be.null");
         }
         TestCaseDTO testCaseDTO = modelMapper.map(testCaseVO, TestCaseDTO.class);
+        testCaseDTO.setVersionNum(1L);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::insert, testCaseDTO, 1, "error.testcase.insert");
         return testCaseDTO;
     }

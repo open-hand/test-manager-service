@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -25,5 +26,10 @@ public class IssueFeignClientFallback implements IssueFeignClient {
     @Override
     public ResponseEntity<List<PriorityVO>> queryByOrganizationIdList(Long organizationId) {
         throw new CommonException("error.priorityList.get");
+    }
+
+    @Override
+    public ResponseEntity<List<IssueLinkVO>> queryIssues(Long projectId, List<Long> issueIds) {
+        throw new CommonException("error.query.queryIssueLinkList");
     }
 }

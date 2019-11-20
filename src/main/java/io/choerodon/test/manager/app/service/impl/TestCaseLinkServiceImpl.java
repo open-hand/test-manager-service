@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.agile.api.vo.IssueLinkDTO;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
+import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,12 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     private TestCaseLinkMapper testCaseLinkMapper;
 
     @Autowired
+    private IssueFeignClient issueFeignClient;
+
+    @Autowired
     private TestCaseFeignClient testCaseFeignClient;
+
+
     @Override
     public void delete(Long project, Long linkId) {
       testCaseLinkMapper.deleteByPrimaryKey(linkId);
@@ -70,5 +78,21 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             testCaseLink.setLinkCaseId(caseId);
             testCaseLinkMapper.insert(testCaseLink);
         }
+    }
+
+    @Override
+    public List<IssueLinkVO> queryLinkIssues(Long projectId, Long caseId) {
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        testCaseLinkDTO.setLinkCaseId(caseId);
+        testCaseLinkDTO.setProjectId(projectId);
+        List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
+        if(CollectionUtils.isEmpty(caseLinkList)){
+            return  new ArrayList<>();
+        }
+        List<Long> issueIds = caseLinkList.stream().map(TestCaseLinkDTO::getIssueId).collect(Collectors.toList());
+        List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, issueIds).getBody();
+        List<IssueLinkVO> issueLinkVOList = new ArrayList<>();
+        issueInfos.stream().forEach(v -> v.setLinkCaseId(caseId));
+        return issueInfos;
     }
 }

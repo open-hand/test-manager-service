@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
 
@@ -33,4 +34,6 @@ public interface TestCaseLinkService {
     List<IssueInfoDTO> listIssueInfo(Long projectId,Long caseId);
 
     void copyByCaseId(Long projectId, Long caseId, Long oldCaseId);
+
+    List<IssueLinkVO> queryLinkIssues(Long projectId, Long caseId);
 }
