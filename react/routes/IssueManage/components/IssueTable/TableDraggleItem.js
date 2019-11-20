@@ -13,7 +13,7 @@ export default observer((props) => {
   } = props;
   const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.caseId });
   return (
-    <Draggable key={issue.caseId} draggableId={issue.caseId} index={index} >
+    <Draggable key={issue.caseId} draggableId={issue.caseId} index={index}>
       {(provided, snapshotinner) => (
         <tr
           ref={provided.innerRef}
@@ -53,7 +53,7 @@ export default observer((props) => {
                   </div>
                   <div> 按下ctrl/command复制</div>
                   <div
-                    ref={props.ref}
+                    ref={props.instanceRef}
                   >
                     <div>
                       当前状态：

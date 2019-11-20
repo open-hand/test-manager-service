@@ -22,7 +22,7 @@ import useAvoidClosure from '@/hooks/useAvoidClosure';
 export default observer((props) => {
   const [firstIndex, setFirstIndex] = useState(null);
   const [filteredColumns, setFilteredColumns] = useState([]);
-  const instance = useRef(null);
+  const instance = useRef();
 
   const handleColumnFilterChange = ({ selectedKeys }) => {
     setFilteredColumns(selectedKeys);
@@ -109,7 +109,7 @@ export default observer((props) => {
         return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} ref={instance} onRow={onRow}>
+          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -125,7 +125,6 @@ export default observer((props) => {
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-
       if (instance.current.firstElementChild) {
         instance.current.replaceChild(templateCopy, instance.current.firstElementChild);
       } else {
