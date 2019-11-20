@@ -62,12 +62,6 @@ function CreateIssueDataSet(intlPrefix, intl) {
                 type: 'number',
                 bind: 'folder.folderId',
             },
-            // {
-            //     name: 'versionId',
-            //     type: 'number',
-            //     bind: 'folder.versionId',
-            //     ignore: 'never',
-            // },
             {
                 name: 'issueLink',
                 type: 'object',
@@ -88,11 +82,19 @@ function CreateIssueDataSet(intlPrefix, intl) {
         transport: {
             // eslint-disable-next-line arrow-body-style
             submit: ({ data, dataSet }) => {
-                // console.log('submit', data, dataSet);
+                // console.log('submit', data);
+                const newData = {
+                    ...data[0],
+                    caseStepVOS: data[0].caseStepVOS.map(i => ({
+                            testStep: i.testStep,
+                            testData: i.testData,
+                            expectedResult: i.expectedResult,
+                        })),
+                };
                 return ({
                     url: `/v1/projects/${getProjectId()}/case/create`,
                     method: 'post',
-                    data: data[0],
+                    data: newData,
                 });
             },
         },
