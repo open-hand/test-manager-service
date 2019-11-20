@@ -13,29 +13,38 @@ import UserHead from '../UserHead';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../CommonComponent/SelectTree';
+import { beforeTextUpload } from '../../../../common/utils';
+
 import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const { intl } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), []);
-  
+
   async function handleCreateIssue() {
-    if (!createDataset.isModified()) {
-      return true;
-    }
+    // if (!createDataset.isModified()) {
+    //   return true;
+    // }
     try {
-      if ((await createDataset.submit())) {
+      const oldDes = createDataset.current.get('description');
+      beforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
+      if (await createDataset.submit()) {
         // setTimeout(() => { window.location.reload(true); }, 1000);
-        // context.sendSettingDataSet.query();
         return true;
       } else {
+        // error 时 重新将描述恢复富文本格式
+        createDataset.current.set('description', oldDes);
         return false;
       }
     } catch (e) {
       return false;
     }
   }
+
+  const handleChangeDes = (value) => {
+    createDataset.current.set('description', value);
+  };
 
   useEffect(() => {
     // 初始化属性
@@ -60,7 +69,11 @@ function CreateIssue(props) {
         {/** 这里逻辑待处理， DataSet提交 */}
 
         {visibleDetail && [
-          <TextArea name="description" />,
+          <WYSIWYGEditor
+            style={{ height: 200, width: '100%' }}
+            onChange={handleChangeDes}
+          />,
+          // <TextArea name="description" />,
           <div className="test-create-issue-form-file">
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
