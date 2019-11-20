@@ -31,6 +31,8 @@ public class TestCaseVO {
     private Long objectVersionNumber;
     @ApiModelProperty(value = "用例步骤")
     private List<TestCaseStepVO> caseStepVOS;
+    @ApiModelProperty(value = "测试用例关联的标签")
+    private List<Long> lableIds;
 
     public Long getCaseId() {
         return caseId;
@@ -110,5 +112,13 @@ public class TestCaseVO {
 
     public void setCaseStepVOS(List<TestCaseStepVO> caseStepVOS) {
         this.caseStepVOS = caseStepVOS;
+    }
+
+    public List<Long> getLableIds() {
+        return lableIds;
+    }
+
+    public void setLableIds(List<Long> lableIds) {
+        this.lableIds = lableIds;
     }
 }

@@ -243,6 +243,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseVO.setProjectId(projectId);
         testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
+        // 创建测试步骤
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
         if (!CollectionUtils.isEmpty(caseStepVOS)) {
             caseStepVOS.forEach(v -> {
@@ -250,6 +251,9 @@ public class TestCaseServiceImpl implements TestCaseService {
                 testCaseStepService.changeStep(v, projectId,false);
             });
         }
+        // 创建标签
+
+
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         List<Long> userIds = new ArrayList<>();
