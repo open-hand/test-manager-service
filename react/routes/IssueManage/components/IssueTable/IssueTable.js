@@ -214,7 +214,7 @@ export default observer((props) => {
       pageSize: IssueStore.pagination.pageSize,
       total: IssueStore.pagination.total,
     });
-    IssueStore.setFilteredInfo(transformFilters(filters));
+    IssueStore.setFilter({ searchArgs: transformFilters(filters) });
     IssueStore.setBarFilters(barFilters);
     // window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {

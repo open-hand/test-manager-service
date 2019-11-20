@@ -16,10 +16,8 @@ class IssueStore {
   };
 
   @observable filter = {
-    advancedSearchArgs: {},
+    searchArgs: {},
   };
-
-  @observable filteredInfo = {};
 
   @observable order = {
     orderField: '',
@@ -48,9 +46,8 @@ class IssueStore {
       total: 0,
     };
     this.filter = {
-      advancedSearchArgs: {},
+      searchArgs: {},
     };
-    this.filteredInfo = {};
     this.order = {
       orderField: '',
       orderType: '',
@@ -74,40 +71,37 @@ class IssueStore {
       
       },
     });
-    this.setFilteredInfo({});
     this.setBarFilters([]);
   }
 
-  loadIssues = (page, size = this.pagination.pageSize) => {
+  loadIssues = async (page, size = this.pagination.pageSize) => {
     const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const { currentCycle } = IssueTreeStore;
     const { id } = currentCycle;
-    return new Promise((resolve) => {
-      getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType).then((res) => {
-        this.setIssues(res.list);
-        // 调用ids接口不返回总数
-        if (Page > 1) {
-          this.setPagination({
-            current: Page,
-            pageSize: size,
-            total: this.pagination.total,
-          });
-        } else {
-          this.setPagination({
-            current: res.pageNum,
-            pageSize: size,
-            total: res.total,
-          });
-        }
-        resolve(res);
-        this.setLoading(false);
-      }).catch((e) => {        
-        this.setLoading(false);
-      });
-    });
+    try {
+      const res = await getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType);
+      this.setIssues(res.list);
+      if (Page > 1) {
+        this.setPagination({
+          current: Page,
+          pageSize: size,
+          total: this.pagination.total,
+        });
+      } else {
+        this.setPagination({
+          current: res.pageNum,
+          pageSize: size,
+          total: res.total,
+        });
+      }
+      this.setLoading(false);
+    } catch (e) {
+      this.setLoading(false);
+    }
   }
+
 
   @action setIssues(data) {
     this.issues = data;
@@ -129,10 +123,6 @@ class IssueStore {
 
   @action setFilter(data) {
     this.filter = data;
-  }
-
-  @action setFilteredInfo(data) {
-    this.filteredInfo = data;
   }
 
   @action setOrder(data) {
@@ -182,11 +172,6 @@ class IssueStore {
     return {
       ...filter,
       contents: this.barFilters,
-      searchArgs: this.filteredInfo,
-      // otherArgs: {
-      //   ...filter.otherArgs,
-      //   issueIds: this.paramIssueId ? [Number(this.paramIssueId)] : undefined,
-      // },
     };
   }
 
