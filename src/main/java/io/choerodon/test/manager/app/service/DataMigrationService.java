@@ -9,4 +9,9 @@ public interface DataMigrationService {
      * 迁移用例
      */
     void migrateIssue();
+
+    /**
+     * 迁移附件
+     */
+    void migrateAttachment();
 }

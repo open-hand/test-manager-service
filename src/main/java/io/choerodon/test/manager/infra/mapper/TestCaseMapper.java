@@ -20,4 +20,6 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") Long[] caseIds);
 
     void batchInsertTestCase(@Param("testCaseMigrateVO")TestCaseMigrateVO testCaseMigrateVO);
+
+    List<Long> listIssueIds();
 }

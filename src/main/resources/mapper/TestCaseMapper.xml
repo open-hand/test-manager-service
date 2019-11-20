@@ -69,4 +69,8 @@
             #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate};
         </if>
     </insert>
+
+    <select id="listIssueIds" resultType="long">
+        select case_id from test_case
+    </select>
 </mapper>
