@@ -76,7 +76,7 @@ export function loadStatus(statusId, issueId, typeId) {
  * @returns
  */
 export function loadIssue(issueId) {
-  return request.get(`/agile/v1/projects/${getProjectId()}/issues/${issueId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/issues/${issueId}`);
 }
 /**
  *更新用例状态

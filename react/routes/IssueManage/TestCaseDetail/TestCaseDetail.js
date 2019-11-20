@@ -28,15 +28,15 @@ class TestCaseDetail extends Component {
 
   componentDidMount() {
     const { clickIssue } = this.props;
-    const { issueId } = clickIssue;
-    this.reloadIssue(issueId);
+    const { caseId } = clickIssue;
+    this.reloadIssue(caseId);
   }
 
   componentWillReceiveProps(nextProps) {
     const { clickIssue } = this.props;
-    const { issueId } = clickIssue;
-    if (nextProps.clickIssue.issueId && nextProps.clickIssue.issueId !== issueId) {
-      this.reloadIssue(nextProps.clickIssue.issueId);
+    const { caseId } = clickIssue;
+    if (nextProps.clickIssue.caseId && nextProps.clickIssue.caseId !== caseId) {
+      this.reloadIssue(nextProps.clickIssue.caseId);
     }
   }
 
@@ -46,17 +46,17 @@ class TestCaseDetail extends Component {
    * @param {*}
    * @memberof EditIssueNarrow
    */
-  reloadIssue = (issueId) => {
+  reloadIssue = (caseId) => {
     this.setState({
       loading: true,
     });
     const { onClose } = this.props;
     Promise.all([
-      loadIssue(issueId),
-      loadLinkIssues(issueId),
-      loadDatalogs(issueId),
-      getIssueSteps(issueId),
-      getIssueExecutes(issueId),
+      loadIssue(caseId),
+      loadLinkIssues(caseId),
+      loadDatalogs(caseId),
+      getIssueSteps(caseId),
+      getIssueExecutes(caseId),
     ]).then(([issue, linkIssues, datalogs, testStepData, testExecuteData]) => {
       const {
         issueAttachmentVOList,
@@ -112,12 +112,12 @@ class TestCaseDetail extends Component {
       // folderName,
     } = this.state;
     const { clickIssue } = this.props;
-    const { issueId, folderName } = clickIssue;
+    const { caseId, folderName } = clickIssue;
     const { onClose } = this.props;
     return (    
       <EditIssue
         loading={loading}
-        issueId={issueId}
+        issueId={caseId}
         folderName={folderName}
         issueInfo={issueInfo}
         testStepData={testStepData}
@@ -137,7 +137,7 @@ class TestCaseDetail extends Component {
         linkIssues={linkIssues}
         datalogs={datalogs}
         disabled={disabled}
-        reloadIssue={this.reloadIssue.bind(this, issueId)}
+        reloadIssue={this.reloadIssue.bind(this, caseId)}
         onClose={onClose}
         onUpdate={this.handleUpdate}
         mode="wide"
