@@ -208,7 +208,6 @@ export default observer((props) => {
   };
 
   const handleFilterChange = (pagination, filters, sorter, barFilters) => {
-    console.log(filters, barFilters);
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,
@@ -221,25 +220,6 @@ export default observer((props) => {
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
-
-    const {
-      statusId, priorityId, issueNum, summary,
-      labelIssueRelVOList, versionIssueRelVOList, componentIssueRelVOList,
-    } = filters;
-    const search = {
-      advancedSearchArgs: {
-        statusId: statusId || [],
-        priorityId: priorityId || [],
-      },
-      otherArgs: {
-        componentIds: componentIssueRelVOList || [],
-        label: labelIssueRelVOList || [],
-        issueNum: issueNum && issueNum.length ? issueNum[0] : '',
-        summary: summary && summary.length ? summary[0] : '',
-        versionStatusCode: versionIssueRelVOList && versionIssueRelVOList.length ? versionIssueRelVOList[0] : '',
-      },
-    };
-    IssueStore.setFilter(search);
     const { current, pageSize } = IssueStore.pagination;
     IssueStore.loadIssues(current - 1, pageSize);
   };
@@ -374,11 +354,10 @@ export default observer((props) => {
             style={{
               userSelect: 'none',
               background: 'white',
-              padding: '12px 0 12px 12px',
+              padding: '16px 0 12px 0',
               fontSize: 13,
               display: 'flex',
               alignItems: 'center',
-              borderBottom: '1px solid #e8e8e8',
             }}
           >
             {/* table底部创建用例 */}
