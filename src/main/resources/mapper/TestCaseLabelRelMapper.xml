@@ -9,7 +9,8 @@
         INSERT INTO test_case_label_rel(case_id,label_id,project_id, object_version_number,
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="testCaseLabelRelDTOList" item="caseLabelRel" separator=",">
-            (#{caseLabelRel.caseId}, #{caseLabelRel.labelId}, #{caseLabelRel.projectId},#{caseLabelRel.objectVersionNumber},#{caseLabelRel.createdBy}, #{caseLabelRel.creationDate},
+            (#{caseLabelRel.caseId}, #{caseLabelRel.labelId}, #{caseLabelRel.projectId},#{caseLabelRel.objectVersionNumber},
+            #{caseLabelRel.createdBy}, #{caseLabelRel.creationDate},
             #{caseLabelRel.lastUpdatedBy}, #{caseLabelRel.lastUpdateDate})
         </foreach>
     </insert>

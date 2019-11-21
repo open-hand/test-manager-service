@@ -128,48 +128,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return new TestTreeIssueFolderVO(rootFolderId, treeFolderVOS);
     }
 
-    @Override
-    @Transactional
-    @Async
-    public void fixVersionFolder() {
-        TestIssueFolderVO testIssueFolder = new TestIssueFolderVO();
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-        Set<Long> projectFolderIds = testIssueFolderVOS.stream().map(TestIssueFolderVO::getProjectId).collect(Collectors.toSet());
-        projectFolderIds.forEach(projectFolderId -> {
-            List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
-            Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e->e.getName()!=null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-            TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-            testIssueFolderDTO.setProjectId(projectFolderId);
-            List<TestIssueFolderVO> testIssueProjectFolderVOs = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                    .map(testIssueFolderDTO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-            }.getType());
-            //以version区分
-            Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e -> e.getVersionId() != null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
-            for (Map.Entry<Long, List<TestIssueFolderVO>> entry : projectVersionFolderVOs.entrySet()) {
-                //1.创建版本文件目录
-                String folderName = versionNameMap.get(entry.getKey());
-                if(!StringUtils.isEmpty(folderName)){
-                    TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
-                    newFolderVO.setName(folderName);
-                    newFolderVO.setParentId(0L);
-                    newFolderVO.setProjectId(projectFolderId);
-                    newFolderVO.setType("cycle");
-                    TestIssueFolderVO testIssueFolderVO = create(projectFolderId, newFolderVO);
-                    //2.更新二级目录
-                    if (!CollectionUtils.isEmpty(entry.getValue())) {
-                        entry.getValue().stream().forEach(folderVO -> {
-                            folderVO.setParentId(testIssueFolderVO.getFolderId());
-                            update(folderVO);
-                        });
-                    }
-                }
-            }
-            logger.info("============issueFolder=================>project:{} copy successed",projectFolderId);
-        });
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderVO create(Long projectId,TestIssueFolderVO testIssueFolderVO) {
