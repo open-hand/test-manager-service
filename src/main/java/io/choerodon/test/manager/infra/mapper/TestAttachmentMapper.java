@@ -6,6 +6,6 @@ import org.apache.ibatis.annotations.Param;
 
 public interface TestAttachmentMapper extends Mapper<TestCaseAttachmentDTO> {
 
-    void insertTestCaseAttachment(@Param("testCaseAttachment") TestCaseAttachmentDTO testCaseAttachmentDTO);
+    void insertTestCaseAttachment(TestCaseAttachmentDTO testCaseAttachmentDTO);
 
 }

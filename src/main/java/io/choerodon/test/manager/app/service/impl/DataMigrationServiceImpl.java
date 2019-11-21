@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
-import io.choerodon.test.manager.api.vo.TestCaseMigrateVO;
+import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.app.service.DataMigrationService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class DataMigrationServiceImpl implements DataMigrationService {
@@ -46,40 +47,45 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         List<Long> projectIds = testCaseFeignClient.queryIds(1L).getBody();
         Long startTime = System.currentTimeMillis();
         for (Long projectId : projectIds){
-            List<TestCaseMigrateVO> testCaseMigrateVOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
-            for (TestCaseMigrateVO testCaseMigrateVO : testCaseMigrateVOS){
-                testCaseMapper.batchInsertTestCase(testCaseMigrateVO);
-                logger.info("InsertTestCase----By----ProjectId{}",testCaseMigrateVO.getProjectId());
+            List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
+            for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS){
+                logger.info("caseID"+ testCaseMigrateDTO.getCaseId().toString());
+                logger.info("description"+ testCaseMigrateDTO.getDescription());
+                testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
+                logger.info("InsertTestCase----By----ProjectId{}", testCaseMigrateDTO.getProjectId());
             }
         }
         logger.info("TestCaseDataMigrateSucceed");
         logger.info("Cost {}ms",System.currentTimeMillis() - startTime);
 
+        //更新文件夹相关联的folderid
         List<Long> issueIds = testCaseMapper.listIssueIds();
         for (Long issueid : issueIds) {
             TestIssueFolderRelDTO relDTO = new TestIssueFolderRelDTO();
             relDTO.setIssueId(issueid);
-            relDTO = testIssueFolderRelMapper.selectOneByExample(relDTO);
-            TestCaseDTO testCaseDTO = new TestCaseDTO();
-            testCaseDTO.setCaseId(issueid);
-            testCaseDTO.setFolderId(relDTO.getFolderId());
-            testCaseMapper.updateByPrimaryKeySelective(testCaseDTO);
+            List<TestIssueFolderRelDTO> list = testIssueFolderRelMapper.select(relDTO);
+            for (TestIssueFolderRelDTO testIssueFolderRelDTO : list){
+                TestCaseDTO testCaseDTO = new TestCaseDTO();
+                testCaseDTO.setCaseId(issueid);
+                testCaseDTO.setFolderId(testIssueFolderRelDTO.getFolderId());
+                testCaseMapper.updateByPrimaryKeySelective(testCaseDTO);
+            }
         }
     }
 
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
-    public void migrateAttachment() {
+    public void migrateAttachment(){
 
-        List<Long> issueIds = testCaseMapper.listIssueIds();
         logger.info("start---migrate---test-case-attachment");
         Long startTime = System.currentTimeMillis();
-        for (Long issueId : issueIds) {
-            List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L,issueId).getBody();
+        List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L).getBody();
+        if (!CollectionUtils.isEmpty(attachmentDTOS)){
             for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
                 if (testCaseAttachmentDTO != null){
-                    testAttachmentMapper.insertTestCaseAttachment(testCaseAttachmentDTO);
+                    logger.info("insert-test-case-attachment{}",testCaseAttachmentDTO.getCaseId());
+                    testAttachmentMapper.insert(testCaseAttachmentDTO);
                 }
             }
         }
