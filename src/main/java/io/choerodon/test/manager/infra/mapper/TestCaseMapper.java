@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<TestCaseDTO> listCaseByFolderIds(@Param("projectId") Long projectId,@Param("folderIds") Set<Long> folderIds,@Param("searchDTO") SearchDTO searchDTO);
 
-    List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") Long[] caseIds);
+    List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
 
     void batchInsertTestCase(@Param("testCaseMigrateVO")TestCaseMigrateVO testCaseMigrateVO);
 

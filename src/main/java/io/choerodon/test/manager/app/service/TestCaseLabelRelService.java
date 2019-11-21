@@ -29,7 +29,7 @@ public interface TestCaseLabelRelService {
     Boolean baseCreate(TestCaseLabelRelDTO testCaseLabelRelDTO);
 
     /**
-     * 批量插入
+     * 批量插入(数据迁移使用)
      * @param testCaseLabelRelDTOList
      */
     void batchInsert(List<TestCaseLabelRelDTO> testCaseLabelRelDTOList);

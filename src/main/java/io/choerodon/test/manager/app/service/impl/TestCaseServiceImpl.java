@@ -96,6 +96,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
+    @Autowired
+    private TestCaseAttachmentService testCaseAttachmentService;
+
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
@@ -256,15 +259,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         // 关联测试用例与标签
         if (!CollectionUtils.isEmpty(testCaseVO.getLableIds())) {
-            List<TestCaseLabelRelDTO> lableList = new ArrayList<>();
             testCaseVO.getLableIds().forEach(v -> {
                 TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
                 testCaseLabelRelDTO.setCaseId(testCaseDTO.getCaseId());
                 testCaseLabelRelDTO.setLabelId(v);
                 testCaseLabelRelDTO.setProjectId(projectId);
-                lableList.add(testCaseLabelRelDTO);
+                testCaseLabelRelService.baseCreate(testCaseLabelRelDTO);
             });
-            testCaseLabelRelService.batchInsert(lableList);
+
         }
 
         //  附件信息
@@ -346,7 +348,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         testDataLogMapper.delete(testDataLogDTO);
         // 删除测试用例关联的标签
         testCaseLabelRelService.deleteByCaseId(caseId);
-        //TODO 删除附件信息
+        // 删除附件信息
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setProjectId(projectId);
         testCaseAttachmentDTO.setCaseId(caseId);
@@ -437,23 +439,28 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.folder.not.exist");
         }
         // 复制用例
-        Long[] caseIds = (Long[]) testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList()).toArray();
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, caseIds);
+        List<Long> collect = testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return;
+        }
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, collect);
         for (TestCaseDTO testCaseDTO : testCaseDTOS) {
             Long oldCaseId = testCaseDTO.getCaseId();
             testCaseDTO.setCaseId(null);
+            testCaseDTO.setVersionNum(1L);
+            testCaseDTO.setFolderId(folderId);
             testCaseDTO.setObjectVersionNumber(null);
-            testCaseMapper.insertSelective(testCaseDTO);
+            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class));
             // 复制用例步骤
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
             testCaseStepVO.setIssueId(oldCaseId);
-            testCaseStepService.batchClone(testCaseStepVO, testCaseDTO.getCaseId(), projectId);
+            testCaseStepService.batchClone(testCaseStepVO, testCase.getCaseId(), projectId);
             // 复制用例链接
-            testCaseLinkService.copyByCaseId(projectId, testCaseDTO.getCaseId(), oldCaseId);
-            //TODO 复制标签
-            testCaseLabelRelService.copyByCaseId(projectId, testCaseDTO.getCaseId(), oldCaseId);
-
-            //TODO 复制附件
+            testCaseLinkService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
+            // 复制标签
+            testCaseLabelRelService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
+            // 复制附件
+            testCaseAttachmentService.cloneAttachmentByCaseId(projectId, testCase.getCaseId(), oldCaseId);
         }
 
     }

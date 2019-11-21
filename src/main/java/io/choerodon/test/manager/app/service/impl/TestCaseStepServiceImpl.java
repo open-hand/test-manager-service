@@ -92,7 +92,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         if (changeVersionNum) {
            testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         }
-        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
     }
 
