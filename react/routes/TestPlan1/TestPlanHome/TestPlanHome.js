@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -8,22 +8,22 @@ import {
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import CreateAutoTest from '../components/CreateAutoTest'; 
+import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 import './TestPlanHome.less';
-
-const createAutoTestModalKey = Modal.key();
 
 export default observer(() => {
   const handleCreateAutoTest = () => {
-    Modal.open({
-      key: createAutoTestModalKey,
-      drawer: true,
-      title: '自动化测试',
-      children: (
-        <CreateAutoTest />
-      ),
-      style: { width: '10.90rem' },
-      className: 'c7ntest-testPlanHome-createAutoTestModal',
-    });
+    CreateAutoTestStore.setVisible(true);
+    // Modal.open({
+    //   key: createAutoTestModalKey,
+    //   drawer: true,
+    //   title: '自动化测试',
+    //   children: (
+    //     <CreateAutoTest />
+    //   ),
+    //   style: { width: '10.90rem' },
+    //   className: 'c7ntest-testPlanHome-createAutoTestModal',
+    // });
   };
 
   return (
@@ -46,6 +46,7 @@ export default observer(() => {
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }} />
+      <CreateAutoTest />
     </Page>
   );
 });

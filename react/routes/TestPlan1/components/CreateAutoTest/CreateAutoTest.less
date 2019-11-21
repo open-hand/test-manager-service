@@ -6,17 +6,11 @@
 @instance-icon-color: #f44336;
 @autotest-clear-color: #3f51b5;
 
-.c7ntest-testPlanHome-createAutoTestModal-footer {
-  display: flex;
-  &-cancelBtn {
-    margin-left: 0.08rem;
-  }
-}
-
-.c7ntest-testPlanHome-createAutoTestModal-children {
+.c7ntest-deployApp {
   .c7n-steps {
-    margin-bottom: 0.24rem;
+    margin-bottom: 24px;
   }
+
   p {
     font-size: 0.13rem;
     color: @p-color;
@@ -79,24 +73,18 @@
       margin-left: 0.3rem;
     }
   }
+
   .deployApp-env, .deployApp-app {
     margin-left: 36px;
   }
+
   .deployApp-review {
-    .c7n-radio-group {
-      display: flex;
-    }
     .deployApp-title {
       font-size: 0.13rem;
       color: @text-color;
       line-height: 0.2rem;
       display: inline-block;
       margin: 0 0 0.06rem 0;
-
-      span {
-        padding-right: 0.1rem;
-      }
-
       .deployApp-title-text {
         vertical-align: middle;
       }

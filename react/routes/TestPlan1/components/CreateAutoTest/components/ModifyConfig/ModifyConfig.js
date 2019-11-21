@@ -1,34 +1,38 @@
 
-import React, { useState, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
+import React, { Component } from 'react';
+import { Button } from 'choerodon-ui';
+import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 
 import { YamlEditor } from '../../../../../../components';
 import CreateAutoTestStore from '../../../../stores/CreateAutoTestStore';
 import { getYaml, checkYaml } from '../../../../../../api/AutoTestApi';
 
-export default injectIntl(observer(() => {
-  const [markers, setMarkers] = useState(null);
+@injectIntl
+@observer
+class ModifyConfig extends Component {
+  state = {
+    markers: null,
+  };
 
-  const loadYaml = () => {
+  componentDidMount() {
+    this.loadYaml();
+  }
+
+  loadYaml=() => {
     const { app, appVersion, env } = CreateAutoTestStore;
     getYaml(app.id, appVersion.id, env.id).then((data) => {
       if (data) {
         CreateAutoTestStore.setConfigValue(data);
       }
     });
-  };
-  
-  useEffect(() => {
-    loadYaml();
-  }, []);
+  }
 
- 
   /**
    * 获取values
    * @param value
    */
-  const handleChangeValue = (value) => {
+  handleChangeValue = (value) => {
     CreateAutoTestStore.setNewConfigValue(value);
     checkYaml(value)
       .then((data) => {      
@@ -36,10 +40,12 @@ export default injectIntl(observer(() => {
       });
   };
 
-  const data = CreateAutoTestStore.getNewConfigValue;
-  return (
-    <div className="deployApp-env">
-      {data && (
+  render() {
+    const { markers } = this.state;
+    const data = CreateAutoTestStore.getNewConfigValue;
+    return (
+      <div className="deployApp-env">
+        {data && (
         <YamlEditor
           newLines={data.newLines}
           isFileError={data.errorLines && data.errorLines.length > 0}
@@ -49,10 +55,13 @@ export default injectIntl(observer(() => {
           modifyMarkers={markers}
           value={data.yaml}
           highlightMarkers={data.highlightMarkers}
-          onChange={handleChangeValue}
+          onChange={this.handleChangeValue}
           change
         />
-      )}
-    </div>
-  );
-}));
+        )}
+      </div>
+    );
+  }
+}
+
+export default ModifyConfig;

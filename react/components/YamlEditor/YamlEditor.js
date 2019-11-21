@@ -65,6 +65,7 @@ class YamlEditor extends Component {
     const ch = 1000;
     const to = { line: end.line, ch: ch };
     const lineInfo = editor.lineInfo(from.line).bgClass;
+    console.log(lineInfo);
     // 新增行
     if (options.origin ==='+input' && options.text.toString() ===",") {
       editor.addLineClass(start.line + 1, 'background', 'newLine-text');
@@ -151,9 +152,9 @@ class YamlEditor extends Component {
     return (
       <div>
         { !this.props.readOnly && <div className="ace-error">
-          <span className="deployApp-config-block deployApp-config-new" /> <span className="deployApp-config-title">{formatMessage({ id: 'yaml.new' })}</span>
-          <span className="deployApp-config-block deployApp-config-lastModify" /> <span className="deployApp-config-title">{formatMessage({ id: 'yaml.lastModify' })}</span>
-          <span className="deployApp-config-error" /><span className="deployApp-config-title">{formatMessage({ id: 'yaml.yaml.error' })}</span>
+          <span className="deployApp-config-cilcle deployApp-config-new" /> <span className="deployApp-config-title">{formatMessage({ id: 'yaml.new' })}</span>
+          <span className="deployApp-config-cilcle deployApp-config-lastModify" /> <span className="deployApp-config-title">{formatMessage({ id: 'yaml.lastModify' })}</span>
+          <span className="deployApp-config-cilcle deployApp-config-error" /> <span className="deployApp-config-title">{formatMessage({ id: 'yaml.yaml.error' })}</span>
         </div> }
         <CodeMirror
           options={this.props.options}

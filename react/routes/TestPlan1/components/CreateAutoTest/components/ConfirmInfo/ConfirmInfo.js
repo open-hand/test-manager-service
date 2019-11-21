@@ -269,7 +269,7 @@ class ConfirmInfo extends Component {
     const { intl, AppState } = this.props;
     const { getFieldDecorator } = this.props.form;
     return (
-      <div className="c7ntest-create-task" style={{ paddingLeft: '0.36rem' }}>
+      <div className="c7ntest-create-task">
         <FormItem
           {...formItemLayout}
           className="c7ntest-create-task-inline-formitem"
@@ -430,7 +430,8 @@ class ConfirmInfo extends Component {
     const {
       app, appVersion, version,
     } = CreateAutoTestStore;
-    const { intl, confirmInfoRef } = this.props;
+    const { intl, saveRef } = this.props;
+    saveRef(this);
     const { formatMessage } = intl;
     const data = CreateAutoTestStore.getNewConfigValue;
     const {
@@ -448,10 +449,10 @@ class ConfirmInfo extends Component {
       lineHeight: '30px',
     };
     return (
-      <section className="deployApp-review" ref={confirmInfoRef}>
+      <section className="deployApp-review">
         <RadioGroup
           value={testType}
-          style={{ marginBottom: 20, paddingLeft: 36 }}
+          style={{ display: 'flex', marginBottom: 20, paddingLeft: 36 }}
           onChange={(e) => {
             this.setState({
               testType: e.target.value,
@@ -465,7 +466,7 @@ class ConfirmInfo extends Component {
         {testType === 'timing' && this.renderTimingExecute()}
         <div>
           <div style={{
-            borderTop: '1px solid #D8D8D8', fontSize: '16px', fontWeight: 500, paddingLeft: 36, marginTop: 20,
+            borderTop: '1px solid #D8D8D8', fontSize: '16px', fontWeight: 500, paddingLeft: 36, marginTop: 10, paddingTop: 20,
           }}
           >
             确认信息
@@ -492,6 +493,16 @@ class ConfirmInfo extends Component {
               </div>
               <div className="deployApp-text">
                 {appVersion && appVersion.version}
+              </div>
+            </div>
+            <div>
+              <div className="deployApp-title">
+                <span className="deployApp-title-text">
+                  目标版本：
+                </span>
+              </div>
+              <div className="deployApp-text">
+                {version && version.versionName}
               </div>
             </div>
             <div>

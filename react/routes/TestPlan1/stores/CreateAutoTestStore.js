@@ -7,6 +7,8 @@ class CreateAutoTestStore {
 
   @observable loading = false;
 
+  @observable currentStep = 1;
+
   @observable appList = [];
 
   @observable app = {};
@@ -14,6 +16,8 @@ class CreateAutoTestStore {
   @observable appVersion = {};
 
   @observable appVersionList = [];
+
+  @observable version = {};
 
   @observable appVersionPagination = {
     current: 1,
@@ -57,6 +61,10 @@ class CreateAutoTestStore {
     this.appVersion = appVersion;
   }
 
+  @action setVersion = (version) => {
+    this.version = version;
+  }
+
   @action setAppVersionPagination = (appVersionPagination) => {
     this.appVersionPagination = { ...this.appVersionPagination, ...appVersionPagination };
   }
@@ -65,16 +73,30 @@ class CreateAutoTestStore {
     this.env = env;
   }
 
+  @action toStep = (step) => {
+    this.currentStep = step;
+  }
+
+  @action nextStep = () => {
+    this.currentStep += 1;
+  }
+
+  @action preStep = () => {
+    this.currentStep -= 1;
+  }
+
   /**
    * 取消部署，数据初始化
    *
    * @memberof CreateAutoTestStore
    */
   @action clearTestInfo = () => {
+    this.currentStep = 1;
     this.appList = [];
     this.app = {};
     this.appVersion = {};
     this.appVersionList = [];
+    this.version = {};
     this.appVersionPagination = {
       current: 1,
       total: 0,
