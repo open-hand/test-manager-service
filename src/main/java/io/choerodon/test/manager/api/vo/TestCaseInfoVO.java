@@ -59,6 +59,12 @@ public class TestCaseInfoVO {
     @ApiModelProperty(value = "测试用例关联的附件信息")
     private List<TestCaseAttachmentDTO> attachment;
 
+    @ApiModelProperty(value = "乐观锁")
+    private Long objectVersionNumber;
+
+    @ApiModelProperty(value = "用例编号")
+    private String issueNum;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -177,5 +183,21 @@ public class TestCaseInfoVO {
 
     public void setAttachment(List<TestCaseAttachmentDTO> attachment) {
         this.attachment = attachment;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getIssueNum() {
+        return issueNum;
+    }
+
+    public void setIssueNum(String issueNum) {
+        this.issueNum = issueNum;
     }
 }

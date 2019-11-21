@@ -1,6 +1,9 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
+import java.util.List;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -44,6 +47,12 @@ public class TestCaseRepVO {
 
     @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
+
+    @ApiModelProperty(value = "标签")
+    private List<TestCaseLabelDTO> labels;
+
+    @ApiModelProperty(value = "附件")
+    private List<TestCaseAttachmentDTO> attachment;
 
     public Long getCaseId() {
         return caseId;
@@ -139,5 +148,21 @@ public class TestCaseRepVO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public List<TestCaseLabelDTO> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<TestCaseLabelDTO> labels) {
+        this.labels = labels;
+    }
+
+    public List<TestCaseAttachmentDTO> getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(List<TestCaseAttachmentDTO> attachment) {
+        this.attachment = attachment;
     }
 }

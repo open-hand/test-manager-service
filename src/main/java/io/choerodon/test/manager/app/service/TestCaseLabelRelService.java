@@ -1,10 +1,12 @@
 package io.choerodon.test.manager.app.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import io.choerodon.agile.api.vo.LabelIssueRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
 
 /**
@@ -55,11 +57,7 @@ public interface TestCaseLabelRelService {
      */
     void copyByCaseId(Long projectId, Long caseId, Long oldCaseId);
 
-    /**
-     * 改变测试用例关联的标签
-     * @param projectId
-     * @param caseId
-     * @param labelIds
-     */
-    void change(Long projectId,Long caseId,Long[] labelIds);
+    void baseDelete(TestCaseLabelRelDTO testCaseLabelRelDTO);
+
+    List<TestCaseLabelRelDTO> query(TestCaseLabelRelDTO testCaseLabelRel);
 }

@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
@@ -32,6 +33,34 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 v.setObjectVersionNumber(null);
                 testAttachmentMapper.insertSelective(v);
             });
+        }
+    }
+
+    @Override
+    public List<TestCaseAttachmentDTO> query(Long projectId, Long caseId) {
+        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
+        testCaseAttachmentDTO.setCaseId(caseId);
+        testCaseAttachmentDTO.setProjectId(projectId);
+        return testAttachmentMapper.select(testCaseAttachmentDTO);
+    }
+
+    @Override
+    public void baseInsert(TestCaseAttachmentDTO testCaseAttachmentDTO) {
+        if (testCaseAttachmentDTO == null) {
+            throw new CommonException("error.attachment.get");
+        }
+        if (testAttachmentMapper.insertSelective(testCaseAttachmentDTO) != 1) {
+            throw new CommonException("error.attachment.insert");
+        }
+    }
+
+    @Override
+    public void baseDelete(TestCaseAttachmentDTO testCaseAttachmentDTO) {
+        if (testCaseAttachmentDTO == null) {
+            throw new CommonException("error.attachment.get");
+        }
+        if (testAttachmentMapper.delete(testCaseAttachmentDTO) != 1) {
+            throw new CommonException("error.attachment.delete");
         }
     }
 }
