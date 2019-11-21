@@ -83,26 +83,6 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         });
 
     }
-
-    @Override
-    public Boolean baseCreate(TestCaseLabelRelDTO testCaseLabelRelDTO){
-       if( testCaseLabelRelMapper.insert(testCaseLabelRelDTO)!=1){
-           throw new CommonException("error.insert.testCaseLabelRel");
-       }
-        return true;
-    }
-
-    @Override
-    public void batchInsert(List<TestCaseLabelRelDTO> testCaseLabelRelDTOList) {
-        testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOList);
-    }
-    private TestCaseLabelRelDTO caseIssueDtoTocaseDto( LabelIssueRelFixVO labelIssueRelFixVO){
-        TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
-        BeanUtils.copyProperties(labelIssueRelFixVO,testCaseLabelRelDTO);
-        testCaseLabelRelDTO.setCaseId(labelIssueRelFixVO.getIssueId());
-        return testCaseLabelRelDTO;
-    }
-
     @Override
     @Transactional
     @DataLog(type = DataLogConstants.LABEL_CREATE)
@@ -165,7 +145,7 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         return testCaseLabelRelMapper.select(testCaseLabelRel);
     }
 
-    private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelDTO labelIssueRelDTO) {
+    private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelFixVO labelIssueRelDTO) {
         TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
         BeanUtils.copyProperties(labelIssueRelDTO, testCaseLabelRelDTO);
         testCaseLabelRelDTO.setCaseId(labelIssueRelDTO.getIssueId());
