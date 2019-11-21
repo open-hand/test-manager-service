@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,14 +75,13 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     @Override
     public void fixLabelCaseRel() {
         List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Set<Long> projectIds = testCaseDTOS.stream().map(TestCaseDTO::getProjectId).collect(Collectors.toSet());
-        projectIds.forEach(projectId->{
-            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
+        Map<Long, List<TestCaseDTO>> projectIds = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getProjectId));
+        for (Map.Entry<Long, List<TestCaseDTO>> projectId : projectIds.entrySet()) {
+            List<Long> caseIdList = projectId.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId.getKey(), caseIdList).getBody();
             List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
             testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOS);
-            logger.info("==========label_case_rel==============> project: {} copy successed", projectId);
-        });
-
+        }
     }
     @Override
     @Transactional

@@ -14,4 +14,6 @@ public interface DataMigrationService {
      * 迁移附件
      */
     void migrateAttachment();
+
+    void migrateLink();
 }

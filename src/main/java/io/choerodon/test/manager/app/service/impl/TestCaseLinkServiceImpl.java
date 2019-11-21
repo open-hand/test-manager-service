@@ -110,4 +110,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
         return issueInfos;
     }
+
+    @Override
+    public void batchInsert(List<TestCaseLinkDTO> testCaseLinkDTOList) {
+        testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
+    }
 }
