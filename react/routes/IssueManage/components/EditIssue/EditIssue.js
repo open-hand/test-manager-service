@@ -1,7 +1,7 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable react/destructuring-assignment */
 import React, {
-  useRef, useState, useEffect, useContext,
+  useRef, useEffect, useContext,
 } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { throttle } from 'lodash';
@@ -17,7 +17,7 @@ import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
 import DataLogs from './Component/DataLogs';
 import EditTestStepTable from './Component/EditTestStepTable';
-import EditDetail from './EditDetail';
+import Detail from './Detail';
 import Header from './Header';
 
 const { TabPane } = Tabs;
@@ -25,7 +25,7 @@ const { TabPane } = Tabs;
 function EditIssue() {
   const container = useRef();
   const {
-    store, caseId, prefixCls, announcementHeight,
+    store, caseId, prefixCls, announcementHeight, onUpdate,
   } = useContext(EditIssueContext);
   const { issueInfo, dataLogs, loading } = store; 
   const setQuery = (width = container.current.clientWidth) => {
@@ -42,10 +42,8 @@ function EditIssue() {
     store.loadIssueData(caseId);
   }, [caseId, store]);
   const handleCreateLinkIssue = () => {
-    this.props.reloadIssue();
-    if (this.props.onUpdate) {
-      this.props.onUpdate();
-    }
+    store.loadIssueData();
+    onUpdate();
   };
 
 
@@ -88,7 +86,7 @@ function EditIssue() {
   }, 150);
 
 
-  const handleUpdate = (newValue, done) => {
+  const handleUpdate = async (newValue, done) => {
     // console.log('handleUpdate', newValue);
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
@@ -101,12 +99,8 @@ function EditIssue() {
     switch (key) {
       case 'description': {
         if (value) {
-          returnBeforeTextUpload(value, issue, updateIssue, 'description')
-            .then((res) => {
-              this.props.reloadIssue();
-            }).catch(() => {
-              done();
-            });
+          await returnBeforeTextUpload(value, issue, updateIssue, 'description');            
+          store.loadIssueData();
         }
         break;
       }
@@ -117,15 +111,10 @@ function EditIssue() {
           break;
         }
         issue = { ...issue, ...newValue };
-        updateIssue(issue)
-          .then((res) => {
-            this.props.reloadIssue();
-            if (this.props.onUpdate) {
-              this.props.onUpdate();
-            }
-          }).catch(() => {
-            done();
-          });
+        await updateIssue(issue);          
+        store.loadIssueData();
+        onUpdate();
+        done();       
         break;
       }
     }
@@ -168,7 +157,7 @@ function EditIssue() {
                   <EditTestStepTable />
                 </TabPane>
                 <TabPane tab="详情" key="detail">
-                  <EditDetail
+                  <Detail
                     onUpdate={handleUpdate}
                   />
                 </TabPane>

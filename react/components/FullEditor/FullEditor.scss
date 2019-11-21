@@ -1,12 +1,7 @@
-.c7n-agile-editDescription {
-  .c7n-modal {
-    width: 95% !important;
-    height: 100%;
-  }
-  .c7n-modal-body {
-    height: calc(100% - 84px);
-  }
-  .c7n-modal-content {
-    height: 100%;
+.c7n-editor-fullscreen {
+  .c7n-pro-modal-body {
+    height: calc(100vh - 1.2rem);
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 }

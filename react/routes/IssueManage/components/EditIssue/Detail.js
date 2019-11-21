@@ -14,13 +14,13 @@ import {
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import { getLabels } from '@/api/agileApi';
-import { FullEditor, WYSIWYGEditor } from '@/components';
+import { openFullEditor, WYSIWYGEditor } from '@/components';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
 import Divider from './Component/Divider';
 import EditIssueContext from './stores';
 import EditDetailWrap from './Component/EditDetailWrap';
-import './EditDetail.less';
+import './Detail.less';
 import LinkIssues from './link-issues';
 // 问题链接
 const { Text, Edit } = TextEditToggle;
@@ -34,7 +34,7 @@ const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
  * @param {*} linkIssues
  * @param {*} reloadIssue  重载问题  
  */
-function EditDetail({
+function Detail({
   onUpdate,
 }) {
   const {
@@ -42,10 +42,10 @@ function EditDetail({
   } = useContext(EditIssueContext);
   const { issueInfo } = store;
   const {
-    folderName, linkIssues, fileList, createUser, lastUpdateUser, 
+    folderName, linkIssues, fileList, createUser,
+    lastUpdateUser, creationDate, lastUpdateDate, description, issueId,
   } = issueInfo;
-  // 编辑全屏
-  const [FullEditorShow, setFullEditorShow] = useState(false);
+
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const [createLinkTaskShow, setCreateLinkTaskShow] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -145,9 +145,7 @@ function EditDetail({
       issueAttachmentVOList: newFileList,
     });
   };
-
   const onUploadFiles = (arr) => {
-    const { issueId } = issueInfo;
     if (arr.length > 0 && arr.some(one => !one.url)) {
       const config = {
         // issueType: this.state.typeCode,
@@ -159,8 +157,7 @@ function EditDetail({
     }
   };
 
-  function renderDescription() {
-    const { description } = issueInfo;
+  function renderDescription() {   
     let delta;
     if (editDescriptionShow === undefined) {
       return null;
@@ -181,7 +178,6 @@ function EditDetail({
 
               handleSave={(value) => {
                 onUpdate({ description: value });
-
                 setEditDescriptionShow(false);
               }}
             />
@@ -206,10 +202,13 @@ function EditDetail({
     //   setCreateLinkTaskShow(false);
     // }
   };
+  function handleOpenFullEditor() {
+    openFullEditor({
+      initValue: description,
+      onOk: async (value) => { await onUpdate({ description: value }); },
+    });
+  }
   function render() {
-    const {
-      creationDate, lastUpdateDate, description, issueId,
-    } = issueInfo;
     return (
       <React.Fragment>
         <section id="detail">
@@ -260,7 +259,7 @@ function EditDetail({
           <TitleWrap title={<FormattedMessage id="execute_description" />}>
             <div style={{ marginLeft: '14px', display: 'flex' }}>
               <Tooltip title="全屏编辑" getPopupContainer={triggerNode => triggerNode.parentNode}>
-                <Button icon="zoom_out_map" onClick={() => setFullEditorShow(true)} />
+                <Button icon="zoom_out_map" onClick={handleOpenFullEditor} />
               </Tooltip>
               <Tooltip title="编辑" getPopupContainer={triggerNode => triggerNode.parentNode.parentNode}>
                 <Button
@@ -306,20 +305,7 @@ function EditDetail({
               reloadIssue={store.loadIssueData}
             />
           </div>
-        </section>
-        {
-          FullEditorShow && (
-            <FullEditor
-              initValue={description}
-              visible={FullEditorShow}
-              onCancel={() => setFullEditorShow(false)}
-              onOk={(value) => {
-                setFullEditorShow(false);
-                onUpdate({ description: value });
-              }}
-            />
-          )
-        }
+        </section>        
         {
           createLinkTaskShow ? (
             <CreateLinkTask
@@ -335,4 +321,4 @@ function EditDetail({
   }
   return render();
 }
-export default observer(EditDetail);
+export default observer(Detail);

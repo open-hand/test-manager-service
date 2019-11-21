@@ -1,65 +1,53 @@
-import React, { Component } from 'react';
-import { Choerodon } from '@choerodon/boot';
-import { withRouter } from 'react-router-dom';
-import { Form, Modal } from 'choerodon-ui';
+import React, { useState, useEffect } from 'react';
+import { Modal } from 'choerodon-ui/pro';
 import WYSIWYGEditor from '../WYSIWYGEditor';
+import './FullEditor.scss';
 
-class FullEditor extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      delta: this.formatValue(props.initValue),
-    };
+const key = Modal.key();
+function formatValue(value) {
+  let delta = value;
+  try {
+    JSON.parse(value);
+    delta = JSON.parse(value);
+  } catch (error) {
+    delta = value;
   }
-
-  formatValue = (value) => {
-    let delta = value;
-    try {
-      JSON.parse(value);
-      delta = JSON.parse(value);
-    } catch (error) {
-      delta = value;
-    }
-    return delta;
-  }
-
-  componentWillReceiveProps(nextProps) {   
-    this.setState({
-      delta: this.formatValue(nextProps.initValue),
-    });  
-  }
-
-
-  handleOk = () => {
-    this.props.onOk(this.state.delta);
-  }
-
-  render() {
-    const {
-      visible, onCancel, onOk, loading, 
-    } = this.props;
-
-    return (
-      <Modal
-        title={Choerodon.getMessage('编辑描述', 'Edit description')}
-        visible={visible || false}
-        maskClosable={false}
-        width={1200}
-        onCancel={this.props.onCancel}
-        onOk={this.handleOk}
-        confirmLoading={loading}
-      >
-        <WYSIWYGEditor
-          autoFocus
-          hideFullScreen
-          value={this.state.delta}
-          style={{ height: 500, width: '100%', marginTop: 20 }}
-          onChange={(value) => {
-            this.setState({ delta: value });
-          }}
-        />
-      </Modal>
-    );
-  }
+  return delta;
 }
-export default Form.create({})(withRouter(FullEditor));
+
+export function FullEditor({
+  initValue, onOk, modal,
+}) {
+  const [delta, setDelta] = useState(formatValue(initValue));
+
+  useEffect(() => {
+    setDelta(formatValue(initValue));
+  }, [initValue]);
+
+  const handleOk = () => {
+    onOk(delta);
+  };
+  modal.handleOk(handleOk);
+  return (
+    <WYSIWYGEditor
+      autoFocus
+      hideFullScreen
+      value={delta}
+      style={{ height: '100%', width: '100%' }}
+      onChange={(value) => {
+        setDelta(value);
+      }}
+    />
+  );
+}
+export default function openFullEditor({
+  initValue, onOk,
+}) {
+  Modal.open({
+    title: '编辑描述',
+    key,
+    className: 'c7n-editor-fullscreen',
+    fullScreen: true,
+    children: <FullEditor initValue={initValue} onOk={onOk} />,
+  });
+}
