@@ -2,10 +2,10 @@ package io.choerodon.test.manager.infra.mapper;
 
 import java.util.List;
 
-import io.choerodon.mybatis.common.Mapper;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.BaseMapper;
 
+import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
 
 /**

@@ -13,7 +13,7 @@ public interface TestCaseLabelService {
     /**
      * label数据迁移
      */
-    void labelFix();
+    void fixLabel();
 
     /**
      * 批量插入

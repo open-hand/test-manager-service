@@ -140,7 +140,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         projectFolderIds.forEach(projectFolderId -> {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
             Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e->e.getName()!=null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-//            List<TestIssueFolderVO> testIssueProjectFolderVOs = testIssueFolderVOS.stream().filter(testIssueFolderVO -> testIssueFolderVO.getProjectId() == projectFolderId).collect(Collectors.toList());
             TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
             testIssueFolderDTO.setProjectId(projectFolderId);
             List<TestIssueFolderVO> testIssueProjectFolderVOs = modelMapper.map(testIssueFolderMapper.select(modelMapper
@@ -167,7 +166,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                     }
                 }
             }
-            logger.info("=============================>project:{} copy successed",projectFolderId);
+            logger.info("============issueFolder=================>project:{} copy successed",projectFolderId);
         });
     }
 
