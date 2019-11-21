@@ -178,5 +178,15 @@ class IssueStore {
   @computed get getDraggingTableItems() {
     return toJS(this.draggingTableItems);
   }
+
+  @observable clickIssue = {};
+
+  @action setClickIssue = (data) => {
+    this.clickIssue = data;
+  }
+
+  @computed get getClickIssue() {
+    return this.clickIssue;
+  }
 }
 export default new IssueStore();

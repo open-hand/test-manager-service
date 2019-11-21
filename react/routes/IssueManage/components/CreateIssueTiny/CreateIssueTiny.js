@@ -2,9 +2,9 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Button, Input, Icon, Select,
+  Input, Icon, Select,
 } from 'choerodon-ui';
-import { TextField } from 'choerodon-ui/pro'
+import { TextField, Button } from 'choerodon-ui/pro'
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -104,6 +104,7 @@ export default observer(() => {
         <Button
           type="primary"
           funcType="flat"
+          color="blue"
           onClick={() => {
             setCreating(true);
           }}

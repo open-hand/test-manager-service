@@ -23,14 +23,6 @@ import IssueTreeStore from '../stores/IssueTreeStore';
 @injectIntl
 @observer
 export default class IssueManage extends Component {
-  constructor(props) {
-    // 更正state 
-    super(props);
-    this.state = {
-      clickIssue: {},
-    };
-  }
-
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);    
     this.getInit();
@@ -42,10 +34,8 @@ export default class IssueManage extends Component {
     IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
     if (paramName && paramIssueId) {
-      this.setState({
-        clickIssue: {
-          issueId: paramIssueId,
-        },
+      IssueStore.setClickIssue({
+        issueId: paramIssueId,
       });
     }
     // 当参数中有用例名时，在table的筛选框中加入
@@ -102,11 +92,7 @@ export default class IssueManage extends Component {
 
 
   handleTableRowClick = (record) => {
-    this.setState({
-      clickIssue: record,
-    });
-    // const { history } = this.props;
-    // history.push(testCaseDetailLink(record.issueId, record.folderName));
+    IssueStore.setClickIssue(record);
   }
 
 
@@ -115,9 +101,7 @@ export default class IssueManage extends Component {
   }
 
   handleClose = () => {
-    this.setState({
-      clickIssue: {},
-    });
+    IssueStore.setClickIssue({});
   }
 
   handleOpenCreateIssue = () => {
@@ -141,7 +125,6 @@ export default class IssueManage extends Component {
   }
 
   handleOpenImportIssue = () => {
-    const { intl } = this.props;
     Modal.open({
       key: 'importIssue',
       // title:<FormattedMessage id='issue_create_name'  />,
@@ -176,7 +159,7 @@ export default class IssueManage extends Component {
   }
 
   render() {
-    const { clickIssue } = this.state;
+    const { clickIssue } = IssueStore;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     return (
       <Page className="c7ntest-Issue c7ntest-region">
@@ -223,11 +206,10 @@ export default class IssueManage extends Component {
               }
             </div>
             <IssueTable
-              clickIssue={clickIssue}
               onClick={this.handleTableRowClick}
             />
           </div>
-          <TestCaseDetail visible={clickIssue.caseId} clickIssue={clickIssue} onClose={this.handleClose} />
+          <TestCaseDetail visible={clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>
     );
