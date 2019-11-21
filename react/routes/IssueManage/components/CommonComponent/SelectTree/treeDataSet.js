@@ -8,7 +8,7 @@ import { getProjectId } from '../../../../../common/utils';
 function forbidRootsSelect({ dataSet }) {
   dataSet.forEach((record) => {
     // eslint-disable-next-line no-param-reassign
-    record.selectable = !record.get('isRoot');
+    record.selectable = record.get('parentId') !== 0;
   });
 }
 
@@ -16,20 +16,21 @@ function forbidRootsSelect({ dataSet }) {
  * 
  * @param {*} pDataSet  控制Select下拉框 DataSet
  * @param {*} name  字段名
+ * @param {*} setData  设置当前选中项数据
  * @param {*} isForbidRoot  是否禁止根节点可选 默认禁止
  */
-const treeDataSet = (pDataSet, name, isForbidRoot = true) => new DataSet({
+const treeDataSet = (pDataSet, name, setData = false, isForbidRoot = true) => new DataSet({
   primaryKey: 'folderId',
   paging: false,
   autoQuery: true,
   selection: 'single',
   parentField: 'parentId', // 父节点字段名
   expandField: 'expanded', // 是否打开节点字段名
-  idField: 'folderId', 
+  idField: 'folderId',
   fields: [
     { name: 'name', type: 'string' },
     { name: 'folderId', type: 'number' },
-    { name: 'expand', type: 'boolean' },
+    { name: 'expanded', type: 'boolean' },
     { name: 'parentId', type: 'number' },
     { name: 'versionId', type: 'number' },
   ],
@@ -42,9 +43,9 @@ const treeDataSet = (pDataSet, name, isForbidRoot = true) => new DataSet({
         const resObj = JSON.parse(res);
         const newArr = resObj.treeFolder.map(item => ({
           expanded: item.expanded,
-          isRoot: resObj.rootIds.some(i => i === item.id),
           ...item.issueFolderVO,
         }));
+        // console.log('read', newArr);
         return newArr;
       },
     }),
@@ -52,8 +53,14 @@ const treeDataSet = (pDataSet, name, isForbidRoot = true) => new DataSet({
   events: {
     // 选中事件
     select: ({ record, dataSet }) => {
+      // console.log('record', record);
       dataSet.select(record);
-      pDataSet.current.set(name, { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') });
+      const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
+      if (pDataSet) {
+        pDataSet.current.set(name, selectData);
+      } else if (setData) {
+        setData(selectData);
+      }
     },
     // 数据加载完成后初始化事件
     load: isForbidRoot && forbidRootsSelect,
