@@ -46,5 +46,12 @@ public class TestDataFix {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("迁移附件数据")
+    @GetMapping("/migrate_attachment")
+    public ResponseEntity migrateAttachment() {
+        dataMigrationService.migrateAttachment();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

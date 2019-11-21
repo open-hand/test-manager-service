@@ -194,7 +194,7 @@ public interface TestCaseFeignClient {
     /**
      * 迁移附件数据专用
      */
-    @GetMapping(value = "/v1/projects/{project_id}/issues/project_ids/migrate")
+    @GetMapping(value = "/v1/projects/{project_id}/issue_attachment/migrate_attachment")
     ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment(@PathVariable("project_id")Long projectId,
-                                                                @RequestParam("issue_id") Long issue_id);
+                                                                @RequestParam("issue_id") Long issueId);
 }
