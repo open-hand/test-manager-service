@@ -28,9 +28,10 @@ public class TestCaseLinkController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建问题链接")
     @PostMapping
-    public ResponseEntity<TestCaseLinkDTO> create(@PathVariable(name = "project_id") Long projectId,
-                                                  @RequestBody TestCaseLinkDTO testCaseLinkDTO) {
-     return  new ResponseEntity<>(testCaseLinkService.create(projectId,testCaseLinkDTO), HttpStatus.OK);
+    public ResponseEntity<List<TestCaseLinkDTO>> create(@PathVariable(name = "project_id") Long projectId,
+                                                        @RequestParam("case_id") Long caseId,
+                                                        @RequestBody List<Long> issueIds) {
+        return new ResponseEntity<>(testCaseLinkService.create(projectId, caseId, issueIds), HttpStatus.NO_CONTENT);
     }
 
 
@@ -38,17 +39,17 @@ public class TestCaseLinkController {
     @ApiOperation("解除关联issue")
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
-                                                  @RequestParam(required = true) Long linkId) {
-        testCaseLinkService.delete(projectId,linkId);
-        return  new ResponseEntity(HttpStatus.NO_CONTENT);
+                                 @RequestParam(required = true) Long linkId) {
+        testCaseLinkService.delete(projectId, linkId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试用例关联的问题链接")
     @GetMapping("/list_issue_info")
     public ResponseEntity<List<IssueLinkVO>> queryLinkIssues(@PathVariable(name = "project_id") Long projectId,
-                                                             @RequestParam(name = "case_id",required = true) Long caseId) {
+                                                             @RequestParam(name = "case_id", required = true) Long caseId) {
 
-        return  new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId,caseId),HttpStatus.OK);
+        return new ResponseEntity<>(testCaseLinkService.queryLinkIssues(projectId, caseId), HttpStatus.OK);
     }
 }
