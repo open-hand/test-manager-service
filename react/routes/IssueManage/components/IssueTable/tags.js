@@ -1,31 +1,14 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Tag, Menu, Modal, Dropdown, Icon,
+  Tooltip, Menu, Modal, Dropdown, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import UserHead from '../UserHead';
-import PriorityTag from '../PriorityTag';
-import StatusTag from '../StatusTag';
-import TypeTag from '../TypeTag';
 import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
-import {
-  commonLink, testCaseTableLink,
-} from '../../../../common/utils';
-import TableDropMenu from '../../../../common/TableDropMenu';
 import './tags.less';
 
 const { confirm } = Modal;
-
-const styles = {
-  issueNum: {
-    padding: '0 12px 0 5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  },
-};
-const testTypes = {
-  issue_auto_test: '自动化测试',
-  issue_test: '测试',
-};
 
 export function renderIssueNum(issueNum) {
   return (
@@ -47,12 +30,7 @@ export function renderIssueNum(issueNum) {
  * @param {*} reLoadTable 
  */
 export function renderAction(record, history, reLoadTable) {
-  const { caseId, issueNum } = record;
-
-  const handleLinkToTestCase = () => {
-    history.push(testCaseTableLink());
-  };
-
+  const { caseId, issueNum } = record;  
   const handleDeleteIssue = () => {
     confirm({
       width: 560,
@@ -72,16 +50,13 @@ export function renderAction(record, history, reLoadTable) {
     // const { issueInfo, enterLoad, leaveLoad, history } = this.props;
     switch (e.key) {
       case 'copy': {
-        const copyConditionVO = {
-          issueLink: false,
-          sprintValues: false,
-          subTask: false,
-          summary: false,
-        };
-        cloneIssue(caseId, copyConditionVO).then((res) => {
+        cloneIssue([{
+          caseId: record.caseId,
+          folderId: record.folderId,
+        }]).then(() => {
           reLoadTable();
           Choerodon.prompt('复制成功');
-        }).catch((err) => {
+        }).catch(() => {
           Choerodon.prompt('网络错误');
         });
         break;
