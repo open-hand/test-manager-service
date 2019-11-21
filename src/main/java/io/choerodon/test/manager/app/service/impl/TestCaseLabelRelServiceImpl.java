@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.choerodon.agile.api.vo.LabelIssueRelDTO;
+import io.choerodon.agile.api.vo.LabelIssueRelFixVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCaseLabelRelService;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -48,19 +49,6 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     private TestCaseService testCaseService;
     @Autowired
     private TestCaseLabelService testCaseLabelService;
-
-    @Override
-    public void fixLabelCaseRel() {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Set<Long> projectIds = testCaseDTOS.stream().map(TestCaseDTO::getProjectId).collect(Collectors.toSet());
-        projectIds.forEach(projectId -> {
-            List<LabelIssueRelDTO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
-            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
-            testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOS);
-            logger.info("========================> project: {} copy successed", projectId);
-        });
-
-    }
 
     @Override
     @Transactional
@@ -124,7 +112,7 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         return testCaseLabelRelMapper.select(testCaseLabelRel);
     }
 
-    private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelDTO labelIssueRelDTO) {
+    private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelFixVO labelIssueRelDTO) {
         TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
         BeanUtils.copyProperties(labelIssueRelDTO, testCaseLabelRelDTO);
         testCaseLabelRelDTO.setCaseId(labelIssueRelDTO.getIssueId());

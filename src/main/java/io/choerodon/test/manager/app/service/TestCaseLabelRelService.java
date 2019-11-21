@@ -16,12 +16,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
  */
 public interface TestCaseLabelRelService {
 
-    /**
-     * 迁移label_case_rel的数据
-     * @param
-     * @return
-     */
-    void fixLabelCaseRel();
+
 
     /**
      * 创建用例标签关系

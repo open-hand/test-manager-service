@@ -5,7 +5,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'case_id', type: 'BIGINT UNSIGNED', remarks: "项目Id") {
                 constraints(nullable: false)
             }
-            column(name: 'label_id', type: 'BIGINT UNSIGNED', remarks: '标签名称') {
+            column(name: 'label_id', type: 'BIGINT UNSIGNED', remarks: '标签id') {
                 constraints(nullable: false)
             }
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: "项目Id") {

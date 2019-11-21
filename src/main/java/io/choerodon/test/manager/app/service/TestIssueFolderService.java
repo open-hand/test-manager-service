@@ -43,5 +43,4 @@ public interface TestIssueFolderService {
      */
     List<TestIssueFolderDTO> queryChildFolder(Long folderId);
 
-    void fixVersionFolder();
 }

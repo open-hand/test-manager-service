@@ -6,10 +6,12 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.IssueLabelDTO;
+import io.choerodon.agile.api.vo.LabelFixVO;
 import io.choerodon.test.manager.app.service.TestCaseLabelService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
@@ -22,8 +24,9 @@ import org.springframework.util.ObjectUtils;
  * @date: 2019/11/20 10:53
  * @description:
  */
-@Service
+@Component
 public class TestCaseLabelServiceImpl implements TestCaseLabelService {
+    private Logger logger = LoggerFactory.getLogger(TestCaseLabelServiceImpl.class);
     @Autowired
     private TestCaseService testCaseService;
     @Autowired
@@ -32,14 +35,6 @@ public class TestCaseLabelServiceImpl implements TestCaseLabelService {
     private ModelMapper modelMapper;
     @Autowired
     private TestCaseLabelMapper testCaseLabelMapper;
-
-    @Override
-    public void labelFix() {
-        List<IssueLabelDTO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel().getBody();
-        List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
-        }.getType());
-        batchInsert(testCaseLabelDTOList);
-    }
 
     @Override
     public void batchInsert(List<TestCaseLabelDTO> testCaseLabelDTOList) {

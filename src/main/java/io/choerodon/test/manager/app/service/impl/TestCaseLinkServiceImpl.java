@@ -126,4 +126,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
          });
         return list;
     }
+
+    @Override
+    public void batchInsert(List<TestCaseLinkDTO> testCaseLinkDTOList) {
+        testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
+    }
 }

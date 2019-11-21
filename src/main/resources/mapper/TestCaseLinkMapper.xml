@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCaseLinkDTO" id="BaseResultMap">
+
+    </resultMap>
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO test_case_link(link_id,link_case_id,issue_id,link_type_id,project_id, object_version_number,
+        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="testCaseLinkDTOList" item="caseLink" separator=",">
+            (#{caseLink.linkId}, #{caseLink.linkCaseId}, #{caseLink.issueId},#{caseLink.linkTypeId},#{caseLink.projectId},
+            #{caseLink.objectVersionNumber},#{caseLink.createdBy}, #{caseLink.creationDate},
+            #{caseLink.lastUpdatedBy}, #{caseLink.lastUpdateDate})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -37,5 +37,7 @@ public interface TestCaseLinkService {
 
     List<IssueLinkVO> queryLinkIssues(Long projectId, Long caseId);
 
+    void batchInsert(List<TestCaseLinkDTO> testCaseLinkDTOList);
+
     List<TestCaseLinkDTO> create(Long projectId, Long caseId, List<Long> issueIds);
 }
