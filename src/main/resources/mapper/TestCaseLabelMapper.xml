@@ -6,11 +6,11 @@
 
     </resultMap>
     <insert id="batchInsert" parameterType="java.util.List">
-        INSERT INTO test_case_label_rel(label_id,label_name,project_id, object_version_number,
+        INSERT INTO test_case_label(label_id,label_name,project_id, object_version_number,
         created_by, creation_date, last_updated_by, last_update_date) VALUES
         <foreach collection="testCaseLabelDTOList" item="caseLabel" separator=",">
-            (#{caseLabel.labelId}, #{caseLabel.labelName}, #{caseLabel.projectId}, #{caseLabel.testData},
-            #{caseLabel.expectedResult}, 1, #{caseLabel.createdBy}, #{caseLabel.creationDate},
+            (#{caseLabel.labelId}, #{caseLabel.labelName}, #{caseLabel.projectId},
+            #{caseLabel.objectVersionNumber},#{caseLabel.createdBy}, #{caseLabel.creationDate},
             #{caseLabel.lastUpdatedBy}, #{caseLabel.lastUpdateDate})
         </foreach>
     </insert>

@@ -16,6 +16,7 @@ import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.TestCaseLabelRelService;
+import io.choerodon.test.manager.app.service.TestCaseLabelService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
 /**
@@ -31,6 +32,8 @@ public class TestDataFix {
     private TestIssueFolderService testIssueFolderService;
     @Autowired
     private TestCaseLabelRelService testCaseLabelRelService;
+    @Autowired
+    private TestCaseLabelService testCaseLabelService;
 
 
     @Autowired
@@ -43,12 +46,13 @@ public class TestDataFix {
     @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fix() {
-//        testIssueFolderService.fixVersionFolder();
-
+        //迁移文件夹
+        testIssueFolderService.fixVersionFolder();
+        //迁移label_issue关系
         testCaseLabelRelService.fixLabelCaseRel();
+        //迁移label
+        testCaseLabelService.fixLabel();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
