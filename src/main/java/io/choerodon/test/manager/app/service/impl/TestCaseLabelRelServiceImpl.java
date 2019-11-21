@@ -51,29 +51,6 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     private TestCaseLabelService testCaseLabelService;
 
     @Override
-    public void fixLabelCaseRel() {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Set<Long> projectIds = testCaseDTOS.stream().map(TestCaseDTO::getProjectId).collect(Collectors.toSet());
-        projectIds.forEach(projectId -> {
-            List<LabelIssueRelDTO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
-            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
-            testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOS);
-            logger.info("========================> project: {} copy successed", projectId);
-        });
-
-    }
-    private Logger logger = LoggerFactory.getLogger(TestCaseLabelRelServiceImpl.class);
-
-    @Autowired
-    private TestIssueLabelRelFeignClient testIssueLabelRelFeignClient;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    private TestCaseLabelRelMapper testCaseLabelRelMapper;
-    @Autowired
-    private TestCaseService testCaseService;
-
-    @Override
     @Transactional
     @DataLog(type = DataLogConstants.LABEL_CREATE)
     public Boolean baseCreate(TestCaseLabelRelDTO testCaseLabelRelDTO) {
