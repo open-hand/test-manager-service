@@ -10,10 +10,6 @@ import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
  * @description:
  */
 public interface TestCaseLabelService {
-    /**
-     * label数据迁移
-     */
-    void fixLabel();
 
     /**
      * 批量插入

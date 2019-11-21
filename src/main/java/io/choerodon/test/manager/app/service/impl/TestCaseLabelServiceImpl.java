@@ -37,15 +37,6 @@ public class TestCaseLabelServiceImpl implements TestCaseLabelService {
     private TestCaseLabelMapper testCaseLabelMapper;
 
     @Override
-    public void fixLabel() {
-        List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(0L).getBody();
-        List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
-        }.getType());
-        batchInsert(testCaseLabelDTOList);
-        logger.info("===========label=============> copy successed");
-    }
-
-    @Override
     public void batchInsert(List<TestCaseLabelDTO> testCaseLabelDTOList) {
         testCaseLabelMapper.batchInsert(testCaseLabelDTOList);
     }

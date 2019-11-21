@@ -72,17 +72,7 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     private TestCaseLabelRelMapper testCaseLabelRelMapper;
     @Autowired
     private TestCaseService testCaseService;
-    @Override
-    public void fixLabelCaseRel() {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Map<Long, List<TestCaseDTO>> projectIds = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getProjectId));
-        for (Map.Entry<Long, List<TestCaseDTO>> projectId : projectIds.entrySet()) {
-            List<Long> caseIdList = projectId.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId.getKey(), caseIdList).getBody();
-            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
-            testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOS);
-        }
-    }
+
     @Override
     @Transactional
     @DataLog(type = DataLogConstants.LABEL_CREATE)
