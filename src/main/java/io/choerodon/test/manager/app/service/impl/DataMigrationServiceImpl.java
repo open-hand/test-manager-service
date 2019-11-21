@@ -1,24 +1,33 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
-import io.choerodon.test.manager.app.service.DataMigrationService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
+import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
+import io.choerodon.test.manager.app.service.DataMigrationService;
+import io.choerodon.test.manager.app.service.TestCaseLinkService;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
+import io.choerodon.test.manager.infra.feign.IssueLinkFeignClient;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 
 @Service
 public class DataMigrationServiceImpl implements DataMigrationService {
@@ -39,7 +48,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     TestIssueFolderRelMapper testIssueFolderRelMapper;
+    @Autowired
+    private TestCaseLinkService testCaseLinkService;
 
+    @Autowired
+    private IssueLinkFeignClient issueLinkFeignClient;
+    @Autowired
+    private ModelMapper modelMapper;
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -92,4 +107,27 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("TestCaseAttachmentMigrateSucceed");
         logger.info("Cost {} ms",System.currentTimeMillis() - startTime);
     }
+
+    @Override
+    public void migrateLink() {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
+        Map<Long, List<TestCaseDTO>> projectIds = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getProjectId));
+        for (Map.Entry<Long, List<TestCaseDTO>> project : projectIds.entrySet()) {
+            List<Long> caseIdList = project.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+            List<IssueLinkFixVO> issueLinkFixVOList = issueLinkFeignClient.listIssueLinkByIssueIds(project.getKey(), caseIdList).getBody();
+            if(!CollectionUtils.isEmpty(issueLinkFixVOList)){
+                List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
+                testCaseLinkService.batchInsert(testCaseLinkDTOS);
+            }
+
+        }
+    }
+
+    private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList){
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+        BeanUtils.copyProperties(issueLinkFixVOList,testCaseLinkDTO);
+        testCaseLinkDTO.setLinkCaseId(issueLinkFixVOList.getLinkedIssueId());
+        return testCaseLinkDTO;
+    }
+
 }

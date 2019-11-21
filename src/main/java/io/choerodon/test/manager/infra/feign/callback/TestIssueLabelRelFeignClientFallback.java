@@ -22,7 +22,7 @@ public class TestIssueLabelRelFeignClientFallback implements TestIssueLabelRelFe
     private static final String CREATE_ERROR = "error.baseFeign.create";
 
     @Override
-    public ResponseEntity<List<LabelIssueRelFixVO>> queryIssueLabelRelList(Long projectId) {
+    public ResponseEntity<List<LabelIssueRelFixVO>> queryIssueLabelRelList(Long projectId,List<Long> issueIds) {
         throw new CommonException(QUERY_ERROR);
     }
 }

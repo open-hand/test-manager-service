@@ -43,12 +43,13 @@ public class TestDataFix {
     @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fix() {
-        //迁移文件夹
-        testIssueFolderService.fixVersionFolder();
-        //迁移label_issue关系
+//        //迁移文件夹
+//        testIssueFolderService.fixVersionFolder();
+//        //迁移label_issue关系
         testCaseLabelRelService.fixLabelCaseRel();
-        //迁移label
-        testCaseLabelService.fixLabel();
+//        //迁移label
+//        testCaseLabelService.fixLabel();
+        dataMigrationService.migrateLink();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
