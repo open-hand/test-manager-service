@@ -110,4 +110,20 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
         return issueInfos;
     }
+
+    @Override
+    public List<TestCaseLinkDTO> create(Long projectId, Long caseId, List<Long> issueIds) {
+        if (CollectionUtils.isEmpty(issueIds)) {
+            return new ArrayList<>();
+        }
+        List<TestCaseLinkDTO> list = new ArrayList<>();
+        issueIds.forEach(v -> {
+            TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
+            testCaseLinkDTO.setProjectId(projectId);
+            testCaseLinkDTO.setLinkCaseId(caseId);
+            testCaseLinkDTO.setIssueId(v);
+            list.add(create(projectId,testCaseLinkDTO));
+         });
+        return list;
+    }
 }

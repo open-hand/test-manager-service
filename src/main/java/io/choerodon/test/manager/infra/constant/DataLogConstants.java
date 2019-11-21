@@ -11,4 +11,6 @@ public class DataLogConstants {
     public static final String LABEL_DELETE = "labelDelete";
     public static final String LABEL_CREATE = "labelCreate";
     public static final String BATCH_MOVE = "batchMove";
+    public static final String CREATE_ATTACHMENT = "createAttachment";
+    public static final String DELETE_ATTACHMENT = "deleteAttachment";
 }

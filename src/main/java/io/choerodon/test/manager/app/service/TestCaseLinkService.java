@@ -36,4 +36,6 @@ public interface TestCaseLinkService {
     void copyByCaseId(Long projectId, Long caseId, Long oldCaseId);
 
     List<IssueLinkVO> queryLinkIssues(Long projectId, Long caseId);
+
+    List<TestCaseLinkDTO> create(Long projectId, Long caseId, List<Long> issueIds);
 }
