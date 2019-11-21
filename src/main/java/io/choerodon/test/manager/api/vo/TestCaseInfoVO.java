@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -51,6 +52,12 @@ public class TestCaseInfoVO {
 
     @ApiModelProperty(value = "用例关联的问题链接")
     private List<IssueInfoDTO> issuesInfos;
+
+    @ApiModelProperty(value = "用例关联的标签Id")
+    private List<Long> lableIds;
+
+    @ApiModelProperty(value = "测试用例关联的附件信息")
+    private List<TestCaseAttachmentDTO> attachment;
 
     public Long getCaseId() {
         return caseId;
@@ -154,5 +161,21 @@ public class TestCaseInfoVO {
 
     public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
         this.issuesInfos = issuesInfos;
+    }
+
+    public List<Long> getLableIds() {
+        return lableIds;
+    }
+
+    public void setLableIds(List<Long> lableIds) {
+        this.lableIds = lableIds;
+    }
+
+    public List<TestCaseAttachmentDTO> getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(List<TestCaseAttachmentDTO> attachment) {
+        this.attachment = attachment;
     }
 }

@@ -1,4 +1,5 @@
 package io.choerodon.test.manager.infra.dto;
+
 import javax.persistence.Table;
 
 import io.choerodon.mybatis.entity.BaseDTO;
@@ -6,11 +7,11 @@ import io.choerodon.mybatis.entity.BaseDTO;
 @Table(name = "test_case_attachment")
 public class TestCaseAttachmentDTO extends BaseDTO {
 
-    Long attachmentId;
-    Long caseId;
-    String url;
-    String fileName;
-    Long project_id;
+    private Long attachmentId;
+    private Long caseId;
+    private String url;
+    private String fileName;
+    private Long projectId;
 
     public Long getAttachmentId() {
         return attachmentId;
@@ -44,11 +45,11 @@ public class TestCaseAttachmentDTO extends BaseDTO {
         this.fileName = fileName;
     }
 
-    public Long getProject_id() {
-        return project_id;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    public void setProject_id(Long project_id) {
-        this.project_id = project_id;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

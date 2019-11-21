@@ -127,7 +127,7 @@ public class DataLogAspect {
                }
                i++;
             }
-            if(!CollectionUtils.isEmpty(testCaseRepVOS)) {
+            if(!CollectionUtils.isEmpty(testCaseRepVOS) && !ObjectUtils.isEmpty(projectId) && !ObjectUtils.isEmpty(folderId)) {
                 TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
                 Long finalProjectId = projectId;
                 Long finalFolderId = folderId;

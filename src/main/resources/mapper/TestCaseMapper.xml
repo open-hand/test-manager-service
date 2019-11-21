@@ -5,11 +5,13 @@
         SELECT
             case_id,
             summary,
+            folder_id,
             case_num,
             created_by,
             last_updated_by,
             creation_date,
-            last_update_date
+            last_update_date,
+            object_version_number
         FROM
             test_case
         WHERE

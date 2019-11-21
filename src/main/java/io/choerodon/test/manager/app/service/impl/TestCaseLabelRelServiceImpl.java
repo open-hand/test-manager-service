@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
 import io.choerodon.test.manager.infra.feign.TestIssueLabelRelFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLabelRelMapper;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author: 25499
@@ -63,6 +65,47 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     public void batchInsert(List<TestCaseLabelRelDTO> testCaseLabelRelDTOList) {
         testCaseLabelRelMapper.batchInsert(testCaseLabelRelDTOList);
     }
+
+    @Override
+    public List<TestCaseLabelRelDTO> listLabelByCaseId(Long caseId) {
+        TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+        testCaseLabelRelDTO.setCaseId(caseId);
+        return testCaseLabelRelMapper.select(testCaseLabelRelDTO);
+    }
+
+    @Override
+    public void deleteByCaseId(Long caseId) {
+        TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+        testCaseLabelRelDTO.setCaseId(caseId);
+        baseDelete(testCaseLabelRelDTO);
+    }
+
+    @Override
+    public void copyByCaseId(Long projectId, Long caseId, Long oldCaseId) {
+        TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+        testCaseLabelRelDTO.setCaseId(oldCaseId);
+        testCaseLabelRelDTO.setProjectId(projectId);
+        List<TestCaseLabelRelDTO> olderCaseLabelRels = testCaseLabelRelMapper.select(testCaseLabelRelDTO);
+        List<TestCaseLabelRelDTO> newCaseLabelRels = new ArrayList<>();
+        olderCaseLabelRels.forEach(v -> {
+            v.setCaseId(caseId);
+            v.setObjectVersionNumber(null);
+            v.setProjectId(projectId);
+            newCaseLabelRels.add(v);
+        });
+        batchInsert(newCaseLabelRels);
+    }
+
+    @Override
+    public void change(Long projectId,Long caseId, Long[] labelIds) {
+        // 查询已有的标签
+
+        // 比较 差集
+
+        // 删除没有的，添加新增的
+
+    }
+
     private TestCaseLabelRelDTO caseIssueDtoTocaseDto( LabelIssueRelDTO labelIssueRelDTO){
         TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
         BeanUtils.copyProperties(labelIssueRelDTO,testCaseLabelRelDTO);
@@ -70,4 +113,10 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         return testCaseLabelRelDTO;
     }
 
+    private void baseDelete(TestCaseLabelRelDTO testCaseLabelRelDTO){
+        if(ObjectUtils.isEmpty(testCaseLabelRelDTO)){
+         throw  new CommonException("error.delete.case.lable.is.not.null");
+        }
+        testCaseLabelRelMapper.delete(testCaseLabelRelDTO);
+    }
 }

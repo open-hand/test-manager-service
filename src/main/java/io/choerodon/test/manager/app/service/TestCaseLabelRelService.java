@@ -33,4 +33,33 @@ public interface TestCaseLabelRelService {
      * @param testCaseLabelRelDTOList
      */
     void batchInsert(List<TestCaseLabelRelDTO> testCaseLabelRelDTOList);
+
+    /**
+     * 按测试用例Id 查询用例与标签的关联关系
+     * @param caseId
+     * @return
+     */
+    List<TestCaseLabelRelDTO> listLabelByCaseId(Long caseId);
+
+    /**
+     * 根据case_id 删除测试用例和标签的关系
+     * @param caseId
+     */
+    void deleteByCaseId(Long caseId);
+
+    /**
+     * 复制测试用例关联的标签
+     * @param projectId
+     * @param caseId
+     * @param oldCaseId
+     */
+    void copyByCaseId(Long projectId, Long caseId, Long oldCaseId);
+
+    /**
+     * 改变测试用例关联的标签
+     * @param projectId
+     * @param caseId
+     * @param labelIds
+     */
+    void change(Long projectId,Long caseId,Long[] labelIds);
 }
