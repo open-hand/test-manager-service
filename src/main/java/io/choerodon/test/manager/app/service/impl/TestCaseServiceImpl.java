@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
+import io.choerodon.test.manager.app.service.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,10 +14,6 @@ import io.choerodon.core.exception.CommonException;
 import io.choerodon.devops.api.vo.*;
 import io.choerodon.mybatis.entity.Criteria;
 import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.TestCaseLinkService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
@@ -92,6 +89,15 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseLinkService testCaseLinkService;
+
+    @Autowired
+    private TestCaseLabelRelService testCaseLabelRelService;
+
+    @Autowired
+    private TestAttachmentMapper testAttachmentMapper;
+
+    @Autowired
+    private TestCaseAttachmentService testCaseAttachmentService;
 
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
@@ -243,13 +249,35 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseVO.setProjectId(projectId);
         testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
+        // 创建测试步骤
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
         if (!CollectionUtils.isEmpty(caseStepVOS)) {
             caseStepVOS.forEach(v -> {
                 v.setIssueId(testCaseDTO.getCaseId());
-                testCaseStepService.changeStep(v, projectId,false);
+                testCaseStepService.changeStep(v, projectId, false);
             });
         }
+        // 关联测试用例与标签
+        if (!CollectionUtils.isEmpty(testCaseVO.getLableIds())) {
+            testCaseVO.getLableIds().forEach(v -> {
+                TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+                testCaseLabelRelDTO.setCaseId(testCaseDTO.getCaseId());
+                testCaseLabelRelDTO.setLabelId(v);
+                testCaseLabelRelDTO.setProjectId(projectId);
+                testCaseLabelRelService.baseCreate(testCaseLabelRelDTO);
+            });
+
+        }
+
+        //  附件信息
+        if (!CollectionUtils.isEmpty(testCaseVO.getAttachment())) {
+            testCaseVO.getAttachment().forEach(v -> {
+                v.setCaseId(testCaseDTO.getCaseId());
+                v.setProjectId(projectId);
+                testAttachmentMapper.insertSelective(v);
+            });
+        }
+        // 返回数据
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         List<Long> userIds = new ArrayList<>();
@@ -280,10 +308,21 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
         }
-        // TODO 获取用例的标签
-
+        //  获取用例的标签
+        List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
+        if (!CollectionUtils.isEmpty(testCaseLabelRelDTOS)) {
+            List<Long> labelIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
+            testCaseInfoVO.setLableIds(labelIds);
+        }
         // 用例的问题链接
         testCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(projectId, caseId));
+        // 查询附件信息
+        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
+        testCaseAttachmentDTO.setCaseId(caseId);
+        List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
+        if (!CollectionUtils.isEmpty(attachment)) {
+            testCaseInfoVO.setAttachment(attachment);
+        }
         // 查询测试用例所属的文件夹
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCaseDTO.getFolderId());
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
@@ -307,10 +346,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         testDataLogDTO.setProjectId(projectId);
         testDataLogDTO.setCaseId(caseId);
         testDataLogMapper.delete(testDataLogDTO);
-        //TODO 删除测试用例关联的标签
-
-        //TODO 删除附件信息
-
+        // 删除测试用例关联的标签
+        testCaseLabelRelService.deleteByCaseId(caseId);
+        // 删除附件信息
+        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
+        testCaseAttachmentDTO.setProjectId(projectId);
+        testCaseAttachmentDTO.setCaseId(caseId);
+        testAttachmentMapper.delete(testCaseAttachmentDTO);
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
     }
@@ -353,17 +395,23 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        map.setCaseNum(testCaseDTO.getCaseNum() +1);
+        map.setCaseNum(testCaseDTO.getCaseNum() + 1);
         Criteria criteria = new Criteria();
         criteria.update(fieldList);
         if (testCaseMapper.updateByPrimaryKeyOptions(map, criteria) != 1) {
             throw new CommonException("error.update.case");
         }
-        return modelMapper.map(testCaseMapper.selectByPrimaryKey(map.getCaseId()), TestCaseRepVO.class);
+        TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(testCaseDTO1.getCreatedBy());
+        userIds.add(testCaseDTO1.getLastUpdatedBy());
+        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
+        return dtoToRepVo(testCaseDTO1, userMessageDTOMap);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DataLog(type = DataLogConstants.BATCH_MOVE, single = false)
     public void batchMove(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
         if (ObjectUtils.isEmpty(testCaseRepVOS)) {
             return;
@@ -374,7 +422,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
+            map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
             map.setVersionNum(testCaseDTO.getVersionNum() + 1);
+            map.setFolderId(folderId);
             DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, map, 1, "error.update.case");
         }
 
@@ -389,22 +439,28 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.folder.not.exist");
         }
         // 复制用例
-        Long[] caseIds = (Long[]) testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList()).toArray();
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId,caseIds );
+        List<Long> collect = testCaseRepVOS.stream().map(TestCaseRepVO::getCaseId).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(collect)) {
+            return;
+        }
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, collect);
         for (TestCaseDTO testCaseDTO : testCaseDTOS) {
             Long oldCaseId = testCaseDTO.getCaseId();
             testCaseDTO.setCaseId(null);
+            testCaseDTO.setVersionNum(1L);
+            testCaseDTO.setFolderId(folderId);
             testCaseDTO.setObjectVersionNumber(null);
-            testCaseMapper.insertSelective(testCaseDTO);
+            TestCaseRepVO testCase = createTestCase(projectId, modelMapper.map(testCaseDTO, TestCaseVO.class));
             // 复制用例步骤
             TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
             testCaseStepVO.setIssueId(oldCaseId);
-            testCaseStepService.batchClone(testCaseStepVO, testCaseDTO.getCaseId(), projectId);
+            testCaseStepService.batchClone(testCaseStepVO, testCase.getCaseId(), projectId);
             // 复制用例链接
-            testCaseLinkService.copyByCaseId(projectId, testCaseDTO.getCaseId(), oldCaseId);
-            //TODO 复制标签
-
-            //TODO 复制附件
+            testCaseLinkService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
+            // 复制标签
+            testCaseLabelRelService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
+            // 复制附件
+            testCaseAttachmentService.cloneAttachmentByCaseId(projectId, testCase.getCaseId(), oldCaseId);
         }
 
     }
@@ -417,6 +473,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         testCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.update.case");
+    }
+
+    @Override
+    public List<TestCaseDTO> queryAllCase() {
+        return testCaseMapper.selectAll();
     }
 
 
@@ -539,11 +600,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseDTO;
     }
 
-    private TestCaseDTO baseQuery(Long caseId){
+    private TestCaseDTO baseQuery(Long caseId) {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
         if (ObjectUtils.isEmpty(testCaseDTO)) {
             throw new CommonException("error.case.is.not.exist");
         }
-        return  testCaseDTO;
+        return testCaseDTO;
     }
 }

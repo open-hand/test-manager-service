@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseLabelMapper">
+
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCaseLabelDTO" id="BaseResultMap">
+
+    </resultMap>
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO test_case_label_rel(label_id,label_name,project_id, object_version_number,
+        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="testCaseLabelDTOList" item="caseLabel" separator=",">
+            (#{caseLabel.labelId}, #{caseLabel.labelName}, #{caseLabel.projectId}, #{caseLabel.testData},
+            #{caseLabel.expectedResult}, 1, #{caseLabel.createdBy}, #{caseLabel.creationDate},
+            #{caseLabel.lastUpdatedBy}, #{caseLabel.lastUpdateDate})
+        </foreach>
+    </insert>
+
+</mapper>

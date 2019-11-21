@@ -1,44 +1,23 @@
-package io.choerodon.agile.api.vo;
-
+package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
- * 敏捷开发Issue标签
- *
- * @author dinghuang123@gmail.com
- * @since 2018-05-14 21:04:00
+ * @author: 25499
+ * @date: 2019/11/20 13:41
+ * @description:
  */
-@Table(name = "agile_issue_label")
-public class IssueLabelDTO extends BaseDTO {
-
-    public IssueLabelDTO() {}
-
-    public IssueLabelDTO(String labelName, Long projectId) {
-        this.labelName = labelName;
-        this.projectId = projectId;
-    }
-
-    /***/
+@Table(name = "test_case_label")
+public class TestCaseLabelDTO extends BaseDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long labelId;
-
-    /**
-     * 标签名称
-     */
     private String labelName;
-
-    /**
-     * 项目id
-     */
-    @NotNull(message = "error.IssueLabel.projectIdNotNull")
     private Long projectId;
 
     public Long getLabelId() {
@@ -64,5 +43,4 @@ public class IssueLabelDTO extends BaseDTO {
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
-
 }

@@ -155,4 +155,9 @@ public interface TestCaseService {
      * @param caseId
      */
     void updateVersionNum(Long caseId);
+
+    /**
+     * 查询所有用例（迁移标签使用）
+     */
+    List<TestCaseDTO> queryAllCase();
 }

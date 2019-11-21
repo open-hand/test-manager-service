@@ -5,11 +5,13 @@
         SELECT
             case_id,
             summary,
+            folder_id,
             case_num,
             created_by,
             last_updated_by,
             creation_date,
-            last_update_date
+            last_update_date,
+            object_version_number
         FROM
             test_case
         WHERE
@@ -60,4 +62,17 @@
             </if>
         </if>
     </sql>
+
+    <insert id="batchInsertTestCase" parameterType="io.choerodon.test.manager.api.vo.TestCaseMigrateVO">
+        <if test="testCaseMigrateVO != null">
+            insert into test_case (case_id, case_num, summary, description, `rank`, folder_id, version_id, project_id,
+            object_version_number, created_by, creation_date, last_updated_by, last_update_date)
+            values (#{caseId}, #{caseNum}, #{summary}, #{description}, #{rank}, #{folderId}, #{versionId}, #{projectId},
+            #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate};
+        </if>
+    </insert>
+
+    <select id="listIssueIds" resultType="long">
+        select case_id from test_case
+    </select>
 </mapper>
