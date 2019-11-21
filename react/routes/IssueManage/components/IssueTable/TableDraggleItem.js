@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
@@ -9,9 +8,10 @@ import IssueStore from '../../stores/IssueStore';
 export default observer((props) => {
   const draggingTableItems = IssueStore.getDraggingTableItems;
   const {
-    issue, index, handleClickIssue, clickIssue,
+    issue, index, handleClickIssue,
   } = props;
-  const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.caseId });
+  const { clickIssue } = IssueStore;
+  const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.caseId === issue.caseId });
   return (
     <Draggable key={issue.caseId} draggableId={issue.caseId} index={index}>
       {(provided, snapshotinner) => (
