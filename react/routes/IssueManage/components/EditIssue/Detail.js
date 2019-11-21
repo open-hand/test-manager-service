@@ -35,7 +35,7 @@ const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
  * @param {*} reloadIssue  重载问题  
  */
 function Detail({
-  onUpdate,
+  onUpdate, handleCreateLinkIssue,
 }) {
   const {
     store, caseId, prefixCls,
@@ -43,7 +43,7 @@ function Detail({
   const { issueInfo } = store;
   const {
     folderName, linkIssues, fileList, createUser,
-    lastUpdateUser, creationDate, lastUpdateDate, description, issueId,
+    lastUpdateUser, creationDate, lastUpdateDate, description, caseId: issueId,
   } = issueInfo;
 
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
@@ -193,14 +193,13 @@ function Detail({
       );
     }
   }
-  const handleCreateLinkIssue = () => {
-    // const { createLinkIssue } = props;
-    // if (createLinkIssue) {
-    //   createLinkIssue();
-    //   setCreateLinkTaskShow(false);
-    // } else {
-    //   setCreateLinkTaskShow(false);
-    // }
+  const handleCreateLinkIssueOk = () => {
+    if (handleCreateLinkIssue) {
+      handleCreateLinkIssue();
+      setCreateLinkTaskShow(false);
+    } else {
+      setCreateLinkTaskShow(false);
+    }
   };
   function handleOpenFullEditor() {
     openFullEditor({
@@ -312,7 +311,7 @@ function Detail({
               issueId={issueId}
               visible={createLinkTaskShow}
               onCancel={() => setCreateLinkTaskShow(false)}
-              onOk={handleCreateLinkIssue}
+              onOk={handleCreateLinkIssueOk}
             />
           ) : null
         }

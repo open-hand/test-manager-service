@@ -15,22 +15,23 @@ function Header({
     store, disabled, prefixCls, onClose,
   } = useContext(EditIssueContext);
   const { issueInfo } = store;
-  const { caseNum, summary } = issueInfo;
+  const { issueNum, summary } = issueInfo;
   return (
     <div className={`${prefixCls}-content-header`}>
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          height: 44,
+          marginTop: 15,
         }}
       >
         {/* caseNum 用例编号 */}
         <div style={{
-          fontSize: 16, fontWeight: 500,
+          fontSize: 16, fontWeight: 500, color: '#3F51B5',
         }}
         >
-          <span>{caseNum}</span>
+          {/* <span>{issueNum}</span> */}
+          <span>c7btest21</span>
         </div>
         <div
           style={{

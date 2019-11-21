@@ -4,7 +4,7 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import {
-  loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, getIssueExecutes, updateIssue,
+  loadDatalogs, loadLinkIssues, loadIssue, getIssueSteps, getIssueExecutes,
 } from '@/api/IssueManageApi';
 
 class EditIssueStore {

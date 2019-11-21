@@ -41,6 +41,7 @@ function EditIssue() {
   useEffect(() => {
     store.loadIssueData(caseId);
   }, [caseId, store]);
+
   const handleCreateLinkIssue = () => {
     store.loadIssueData();
     onUpdate();
@@ -90,10 +91,10 @@ function EditIssue() {
     // console.log('handleUpdate', newValue);
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
-    const { issueId, objectVersionNumber } = issueInfo;
+    const { objectVersionNumber } = issueInfo;
 
     let issue = {
-      issueId,
+      caseId,
       objectVersionNumber,
     };
     switch (key) {
@@ -159,6 +160,7 @@ function EditIssue() {
                 <TabPane tab="详情" key="detail">
                   <Detail
                     onUpdate={handleUpdate}
+                    handleCreateLinkIssue={handleCreateLinkIssue}
                   />
                 </TabPane>
                 <TabPane tab="记录" key="log">

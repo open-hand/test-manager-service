@@ -24,52 +24,10 @@ class CreateLinkTask extends Component {
       selectLoading: true,
 
       originIssues: [],
-      originLinks: [],
       show: [],
 
       selected: [],
     };
-  }
-
-  componentDidMount() {
-    this.getLinks();
-  }
-
-  getLinks() {
-    this.setState({
-      selectLoading: true,
-    });
-    axios.post(`/agile/v1/projects/${AppState.currentMenuType.id}/issue_link_types/query_all`, {
-      contents: [],
-      linkName: '',
-    })
-      .then((res) => {
-        this.setState({
-          selectLoading: false,
-          originLinks: res.list,
-        });
-        this.transform(res.list);
-      });
-  }
-
-  transform(links) {
-    // split active and passive
-    const active = links.map(link => ({
-      name: link.outWard,
-      linkTypeId: link.linkTypeId,
-    }));
-    const passive = [];
-    links.forEach((link) => {
-      if (link.inWard !== link.outWard) {
-        passive.push({
-          name: link.inWard,
-          linkTypeId: link.linkTypeId,
-        });
-      }
-    });
-    this.setState({
-      show: active.concat(passive),
-    });
   }
 
   handleSelect(value, option) {
@@ -109,24 +67,14 @@ class CreateLinkTask extends Component {
   handleCreateIssue = () => {
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const labelIssueRelVOList = _.map(this.state.selected, (issue) => {
-          const currentLinkType = this.state.originLinks[0];
-          // if (currentLinkType.outWard === linkTypeId.split('+')[1]) {
-          return ({
-            linkTypeId: currentLinkType.linkTypeId,
-            linkedIssueId: issue * 1,
-            issueId: this.props.issueId,
-          });
-          // } else {
-          //   return ({
-          //     linkTypeId: linkTypeId.split('+')[0] * 1,
-          //     issueId: issue * 1,
-          //     linkedIssueId: this.props.issueId,
-          //   });
-          // }
-        });
+        const { selected } = this.state;
+        const { issueId } = this.props;
+        const data = {
+          caseId: issueId,
+          issueIds: selected, 
+        };
         this.setState({ createLoading: true });
-        createLink(this.props.issueId, labelIssueRelVOList)
+        createLink(data)
           .then((res) => {
             this.setState({ createLoading: false });
             this.props.onOk();
@@ -159,26 +107,6 @@ class CreateLinkTask extends Component {
           }}
         >
           <Form layout="vertical">
-            {/* <FormItem style={{ width: 520 }}>
-              {getFieldDecorator('linkTypeId', {
-                rules: [{
-                  required: true, message: '请选择类型!',
-                }],
-              })(
-                <Select
-                  label={<FormattedMessage id="issue_create_link_content_create_relation" />}
-                  // labelInValue
-                  loading={this.state.selectLoading}
-                >
-                  {this.state.show.map(link => (
-                    <Option key={`${link.linkTypeId}+${link.name}`} value={`${link.linkTypeId}+${link.name}`}>
-                      {link.name}
-                    </Option>
-                  ))}
-                </Select>,
-              )}
-            </FormItem> */}
-
             <FormItem>
               {getFieldDecorator('issues', {
                 rules: [{

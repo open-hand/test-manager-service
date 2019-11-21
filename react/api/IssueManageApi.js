@@ -98,7 +98,7 @@ export function updateStatus(transformId, issueId, objVerNum) {
  * @returns
  */
 export function updateIssue(data) {
-  return request.put(`/agile/v1/projects/${getProjectId()}/issues?applyType=test`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/case/update`, data);
 }
 /**
  *用例删除
@@ -118,7 +118,7 @@ export function deleteIssue(issueId) {
  * @returns
  */
 export function deleteLink(issueLinkId) {
-  return request.delete(`/agile/v1/projects/${getProjectId()}/issue_links/${issueLinkId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/case_link?link_id=${issueLinkId}`);
 }
 /**
  *加载操作日志
@@ -159,8 +159,8 @@ export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
  * @param {*} issueLinkCreateDTOList
  * @returns
  */
-export function createLink(issueId, issueLinkCreateDTOList) {
-  return request.post(`/agile/v1/projects/${getProjectId()}/issue_links/${issueId}`, issueLinkCreateDTOList);
+export function createLink(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case_link`, data);
 }
 // 需要更新
 /**
@@ -171,7 +171,7 @@ export function createLink(issueId, issueLinkCreateDTOList) {
  * @returns
  */
 export function loadLinkIssues(issueId) {
-  return request.get(`/agile/v1/projects/${getProjectId()}/issue_links/${issueId}?no_issue_test=false`);
+  return request.get(`/test/v1/projects/${getProjectId()}/case_link/list_issue_info?case_id=${issueId}`);
 }
 /**
  *获取用例树
