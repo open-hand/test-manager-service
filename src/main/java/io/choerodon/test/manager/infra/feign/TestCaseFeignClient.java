@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -182,6 +183,18 @@ public interface TestCaseFeignClient {
     @GetMapping(value = "/v1/projects/{project_id}/issues/migrate_issue")
     ResponseEntity<List<TestCaseMigrateVO>> migrateTestCase(@PathVariable("project_id")Long projectId);
 
+    /**
+     * 迁移数据专用
+     * @param projectId
+     * @return
+     */
     @GetMapping(value = "/v1/projects/{project_id}/issues/project_ids")
     ResponseEntity<List<Long>> queryIds(@PathVariable("project_id") Long projectId);
+
+    /**
+     * 迁移附件数据专用
+     */
+    @GetMapping(value = "/v1/projects/{project_id}/issues/project_ids/migrate")
+    ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment(@PathVariable("project_id")Long projectId,
+                                                                @RequestParam("issue_id") Long issue_id);
 }

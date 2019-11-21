@@ -8,6 +8,7 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     TestCaseMapper testCaseMapper;
+
+    @Autowired
+    TestAttachmentMapper testAttachmentMapper;
 
     @Override
     @Async
@@ -52,8 +56,15 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Transactional(rollbackFor = Exception.class)
     public void migrateAttachment() {
         List<Long> issueIds = testCaseMapper.listIssueIds();
+        logger.info("start---migrate---test-case-attachment");
+        Long startTime = System.currentTimeMillis();
         for (Long issueId : issueIds) {
-            List<TestCaseAttachmentDTO> attachmentDTOS;
+            List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L,issueId).getBody();
+            for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
+                testAttachmentMapper.insertTestCaseAttachment(testCaseAttachmentDTO);
+            }
         }
+        logger.info("TestCaseAttachMentMigrateSucceed");
+        logger.info("Cost {}ms",System.currentTimeMillis() - startTime);
     }
 }
