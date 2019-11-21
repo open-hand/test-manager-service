@@ -15,4 +15,13 @@
         </foreach>
     </insert>
 
+    <select id="listByIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseLabelDTO">
+         select  * from test_case_label
+         where
+         label_id in
+         <foreach collection="labelIds" item="labelId" open="(" close=")" separator=",">
+               #{labelId}
+         </foreach>
+    </select>
+
 </mapper>

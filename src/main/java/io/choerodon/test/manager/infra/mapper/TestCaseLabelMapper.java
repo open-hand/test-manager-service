@@ -2,6 +2,7 @@ package io.choerodon.test.manager.infra.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.BaseMapper;
 
 import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
@@ -13,4 +14,6 @@ import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
  */
 public interface TestCaseLabelMapper extends BaseMapper<TestCaseLabelDTO> {
     void batchInsert(List<TestCaseLabelDTO> testCaseLabelDTOList);
+
+    List<TestCaseLabelDTO> listByIds(@Param("labelIds") List<Long> labelIds);
 }

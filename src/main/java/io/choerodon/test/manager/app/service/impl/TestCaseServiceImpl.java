@@ -99,6 +99,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
 
+    @Autowired
+    private TestCaseLabelService testCaseLabelService;
+
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
         Assert.notNull(projectId, "error.TestCaseService.listIssueWithoutSub.param.projectId.not.null");
@@ -328,6 +331,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
             testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
         }
+
+        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+        testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
+        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+        String issue = String.format("%s-%s", testProjectInfo.getProjectCode(), testCaseDTO.getCaseNum());
+        testCaseInfoVO.setIssueNum(issue);
         return testCaseInfoVO;
     }
 
@@ -396,18 +405,25 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
         map.setCaseNum(testCaseDTO.getCaseNum() + 1);
-        Criteria criteria = new Criteria();
-        criteria.update(fieldList);
-        if (testCaseMapper.updateByPrimaryKeyOptions(map, criteria) != 1) {
-            throw new CommonException("error.update.case");
+
+        baseUpdate(testCaseDTO);
+
+        // 更新标签
+        List<TestCaseLabelDTO> labels = testCaseRepVO.getLabels();
+        if (!CollectionUtils.isEmpty(labels)) {
+            changeLabel(projectId, testCaseDTO.getCaseId(), labels);
         }
+
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<Long> userIds = new ArrayList<>();
         userIds.add(testCaseDTO1.getCreatedBy());
         userIds.add(testCaseDTO1.getLastUpdatedBy());
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        return dtoToRepVo(testCaseDTO1, userMessageDTOMap);
+        TestCaseRepVO testCaseRepVO1 = dtoToRepVo(testCaseDTO1, userMessageDTOMap);
+        testCaseRepVO1.setLabels(labels);
+        return testCaseRepVO1;
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -606,5 +622,55 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.case.is.not.exist");
         }
         return testCaseDTO;
+    }
+
+    private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
+        // 查询已有的标签
+        List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
+        List<Long> olderIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
+        List<Long> newIds = new ArrayList<>();
+        labels.forEach(v -> {
+            if (ObjectUtils.isEmpty(v.getLabelId())) {
+                TestCaseLabelDTO orUpdate = testCaseLabelService.createOrUpdate(projectId, v);
+                newIds.add(orUpdate.getLabelId());
+            } else {
+                newIds.add(v.getLabelId());
+            }
+        });
+        // 比较 差集
+        List<Long> newLabels = new ArrayList<>();
+        newLabels.addAll(newIds);
+        List<Long> olderLabels = new ArrayList<>();
+        olderLabels.addAll(olderIds);
+
+        newLabels.removeAll(olderIds);
+        olderLabels.removeAll(newIds);
+        // 删除不存在的，添加新增的
+        createOrDeleteLabel(projectId, caseId, olderLabels, false);
+        createOrDeleteLabel(projectId, caseId, newLabels, true);
+    }
+
+    private void createOrDeleteLabel(Long projectId, Long caseId, List<Long> labels, Boolean isCreate) {
+        // 遍历labelId 集合
+        if (!CollectionUtils.isEmpty(labels)) {
+            labels.forEach(v -> {
+                TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+                testCaseLabelRelDTO.setProjectId(projectId);
+                testCaseLabelRelDTO.setCaseId(caseId);
+                testCaseLabelRelDTO.setLabelId(v);
+                // 如果是true，就去新建关联
+                // 如果是false,就去删除，删除完成后，看看有没有其他用例关联该标签，没有就删除标签
+                if (isCreate) {
+                    testCaseLabelRelService.baseCreate(testCaseLabelRelDTO);
+                } else {
+                    testCaseLabelRelService.baseDelete(testCaseLabelRelDTO);
+                    TestCaseLabelRelDTO testCaseLabelRel = new TestCaseLabelRelDTO();
+                    testCaseLabelRel.setLabelId(v);
+                    if (CollectionUtils.isEmpty(testCaseLabelRelService.query(testCaseLabelRel))) {
+                        testCaseLabelService.baseDelete(v);
+                    }
+                }
+            });
+        }
     }
 }

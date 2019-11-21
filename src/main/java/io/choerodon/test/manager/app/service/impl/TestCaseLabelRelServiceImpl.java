@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.app.service.TestCaseLabelService;
+import io.choerodon.test.manager.infra.annotation.DataLog;
+import io.choerodon.test.manager.infra.constant.DataLogConstants;
+import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -21,6 +25,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
 import io.choerodon.test.manager.infra.feign.TestIssueLabelRelFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLabelRelMapper;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -41,6 +46,8 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     private TestCaseLabelRelMapper testCaseLabelRelMapper;
     @Autowired
     private TestCaseService testCaseService;
+    @Autowired
+    private TestCaseLabelService testCaseLabelService;
 
     @Override
     public void fixLabelCaseRel() {
@@ -56,6 +63,8 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     }
 
     @Override
+    @Transactional
+    @DataLog(type = DataLogConstants.LABEL_CREATE)
     public Boolean baseCreate(TestCaseLabelRelDTO testCaseLabelRelDTO) {
         if (testCaseLabelRelMapper.insert(testCaseLabelRelDTO) != 1) {
             throw new CommonException("error.insert.testCaseLabelRel");
@@ -102,13 +111,17 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
     }
 
     @Override
-    public void change(Long projectId, Long caseId, Long[] labelIds) {
-        // 查询已有的标签
+    @DataLog(type = DataLogConstants.LABEL_DELETE)
+    public void baseDelete(TestCaseLabelRelDTO testCaseLabelRelDTO) {
+        if (ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
+            throw new CommonException("error.delete.case.lable.is.not.null");
+        }
+        testCaseLabelRelMapper.delete(testCaseLabelRelDTO);
+    }
 
-        // 比较 差集
-
-        // 删除没有的，添加新增的
-
+    @Override
+    public List<TestCaseLabelRelDTO> query(TestCaseLabelRelDTO testCaseLabelRel) {
+        return testCaseLabelRelMapper.select(testCaseLabelRel);
     }
 
     private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelDTO labelIssueRelDTO) {
@@ -118,10 +131,4 @@ public class TestCaseLabelRelServiceImpl implements TestCaseLabelRelService {
         return testCaseLabelRelDTO;
     }
 
-    private void baseDelete(TestCaseLabelRelDTO testCaseLabelRelDTO) {
-        if (ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
-            throw new CommonException("error.delete.case.lable.is.not.null");
-        }
-        testCaseLabelRelMapper.delete(testCaseLabelRelDTO);
-    }
 }

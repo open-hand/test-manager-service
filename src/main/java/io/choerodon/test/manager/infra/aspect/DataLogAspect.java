@@ -12,11 +12,8 @@ import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestDataLogDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -42,6 +39,7 @@ public class DataLogAspect {
     private static final String DESCRIPTION = "description";
     private static final String FIELD_DESCRIPTION_NULL = "[{\"insert\":\"\n\"}]";
     private static final String FIELD_FOLDER = "Folder Link";
+    private static final String FIELD_LABELS = "labels";
 
     @Autowired
     private ModelMapper modelMapper;
@@ -54,6 +52,12 @@ public class DataLogAspect {
 
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private TestCaseLabelMapper testCaseLabelMapper;
+
+    @Autowired
+    private TestCaseLabelRelMapper testCaseLabelRelMapper;
 
     @PostConstruct
     public void init() {
@@ -83,6 +87,12 @@ public class DataLogAspect {
                     case DataLogConstants.CASE_UPDATE:
                         handleCaseDataLog(args);
                         break;
+                    case DataLogConstants.LABEL_CREATE:
+                        handleLabelCreateLog(args);
+                        break;
+                    case DataLogConstants.LABEL_DELETE:
+                        handleLabelDeleteLog(args);
+                        break;
                     default:
                         break;
                 }
@@ -106,6 +116,42 @@ public class DataLogAspect {
         return result;
     }
 
+    private void handleLabelDeleteLog(Object[] args) {
+        try{
+            TestCaseLabelRelDTO testCaseLabelRelDTO = null;
+            for(Object arg : args){
+                if (arg instanceof TestCaseLabelRelDTO){
+                    testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
+                }
+            }
+            if(!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
+                TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
+                createDataLog(testCaseLabelRelDTO.getProjectId(),testCaseLabelRelDTO.getCaseId(),FIELD_LABELS,testCaseLabelDTO.getLabelName(),null, testCaseLabelRelDTO.getLabelId().toString(),null);
+            }
+        }
+        catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+    }
+
+    private void handleLabelCreateLog(Object[] args) {
+        try{
+            TestCaseLabelRelDTO testCaseLabelRelDTO = null;
+            for(Object arg : args){
+                if (arg instanceof TestCaseLabelRelDTO){
+                    testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
+                }
+            }
+            if(!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
+                TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
+                createDataLog(testCaseLabelRelDTO.getProjectId(),testCaseLabelRelDTO.getCaseId(),FIELD_LABELS,null,testCaseLabelDTO.getLabelName(), null,testCaseLabelRelDTO.getLabelId().toString());
+            }
+        }
+        catch (Throwable throwable){
+            throwable.printStackTrace();
+        }
+    }
+
     @SuppressWarnings("checkstyle:LineLength")
     private void handleCaseMoveFolder(Object[] args) {
         try{
@@ -121,11 +167,11 @@ public class DataLogAspect {
                    else {
                        folderId = (Long) arg;
                    }
+                   i++;
                }
                else if (arg instanceof List) {
                    testCaseRepVOS = (List<TestCaseRepVO>) arg;
                }
-               i++;
             }
             if(!CollectionUtils.isEmpty(testCaseRepVOS) && !ObjectUtils.isEmpty(projectId) && !ObjectUtils.isEmpty(folderId)) {
                 TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
