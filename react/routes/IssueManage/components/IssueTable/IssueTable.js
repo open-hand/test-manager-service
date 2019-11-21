@@ -234,16 +234,7 @@ export default observer((props) => {
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
         filters={IssueStore.barFilters || []}
-        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-        empty={!IssueStore.loading && (
-          <EmptyBlock
-            style={{ marginTop: 40 }}
-            border
-            pic={pic}
-            title={<FormattedMessage id="issue_noIssueTitle" />}
-            des={<FormattedMessage id="issue_noIssueDescription" />}
-          />
-        )}
+        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}        
       />
     </div>
   );

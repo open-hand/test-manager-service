@@ -13,6 +13,7 @@ class TestCaseDetail extends Component {
         caseId={caseId}
         visible={caseId}
         onClose={onClose}
+        onUpdate={() => {}}
       />    
     );
   }

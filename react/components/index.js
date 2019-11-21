@@ -6,7 +6,7 @@ export { default as UploadInTable } from './UploadInTable';
 export { default as DefectSelect } from './DefectSelect';
 export { default as RadioButton } from './RadioButton';
 export { default as StatusTags } from './StatusTags';
-export { default as FullEditor } from './FullEditor';
+export { default as openFullEditor } from './FullEditor';
 export { default as WYSIWYGEditor } from './WYSIWYGEditor';
 export { default as DragTable } from './DragTable';
 export { default as YamlEditor } from './YamlEditor';
