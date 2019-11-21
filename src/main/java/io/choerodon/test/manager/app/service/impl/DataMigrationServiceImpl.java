@@ -6,10 +6,12 @@ import io.choerodon.test.manager.api.vo.TestCaseMigrateVO;
 import io.choerodon.test.manager.app.service.DataMigrationService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Autowired
     TestAttachmentMapper testAttachmentMapper;
 
+    @Autowired
+    TestIssueFolderRelMapper testIssueFolderRelMapper;
+
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -49,22 +54,36 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         }
         logger.info("TestCaseDataMigrateSucceed");
         logger.info("Cost {}ms",System.currentTimeMillis() - startTime);
+
+        List<Long> issueIds = testCaseMapper.listIssueIds();
+        for (Long issueid : issueIds) {
+            TestIssueFolderRelDTO relDTO = new TestIssueFolderRelDTO();
+            relDTO.setIssueId(issueid);
+            relDTO = testIssueFolderRelMapper.selectOneByExample(relDTO);
+            TestCaseDTO testCaseDTO = new TestCaseDTO();
+            testCaseDTO.setCaseId(issueid);
+            testCaseDTO.setFolderId(relDTO.getFolderId());
+            testCaseMapper.updateByPrimaryKeySelective(testCaseDTO);
+        }
     }
 
     @Override
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void migrateAttachment() {
+
         List<Long> issueIds = testCaseMapper.listIssueIds();
         logger.info("start---migrate---test-case-attachment");
         Long startTime = System.currentTimeMillis();
         for (Long issueId : issueIds) {
             List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L,issueId).getBody();
             for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
-                testAttachmentMapper.insertTestCaseAttachment(testCaseAttachmentDTO);
+                if (testCaseAttachmentDTO != null){
+                    testAttachmentMapper.insertTestCaseAttachment(testCaseAttachmentDTO);
+                }
             }
         }
-        logger.info("TestCaseAttachMentMigrateSucceed");
-        logger.info("Cost {}ms",System.currentTimeMillis() - startTime);
+        logger.info("TestCaseAttachmentMigrateSucceed");
+        logger.info("Cost {} ms",System.currentTimeMillis() - startTime);
     }
 }

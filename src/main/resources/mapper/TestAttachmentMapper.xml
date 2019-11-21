@@ -3,8 +3,10 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestAttachmentMapper">
     <insert id="insertTestCaseAttachment" parameterType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
         <if test="testCaseAttachmentDTO != null">
-            insert into test_case_attachment(attachment_id, case_id, url, file_name, project_id,
-                                             object_version_number, created_by, creation_date, last_updated_by, last_update_date)
+            insert into test_case_attachment (attachment_id, case_id, url, file_name,
+                                              project_id, object_version_number,
+                                              created_by, creation_date,
+                                              last_updated_by, last_update_date)
             values (#{attachmentId}, #{caseId}, #{url}, #{file_name}, #{projectId},
                     #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate};
         </if>
