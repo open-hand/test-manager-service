@@ -40,8 +40,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     private Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
     @Autowired
     private TestCycleService testCycleService;
-//    @Autowired
-//    private TestIssueFolderRelService testIssueFolderRelService;
     @Autowired
     private TestCaseService testCaseService;
     @Autowired
@@ -49,8 +47,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private ProductionVersionClient productionVersionClient;
     @Override
     public TestIssueFolderDTO baseInsert(TestIssueFolderDTO insert) {
         if (testIssueFolderMapper.insert(insert) != 1) {
@@ -99,13 +95,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }.getType());
 
         //根目录
-        List<Long> rootFolderId = testIssueFolderVOS.stream().filter(IssueFolder -> IssueFolder.getParentId() == 0).map(TestIssueFolderVO::getFolderId).collect(Collectors.toList());
+        List<Long> rootFolderId = testIssueFolderVOS.stream().filter(IssueFolder ->
+                IssueFolder.getParentId() == 0).map(TestIssueFolderVO::getFolderId).collect(Collectors.toList());
 
         List<TestTreeFolderVO> list = new ArrayList<>();
         testIssueFolderVOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
             List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectChildrenByParentId(testIssueFolderVO.getFolderId());
-//            List<TestIssueFolderVO> collect = testIssueFolderVOS.stream().filter(issueFolderVO -> issueFolderVO.getParentId() ==folderId ).collect(Collectors.toList());
             List<Long> ids = new ArrayList<>();
             if(testIssueFolderDTOS!=null){
                  ids = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
@@ -231,18 +227,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             resTestIssueFolderVO.setVersionId(targetForderId);
             resTestIssueFolderVO.setParentId(tergetInssueFolderVO.getFolderId());
             TestIssueFolderVO returnTestIssueFolderVO = create(projectId,resTestIssueFolderVO);
-            //复制issue到目的文件夹
-            //todo 复制文件夹下的case到新文件夹
-//            List<TestCaseRepVO> testCaseRepVOS = testCaseService.listAllCaseByFolderId(projectId, folderId);
-//            TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO(folderId, null, null, null, null);
-//            List<IssueInfosVO> issueInfosVOS = new ArrayList<>();
-//            List<TestIssueFolderRelVO> resTestIssueFolderRelVOS = testIssueFolderRelService.queryByFolder(testIssueFolderRelVO);
-//            for (TestIssueFolderRelVO resTestIssueFolderRelVO : resTestIssueFolderRelVOS) {
-//                IssueInfosVO issueInfosVO = new IssueInfosVO();
-//                issueInfosVO.setIssueId(resTestIssueFolderRelVO.getIssueId());
-//                issueInfosVOS.add(issueInfosVO);
-//            }
-//            testIssueFolderRelService.copyIssue(projectId, versionId, returnTestIssueFolderVO.getFolderId(), issueInfosVOS);
         }
     }
 
