@@ -39,7 +39,7 @@ public class TestDataFix {
     @Autowired
     private DataMigrationService dataMigrationService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(type = ResourceType.SITE, roles = {InitRoleCode.SITE_ADMINISTRATOR, InitRoleCode.SITE_DEVELOPER})
     @ApiOperation("迁移数据")
     @GetMapping
     public ResponseEntity fix() {
