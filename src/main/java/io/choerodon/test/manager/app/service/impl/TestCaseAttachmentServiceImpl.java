@@ -174,8 +174,15 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 v.setCaseId(caseId);
                 v.setAttachmentId(null);
                 v.setObjectVersionNumber(null);
-                iIssueAttachmentService.createBase(v);
+                baseInsert(v);
             });
         }
     }
+
+    private void baseInsert(TestCaseAttachmentDTO v) {
+        if(testAttachmentMapper.insertSelective(v) != 1){
+            throw new CommonException("error.insert.attachment");
+        }
+    }
+
 }
