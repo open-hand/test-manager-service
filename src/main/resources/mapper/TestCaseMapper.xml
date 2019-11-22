@@ -76,8 +76,10 @@
     </select>
 
     <update id="updateTestCaseFolder">
-        update test_case a , test_issue_folder_rel b
-        set a.folder_id = b.folder_id where a.case_id = b.issue_id
+        update test_case tc
+        set tc.folder_id = (select tifr.folder_id
+                            from test_issue_folder_rel tifr
+                            where tc.case_id = tifr.issue_id)
     </update>
 
 </mapper>
