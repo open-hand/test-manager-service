@@ -160,4 +160,8 @@ public interface TestCaseService {
      * 查询所有用例（迁移标签使用）
      */
     List<TestCaseDTO> queryAllCase();
+
+    TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
+
+    void batchDeleteIssues(Long projectId, Long[] issueIds);
 }
