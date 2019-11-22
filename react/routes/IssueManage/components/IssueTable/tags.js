@@ -4,7 +4,7 @@ import {
   Tooltip, Menu, Modal, Dropdown, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
+import { copyIssues, deleteIssue } from '../../../../api/IssueManageApi';
 import './tags.less';
 
 const { confirm } = Modal;
@@ -49,10 +49,10 @@ export function renderAction(record, history, reLoadTable) {
     // const { issueInfo, enterLoad, leaveLoad, history } = this.props;
     switch (e.key) {
       case 'copy': {
-        cloneIssue([{
+        copyIssues([{
           caseId: record.caseId,
           folderId: record.folderId,
-        }]).then(() => {
+        }], record.folderId).then(() => {
           reLoadTable();
           Choerodon.prompt('复制成功');
         }).catch(() => {

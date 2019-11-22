@@ -355,14 +355,6 @@ export function syncFoldersInCycle(cycleId) {
 export function syncFolder(folderId, cycleId) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
 }
-
-/**
- * 单个克隆自身
- * @param {*} data 
- */
-export function cloneIssue(data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/case/batch_clone`, data);
-}
 /**
  *所有用例导出
  *
