@@ -1,6 +1,6 @@
 import { mutateTree } from '@atlaskit/tree';
-import { getTreePosition, getParent } from '@atlaskit/tree/dist/cjs/utils/tree';
-import { useEffect, useRef, useCallback } from 'react';
+import { getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
+import { useEffect, useRef } from 'react';
 
 const hasLoadedChildren = item => !!item.hasChildren && item.children.length > 0;
 
@@ -20,23 +20,31 @@ export function selectItem(tree, id, previous) {
   }
   return newTree;
 }
-export function selectItemWithExpand(tree, id, previous) {
+function findParent(tree, id) {
+  const keys = Object.keys(tree.items);
+  for (const key of keys) {
+    const item = tree.items[key];   
+    if (item.children.includes(id)) {
+      return item;
+    }
+  }
+  return null;
+}
+function autoExpandParent(tree, id) {
+  let newTree = tree;
+  let parent = findParent(tree, id);
+  while (parent) {
+    if (!parent.isExpanded) {
+      newTree = mutateTree(newTree, parent.id, { isExpanded: true });
+    }
+    parent = findParent(tree, parent.id);
+  }
+  return newTree;
+}
+export function selectItemWithExpand(tree, id, previous) {  
   let newTree = tree;
   newTree = selectItem(newTree, id, previous);
-  Object.keys(tree.items).forEach((itemId) => {
-    const item = tree.items[itemId];    
-    if (item.children && item.children.length > 0) {
-      const hasChildMatch = item.children.some((childId) => {
-        const child = tree.items[childId];
-        return child.id === id;
-      });
-      // 自动展开
-      if (hasChildMatch && !item.isExpanded) {
-        newTree = mutateTree(newTree, itemId, { isExpanded: true });
-      }
-    }
-  });
-
+  newTree = autoExpandParent(newTree, id);
   return newTree;
 }
 // 从树中删除一项
@@ -109,28 +117,14 @@ export function expandTreeBySearch(tree, search) {
     // 更新数据，使tree的组件会更新
     if (item.data.name.indexOf(search) > -1) {
       newTree = mutateTree(newTree, itemId, { isMatch: true });
-    }
-    if (item.children && item.children.length > 0) {
-      const hasChildMatch = item.children.some((childId) => {
-        const child = tree.items[childId];
-        return child.data.name.indexOf(search) > -1;
-      });
-      // 自动展开
-      if (hasChildMatch && !item.isExpanded) {
-        newTree = mutateTree(newTree, itemId, { isExpanded: true });
-        // 自动折叠
-      } else if (!hasChildMatch && item.isExpanded) {
-        newTree = mutateTree(newTree, itemId, { isExpanded: false });
-      }
+      // 展开父级
+      newTree = autoExpandParent(newTree, item.id);
     }
   });
 
   return newTree;
 }
-// 根据id获取数据
-export function getItem(tree, id) {
-  return tree.items[id];
-}
+
 export const usePrevious = (value) => {
   const ref = useRef();
   useEffect(() => {

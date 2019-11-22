@@ -84,8 +84,6 @@ function PureTree({
     setTree(oldTree => expandTreeBySearch(oldTree, value || ''));
     setSearch(value || '');
   }, []);
-
-  const getItem = id => tree.items[id];
   const onExpand = (itemId) => {
     setTree(oldTree => mutateTree(oldTree, itemId, { isExpanded: true }));
   };

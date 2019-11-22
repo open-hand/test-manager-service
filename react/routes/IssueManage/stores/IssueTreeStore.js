@@ -39,14 +39,14 @@ class IssueTreeStore {
     this.selectedKeys = selectedKeys;
   }
 
-  async loadIssueTree() {
+  async loadIssueTree(defaultSelectId) {
     this.setLoading(true);
     const treeData = await getIssueTree();   
-    this.setTreeData(treeData);
+    this.setTreeData(treeData, defaultSelectId);
     this.setLoading(false);
   }
 
-  @action setTreeData(treeData) {
+  @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
     this.treeData = {
       rootIds,
@@ -64,7 +64,8 @@ class IssueTreeStore {
     };
     // 默认选中第一个
     if (!this.currentCycle.id && rootIds.length > 0) {
-      this.setCurrentCycle(find(this.treeData.treeFolder, { id: rootIds[0] }));
+      const targetId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
+      this.setCurrentCycle(find(this.treeData.treeFolder, { id: targetId }));
     }
   }
 

@@ -29,22 +29,22 @@ export default class IssueManage extends Component {
 
   getInit = () => {
     const Request = getParams(this.props.location.search);
-    const { paramName, paramIssueId } = Request;
+    const { paramName, paramIssueId, folderId } = Request;
     IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
     if (paramName && paramIssueId) {
       IssueStore.setClickIssue({
-        issueId: paramIssueId,
+        caseId: Number(paramIssueId),
       });
     }
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
-    IssueStore.setBarFilters(barFilters);    
-    this.getTestCase();
+    IssueStore.setBarFilters(barFilters);
+    this.getTestCase(folderId);
   }
 
-  getTestCase = async () => {
-    await IssueTreeStore.loadIssueTree();   
+  getTestCase = async (defaultSelectId) => {
+    await IssueTreeStore.loadIssueTree(defaultSelectId);   
     const { currentCycle } = IssueTreeStore;
     const { id } = currentCycle;
     if (id) {
