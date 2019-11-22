@@ -2,13 +2,14 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import { Choerodon } from '@choerodon/boot';
 import { findIndex } from 'lodash';
-import { getIssuesByFolder } from '../../../api/IssueManageApi';
+import { getIssuesByFolder, moveIssues, copyIssues } from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
 class IssueStore {
   @observable issues = [];
-  
+
   @observable pagination = {
     current: 1,
     pageSize: 10,
@@ -89,6 +90,24 @@ class IssueStore {
     }
   }
 
+  async moveOrCopyIssues(folderId, isCopy) {
+    const issueLinks = this.getDraggingTableItems.map(issue => ({
+      caseId: issue.caseId,
+      folderId,
+    }));
+    //
+    this.setLoading(true);
+    const request = isCopy ? copyIssues : moveIssues;
+    try {
+      await request(issueLinks, folderId);
+      this.setDraggingTableItems([]);
+      this.loadIssues();
+      this.setLoading(false);
+    } catch (error) {
+      Choerodon.prompt('网络错误');
+      this.setLoading(false);
+    }
+  }
 
   @action setIssues(data) {
     this.issues = data;

@@ -4,7 +4,6 @@ import {
   Tooltip, Menu, Modal, Dropdown, Icon,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import UserHead from '../UserHead';
 import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
 import './tags.less';
 
@@ -102,22 +101,5 @@ export function renderSummary(summary, record, onClick) {
         </p>
       </Tooltip>
     </div>
-  );
-}
-export function renderUser(name, loginName, realName, imageUrl, hiddenText) {
-  return (
-    loginName ? (
-      <div>
-        <UserHead
-          hiddenText={hiddenText}
-          user={{
-            name,
-            loginName,
-            realName,
-            avatar: imageUrl,
-          }}
-        />
-      </div>
-    ) : null
   );
 }

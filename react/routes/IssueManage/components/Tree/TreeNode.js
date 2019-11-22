@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
   Icon, Button, TextField,
 } from 'choerodon-ui/pro';
 import { Menu, Dropdown } from 'choerodon-ui';
+import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
+import IssueStore from '../../stores/IssueStore';
 
 const PreTextIcon = styled.span`
   display: inline-block;
@@ -68,10 +70,18 @@ const getAction = (item, onMenuClick) => {
 };
 
 
-export default function TreeNode(props) {
+function TreeNode(props) {
   const {
     provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit,
   } = props;
+  const [dragEnter, setDragEnter] = useState(false);
+  const hasChildren = item.children && item.children.length > 0;
+  const canDrop = !hasChildren && IssueStore.tableDraging;
+  const handleMouseUp = (e) => {
+    setDragEnter(false);
+    const isCopy = e.ctrlKey || e.metaKey;
+    IssueStore.moveOrCopyIssues(item.id, isCopy);
+  };
   const onSave = (e) => {
     if (item.id === 'new') {
       onCreate(e.target.value, path, item);
@@ -102,7 +112,9 @@ export default function TreeNode(props) {
     return <SmartTooltip title={name}>{result}</SmartTooltip>;
   };
   const renderContent = () => (
-    <div className={`${prefix}-tree-item-wrapper`}>
+    <div     
+      className={`${prefix}-tree-item-wrapper ${dragEnter ? `${prefix}-tree-item-wrapper-over` : ''}`}
+    >
       <div
         role="none"
         className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
@@ -117,12 +129,26 @@ export default function TreeNode(props) {
   );
   // console.log(path);
   return (
-    <div
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-    >
-      {item.isEditing ? renderEditing() : renderContent()}
-    </div>
+    <span
+      role="none"
+      {...canDrop ? {
+        onMouseEnter: () => {
+          setDragEnter(true);
+        },
+        onMouseLeave: () => {
+          setDragEnter(false);
+        },
+        onMouseUp: handleMouseUp,
+      } : {}}      
+    > 
+      <div
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+      >
+        {item.isEditing ? renderEditing() : renderContent()}
+      </div>
+    </span>
   );
 }
+export default observer(TreeNode);

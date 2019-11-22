@@ -283,8 +283,8 @@ export function getIssuesByFolder(folderId, page = 1, size = 10, search, orderFi
  * @param {*} issueLinks
  * @returns
  */
-export function moveIssues(versionId, folderId, issueLinks) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolderRel/move?versionId=${versionId}&folderId=${folderId}`, issueLinks);
+export function moveIssues(issueLinks, folderId) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/batch_move?folder_id=${folderId}`, issueLinks);
 }
 /**
  *用例克隆
@@ -295,8 +295,8 @@ export function moveIssues(versionId, folderId, issueLinks) {
  * @param {*} issueLinks
  * @returns
  */
-export function copyIssues(versionId, folderId, issueLinks) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolderRel/copy?versionId=${versionId}&folderId=${folderId}`, issueLinks);
+export function copyIssues(issueLinks, folderId) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case/batch_clone?folder_id=${folderId}`, issueLinks);
 }
 /**
  *文件夹克隆
