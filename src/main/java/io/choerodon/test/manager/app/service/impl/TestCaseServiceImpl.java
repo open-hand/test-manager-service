@@ -7,6 +7,7 @@ import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.util.LongUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -259,7 +260,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.project.info.null");
         }
         testCaseVO.setProjectId(projectId);
-        testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
+        Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
+        testCaseVO.setCaseNum(caseNum.toString());
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         // 创建测试步骤
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
@@ -282,7 +284,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
 
         // 返回数据
-        testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
+        testProjectInfo.setCaseMaxNum(caseNum);
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         List<Long> userIds = new ArrayList<>();
         userIds.add(testCaseDTO.getCreatedBy());

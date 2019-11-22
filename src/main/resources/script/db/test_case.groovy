@@ -9,7 +9,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
             column(name: 'case_id', type: 'BIGINT UNSIGNED', autoIncrement: true, remarks: '表ID，主键，供其他表做外键，unsigned bigint、单表时自增、步长为 1') {
                 constraints(primaryKey: true)
             }
-            column(name: 'case_num', type: "BIGINT UNSIGNED", remarks: 'case编号')
+            column(name: 'case_num', type: "VARCHAR(255)", remarks: 'case编号')
             column(name: 'summary', type: "VARCHAR(255)", remarks: '概要')
             column(name: 'description', type: 'text', remarks: '描述')
             column(name: 'rank', type: 'VARCHAR(765)', remarks: 'rank')
@@ -26,7 +26,7 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
     }
 
     changeSet(author: 'zhaotianxin', id: '2019-11-19-rename-colume-version-num') {
-        renameColumn(columnDataType: 'BIGINT UNSIGNED', newColumnName: 'version_num', oldColumnName: 'version_id',tableName: "test_case")
+        renameColumn(columnDataType: 'BIGINT UNSIGNED', newColumnName: 'version_num', oldColumnName: 'version_id', tableName: "test_case")
     }
-}
 
+}
