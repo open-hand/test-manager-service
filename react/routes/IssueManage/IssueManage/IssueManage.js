@@ -23,7 +23,7 @@ import IssueTreeStore from '../stores/IssueTreeStore';
 @observer
 export default class IssueManage extends Component {
   componentDidMount() {
-    RunWhenProjectChange(IssueStore.clearStore);    
+    RunWhenProjectChange(IssueStore.clearStore);
     this.getInit();
   }
 
@@ -62,7 +62,7 @@ export default class IssueManage extends Component {
   handleCreateIssue(issue, folderId) {
     if (folderId) {
       IssueTreeStore.setCurrentCycleById(folderId);
-    }   
+    }
     IssueStore.loadIssues();
   }
 
@@ -94,6 +94,7 @@ export default class IssueManage extends Component {
         <CreateIssue
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
+          deafultFolerValue={IssueTreeStore.getCurrentCycle}
         />
       ),
       okText: '创建',
@@ -124,13 +125,17 @@ export default class IssueManage extends Component {
       style: {
         width: 1090,
       },
+      okCancel: false,
+      okText: '关闭',
       children: (
-        <ExportSide />
+        <ExportSide
+          folderId={IssueTreeStore.getCurrentCycle.id}
+        />
       ),
     });
   }
 
-  handleAddFolderClick = () => {   
+  handleAddFolderClick = () => {
     IssueTreeStore.treeRef.current.addFirstLevelItem();
   }
 
