@@ -13,7 +13,7 @@ import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
  * @description:
  */
 public interface TestCaseLabelMapper extends Mapper<TestCaseLabelDTO> {
-    void batchInsert(List<TestCaseLabelDTO> testCaseLabelDTOList);
+    void batchInsert(@Param("testCaseLabelDTOList")List<TestCaseLabelDTO> testCaseLabelDTOList);
 
     List<TestCaseLabelDTO> listByIds(@Param("labelIds") List<Long> labelIds);
 }
