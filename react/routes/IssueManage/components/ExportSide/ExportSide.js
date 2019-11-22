@@ -1,54 +1,70 @@
 /* eslint-disable react/state-in-constructor */
 import React, {
-  Component, useState, useEffect, useMemo,
+  Component, useState, useEffect, useMemo, useReducer,
 } from 'react';
-import { FormattedMessage } from 'react-intl';
-import { Content, stores, WSHandler } from '@choerodon/boot';
+import { stores, WSHandler, Action } from '@choerodon/boot';
 import {
   Modal, Progress, Button, Icon, Tooltip, Select,
 } from 'choerodon-ui';
-import { Table } from 'choerodon-ui/pro';
+import { Table, Form, DataSet } from 'choerodon-ui/pro';
 import _ from 'lodash';
-import moment from 'moment';
-import { SelectVersion, SelectFolder } from '../../../../components';
 import {
   exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
 } from '../../../../api/IssueManageApi';
-import { humanizeDuration, getProjectName } from '../../../../common/utils';
-import './ExportSide.scss';
+import './ExportSide.less';
 import SelectTree from '../CommonComponent/SelectTree';
 import ExportSideDataSet from './store';
 
-const { Option } = Select;
-const { Sidebar } = Modal;
 const { Column } = Table;
 const { AppState } = stores;
 
+const dataSet = new DataSet({
+  autoQuery: false,
+  autoCreate: true,
+  fields: [
+    {
+      name: 'folder',
+      type: 'object',
+      required: true,
+      label: '文件夹',
+      textField: 'fileName',
+      valueField: 'folderId',
+      ignore: 'always',
+    },
+    {
+      name: 'folderId',
+      type: 'number',
+      bind: 'folder.folderId',
+    },
+  ],
+
+  transport: {
+    submit: ({ data }) => ({
+      url: `/test/v1/projects/${AppState.currentMenuType.id}/case/download/excel/folder?organizationId=${AppState.currentMenuType.organizationId}&userId=${AppState.userInfo.id}`,
+      method: 'get',
+      data: {
+        folder_id: data[0].folderId,
+      },
+    }),
+  },
+});
 function ExportSide(props) {
-  const [loading, setLoading] = useState(true);
-  const [versionId, setVersionId] = useState('all');
-  const [folderId, setFolderId] = useState(null);
+  const [folder, setFolder] = useState({ folderId: props.folderId });
+
   const [exportList, setExportList] = useState([]);
-  const exportSideDataSet = useMemo(() => ExportSideDataSet(), []);
+  const exportSideDataSet = useMemo(() => ExportSideDataSet(folder.folderId), [folder.folderId]);
   useEffect(() => {
-    getExportList().then((res) => {
-      setExportList(res);
-      setLoading(false);
-    });
+
   }, []);
 
 
   const handleFolderChange = (newFolderId) => {
-    setFolderId(newFolderId);
+    setFolder(folder);
   };
 
   const createExport = () => {
-    if (folderId) {
-      exportIssuesFromFolder(folderId).then((data) => {
-
-      });
-    } else if (versionId && versionId !== 'all') {
-      exportIssuesFromVersion(versionId).then((data) => {
+    if (folder) {
+      exportIssuesFromFolder(folder.folderId).then((data) => {
 
       });
     } else {
@@ -57,9 +73,19 @@ function ExportSide(props) {
       });
     }
   };
+  async function handleCreateExport() {
+    if (await dataSet.submit()) {
+      exportSideDataSet.query();
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   const handleDownload = (record) => {
-    const { fileUrl, status, id } = record;
+    const fileUrl = record.get('fileUrl');
+    const id = record.get('id');
+    const status = record.get('status');
     if (status === 3) {
       exportRetry(id);
       return;
@@ -91,72 +117,30 @@ function ExportSide(props) {
     setExportList(newExportList);
   };
 
-  const onHumanizeDuration = (record) => {
-    const { creationDate, lastUpdateDate } = record;
-    const startTime = moment(creationDate);
-    const lastTime = moment(lastUpdateDate);
 
-    let diff = lastTime.diff(startTime);
-    // console.log(diff);
-    if (diff <= 0) {
-      diff = moment().diff(startTime);
-    }
-    return creationDate && lastUpdateDate
-      ? humanizeDuration(diff)
-      : null;
-  };
+  function renderStatus({ value, text, record }) {
+    // record.get('rate') Prgoress
+    return (value === 2
+      ? <div>已完成</div>
+      : (
+        <Tooltip title={`进度：${value ? value.toFixed(1) : 0}%`} getPopupContainer={ele => ele.parentNode}>
+          <Progress percent={value} showInfo={false} />
+        </Tooltip>
+      ));
+  }
+
+  function renderDropDownMenu({ record }) {
+    const action = [{
+      service: [],
+      text: record.get('status') === 3 ? '重试' : '下载文件',
+      action: () => handleDownload(record),
+    }];
+    return <Action className="action-icon" data={action} />;
+  }
 
   function render() {
     const columns = [
       {
-        title: '导出来源',
-        dataIndex: 'sourceType',
-        key: 'sourceType',
-        // width: 100,
-        render: (sourceType, record) => {
-          const ICONS = {
-            1: 'project',
-            2: 'version',
-            4: 'folder',
-          };
-          return (
-            <div className="c7ntest-center">
-              <Icon type={ICONS[sourceType]} />
-              <span className="c7ntest-text-dot" style={{ marginLeft: 10 }}>{record.name}</span>
-            </div>
-          );
-        },
-      },
-      {
-        title: '用例个数',
-        dataIndex: 'successfulCount',
-        key: 'successfulCount',
-        // width: 100,
-      },
-      {
-        title: '导出时间',
-        dataIndex: 'creationDate',
-        key: 'creationDate',
-        // width: 160,
-        render: creationDate => moment(creationDate).format('YYYY-MM-DD h:mm:ss'),
-      }, {
-        title: '耗时',
-        dataIndex: 'during',
-        key: 'during',
-        // width: 100,
-        render: (during, record) => <div>{onHumanizeDuration(record)}</div>,
-      }, {
-        title: '进度',
-        dataIndex: 'rate',
-        key: 'rate',
-        render: (rate, record) => (record.status === 2
-          ? <div>已完成</div>
-          : (
-            <Tooltip title={`进度：${rate ? rate.toFixed(1) : 0}%`} getPopupContainer={ele => ele.parentNode}>
-              <Progress percent={rate} showInfo={false} />
-            </Tooltip>
-          )),
-      }, {
         title: '',
         dataIndex: 'fileUrl',
         key: 'fileUrl',
@@ -170,22 +154,24 @@ function ExportSide(props) {
       }];
     return (
 
-      <div className="c7ntest-ExportSide">
-        <div style={{ marginBottom: 24 }}>
-          <SelectTree setData={setFolderId} placeholder="文件夹" />
-          <Button type="primary" icon="playlist_add" onClick={createExport}>新建导出</Button>
+      <div className="test-export-issue">
+        <div className="test-export-issue-header">
+          <Form dataSet={dataSet} className="test-export-issue-form">
+            <SelectTree name="folder" pDataSet={dataSet} onChange={setFolder} placeholder="文件夹" isForbidRoot={false} />
+          </Form>
+          <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>
         <WSHandler
           messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
           onMessage={handleMessage}
         >
           <Table dataSet={exportSideDataSet}>
-            <Column name="sourceType" align="left" />
-            <Column name="action" width={50} align="left" />
-            <Column name="successfulCount" width={100} align="left" />
-            <Column name="creationDate" width={150} align="left" />
-            <Column name="during" />
-            <Column name="rate" />
+            <Column name="name" align="left" />
+            <Column name="action" width={50} renderer={renderDropDownMenu} />
+            <Column name="successfulCount" width={120} align="left" />
+            <Column name="creationDate" width={200} align="left" />
+            <Column name="during" width={200} align="left" />
+            <Column name="status" renderer={renderStatus} align="left" />
           </Table>
         </WSHandler>
       </div>

@@ -14,23 +14,22 @@ import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../CommonComponent/SelectTree';
 import { beforeTextUpload } from '../../../../common/utils';
-
 import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const { intl } = props;
+  const { intl, deafultFolerValue } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), []);
-
   async function handleCreateIssue() {
-    // if (!createDataset.isModified()) {
-    //   return true;
-    // }
+    const { onOk } = props;
     try {
+      // 描述富文本转换为字符串
       const oldDes = createDataset.current.get('description');
       beforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
-      if (await createDataset.submit()) {
-        // setTimeout(() => { window.location.reload(true); }, 1000);
+      if (await createDataset.submit().then((res) => {
+        onOk(res, createDataset.current.get('folderId'));
+        return true;
+      })) {
         return true;
       } else {
         // error 时 重新将描述恢复富文本格式
@@ -78,7 +77,7 @@ function CreateIssue(props) {
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
           </div>,
-          <SelectTree name="folder" pDataSet={createDataset} />,
+          <SelectTree name="folder" pDataSet={createDataset} deafultValue={{ folderId: deafultFolerValue.id }} />,
           <Select name="issueLink" />]
         }
         <div className="test-create-issue-form-step">

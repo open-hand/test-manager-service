@@ -1,16 +1,15 @@
 
 import React, {
-  Component, useState, useEffect, useMemo,
+  Component, useState, useEffect, useMemo, useCallback,
 } from 'react';
 import {
-  Select, Icon, Tree, TextField,
+  Select, Icon, Tree, TextField, DataSet,
 } from 'choerodon-ui/pro';
+import PropTypes from 'prop-types';
 import { Choerodon } from '@choerodon/boot';
+import _ from 'lodash';
 import './SelectTree.less';
-import { Input, Divider } from 'choerodon-ui';
-import Search from 'choerodon-ui/lib/input/Search';
-import { runInAction } from 'mobx';
-import { observer } from 'mobx-react-lite';
+import { Divider } from 'choerodon-ui';
 import treeDataSet from './treeDataSet';
 
 /**
@@ -19,22 +18,28 @@ import treeDataSet from './treeDataSet';
  * @param {*} renderSelect select显示渲染器
  * @param {*} pDataSet 控制select的DataSet
  */
+const propTypes = {
+  name: PropTypes.string,
+  onChange: PropTypes.func,
+  isForbidRoot: PropTypes.bool,
+  renderSelect: PropTypes.element,
+  deafultValue: PropTypes.object,
+};
 function SelectTree(props) {
   const {
-    name, renderSelect, pDataSet, data, setData, ...restProps
+    name, renderSelect, deafultValue, pDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
-  const [isfocus, setIsfocus] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const dataSet = useMemo(() => treeDataSet(pDataSet, name), [name, pDataSet]);
+  const [searchValue, setSearchValue] = useState('');// 搜索框内值
+  const dataSet = useMemo(() => treeDataSet(pDataSet, name, deafultValue, onChange, isForbidRoot), [isForbidRoot, name, onChange, pDataSet]);
   /**
   * 渲染树节点
   * @param {*} record  
   */
   const renderNode = ({ record }) => {
     const fileName = record.get('name');
-    const index = fileName.toLowerCase().indexOf(searchValue.toLowerCase());
+    const index = fileName.toLowerCase().indexOf(String(searchValue).toLowerCase());
     const beforeFileName = fileName.substr(0, index);
-    const afterFileName = fileName.substr(index + searchValue.length);
+    const afterFileName = fileName.substr(index + String(searchValue).length);
 
     return (
       <div className="test-select-tree-node">
@@ -56,6 +61,10 @@ function SelectTree(props) {
     );
   };
 
+  /**
+   * 搜索此节点父节点并展开
+   * @param {*} record 
+   */
   function searchParent(record) {
     // 防止文件id与父id相同 出现死循环
     if (record.get('parentId') !== 0 && record.get('folderId') !== record.get('parentId')) {
@@ -64,9 +73,15 @@ function SelectTree(props) {
     }
   }
 
+  /**
+   * 根据文件名找寻树节点并展开
+   * @param {*} value 
+   */
   function handleFilterNode(value) {
-    setSearchValue(value);
-    runInAction(() => {
+    dataSet.forEach((record) => {
+      record.set('expanded', false);
+    });
+    if (value !== '' && value) {
       dataSet.forEach((record) => {
         if (record.get('name').toLowerCase().indexOf(value.toLowerCase()) !== -1) {
           try {
@@ -76,66 +91,103 @@ function SelectTree(props) {
           }
         }
       });
-    });
+    }
   }
+
+  /**
+ * 根据文件名ID找寻树节点并展开
+ * @param {*} value 
+ * 
+ */
+  const handleFilterNodeByFolerId = (value) => {
+    dataSet.forEach((record) => {
+      record.set('expanded', false);
+    });
+    let result;
+    if (value) {
+      dataSet.forEach((record) => {
+        if (record.get('folderId') === value) {
+          try {
+            searchParent(record);
+            result = record;
+          } catch (error) {
+            Choerodon.prompt('数据错误');
+          }
+        }
+      });
+    }
+    return result;
+  };
+
+
+  /**
+   * 输入回调
+   * @param {*} value 
+   */
+  function handleInput(value) {
+    setSearchValue(value);
+    handleFilterNode(value);
+  }
+
 
   /**
   * 渲染树
   * @param {*} content 
   */
-  function renderTree(content) {
-    // console.log('renderTree', treeDataSet);
-    return (
-      <div className="test-select-tree">
-        <div className="test-select-tree-search">
-          <TextField
-            placeholder="输入文字以进行过滤 "
-            onClick={(e) => {
-              const input = document.getElementById('onTextField');
-              if (input) {
-                input.focus();
-              }
-              // e.currentTarget();
-            }}
-            // onInput={(value)=>console.log('input',value)}
-            id="onTextField"
-            autoFocus={isfocus}
-            prefix={<Icon type="search" />}
-            readOnly={false}
-            onChange={handleFilterNode}
+  const renderTree = (
+    <div
+      role="none"
+      className="test-select-tree"
+      onMouseDown={e => e.stopPropagation()}
+    >
+      <div className="test-select-tree-search">
+        <TextField
+          placeholder="输入文字以进行过滤 "
+          onInput={e => _.debounce(handleInput, 300).call(this, e.target.value)}
+          id="onTextField"
+          autoFocus
+          prefix={<Icon type="search" />}
+          readOnly={false}
+          onChange={handleFilterNode}
           // onEnterDown={handleEnd}
-          />
-        </div>
-        <Divider />
-        <Tree
-          dataSet={dataSet}
-          renderer={renderNode}
+          clearButton
+          onClear={() => setSearchValue('')}
         />
       </div>
-    );
-  }
+      <Divider />
+      <Tree
+        dataSet={dataSet}
+        renderer={renderNode}
+        className="test-select-tree-body"
 
+      />
+    </div>
+  );
+
+  /**
+   * 默认渲染select选中项
+   * @param {*} param0 
+   */
   function defaultRenderSelect({ record, text, value }) {
     return text;
   }
-  function handleChange(hidden) {
-    if (!hidden) {
-      setIsfocus(true);
-    } else {
-      setIsfocus(false);
-    }
+
+  function handleSelectClear(e) {
+    dataSet.unSelectAll();
   }
+
   return (
     <Select
       name={name}
       popupContent={renderTree}
       trigger={['click']}
       popupCls="test-select-tree-wrap"
+      onClear={handleSelectClear}
       renderer={renderSelect || defaultRenderSelect}
-      onPopupHiddenChange={handleChange}
       {...restProps}
     />
   );
 }
+Select.propTypes = propTypes;
 
-export default observer(SelectTree);
+export default SelectTree;
