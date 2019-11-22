@@ -65,7 +65,6 @@ function CreateIssue(props) {
           </span>
 
         </div>
-        {/** 这里逻辑待处理， DataSet提交 */}
 
         {visibleDetail && [
           <WYSIWYGEditor
@@ -73,11 +72,12 @@ function CreateIssue(props) {
             onChange={handleChangeDes}
           />,
           // <TextArea name="description" />,
+          // {/** 这里逻辑待处理， DataSet提交 */ }
           <div className="test-create-issue-form-file">
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
           </div>,
-          <SelectTree name="folder" pDataSet={createDataset} deafultValue={{ folderId: deafultFolerValue.id }} />,
+          <SelectTree name="folder" pDataSet={createDataset} deafultValue={deafultFolerValue.id} />,
           <Select name="issueLink" />]
         }
         <div className="test-create-issue-form-step">

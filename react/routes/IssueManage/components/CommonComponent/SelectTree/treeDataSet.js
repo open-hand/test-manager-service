@@ -15,30 +15,27 @@ function forbidRootsSelect({ dataSet }) {
 /**
  * 有默认值时初始化数据
  */
-const initData = () => {
-  // const record = handleFilterNodeByFolerId(deafultValue.folderId);
-  // dataSet.forEach((record) => {
-  //   if (record.get('folderId') === value) {
-  //     try {
-  //       searchParent(record);
-  //     } catch (error) {
-  //       Choerodon.prompt('数据错误');
-  //     }
-  //   }
-  // }
-  // dataSet.select(record);
-  // console.log('initData', record);
-  // if (record) {
-  //   const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
-  //   pDataSet.current.set(name, selectData);
-  // }
+const initData = ({ dataSet }, {
+  folderId, pDataSet, name,
+}) => {
+  dataSet.forEach((record) => {
+    if (record.get('folderId') === folderId) {
+      const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
+      // 当前节点可选 才进行默认值回显
+      if (pDataSet && record.selectable) {
+        dataSet.select(record);
+        pDataSet.current.set(name, selectData);
+      }
+    }
+  });
 };
-function initLoad(isForbidRoot, deafultValue, props) {
+
+function initLoad(isForbidRoot, deafultValue, props, dataSet) {
   if (isForbidRoot) {
-    forbidRootsSelect(props);
+    forbidRootsSelect(dataSet);
   }
   if (deafultValue) {
-    initData({ folderId: deafultValue.folderId, ...props });
+    initData(dataSet, { folderId: deafultValue, ...props });
   }
 }
 /**
@@ -93,7 +90,7 @@ const treeDataSet = (pDataSet, name, deafultValue, setData = false, isForbidRoot
       }
     },
     // 数据加载完成后初始化事件
-    load: initLoad.bind(this, isForbidRoot, deafultValue),
+    load: initLoad.bind(this, isForbidRoot, deafultValue, { pDataSet, name }),
     // 取消选中事件
     unSelect: ({ record, dataSet }) => {
       dataSet.unSelect(record);
@@ -101,7 +98,7 @@ const treeDataSet = (pDataSet, name, deafultValue, setData = false, isForbidRoot
         pDataSet.current.set(name, undefined);
       }
       if (setData) {
-        setData(undefined);
+        setData({ folderId: undefined });
       }
     },
   },

@@ -28,21 +28,25 @@
     background: @progress-area-background;
     box-shadow: 0 0.03rem 0.01rem -0.02rem @progress-area-box-shadow1, 0 0.02rem 0.02rem 0 @progress-area-box-shadow2, 0 0.01rem 0.05rem 0 @progress-area-box-shadow3;
     border-radius: 0.04rem;
-    width: 5.12rem;
+    width: 3.3rem;
     height: 1.93rem;
     text-align: center;
+    margin-top: .24rem;
     padding-top: 0.18rem;
 
     &-text {
       font-size: 0.2rem;
       color: @progress-area-text;
       line-height: 0.28rem;
-      margin: 0.16rem 0;
+      margin: .2rem 0 0.07rem 0;
+      display: block;
     }
 
     &-prompt {
-      font-size: 0.13rem;
+      font-size: 0.14rem;
       line-height: 0.2rem;
+      color: #000000;
+      text-align: left;
     }
   }
 
@@ -72,9 +76,9 @@
   }
 
   &-progress {
-    width: 2rem;
-    vertical-align: top;
-    margin-top: 0.07rem;
+    // width: 2rem;
+    // vertical-align: top;
+    // margin-top: 0.07rem;
   }
 
   &-icon {
@@ -93,17 +97,18 @@
 
   &-form {
     .c7n-divider {
-      width: 3.8rem;
+      width: 3.74rem;
       margin-left: -.24rem;
       margin-bottom: .195rem;
     }
-    &-one{
+
+    &-one {
       &-title {
         font-size: 16px;
         color: rgba(0, 0, 0, 0.87);
         line-height: 24px;
       }
-  
+
       &-content {
         display: block;
         margin: .16rem 0;
@@ -111,12 +116,12 @@
         color: rgba(0, 0, 0, 0.65);
         line-height: 20px;
       }
-  
+
       button {
         padding-left: 0;
       }
     }
- 
+
 
   }
 }
