@@ -64,76 +64,76 @@ public class TestManagerEventHandler {
         }
     }
 
-    /**
-     * 创建临时循环事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-create-version",
-            description = "创建临时循环事件",
-            sagaCode = "agile-create-version",
-            //enabledDbRecord = true,
-            seq = 1)
-    public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
-        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
-        loggerInfo(versionEvent);
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-        testIssueFolderVO.setType(TestIssueFolderType.TYPE_TEMP);
-        testIssueFolderVO.setProjectId(versionEvent.getProjectId());
-        testIssueFolderVO.setVersionId(versionEvent.getVersionId());
-        testIssueFolderVO.setName("临时");
-        testIssueFolderService.create(versionEvent.getProjectId(),testIssueFolderVO);
-        return versionEvent;
-    }
-
-    /**
-     * 版本删除事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-delete-version",
-            description = "删除version事件，删除相关测试数据",
-            sagaCode = "agile-delete-version",
-            //enabledDbRecord = true,
-            seq = 1)
-    public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
-        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
-        loggerInfo(versionEvent);
-        List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(), versionEvent.getVersionId());
-        testIssueFolderVOS.forEach(v -> testIssueFolderService.delete(versionEvent.getProjectId(), v.getFolderId()));
-        return versionEvent;
-    }
-
-    /**
-     * 问题删除事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-delete-issue",
-            description = "删除issue事件，删除相关测试数据",
-            sagaCode = "agile-delete-issue",
-            // enabledDbRecord = true,
-            seq = 1)
-    public IssuePayload handleProjectIssueDeleteEvent(String message) throws IOException {
-        IssuePayload issuePayload = objectMapper.readValue(message, IssuePayload.class);
-        TestCycleCaseDefectRelDTO defectRelE = new TestCycleCaseDefectRelDTO();
-        defectRelE.setIssueId(issuePayload.getIssueId());
-        testCycleCaseDefectRelMapper.delete(defectRelE);
-        TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
-        testCycleCaseVO.setIssueId(issuePayload.getIssueId());
-        testCycleCaseService.batchDelete(testCycleCaseVO, issuePayload.getProjectId());
-
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
-        testIssueFolderRelVO.setIssueId(issuePayload.getIssueId());
-
-        List<Long> issuesId = Lists.newArrayList(issuePayload.getIssueId());
-        testIssueFolderRelService.delete(issuePayload.getProjectId(), issuesId);
-
-        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-        testCaseStepVO.setIssueId(issuePayload.getIssueId());
-        testCaseStepService.removeStep(testCaseStepVO);
-        return issuePayload;
-    }
+//    /**
+//     * 创建临时循环事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-create-version",
+//            description = "创建临时循环事件",
+//            sagaCode = "agile-create-version",
+//            //enabledDbRecord = true,
+//            seq = 1)
+//    public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
+//        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+//        loggerInfo(versionEvent);
+//        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+//        testIssueFolderVO.setType(TestIssueFolderType.TYPE_TEMP);
+//        testIssueFolderVO.setProjectId(versionEvent.getProjectId());
+//        testIssueFolderVO.setVersionId(versionEvent.getVersionId());
+//        testIssueFolderVO.setName("临时");
+//        testIssueFolderService.create(versionEvent.getProjectId(),testIssueFolderVO);
+//        return versionEvent;
+//    }
+//
+//    /**
+//     * 版本删除事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-delete-version",
+//            description = "删除version事件，删除相关测试数据",
+//            sagaCode = "agile-delete-version",
+//            //enabledDbRecord = true,
+//            seq = 1)
+//    public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
+//        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+//        loggerInfo(versionEvent);
+//        List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(), versionEvent.getVersionId());
+//        testIssueFolderVOS.forEach(v -> testIssueFolderService.delete(versionEvent.getProjectId(), v.getFolderId()));
+//        return versionEvent;
+//    }
+//
+//    /**
+//     * 问题删除事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-delete-issue",
+//            description = "删除issue事件，删除相关测试数据",
+//            sagaCode = "agile-delete-issue",
+//            // enabledDbRecord = true,
+//            seq = 1)
+//    public IssuePayload handleProjectIssueDeleteEvent(String message) throws IOException {
+//        IssuePayload issuePayload = objectMapper.readValue(message, IssuePayload.class);
+//        TestCycleCaseDefectRelDTO defectRelE = new TestCycleCaseDefectRelDTO();
+//        defectRelE.setIssueId(issuePayload.getIssueId());
+//        testCycleCaseDefectRelMapper.delete(defectRelE);
+//        TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
+//        testCycleCaseVO.setIssueId(issuePayload.getIssueId());
+//        testCycleCaseService.batchDelete(testCycleCaseVO, issuePayload.getProjectId());
+//
+//        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+//        testIssueFolderRelVO.setIssueId(issuePayload.getIssueId());
+//
+//        List<Long> issuesId = Lists.newArrayList(issuePayload.getIssueId());
+//        testIssueFolderRelService.delete(issuePayload.getProjectId(), issuesId);
+//
+//        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
+//        testCaseStepVO.setIssueId(issuePayload.getIssueId());
+//        testCaseStepService.removeStep(testCaseStepVO);
+//        return issuePayload;
+//    }
 
     @SagaTask(code = "test-start-instance", description = "更新Appinstance状态", sagaCode = "test-pod-update-saga", seq = 1)
     public void updateInstance(String message) throws IOException {
