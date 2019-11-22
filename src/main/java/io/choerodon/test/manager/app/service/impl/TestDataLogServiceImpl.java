@@ -58,7 +58,7 @@ public class TestDataLogServiceImpl implements TestDataLogService {
 
     private void fillUserAndStatus(Long projectId, List<DataLogVO> dataLogVOS) {
         List<Long> createByIds = dataLogVOS.stream().filter(dataLogDTO -> dataLogDTO.getCreatedBy() != null && !Objects.equals(dataLogDTO.getCreatedBy(), 0L)).map(DataLogVO::getCreatedBy).distinct().collect(Collectors.toList());
-        Map<Long, UserMessageDTO> usersMap = userService.queryUsersMap(createByIds, true);
+        Map<Long, UserMessageDTO> usersMap = userService.queryUsersMap(createByIds);
         for (DataLogVO dto : dataLogVOS) {
             UserMessageDTO userMessageDTO = usersMap.get(dto.getCreatedBy());
             String name = userMessageDTO != null ? userMessageDTO.getName() : null;
