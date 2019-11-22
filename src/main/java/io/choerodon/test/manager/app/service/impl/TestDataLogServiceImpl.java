@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.StatusVO;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.choerodon.test.manager.app.service.UserService;
@@ -31,9 +32,12 @@ public class TestDataLogServiceImpl implements TestDataLogService {
 
     @Autowired
     private ModelMapper modelMapper;
+
     @Override
     public void create(TestDataLogDTO testDataLogDTO) {
-        testDataLogMapper.insertSelective(testDataLogDTO);
+        if (testDataLogMapper.insertSelective(testDataLogDTO) != 1) {
+            throw new CommonException("error.insert.data.log");
+        }
     }
 
     @Override
@@ -48,7 +52,7 @@ public class TestDataLogServiceImpl implements TestDataLogService {
         testDataLogDTO.setProjectId(projectId);
         List<DataLogVO> dataLogVOS = modelMapper.map(testDataLogMapper.select(testDataLogDTO), new TypeToken<List<DataLogVO>>() {
         }.getType());
-        fillUserAndStatus(projectId,dataLogVOS);
+        fillUserAndStatus(projectId, dataLogVOS);
         return dataLogVOS.stream().sorted(Comparator.comparing(DataLogVO::getCreationDate).reversed()).collect(Collectors.toList());
     }
 

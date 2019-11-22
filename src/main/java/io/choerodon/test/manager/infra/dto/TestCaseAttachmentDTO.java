@@ -1,12 +1,16 @@
 package io.choerodon.test.manager.infra.dto;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
 @Table(name = "test_case_attachment")
 public class TestCaseAttachmentDTO extends BaseDTO {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attachmentId;
     private Long caseId;
     private String url;

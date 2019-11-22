@@ -174,7 +174,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 v.setCaseId(caseId);
                 v.setAttachmentId(null);
                 v.setObjectVersionNumber(null);
-                testAttachmentMapper.insertSelective(v);
+                iIssueAttachmentService.createBase(v);
             });
         }
     }

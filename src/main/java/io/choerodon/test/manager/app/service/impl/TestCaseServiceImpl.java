@@ -281,14 +281,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         }
 
-        //  附件信息
-        if (!CollectionUtils.isEmpty(testCaseVO.getAttachment())) {
-            testCaseVO.getAttachment().forEach(v -> {
-                v.setCaseId(testCaseDTO.getCaseId());
-                v.setProjectId(projectId);
-                testAttachmentMapper.insertSelective(v);
-            });
-        }
         // 返回数据
         testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
@@ -597,7 +589,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     private void queryAllFolderIds(Long folderId, Set<Long> folderIds) {
-        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
         folderIds.add(folderId);
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setParentId(folderId);
