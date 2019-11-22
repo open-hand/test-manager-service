@@ -44,15 +44,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     private ModelMapper modelMapper;
 
     @Override
-    public TestIssueFolderDTO baseInsert(TestIssueFolderDTO insert) {
-        if (testIssueFolderMapper.insert(insert) != 1) {
-            throw new CommonException("error.issueFolder.insert");
-        }
-
-        return testIssueFolderMapper.selectByPrimaryKey(insert.getFolderId());
-    }
-
-    @Override
     public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {
         TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
         return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
@@ -131,8 +122,12 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         if (testIssueFolderVO.getFolderId() != null) {
             throw new CommonException("error.issue.folder.insert.folderId.should.be.null");
         }
-        return modelMapper.map(this.baseInsert(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
+        testIssueFolderVO.setProjectId(projectId);
+        TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
+        if (testIssueFolderMapper.insert(testIssueFolderDTO) != 1) {
+            throw new CommonException("error.issueFolder.insert");
+        }
+        return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
