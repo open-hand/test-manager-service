@@ -65,7 +65,7 @@ class IssueTreeStore {
   }
 
   @action setCurrentCycleById(id) {
-    const data = find(this.treeFolder, { id });
+    const data = find(this.treeData.treeFolder, { id });
     if (data) {
       this.setCurrentCycle(data);
     }
