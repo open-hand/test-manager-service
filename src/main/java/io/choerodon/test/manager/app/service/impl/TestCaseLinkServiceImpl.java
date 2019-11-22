@@ -42,29 +42,29 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
 
     @Override
     public void delete(Long project, Long linkId) {
-      testCaseLinkMapper.deleteByPrimaryKey(linkId);
+        testCaseLinkMapper.deleteByPrimaryKey(linkId);
     }
 
     @Override
     public TestCaseLinkDTO create(Long project, TestCaseLinkDTO testCaseLinkDTO) {
-        if(!ObjectUtils.isEmpty(testCaseLinkDTO.getLinkId())){
+        if (!ObjectUtils.isEmpty(testCaseLinkDTO.getLinkId())) {
             throw new CommonException("error.insert.link.id.not.null");
         }
         testCaseLinkDTO.setProjectId(project);
-        if (!testCaseLinkMapper.select(testCaseLinkDTO).isEmpty()){
+        if (!testCaseLinkMapper.select(testCaseLinkDTO).isEmpty()) {
             return new TestCaseLinkDTO();
         }
-        testCaseLinkMapper.insertSelective(testCaseLinkDTO);
-        return  testCaseLinkDTO;
+        baseInsert(testCaseLinkDTO);
+        return testCaseLinkDTO;
     }
 
     @Override
     public List<IssueInfoDTO> listIssueInfo(Long projectId, Long caseId) {
-        TestCaseLinkDTO  testCaseLinkDTO = new TestCaseLinkDTO();
+        TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setProjectId(projectId);
         testCaseLinkDTO.setLinkCaseId(caseId);
         List<TestCaseLinkDTO> testCaseLinkDTOS = testCaseLinkMapper.select(testCaseLinkDTO);
-        if (CollectionUtils.isEmpty(testCaseLinkDTOS)){
+        if (CollectionUtils.isEmpty(testCaseLinkDTOS)) {
             return new ArrayList<>();
         }
         List<Long> collect = testCaseLinkDTOS.stream().map(TestCaseLinkDTO::getLinkCaseId).collect(Collectors.toList());
@@ -78,11 +78,11 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         testCaseLinkDTO.setLinkCaseId(caseId);
         testCaseLinkDTO.setProjectId(projectId);
         List<TestCaseLinkDTO> list = testCaseLinkMapper.select(testCaseLinkDTO);
-        if(CollectionUtils.isEmpty(list)){
-         return;
+        if (CollectionUtils.isEmpty(list)) {
+            return;
         }
         // 替换新的测试用例ID，并插入数据库
-        for (TestCaseLinkDTO testCaseLink: list) {
+        for (TestCaseLinkDTO testCaseLink : list) {
             testCaseLink.setLinkId(null);
             testCaseLink.setObjectVersionNumber(null);
             testCaseLink.setLinkCaseId(caseId);
@@ -96,8 +96,8 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         testCaseLinkDTO.setLinkCaseId(caseId);
         testCaseLinkDTO.setProjectId(projectId);
         List<TestCaseLinkDTO> caseLinkList = testCaseLinkMapper.select(testCaseLinkDTO);
-        if(CollectionUtils.isEmpty(caseLinkList)){
-            return  new ArrayList<>();
+        if (CollectionUtils.isEmpty(caseLinkList)) {
+            return new ArrayList<>();
         }
         Map<Long, List<TestCaseLinkDTO>> collect = caseLinkList.stream().collect(Collectors.groupingBy(TestCaseLinkDTO::getIssueId));
         List<Long> issueIds = caseLinkList.stream().map(TestCaseLinkDTO::getIssueId).collect(Collectors.toList());
@@ -122,13 +122,19 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
             testCaseLinkDTO.setProjectId(projectId);
             testCaseLinkDTO.setLinkCaseId(caseId);
             testCaseLinkDTO.setIssueId(v);
-            list.add(create(projectId,testCaseLinkDTO));
-         });
+            list.add(create(projectId, testCaseLinkDTO));
+        });
         return list;
     }
 
     @Override
     public void batchInsert(List<TestCaseLinkDTO> testCaseLinkDTOList) {
         testCaseLinkMapper.batchInsert(testCaseLinkDTOList);
+    }
+
+    private void baseInsert(TestCaseLinkDTO testCaseLinkDTO) {
+        if (testCaseLinkMapper.insertSelective(testCaseLinkDTO) != 1) {
+            throw new CommonException("error.insert.case.link");
+        }
     }
 }

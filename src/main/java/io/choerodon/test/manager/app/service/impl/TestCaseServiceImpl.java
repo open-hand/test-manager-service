@@ -7,6 +7,7 @@ import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.util.LongUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -259,7 +260,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.project.info.null");
         }
         testCaseVO.setProjectId(projectId);
-        testCaseVO.setCaseNum(testProjectInfo.getCaseMaxNum() + 1);
+        Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
+        testCaseVO.setCaseNum(caseNum.toString());
         TestCaseDTO testCaseDTO = baseInsert(testCaseVO);
         // 创建测试步骤
         List<TestCaseStepVO> caseStepVOS = testCaseVO.getCaseStepVOS();
@@ -281,16 +283,8 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         }
 
-        //  附件信息
-        if (!CollectionUtils.isEmpty(testCaseVO.getAttachment())) {
-            testCaseVO.getAttachment().forEach(v -> {
-                v.setCaseId(testCaseDTO.getCaseId());
-                v.setProjectId(projectId);
-                testAttachmentMapper.insertSelective(v);
-            });
-        }
         // 返回数据
-        testProjectInfo.setCaseMaxNum(testCaseVO.getCaseNum());
+        testProjectInfo.setCaseMaxNum(caseNum);
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         List<Long> userIds = new ArrayList<>();
         userIds.add(testCaseDTO.getCreatedBy());
@@ -416,9 +410,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        map.setCaseNum(testCaseDTO.getCaseNum() + 1);
+        map.setVersionNum(testCaseDTO.getVersionNum() + 1);
 
-        baseUpdate(testCaseDTO);
+        baseUpdate(map);
 
         // 更新标签
         List<TestCaseLabelDTO> labels = testCaseRepVO.getLabels();
@@ -597,7 +591,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     private void queryAllFolderIds(Long folderId, Set<Long> folderIds) {
-        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
         folderIds.add(folderId);
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
         testIssueFolder.setParentId(folderId);
@@ -624,7 +617,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
-        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKey, testCaseDTO, 1, "error.testcase.update");
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
     }
 

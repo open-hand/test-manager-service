@@ -126,7 +126,7 @@ public class DataLogAspect {
         try {
             TestCaseAttachmentDTO testCaseAttachmentDTO = null;
             for (Object arg : args) {
-                if (arg instanceof TestCaseLabelRelDTO) {
+                if (arg instanceof TestCaseAttachmentDTO) {
                     testCaseAttachmentDTO = (TestCaseAttachmentDTO) arg;
                 }
             }
@@ -142,7 +142,7 @@ public class DataLogAspect {
         try {
             TestCaseAttachmentDTO testCaseAttachmentDTO = null;
             for (Object arg : args) {
-                if (arg instanceof TestCaseLabelRelDTO) {
+                if (arg instanceof TestCaseAttachmentDTO) {
                     testCaseAttachmentDTO = (TestCaseAttachmentDTO) arg;
                 }
             }
