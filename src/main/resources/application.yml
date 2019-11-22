@@ -58,3 +58,6 @@ logging:
   level:
     root: info
     io.choerodon.test.manager: debug
+services:
+  attachment:
+    url: example.com

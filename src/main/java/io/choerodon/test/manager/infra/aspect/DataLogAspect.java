@@ -40,6 +40,7 @@ public class DataLogAspect {
     private static final String FIELD_DESCRIPTION_NULL = "[{\"insert\":\"\n\"}]";
     private static final String FIELD_FOLDER = "Folder Link";
     private static final String FIELD_LABELS = "labels";
+    private static final String FIELD_ATTACHMENT = "Attachment";
 
     @Autowired
     private ModelMapper modelMapper;
@@ -93,12 +94,17 @@ public class DataLogAspect {
                     case DataLogConstants.LABEL_DELETE:
                         handleLabelDeleteLog(args);
                         break;
+                    case DataLogConstants.CREATE_ATTACHMENT:
+                        handleAttachmentCreateLog(args);
+                        break;
+                    case DataLogConstants.DELETE_ATTACHMENT:
+                        handleAttachmentDeleteLog(args);
+                        break;
                     default:
                         break;
                 }
-            }
-            else {
-                switch(dataLog.type()) {
+            } else {
+                switch (dataLog.type()) {
                     case DataLogConstants.BATCH_MOVE:
                         handleCaseMoveFolder(args);
                         break;
@@ -116,64 +122,92 @@ public class DataLogAspect {
         return result;
     }
 
+    private void handleAttachmentDeleteLog(Object[] args) {
+        try {
+            TestCaseAttachmentDTO testCaseAttachmentDTO = null;
+            for (Object arg : args) {
+                if (arg instanceof TestCaseLabelRelDTO) {
+                    testCaseAttachmentDTO = (TestCaseAttachmentDTO) arg;
+                }
+            }
+            if (!ObjectUtils.isEmpty(testCaseAttachmentDTO)) {
+                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getFileName(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    private void handleAttachmentCreateLog(Object[] args) {
+        try {
+            TestCaseAttachmentDTO testCaseAttachmentDTO = null;
+            for (Object arg : args) {
+                if (arg instanceof TestCaseLabelRelDTO) {
+                    testCaseAttachmentDTO = (TestCaseAttachmentDTO) arg;
+                }
+            }
+            if (!ObjectUtils.isEmpty(testCaseAttachmentDTO)) {
+                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, null, testCaseAttachmentDTO.getFileName(), null, null);
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
     private void handleLabelDeleteLog(Object[] args) {
-        try{
+        try {
             TestCaseLabelRelDTO testCaseLabelRelDTO = null;
-            for(Object arg : args){
-                if (arg instanceof TestCaseLabelRelDTO){
+            for (Object arg : args) {
+                if (arg instanceof TestCaseLabelRelDTO) {
                     testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
                 }
             }
-            if(!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
+            if (!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
                 TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
-                createDataLog(testCaseLabelRelDTO.getProjectId(),testCaseLabelRelDTO.getCaseId(),FIELD_LABELS,testCaseLabelDTO.getLabelName(),null, testCaseLabelRelDTO.getLabelId().toString(),null);
+                createDataLog(testCaseLabelRelDTO.getProjectId(), testCaseLabelRelDTO.getCaseId(), FIELD_LABELS, testCaseLabelDTO.getLabelName(), null, testCaseLabelRelDTO.getLabelId().toString(), null);
             }
-        }
-        catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
 
     private void handleLabelCreateLog(Object[] args) {
-        try{
+        try {
             TestCaseLabelRelDTO testCaseLabelRelDTO = null;
-            for(Object arg : args){
-                if (arg instanceof TestCaseLabelRelDTO){
+            for (Object arg : args) {
+                if (arg instanceof TestCaseLabelRelDTO) {
                     testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
                 }
             }
-            if(!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
+            if (!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
                 TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
-                createDataLog(testCaseLabelRelDTO.getProjectId(),testCaseLabelRelDTO.getCaseId(),FIELD_LABELS,null,testCaseLabelDTO.getLabelName(), null,testCaseLabelRelDTO.getLabelId().toString());
+                createDataLog(testCaseLabelRelDTO.getProjectId(), testCaseLabelRelDTO.getCaseId(), FIELD_LABELS, null, testCaseLabelDTO.getLabelName(), null, testCaseLabelRelDTO.getLabelId().toString());
             }
-        }
-        catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
 
     @SuppressWarnings("checkstyle:LineLength")
     private void handleCaseMoveFolder(Object[] args) {
-        try{
+        try {
             Long projectId = null;
             Long folderId = null;
             List<TestCaseRepVO> testCaseRepVOS = null;
             int i = 0;
-            for(Object arg : args){
-               if (arg instanceof Long){
-                   if(i == 0){
-                       projectId = (Long) arg;
-                   }
-                   else {
-                       folderId = (Long) arg;
-                   }
-                   i++;
-               }
-               else if (arg instanceof List) {
-                   testCaseRepVOS = (List<TestCaseRepVO>) arg;
-               }
+            for (Object arg : args) {
+                if (arg instanceof Long) {
+                    if (i == 0) {
+                        projectId = (Long) arg;
+                    } else {
+                        folderId = (Long) arg;
+                    }
+                    i++;
+                } else if (arg instanceof List) {
+                    testCaseRepVOS = (List<TestCaseRepVO>) arg;
+                }
             }
-            if(!CollectionUtils.isEmpty(testCaseRepVOS) && !ObjectUtils.isEmpty(projectId) && !ObjectUtils.isEmpty(folderId)) {
+            if (!CollectionUtils.isEmpty(testCaseRepVOS) && !ObjectUtils.isEmpty(projectId) && !ObjectUtils.isEmpty(folderId)) {
                 TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
                 Long finalProjectId = projectId;
                 Long finalFolderId = folderId;
@@ -181,12 +215,11 @@ public class DataLogAspect {
                     TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(v.getCaseId());
                     Long oldFolderId = testCaseDTO.getFolderId();
                     TestIssueFolderDTO olderFolder = testIssueFolderMapper.selectByPrimaryKey(oldFolderId);
-                    createDataLog(finalProjectId,v.getCaseId(),FIELD_FOLDER,olderFolder.getName(),testIssueFolderDTO.getName(),String.valueOf(oldFolderId), String.valueOf(finalFolderId));
+                    createDataLog(finalProjectId, v.getCaseId(), FIELD_FOLDER, olderFolder.getName(), testIssueFolderDTO.getName(), String.valueOf(oldFolderId), String.valueOf(finalFolderId));
                 });
             }
 
-        }
-        catch (Throwable throwable){
+        } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
@@ -204,9 +237,9 @@ public class DataLogAspect {
             }
             if (!ObjectUtils.isEmpty(testCaseRepVO) && !field.isEmpty()) {
                 TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCaseRepVO.getCaseId());
-                handleIssueSummary(field,testCaseDTO,testCaseRepVO);
-                handleIssueDescription(field,testCaseDTO,testCaseRepVO);
-                handleIssueFolder(field,testCaseDTO,testCaseRepVO);
+                handleIssueSummary(field, testCaseDTO, testCaseRepVO);
+                handleIssueDescription(field, testCaseDTO, testCaseRepVO);
+                handleIssueFolder(field, testCaseDTO, testCaseRepVO);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -247,6 +280,7 @@ public class DataLogAspect {
         dataLogDTO.setNewValue(newValue);
         testDataLogService.create(dataLogDTO);
     }
+
     private void handleIssueSummary(List<String> field, TestCaseDTO testCaseDTO, TestCaseRepVO testCaseRepVO) {
         if (field.contains(SUMMARY_FIELD) && !Objects.equals(testCaseDTO.getSummary(), testCaseRepVO.getSummary())) {
             createDataLog(testCaseDTO.getProjectId(), testCaseDTO.getCaseId(),

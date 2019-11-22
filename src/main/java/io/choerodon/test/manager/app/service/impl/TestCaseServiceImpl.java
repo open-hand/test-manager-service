@@ -7,6 +7,9 @@ import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.app.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -50,6 +53,9 @@ import java.util.stream.Collectors;
 @Component
 @Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
+
+    private static final String BACKETNAME = "agile-service";
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
@@ -101,6 +107,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseLabelService testCaseLabelService;
+
+    @Value("${services.attachment.url}")
+    private String attachmentUrl;
 
     @Override
     public ResponseEntity<PageInfo<IssueListTestVO>> listIssueWithoutSub(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
@@ -324,6 +333,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseAttachmentDTO.setCaseId(caseId);
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
+            attachment.forEach(v -> {
+                v.setUrl(attachmentUrl + "/" + BACKETNAME + "/" + v.getUrl());
+            });
             testCaseInfoVO.setAttachment(attachment);
         }
         // 查询测试用例所属的文件夹
