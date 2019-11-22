@@ -416,9 +416,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
-        map.setCaseNum(testCaseDTO.getCaseNum() + 1);
+        map.setVersionNum(testCaseDTO.getVersionNum() + 1);
 
-        baseUpdate(testCaseDTO);
+        baseUpdate(map);
 
         // 更新标签
         List<TestCaseLabelDTO> labels = testCaseRepVO.getLabels();
@@ -624,7 +624,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }
-        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKey, testCaseDTO, 1, "error.testcase.update");
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, testCaseDTO, 1, "error.testcase.update");
         return testCaseDTO;
     }
 

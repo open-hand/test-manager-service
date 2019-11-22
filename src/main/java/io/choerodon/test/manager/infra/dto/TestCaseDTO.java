@@ -15,7 +15,7 @@ public class TestCaseDTO extends BaseDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long caseId;
-    private String caseNum;
+    private Long caseNum;
     private String summary;
     private String description;
     private String rank;
@@ -31,11 +31,11 @@ public class TestCaseDTO extends BaseDTO {
         this.caseId = caseId;
     }
 
-    public String getCaseNum() {
+    public Long getCaseNum() {
         return caseNum;
     }
 
-    public void setCaseNum(String caseNum) {
+    public void setCaseNum(Long caseNum) {
         this.caseNum = caseNum;
     }
 
