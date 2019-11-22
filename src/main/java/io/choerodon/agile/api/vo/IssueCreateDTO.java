@@ -1,6 +1,7 @@
 package io.choerodon.agile.api.vo;
 
 import io.choerodon.agile.infra.common.utils.StringUtil;
+import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,6 +33,8 @@ public class IssueCreateDTO {
 
     private Long issueTypeId;
 
+    private Long folderId;
+
     private List<VersionIssueRelVO> versionIssueRelVOList;
 
     private List<LabelIssueRelVO> labelIssueRelVOList;
@@ -39,6 +42,8 @@ public class IssueCreateDTO {
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
     private List<IssueLinkCreateDTO> issueLinkCreateDTOList;
+
+    private List<TestCaseLinkDTO> testCaseLinkDTOList;
 
     private BigDecimal remainingTime;
 
@@ -50,16 +55,16 @@ public class IssueCreateDTO {
         return issueLinkCreateDTOList;
     }
 
+    public List<TestCaseLinkDTO> getTestCaseLinkDTOList() {
+        return testCaseLinkDTOList;
+    }
+
+    public void setTestCaseLinkDTOList(List<TestCaseLinkDTO> testCaseLinkDTOList) {
+        this.testCaseLinkDTOList = testCaseLinkDTOList;
+    }
+
     public void setIssueLinkCreateDTOList(List<IssueLinkCreateDTO> issueLinkCreateDTOList) {
         this.issueLinkCreateDTOList = issueLinkCreateDTOList;
-    }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
     }
 
     public String getSummary() {
@@ -190,9 +195,24 @@ public class IssueCreateDTO {
         return issueTypeId;
     }
 
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+
     @Override
     public String toString() {
         return StringUtil.getToString(this);
     }
 
+    public Long getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(Long folderId) {
+        this.folderId = folderId;
+    }
 }

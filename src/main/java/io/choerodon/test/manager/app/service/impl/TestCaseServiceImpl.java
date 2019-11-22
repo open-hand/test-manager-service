@@ -7,6 +7,7 @@ import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.LongUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -627,6 +628,26 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.case.is.not.exist");
         }
         return testCaseDTO;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType) {
+        TestCaseDTO testCaseDTO = ConvertUtils.convertObject(issueCreateDTO, TestCaseDTO.class);
+        // 插入测试用例
+        testCaseMapper.insert(testCaseDTO);
+        // 更新记录关联表
+        for (TestCaseLinkDTO testCaseLinkDTO: issueCreateDTO.getTestCaseLinkDTOList()){
+            testCaseLinkDTO.setProjectId(projectId);
+            testCaseLinkDTO.setLinkCaseId(testCaseDTO.getCaseId());
+            testCaseLinkMapper.insert(testCaseLinkDTO);
+        }
+        return testCaseDTO;
+    }
+
+    @Override
+    public void batchDeleteIssues(Long projectId, Long[] issueIds) {
+
     }
 
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
