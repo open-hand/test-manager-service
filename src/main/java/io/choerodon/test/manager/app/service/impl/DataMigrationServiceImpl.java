@@ -20,16 +20,14 @@ import org.springframework.util.CollectionUtils;
 import io.choerodon.agile.api.vo.LabelFixVO;
 import io.choerodon.agile.api.vo.LabelIssueRelFixVO;
 import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProjectInfoFixVO;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.*;
-import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
+import io.choerodon.test.manager.infra.mapper.*;
 
 @Service
 public class DataMigrationServiceImpl implements DataMigrationService {
@@ -77,8 +75,14 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private ProjectInfoFeignClient projectInfoFeignClient;
+    @Autowired
+    private TestProjectInfoMapper testProjectInfoMapper;
+
     @Async
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void fixData() {
         //1.文件夹
@@ -93,10 +97,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migrateAttachment();
         //6.连接
         migrateLink();
+        //7.项目
+        migrateProject();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void migrateIssue() {
         List<Long> projectIds = testCaseFeignClient.queryIds(1L).getBody();
         Long startTime = System.currentTimeMillis();
@@ -127,7 +132,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void migrateAttachment(){
 
         logger.info("start---migrate---test-case-attachment");
@@ -163,9 +167,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Override
     public void migrateLabel() {
         List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(0L).getBody();
-        List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
-        }.getType());
-        testCaseLabelService.batchInsert(testCaseLabelDTOList);
+        if(!CollectionUtils.isEmpty(issueLabelDTOS)){
+            List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
+            }.getType());
+            testCaseLabelService.batchInsert(testCaseLabelDTOList);
+        }
         logger.info("===========label=============> copy successed");
     }
 
@@ -177,7 +183,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             List<Long> caseIdList = projectId.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
             List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId.getKey(), caseIdList).getBody();
             if(!CollectionUtils.isEmpty(labelIssueRelDTOS)){
-                List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueDtoTocaseDto).collect(Collectors.toList());
+                List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueVoTocaseDto).collect(Collectors.toList());
                 testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
             }
         }
@@ -209,6 +215,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                     newFolderVO.setParentId(0L);
                     newFolderVO.setProjectId(projectFolderId);
                     newFolderVO.setType("cycle");
+                    newFolderVO.setVersionId(0L);
                     TestIssueFolderVO testIssueFolderVO = testIssueFolderService.create(projectFolderId, newFolderVO);
                     //2.更新二级目录
                     if (!CollectionUtils.isEmpty(entry.getValue())) {
@@ -223,16 +230,32 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         });
     }
 
+    @Override
+    public void migrateProject() {
+        List<ProjectInfoFixVO> projectInfoFixVOS = projectInfoFeignClient.queryAllProjectInfo(0L).getBody();
+        if(!CollectionUtils.isEmpty(projectInfoFixVOS)){
+            List<TestProjectInfoDTO> testProjectInfoDTOS = projectInfoFixVOS.stream().map(this::projectInfVoToDto).collect(Collectors.toList());
+            testProjectInfoMapper.batchInsert(testProjectInfoDTOS);
+        }
+    }
+
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList){
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         BeanUtils.copyProperties(issueLinkFixVOList,testCaseLinkDTO);
         testCaseLinkDTO.setLinkCaseId(issueLinkFixVOList.getLinkedIssueId());
         return testCaseLinkDTO;
     }
-    private TestCaseLabelRelDTO caseIssueDtoTocaseDto(LabelIssueRelFixVO labelIssueRelDTO) {
+    private TestCaseLabelRelDTO caseIssueVoTocaseDto(LabelIssueRelFixVO labelIssueRelDTO) {
         TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
         BeanUtils.copyProperties(labelIssueRelDTO, testCaseLabelRelDTO);
         testCaseLabelRelDTO.setCaseId(labelIssueRelDTO.getIssueId());
         return testCaseLabelRelDTO;
+    }
+
+    private TestProjectInfoDTO projectInfVoToDto(ProjectInfoFixVO projectInfoFixVO) {
+        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+        BeanUtils.copyProperties(projectInfoFixVO, testProjectInfoDTO);
+        testProjectInfoDTO.setCaseMaxNum(projectInfoFixVO.getIssueMaxNum());
+        return testProjectInfoDTO;
     }
 }
