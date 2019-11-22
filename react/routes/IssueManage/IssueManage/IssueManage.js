@@ -70,23 +70,9 @@ export default class IssueManage extends Component {
    * @memberof IssueManage
    */
   handleCreateIssue(issue, folderId) {
-    let targetCycle = null;
-    // 如果指定了文件夹就设置文件夹，否则设置版本
     if (folderId) {
-      targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
-    } else {
-      const { versionId } = issue.versionIssueRelVOList[0];
-      targetCycle = _.find(IssueTreeStore.dataList, { versionId });
-    }
-    if (targetCycle) {
-      const expandKeys = IssueTreeStore.getExpandedKeys;
-      // 设置当前选中项
-      IssueTreeStore.setCurrentCycle(targetCycle);
-      // 设置当前选中项
-      IssueTreeStore.setSelectedKeys([targetCycle.key]);
-      // 设置展开项，展开父元素
-      IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
-    }
+      IssueTreeStore.setCurrentCycleById(folderId);
+    }   
     IssueStore.loadIssues();
   }
 

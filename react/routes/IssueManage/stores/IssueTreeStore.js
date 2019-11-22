@@ -5,76 +5,14 @@ import {
 import { find } from 'lodash';
 
 class IssueTreeStore {
-  // @observable treeData = {
-  //   rootIds: ['1-1', '1-2'],
-  //   treeFolder: [{
-  //     id: '1-1',
-  //     children: ['1-1-1', '1-1-2'],
-  //     hasChildren: true,
-  //     isExpanded: true,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon',
-  //     },
-  //   }, {
-  //     id: '1-2',
-  //     children: ['1-2-1', '1-2-2'],
-  //     hasChildren: true,
-  //     isExpanded: true,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon2',
-  //     },
-  //   }, {
-  //     id: '1-1-1',
-  //     children: [],
-  //     hasChildren: false,
-  //     isExpanded: false,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon敏捷',
-  //     },
-  //   }, {
-  //     id: '1-1-2',
-  //     children: [],
-  //     hasChildren: false,
-  //     isExpanded: false,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon测试',
-  //     },
-  //   }, {
-  //     id: '1-2-1',
-  //     children: [],
-  //     hasChildren: false,
-  //     isExpanded: false,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon敏捷',
-  //     },
-  //   }, {
-  //     id: '1-2-2',
-  //     children: [],
-  //     hasChildren: false,
-  //     isExpanded: false,
-  //     isChildrenLoading: false,
-  //     data: {
-  //       name: 'Choerodon测试',
-  //     },
-  //   }],
-  // }
   @observable treeData = {
     rootIds: [],
     treeFolder: [],
   }
 
-  @observable expandedKeys = ['0-0'];
-
   @observable selectedKeys = [];
 
   @observable currentCycle = {};
-
-  @observable preCycle = {};
 
   @observable loading = false;
 
@@ -82,10 +20,6 @@ class IssueTreeStore {
 
   @computed get getTreeData() {
     return toJS(this.treeData);
-  }
-
-  @computed get getExpandedKeys() {
-    return toJS(this.expandedKeys);
   }
 
   @computed get getSelectedKeys() {
@@ -98,11 +32,6 @@ class IssueTreeStore {
 
   @computed get getPreCycle() {
     return toJS(this.preCycle);
-  }
-
-  @action setExpandedKeys(expandedKeys) {
-    // window.console.log(expandedKeys);
-    this.expandedKeys = expandedKeys;
   }
 
   @action setSelectedKeys(selectedKeys) {
@@ -132,12 +61,14 @@ class IssueTreeStore {
   }
 
   @action setCurrentCycle(currentCycle) {
-    this.setPreCycle({ ...this.currentCycle });
     this.currentCycle = currentCycle;
   }
 
-  @action setPreCycle(preCycle) {
-    this.preCycle = preCycle;
+  @action setCurrentCycleById(id) {
+    const data = find(this.treeFolder, { id });
+    if (data) {
+      this.setCurrentCycle(data);
+    }
   }
 
   @action setLoading = (loading) => {

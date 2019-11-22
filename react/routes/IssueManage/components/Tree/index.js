@@ -11,7 +11,7 @@ import { Modal } from 'choerodon-ui/pro';
 import { getRootNode } from './utils';
 import TreeNode from './TreeNode';
 import {
-  selectItem, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
+  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
@@ -30,7 +30,7 @@ function mapDataToTree(data) {
         isExpanded: true,
         isChildrenLoading: false,
         data: {
-          title: 'root',
+          name: 'root',
         },
       },
     },
@@ -57,7 +57,7 @@ function PureTree({
   const previous = usePrevious(selected);
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
-    setTree(oldTree => selectItem(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
+    setTree(oldTree => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
   const addFirstLevelItem = () => {
     const newChild = {

@@ -1,7 +1,6 @@
 import { mutateTree } from '@atlaskit/tree';
 import { getTreePosition, getParent } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { useEffect, useRef, useCallback } from 'react';
-import { debounce } from 'lodash';
 
 const hasLoadedChildren = item => !!item.hasChildren && item.children.length > 0;
 
@@ -18,7 +17,26 @@ export function selectItem(tree, id, previous) {
   }
   if (id) {
     newTree = mutateTree(newTree, id, { selected: true });
-  }  
+  }
+  return newTree;
+}
+export function selectItemWithExpand(tree, id, previous) {
+  let newTree = tree;
+  newTree = selectItem(newTree, id, previous);
+  Object.keys(tree.items).forEach((itemId) => {
+    const item = tree.items[itemId];    
+    if (item.children && item.children.length > 0) {
+      const hasChildMatch = item.children.some((childId) => {
+        const child = tree.items[childId];
+        return child.id === id;
+      });
+      // 自动展开
+      if (hasChildMatch && !item.isExpanded) {
+        newTree = mutateTree(newTree, itemId, { isExpanded: true });
+      }
+    }
+  });
+
   return newTree;
 }
 // 从树中删除一项
@@ -89,13 +107,13 @@ export function expandTreeBySearch(tree, search) {
   Object.keys(tree.items).forEach((itemId) => {
     const item = tree.items[itemId];
     // 更新数据，使tree的组件会更新
-    if (item.data.title.indexOf(search) > -1) {
+    if (item.data.name.indexOf(search) > -1) {
       newTree = mutateTree(newTree, itemId, { isMatch: true });
     }
     if (item.children && item.children.length > 0) {
       const hasChildMatch = item.children.some((childId) => {
         const child = tree.items[childId];
-        return child.data.title.indexOf(search) > -1;
+        return child.data.name.indexOf(search) > -1;
       });
       // 自动展开
       if (hasChildMatch && !item.isExpanded) {
@@ -119,11 +137,4 @@ export const usePrevious = (value) => {
     ref.current = value;
   });
   return ref.current;
-};
-export const useDebounceInput = (fn, deps, delay = 200) => {
-  const realFiler = useCallback(debounce(fn, delay), deps);
-  const onChange = useCallback((e) => {
-    realFiler(e.target.value);
-  }, []);
-  return onChange;
 };
