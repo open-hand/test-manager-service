@@ -115,10 +115,12 @@ export function expandTreeBySearch(tree, search) {
   Object.keys(tree.items).forEach((itemId) => {
     const item = tree.items[itemId];
     // 更新数据，使tree的组件会更新
-    if (item.data.name.indexOf(search) > -1) {
+    if (search && item.data.name.indexOf(search) > -1) {
       newTree = mutateTree(newTree, itemId, { isMatch: true });
       // 展开父级
       newTree = autoExpandParent(newTree, item.id);
+    } else if (item.isMatch) {
+      newTree = mutateTree(newTree, itemId, { isMatch: false });
     }
   });
 
