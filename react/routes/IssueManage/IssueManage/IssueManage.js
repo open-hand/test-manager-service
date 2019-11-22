@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
-  Page, Header, Content, Breadcrumb, Choerodon,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
-import { getIssueTree } from '../../../api/IssueManageApi';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
@@ -40,26 +39,17 @@ export default class IssueManage extends Component {
     }
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
-    IssueStore.setBarFilters(barFilters);
-    IssueStore.init();
+    IssueStore.setBarFilters(barFilters);    
     this.getTestCase();
   }
 
-  getTestCase = () => {
-    IssueTreeStore.setLoading(true);
-    getIssueTree().then((data) => {
-      IssueTreeStore.setTreeData(data);
-      IssueTreeStore.setLoading(false);
-
-      const { currentCycle } = IssueTreeStore;
-      const { id } = currentCycle;
-      if (id) {
-        IssueStore.loadIssues();
-      }
-    }).catch(() => {
-      IssueTreeStore.setLoading(false);
-      Choerodon.prompt('网络错误');
-    });
+  getTestCase = async () => {
+    await IssueTreeStore.loadIssueTree();   
+    const { currentCycle } = IssueTreeStore;
+    const { id } = currentCycle;
+    if (id) {
+      IssueStore.loadIssues();
+    }
   }
 
   /**
@@ -170,12 +160,7 @@ export default class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
-          <IssueTree
-            ref={(tree) => { this.tree = tree; }}
-            onClose={() => {
-              IssueStore.setTreeShow(false);
-            }}
-          />  
+          <IssueTree />  
           <div
             className="c7ntest-content-issue"
             style={{

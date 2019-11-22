@@ -61,19 +61,6 @@ class IssueStore {
     this.tableDraging = false;
   }
 
-  init() {
-    this.setOrder({
-      orderField: '',
-      orderType: '',
-    });
-    this.setFilter({
-      advancedSearchArgs: {
-      
-      },
-    });
-    this.setBarFilters([]);
-  }
-
   loadIssues = async (page, size = this.pagination.pageSize) => {
     const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);

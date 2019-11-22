@@ -5,7 +5,7 @@ import Tree, {
   mutateTree,
   moveItemOnTree,
 } from '@atlaskit/tree';
-import { flattenTree, getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
+import { flattenTree } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
 import { getRootNode } from './utils';
@@ -69,7 +69,7 @@ function PureTree({
       isChildrenLoading: false,
       isEditing: true,
       data: {
-        name: '新的',
+        name: '',
       },
     };
     setTree(oldTree => addItem(oldTree, getRootNode(oldTree), newChild));
@@ -78,7 +78,6 @@ function PureTree({
     addFirstLevelItem,
   }));
   const onSelect = (item) => {
-    // console.log('select', itemId)
     setSelected(item);
   };
   const filterTree = useCallback((value) => {
@@ -102,9 +101,7 @@ function PureTree({
     if (!destination) {
       return;
     }
-    const { parentId: targetId } = destination;
     const sourceItem = getItemByPosition(tree, source);
-    // console.log(source, destination);
     setTree(oldTree => moveItemOnTree(oldTree, source, destination));
     try {
       await afterDrag(sourceItem, destination);
@@ -112,7 +109,7 @@ function PureTree({
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };
-  const handleDelete = async (item) => {
+  const handleDelete = useCallback(async (item) => {
     try {
       await onDelete(item);
       setTree(oldTree => removeItem(oldTree, item.path));
@@ -121,17 +118,15 @@ function PureTree({
       }
     } catch (error) {
       // console.log(error);
-    } 
-  };
+    }
+  }, [onDelete, selected.id, setSelected]);
   const handleMenuClick = useCallback((node, { item, key, keyPath }) => {
     switch (key) {
-      case 'rename': {
-        // console.log('rename', node);
+      case 'rename': {      
         setTree(oldTree => mutateTree(oldTree, node.id, { isEditing: true }));
         break;
       }
-      case 'delete': {
-        // console.log('delete', node);
+      case 'delete': {  
         Modal.confirm({
           title: '确认删除文件夹',
         }).then((button) => {
@@ -141,8 +136,7 @@ function PureTree({
         });               
         break;
       }
-      case 'add': {
-        // console.log('add', node);
+      case 'add': {      
         const newChild = {
           id: 'new',
           parentId: node.id, // 放入父id，方便创建时读取
@@ -211,7 +205,6 @@ function PureTree({
       search={search}
     />
   );
-  // console.log(flattenedTree);
   return (
     <div className={prefix}>
       <FilterInput

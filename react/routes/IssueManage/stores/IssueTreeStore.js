@@ -3,6 +3,7 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { find } from 'lodash';
+import { getIssueTree } from '@/api/IssueManageApi';
 
 class IssueTreeStore {
   @observable treeData = {
@@ -36,6 +37,13 @@ class IssueTreeStore {
 
   @action setSelectedKeys(selectedKeys) {
     this.selectedKeys = selectedKeys;
+  }
+
+  async loadIssueTree() {
+    this.setLoading(true);
+    const treeData = await getIssueTree();   
+    this.setTreeData(treeData);
+    this.setLoading(false);
   }
 
   @action setTreeData(treeData) {
