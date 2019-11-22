@@ -85,6 +85,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void fixData() {
+        logger.info("=====Data Migrate Start=====");
         //1.文件夹
         migrateFolder();
         //2.用例
@@ -99,47 +100,40 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migrateLink();
         //7.项目
         migrateProject();
+        logger.info("=====Data Migrate Succeed!!!=====");
     }
 
     @Override
     public void migrateIssue() {
-        List<Long> projectIds = testCaseFeignClient.queryIds(1L).getBody();
+        List<Long> projectIds = testCaseFeignClient.queryIds().getBody();
         for (Long projectId : projectIds){
             List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS){
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
-                logger.info("InsertTestCase----By----ProjectId{}", testCaseMigrateDTO.getProjectId());
             }
+            logger.info("=====Insert Test Case By  ProjectId{}=====", projectId);
         }
-        logger.info("TestCaseDataMigrateSucceed");
+        logger.info("=====Test Case Data Migrate Succeed=====");
 
         //更新文件夹相关联的folderid
-        List<Long> issueIds = testCaseMapper.listIssueIds();
-        for (Long issueid : issueIds) {
-            TestIssueFolderRelDTO relDTO = new TestIssueFolderRelDTO();
-            relDTO.setIssueId(issueid);
-            List<TestIssueFolderRelDTO> list = testIssueFolderRelMapper.select(relDTO);
-            for (TestIssueFolderRelDTO testIssueFolderRelDTO : list){
-                TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(issueid);
-                testCaseDTO.setFolderId(testIssueFolderRelDTO.getFolderId());
-                testCaseMapper.updateByPrimaryKeySelective(testCaseDTO);
-            }
-        }
+        logger.info("======Update Test Case Related Folder=====");
+        testCaseMapper.updateTestCaseFolder();
+        logger.info("======Update Test Case Related Folder Succeed=====");
     }
 
     @Override
     public void migrateAttachment(){
 
-        List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L).getBody();
+        List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment().getBody();
         if (!CollectionUtils.isEmpty(attachmentDTOS)){
             for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
                 if (testCaseAttachmentDTO != null){
-                    logger.info("insert-test-case-attachment{}",testCaseAttachmentDTO.getCaseId());
+                    logger.info("=====Insert Test Case Attachment{}=====",testCaseAttachmentDTO.getCaseId());
                     testAttachmentMapper.insert(testCaseAttachmentDTO);
                 }
             }
         }
-        logger.info("TestCaseAttachmentMigrateSucceed");
+        logger.info("=====Test Case Attachment Migrate Succeed=====");
     }
 
     @Override

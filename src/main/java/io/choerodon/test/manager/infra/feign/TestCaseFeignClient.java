@@ -178,21 +178,24 @@ public interface TestCaseFeignClient {
     @GetMapping(value = "/v1/lookup_values/{typeCode}")
     ResponseEntity<LookupTypeWithValuesDTO> queryLookupValueByCode(@PathVariable(name = "typeCode") String typeCode);
 
-    @GetMapping(value = "/v1/projects/{project_id}/issues/migrate_issue")
+    /***
+     * 迁移测试用例数据专用
+     * @return
+     */
+    @GetMapping(value = "/v1/fix_data/migrate_issue/{project_id}")
     ResponseEntity<List<TestCaseMigrateDTO>> migrateTestCase(@PathVariable("project_id")Long projectId);
 
     /**
      * 迁移数据专用
-     * @param projectId
      * @return
      */
-    @GetMapping(value = "/v1/projects/{project_id}/issues/project_ids")
-    ResponseEntity<List<Long>> queryIds(@PathVariable("project_id") Long projectId);
+    @GetMapping(value = "/v1/fix_data/project_ids")
+    ResponseEntity<List<Long>> queryIds();
 
     /**
      * 迁移附件数据专用
      */
-    @GetMapping(value = "/v1/projects/{project_id}/issue_attachment/migrate_attachment")
-    ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment(@PathVariable("project_id")Long projectId);
+    @GetMapping(value = "/v1/fix_data/migrate_attachment")
+    ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment();
 
 }

@@ -21,4 +21,5 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
 
     List<Long> listIssueIds();
 
+    void updateTestCaseFolder();
 }

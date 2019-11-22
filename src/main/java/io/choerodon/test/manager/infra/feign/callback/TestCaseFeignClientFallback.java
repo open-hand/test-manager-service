@@ -118,12 +118,12 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<List<Long>> queryIds(Long projectId) {
+    public ResponseEntity<List<Long>> queryIds() {
         throw new CommonException(QUERY_ERROR);
     }
 
     @Override
-    public ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment(Long projectId) {
+    public ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment() {
         throw new CommonException(QUERY_ERROR);
     }
 }
