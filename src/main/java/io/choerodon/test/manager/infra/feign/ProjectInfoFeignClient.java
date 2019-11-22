@@ -20,7 +20,7 @@ import io.choerodon.test.manager.infra.feign.callback.ProjectInfoFeignClientFall
 @FeignClient(value = "agile-service", fallback = ProjectInfoFeignClientFallback.class)
 public interface ProjectInfoFeignClient {
 
-    @GetMapping(value = "/v1/projects/{project_id}/project_info/all")
-    ResponseEntity<List<ProjectInfoFixVO>> queryAllProjectInfo(@PathVariable(name = "project_id") Long projectId);
+    @GetMapping(value = "/v1/fix_data/migrate_project_info")
+    ResponseEntity<List<ProjectInfoFixVO>> queryAllProjectInfo();
 
 }
