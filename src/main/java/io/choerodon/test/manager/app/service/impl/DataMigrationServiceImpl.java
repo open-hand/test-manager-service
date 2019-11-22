@@ -104,18 +104,14 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Override
     public void migrateIssue() {
         List<Long> projectIds = testCaseFeignClient.queryIds(1L).getBody();
-        Long startTime = System.currentTimeMillis();
         for (Long projectId : projectIds){
             List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS){
-                logger.info("caseID"+ testCaseMigrateDTO.getCaseId().toString());
-                logger.info("description"+ testCaseMigrateDTO.getDescription());
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
                 logger.info("InsertTestCase----By----ProjectId{}", testCaseMigrateDTO.getProjectId());
             }
         }
         logger.info("TestCaseDataMigrateSucceed");
-        logger.info("Cost {}ms",System.currentTimeMillis() - startTime);
 
         //更新文件夹相关联的folderid
         List<Long> issueIds = testCaseMapper.listIssueIds();
@@ -134,8 +130,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Override
     public void migrateAttachment(){
 
-        logger.info("start---migrate---test-case-attachment");
-        Long startTime = System.currentTimeMillis();
         List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment(1L).getBody();
         if (!CollectionUtils.isEmpty(attachmentDTOS)){
             for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
@@ -146,7 +140,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             }
         }
         logger.info("TestCaseAttachmentMigrateSucceed");
-        logger.info("Cost {} ms",System.currentTimeMillis() - startTime);
     }
 
     @Override
@@ -160,7 +153,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
                 testCaseLinkService.batchInsert(testCaseLinkDTOS);
             }
-            logger.info("projectId {}link copy successed",project);
+            logger.info("===========link=============>projectId {}link copy successed",project);
         }
     }
 
@@ -187,6 +180,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
             }
         }
+        logger.info("===========label_issue_rel=============> copy successed");
     }
 
     @Override
@@ -237,6 +231,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             List<TestProjectInfoDTO> testProjectInfoDTOS = projectInfoFixVOS.stream().map(this::projectInfVoToDto).collect(Collectors.toList());
             testProjectInfoMapper.batchInsert(testProjectInfoDTOS);
         }
+        logger.info("===========project=============> copy successed");
     }
 
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList){
