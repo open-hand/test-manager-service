@@ -37,4 +37,16 @@ public interface TestIssueFolderService {
      */
     List<TestIssueFolderDTO> queryChildFolder(Long folderId);
 
+    /**
+     * 查询所有项目id
+     * @return
+     */
+    List<Long> queryProjectIdList();
+
+    /**
+     * 根据projectId查询项目下所有folder
+     * @param projectId
+     * @return
+     */
+    List<TestIssueFolderVO> queryListByProjectId(Long projectId);
 }

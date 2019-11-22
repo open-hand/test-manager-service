@@ -20,7 +20,7 @@ import io.choerodon.test.manager.infra.feign.callback.TestIssueLabelFeignClientF
 @FeignClient(value = "agile-service", fallback = TestIssueLabelFeignClientFallback.class)
 public interface TestIssueLabelFeignClient {
 
-    @GetMapping(value = "/v1/projects/{project_id}/issue_labels/all")
+    @GetMapping(value = "/v1/fix_data/migrate_label/{project_id}")
     ResponseEntity<List<LabelFixVO>> listAllLabel(@PathVariable(name = "project_id") Long projectId);
 
 }

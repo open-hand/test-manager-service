@@ -23,4 +23,12 @@
     <select id="selectChildrenByParentId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
         SELECT  *  FROM test_issue_folder WHERE parent_id=#{parentId}
     </select>
+
+    <select id="selectProjectIdList" resultType="Long">
+       select DISTINCT project_id from test_issue_folder ORDER BY project_id ;
+    </select>
+
+    <select id="selectListByProjectId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
+         SELECT  *  FROM test_issue_folder WHERE project_id=#{project} ORDER BY project_id ORDER BY version_id ;
+    </select>
 </mapper>
