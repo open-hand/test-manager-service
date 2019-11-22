@@ -2,22 +2,19 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.LabelFixVO;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.app.service.TestCaseLabelService;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
-import io.choerodon.test.manager.infra.feign.TestIssueLabelFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestCaseLabelMapper;
-import org.springframework.util.ObjectUtils;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * @author: 25499
@@ -29,8 +26,6 @@ public class TestCaseLabelServiceImpl implements TestCaseLabelService {
     private Logger logger = LoggerFactory.getLogger(TestCaseLabelServiceImpl.class);
     @Autowired
     private TestCaseService testCaseService;
-    @Autowired
-    private TestIssueLabelFeignClient testIssueLabelFeignClient;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired

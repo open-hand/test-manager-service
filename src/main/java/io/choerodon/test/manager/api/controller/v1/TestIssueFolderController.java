@@ -50,7 +50,6 @@ public class TestIssueFolderController {
     @PostMapping
     public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
-        testIssueFolderVO.setProjectId(projectId);
         return Optional.ofNullable(testIssueFolderService.create(projectId,testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));

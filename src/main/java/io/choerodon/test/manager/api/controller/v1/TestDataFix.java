@@ -1,23 +1,17 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import com.netflix.discovery.converters.Auto;
-import io.choerodon.test.manager.app.service.DataMigrationService;
 import io.swagger.annotations.ApiOperation;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.app.service.TestCaseLabelRelService;
-import io.choerodon.test.manager.app.service.TestCaseLabelService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
+import io.choerodon.test.manager.app.service.DataMigrationService;
 
 /**
  * @author: 25499
@@ -27,14 +21,6 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 @RestController
 @RequestMapping(value = "/v1/projects/fix")
 public class TestDataFix {
-
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
-    @Autowired
-    private TestCaseLabelRelService testCaseLabelRelService;
-    @Autowired
-    private TestCaseLabelService testCaseLabelService;
-
 
     @Autowired
     private DataMigrationService dataMigrationService;
