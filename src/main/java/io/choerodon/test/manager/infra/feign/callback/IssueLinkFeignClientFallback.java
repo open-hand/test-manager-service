@@ -15,9 +15,9 @@ import io.choerodon.test.manager.infra.feign.IssueLinkFeignClient;
  * @description:
  */
 @Component
-public class IssueLinkFeignClientFallback implements IssueLinkFeignClient {
+public  class IssueLinkFeignClientFallback implements IssueLinkFeignClient {
     @Override
-    public ResponseEntity<List<IssueLinkFixVO>> listIssueLinkByIssueIds(Long projectId, List<Long> issueIds) {
+    public ResponseEntity<List<IssueLinkFixVO>> listIssueLinkByIssueIds(Long projectId) {
         throw new CommonException("error.issueFeignClient.queryIssueLinks");
     }
 }

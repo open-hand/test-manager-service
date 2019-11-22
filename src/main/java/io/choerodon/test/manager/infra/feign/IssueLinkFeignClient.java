@@ -20,10 +20,8 @@ import io.choerodon.test.manager.infra.feign.callback.IssueLinkFeignClientFallba
 @Component
 @FeignClient(value = "agile-service", fallback = IssueLinkFeignClientFallback.class)
 public interface IssueLinkFeignClient {
-    @PostMapping("/v1/projects/{project_id}/issue_links/queryByIds")
+    @GetMapping("/v1/fix_data/migrate_issueLink/{project_id}")
     ResponseEntity<List<IssueLinkFixVO>> listIssueLinkByIssueIds(@ApiParam(value = "项目id", required = true)
-                                                              @PathVariable(name = "project_id") Long projectId,
-                                                                 @ApiParam(value = "issueIds", required = true)
-                                                              @RequestBody List<Long> issueIds);
+                                                              @PathVariable(name = "project_id") Long projectId);
 
 }

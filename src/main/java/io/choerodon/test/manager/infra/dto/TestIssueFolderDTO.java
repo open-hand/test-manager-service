@@ -29,6 +29,13 @@ public class TestIssueFolderDTO extends BaseDTO {
 
     private Long parentId;
 
+    public TestIssueFolderDTO(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public TestIssueFolderDTO() {
+    }
+
     @Override
     public Long getObjectVersionNumber() {
         return objectVersionNumber;
