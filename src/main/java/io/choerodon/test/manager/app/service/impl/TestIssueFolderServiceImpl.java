@@ -3,15 +3,12 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +22,6 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 /**
@@ -167,29 +163,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
         }
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
-    }
-
-    @Override
-    public JSONObject getTestIssueFolder(Long projectId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-        testIssueFolderVO.setProjectId(projectId);
-        List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
-                .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
-
-        JSONObject root = new JSONObject();
-        if (versions.isEmpty()) {
-            root.put("versions", new ArrayList<>());
-            return root;
-        }
-
-        JSONArray versionStatus = new JSONArray();
-        root.put("versions", versionStatus);
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-        List<TestCycleVO> cycles = testIssueFolderVOS.stream().map(TestIssueFolderVO::transferToCycle).collect(Collectors.toList());
-        testCycleService.initVersionTree(projectId, versionStatus, versions, cycles);
-        return root;
     }
 
     @Transactional(rollbackFor = Exception.class)

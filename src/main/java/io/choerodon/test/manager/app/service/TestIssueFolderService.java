@@ -22,8 +22,6 @@ public interface TestIssueFolderService {
 
     TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO);
 
-    JSONObject getTestIssueFolder(Long projectId);
-
     Long getDefaultFolderId(Long projectId, Long versionId);
 
     void copyFolder(Long projectId, Long targetFolderId, Long[] folderIds);
