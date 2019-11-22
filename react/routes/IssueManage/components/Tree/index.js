@@ -205,19 +205,23 @@ function PureTree({
   );
   return (
     <div className={prefix}>
-      <FilterInput
-        onChange={filterTree}
-      />
-      <Tree
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        onDragEnd={onDragEnd}
-        offsetPerLevel={PADDING_PER_LEVEL}
-        isDragEnabled
-        isNestingEnabled
-      />
+      <div className={`${prefix}-top`}>
+        <FilterInput
+          onChange={filterTree}
+        />
+      </div>      
+      <div className={`${prefix}-scroll`}>
+        <Tree        
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          onDragEnd={onDragEnd}
+          offsetPerLevel={PADDING_PER_LEVEL}
+          isDragEnabled
+          isNestingEnabled
+        />
+      </div>      
     </div>
   );
 }
