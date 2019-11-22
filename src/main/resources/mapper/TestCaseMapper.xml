@@ -6,6 +6,7 @@
             case_id,
             summary,
             folder_id,
+            project_id,
             case_num,
             created_by,
             last_updated_by,
