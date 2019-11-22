@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
+import java.util.List;
+import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.infra.dto.TestDataLogDTO;
 
 /**
@@ -18,4 +20,12 @@ public interface TestDataLogService {
      * @param dataLogDTO
      */
     void delete(TestDataLogDTO dataLogDTO);
+
+    /**
+     * 根据caseId 查询记录信息
+     * @param projectId
+     * @param caseId
+     * @return
+     */
+    List<DataLogVO> queryByCaseId(Long projectId, Long caseId);
 }
