@@ -1,7 +1,7 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Menu, Modal, Dropdown, Icon,
+  Tooltip, Menu, Modal, Dropdown, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
@@ -79,8 +79,8 @@ export function renderAction(record, history, reLoadTable) {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu} trigger="click" className="test-issue-tags-drop-dwon">
-      <Icon shape="circle" type="more_vert" style={{ cursor: 'pointer' }} />
+    <Dropdown overlay={menu} trigger="click" getPopupContainer={trigger => trigger.parentNode}>
+      <Button shape="circle" icon="more_vert" />
     </Dropdown>
   );
 }
