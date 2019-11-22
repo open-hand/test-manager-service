@@ -368,7 +368,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setProjectId(projectId);
         testCaseAttachmentDTO.setCaseId(caseId);
-        testAttachmentMapper.delete(testCaseAttachmentDTO);
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
+        attachmentDTOS.forEach(v -> testCaseAttachmentService.delete(projectId,v.getAttachmentId()));
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
     }
