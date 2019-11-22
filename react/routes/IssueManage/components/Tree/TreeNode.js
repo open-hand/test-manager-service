@@ -5,6 +5,7 @@ import {
   Icon, Button, TextField,
 } from 'choerodon-ui/pro';
 import { Menu, Dropdown } from 'choerodon-ui';
+import SmartTooltip from '@/components/SmartTooltip';
 
 const PreTextIcon = styled.span`
   display: inline-block;
@@ -98,7 +99,7 @@ export default function TreeNode(props) {
         {afterStr}
       </span>
     ) : name;
-    return result;
+    return <SmartTooltip title={name}>{result}</SmartTooltip>;
   };
   const renderContent = () => (
     <div className={`${prefix}-tree-item-wrapper`}>

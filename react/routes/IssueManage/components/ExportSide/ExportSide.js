@@ -112,7 +112,7 @@ function ExportSide(props) {
     if (index >= 0) {
       newExportList[index] = data;
     } else {
-      newExportList.unshift(data);
+      exportSideDataSet.unshift(data);
     }
     setExportList(newExportList);
   };
