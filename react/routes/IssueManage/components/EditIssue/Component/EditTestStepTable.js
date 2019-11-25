@@ -8,18 +8,22 @@ import EditIssueContext from '../stores';
 
 function EditTestStepTable() {
   const {
-    store, disabled, caseId, prefixCls, 
+    store, disabled, caseId, prefixCls,
   } = useContext(EditIssueContext);
   const { issueSteps } = store;
   const onUpdateStep = newData => store.loadWithLoading(
     updateStep(newData),
   );
-  const onCreateIssueStep = newData => store.loadWithLoading(
-    createIssueStep({
-      issueId: caseId,
-      ...newData,
-    }),
-  );
+  const onCreateIssueStep = (newData) => {
+    // eslint-disable-next-line no-param-reassign
+    delete newData.stepId;// 清除本地排序所用stepId 
+    return store.loadWithLoading(
+      createIssueStep({
+        issueId: caseId,
+        ...newData,
+      }),
+    );
+  };
   const onCloneStep = newData => store.loadWithLoading(
     cloneStep({
       caseId,

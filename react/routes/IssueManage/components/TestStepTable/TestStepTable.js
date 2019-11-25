@@ -57,14 +57,14 @@ function TestStepTable(props) {
         nextRank,
         stepIsCreating: false,
       };
-      const result = await onDrag(testCaseStepDTO);  
+      const result = await onDrag(testCaseStepDTO);
       data[targetIndex] = result;
       setData([...data]);
     } catch (error) {
       data.splice(targetIndex, 1);
       data.splice(sourceIndex, 0, drag);
       setData([...data]);
-    }    
+    }
   };
 
 
@@ -79,6 +79,7 @@ function TestStepTable(props) {
       testData: '',
       expectedResult: '',
       stepIsCreating: true,
+      stepId: Math.random(),
     };
     setData([...data, testCaseStepDTO]);
   };
@@ -91,7 +92,7 @@ function TestStepTable(props) {
   const onCreateStep = async (newStep, index) => {
     const { expectedResult, testStep } = newStep;
     // eslint-disable-next-line no-param-reassign
-    
+
     if (expectedResult && testStep) {
       try {
         const newStepResult = await onCreate(newStep, index);
@@ -103,7 +104,7 @@ function TestStepTable(props) {
       } catch (error) {
         // 
       }
-      
+
       // 清除当前创建的值
     } else {
       Choerodon.prompt('测试步骤和预期结果均为必输项');
