@@ -84,15 +84,16 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         List<TestTreeFolderVO> list = new ArrayList<>();
         issueFolderDTOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
-            List<Long> ids = findTreeChildFolder(testIssueFolderVO.getFolderId(), issueFolderDTOS);
+            List<Long> childrenIds = issueFolderDTOS.stream().filter(e -> e.getParentId().equals(testIssueFolderVO.getFolderId()))
+                    .map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
             folderVO.setId(testIssueFolderVO.getFolderId());
             folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderVO, TestIssueFolderVO.class));
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
-            //todo 判断是否有case
-            if (CollectionUtils.isEmpty(ids)) {
+            // 判断是否有case
+            if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
-                folderVO.setChildren(ids);
+                folderVO.setChildren(childrenIds);
                 List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getFolderId());
                 if (CollectionUtils.isEmpty(testCaseDTOS)) {
                     folderVO.setHasCase(false);
@@ -100,7 +101,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                     folderVO.setHasCase(true);
                 }
             } else {
-                folderVO.setChildren(ids);
+                folderVO.setChildren(childrenIds);
                 folderVO.setHasChildren(true);
                 folderVO.setHasCase(false);
             }
@@ -264,13 +265,4 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return folders;
     }
 
-    private List<Long> findTreeChildFolder(Long parentId, List<TestIssueFolderDTO> testIssueFolderDTOS) {
-        List<Long> longs = new ArrayList<>();
-        testIssueFolderDTOS.forEach(e->{
-            if(e.getParentId().equals(parentId)){
-                longs.add(e.getFolderId());
-            }
-        });
-        return longs;
-    }
 }
