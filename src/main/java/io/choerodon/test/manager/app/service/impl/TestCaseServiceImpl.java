@@ -272,7 +272,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         // 关联测试用例与标签
         if (!CollectionUtils.isEmpty(testCaseVO.getLabels())) {
-            changeLabel(projectId, testCaseDTO.getCaseId(),testCaseVO.getLabels());
+            changeLabel(projectId, testCaseDTO.getCaseId(), testCaseVO.getLabels());
 
         }
 
@@ -315,7 +315,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         testCaseAttachmentDTO.setProjectId(projectId);
         testCaseAttachmentDTO.setCaseId(caseId);
         List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
-        attachmentDTOS.forEach(v -> testCaseAttachmentService.delete(projectId,v.getAttachmentId()));
+        attachmentDTOS.forEach(v -> testCaseAttachmentService.delete(projectId, v.getAttachmentId()));
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
     }
@@ -324,14 +324,21 @@ public class TestCaseServiceImpl implements TestCaseService {
     public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        queryAllFolderIds(folderId, folderIds);
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(folderId);
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
-        PageInfo<Long> pageDto = PageHelper.startPage(pageable.getPageNumber(),pageable.getPageSize()).doSelectPageInfo(() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, pageDto.getList());
+        PageInfo<Long> longPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
+        PageInfo<TestCaseRepVO> pageRepList = modelMapper.map(longPageInfo, PageInfo.class);
+        if (CollectionUtils.isEmpty(longPageInfo.getList())) {
+            pageRepList.setList(new ArrayList<>());
+            return pageRepList;
+        }
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList());
         List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(testCaseDTOS);
-        PageInfo<TestCaseRepVO> pageRepoList = modelMapper.map(pageDto,PageInfo.class);
-        pageRepoList.setList(repVOS);
-        return pageRepoList;
+        pageRepList.setList(repVOS);
+        return pageRepList;
     }
 
     @Override
@@ -524,13 +531,11 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseDTO;
     }
 
-    private void queryAllFolderIds(Long folderId, Set<Long> folderIds) {
+    private void queryAllFolderIds(Long folderId, Set<Long> folderIds, Map<Long, List<TestIssueFolderDTO>> folderMap) {
         folderIds.add(folderId);
-        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-        testIssueFolder.setParentId(folderId);
-        List<TestIssueFolderDTO> folderDTOS = testIssueFolderMapper.select(testIssueFolder);
-        if (!CollectionUtils.isEmpty(folderDTOS)) {
-            folderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds));
+        List<TestIssueFolderDTO> testIssueFolderDTOS = folderMap.get(folderId);
+        if (!CollectionUtils.isEmpty(testIssueFolderDTOS)) {
+            testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
         }
     }
 
@@ -566,7 +571,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 插入测试用例
         testCaseMapper.insert(testCaseDTO);
         // 更新记录关联表
-        for (TestCaseLinkDTO testCaseLinkDTO: issueCreateDTO.getTestCaseLinkDTOList()){
+        for (TestCaseLinkDTO testCaseLinkDTO : issueCreateDTO.getTestCaseLinkDTOList()) {
             testCaseLinkDTO.setProjectId(projectId);
             testCaseLinkDTO.setLinkCaseId(testCaseDTO.getCaseId());
             testCaseLinkMapper.insert(testCaseLinkDTO);

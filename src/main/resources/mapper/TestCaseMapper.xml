@@ -106,5 +106,17 @@
         <include refid="sqlParam"/>
         order by  last_update_date DESC
     </select>
-
+   <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
+       SELECT
+       *
+       FROM
+       test_case
+       WHERE
+       project_id = #{projectId}
+       AND
+       case_id IN
+       <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
+           #{caseId}
+       </foreach>
+   </select>
 </mapper>
