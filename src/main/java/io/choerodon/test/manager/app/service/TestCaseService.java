@@ -165,6 +165,5 @@ public interface TestCaseService {
 
     void batchDeleteIssues(Long projectId, Long[] issueIds);
 
-    List<Long> queryProjectAllCase(Long projectId);
 
 }
