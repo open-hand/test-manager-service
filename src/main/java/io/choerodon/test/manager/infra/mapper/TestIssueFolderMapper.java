@@ -16,5 +16,12 @@ public interface TestIssueFolderMapper extends Mapper<TestIssueFolderDTO> {
 
     List<TestIssueFolderDTO> selectChildrenByParentId(@Param("parentId") Long parentId);
 
+    List<Long> selectProjectIdList();
+
+    List<Long> selectVersionIdList(@Param("projectId") Long projectId);
+
+    List<TestIssueFolderDTO> selectListByProjectId(@Param("projectId") Long projectId);
+
+    void updateByVersionId(@Param("projectId") Long projectId,@Param("versionId") Long versionId,@Param("parentId") Long parentId);
 
 }

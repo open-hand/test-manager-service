@@ -1,8 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -74,12 +72,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private TestIssueFolderService testIssueFolderService;
 
     @Autowired
-    private TestIssueFolderMapper testIssueFolderMapper;
-
-    @Autowired
     private ProjectInfoFeignClient projectInfoFeignClient;
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
+    @Autowired
+    private TestIssueFolderMapper testIssueFolderMapper;
 
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -105,10 +102,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Override
     public void migrateIssue() {
-        List<Long> projectIds = testCaseFeignClient.queryIds().getBody();
-        for (Long projectId : projectIds){
+        List<Long> projectIds = testIssueFolderService.queryProjectIdList();
+        for (Long projectId : projectIds) {
             List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
-            for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS){
+            for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
             }
             logger.info("=====Insert Test Case By  ProjectId{}=====", projectId);
@@ -122,13 +119,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
 
     @Override
-    public void migrateAttachment(){
+    public void migrateAttachment() {
 
         List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment().getBody();
-        if (!CollectionUtils.isEmpty(attachmentDTOS)){
-            for (TestCaseAttachmentDTO testCaseAttachmentDTO: attachmentDTOS){
-                if (testCaseAttachmentDTO != null){
-                    logger.info("=====Insert Test Case Attachment{}=====",testCaseAttachmentDTO.getCaseId());
+        if (!CollectionUtils.isEmpty(attachmentDTOS)) {
+            for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
+                if (testCaseAttachmentDTO != null) {
+                    logger.info("=====Insert Test Case Attachment{}=====", testCaseAttachmentDTO.getCaseId());
                     testAttachmentMapper.insert(testCaseAttachmentDTO);
                 }
             }
@@ -138,102 +135,86 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Override
     public void migrateLink() {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Map<Long, List<TestCaseDTO>> projectIds = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getProjectId));
-        for (Map.Entry<Long, List<TestCaseDTO>> project : projectIds.entrySet()) {
-            List<Long> caseIdList = project.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            List<IssueLinkFixVO> issueLinkFixVOList = issueLinkFeignClient.listIssueLinkByIssueIds(project.getKey(), caseIdList).getBody();
-            if(!CollectionUtils.isEmpty(issueLinkFixVOList)){
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<IssueLinkFixVO> issueLinkFixVOList = issueLinkFeignClient.listIssueLinkByIssueIds(projectId).getBody();
+            if (!CollectionUtils.isEmpty(issueLinkFixVOList)) {
                 List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
                 testCaseLinkService.batchInsert(testCaseLinkDTOS);
             }
-            logger.info("===========link=============>projectId {}link copy successed",project);
-        }
+            logger.info("===========link=============>projectId {}link copy successed", projectId);
+        });
     }
 
     @Override
     public void migrateLabel() {
-        List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(0L).getBody();
-        if(!CollectionUtils.isEmpty(issueLabelDTOS)){
-            List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
-            }.getType());
-            testCaseLabelService.batchInsert(testCaseLabelDTOList);
-        }
-        logger.info("===========label=============> copy successed");
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(projectId).getBody();
+            if (!CollectionUtils.isEmpty(issueLabelDTOS)) {
+                List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
+                }.getType());
+                testCaseLabelService.batchInsert(testCaseLabelDTOList);
+                logger.info("===========label=============> copy successed");
+            }
+        });
     }
 
     @Override
     public void migrateLabelCaseRel() {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.queryAllCase();
-        Map<Long, List<TestCaseDTO>> projectIds = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getProjectId));
-        for (Map.Entry<Long, List<TestCaseDTO>> projectId : projectIds.entrySet()) {
-            List<Long> caseIdList = projectId.getValue().stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId.getKey(), caseIdList).getBody();
-            if(!CollectionUtils.isEmpty(labelIssueRelDTOS)){
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
+            if (!CollectionUtils.isEmpty(labelIssueRelDTOS)) {
                 List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueVoTocaseDto).collect(Collectors.toList());
                 testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
             }
-        }
+        });
+
         logger.info("===========label_issue_rel=============> copy successed");
     }
 
     @Override
     public void migrateFolder() {
-        TestIssueFolderVO testIssueFolder = new TestIssueFolderVO();
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-        Set<Long> projectFolderIds = testIssueFolderVOS.stream().map(TestIssueFolderVO::getProjectId).collect(Collectors.toSet());
-        projectFolderIds.forEach(projectFolderId -> {
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectFolderId -> {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
-            Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e->e.getName()!=null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-            TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-            testIssueFolderDTO.setProjectId(projectFolderId);
-            List<TestIssueFolderVO> testIssueProjectFolderVOs = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                    .map(testIssueFolderDTO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-            }.getType());
-            //以version区分
-            Map<Long, List<TestIssueFolderVO>> projectVersionFolderVOs = testIssueProjectFolderVOs.stream().filter(e -> e.getVersionId() != null).collect(Collectors.groupingBy(TestIssueFolderVO::getVersionId));
-            for (Map.Entry<Long, List<TestIssueFolderVO>> entry : projectVersionFolderVOs.entrySet()) {
-                //1.创建版本文件目录
-                String folderName = versionNameMap.get(entry.getKey());
-                if(!StringUtils.isEmpty(folderName)){
-                    TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
-                    newFolderVO.setName(folderName);
-                    newFolderVO.setParentId(0L);
-                    newFolderVO.setProjectId(projectFolderId);
-                    newFolderVO.setType("cycle");
-                    newFolderVO.setVersionId(0L);
-                    TestIssueFolderVO testIssueFolderVO = testIssueFolderService.create(projectFolderId, newFolderVO);
-                    //2.更新二级目录
-                    if (!CollectionUtils.isEmpty(entry.getValue())) {
-                        entry.getValue().stream().forEach(folderVO -> {
-                            folderVO.setParentId(testIssueFolderVO.getFolderId());
-                            testIssueFolderService.update(folderVO);
-                        });
-                    }
-                }
-            }
-            logger.info("============issueFolder=================>project:{} copy successed",projectFolderId);
+            Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e -> e.getName() != null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
+            List<Long> versionIds = testIssueFolderMapper.selectVersionIdList(projectFolderId);
+            versionIds.forEach(versionId -> {
+                String folderName = versionNameMap.get(versionId);
+                TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
+                newFolderVO.setName(folderName == null ? "test" : folderName);
+                newFolderVO.setParentId(0L);
+                newFolderVO.setProjectId(projectFolderId);
+                newFolderVO.setType("cycle");
+                newFolderVO.setVersionId(0L);
+                TestIssueFolderVO testIssueFolderVO = testIssueFolderService.create(projectFolderId, newFolderVO);
+
+                testIssueFolderMapper.updateByVersionId(projectFolderId, versionId, testIssueFolderVO.getFolderId());
+
+            });
+            logger.info("============issueFolder=================>project:{} copy successed", projectFolderId);
         });
     }
 
     @Override
     public void migrateProject() {
-        List<ProjectInfoFixVO> projectInfoFixVOS = projectInfoFeignClient.queryAllProjectInfo(0L).getBody();
-        if(!CollectionUtils.isEmpty(projectInfoFixVOS)){
+        List<ProjectInfoFixVO> projectInfoFixVOS = projectInfoFeignClient.queryAllProjectInfo().getBody();
+        if (!CollectionUtils.isEmpty(projectInfoFixVOS)) {
             List<TestProjectInfoDTO> testProjectInfoDTOS = projectInfoFixVOS.stream().map(this::projectInfVoToDto).collect(Collectors.toList());
             testProjectInfoMapper.batchInsert(testProjectInfoDTOS);
         }
         logger.info("===========project=============> copy successed");
     }
 
-    private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList){
+    private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
-        BeanUtils.copyProperties(issueLinkFixVOList,testCaseLinkDTO);
+        BeanUtils.copyProperties(issueLinkFixVOList, testCaseLinkDTO);
         testCaseLinkDTO.setLinkCaseId(issueLinkFixVOList.getLinkedIssueId());
         return testCaseLinkDTO;
     }
+
     private TestCaseLabelRelDTO caseIssueVoTocaseDto(LabelIssueRelFixVO labelIssueRelDTO) {
         TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
         BeanUtils.copyProperties(labelIssueRelDTO, testCaseLabelRelDTO);

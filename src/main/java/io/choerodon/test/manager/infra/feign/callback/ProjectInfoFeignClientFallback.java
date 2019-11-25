@@ -20,7 +20,7 @@ public class ProjectInfoFeignClientFallback implements ProjectInfoFeignClient {
     private static final String QUERY_ERROR = "error.projectInfo.query";
 
     @Override
-    public ResponseEntity<List<ProjectInfoFixVO>> queryAllProjectInfo(@PathVariable(name = "project_id") Long projectId) {
+    public ResponseEntity<List<ProjectInfoFixVO>> queryAllProjectInfo() {
         throw new CommonException(QUERY_ERROR);
     }
 }
