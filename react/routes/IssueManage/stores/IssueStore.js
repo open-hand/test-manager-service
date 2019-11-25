@@ -2,13 +2,14 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import { Choerodon } from '@choerodon/boot';
 import { findIndex } from 'lodash';
-import { getIssuesByFolder } from '../../../api/IssueManageApi';
+import { getIssuesByFolder, moveIssues, copyIssues } from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
 class IssueStore {
   @observable issues = [];
-  
+
   @observable pagination = {
     current: 1,
     pageSize: 10,
@@ -30,7 +31,7 @@ class IssueStore {
 
   @observable paramIssueId = undefined;
 
-  @observable barFilters = undefined;
+  @observable barFilters = [];
 
   @observable draggingTableItems = [];
 
@@ -61,19 +62,6 @@ class IssueStore {
     this.tableDraging = false;
   }
 
-  init() {
-    this.setOrder({
-      orderField: '',
-      orderType: '',
-    });
-    this.setFilter({
-      advancedSearchArgs: {
-      
-      },
-    });
-    this.setBarFilters([]);
-  }
-
   loadIssues = async (page, size = this.pagination.pageSize) => {
     const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);
@@ -102,6 +90,24 @@ class IssueStore {
     }
   }
 
+  async moveOrCopyIssues(folderId, isCopy) {
+    const issueLinks = this.getDraggingTableItems.map(issue => ({
+      caseId: issue.caseId,
+      folderId,
+    }));
+    //
+    this.setLoading(true);
+    const request = isCopy ? copyIssues : moveIssues;
+    try {
+      await request(issueLinks, folderId);
+      this.setDraggingTableItems([]);
+      this.loadIssues();
+      this.setLoading(false);
+    } catch (error) {
+      Choerodon.prompt('网络错误');
+      this.setLoading(false);
+    }
+  }
 
   @action setIssues(data) {
     this.issues = data;
@@ -173,6 +179,10 @@ class IssueStore {
       ...filter,
       contents: this.barFilters,
     };
+  }
+
+  @computed get getBarFilters() {
+    return toJS(this.barFilters);
   }
 
   @computed get getDraggingTableItems() {

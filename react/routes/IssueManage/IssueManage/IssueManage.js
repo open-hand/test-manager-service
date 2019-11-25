@@ -3,14 +3,13 @@ import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { toJS } from 'mobx';
 import {
-  Page, Header, Content, Breadcrumb, Choerodon,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
-import { getIssueTree } from '../../../api/IssueManageApi';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
 import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
@@ -25,42 +24,33 @@ import IssueTreeStore from '../stores/IssueTreeStore';
 @observer
 export default class IssueManage extends Component {
   componentDidMount() {
-    RunWhenProjectChange(IssueStore.clearStore);    
+    RunWhenProjectChange(IssueStore.clearStore);
     this.getInit();
   }
 
   getInit = () => {
     const Request = getParams(this.props.location.search);
-    const { paramName, paramIssueId } = Request;
+    const { paramName, paramIssueId, folderId } = Request;
     IssueStore.setParamName(paramName);
     IssueStore.setParamIssueId(paramIssueId);
     if (paramName && paramIssueId) {
       IssueStore.setClickIssue({
-        issueId: paramIssueId,
+        caseId: Number(paramIssueId),
       });
     }
     // 当参数中有用例名时，在table的筛选框中加入
     const barFilters = paramName ? [paramName] : [];
     IssueStore.setBarFilters(barFilters);
-    IssueStore.init();
-    this.getTestCase();
+    this.getTestCase(folderId);
   }
 
-  getTestCase = () => {
-    IssueTreeStore.setLoading(true);
-    getIssueTree().then((data) => {
-      IssueTreeStore.setTreeData(data);
-      IssueTreeStore.setLoading(false);
-
-      const { currentCycle } = IssueTreeStore;
-      const { id } = currentCycle;
-      if (id) {
-        IssueStore.loadIssues();
-      }
-    }).catch(() => {
-      IssueTreeStore.setLoading(false);
-      Choerodon.prompt('网络错误');
-    });
+  getTestCase = async (defaultSelectId) => {
+    await IssueTreeStore.loadIssueTree(defaultSelectId);   
+    const { currentCycle } = IssueTreeStore;
+    const { id } = currentCycle;
+    if (id) {
+      IssueStore.loadIssues();
+    }
   }
 
   /**
@@ -71,22 +61,8 @@ export default class IssueManage extends Component {
    * @memberof IssueManage
    */
   handleCreateIssue(issue, folderId) {
-    let targetCycle = null;
-    // 如果指定了文件夹就设置文件夹，否则设置版本
     if (folderId) {
-      targetCycle = _.find(IssueTreeStore.dataList, { cycleId: folderId });
-    } else {
-      const { versionId } = issue.versionIssueRelVOList[0];
-      targetCycle = _.find(IssueTreeStore.dataList, { versionId });
-    }
-    if (targetCycle) {
-      const expandKeys = IssueTreeStore.getExpandedKeys;
-      // 设置当前选中项
-      IssueTreeStore.setCurrentCycle(targetCycle);
-      // 设置当前选中项
-      IssueTreeStore.setSelectedKeys([targetCycle.key]);
-      // 设置展开项，展开父元素
-      IssueTreeStore.setExpandedKeys([...expandKeys, targetCycle.key.split('-').slice(0, -1).join('-')]);
+      IssueTreeStore.setCurrentCycleById(folderId);
     }
     IssueStore.loadIssues();
   }
@@ -127,6 +103,7 @@ export default class IssueManage extends Component {
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
           caseId={clickIssue && clickIssue.caseId}
+          deafultFolerValue={IssueTreeStore.getCurrentCycle}
         />
       ),
       okText: '创建',
@@ -157,13 +134,17 @@ export default class IssueManage extends Component {
       style: {
         width: 1090,
       },
+      okCancel: false,
+      okText: '关闭',
       children: (
-        <ExportSide />
+        <ExportSide
+          folderId={IssueTreeStore.getCurrentCycle.id}
+        />
       ),
     });
   }
 
-  handleAddFolderClick = () => {   
+  handleAddFolderClick = () => {
     IssueTreeStore.treeRef.current.addFirstLevelItem();
   }
 
@@ -193,12 +174,7 @@ export default class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
-          <IssueTree
-            ref={(tree) => { this.tree = tree; }}
-            onClose={() => {
-              IssueStore.setTreeShow(false);
-            }}
-          />  
+          <IssueTree />  
           <div
             className="c7ntest-content-issue"
             style={{

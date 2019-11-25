@@ -1,11 +1,10 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Tooltip, Menu, Modal, Dropdown, Icon,
+  Tooltip, Menu, Modal, Dropdown, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import UserHead from '../UserHead';
-import { cloneIssue, deleteIssue } from '../../../../api/IssueManageApi';
+import { copyIssues, deleteIssue } from '../../../../api/IssueManageApi';
 import './tags.less';
 
 const { confirm } = Modal;
@@ -50,10 +49,10 @@ export function renderAction(record, history, reLoadTable) {
     // const { issueInfo, enterLoad, leaveLoad, history } = this.props;
     switch (e.key) {
       case 'copy': {
-        cloneIssue([{
+        copyIssues([{
           caseId: record.caseId,
           folderId: record.folderId,
-        }]).then(() => {
+        }], record.folderId).then(() => {
           reLoadTable();
           Choerodon.prompt('复制成功');
         }).catch(() => {
@@ -80,8 +79,8 @@ export function renderAction(record, history, reLoadTable) {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu} trigger="click" className="test-issue-tags-drop-dwon">
-      <Icon shape="circle" type="more_vert" style={{ cursor: 'pointer' }} />
+    <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
+      <Button shape="circle" icon="more_vert" />
     </Dropdown>
   );
 }
@@ -102,22 +101,5 @@ export function renderSummary(summary, record, onClick) {
         </p>
       </Tooltip>
     </div>
-  );
-}
-export function renderUser(name, loginName, realName, imageUrl, hiddenText) {
-  return (
-    loginName ? (
-      <div>
-        <UserHead
-          hiddenText={hiddenText}
-          user={{
-            name,
-            loginName,
-            realName,
-            avatar: imageUrl,
-          }}
-        />
-      </div>
-    ) : null
   );
 }

@@ -4,27 +4,7 @@ import { stores } from '@choerodon/boot';
 import { getProjectId, beforeTextUpload } from '../../../../../common/utils';
 
 const { AppState } = stores;
-const linkOptions = new DataSet({
-    selection: 'multiple',
-    paging: false,
-    autoQuery: true,
-    fields: [
-        { name: 'labelName', type: 'string' },
-        { name: 'labelId', type: 'number' },
-    ],
-    transport: {
-        read: {
-            url: `agile/v1/projects/${AppState.currentMenuType.id}/issue_labels`,
-            method: 'get',
-            transformResponse(data) {
-                return ({
-                    ...JSON.parse(data),
 
-                });
-            },
-        },
-    },
-});
 function CreateIssueDataSet(intlPrefix, intl) {
     const summary = intl.formatMessage({ id: `${intlPrefix}_issueFilterBySummary` });
     const description = '描述';

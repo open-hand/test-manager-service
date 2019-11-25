@@ -5,13 +5,13 @@ import Tree, {
   mutateTree,
   moveItemOnTree,
 } from '@atlaskit/tree';
-import { flattenTree, getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
+import { flattenTree } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
 import { getRootNode } from './utils';
 import TreeNode from './TreeNode';
 import {
-  selectItem, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
+  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
@@ -30,7 +30,7 @@ function mapDataToTree(data) {
         isExpanded: true,
         isChildrenLoading: false,
         data: {
-          title: 'root',
+          name: 'root',
         },
       },
     },
@@ -57,7 +57,7 @@ function PureTree({
   const previous = usePrevious(selected);
   const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   useEffect(() => {
-    setTree(oldTree => selectItem(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
+    setTree(oldTree => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
   const addFirstLevelItem = () => {
     const newChild = {
@@ -69,7 +69,7 @@ function PureTree({
       isChildrenLoading: false,
       isEditing: true,
       data: {
-        name: '新的',
+        name: '',
       },
     };
     setTree(oldTree => addItem(oldTree, getRootNode(oldTree), newChild));
@@ -78,15 +78,12 @@ function PureTree({
     addFirstLevelItem,
   }));
   const onSelect = (item) => {
-    // console.log('select', itemId)
     setSelected(item);
   };
   const filterTree = useCallback((value) => {
     setTree(oldTree => expandTreeBySearch(oldTree, value || ''));
     setSearch(value || '');
   }, []);
-
-  const getItem = id => tree.items[id];
   const onExpand = (itemId) => {
     setTree(oldTree => mutateTree(oldTree, itemId, { isExpanded: true }));
   };
@@ -102,9 +99,7 @@ function PureTree({
     if (!destination) {
       return;
     }
-    const { parentId: targetId } = destination;
     const sourceItem = getItemByPosition(tree, source);
-    // console.log(source, destination);
     setTree(oldTree => moveItemOnTree(oldTree, source, destination));
     try {
       await afterDrag(sourceItem, destination);
@@ -112,7 +107,7 @@ function PureTree({
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };
-  const handleDelete = async (item) => {
+  const handleDelete = useCallback(async (item) => {
     try {
       await onDelete(item);
       setTree(oldTree => removeItem(oldTree, item.path));
@@ -121,17 +116,15 @@ function PureTree({
       }
     } catch (error) {
       // console.log(error);
-    } 
-  };
+    }
+  }, [onDelete, selected.id, setSelected]);
   const handleMenuClick = useCallback((node, { item, key, keyPath }) => {
     switch (key) {
-      case 'rename': {
-        // console.log('rename', node);
+      case 'rename': {      
         setTree(oldTree => mutateTree(oldTree, node.id, { isEditing: true }));
         break;
       }
-      case 'delete': {
-        // console.log('delete', node);
+      case 'delete': {  
         Modal.confirm({
           title: '确认删除文件夹',
         }).then((button) => {
@@ -141,8 +134,7 @@ function PureTree({
         });               
         break;
       }
-      case 'add': {
-        // console.log('add', node);
+      case 'add': {      
         const newChild = {
           id: 'new',
           parentId: node.id, // 放入父id，方便创建时读取
@@ -199,6 +191,7 @@ function PureTree({
     item, provided,
   }) => (
     <TreeNode
+      key={item.id}
       path={getItemById(flattenedTree, item.id).path}
       provided={provided}
       item={item}
@@ -211,22 +204,25 @@ function PureTree({
       search={search}
     />
   );
-  // console.log(flattenedTree);
   return (
     <div className={prefix}>
-      <FilterInput
-        onChange={filterTree}
-      />
-      <Tree
-        tree={tree}
-        renderItem={renderItem}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        onDragEnd={onDragEnd}
-        offsetPerLevel={PADDING_PER_LEVEL}
-        isDragEnabled
-        isNestingEnabled
-      />
+      <div className={`${prefix}-top`}>
+        <FilterInput
+          onChange={filterTree}
+        />
+      </div>      
+      <div className={`${prefix}-scroll`}>
+        <Tree        
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          onDragEnd={onDragEnd}
+          offsetPerLevel={PADDING_PER_LEVEL}
+          isDragEnabled
+          isNestingEnabled
+        />
+      </div>      
     </div>
   );
 }

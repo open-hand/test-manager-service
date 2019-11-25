@@ -1,15 +1,13 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
-import { Choerodon } from '@choerodon/boot';
-import _ from 'lodash';
-import { getProjectId, getOrganizationId, handleRequestFailed } from '@/common/utils';
+import { handleRequestFailed } from '@/common/utils';
 import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  getIssueTree, addFolder, copyFolders, editFolder, deleteFolder, moveFolders,
+  addFolder, editFolder, deleteFolder, moveFolders,
 } from '../../../../api/IssueManageApi';
 import IssueStore from '../../stores/IssueStore';
-import { NoVersion } from '../../../../components';
+import { NoVersion, Loading } from '../../../../components';
 import Tree from '../Tree';
 
 @observer
@@ -18,13 +16,9 @@ class IssueTree extends Component {
     super();
     this.treeRef = createRef();
     IssueTreeStore.setTreeRef(this.treeRef);
-    this.state = {
-
-    };
   }
 
-  handleCreate = (value, parentId) => {
-    // console.log(value, parentId);
+  handleCreate = (value, parentId) => {  
     const data = {
       parentId,
       name: value,
@@ -61,17 +55,19 @@ class IssueTree extends Component {
 
     return (
       <div className="c7ntest-IssueTree">
-        {/* {IssueTreeStore.getCurrentCycle.id && IssueTreeStore.getCurrentCycle.data.name} */}
-        <Tree
-          ref={this.treeRef}
-          data={treeData}
-          onCreate={this.handleCreate}
-          onEdit={this.handleEdit}
-          onDelete={this.handleDelete}
-          afterDrag={this.handleDrag}
-          selected={IssueTreeStore.getCurrentCycle}
-          setSelected={this.setSelected}
-        />
+        <Loading loading={loading} />
+        {noVersion ? !loading && <NoVersion /> : (
+          <Tree
+            ref={this.treeRef}
+            data={treeData}
+            onCreate={this.handleCreate}
+            onEdit={this.handleEdit}
+            onDelete={this.handleDelete}
+            afterDrag={this.handleDrag}
+            selected={IssueTreeStore.getCurrentCycle}
+            setSelected={this.setSelected}
+          />
+        )}
       </div>
     );
   }

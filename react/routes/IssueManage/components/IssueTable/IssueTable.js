@@ -7,16 +7,15 @@ import {
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { FormattedMessage } from 'react-intl';
-import EmptyBlock from '../EmptyBlock';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  renderIssueNum, renderSummary, renderUser, renderAction,
+  renderIssueNum, renderSummary, renderAction,
 } from './tags';
+import UserHead from '../UserHead';
 import './IssueTable.less';
-import pic from '../../../../assets/testCaseEmpty.svg';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
 
 export default observer((props) => {
@@ -39,7 +38,7 @@ export default observer((props) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
       // <th style={{ flex: column.flex || 1 }} >
-      <th style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+      <th key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
         {column.title}
         {' '}
       </th>
@@ -97,7 +96,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -227,14 +226,15 @@ export default observer((props) => {
     <div className="c7ntest-issuetable">
       <Table
         // filterBar={false}
+        rowKey="caseId"
         columns={columns}
         dataSource={IssueStore.getIssues}
         components={getComponents(columns)}
         onChange={handleFilterChange}
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
-        filters={IssueStore.barFilters || []}
-        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}        
+        filters={IssueStore.getBarFilters || []}
+        filterBarPlaceholder="过滤表"        
       />
     </div>
   );
@@ -280,12 +280,7 @@ export default observer((props) => {
       title: '创建人',
       dataIndex: 'createUser',
       key: 'createUser',
-      render: (createUser) => {
-        const {
-          name, loginName, realName, imageUrl,
-        } = createUser;
-        return renderUser(name, loginName, realName, imageUrl);
-      },
+      render: createUser => createUser && <UserHead user={createUser} />,
       width: '1rem',
     },
     {
@@ -298,12 +293,7 @@ export default observer((props) => {
       title: '更新人',
       dataIndex: 'lastUpdateUser',
       key: 'lastUpdateUser',
-      render: (lastUpdateUser) => {
-        const {
-          name, loginName, realName, imageUrl,
-        } = lastUpdateUser;
-        return renderUser(name, loginName, realName, imageUrl);
-      },
+      render: lastUpdateUser => lastUpdateUser && <UserHead user={lastUpdateUser} />,     
       width: '1rem',
     },
     {

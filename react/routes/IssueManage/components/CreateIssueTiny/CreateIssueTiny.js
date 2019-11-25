@@ -81,7 +81,6 @@ export default observer(() => {
           }}
           >
             <Button
-              type="primary"
               funcType="raised"
               loading={createLoading}
               onClick={handleBlurCreateIssue}

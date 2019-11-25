@@ -333,7 +333,7 @@ function TestStepTable(props) {
             style={{ color: disabled || hasStepIsCreating ? '#bfbfbf' : '#3F51B5' }}
             icon="playlist_add"
             className="leftBtn"
-            funcTyp="flat"
+            funcType="flat"
             onClick={handleAddCreating}
           >
             <FormattedMessage id="issue_edit_addTestDetail" />
