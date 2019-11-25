@@ -18,7 +18,7 @@ import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const { intl, caseId } = props;
+  const { intl, caseId, deafultFolerValue } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
 
   async function handleCreateIssue() {
