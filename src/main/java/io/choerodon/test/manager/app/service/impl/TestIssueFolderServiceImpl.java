@@ -79,25 +79,25 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Override
     public TestTreeIssueFolderVO queryTreeFolder(Long projectId) {
-        List<TestIssueFolderDTO> issueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderMapper.selectListByProjectId(projectId);
         //根目录
-        List<Long> rootFolderId = issueFolderDTOS.stream().filter(IssueFolder ->
+        List<Long> rootFolderId = testIssueFolderDTOList.stream().filter(IssueFolder ->
                 IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
         List<Long> longs = testCaseMapper.queryFolderId(projectId);
         List<TestTreeFolderVO> list = new ArrayList<>();
-        issueFolderDTOS.forEach(testIssueFolderVO -> {
+        testIssueFolderDTOList.forEach(testIssueFolderDTO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
-            List<Long> childrenIds = issueFolderDTOS.stream().filter(e -> e.getParentId().equals(testIssueFolderVO.getFolderId()))
+            List<Long> childrenIds = testIssueFolderDTOList.stream().filter(e -> e.getParentId().equals(testIssueFolderDTO.getFolderId()))
                     .map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
-            folderVO.setId(testIssueFolderVO.getFolderId());
-            folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderVO, TestIssueFolderVO.class));
+            folderVO.setId(testIssueFolderDTO.getFolderId());
+            folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class));
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
             // 判断是否有case
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
-                if(longs.contains(testIssueFolderVO.getFolderId())){
+                if(longs.contains(testIssueFolderDTO.getFolderId())){
                     folderVO.setHasCase(true);
                 }else {
                     folderVO.setHasCase(false);
