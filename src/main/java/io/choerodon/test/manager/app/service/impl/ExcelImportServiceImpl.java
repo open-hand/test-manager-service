@@ -7,6 +7,7 @@ import feign.FeignException;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.agile.infra.common.utils.AgileUtil;
+import io.choerodon.test.manager.infra.mapper.TestProjectInfoMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.core.exception.CommonException;
@@ -51,7 +52,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String HIDDEN_PRIORITY = "hidden_priority";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_COMPONENT = "hidden_component";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[8];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[7];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -120,6 +121,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     @Autowired
     private TestCaseLinkService testCaseLinkService;
+
 
     @Override
     public boolean cancelFileUpload(Long historyId) {

@@ -103,6 +103,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCaseLabelService testCaseLabelService;
 
+
     @Autowired
     private TestCaseAssembler testCaseAssembler;
 
@@ -560,7 +561,16 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType) {
+        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
+        testProjectInfoDTO.setProjectId(projectId);
+        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
+        if (ObjectUtils.isEmpty(testProjectInfo)) {
+            throw new CommonException("error.query.project.info.null");
+        }
+
         TestCaseDTO testCaseDTO = ConvertUtils.convertObject(issueCreateDTO, TestCaseDTO.class);
+        Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
+        testCaseDTO.setCaseNum(caseNum.toString());
         // 插入测试用例
         testCaseMapper.insert(testCaseDTO);
         // 更新记录关联表
