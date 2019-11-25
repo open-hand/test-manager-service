@@ -51,7 +51,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String HIDDEN_PRIORITY = "hidden_priority";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_COMPONENT = "hidden_component";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[8];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[7];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
