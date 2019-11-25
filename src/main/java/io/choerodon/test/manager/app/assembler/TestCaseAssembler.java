@@ -68,7 +68,7 @@ public class TestCaseAssembler {
         modelMapper.map(testCaseDTO, testCaseRepVO);
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
-        testCaseRepVO.setIssueNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         return testCaseRepVO;
@@ -115,7 +115,7 @@ public class TestCaseAssembler {
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
             testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
         }
-        testCaseInfoVO.setIssueNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         return testCaseInfoVO;
     }
 

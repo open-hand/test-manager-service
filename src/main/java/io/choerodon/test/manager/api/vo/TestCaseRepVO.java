@@ -16,10 +16,7 @@ public class TestCaseRepVO {
     private Long caseId;
 
     @ApiModelProperty(value = "用例编号")
-    private Long caseNum;
-
-    @ApiModelProperty(value = "用例拼接编号")
-    private String issueNum;
+    private String caseNum;
 
     @ApiModelProperty(value = "概要")
     private String summary;
@@ -62,20 +59,12 @@ public class TestCaseRepVO {
         this.caseId = caseId;
     }
 
-    public Long getCaseNum() {
+    public String getCaseNum() {
         return caseNum;
     }
 
-    public void setCaseNum(Long caseNum) {
+    public void setCaseNum(String caseNum) {
         this.caseNum = caseNum;
-    }
-
-    public String getIssueNum() {
-        return issueNum;
-    }
-
-    public void setIssueNum(String issueNum) {
-        this.issueNum = issueNum;
     }
 
     public String getSummary() {

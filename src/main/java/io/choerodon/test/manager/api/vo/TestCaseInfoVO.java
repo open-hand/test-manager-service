@@ -62,8 +62,6 @@ public class TestCaseInfoVO {
     @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
-    @ApiModelProperty(value = "用例编号")
-    private String issueNum;
 
     public Long getCaseId() {
         return caseId;
@@ -193,11 +191,4 @@ public class TestCaseInfoVO {
         this.objectVersionNumber = objectVersionNumber;
     }
 
-    public String getIssueNum() {
-        return issueNum;
-    }
-
-    public void setIssueNum(String issueNum) {
-        this.issueNum = issueNum;
-    }
 }

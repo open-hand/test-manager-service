@@ -60,6 +60,9 @@ public class DataLogAspect {
     @Autowired
     private TestCaseLabelRelMapper testCaseLabelRelMapper;
 
+    @Autowired
+    private TestAttachmentMapper testAttachmentMapper;
+
     @PostConstruct
     public void init() {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -124,13 +127,14 @@ public class DataLogAspect {
 
     private void handleAttachmentDeleteLog(Object[] args) {
         try {
-            TestCaseAttachmentDTO testCaseAttachmentDTO = null;
+            Long attachmentId = null;
             for (Object arg : args) {
-                if (arg instanceof TestCaseAttachmentDTO) {
-                    testCaseAttachmentDTO = (TestCaseAttachmentDTO) arg;
+                if (arg instanceof Long) {
+                    attachmentId = (Long) arg;
                 }
             }
-            if (!ObjectUtils.isEmpty(testCaseAttachmentDTO)) {
+            if (!ObjectUtils.isEmpty(attachmentId)) {
+                TestCaseAttachmentDTO testCaseAttachmentDTO = testAttachmentMapper.selectByPrimaryKey(attachmentId);
                 createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
             }
         } catch (Throwable throwable) {

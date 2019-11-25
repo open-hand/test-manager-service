@@ -27,7 +27,7 @@ public class IIssueAttachmentServiceImpl implements IIssueAttachmentService {
     }
 
     @Override
-    @DataLog(type = DataLogConstants.CREATE_ATTACHMENT)
+    @DataLog(type = DataLogConstants.DELETE_ATTACHMENT)
     public Boolean deleteBase(Long attachmentId) {
         TestCaseAttachmentDTO issueAttachmentDTO = testAttachmentMapper.selectByPrimaryKey(attachmentId);
         if (issueAttachmentDTO == null) {
