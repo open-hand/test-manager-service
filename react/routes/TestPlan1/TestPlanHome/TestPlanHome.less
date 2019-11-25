@@ -1,3 +1,55 @@
-.c7ntest-testPlanHome {
-    
+.c7ntest-testPlan {
+    &-contentWrap {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        &-left {
+            width: 2.42rem;
+            border-right: 1px solid #D8D8D8;;
+            .c7ntest-testPlan-contentWrap-testPlanTree {
+                .c7n-tabs-bar {
+                    margin: 0 0.1rem 0.16rem 0.1rem;
+                    .c7n-tabs-tab {
+                        margin: 0;
+                        height: 0.42rem;
+                        line-height: 0.42rem;
+                        margin-top: 0.09rem;
+                        padding: 0 0.16rem;
+                    }
+                }
+            }
+        }
+        &-right {
+            width: calc(~"100% - 2.42rem");
+            padding-left: 0.2rem;
+            padding-right: 0.2rem;
+            .c7ntest-testPlan-contentWrap-baseInfo {
+                &-currentPlanName, &-warning {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 0.16rem;
+                    .icon {
+                        margin-right: 0.06rem;
+                    }
+                }
+                &-currentPlanName {
+                    margin-top: 15px;
+                    span {
+                        font-size: 0.2rem;
+                        color: #000000;
+                    }
+                }
+                &-warning {
+                    .icon {
+                        color: red;
+                    }
+                    span {
+                        font-size: 0.12rem;
+                        color: rgba(0,0,0,0.65);
+                    }  
+                }
+            }
+        }
+       
+    }
 }

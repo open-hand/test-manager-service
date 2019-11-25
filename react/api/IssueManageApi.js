@@ -480,3 +480,13 @@ export function uploadFile(caseId, data) {
 export function deleteFile(id) {
   return request.delete(`/test/v1/projects/${getProjectId()}/attachment/${id}`);
 }
+
+/**
+ *获取当前项目的标签
+ *
+ * @export
+ * @returns
+ */
+export function getLabels() {
+  return request.get(`/test/v1/projects/${getProjectId()}/labels`);
+}

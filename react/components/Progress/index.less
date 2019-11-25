@@ -1,0 +1,31 @@
+.c7ntest-progress {
+  width: 0.4rem;
+  height: 0.4rem;
+  display: inline-block;
+  position: relative;
+
+  &-circle {
+    transform: matrix(-1, 0, 0, 1, 0, 0);
+  }
+
+  &-tip {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &-title {
+      font-size: 0.13rem;
+      color: #000000;
+    }
+  }
+  &-title {
+    text-align: center;
+    word-break: keep-all;
+    font-size: 0.13rem;
+    color: #000000;
+  }
+}

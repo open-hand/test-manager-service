@@ -111,15 +111,7 @@ export function getIssueCount(search) {
 export function getModules() {
   return request.get(`agile/v1/projects/${getProjectId()}/component`);
 }
-/**
- *获取当前项目的标签
- *
- * @export
- * @returns
- */
-export function getLabels() {
-  return request.get(`agile/v1/projects/${getProjectId()}/issue_labels`);
-}
+
 /**
  *获取当前组织的issue优先级
  *

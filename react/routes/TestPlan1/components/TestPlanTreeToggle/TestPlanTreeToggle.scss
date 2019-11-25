@@ -1,0 +1,81 @@
+.c7ntest-testPlanTreeToggle {
+  display: flex;
+
+  &-button {
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    background-color: #3F51B5;
+    color: white;
+    text-align: center;
+    line-height: 19px; // margin: 0 7px;
+    border-radius: 3px;
+  }
+
+  &-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &-bar {
+      // margin-top: 10px;
+      width: 22.5px;
+
+      p {
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.08);
+        text-align: center;
+        color: rgba(0, 0, 0, 0.65);
+      }
+    }
+  }
+
+  .c7ntest-treeTop {
+    padding: 0 10px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.12); */
+    /* border-top: 1px solid rgba(0, 0, 0, 0.12); */
+    // border-left: 1px solid rgba(0, 0, 0, 0.12);
+    width: 100%;
+
+    .c7n-input-wrapper {
+      .c7n-input-content {
+        margin-bottom: 0;
+
+        .c7n-input-prefix {
+          margin-left: 3px;
+        }
+      }
+    }
+
+    .c7n-input-wrapper:before {
+      border: none;
+    }
+  }
+
+  &-tree-area {
+    /* margin-left: 24px; */
+    height: 100%;
+    width: 230px;
+    // border-left: 1px solid rgba(0, 0, 0, 0.12);
+
+    &-head {
+      display: flex;
+      align-items: center;
+
+      &-search {
+        flex: 1;
+      }
+    }
+
+    // .c7ntest-testPlanTree {
+    //   border-left: 1px solid rgba(0, 0, 0, 0.12);
+    // }
+  }
+
+  &-hidden {
+    display: none;
+  }
+}
