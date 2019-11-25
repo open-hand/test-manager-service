@@ -4,7 +4,6 @@ import { injectIntl } from 'react-intl';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import { SelectFocusLoad, SelectVersion } from '../../../../../../components';
-import CreateAutoTestStore from '../../../../stores/CreateAutoTestStore';
 import { getAllEnvs } from '../../../../../../api/AutoTestApi';
 import './SelectVariable.less';
 
@@ -20,17 +19,20 @@ class SelectVariable extends Component {
    */
   handleVersionSelect = (versionId, other) => {
     const { children: versionName } = other.props;
-    CreateAutoTestStore.setVersion({ versionId, versionName });
+    const { createAutoTestStore } = this.props;
+    createAutoTestStore.setVersion({ versionId, versionName });
   }
 
   handleSelectEnv = (envId, other) => {
-    const { envList } = CreateAutoTestStore;
-    CreateAutoTestStore.setEnv(_.find(envList, { id: envId }));
+    const { createAutoTestStore } = this.props;
+    const { envList } = createAutoTestStore;
+    createAutoTestStore.setEnv(_.find(envList, { id: envId }));
   }
 
   loadEnvs = () => {
+    const { createAutoTestStore } = this.props;
     getAllEnvs().then((res) => {
-      CreateAutoTestStore.setEnvList(res);
+      createAutoTestStore.setEnvList(res);
     });
   }
 
@@ -39,22 +41,24 @@ class SelectVariable extends Component {
    * @param record
    */
   handleSelectApp = (id) => {
-    const { appList } = CreateAutoTestStore;
-    CreateAutoTestStore.setApp(_.find(appList, { id }));
-    CreateAutoTestStore.setAppVersion({});
+    const { createAutoTestStore } = this.props;
+    const { appList } = createAutoTestStore;
+    createAutoTestStore.setApp(_.find(appList, { id }));
+    createAutoTestStore.setAppVersion({});
   };
 
   handleSelectAppVersion = (id) => {
-    const { appVersionList } = CreateAutoTestStore;
-    CreateAutoTestStore.setAppVersion(_.find(appVersionList, { id }));
+    const { createAutoTestStore } = this.props;
+    const { appVersionList } = createAutoTestStore;
+    createAutoTestStore.setAppVersion(_.find(appVersionList, { id }));
   }
 
   render() {
-    const { intl } = this.props;
+    const { intl, createAutoTestStore } = this.props;
     const { formatMessage } = intl;
     const {
       app, appVersion, env, version, envList,
-    } = CreateAutoTestStore;
+    } = createAutoTestStore;
     return (
       <div className="deployApp-app">
         {/* 选择应用 */}
@@ -64,7 +68,7 @@ class SelectVariable extends Component {
           style={{ width: 512, display: 'block' }}
           onChange={this.handleSelectApp}
           value={app.id}
-          saveList={(list) => { CreateAutoTestStore.setAppList(list); }}
+          saveList={(list) => { createAutoTestStore.setAppList(list); }}
         />
         <SelectFocusLoad
           disabled={!app.id}
@@ -74,7 +78,7 @@ class SelectVariable extends Component {
           appId={app.id}
           onChange={this.handleSelectAppVersion}
           value={appVersion.id}
-          saveList={(list) => { CreateAutoTestStore.setAppVersionList(list); }}
+          saveList={(list) => { createAutoTestStore.setAppVersionList(list); }}
         />
         {/* 选择目标版本 */}
         {/* <section className="deployApp-section">

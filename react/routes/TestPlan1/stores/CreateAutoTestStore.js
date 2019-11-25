@@ -131,4 +131,4 @@ class CreateAutoTestStore {
   }
 }
 
-export default new CreateAutoTestStore();
+export default CreateAutoTestStore;

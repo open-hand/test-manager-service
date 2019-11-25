@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import { injectIntl, FormattedMessage } from 'react-intl';
 
 import { YamlEditor } from '../../../../../../components';
-import CreateAutoTestStore from '../../../../stores/CreateAutoTestStore';
 import { getYaml, checkYaml } from '../../../../../../api/AutoTestApi';
 
 @injectIntl
@@ -20,10 +19,11 @@ class ModifyConfig extends Component {
   }
 
   loadYaml=() => {
-    const { app, appVersion, env } = CreateAutoTestStore;
+    const { createAutoTestStore } = this.props;
+    const { app, appVersion, env } = createAutoTestStore;
     getYaml(app.id, appVersion.id, env.id).then((data) => {
       if (data) {
-        CreateAutoTestStore.setConfigValue(data);
+        createAutoTestStore.setConfigValue(data);
       }
     });
   }
@@ -33,16 +33,18 @@ class ModifyConfig extends Component {
    * @param value
    */
   handleChangeValue = (value) => {
-    CreateAutoTestStore.setNewConfigValue(value);
+    const { createAutoTestStore } = this.props;
+    createAutoTestStore.setNewConfigValue(value);
     checkYaml(value)
       .then((data) => {      
-        CreateAutoTestStore.setNewConfigValue(value, data);
+        createAutoTestStore.setNewConfigValue(value, data);
       });
   };
 
   render() {
     const { markers } = this.state;
-    const data = CreateAutoTestStore.getNewConfigValue;
+    const { createAutoTestStore } = this.props;
+    const data = createAutoTestStore.getNewConfigValue;
     return (
       <div className="deployApp-env">
         {data && (
