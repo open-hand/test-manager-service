@@ -20,7 +20,8 @@ const onHumanizeDuration = (record) => {
     ? humanizeDuration(diff)
     : null;
 };
-const queryStatus = new DataSet({
+
+const ExportSideDataSet = (folderId, queryStatus = new DataSet({
   autoQuery: true,
   paging: false,
   fields: [
@@ -33,8 +34,7 @@ const queryStatus = new DataSet({
     { key: 3, value: '未完成' },
 
   ],
-});
-const ExportSideDataSet = folderId => new DataSet({
+})) => new DataSet({
   autoQuery: true,
   paging: true,
   selection: false,
@@ -63,6 +63,10 @@ const ExportSideDataSet = folderId => new DataSet({
     {
       label: '进度',
       name: 'status',
+      type: 'number',
+    },
+    {
+      name: 'rate',
       type: 'number',
     },
     {
