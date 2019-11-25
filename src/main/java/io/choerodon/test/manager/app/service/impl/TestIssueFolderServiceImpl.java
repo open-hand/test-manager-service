@@ -237,17 +237,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }.getType());
     }
 
-    @Override
-    public List<Long> queryProjectIdList() {
-        return testIssueFolderMapper.selectProjectIdList();
-    }
-
-    @Override
-    public List<TestIssueFolderVO> queryListByProjectId(Long projectId) {
-        return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderMapper.selectProjectIdList(), TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-    }
-
     // 递归查询最底层文件夹
     private List<TestIssueFolderDTO> recurisionQuery(Long parentId, List<TestIssueFolderDTO> folders) {
         List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
