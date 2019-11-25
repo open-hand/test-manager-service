@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
@@ -8,12 +8,13 @@ import {
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import CreateAutoTest from '../components/CreateAutoTest'; 
-import CreateAutoTestStore from '../stores/CreateAutoTestStore';
+import Store from '../stores';
 import './TestPlanHome.less';
 
 export default observer(() => {
+  const { prefixCls, createAutoTestStore } = useContext(Store);
   const handleCreateAutoTest = () => {
-    CreateAutoTestStore.setVisible(true);
+    createAutoTestStore.setVisible(true);
     // Modal.open({
     //   key: createAutoTestModalKey,
     //   drawer: true,
@@ -46,7 +47,7 @@ export default observer(() => {
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }} />
-      <CreateAutoTest />
+      <CreateAutoTest createAutoTestStore={createAutoTestStore} />
     </Page>
   );
 });

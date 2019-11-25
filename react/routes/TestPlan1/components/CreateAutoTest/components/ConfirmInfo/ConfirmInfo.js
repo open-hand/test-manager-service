@@ -7,7 +7,6 @@ import moment from 'moment';
 import YAML from 'yamljs';
 import { observer } from 'mobx-react';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import CreateAutoTestStore from '../../../../stores/CreateAutoTestStore';
 import { YamlEditor } from '../../../../../../components';
 import { commonLink } from '../../../../../../common/utils';
 import {
@@ -147,14 +146,10 @@ class ConfirmInfo extends Component {
    * 部署应用
    */
   handleDeploy = () => {
-    // this.setState({
-    //   loading: true,
-    // });
-    // const instances = CreateAutoTestStore.currentInstance;
-    // const value = this.state.value || CreateAutoTestStore.value.yaml;
+    const { createAutoTestStore } = this.props;
     let isNotChange = true;
-    const oldYaml = CreateAutoTestStore.getConfigValue.yaml;
-    const newYaml = CreateAutoTestStore.getNewConfigValue.yaml;
+    const oldYaml = createAutoTestStore.getConfigValue.yaml;
+    const newYaml = createAutoTestStore.getNewConfigValue.yaml;
     const oldvalue = YAML.parse(oldYaml);
     const newvalue = YAML.parse(newYaml);
     // console.log(oldvalue);    
@@ -163,7 +158,7 @@ class ConfirmInfo extends Component {
     }
     const {
       app, appVersion, env, version,
-    } = CreateAutoTestStore;
+    } = createAutoTestStore;
     const applicationDeployDTO = {
       isNotChange,
       appId: app.id,
@@ -179,19 +174,19 @@ class ConfirmInfo extends Component {
     const { testType } = this.state;
 
     if (testType === 'instant') {
-      CreateAutoTestStore.setLoading(true);
+      createAutoTestStore.setLoading(true);
       // 立即执行
       runTestInstant(applicationDeployDTO).then((res) => {
-        CreateAutoTestStore.setLoading(false);
+        createAutoTestStore.setLoading(false);
         this.toTestHistory();
       }).catch((err) => {
-        CreateAutoTestStore.setLoading(false);
+        createAutoTestStore.setLoading(false);
       });
     } else {
       // 定时执行
       this.props.form.validateFieldsAndScroll((err, values) => {
         if (!err) {
-          CreateAutoTestStore.setLoading(true);
+          createAutoTestStore.setLoading(true);
           const flag = values.triggerType === 'simple-trigger';
           const {
             startTime, endTime, cronExpression, simpleRepeatInterval,
@@ -210,7 +205,7 @@ class ConfirmInfo extends Component {
             },
           };
           runTestTiming(scheduleTaskDTO).then((res) => {
-            CreateAutoTestStore.setLoading(false);
+            createAutoTestStore.setLoading(false);
             this.toTestHistory();
           });
         } else {
@@ -422,18 +417,20 @@ class ConfirmInfo extends Component {
   }
 
   toTestHistory = () => {
+    const { createAutoTestStore } = this.props;
     this.props.history.push(commonLink('/AutoTest/list'));
-    CreateAutoTestStore.clearTestInfo();
+    createAutoTestStore.clearTestInfo();
   }
 
   render() {
+    const { createAutoTestStore } = this.props;
     const {
       app, appVersion, version,
-    } = CreateAutoTestStore;
+    } = createAutoTestStore;
     const { intl, saveRef } = this.props;
     saveRef(this);
     const { formatMessage } = intl;
-    const data = CreateAutoTestStore.getNewConfigValue;
+    const data = createAutoTestStore.getNewConfigValue;
     const {
       testType,
     } = this.state;

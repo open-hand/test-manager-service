@@ -168,7 +168,7 @@ function ExportSide(props) {
           messageKey={`choerodon:msg:test-issue-export:${AppState.userInfo.id}`}
           onMessage={handleMessage}
         >
-          <Table dataSet={exportSideDataSet}>
+          <Table dataSet={exportSideDataSet} className="test-export-issue-table">
             <Column name="name" align="left" />
             <Column name="action" width={50} renderer={renderDropDownMenu} />
             <Column name="successfulCount" width={120} align="left" />
