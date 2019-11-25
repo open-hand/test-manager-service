@@ -85,21 +85,21 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Override
     public void fixData() {
         logger.info("=====Data Migrate Start=====");
-//        //1.文件夹
-//        migrateFolder();
-//        //2.用例
-//        migrateIssue();
-//        //3.标签关系
-//        migrateLabelCaseRel();
-//        //4标签
-//        migrateLabel();
-//        //5附件
-//        migrateAttachment();
-//        //6.连接
-//        migrateLink();
-//        //7.项目
-//        migrateProject();
-//        //8.日志
+        //1.文件夹
+        migrateFolder();
+        //2.用例
+        migrateIssue();
+        //3.标签关系
+        migrateLabelCaseRel();
+        //4标签
+        migrateLabel();
+        //5附件
+        migrateAttachment();
+        //6.连接
+        migrateLink();
+        //7.项目
+        migrateProject();
+        //8.日志
         migreateDataLog();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
