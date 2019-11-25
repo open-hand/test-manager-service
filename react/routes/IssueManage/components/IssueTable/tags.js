@@ -79,7 +79,7 @@ export function renderAction(record, history, reLoadTable) {
     </Menu>
   );
   return (
-    <Dropdown overlay={menu} trigger="click" getPopupContainer={trigger => trigger.parentNode}>
+    <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
       <Button shape="circle" icon="more_vert" />
     </Dropdown>
   );

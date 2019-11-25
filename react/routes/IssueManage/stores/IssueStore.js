@@ -31,7 +31,7 @@ class IssueStore {
 
   @observable paramIssueId = undefined;
 
-  @observable barFilters = undefined;
+  @observable barFilters = [];
 
   @observable draggingTableItems = [];
 
@@ -179,6 +179,10 @@ class IssueStore {
       ...filter,
       contents: this.barFilters,
     };
+  }
+
+  @computed get getBarFilters() {
+    return toJS(this.barFilters);
   }
 
   @computed get getDraggingTableItems() {

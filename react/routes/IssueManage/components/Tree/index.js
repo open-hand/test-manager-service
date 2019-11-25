@@ -191,6 +191,7 @@ function PureTree({
     item, provided,
   }) => (
     <TreeNode
+      key={item.id}
       path={getItemById(flattenedTree, item.id).path}
       provided={provided}
       item={item}

@@ -38,7 +38,7 @@ export default observer((props) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
       // <th style={{ flex: column.flex || 1 }} >
-      <th style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+      <th key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
         {column.title}
         {' '}
       </th>
@@ -96,7 +96,7 @@ export default observer((props) => {
       }
       return (
         // <td style={{ flex: flex || 1 }} >
-        <td style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
+        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -226,14 +226,15 @@ export default observer((props) => {
     <div className="c7ntest-issuetable">
       <Table
         // filterBar={false}
+        rowKey="caseId"
         columns={columns}
         dataSource={IssueStore.getIssues}
         components={getComponents(columns)}
         onChange={handleFilterChange}
         onColumnFilterChange={handleColumnFilterChange}
         pagination={false}
-        filters={IssueStore.barFilters || []}
-        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}        
+        filters={IssueStore.getBarFilters || []}
+        filterBarPlaceholder="过滤表"        
       />
     </div>
   );

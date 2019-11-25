@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -44,9 +44,19 @@ const getIcon = (
     />
   );
   if (item.children && item.children.length > 0) {
-    return [exapndIcon, folderIcon];
+    return (
+      <Fragment>
+        {exapndIcon}
+        {folderIcon}
+      </Fragment>
+    );
   }
-  return [<PreTextIcon>&bull;</PreTextIcon>, folderIcon];
+  return (
+    <Fragment>
+      <PreTextIcon>&bull;</PreTextIcon>
+      {folderIcon}
+    </Fragment>
+  );
 };
 const getAction = (item, onMenuClick) => {
   const menu = (
@@ -60,9 +70,9 @@ const getAction = (item, onMenuClick) => {
     </Menu>
   );
   return (
-    <div role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
+    <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
       <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />
-      <Dropdown overlay={menu} trigger="click" getPopupContainer={trigger => trigger.parentNode}>
+      <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
         <Button funcType="flat" icon="more_vert" size="small" />
       </Dropdown>
     </div>
