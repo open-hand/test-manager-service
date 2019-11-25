@@ -98,16 +98,17 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         if (CollectionUtils.isEmpty(caseLinkList)) {
             return new ArrayList<>();
         }
-        Map<Long, List<TestCaseLinkDTO>> collect = caseLinkList.stream().collect(Collectors.groupingBy(TestCaseLinkDTO::getIssueId));
         List<Long> issueIds = caseLinkList.stream().map(TestCaseLinkDTO::getIssueId).collect(Collectors.toList());
         List<IssueLinkVO> issueInfos = issueFeignClient.queryIssues(projectId, issueIds).getBody();
-        issueInfos.forEach(v -> {
-            v.setLinkId(collect.get(v.getIssueId()).get(0).getLinkId());
-            v.setLinkCaseId(caseId);
-
+        Map<Long, List<IssueLinkVO>> collect = issueInfos.stream().collect(Collectors.groupingBy(IssueLinkVO::getIssueId));
+        List<IssueLinkVO> result = new ArrayList<>();
+        caseLinkList.forEach(v -> {
+            IssueLinkVO issueLinkVO = collect.get(v.getIssueId()).get(0);
+            modelMapper.map(v,issueLinkVO);
+            result.add(issueLinkVO);
         });
 
-        return issueInfos;
+        return result;
     }
 
     @Override

@@ -1,24 +1,20 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.util.PageObjectUtil;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
-import io.choerodon.test.manager.infra.util.LongUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.devops.api.vo.*;
-import io.choerodon.mybatis.entity.Criteria;
+import io.choerodon.devops.api.vo.AppServiceDeployVO;
+import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.devops.api.vo.ApplicationRepDTO;
+import io.choerodon.devops.api.vo.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
@@ -27,26 +23,25 @@ import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.TypeUtil;
-import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.info.GitInfoContributor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -56,8 +51,6 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
-
-    private static final String BACKETNAME = "agile-service";
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
@@ -109,6 +102,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseLabelService testCaseLabelService;
+
+    @Autowired
+    private TestCaseAssembler testCaseAssembler;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -287,11 +283,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 返回数据
         testProjectInfo.setCaseMaxNum(caseNum);
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(testCaseDTO.getCreatedBy());
-        userIds.add(testCaseDTO.getLastUpdatedBy());
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        TestCaseRepVO testCaseRepVO = dtoToRepVo(testCaseDTO, userMessageDTOMap);
+        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO);
         return testCaseRepVO;
     }
 
@@ -301,49 +293,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (ObjectUtils.isEmpty(testCaseDTO)) {
             throw new CommonException("error.test.case.is.not.exist");
         }
-        TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO, TestCaseInfoVO.class);
-        // 获取用户信息
-        Set<Long> ids = new HashSet<>();
-        ids.add(testCaseDTO.getCreatedBy());
-        ids.add(testCaseDTO.getLastUpdatedBy());
-        List<Long> collect = modelMapper.map(ids, new TypeToken<List<Long>>() {
-        }.getType());
-        Map<Long, UserMessageDTO> UserMessageDTOMap = userService.queryUsersMap(collect, true);
-        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
-            testCaseInfoVO.setCreateUser(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()));
-        }
-        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
-            testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
-        }
-        //  获取用例的标签
-        List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
-        if (!CollectionUtils.isEmpty(testCaseLabelRelDTOS)) {
-            List<Long> labelIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
-            testCaseInfoVO.setLableIds(labelIds);
-        }
-        // 用例的问题链接
-        testCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(projectId, caseId));
-        // 查询附件信息
-        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
-        testCaseAttachmentDTO.setCaseId(caseId);
-        List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
-        if (!CollectionUtils.isEmpty(attachment)) {
-            attachment.forEach(v -> {
-                v.setUrl(attachmentUrl + "/" + BACKETNAME + "/" + v.getUrl());
-            });
-            testCaseInfoVO.setAttachment(attachment);
-        }
-        // 查询测试用例所属的文件夹
-        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCaseDTO.getFolderId());
-        if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
-            testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
-        }
-
-        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
-        testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
-        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
-        String issue = String.format("%s-%s", testProjectInfo.getProjectCode(), testCaseDTO.getCaseNum());
-        testCaseInfoVO.setIssueNum(issue);
+        TestCaseInfoVO testCaseInfoVO = testCaseAssembler.dtoToInfoVO(testCaseDTO);
         return testCaseInfoVO;
     }
 
@@ -368,7 +318,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setProjectId(projectId);
         testCaseAttachmentDTO.setCaseId(caseId);
-        testAttachmentMapper.delete(testCaseAttachmentDTO);
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
+        attachmentDTOS.forEach(v -> testCaseAttachmentService.delete(projectId,v.getAttachmentId()));
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
     }
@@ -378,21 +329,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId, folderIds);
-
         // 查询文件夹下的的用例
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO);
-        if (CollectionUtils.isEmpty(testCaseDTOS)) {
+        List<TestCaseDTO> allDto = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO);
+        if (CollectionUtils.isEmpty(allDto)) {
             return new PageInfo<>(new ArrayList<>());
         }
-        List<Long> userIds = new ArrayList<>();
-        testCaseDTOS.forEach(v -> {
-            userIds.add(v.getCreatedBy());
-            userIds.add(v.getLastUpdatedBy());
-        });
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        List<TestCaseRepVO> collect = testCaseDTOS.stream().map(v -> dtoToRepVo(v, userMessageDTOMap)).collect(Collectors.toList());
-        return PageUtil.createPageFromList(collect, pageable);
-
+        PageInfo<TestCaseDTO> pageDto = PageUtil.createPageFromList(allDto, pageable);
+        PageInfo<TestCaseRepVO> pageFromList = PageUtil.buildPageInfoWithPageInfoList(pageDto,modelMapper.map(pageDto.getList(),new TypeToken<List<TestCaseRepVO>>(){}.getType()));
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(pageDto.getList());
+        pageFromList.setList(repVOS);
+        return pageFromList;
     }
 
     @Override
@@ -412,7 +358,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
         TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
         map.setVersionNum(testCaseDTO.getVersionNum() + 1);
-
         baseUpdate(map);
 
         // 更新标签
@@ -420,13 +365,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(labels)) {
             changeLabel(projectId, testCaseDTO.getCaseId(), labels);
         }
-
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(testCaseDTO1.getCreatedBy());
-        userIds.add(testCaseDTO1.getLastUpdatedBy());
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds, false);
-        TestCaseRepVO testCaseRepVO1 = dtoToRepVo(testCaseDTO1, userMessageDTOMap);
+        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1);
         testCaseRepVO1.setLabels(labels);
         return testCaseRepVO1;
     }
@@ -599,19 +539,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(folderDTOS)) {
             folderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds));
         }
-    }
-
-    private TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO, Map<Long, UserMessageDTO> map) {
-        TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
-        modelMapper.map(testCaseDTO, testCaseRepVO);
-        TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
-        testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
-        TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
-        String issue = String.format("%s-%s", testProjectInfo.getProjectCode(), testCaseDTO.getCaseNum());
-        testCaseRepVO.setIssueNum(issue);
-        testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
-        testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
-        return testCaseRepVO;
     }
 
     private TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO) {

@@ -28,6 +28,6 @@ public interface UserService {
 
     void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto);
 
-    Map<Long, UserMessageDTO> queryUsersMap(List<Long> assigneeIdList, Boolean withLoginName);
+    Map<Long, UserMessageDTO> queryUsersMap(List<Long> assigneeIdList);
 
 }

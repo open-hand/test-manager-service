@@ -95,7 +95,7 @@ public class DataLogAspect {
                         handleLabelDeleteLog(args);
                         break;
                     case DataLogConstants.CREATE_ATTACHMENT:
-                        handleAttachmentCreateLog(args);
+                        result = handleAttachmentCreateLog(pjp,args);
                         break;
                     case DataLogConstants.DELETE_ATTACHMENT:
                         handleAttachmentDeleteLog(args);
@@ -131,14 +131,15 @@ public class DataLogAspect {
                 }
             }
             if (!ObjectUtils.isEmpty(testCaseAttachmentDTO)) {
-                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getFileName(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
+                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
     }
 
-    private void handleAttachmentCreateLog(Object[] args) {
+    private Object handleAttachmentCreateLog(ProceedingJoinPoint pjp,Object[] args) {
+        Object result = null;
         try {
             TestCaseAttachmentDTO testCaseAttachmentDTO = null;
             for (Object arg : args) {
@@ -147,11 +148,15 @@ public class DataLogAspect {
                 }
             }
             if (!ObjectUtils.isEmpty(testCaseAttachmentDTO)) {
-                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, null, testCaseAttachmentDTO.getFileName(), null, null);
+                result = pjp.proceed();
+                testCaseAttachmentDTO = (TestCaseAttachmentDTO) result;
+                createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, null, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString());
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
+
+        return  result;
     }
 
     private void handleLabelDeleteLog(Object[] args) {
