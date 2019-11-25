@@ -581,10 +581,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     }
 
-    @Override
-    public List<Long> queryProjectAllCase(Long projectId) {
-        return testCaseMapper.queryFolderId(projectId);
-    }
 
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
         // 查询已有的标签
