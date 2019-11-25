@@ -283,11 +283,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 返回数据
         testProjectInfo.setCaseMaxNum(caseNum);
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(testCaseDTO.getCreatedBy());
-        userIds.add(testCaseDTO.getLastUpdatedBy());
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
-        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO, userMessageDTOMap);
+        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO);
         return testCaseRepVO;
     }
 
@@ -334,14 +330,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId, folderIds);
         // 查询文件夹下的的用例
-        List<TestCaseDTO> allDto = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO,null);
-        PageInfo<TestCaseRepVO> pageFromList = PageUtil.createPageFromList(modelMapper.map(allDto, new TypeToken<List<TestCaseRepVO>>() {
-        }.getType()), pageable);
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO, pageable);
-        if (CollectionUtils.isEmpty(testCaseDTOS)) {
+        List<TestCaseDTO> allDto = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO);
+        if (CollectionUtils.isEmpty(allDto)) {
             return new PageInfo<>(new ArrayList<>());
         }
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(testCaseDTOS);
+        PageInfo<TestCaseDTO> pageDto = PageUtil.createPageFromList(allDto, pageable);
+        PageInfo<TestCaseRepVO> pageFromList = PageUtil.buildPageInfoWithPageInfoList(pageDto,modelMapper.map(pageDto.getList(),new TypeToken<List<TestCaseRepVO>>(){}.getType()));
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(pageDto.getList());
         pageFromList.setList(repVOS);
         return pageFromList;
     }
@@ -370,10 +365,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         if (!CollectionUtils.isEmpty(labels)) {
             changeLabel(projectId, testCaseDTO.getCaseId(), labels);
         }
-
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
-        Map<Long, UserMessageDTO> userMessageDTOMap = testCaseAssembler.getUserMap(testCaseDTO1,null);
-        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1, userMessageDTOMap);
+        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1);
         testCaseRepVO1.setLabels(labels);
         return testCaseRepVO1;
     }

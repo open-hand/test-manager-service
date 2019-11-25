@@ -62,7 +62,8 @@ public class TestCaseAssembler {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO, Map<Long, UserMessageDTO> map) {
+    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO) {
+        Map<Long, UserMessageDTO> map = getUserMap(testCaseDTO, null);
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
         modelMapper.map(testCaseDTO, testCaseRepVO);
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
@@ -77,7 +78,7 @@ public class TestCaseAssembler {
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
         List<TestCaseRepVO> collect = list.stream()
-                .map(v -> dtoToRepVo(v,userMap)).collect(Collectors.toList());
+                .map(v -> dtoToRepVo(v)).collect(Collectors.toList());
         return collect;
     }
 

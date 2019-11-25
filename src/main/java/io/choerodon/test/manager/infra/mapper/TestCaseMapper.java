@@ -14,7 +14,7 @@ import org.springframework.data.domain.Pageable;
  * @since 2019/11/14
  */
 public interface TestCaseMapper extends Mapper<TestCaseDTO> {
-    List<TestCaseDTO> listCaseByFolderIds(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO, @Param("pageable")Pageable pageable);
+    List<TestCaseDTO> listCaseByFolderIds(@Param("projectId") Long projectId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
 
     List<TestCaseDTO> listCopyCase(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
 
