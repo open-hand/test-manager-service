@@ -99,14 +99,11 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
         folder_id: folderId,
       },
       data: {
-        SearchDTO: {
-          advancedSearchArgs: {
-            // name:
-            // status: 
-            data,
-          },
+        advancedSearchArgs: {
+          // name: 
+          // status:2,   
+          ...data,
         },
-
       },
       transformResponse(res) {
         const newList = JSON.parse(res).list.map(item => ({
