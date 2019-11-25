@@ -22,6 +22,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 /**
@@ -38,6 +39,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     private TestCycleService testCycleService;
     @Autowired
     private TestCaseService testCaseService;
+    @Autowired
+    private TestCaseMapper testCaseMapper;
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
     @Autowired
@@ -80,7 +83,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         //根目录
         List<Long> rootFolderId = issueFolderDTOS.stream().filter(IssueFolder ->
                 IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
-        List<Long> longs = testCaseService.queryProjectAllCase(projectId);
+        List<Long> longs = testCaseMapper.queryFolderId(projectId);
         List<TestTreeFolderVO> list = new ArrayList<>();
         issueFolderDTOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();

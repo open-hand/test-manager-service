@@ -82,7 +82,13 @@
                             where tc.case_id = tifr.issue_id)
     </update>
     <select id="queryFolderId" resultType="Long">
-        SELECT DISTINCT folder_id FROM `test_case` where project_id=#{projectId}  and folder_id is not null ;
+       SELECT DISTINCT
+	    folder_id
+        FROM
+            `test_case`
+        WHERE
+            project_id = #{projectId}
+        AND folder_id IS NOT NULL;
     </select>
 
 </mapper>
