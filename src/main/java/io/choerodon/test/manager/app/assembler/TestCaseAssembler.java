@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.app.assembler;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
@@ -49,12 +51,6 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
-
-    @Autowired
-    private TestCaseAttachmentService testCaseAttachmentService;
-
-    @Autowired
-    private TestCaseLabelService testCaseLabelService;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;

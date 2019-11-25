@@ -24,6 +24,9 @@
             </foreach>
             <include refid="sqlParam"/>
             order by  last_update_date DESC
+            <if test="pageable != null">
+             limit #{pageable.pageNumber},#{pageable.pageSize}
+            </if>
     </select>
 
     <select id="listCopyCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">

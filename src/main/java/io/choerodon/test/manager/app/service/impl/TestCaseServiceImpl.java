@@ -52,8 +52,6 @@ import org.springframework.util.ObjectUtils;
 public class TestCaseServiceImpl implements TestCaseService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
-    private static final String BACKETNAME = "agile-service";
-
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
 
@@ -336,12 +334,16 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId, folderIds);
         // 查询文件夹下的的用例
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO);
+        List<TestCaseDTO> allDto = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO,null);
+        PageInfo<TestCaseRepVO> pageFromList = PageUtil.createPageFromList(modelMapper.map(allDto, new TypeToken<List<TestCaseRepVO>>() {
+        }.getType()), pageable);
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO, pageable);
         if (CollectionUtils.isEmpty(testCaseDTOS)) {
             return new PageInfo<>(new ArrayList<>());
         }
         List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(testCaseDTOS);
-        return PageUtil.createPageFromList(repVOS, pageable);
+        pageFromList.setList(repVOS);
+        return pageFromList;
     }
 
     @Override
