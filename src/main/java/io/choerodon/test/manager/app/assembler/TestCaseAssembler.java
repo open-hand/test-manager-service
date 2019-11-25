@@ -115,7 +115,7 @@ public class TestCaseAssembler {
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
             testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
         }
-        testCaseInfoVO.setIssueNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         return testCaseInfoVO;
     }
 
