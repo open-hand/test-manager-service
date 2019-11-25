@@ -1,13 +1,13 @@
 import React, { Fragment, useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { stores, Choerodon } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   Select, Button, Tooltip, Icon,
 } from 'choerodon-ui';
-import { UploadButtonNow, FileList } from '../CommonComponent/UploadButtonNow';
-import { IssueDescription } from '../CommonComponent';
+import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
+import IssueDescription from './Component/IssueDescription';
 import { TextEditToggle } from '@/components';
 import {
   delta2Html, text2Delta,
@@ -24,7 +24,6 @@ import './Detail.less';
 import LinkIssues from './link-issues';
 // 问题链接
 const { Text, Edit } = TextEditToggle;
-const { AppState } = stores;
 const { Option } = Select;
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
@@ -156,7 +155,7 @@ function Detail({
     const fileList = propFileList.filter(i => !i.url);
     const formData = new FormData();
     fileList.forEach((file) => {
-    // file.name = encodeURI(encodeURI(file.name));
+      // file.name = encodeURI(encodeURI(file.name));
       formData.append('file', file);
     });
     uploadFile(issueId, formData)
@@ -187,7 +186,7 @@ function Detail({
     }
   };
 
-  function renderDescription() {   
+  function renderDescription() {
     let delta;
     if (editDescriptionShow === undefined) {
       return null;
@@ -308,11 +307,11 @@ function Detail({
           <TitleWrap title={<FormattedMessage id="attachment" />}>
             <span>
               <UploadButtonNow onUpload={onUploadFiles} fileList={attachment || []} />
-            </span>            
+            </span>
           </TitleWrap>
           <ContentWrap>
             <FileList
-              onRemove={setFileList}              
+              onRemove={setFileList}
               fileList={attachment}
               store={store}
               issueId={issueId}
@@ -336,7 +335,7 @@ function Detail({
               reloadIssue={store.loadIssueData}
             />
           </div>
-        </section>        
+        </section>
         {
           createLinkTaskShow ? (
             <CreateLinkTask

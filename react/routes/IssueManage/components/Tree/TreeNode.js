@@ -71,7 +71,7 @@ const getAction = (item, onMenuClick) => {
   );
   return (
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
-      <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />
+      {!item.hasCase && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
       <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
         <Button funcType="flat" icon="more_vert" size="small" />
       </Dropdown>

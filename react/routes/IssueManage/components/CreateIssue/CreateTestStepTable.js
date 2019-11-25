@@ -1,7 +1,4 @@
-/* eslint-disable no-console */
-import React, {
-  Component, useState, useEffect, useMemo,
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import TestStepTable from '../TestStepTable';
 
 function CreateTestStepTable(props) {

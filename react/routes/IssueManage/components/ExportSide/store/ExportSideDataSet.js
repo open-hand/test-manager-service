@@ -1,5 +1,4 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
-import { useMemo } from 'react';
 import moment from 'moment';
 import { getProjectId, humanizeDuration } from '../../../../../common/utils';
 
@@ -99,14 +98,11 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
         folder_id: folderId,
       },
       data: {
-        SearchDTO: {
-          advancedSearchArgs: {
-            // name:
-            // status: 
-            data,
-          },
+        advancedSearchArgs: {
+          // name: 
+          // status:2,   
+          ...data,
         },
-
       },
       transformResponse(res) {
         const newList = JSON.parse(res).list.map(item => ({

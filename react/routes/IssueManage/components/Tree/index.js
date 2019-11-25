@@ -100,6 +100,11 @@ function PureTree({
       return;
     }
     const sourceItem = getItemByPosition(tree, source);
+    const destinationParent = tree.items[destination.parentId];
+    // 不能拖动到已经有issue的文件夹下
+    if (destinationParent.hasCase) {
+      return;
+    }
     setTree(oldTree => moveItemOnTree(oldTree, source, destination));
     try {
       await afterDrag(sourceItem, destination);

@@ -1,23 +1,23 @@
 import React, {
-  Component, useState, useRef, useEffect, useMemo,
+  useState, useRef, useEffect, useMemo,
 } from 'react';
 import {
   WSHandler, stores,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Table, Button, Input, Dropdown, Menu, Pagination, Modal, Progress,
+  Button, Input, Modal, Progress,
   Icon, Divider, Tooltip,
 } from 'choerodon-ui';
 import { DataSet, Form } from 'choerodon-ui/pro';
 import moment from 'moment';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
-import { importIssue } from '../../../api/FileApi';
-import { commonLink, humanizeDuration, getProjectName } from '../../../common/utils';
-import { getImportHistory, cancelImport, downloadTemplate } from '../../../api/IssueManageApi';
+import { importIssue } from '@/api/FileApi';
+import { humanizeDuration } from '@/common/utils';
+import { getImportHistory, cancelImport, downloadTemplate } from '@/api/IssueManageApi';
 import './ImportIssue.less';
-import SelectTree from '../components/CommonComponent/SelectTree';
+import SelectTree from '../SelectTree';
 
 const { AppState } = stores;
 
@@ -54,10 +54,9 @@ function ImportIssue(props) {
   }), []);
   const [visible, setVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [importRecord, setImportRecord] = useState(null);
+  const [importRecord, setImportRecord] = useState({});
   const [file, setFile] = useState(null);
   const [folder, setFolder] = useState(null);
-  const [fileName, setFileName] = useState(false);
   const [isImport, setIsImport] = useState(false);
   const uploadInput = useRef(null);
 
@@ -108,7 +107,7 @@ function ImportIssue(props) {
       : null;
   };
 
-  const renderRecord = (tag) => {
+  const renderRecord = () => {
     if (!importRecord) {
       return '';
     }
@@ -119,8 +118,8 @@ function ImportIssue(props) {
       return (
         <div className="c7ntest-ImportIssue-record-normal-text">
           <span className="c7ntest-ImportIssue-text">
-            上次导入完成时间：
-            {lastUpdateDate}
+            上次导入完成时间
+            {<span>lastUpdateDate</span>}
             {' '}
             (耗时
             {onHumanizeDuration(importRecord)}
@@ -128,9 +127,9 @@ function ImportIssue(props) {
           </span>
           <span className="c7ntest-ImportIssue-text">
             共导入
-            <span style={{ color: '#0000FF' }}>{successfulCount}</span>
+            <span style={{ color: '#00bfa5', fontSize: 20, margin: '0 .04rem' }}>{successfulCount}</span>
             条数据成功,
-            <span style={{ color: '#F44336' }}>{failedCount}</span>
+            <span style={{ color: '#f76e64', fontSize: 20, margin: '0 .04rem' }}>{failedCount}</span>
             条数据失败
           </span>
           {fileUrl
@@ -146,14 +145,10 @@ function ImportIssue(props) {
     return '';
   };
 
-  const handleOk = () => {
-    setVisible(false);
-  };
 
   const beforeUpload = (e) => {
     if (e.target.files[0]) {
       setFile(e.target.files[0]);
-      setFileName(e.target.files[0]);
     }
   };
 
@@ -163,7 +158,6 @@ function ImportIssue(props) {
       const {
         rate, id, status, fileUrl,
       } = data;
-
       if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
         return;
       }
@@ -178,7 +172,6 @@ function ImportIssue(props) {
     setVisible(false);
     setImportRecord(null);
     setFile(null);
-    setFileName(false);
   };
 
   const handleCancelImport = () => {
@@ -204,110 +197,114 @@ function ImportIssue(props) {
     const {
       rate = 0,
       status,
+      lastUpdateDate,
     } = importRecord;
     if (status === 1) {
       return (
-        <div className="c7ntest-ImportIssue-progress-area">
-          <Progress
-            className="c7ntest-ImportIssue-progress"
-            status="active"
-            type="circle"
-            width={50}
-            strokeWidth={12}
-            showInfo={false}
-          />
-          <span className="c7ntest-ImportIssue-progress-area-text">正在导入中</span>
-          <span className="c7ntest-ImportIssue-progress-area-prompt">( 本次导入耗时较长，您可先返回进行其他操作）</span>
-
-        </div>
-      );
-    } else if (status === 2) {
-      return renderRecord(true);
-    } else {
-      return (
-        <div width={{ width: 300 }}>
-          正在查询导入信息，请稍后
-        </div>
-      );
-    }
-  };
-  // import Divider from './Component/Divider';
-  const renderOneForm = (title, content, button) => (
-    <div className="c7ntest-ImportIssue-form-one">
-      <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
-      <span className="c7ntest-ImportIssue-form-one-content">{content}</span>
-      {button}
-    </div>
-  );
-  const renderForm = () => (
-    <div className="c7ntest-ImportIssue-form">
-      {renderOneForm('下载模板', '您必须使用模版文件，录入用例信息',
-        <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
-          <Icon type="get_app icon" />
-          <FormattedMessage id="issue_download_tpl" />
-        </Button>)}
-
-      <Divider />
-      {renderOneForm('导入测试用例', renderRecord(), !isImport ? (
-        <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
-          <Icon type="archive icon" />
-          <FormattedMessage id="issue_import" />
-        </Button>
-      ) : (
         <WSHandler
           messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
           onMessage={handleMessage}
         >
-          {renderProgress()}
+          {lastUpdateDate && renderRecord()}
+          <div className="c7ntest-ImportIssue-progress-area">
+            <Progress
+              className="c7ntest-ImportIssue-progress"
+              status="active"
+              type="circle"
+              width={50}
+              percent={rate}
+              strokeWidth={16}
+              showInfo={false}
+            />
+            <span className="c7ntest-ImportIssue-progress-area-text">正在导入中</span>
+            <span className="c7ntest-ImportIssue-progress-area-prompt">( 本次导入耗时较长，您可先返回进行其他操作）</span>
+
+          </div>
         </WSHandler>
-      ))}
-
-
-    </div>
-  );
+      );
+    } else if (lastUpdateDate || status === 2) {
+      return renderRecord();
+    }
+    return '';
+  };
+  // import Divider from './Component/Divider';
+  const ImportIssueForm = (formProps) => {
+    const { title, children, buttom } = formProps;
+    return (
+      <div className="c7ntest-ImportIssue-form-one">
+        <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
+        <span className="c7ntest-ImportIssue-form-one-content">{children}</span>
+        {buttom}
+      </div>
+    );
+  };
 
   useEffect(() => {
     loadImportHistory();
   }, []);
 
-  function render() {
-    return (
-      <React.Fragment>
-        {renderForm()}
-        <Modal
-          title="导入用例"
-          visible={visible}
-          okText={<FormattedMessage id="upload" />}
-          confirmLoading={uploading}
-          cancelText={<FormattedMessage id="close" />}
-          onOk={upload}
-          onCancel={handleClose}
+
+  return (
+    <React.Fragment>
+      <div className="c7ntest-ImportIssue-form">
+        {/* {renderOneForm('下载模板', ,
+      )} */}
+        <ImportIssueForm
+          title="下载模板"
+          buttom={(
+            <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
+              <Icon type="get_app icon" />
+              <FormattedMessage id="issue_download_tpl" />
+            </Button>
+          )}
         >
-          <Form dataSet={dataSet} columns={2} style={{ width: 200, height: 60 }}>
-            <SelectTree
-              name="folder"
-              pDataSet={dataSet}
-              onChange={setFolder}
-            />
-            <Input
-              style={{ width: 340, marginLeft: '18px' }}
-              value={file && file.name}
-              prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
-              suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { uploadInput.current.click(); }} /></Tooltip>}
-            />
-          </Form>
-          <input
-            ref={uploadInput}
-            type="file"
-            onChange={beforeUpload}
-            style={{ display: 'none' }}
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          您必须使用模版文件，录入用例信息
+        </ImportIssueForm>
+        <Divider />
+        <ImportIssueForm
+          title="导入测试用例"
+          buttom={isImport || (
+            <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
+              <Icon type="file_upload" />
+              <FormattedMessage id="issue_import" />
+            </Button>
+          )}
+        >
+          {renderProgress()}
+        </ImportIssueForm>
+      </div>
+      <Modal
+        title="导入用例"
+        visible={visible}
+        okText={<FormattedMessage id="upload" />}
+        confirmLoading={uploading}
+        cancelText={<FormattedMessage id="close" />}
+        onOk={upload}
+        onCancel={handleClose}
+      >
+        <Form dataSet={dataSet} columns={2} style={{ width: 200, height: 60 }}>
+          <SelectTree
+            name="folder"
+            pDataSet={dataSet}
+            onChange={setFolder}
           />
-        </Modal>
-      </React.Fragment>
-    );
-  }
-  return render();
+          <Input
+            style={{ width: 340, marginLeft: '18px' }}
+            value={file && file.name}
+            prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
+            suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { uploadInput.current.click(); }} /></Tooltip>}
+          />
+        </Form>
+        <input
+          ref={uploadInput}
+          type="file"
+          onChange={beforeUpload}
+          style={{ display: 'none' }}
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        />
+      </Modal>
+    </React.Fragment>
+  );
 }
 
 

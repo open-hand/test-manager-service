@@ -1,5 +1,5 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
-import { getProjectId } from '../../../../../common/utils';
+import { getProjectId } from '../../../../common/utils';
 
 /**
  * 根据字段isRoot判断是否禁止根节点可选
@@ -30,12 +30,12 @@ const initData = ({ dataSet }, {
   });
 };
 
-function initLoad(isForbidRoot, deafultValue, props, dataSet) {
+function initLoad(isForbidRoot, defaultValue, props, dataSet) {
   if (isForbidRoot) {
     forbidRootsSelect(dataSet);
   }
-  if (deafultValue) {
-    initData(dataSet, { folderId: deafultValue, ...props });
+  if (defaultValue) {
+    initData(dataSet, { folderId: defaultValue, ...props });
   }
 }
 /**
@@ -45,7 +45,7 @@ function initLoad(isForbidRoot, deafultValue, props, dataSet) {
  * @param {*} setData  设置当前选中项数据
  * @param {*} isForbidRoot  是否禁止根节点可选 默认禁止
  */
-const treeDataSet = (pDataSet, name, deafultValue, setData = false, isForbidRoot = true) => new DataSet({
+const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot = true) => new DataSet({
   primaryKey: 'folderId',
   paging: false,
   autoQuery: true,
@@ -90,7 +90,7 @@ const treeDataSet = (pDataSet, name, deafultValue, setData = false, isForbidRoot
       }
     },
     // 数据加载完成后初始化事件
-    load: initLoad.bind(this, isForbidRoot, deafultValue, { pDataSet, name }),
+    load: initLoad.bind(this, isForbidRoot, defaultValue, { pDataSet, name }),
     // 取消选中事件
     unSelect: ({ record, dataSet }) => {
       dataSet.unSelect(record);

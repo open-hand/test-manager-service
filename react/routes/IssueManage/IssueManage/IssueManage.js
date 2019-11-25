@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { toJS } from 'mobx';
 import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
@@ -15,8 +14,8 @@ import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
 import IssueTable from '../components/IssueTable';
 import ExportSide from '../components/ExportSide';
-import ImportSide from '../ImportIssue';
-import TestCaseDetail from '../TestCaseDetail';
+import ImportSide from '../components/ImportIssue';
+import TestCaseDetail from '../components/TestCaseDetail';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
 
@@ -103,7 +102,7 @@ export default class IssueManage extends Component {
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
           caseId={clickIssue && clickIssue.caseId}
-          deafultFolerValue={IssueTreeStore.getCurrentCycle}
+          defaultFolerValue={IssueTreeStore.getCurrentCycle}
         />
       ),
       okText: '创建',

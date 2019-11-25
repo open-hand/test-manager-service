@@ -2,7 +2,6 @@
 import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { stores } from '@choerodon/boot';
-
 import SingleFileUpload from '@/components/SingleFileUpload';
 import './UploadButtonNow.less';
 
