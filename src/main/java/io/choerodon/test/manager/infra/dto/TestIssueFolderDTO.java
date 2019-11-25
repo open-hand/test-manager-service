@@ -36,6 +36,8 @@ public class TestIssueFolderDTO extends BaseDTO {
     public TestIssueFolderDTO() {
     }
 
+
+
     @Override
     public Long getObjectVersionNumber() {
         return objectVersionNumber;
@@ -101,6 +103,7 @@ public class TestIssueFolderDTO extends BaseDTO {
                 + ", name='" + name + '\''
                 + ", versionId=" + versionId
                 + ", projectId=" + projectId
+                + ", parentId=" + parentId
                 + ", type='" + type + '\'' + '}';
     }
 }

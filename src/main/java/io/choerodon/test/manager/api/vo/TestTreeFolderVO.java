@@ -14,6 +14,7 @@ public class TestTreeFolderVO {
     private Boolean isExpanded;
     private Boolean isChildrenLoading;
     private TestIssueFolderVO issueFolderVO;
+    private Boolean hasCase;
 
     public Long getId() {
         return id;
@@ -60,6 +61,15 @@ public class TestTreeFolderVO {
     }
 
     public void setIssueFolderVO(TestIssueFolderVO issueFolderVO) {
+
         this.issueFolderVO = issueFolderVO;
+    }
+
+    public Boolean getHasCase() {
+        return hasCase;
+    }
+
+    public void setHasCase(Boolean hasCase) {
+        this.hasCase = hasCase;
     }
 }
