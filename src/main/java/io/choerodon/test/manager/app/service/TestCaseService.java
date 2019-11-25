@@ -164,4 +164,7 @@ public interface TestCaseService {
     TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
 
     void batchDeleteIssues(Long projectId, Long[] issueIds);
+
+    List<TestCaseDTO> queryProjectAllCase(Long projectId);
+
 }

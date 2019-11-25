@@ -581,6 +581,13 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     }
 
+    @Override
+    public List<TestCaseDTO> queryProjectAllCase(Long projectId) {
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        testCaseDTO.setProjectId(projectId);
+        return testCaseMapper.select(testCaseDTO);
+    }
+
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
         // 查询已有的标签
         List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
