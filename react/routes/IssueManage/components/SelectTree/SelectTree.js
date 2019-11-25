@@ -1,9 +1,7 @@
 
-import React, {
-  Component, useState, useEffect, useMemo, useCallback,
-} from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  Select, Icon, Tree, TextField, DataSet,
+  Select, Icon, Tree, TextField,
 } from 'choerodon-ui/pro';
 import PropTypes from 'prop-types';
 import { Choerodon } from '@choerodon/boot';
@@ -23,14 +21,14 @@ const propTypes = {
   onChange: PropTypes.func,
   isForbidRoot: PropTypes.bool,
   renderSelect: PropTypes.element,
-  deafultValue: PropTypes.object,
+  defaultValue: PropTypes.object,
 };
 function SelectTree(props) {
   const {
-    name, renderSelect, deafultValue, pDataSet, data, onChange, isForbidRoot = true, ...restProps
+    name, renderSelect, defaultValue, pDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
   const [searchValue, setSearchValue] = useState('');// 搜索框内值
-  const dataSet = useMemo(() => treeDataSet(pDataSet, name, deafultValue, onChange, isForbidRoot), [isForbidRoot, name, onChange, pDataSet]);
+  const dataSet = useMemo(() => treeDataSet(pDataSet, name, defaultValue, onChange, isForbidRoot), [isForbidRoot, name, onChange, pDataSet]);
   /**
   * 渲染树节点
   * @param {*} record  
@@ -188,6 +186,6 @@ function SelectTree(props) {
     />
   );
 }
-Select.propTypes = propTypes;
+SelectTree.propTypes = propTypes;
 
 export default SelectTree;

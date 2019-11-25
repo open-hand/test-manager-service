@@ -1,5 +1,4 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
-import { useMemo } from 'react';
 import moment from 'moment';
 import { getProjectId, humanizeDuration } from '../../../../../common/utils';
 

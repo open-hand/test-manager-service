@@ -1,24 +1,19 @@
-/* eslint-disable object-curly-newline */
-import React, { Component, useState, useEffect, useMemo } from 'react';
-import { Choerodon } from '@choerodon/boot';
+import React, { useState, useEffect, useMemo } from 'react';
 import { withRouter } from 'react-router-dom';
-import { find, debounce, map } from 'lodash';
 import {
-  Form, TextField, Select, TextArea, DataSet, Icon, Tree,
+  Form, TextField, Select, DataSet, Icon,
 } from 'choerodon-ui/pro';
-import { FormattedMessage } from 'react-intl';
-import { UploadButton } from '../CommonComponent';
+import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '../../../../components';
-import UserHead from '../UserHead';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
-import SelectTree from '../CommonComponent/SelectTree';
+import SelectTree from '../SelectTree';
 import { beforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const { intl, caseId, deafultFolerValue } = props;
+  const { intl, caseId, defaultFolerValue } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
 
   async function handleCreateIssue() {
@@ -78,7 +73,7 @@ function CreateIssue(props) {
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
           </div>,
-          <SelectTree name="folder" pDataSet={createDataset} deafultValue={deafultFolerValue.id} />,
+          <SelectTree name="folder" pDataSet={createDataset} defaultValue={defaultFolerValue.id} />,
           <Select name="issueLink" />]
         }
         <div className="test-create-issue-form-step">

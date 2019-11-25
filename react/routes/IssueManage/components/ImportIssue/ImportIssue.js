@@ -1,23 +1,23 @@
 import React, {
-  Component, useState, useRef, useEffect, useMemo,
+  useState, useRef, useEffect, useMemo,
 } from 'react';
 import {
   WSHandler, stores,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Table, Button, Input, Dropdown, Menu, Pagination, Modal, Progress,
+  Button, Input, Modal, Progress,
   Icon, Divider, Tooltip,
 } from 'choerodon-ui';
 import { DataSet, Form } from 'choerodon-ui/pro';
 import moment from 'moment';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
-import { importIssue } from '../../../api/FileApi';
-import { commonLink, humanizeDuration, getProjectName } from '../../../common/utils';
-import { getImportHistory, cancelImport, downloadTemplate } from '../../../api/IssueManageApi';
+import { importIssue } from '@/api/FileApi';
+import { humanizeDuration } from '@/common/utils';
+import { getImportHistory, cancelImport, downloadTemplate } from '@/api/IssueManageApi';
 import './ImportIssue.less';
-import SelectTree from '../components/CommonComponent/SelectTree';
+import SelectTree from '../SelectTree';
 
 const { AppState } = stores;
 
@@ -158,7 +158,6 @@ function ImportIssue(props) {
       const {
         rate, id, status, fileUrl,
       } = data;
-
       if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
         return;
       }

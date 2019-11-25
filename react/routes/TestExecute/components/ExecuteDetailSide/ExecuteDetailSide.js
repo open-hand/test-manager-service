@@ -12,7 +12,7 @@ import { stores } from '@choerodon/boot';
 import { find } from 'lodash';
 import { delta2Html, issueLink, text2Delta } from '../../../../common/utils';
 import {
-  WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, FullEditor,
+  WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, openFullEditor as FullEditor,
   TextEditToggle,
   ResizeAble,
 } from '../../../../components';
@@ -21,7 +21,7 @@ import ExecuteDetailStore from '../../stores/ExecuteDetailStore';
 import TypeTag from '../../../IssueManage/components/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
-import UploadButtonExcuteDetail from '../../../IssueManage/components/CommonComponent/UploadButtonExcuteDetail';
+import UploadButtonExcuteDetail from './UploadButtonExcuteDetail';
 
 const { HeaderStore } = stores;
 
