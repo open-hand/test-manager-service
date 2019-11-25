@@ -5,9 +5,9 @@ import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import { Button, Icon } from 'choerodon-ui';
-import { Modal } from 'choerodon-ui/pro';
+import { Button } from 'choerodon-ui/pro';
 import CreateAutoTest from '../components/CreateAutoTest'; 
+import openCreatePlan from '../components/CreatePlan';
 import Store from '../stores';
 import './TestPlanHome.less';
 
@@ -26,13 +26,15 @@ export default observer(() => {
     //   className: 'c7ntest-testPlanHome-createAutoTestModal',
     // });
   };
-
+  const handleOpenCreatePlan = () => {
+    openCreatePlan();
+  };
   return (
     <Page className="c7ntest-testPlanHome">
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon">
+        <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
         <Button icon="mode_edit">
