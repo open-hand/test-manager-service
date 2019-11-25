@@ -80,7 +80,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         //根目录
         List<Long> rootFolderId = issueFolderDTOS.stream().filter(IssueFolder ->
                 IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
-
+        List<Long> longs = testCaseService.queryProjectAllCase(projectId);
         List<TestTreeFolderVO> list = new ArrayList<>();
         issueFolderDTOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
@@ -94,12 +94,12 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
-                List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getFolderId());
-                if (CollectionUtils.isEmpty(testCaseDTOS)) {
-                    folderVO.setHasCase(false);
-                } else {
+                if(longs.contains(testIssueFolderVO.getFolderId())){
                     folderVO.setHasCase(true);
+                }else {
+                    folderVO.setHasCase(false);
                 }
+
             } else {
                 folderVO.setChildren(childrenIds);
                 folderVO.setHasChildren(true);
