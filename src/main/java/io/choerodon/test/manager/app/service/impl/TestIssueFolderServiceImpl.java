@@ -57,7 +57,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                 .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
         List<TestIssueFolderWithVersionNameVO> result = new ArrayList<>();
-        String versionName = testCaseService.getVersionInfo(projectId).getOrDefault(versionId,new ProductVersionDTO()).getName();
+        String versionName = testCaseService.getVersionInfo(projectId).getOrDefault(versionId, new ProductVersionDTO()).getName();
 
         resultTemp.forEach(v -> {
             TestIssueFolderWithVersionNameVO t = new TestIssueFolderWithVersionNameVO();
@@ -76,34 +76,33 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Override
     public TestTreeIssueFolderVO queryTreeFolder(Long projectId) {
-        TestIssueFolderVO testIssueFolder = new TestIssueFolderVO(null, null, null, projectId, null, null);
-        List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolder, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-
+        List<TestIssueFolderDTO> issueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         //根目录
-        List<Long> rootFolderId = testIssueFolderVOS.stream().filter(IssueFolder ->
-                IssueFolder.getParentId() == 0).map(TestIssueFolderVO::getFolderId).collect(Collectors.toList());
+        List<Long> rootFolderId = issueFolderDTOS.stream().filter(IssueFolder ->
+                IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
 
         List<TestTreeFolderVO> list = new ArrayList<>();
-        testIssueFolderVOS.forEach(testIssueFolderVO -> {
+        issueFolderDTOS.forEach(testIssueFolderVO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
-            List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectChildrenByParentId(testIssueFolderVO.getFolderId());
-            List<Long> ids = new ArrayList<>();
-            if(testIssueFolderDTOS!=null){
-                 ids = testIssueFolderDTOS.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
-            }
-
+            List<Long> ids = findTreeChildFolder(testIssueFolderVO.getFolderId(), issueFolderDTOS);
             folderVO.setId(testIssueFolderVO.getFolderId());
-            folderVO.setIssueFolderVO(testIssueFolderVO);
+            folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderVO, TestIssueFolderVO.class));
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
+            //todo 判断是否有case
             if (CollectionUtils.isEmpty(ids)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(ids);
+                List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getFolderId());
+                if (CollectionUtils.isEmpty(testCaseDTOS)) {
+                    folderVO.setHasCase(false);
+                } else {
+                    folderVO.setHasCase(true);
+                }
             } else {
                 folderVO.setChildren(ids);
                 folderVO.setHasChildren(true);
+                folderVO.setHasCase(false);
             }
             list.add(folderVO);
         });
@@ -113,10 +112,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestIssueFolderVO create(Long projectId,TestIssueFolderVO testIssueFolderVO) {
+    public TestIssueFolderVO create(Long projectId, TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);
         List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(testIssueFolderVO.getParentId());
-        if(!CollectionUtils.isEmpty(testCaseDTOS)){
+        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
         if (testIssueFolderVO.getFolderId() != null) {
@@ -168,7 +167,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                 .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
         testIssueFolderVO.setName("临时");
         if (resultTestIssueFolderVO == null) {
-            return create(projectId,testIssueFolderVO).getFolderId();
+            return create(projectId, testIssueFolderVO).getFolderId();
         } else {
             return resultTestIssueFolderVO.getFolderId();
         }
@@ -177,7 +176,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     /**
      * @param projectId
      * @param targetForderId 要复制到的目标folder
-     * @param folderIds 要被复制的源folder
+     * @param folderIds      要被复制的源folder
      * @return 被复制成功的目标folder
      */
     @Transactional(rollbackFor = Exception.class)
@@ -194,14 +193,18 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             resTestIssueFolderVO.setFolderId(null);
             resTestIssueFolderVO.setVersionId(targetForderId);
             resTestIssueFolderVO.setParentId(tergetInssueFolderVO.getFolderId());
-            TestIssueFolderVO returnTestIssueFolderVO = create(projectId,resTestIssueFolderVO);
+            TestIssueFolderVO returnTestIssueFolderVO = create(projectId, resTestIssueFolderVO);
         }
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void moveFolder(Long projectId,  Long targetForderId,List<Long> folderIds) {
-        folderIds.forEach(folderId->{
+    public void moveFolder(Long projectId, Long targetForderId, List<Long> folderIds) {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
+        if (!CollectionUtils.isEmpty(testCaseDTOS)) {
+            throw new CommonException("error.issueFolder.has.case");
+        }
+        folderIds.forEach(folderId -> {
             TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
             testIssueFolderDTO.setParentId(targetForderId);
             if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
@@ -219,7 +222,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Override
     public List<TestIssueFolderDTO> queryChildFolder(Long folderId) {
         List<TestIssueFolderDTO> folders = new ArrayList<>();
-        return recurisionQuery(folderId,folders);
+        return recurisionQuery(folderId, folders);
     }
 
     @Override
@@ -229,7 +232,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Override
     public List<TestIssueFolderVO> queryListByProjectId(Long projectId) {
-        return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderMapper.selectProjectIdList(), TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
+        return modelMapper.map(testIssueFolderMapper.selectListByProjectId(projectId), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
     }
 
@@ -246,6 +249,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         return folders;
     }
+
     // 递归查询子文件夹
     private Set<TestIssueFolderDTO> findchildFolder(Long parentId, Set<TestIssueFolderDTO> folders) {
         List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);
@@ -258,5 +262,15 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             }
         }
         return folders;
+    }
+
+    private List<Long> findTreeChildFolder(Long parentId, List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        List<Long> longs = new ArrayList<>();
+        testIssueFolderDTOS.forEach(e->{
+            if(e.getParentId().equals(parentId)){
+                longs.add(e.getFolderId());
+            }
+        });
+        return longs;
     }
 }

@@ -33,7 +33,7 @@ public class TestCaseLabelServiceImpl implements TestCaseLabelService {
 
     @Override
     public void batchInsert(List<TestCaseLabelDTO> testCaseLabelDTOList) {
-        testCaseLabelMapper.batchInsert(testCaseLabelDTOList);
+         testCaseLabelMapper.batchInsert(testCaseLabelDTOList);
     }
 
     @Override
