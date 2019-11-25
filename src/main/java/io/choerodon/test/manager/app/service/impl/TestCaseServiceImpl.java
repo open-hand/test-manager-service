@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
@@ -325,15 +326,12 @@ public class TestCaseServiceImpl implements TestCaseService {
         Set<Long> folderIds = new HashSet<>();
         queryAllFolderIds(folderId, folderIds);
         // 查询文件夹下的的用例
-        List<TestCaseDTO> allDto = testCaseMapper.listCaseByFolderIds(projectId, folderIds, searchDTO);
-        if (CollectionUtils.isEmpty(allDto)) {
-            return new PageInfo<>(new ArrayList<>());
-        }
-        PageInfo<TestCaseDTO> pageDto = PageUtil.createPageFromList(allDto, pageable);
-        PageInfo<TestCaseRepVO> pageFromList = PageUtil.buildPageInfoWithPageInfoList(pageDto,modelMapper.map(pageDto.getList(),new TypeToken<List<TestCaseRepVO>>(){}.getType()));
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(pageDto.getList());
-        pageFromList.setList(repVOS);
-        return pageFromList;
+        PageInfo<Long> pageDto = PageHelper.startPage(pageable.getPageNumber(),pageable.getPageSize()).doSelectPageInfo(() -> testCaseMapper.listCaseIds(projectId, folderIds, searchDTO));
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listCopyCase(projectId, pageDto.getList());
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(testCaseDTOS);
+        PageInfo<TestCaseRepVO> pageRepoList = modelMapper.map(pageDto,PageInfo.class);
+        pageRepoList.setList(repVOS);
+        return pageRepoList;
     }
 
     @Override

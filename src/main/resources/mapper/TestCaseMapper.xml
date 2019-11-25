@@ -85,4 +85,20 @@
         SELECT DISTINCT folder_id FROM `test_case` where project_id=#{projectId}  and folder_id is not null ;
     </select>
 
+    <select id="listCaseIds" resultType="long">
+        SELECT
+        case_id
+        FROM
+        test_case
+        WHERE
+        project_id = #{projectId}
+        AND
+        folder_id IN
+        <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
+            #{folderId}
+        </foreach>
+        <include refid="sqlParam"/>
+        order by  last_update_date DESC
+    </select>
+
 </mapper>
