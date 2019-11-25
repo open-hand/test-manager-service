@@ -9,6 +9,7 @@ import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -135,6 +136,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @Async
     public void delete(Long projectId, Long folderId) {
         List<TestCaseRepVO> testCaseVOs = testCaseService.listAllCaseByFolderId(projectId, folderId, null, null).getList();
         Set<TestIssueFolderDTO> folderDTOSet = new HashSet<>();
