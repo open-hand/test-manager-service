@@ -5,6 +5,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.List;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseLabelDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -32,8 +33,8 @@ public class TestCaseVO {
     private Long objectVersionNumber;
     @ApiModelProperty(value = "用例步骤")
     private List<TestCaseStepVO> caseStepVOS;
-    @ApiModelProperty(value = "测试用例关联的标签")
-    private List<Long> lableIds;
+    @ApiModelProperty(value = "标签")
+    private List<TestCaseLabelDTO> labels;
     @ApiModelProperty(value = "测试用例关联的附件")
     private List<TestCaseAttachmentDTO> attachment;
 
@@ -118,12 +119,12 @@ public class TestCaseVO {
         this.caseStepVOS = caseStepVOS;
     }
 
-    public List<Long> getLableIds() {
-        return lableIds;
+    public List<TestCaseLabelDTO> getLabels() {
+        return labels;
     }
 
-    public void setLableIds(List<Long> lableIds) {
-        this.lableIds = lableIds;
+    public void setLabels(List<TestCaseLabelDTO> labels) {
+        this.labels = labels;
     }
 
     public List<TestCaseAttachmentDTO> getAttachment() {

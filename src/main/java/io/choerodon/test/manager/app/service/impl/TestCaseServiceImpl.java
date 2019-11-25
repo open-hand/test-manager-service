@@ -270,14 +270,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             });
         }
         // 关联测试用例与标签
-        if (!CollectionUtils.isEmpty(testCaseVO.getLableIds())) {
-            testCaseVO.getLableIds().forEach(v -> {
-                TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
-                testCaseLabelRelDTO.setCaseId(testCaseDTO.getCaseId());
-                testCaseLabelRelDTO.setLabelId(v);
-                testCaseLabelRelDTO.setProjectId(projectId);
-                testCaseLabelRelService.baseCreate(testCaseLabelRelDTO);
-            });
+        if (!CollectionUtils.isEmpty(testCaseVO.getLabels())) {
+            changeLabel(projectId, testCaseDTO.getCaseId(),testCaseVO.getLabels());
 
         }
 
