@@ -582,10 +582,8 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseDTO> queryProjectAllCase(Long projectId) {
-        TestCaseDTO testCaseDTO = new TestCaseDTO();
-        testCaseDTO.setProjectId(projectId);
-        return testCaseMapper.select(testCaseDTO);
+    public List<Long> queryProjectAllCase(Long projectId) {
+        return testCaseMapper.queryFolderId(projectId);
     }
 
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {

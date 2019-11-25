@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
@@ -28,6 +25,8 @@ public class TestIssueFolderDTO extends BaseDTO {
     private Long objectVersionNumber;
 
     private Long parentId;
+
+
 
     public TestIssueFolderDTO(Long projectId) {
         this.projectId = projectId;

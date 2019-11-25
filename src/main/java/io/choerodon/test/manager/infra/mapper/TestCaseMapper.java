@@ -23,4 +23,6 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<Long> listIssueIds();
 
     void updateTestCaseFolder();
+
+    List<Long> queryFolderId(@Param("projectId") Long projectId);
 }

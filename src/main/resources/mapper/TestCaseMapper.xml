@@ -81,5 +81,8 @@
                             from test_issue_folder_rel tifr
                             where tc.case_id = tifr.issue_id)
     </update>
+    <select id="queryFolderId" resultType="Long">
+        SELECT DISTINCT folder_id FROM `test_case` where project_id=#{projectId}  and folder_id is not null ;
+    </select>
 
 </mapper>
