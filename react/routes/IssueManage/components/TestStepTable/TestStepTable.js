@@ -36,10 +36,9 @@ const defaultProps = {
   }),
   onDrag: step => step,
 };
-let localStepId = 0;
 function TestStepTable(props) {
   const {
-    onCreate, setData, data, onDelete, onUpdate, onClone, onDrag,
+    onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
@@ -73,7 +72,6 @@ function TestStepTable(props) {
     const lastRank = data.length
       ? data[data.length - 1].rank : null;
     const testCaseStepDTO = {
-      stepId: localStepId,
       // attachments: [],
       lastRank,
       nextRank: null,
@@ -82,7 +80,6 @@ function TestStepTable(props) {
       expectedResult: '',
       stepIsCreating: true,
     };
-    localStepId += 1;
     setData([...data, testCaseStepDTO]);
   };
   const onCancelCreateStep = (index) => {
@@ -134,7 +131,6 @@ function TestStepTable(props) {
     }, originData);
     data.splice(index, 0, newStep);
     setData([...data]);
-    localStepId += 1;
   };
 
   const handleDeleteStep = (index, stepId) => {
@@ -143,7 +139,7 @@ function TestStepTable(props) {
       title: '确认删除吗？',
       async onOk() {
         try {
-          await onDelete({ data: { stepId } });
+          await onDelete({ data: { issueId: caseId, stepId } });
           data.splice(index, 1);
           setData([...data]);
         } catch (error) {

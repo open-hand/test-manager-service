@@ -54,6 +54,7 @@ class EditIssueStore {
     this.setData(data);
     this.setLoading(false);
   }
+  
 
   async loadWithLoading(promise) {
     this.setLoading(true);

@@ -5,7 +5,7 @@ import React, {
 import TestStepTable from '../TestStepTable';
 
 function CreateTestStepTable(props) {
-  const { name, pDataSet } = props;
+  const { name, pDataSet, caseId } = props;
   const [testStepData, setTestStepData] = useState([]);
   useEffect(() => {
     pDataSet.current.set(name, testStepData);
@@ -15,6 +15,7 @@ function CreateTestStepTable(props) {
       disabled={false}
       data={testStepData}
       setData={setTestStepData}
+      caseId={caseId}
     />
   );
 }

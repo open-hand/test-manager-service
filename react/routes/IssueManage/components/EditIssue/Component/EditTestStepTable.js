@@ -16,7 +16,7 @@ function EditTestStepTable() {
   );
   const onCreateIssueStep = newData => store.loadWithLoading(
     createIssueStep({
-      caseId,
+      issueId: caseId,
       ...newData,
     }),
   );
@@ -27,7 +27,10 @@ function EditTestStepTable() {
     }),
   );
   const onDeleteStep = async (newData) => {
-    await deleteStep(newData);
+    await deleteStep({
+      issueId: caseId,
+      ...newData,
+    });
     store.loadIssueData();
   };
   return (
@@ -42,6 +45,7 @@ function EditTestStepTable() {
       onClone={onCloneStep}
       onDelete={onDeleteStep}
       onDrag={onUpdateStep}
+      caseId={caseId}
     />
   );
 }

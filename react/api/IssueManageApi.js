@@ -118,7 +118,7 @@ export function deleteIssue(issueId) {
  * @returns
  */
 export function deleteLink(issueLinkId) {
-  return request.delete(`/test/v1/projects/${getProjectId()}/case_link?link_id=${issueLinkId}`);
+  return request.delete(`/test/v1/projects/${getProjectId()}/case_link?linkId=${issueLinkId}`);
 }
 /**
  *加载操作日志
@@ -127,8 +127,8 @@ export function deleteLink(issueLinkId) {
  * @param {*} issueId
  * @returns
  */
-export function loadDatalogs(issueId) {
-  return request.get(`agile/v1/projects/${getProjectId()}/data_log?issueId=${issueId}`);
+export function loadDatalogs(caseId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/data_log?case_id=${caseId}`);
 }
 /**
  *加载用例以建立关联
@@ -159,8 +159,8 @@ export function loadIssuesInLink(page = 0, size = 10, issueId, content) {
  * @param {*} issueLinkCreateDTOList
  * @returns
  */
-export function createLink(data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/case_link`, data);
+export function createLink(caseId, data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/case_link?case_id=${caseId}`, data);
 }
 // 需要更新
 /**
@@ -233,7 +233,7 @@ export function getIssueSteps(issueId) {
   return request.get(`/test/v1/projects/${getProjectId()}/case/step/query/${issueId}`);
 }
 /**
- *获取用例的步骤
+ *创建用例的步骤
  *
  * @export
  * @param {*} issueId
@@ -468,4 +468,23 @@ export function updateStep(data) {
  */
 export function deleteStep(data) {
   return request.delete(`/test/v1/projects/${getProjectId()}/case/step`, data);
+}
+/**
+ * 测试用例上传附件
+ * @param {*} caseId 
+ * @param {*} data 
+ */
+export function uploadFile(caseId, data) {
+  const axiosConfig = {
+    headers: { 'content-type': 'multipart/form-data' },
+  };
+  return request.post(`/test/v1/projects/${getProjectId()}/attachment?caseId=${caseId}`, data, axiosConfig);
+}
+/**
+ * 删除测试用例附件
+ * @param {number} resourceId 资源id
+ * @param {string} 文件id
+ */
+export function deleteFile(id) {
+  return request.delete(`/test/v1/projects/${getProjectId()}/attachment/${id}`);
 }

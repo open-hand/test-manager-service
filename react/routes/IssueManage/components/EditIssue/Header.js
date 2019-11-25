@@ -30,15 +30,14 @@ function Header({
           fontSize: 16, fontWeight: 500, color: '#3F51B5',
         }}
         >
-          {/* <span>{issueNum}</span> */}
-          <span>c7btest21</span>
+          <span>{issueNum}</span>
         </div>
         <div
           style={{
             cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', marginLeft: 'auto',
           }}
           role="none"
-          onClick={onClose}
+          onClick={onClose.bind(this, issueInfo)}
         >
           <Icon type="last_page" style={{ fontSize: '18px', fontWeight: '500' }} />
           隐藏详情

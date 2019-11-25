@@ -25,7 +25,7 @@ const { TabPane } = Tabs;
 function EditIssue() {
   const container = useRef();
   const {
-    store, caseId, prefixCls, announcementHeight, onUpdate,
+    store, caseId, prefixCls, announcementHeight, onUpdate, IssueStore,
   } = useContext(EditIssueContext);
   const { issueInfo, dataLogs, loading } = store; 
   const setQuery = (width = container.current.clientWidth) => {
@@ -53,21 +53,26 @@ function EditIssue() {
    */
   const renderDataLogs = () => {
     const {
-      createdBy,
-      createrImageUrl, createrEmail,
-      createrName, createrRealName, creationDate, issueTypeVO = {},
-    } = issueInfo;
+      createUser, creationDate, 
+    } = issueInfo || {};
+    const {
+      email, imageUrl, loginName, name, realName, 
+    } = createUser || {};
+
     const createLog = {
-      email: createrEmail,
-      field: issueTypeVO.typeCode,
-      imageUrl: createrImageUrl,
-      name: createrName,
-      realName: createrRealName,
+      email,
+      field: 'IssueNum',
+      imageUrl,
+      name,
+      realName,
+      loginName,
       lastUpdateDate: creationDate,
-      lastUpdatedBy: createdBy,
+      // lastUpdatedBy: createdBy,
       newString: 'caseNum',
       newValue: 'caseNum',
     };
+
+    // console.log([...dataLogs, createLog]);
 
     return (
       <DataLogs
@@ -88,7 +93,6 @@ function EditIssue() {
 
 
   const handleUpdate = async (newValue, done) => {
-    // console.log('handleUpdate', newValue);
     const key = Object.keys(newValue)[0];
     const value = newValue[key];
     const { objectVersionNumber } = issueInfo;

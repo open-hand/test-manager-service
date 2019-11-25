@@ -69,12 +69,8 @@ class CreateLinkTask extends Component {
       if (!err) {
         const { selected } = this.state;
         const { issueId } = this.props;
-        const data = {
-          caseId: issueId,
-          issueIds: selected, 
-        };
         this.setState({ createLoading: true });
-        createLink(data)
+        createLink(issueId, selected)
           .then((res) => {
             this.setState({ createLoading: false });
             this.props.onOk();

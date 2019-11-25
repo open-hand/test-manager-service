@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { stores } from '@choerodon/boot';
+import { stores, Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -10,10 +10,11 @@ import { UploadButtonNow, FileList } from '../CommonComponent/UploadButtonNow';
 import { IssueDescription } from '../CommonComponent';
 import { TextEditToggle } from '@/components';
 import {
-  delta2Html, handleFileUpload, text2Delta,
+  delta2Html, text2Delta,
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import { getLabels } from '@/api/agileApi';
+import { uploadFile } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
@@ -30,7 +31,7 @@ const { Option } = Select;
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**
  * 问题详情
- * folderName
+ * folder
  * @param {*} linkIssues
  * @param {*} reloadIssue  重载问题  
  */
@@ -40,9 +41,9 @@ function Detail({
   const {
     store, caseId, prefixCls,
   } = useContext(EditIssueContext);
-  const { issueInfo } = store;
+  const { issueInfo, linkIssues } = store;
   const {
-    folderName, linkIssues, fileList, createUser,
+    folder, attachment, createUser,
     lastUpdateUser, creationDate, lastUpdateDate, description, caseId: issueId,
   } = issueInfo;
 
@@ -145,15 +146,44 @@ function Detail({
       issueAttachmentVOList: newFileList,
     });
   };
+
+  /**
+ * 适用于富文本附件上传以及回调
+ * @param {any []} propFileList 文件列表
+ * @param {function} func 回调
+ */
+  const handleFileUpload = (propFileList, func) => {
+    const fileList = propFileList.filter(i => !i.url);
+    const formData = new FormData();
+    fileList.forEach((file) => {
+    // file.name = encodeURI(encodeURI(file.name));
+      formData.append('file', file);
+    });
+    uploadFile(issueId, formData)
+      .then(() => {
+        Choerodon.prompt('上传成功');
+        func(issueId);
+      })
+      .catch((error) => {
+        if (error.response) {
+          Choerodon.prompt(error.response.data.message);
+        } else {
+          Choerodon.prompt(error.message);
+        }
+        const temp = propFileList.slice();
+        temp.forEach((one) => {
+          if (!one.url) {
+            const tmp = one;
+            tmp.status = 'error';
+          }
+        });
+        func(temp);
+      });
+  };
+
   const onUploadFiles = (arr) => {
     if (arr.length > 0 && arr.some(one => !one.url)) {
-      const config = {
-        // issueType: this.state.typeCode,
-        issueId,
-        fileName: arr[0].name || 'AG_ATTACHMENT',
-        projectId: AppState.currentMenuType.id,
-      };
-      handleFileUpload(arr, store.loadIssueData, config);
+      handleFileUpload(arr, store.loadIssueData);
     }
   };
 
@@ -216,13 +246,13 @@ function Detail({
             {/* 文件夹名称 */}
             <PropertyWrap label={<FormattedMessage id="issue_create_content_folder" />}>
               <div style={{ marginLeft: 6 }}>
-                {folderName || '无'}
+                {folder || '无'}
               </div>
             </PropertyWrap>
             {/* 创建人 */}
             <PropertyWrap
               className="assignee"
-              label={<FormattedMessage id="issue_edit_reporter" />}
+              label={<FormattedMessage id="issue_edit_creator" />}
               valueStyle={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
             >
               <UserHead user={createUser} />
@@ -238,7 +268,7 @@ function Detail({
                   {renderSelectLabel()}
                 </PropertyWrap>
                 {/** 更新人 */}
-                <PropertyWrap label={<FormattedMessage id="issue_edit_manager" />} valueStyle={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <PropertyWrap label={<FormattedMessage id="issue_edit_updater" />} valueStyle={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                   <UserHead user={lastUpdateUser} />
                 </PropertyWrap>
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>
@@ -248,7 +278,7 @@ function Detail({
             ) : null}
           </ContentWrap>
           <Button className="leftBtn" funcType="flat" onClick={() => setShowMore(!showMore)}>
-            <span>{showMore ? '收起' : '展开'}</span>
+            <span>{showMore ? '收起更多' : '查看更多'}</span>
             <Icon type={showMore ? 'baseline-arrow_drop_up' : 'baseline-arrow_right'} style={{ marginRight: 2 }} />
           </Button>
         </section>
@@ -277,13 +307,15 @@ function Detail({
         <section id="attachment">
           <TitleWrap title={<FormattedMessage id="attachment" />}>
             <span>
-              <UploadButtonNow onUpload={onUploadFiles} fileList={fileList} />
+              <UploadButtonNow onUpload={onUploadFiles} fileList={attachment || []} />
             </span>            
           </TitleWrap>
           <ContentWrap>
             <FileList
               onRemove={setFileList}              
-              fileList={fileList}
+              fileList={attachment}
+              store={store}
+              issueId={issueId}
             />
           </ContentWrap>
         </section>

@@ -19,8 +19,8 @@ import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const { intl } = props;
-  const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), []);
+  const { intl, caseId } = props;
+  const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
 
   async function handleCreateIssue() {
     // if (!createDataset.isModified()) {
@@ -49,7 +49,7 @@ function CreateIssue(props) {
   useEffect(() => {
     // 初始化属性
     props.modal.handleOk(handleCreateIssue);
-  }, []);
+  }, [handleCreateIssue, props.modal]);
 
   function render() {
     return (
@@ -84,7 +84,7 @@ function CreateIssue(props) {
         <div className="test-create-issue-form-step">
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">测试步骤</span>
-          <CreateTestStepTable name="caseStepVOS" pDataSet={createDataset} />
+          <CreateTestStepTable name="caseStepVOS" pDataSet={createDataset} caseId={caseId} />
         </div>
       </Form>
     );

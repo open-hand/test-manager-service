@@ -7,6 +7,7 @@ import { deleteLink } from '../../../../../api/IssueManageApi';
 import PriorityTag from '../../PriorityTag';
 import StatusTag from '../../StatusTag';
 import TypeTag from '../../TypeTag';
+import UserHead from '../../UserHead';
 import { issueLink } from '../../../../../common/utils';
 
 class LinkList extends Component {
@@ -24,7 +25,7 @@ class LinkList extends Component {
   render() {
     const { issue, i } = this.props;
     const {
-      priorityVO, issueTypeVO, issueNum, summary, issueId, linkedIssueId,
+      priorityVO, issueTypeVO, issueNum, summary, issueId, linkedIssueId, assigneeId, assigneeName, imageUrl,
       linkId, ward, statusVO,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
@@ -65,6 +66,15 @@ class LinkList extends Component {
             </p>
           </div>
         </Tooltip>
+        <UserHead
+          user={{
+            id: assigneeId,
+            name: assigneeName,
+            loginName: assigneeName,
+            realName: assigneeName,
+            avatar: imageUrl,
+          }}
+        />
         <div style={{ marginRight: '15px', overflow: 'hidden' }}>
           <Tooltip mouseEnterDelay={0.5} title={`优先级： ${priorityName}`}>
             <div style={{ marginRight: 12 }}>

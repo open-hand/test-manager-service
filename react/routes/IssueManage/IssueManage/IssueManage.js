@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
+import { toJS } from 'mobx';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
@@ -100,12 +101,19 @@ export default class IssueManage extends Component {
     this[name] = ref;
   }
 
-  handleClose = () => {
-    IssueStore.setClickIssue({});
+  handleClose = (issueInfo) => {
+    const { issues } = IssueStore;
+    const index = issues.findIndex(item => item.caseId === issueInfo.caseId);
+    if (index > -1) {
+      issues[index] = { ...issues[index], ...issueInfo };
+    }
+    IssueStore.setClickIssue({}); 
+    IssueStore.setIssues(issues); // 每次关闭详情时应该设置issues
   }
 
   handleOpenCreateIssue = () => {
     const { intl } = this.props;
+    const { clickIssue } = IssueStore;
     Modal.open({
       key: 'createIssue',
       // title:<FormattedMessage id='issue_create_name'  />,
@@ -118,6 +126,7 @@ export default class IssueManage extends Component {
         <CreateIssue
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
+          caseId={clickIssue && clickIssue.caseId}
         />
       ),
       okText: '创建',
@@ -209,7 +218,7 @@ export default class IssueManage extends Component {
               onClick={this.handleTableRowClick}
             />
           </div>
-          <TestCaseDetail visible={clickIssue.caseId} onClose={this.handleClose} />
+          <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>
     );

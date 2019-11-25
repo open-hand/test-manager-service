@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
 import SingleFileUpload from '@/components/SingleFileUpload';
-import { deleteFileAgile } from '../../../../api/FileApi';
+import { deleteFile } from '../../../../api/IssueManageApi';
 
 import './UploadButtonNow.less';
 
@@ -18,7 +18,7 @@ const { AppState } = stores;
  */
 export function UploadButtonNow(props) {
   const {
-    fileList, onUpload, 
+    fileList, onUpload,
   } = props;
 
   const config = {
@@ -70,17 +70,20 @@ export function FileList({
   fileList, 
   onRemove, 
   hasPermission = true, 
+  store,
+  issueId,
 }) {
   const handleRemove = (file) => {
     const index = fileList.indexOf(file);
     const newFileList = fileList.slice();
     if (onRemove) {
-      deleteFileAgile(file.uid)
+      deleteFile(file.attachmentId)
         .then((response) => {
           if (response) {
             newFileList.splice(index, 1);
             onRemove(newFileList.reverse());
             Choerodon.prompt('删除成功');
+            store.loadIssueData(issueId);
           }
         })
         .catch(() => {
@@ -95,7 +98,7 @@ export function FileList({
           <SingleFileUpload
             key={item.uid}
             url={item.url}
-            fileName={item.name}
+            fileName={item.fileName}
             onDeleteFile={() => { handleRemove(item); }}
             hasDeletePermission={hasPermission || AppState.userInfo.id === item.userId}
           />
