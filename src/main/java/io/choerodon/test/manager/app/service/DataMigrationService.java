@@ -26,4 +26,6 @@ public interface DataMigrationService {
 
     void migrateProject();
 
+    void migreateDataLog();
+
 }

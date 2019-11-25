@@ -28,4 +28,6 @@ public interface TestDataLogService {
      * @return
      */
     List<DataLogVO> queryByCaseId(Long projectId, Long caseId);
+
+    void batchInsert(List<TestDataLogDTO> testDataLogDTOList);
 }

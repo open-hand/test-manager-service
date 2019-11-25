@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestDataLogMapper">
+
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO test_data_log(log_id,project_id,field,old_value,old_string,
+         new_value,new_string,case_id,object_version_number,
+        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="testDataLogDTOList" item="datalog" separator=",">
+            (#{datalog.logId}, #{datalog.projectId}, #{datalog.field},#{datalog.oldValue},
+            #{datalog.oldString}, #{datalog.newValue}, #{datalog.newString}, #{datalog.caseId},
+            #{datalog.objectVersionNumber},#{datalog.createdBy}, #{datalog.creationDate},
+            #{datalog.lastUpdatedBy}, #{datalog.lastUpdateDate})
+        </foreach>
+    </insert>
+</mapper>
