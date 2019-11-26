@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import './TestCaseDetail.scss';
-import EditIssue from '../components/EditIssue';
-import IssueStore from '../stores/IssueStore';
+import EditIssue from '../EditIssue';
+import IssueStore from '../../stores/IssueStore';
 
 class TestCaseDetail extends Component {
   render() {

@@ -1,20 +1,19 @@
 import React, { Fragment, useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { stores, Choerodon } from '@choerodon/boot';
+import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
   Select, Button, Tooltip, Icon,
 } from 'choerodon-ui';
-import { UploadButtonNow, FileList } from '../CommonComponent/UploadButtonNow';
-import { IssueDescription } from '../CommonComponent';
+import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
+import IssueDescription from './Component/IssueDescription';
 import { TextEditToggle } from '@/components';
 import {
   delta2Html, text2Delta,
 } from '@/common/utils';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
-import { getLabels } from '@/api/agileApi';
-import { uploadFile } from '@/api/IssueManageApi';
+import { uploadFile, getLabels } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
 import CreateLinkTask from '../CreateLinkTask';
 import UserHead from '../UserHead';
@@ -25,7 +24,6 @@ import './Detail.less';
 import LinkIssues from './link-issues';
 // 问题链接
 const { Text, Edit } = TextEditToggle;
-const { AppState } = stores;
 const { Option } = Select;
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
@@ -57,7 +55,7 @@ function Detail({
     if (typeof arr !== 'object') {
       return '';
     }
-    if (!arr.length) {
+    if (!arr || !arr.length) {
       return type === 'string' ? '无' : [];
     } else if (typeof arr[0] === 'object') {
       return type === 'string' ? _.map(arr, pro).join() : _.map(arr, pro);
@@ -72,14 +70,15 @@ function Detail({
      * @memberof EditIssueNarrow
      */
   const renderSelectLabel = () => {
-    const { labelIssueRelVOList } = issueInfo;
+    console.log(issueInfo);
+    const { lableIds } = issueInfo;
     return (
       <TextEditToggle
         // disabled={disabled}
         style={{ width: '100%' }}
-        formKey="labelIssueRelVOList"
-        onSubmit={(value, done) => { onUpdate({ labelIssueRelVOList: value }, done); }}
-        originData={transToArr(labelIssueRelVOList, 'labelName', 'array')}
+        formKey="lableIds"
+        onSubmit={(value, done) => { onUpdate({ lableIds: value }, done); }}
+        originData={transToArr(lableIds, 'labelName', 'array')}
       >
         <Text>
           {data => (
@@ -119,7 +118,7 @@ function Detail({
             tokenSeparators={[',']}
             style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
             onFocus={() => {
-              selectLoading(true);
+              setSelectLoading(true);
               getLabels().then((res) => {
                 setLabelList(res);
                 setSelectLoading(false);
@@ -128,7 +127,7 @@ function Detail({
           >
             {labelList.map(label => (
               <Option
-                key={label.labelName}
+                key={label.labelId}
                 value={label.labelName}
               >
                 {label.labelName}
@@ -156,7 +155,7 @@ function Detail({
     const fileList = propFileList.filter(i => !i.url);
     const formData = new FormData();
     fileList.forEach((file) => {
-    // file.name = encodeURI(encodeURI(file.name));
+      // file.name = encodeURI(encodeURI(file.name));
       formData.append('file', file);
     });
     uploadFile(issueId, formData)
@@ -187,7 +186,7 @@ function Detail({
     }
   };
 
-  function renderDescription() {   
+  function renderDescription() {
     let delta;
     if (editDescriptionShow === undefined) {
       return null;
@@ -308,11 +307,11 @@ function Detail({
           <TitleWrap title={<FormattedMessage id="attachment" />}>
             <span>
               <UploadButtonNow onUpload={onUploadFiles} fileList={attachment || []} />
-            </span>            
+            </span>
           </TitleWrap>
           <ContentWrap>
             <FileList
-              onRemove={setFileList}              
+              onRemove={setFileList}
               fileList={attachment}
               store={store}
               issueId={issueId}
@@ -336,7 +335,7 @@ function Detail({
               reloadIssue={store.loadIssueData}
             />
           </div>
-        </section>        
+        </section>
         {
           createLinkTaskShow ? (
             <CreateLinkTask

@@ -1,10 +1,9 @@
-/* eslint-disable react/state-in-constructor */
 import React, {
-  Component, useState, useEffect, useMemo, useReducer,
+  useState, useEffect, useMemo,
 } from 'react';
 import { stores, WSHandler, Action } from '@choerodon/boot';
 import {
-  Modal, Progress, Button, Icon, Tooltip, Select,
+  Progress, Button, Tooltip,
 } from 'choerodon-ui';
 import {
   Table, Form, DataSet,
@@ -12,13 +11,11 @@ import {
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import _ from 'lodash';
 import moment from 'moment';
-import {
-  exportIssues, exportIssuesFromVersion, exportIssuesFromFolder, getExportList, exportRetry,
-} from '../../../../api/IssueManageApi';
+import { exportRetry } from '@/api/IssueManageApi';
 import './ExportSide.less';
-import SelectTree from '../CommonComponent/SelectTree';
+import SelectTree from '../SelectTree';
 import ExportSideDataSet from './store';
-import { getProjectId, humanizeDuration } from '../../../../common/utils';
+import { humanizeDuration } from '@/common/utils';
 
 const { Column } = Table;
 const { AppState } = stores;
@@ -133,7 +130,7 @@ function ExportSide(props) {
   };
 
 
-  function renderStatus({ value, text, record }) {
+  function renderStatus({ value, record }) {
     // record.get('rate') Prgoress
     return (value === 2
       ? <div>已完成</div>
@@ -160,7 +157,7 @@ function ExportSide(props) {
       <div className="test-export-issue">
         <div className="test-export-issue-header">
           <Form dataSet={dataSet} className="test-export-issue-form">
-            <SelectTree deafultValue={folderId} name="folder" pDataSet={dataSet} onChange={setFolder} placeholder="文件夹" isForbidRoot={false} />
+            <SelectTree defaultValue={folderId} name="folder" pDataSet={dataSet} onChange={setFolder} placeholder="文件夹" isForbidRoot={false} />
           </Form>
           <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>

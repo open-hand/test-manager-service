@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Upload, Button } from 'choerodon-ui';
 import { randomWord } from '../../../../common/utils';
-import './UploadButton.scss';
+import './UploadButton.less';
 
 const UploadButton = ({ ...props }) => {
   const className = randomWord(false, 32);
