@@ -149,7 +149,7 @@ function PureTree({
           isChildrenLoading: false,
           isEditing: true,
           data: {
-            name: '新的',
+            name: undefined,
           },
         };
         setTree(oldTree => addItem(oldTree, node, newChild));
