@@ -19,6 +19,15 @@ class IssueTreeStore {
 
   treeRef = null;
 
+  @action clearStore = () => {
+    this.currentCycle = {};
+    this.treeData = {
+      rootIds: [],
+      treeFolder: [],
+    };
+    this.treeRef = null;
+  }
+
   @computed get getTreeData() {
     return toJS(this.treeData);
   }

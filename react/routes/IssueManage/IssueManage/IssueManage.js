@@ -25,6 +25,7 @@ import IssueTreeStore from '../stores/IssueTreeStore';
 export default class IssueManage extends Component {
   componentDidMount() {
     RunWhenProjectChange(IssueStore.clearStore);
+    RunWhenProjectChange(IssueTreeStore.clearStore);
     this.getInit();
   }
 
@@ -45,7 +46,7 @@ export default class IssueManage extends Component {
   }
 
   getTestCase = async (defaultSelectId) => {
-    await IssueTreeStore.loadIssueTree(defaultSelectId);   
+    await IssueTreeStore.loadIssueTree(defaultSelectId);
     const { currentCycle } = IssueTreeStore;
     const { id } = currentCycle;
     if (id) {
@@ -83,7 +84,7 @@ export default class IssueManage extends Component {
     if (index > -1) {
       issues[index] = { ...issues[index], ...issueInfo };
     }
-    IssueStore.setClickIssue({}); 
+    IssueStore.setClickIssue({});
     IssueStore.setIssues(issues); // 每次关闭详情时应该设置issues
   }
 
@@ -173,27 +174,27 @@ export default class IssueManage extends Component {
           </Button>
         </Header>
         <Breadcrumb />
-        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>          
-          <IssueTree />  
-          <div
-            className="c7ntest-content-issue"
-            style={{
-              flex: 1,
-              display: 'block',
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              padding: '0 20px',
-            }}
-          >
-            <div className="c7ntest-content-issueFolderName">
-              {
-                currentCycle.id ? currentCycle.data.name : ''
-              }
+        <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
+          <IssueTree />
+          {currentCycle.id && (
+            <div
+              className="c7ntest-content-issue"
+              style={{
+                flex: 1,
+                display: 'block',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                padding: '0 20px',
+              }}
+            >
+              <div className="c7ntest-content-issueFolderName">
+                {currentCycle.data.name}
+              </div>
+              <IssueTable
+                onClick={this.handleTableRowClick}
+              />
             </div>
-            <IssueTable
-              onClick={this.handleTableRowClick}
-            />
-          </div>
+          )}
           <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>
       </Page>

@@ -51,23 +51,21 @@ class IssueTree extends Component {
   render() {
     const { loading } = IssueTreeStore;
     const treeData = IssueTreeStore.getTreeData;
-    const noVersion = treeData.rootIds.length === 0;
 
     return (
       <div className="c7ntest-IssueTree">
-        <Loading loading={loading} />
-        {noVersion ? !loading && <NoVersion /> : (
-          <Tree
-            ref={this.treeRef}
-            data={treeData}
-            onCreate={this.handleCreate}
-            onEdit={this.handleEdit}
-            onDelete={this.handleDelete}
-            afterDrag={this.handleDrag}
-            selected={IssueTreeStore.getCurrentCycle}
-            setSelected={this.setSelected}
-          />
-        )}
+        <Loading loading={loading} />        
+        <Tree
+          ref={this.treeRef}
+          empty={loading ? null : <NoVersion onCreateClick={() => { this.treeRef.current.addFirstLevelItem(); }} />}          
+          data={treeData}
+          onCreate={this.handleCreate}
+          onEdit={this.handleEdit}
+          onDelete={this.handleDelete}
+          afterDrag={this.handleDrag}
+          selected={IssueTreeStore.getCurrentCycle}
+          setSelected={this.setSelected}
+        />   
       </div>
     );
   }

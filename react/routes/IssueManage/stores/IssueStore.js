@@ -4,6 +4,7 @@ import {
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
 import { findIndex } from 'lodash';
+import { handleRequestFailed } from '@/common/utils';
 import { getIssuesByFolder, moveIssues, copyIssues } from '../../../api/IssueManageApi';
 import IssueTreeStore from './IssueTreeStore';
 
@@ -69,7 +70,7 @@ class IssueStore {
     const { currentCycle } = IssueTreeStore;
     const { id } = currentCycle;
     try {
-      const res = await getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType);
+      const res = await handleRequestFailed(getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType));
       this.setIssues(res.list);
       if (Page > 1) {
         this.setPagination({

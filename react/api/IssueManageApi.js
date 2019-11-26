@@ -190,7 +190,7 @@ export function getIssueTree() {
  * @returns
  */
 export function addFolder(data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/issueFolder`, data);
+  return request.post(`/test/v1/projects/${getProjectId()}/issueFolder`, { ...data, versionId: 0 });
 }
 /**
  *修改文件夹

@@ -1,13 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { agileVersionLink } from '../common/utils';
 import noVersion from '../assets/noVersion.svg';
 
-const NoVersion = () => (
+const NoVersion = ({ onCreateClick }) => (
   <div style={{
     display: 'flex',
-    alignItems: 'center',   
-    marginRight: 10,
+    alignItems: 'center',      
     marginTop: 10,
     padding: 15,
     // border: '1px dashed rgba(0,0,0,0.54)',
@@ -15,10 +12,10 @@ const NoVersion = () => (
   >
     <img src={noVersion} alt="" />
     <div style={{ marginLeft: 15 }}>
-      <div style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>创建版本</div>
+      <div style={{ fontSize: '12px', color: 'rgba(0,0,0,0.65)' }}>没有一级目录</div>
       <span style={{ fontSize: '14px', marginTop: 10 }}>
-        你需要到敏捷管理进行
-        <Link style={{ marginLeft: 5 }} to={agileVersionLink()}>创建发布版本</Link>
+        你需要
+        <a role="none" style={{ marginLeft: 5 }} onClick={onCreateClick}>创建一级目录</a>
       </span>
     </div>
   </div>

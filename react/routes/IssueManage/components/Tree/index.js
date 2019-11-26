@@ -8,10 +8,9 @@ import Tree, {
 import { flattenTree } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
-import { getRootNode } from './utils';
 import TreeNode from './TreeNode';
 import {
-  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition,
+  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode,
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
@@ -42,6 +41,7 @@ function mapDataToTree(data) {
 }
 function PureTree({
   data,
+  empty,
   onCreate,
   onEdit,
   onDelete,
@@ -209,26 +209,29 @@ function PureTree({
       search={search}
     />
   );
+  const isEmpty = getRootNode(tree).children.length === 0;
   return (
-    <div className={prefix}>
-      <div className={`${prefix}-top`}>
-        <FilterInput
-          onChange={filterTree}
-        />
-      </div>      
-      <div className={`${prefix}-scroll`}>
-        <Tree        
-          tree={tree}
-          renderItem={renderItem}
-          onExpand={onExpand}
-          onCollapse={onCollapse}
-          onDragEnd={onDragEnd}
-          offsetPerLevel={PADDING_PER_LEVEL}
-          isDragEnabled
-          isNestingEnabled
-        />
-      </div>      
-    </div>
+    isEmpty ? empty : (
+      <div className={prefix}>
+        <div className={`${prefix}-top`}>
+          <FilterInput
+            onChange={filterTree}
+          />
+        </div>      
+        <div className={`${prefix}-scroll`}>
+          <Tree        
+            tree={tree}
+            renderItem={renderItem}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
+            onDragEnd={onDragEnd}
+            offsetPerLevel={PADDING_PER_LEVEL}
+            isDragEnabled
+            isNestingEnabled
+          />
+        </div>      
+      </div>
+    )
   );
 }
 export default forwardRef(PureTree);
