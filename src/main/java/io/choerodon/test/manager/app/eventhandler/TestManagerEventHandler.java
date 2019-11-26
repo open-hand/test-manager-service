@@ -57,6 +57,9 @@ public class TestManagerEventHandler {
     @Autowired
     private TestAutomationHistoryService testAutomationHistoryService;
 
+    @Autowired
+    private TestProjectInfoService testProjectInfoService;
+
 //    @Autowired
 //    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
@@ -149,7 +152,7 @@ public class TestManagerEventHandler {
     public String handleProjectInitByConsumeSagaTask(String message) {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
-        projectInfoService.initializationProjectInfo(projectEvent);
+        testProjectInfoService.initializationProjectInfo(projectEvent);
         return message;
     }
 
