@@ -57,6 +57,11 @@ class IssueTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
+    // 选中之前选中的
+    let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
+    if (!this.currentCycle.id && rootIds.length > 0) {
+      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
+    }
     this.treeData = {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
@@ -67,14 +72,13 @@ class IssueTreeStore {
           children: children || [],
           data: issueFolderVO,
           isExpanded: expanded,
+          selected: folder.id === selectedId,
           ...other,
         };
       }),
     };
-    // 默认选中第一个
-    if (!this.currentCycle.id && rootIds.length > 0) {
-      const targetId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
-      this.setCurrentCycle(find(this.treeData.treeFolder, { id: targetId }));
+    if (selectedId) {
+      this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }
 
