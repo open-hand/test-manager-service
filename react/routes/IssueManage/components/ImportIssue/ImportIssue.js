@@ -273,7 +273,7 @@ function ImportIssue(props) {
         <Form dataSet={dataSet}>
           <SelectTree
             name="folder"
-            pDataSet={dataSet}
+            parentDataSet={dataSet}
             onChange={setFolder}
           />
         </Form>

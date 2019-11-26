@@ -50,7 +50,7 @@ function CreateIssue(props) {
     return (
       <Form dataSet={createDataset} className="test-create-issue-form">
         <TextField name="summary" />
-        <SelectTree name="folder" pDataSet={createDataset} defaultValue={defaultFolderValue.id} />
+        <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">
@@ -79,7 +79,7 @@ function CreateIssue(props) {
         <div className="test-create-issue-form-step">
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">测试步骤</span>
-          <CreateTestStepTable name="caseStepVOS" pDataSet={createDataset} caseId={caseId} />
+          <CreateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={caseId} />
         </div>
       </Form>
     );

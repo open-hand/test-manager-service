@@ -14,7 +14,7 @@ import treeDataSet from './treeDataSet';
  * 下拉选择树
  * @param {*} name 字段名
  * @param {*} renderSelect select显示渲染器
- * @param {*} pDataSet 控制select的DataSet
+ * @param {*} parentDataSet 控制select的DataSet
  */
 const propTypes = {
   name: PropTypes.string,
@@ -25,11 +25,11 @@ const propTypes = {
 };
 function SelectTree(props) {
   const {
-    name, renderSelect, defaultValue, pDataSet, data, onChange, isForbidRoot = true, ...restProps
+    name, renderSelect, defaultValue, parentDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
   const selectRef = useRef();
   const [searchValue, setSearchValue] = useState('');// 搜索框内值
-  const dataSet = useMemo(() => treeDataSet(pDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), [isForbidRoot, name, onChange, pDataSet]);
+  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), [defaultValue, isForbidRoot, name, onChange, parentDataSet]);
   /**
   * 渲染树节点
   * @param {*} record  
@@ -91,31 +91,6 @@ function SelectTree(props) {
       });
     }
   }
-
-  /**
- * 根据文件名ID找寻树节点并展开
- * @param {*} value 
- * 
- */
-  const handleFilterNodeByFolerId = (value) => {
-    dataSet.forEach((record) => {
-      record.set('expanded', false);
-    });
-    let result;
-    if (value) {
-      dataSet.forEach((record) => {
-        if (record.get('folderId') === value) {
-          try {
-            searchParent(record);
-            result = record;
-          } catch (error) {
-            Choerodon.prompt('数据错误');
-          }
-        }
-      });
-    }
-    return result;
-  };
 
 
   /**
