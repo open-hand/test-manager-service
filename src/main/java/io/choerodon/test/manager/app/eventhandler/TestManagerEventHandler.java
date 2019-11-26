@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +35,21 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 @Component
 public class TestManagerEventHandler {
 
-    @Autowired
-    private TestIssueFolderRelService testIssueFolderRelService;
+    public static final String TASK_PROJECT_CREATE = "agile-create-project";
 
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
+    public static final String PROJECT_CREATE = "iam-create-project";
 
-    @Autowired
-    private TestCaseStepService testCaseStepService;
-
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
+//    @Autowired
+//    private TestIssueFolderRelService testIssueFolderRelService;
+//
+//    @Autowired
+//    private TestCycleCaseService testCycleCaseService;
+//
+//    @Autowired
+//    private TestCaseStepService testCaseStepService;
+//
+//    @Autowired
+//    private TestIssueFolderService testIssueFolderService;
 
     @Autowired
     private TestAppInstanceService testAppInstanceService;
@@ -51,18 +57,18 @@ public class TestManagerEventHandler {
     @Autowired
     private TestAutomationHistoryService testAutomationHistoryService;
 
-    @Autowired
-    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+//    @Autowired
+//    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
-    private void loggerInfo(Object o) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("data: {}", o);
-        }
-    }
+//    private void loggerInfo(Object o) {
+//        if (LOGGER.isDebugEnabled()) {
+//            LOGGER.info("data: {}", o);
+//        }
+//    }
 
 //    /**
 //     * 创建临时循环事件
@@ -134,6 +140,18 @@ public class TestManagerEventHandler {
 //        testCaseStepService.removeStep(testCaseStepVO);
 //        return issuePayload;
 //    }
+
+
+    @SagaTask(code = TASK_PROJECT_CREATE,
+            description = "agile消费创建项目事件初始化项目数据",
+            sagaCode = PROJECT_CREATE,
+            seq = 2)
+    public String handleProjectInitByConsumeSagaTask(String message) {
+        ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
+        LOGGER.info("接受创建项目消息{}", message);
+        projectInfoService.initializationProjectInfo(projectEvent);
+        return message;
+    }
 
     @SagaTask(code = "test-start-instance", description = "更新Appinstance状态", sagaCode = "test-pod-update-saga", seq = 1)
     public void updateInstance(String message) throws IOException {
