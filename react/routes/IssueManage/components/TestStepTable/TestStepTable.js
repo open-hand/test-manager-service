@@ -328,6 +328,7 @@ function TestStepTable(props) {
           customDragHandle
           scroll={{ x: true }}
         />
+        <div width="100%" style={{ borderTop: '1px solid rgba(0,0,0,0.12)' }} />
         <div style={{ marginLeft: 3, marginTop: 10, position: 'relative' }}>
           <Button
             disabled={disabled || hasStepIsCreating}

@@ -64,20 +64,30 @@ function Detail({
     }
   }
 
+  const getUpdateLabelData = value => (value.split('#')[0] === 'undefined' ? {
+    labelName: value.split('#')[1],
+  } : {
+    labelId: value.split('#')[0],
+    labelName: value.split('#')[1],
+  });
   /**
      *标签更改
      *
      * @memberof EditIssueNarrow
      */
   const renderSelectLabel = () => {
-    console.log(issueInfo);
     const { lableIds } = issueInfo;
     return (
       <TextEditToggle
         // disabled={disabled}
         style={{ width: '100%' }}
         formKey="lableIds"
-        onSubmit={(value, done) => { onUpdate({ lableIds: value }, done); }}
+        onSubmit={(value, done) => {
+          // console.log(getUpdateLabelData(value));
+          // onUpdate({
+          //   lableIds: getUpdateLabelData(value), 
+          // }, done); 
+        }}
         originData={transToArr(lableIds, 'labelName', 'array')}
       >
         <Text>
@@ -128,7 +138,7 @@ function Detail({
             {labelList.map(label => (
               <Option
                 key={label.labelId}
-                value={label.labelName}
+                value={`${label.labelId}#${label.labelName}`}
               >
                 {label.labelName}
               </Option>

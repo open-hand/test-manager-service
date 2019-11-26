@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
-import { Icon, Tree } from 'choerodon-ui';
+import { Icon, Tree, Spin } from 'choerodon-ui';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import TreeTitle from './TreeTitle';
-import { NoVersion } from '../../../../components';
 import './TestPlanTree.scss';
 
 const { TreeNode } = Tree;
@@ -27,7 +26,6 @@ const TestPlanTree = ({
   treeData,
   loading,
 }) => {
-  const noVersion = treeData.length === 0 || treeData[0].children.length === 0;
   const renderTreeNodes = data => data.map((item) => {
     const {
       children, key, cycleCaseList, type,
@@ -81,7 +79,7 @@ const TestPlanTree = ({
 
   return (
     <div className="c7ntest-testPlanTree">
-      {!loading && noVersion ? <NoVersion /> : (
+      <Spin spinning={loading}>
         <Tree
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
@@ -92,7 +90,7 @@ const TestPlanTree = ({
         >
           {renderTreeNodes(treeData)}
         </Tree>
-      )}
+      </Spin>
     </div>
   );
 };

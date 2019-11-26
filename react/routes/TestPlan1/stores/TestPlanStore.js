@@ -25,6 +25,31 @@ class TestPlanStore extends BaseTreeProto {
       return this.dataList;
     }
 
+    @observable tableLoading = true;
+
+    @action setTableLoading = (tableLoading) => {
+      this.tableLoading = tableLoading;
+    }
+
+    @computed get getTableLoading() {
+      return this.tableLoading;
+    }
+
+    @observable executePagination = {
+      current: 1,
+      total: 0,
+      pageSize: 50,
+    };
+     
+    @action setExecutePagination(executePagination) {
+      this.executePagination = { ...this.executePagination, ...executePagination };
+    }
+  
+    @computed get getExecutePagination() {
+      return toJS(this.executePagination);
+    }
+
+
     @action clearStore = () => {
       this.treeData = [];  
       this.expandedKeys = ['0-0'];  
@@ -33,6 +58,11 @@ class TestPlanStore extends BaseTreeProto {
       this.currentCycle = {};  
       this.preCycle = {};
       this.dataList = [];
+      this.executePagination = {
+        current: 1,
+        total: 0,
+        pageSize: 50,
+      };
     }
 }
 

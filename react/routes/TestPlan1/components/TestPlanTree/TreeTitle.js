@@ -8,7 +8,7 @@ const TreeTitle = ({
   title,
 }) => (
   <div className="c7ntest-tree-title">
-    <SmartTooltip title={title} width={150}>
+    <SmartTooltip title={title} width={120}>
       {title}
     </SmartTooltip>
   </div>
