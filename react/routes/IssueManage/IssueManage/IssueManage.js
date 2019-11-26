@@ -164,6 +164,7 @@ export default class IssueManage extends Component {
     const { clickIssue } = IssueStore;
     const currentCycle = IssueTreeStore.getCurrentCycle;
     const treeData = IssueTreeStore.getTreeData;
+    const { loading } = IssueTreeStore;
     const noFolder = treeData.rootIds.length === 0;
     // const noFolder = true;
     return (
@@ -191,6 +192,7 @@ export default class IssueManage extends Component {
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
           {noFolder ? (
             <Empty
+              loading={loading}
               pic={empty}
               title="暂无文件夹"
               description="当前项目下无文件夹，请创建"
