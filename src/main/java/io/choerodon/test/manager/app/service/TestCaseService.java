@@ -165,5 +165,13 @@ public interface TestCaseService {
 
     void batchDeleteIssues(Long projectId, Long[] issueIds);
 
+    /**
+     * 查询文件夹下所有用例（不分页）
+     * @param projectId
+     * @param folderId
+     * @return
+     */
+    List<Long> listAllCaseByFolderId(Long projectId, Long folderId);
+
 
 }

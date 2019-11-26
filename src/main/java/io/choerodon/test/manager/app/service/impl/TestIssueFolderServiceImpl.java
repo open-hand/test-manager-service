@@ -16,7 +16,10 @@ import org.springframework.util.CollectionUtils;
 
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
+import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
@@ -138,14 +141,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Override
     @Async
     public void delete(Long projectId, Long folderId) {
-        List<TestCaseRepVO> testCaseVOs = testCaseService.listAllCaseByFolderId(projectId, folderId, null, null).getList();
+        List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
         Set<TestIssueFolderDTO> folderDTOSet = new HashSet<>();
         folderDTOSet.add(testIssueFolderMapper.selectByPrimaryKey(folderId));
         Set<TestIssueFolderDTO> testIssueFolderDTOS = findchildFolder(folderId, folderDTOSet);
         //删除文件夹下用例
-        if (!CollectionUtils.isEmpty(testCaseVOs)) {
-            testCaseVOs.forEach(e -> {
-                testCaseService.deleteCase(projectId, e.getCaseId());
+        if (!CollectionUtils.isEmpty(caseIdList)) {
+            caseIdList.forEach(caseId -> {
+                testCaseService.deleteCase(projectId,caseId);
             });
         }
         //删除文件夹

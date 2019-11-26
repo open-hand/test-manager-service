@@ -584,6 +584,20 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     }
 
+    @Override
+    public List<Long> listAllCaseByFolderId(Long projectId, Long folderId) {
+        // 查询文件夹下所有的目录
+        Set<Long> folderIds = new HashSet<>();
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(folderId);
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        queryAllFolderIds(folderId, folderIds, folderMap);
+        // 查询文件夹下的的用例
+        List<Long> caseIdList = testCaseMapper.listCaseIds(projectId, folderIds, null);
+
+        return caseIdList;
+    }
+
 
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
         // 查询已有的标签
