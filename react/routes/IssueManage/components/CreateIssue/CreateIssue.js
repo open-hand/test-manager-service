@@ -13,7 +13,7 @@ import './CreateIssue.less';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
-  const { intl, caseId, defaultFolerValue } = props;
+  const { intl, caseId, defaultFolderValue } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
 
   async function handleCreateIssue() {
@@ -50,6 +50,7 @@ function CreateIssue(props) {
     return (
       <Form dataSet={createDataset} className="test-create-issue-form">
         <TextField name="summary" />
+        <SelectTree name="folder" pDataSet={createDataset} defaultValue={defaultFolderValue.id} />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-create-issue-line" />
           <span className="test-create-issue-head">
@@ -73,7 +74,6 @@ function CreateIssue(props) {
             <span className="test-create-issue-head">附件</span>
             <UploadButton />
           </div>,
-          <SelectTree name="folder" pDataSet={createDataset} defaultValue={defaultFolerValue.id} />,
           <Select name="issueLink" />]
         }
         <div className="test-create-issue-form-step">

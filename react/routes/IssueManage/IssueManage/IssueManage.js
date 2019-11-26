@@ -105,7 +105,7 @@ export default class IssueManage extends Component {
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
           caseId={clickIssue && clickIssue.caseId}
-          defaultFolerValue={IssueTreeStore.getCurrentCycle}
+          defaultFolderValue={IssueTreeStore.getCurrentCycle}
         />
       ),
       okText: '创建',
