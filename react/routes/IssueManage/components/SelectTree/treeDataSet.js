@@ -35,7 +35,7 @@ function initLoad(isForbidRoot, defaultValue, props, dataSet) {
     forbidRootsSelect(dataSet);
   }
   if (defaultValue) {
-    initData(dataSet, { folderId: defaultValue, ...props });
+    // initData(dataSet, { folderId: defaultValue, ...props });
   }
 }
 /**
@@ -45,7 +45,7 @@ function initLoad(isForbidRoot, defaultValue, props, dataSet) {
  * @param {*} setData  设置当前选中项数据
  * @param {*} isForbidRoot  是否禁止根节点可选 默认禁止
  */
-const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot = true) => new DataSet({
+const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot = true, selectRef) => new DataSet({
   primaryKey: 'folderId',
   paging: false,
   autoQuery: true,
@@ -82,7 +82,9 @@ const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot
       // console.log('record', record);
       dataSet.select(record);
       const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
+      selectRef.current.collapse();
       if (pDataSet) {
+        // selectRef.current.choose(selectData);
         pDataSet.current.set(name, selectData);
       }
       if (setData) {

@@ -28,7 +28,7 @@ export default observer((props) => {
 
   const handleTreeNodeExpand = (expandedKeys) => {
     testPlanStore.setExpandedKeys(expandedKeys);
-    setAutoExpandParent(true);
+    setAutoExpandParent(false);
   };
 
   const {
