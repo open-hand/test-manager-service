@@ -54,10 +54,11 @@ feign:
 ribbon:
   ConnectTimeout: 5000
   ReadTimeout: 5000
-#logging:
-#  level:
-#    root: info
-#    io.choerodon.test.manager: debug
+
+logging:
+  level:
+    io.choerodon.test.manager: info
+
 services:
   attachment:
     url: example.com
