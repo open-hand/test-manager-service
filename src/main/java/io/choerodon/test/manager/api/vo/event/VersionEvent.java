@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.domain.test.manager.event;
+package io.choerodon.test.manager.api.vo.event;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/5/22.

@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.domain.test.manager.event;
+package io.choerodon.test.manager.api.vo.event;
 
 public class InstancePayload {
 

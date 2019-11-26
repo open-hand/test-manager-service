@@ -7,7 +7,6 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,18 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
-import io.choerodon.test.manager.api.vo.TestCaseStepVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderRelVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.domain.test.manager.event.InstancePayload;
-import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
-import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.infra.enums.TestIssueFolderType;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
+import io.choerodon.test.manager.api.vo.event.InstancePayload;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
