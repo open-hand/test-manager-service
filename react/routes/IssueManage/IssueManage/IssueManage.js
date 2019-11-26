@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
 import {
@@ -10,15 +10,17 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
+import Empty from '@/components/Empty';
 import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
 import IssueTable from '../components/IssueTable';
 import ExportSide from '../components/ExportSide';
 import ImportSide from '../components/ImportIssue';
 import TestCaseDetail from '../components/TestCaseDetail';
+import openCreateFolder from '../components/CreateFolder';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
-
+import empty from '@/assets/empty.png';
 @injectIntl
 @observer
 export default class IssueManage extends Component {
@@ -144,13 +146,26 @@ export default class IssueManage extends Component {
     });
   }
 
+  handleCreateFolder = () => {
+    this.getTestCase();
+  }
+
   handleAddFolderClick = () => {
-    IssueTreeStore.treeRef.current.addFirstLevelItem();
+    if (IssueTreeStore.treeRef && IssueTreeStore.treeRef.current) {
+      IssueTreeStore.treeRef.current.addFirstLevelItem();
+    } else {
+      openCreateFolder({
+        onCreate: this.handleCreateFolder,
+      });
+    }
   }
 
   render() {
     const { clickIssue } = IssueStore;
     const currentCycle = IssueTreeStore.getCurrentCycle;
+    const treeData = IssueTreeStore.getTreeData;
+    const noFolder = treeData.rootIds.length === 0;
+    // const noFolder = true;
     return (
       <Page className="c7ntest-Issue c7ntest-region">
         <Header
@@ -174,25 +189,36 @@ export default class IssueManage extends Component {
         </Header>
         <Breadcrumb />
         <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
-          <IssueTree />
-          {currentCycle.id && (
-            <div
-              className="c7ntest-content-issue"
-              style={{
-                flex: 1,
-                display: 'block',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                padding: '0 20px',
-              }}
-            >
-              <div className="c7ntest-content-issueFolderName">
-                {currentCycle.data.name}
+          {noFolder ? (
+            <Empty
+              pic={empty}
+              title="暂无文件夹"
+              description="当前项目下无文件夹，请创建"
+              extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
+            />
+          ) : (
+            <Fragment>
+              <IssueTree />
+              {currentCycle.id && (
+              <div
+                className="c7ntest-content-issue"
+                style={{
+                  flex: 1,
+                  display: 'block',
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  padding: '0 20px',
+                }}
+              >
+                <div className="c7ntest-content-issueFolderName">
+                  {currentCycle.data.name}
+                </div>
+                <IssueTable
+                  onClick={this.handleTableRowClick}
+                />
               </div>
-              <IssueTable
-                onClick={this.handleTableRowClick}
-              />
-            </div>
+              )}
+            </Fragment>
           )}
           <TestCaseDetail visible={clickIssue && clickIssue.caseId} onClose={this.handleClose} />
         </Content>

@@ -15,7 +15,7 @@ function Header({
     store, disabled, prefixCls, onClose,
   } = useContext(EditIssueContext);
   const { issueInfo } = store;
-  const { issueNum, summary } = issueInfo;
+  const { caseNum, summary } = issueInfo;
   return (
     <div className={`${prefixCls}-content-header`}>
       <div
@@ -30,7 +30,7 @@ function Header({
           fontSize: 16, fontWeight: 500, color: '#3F51B5',
         }}
         >
-          <span>{issueNum}</span>
+          <span>{caseNum}</span>
         </div>
         <div
           style={{

@@ -271,10 +271,10 @@ export default observer((props) => {
     },
     {
       title: '用例编号',
-      dataIndex: 'issueNum',
-      key: 'issueNum',
+      dataIndex: 'caseNum',
+      key: 'caseNum',
       filters: [],
-      render: issueNum => renderIssueNum(issueNum),
+      render: caseNum => renderIssueNum(caseNum),
     },
     {
       title: '创建人',

@@ -9,14 +9,14 @@ import './tags.less';
 
 const { confirm } = Modal;
 
-export function renderIssueNum(issueNum) {
+export function renderIssueNum(caseNum) {
   return (
-    <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: issueNum }} />}>
-      {/* <a style={styles.issueNum}>
-        {issueNum}
+    <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
+      {/* <a style={styles.caseNum}>
+        {caseNum}
       </a> */}
       <span className="c7n-table-issueTreeTtile-table-span">
-        {issueNum}
+        {caseNum}
       </span>
 
     </Tooltip>
@@ -29,11 +29,11 @@ export function renderIssueNum(issueNum) {
  * @param {*} reLoadTable 
  */
 export function renderAction(record, history, reLoadTable) {
-  const { caseId, issueNum } = record;  
+  const { caseId, caseNum } = record;  
   const handleDeleteIssue = () => {
     confirm({
       width: 560,
-      title: `删除测试用例${issueNum}`,
+      title: `删除测试用例${caseNum}`,
       content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
       onOk: () => deleteIssue(caseId)
         .then((res) => {
