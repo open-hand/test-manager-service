@@ -6,7 +6,7 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
+// import { renderPriority } from '../../../../IssueManage/components/IssueTable/tags';
 import {
   SelectFocusLoad, StatusTags, SmartTooltip,
 } from '../../../../../components';
@@ -98,18 +98,18 @@ class TestExecuteTable extends Component {
       },
     },
     
-    {
-      title: <span>优先级</span>,
-      dataIndex: 'priorityId',
-      key: 'priorityId',
-      filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-      render(issueId, record) {
-        const { issueInfosVO } = record;
-        return (
-          issueInfosVO && renderPriority(issueInfosVO.priorityVO)
-        );
-      },
-    },
+    // {
+    //   title: <span>优先级</span>,
+    //   dataIndex: 'priorityId',
+    //   key: 'priorityId',
+    //   filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
+    //   render(issueId, record) {
+    //     const { issueInfosVO } = record;
+    //     return (
+    //       issueInfosVO && renderPriority(issueInfosVO.priorityVO)
+    //     );
+    //   },
+    // },
     {
       title: <FormattedMessage id="status" />,
       dataIndex: 'executionStatus',

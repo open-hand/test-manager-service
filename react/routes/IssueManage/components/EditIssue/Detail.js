@@ -1,4 +1,6 @@
-import React, { Fragment, useState, useContext } from 'react';
+import React, {
+  Fragment, useState, useContext, useRef, useEffect, useImperativeHandle,
+} from 'react';
 import { observer } from 'mobx-react-lite';
 import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
@@ -12,6 +14,7 @@ import { TextEditToggle } from '@/components';
 import {
   delta2Html, text2Delta,
 } from '@/common/utils';
+import SelectFocusLoad from '@/components/SelectFocusLoad';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
 import { uploadFile, getLabels } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
@@ -48,34 +51,33 @@ function Detail({
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const [createLinkTaskShow, setCreateLinkTaskShow] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [labelList, setLabelList] = useState([]);
   const [selectLoading, setSelectLoading] = useState(true);
 
-  function transToArr(arr, pro, type = 'string') {
-    if (typeof arr !== 'object') {
-      return '';
-    }
-    if (!arr || !arr.length) {
-      return type === 'string' ? '无' : [];
-    } else if (typeof arr[0] === 'object') {
-      return type === 'string' ? _.map(arr, pro).join() : _.map(arr, pro);
-    } else {
-      return type === 'string' ? arr.join() : arr;
-    }
-  }
+  const getUpdateLabelData = (values) => {
+    const { labelLists } = store;
+    const labelData = [];
+    values.forEach((value) => {
+      // eslint-disable-next-line no-restricted-globals
+      if (!isNaN(Number(value))) { // 如果可转为数字
+        if (_.map(labelLists, 'labelName').includes(value) || _.map(labelLists, 'labelId').includes(Number(value))) {
+          labelData.push({ labelId: value });
+        } else {
+          labelData.push({ labelName: value });
+        }
+      } else {
+        labelData.push({ labelName: value });
+      }
+    });
+    return labelData;
+  };
 
-  const getUpdateLabelData = value => (value.split('#')[0] === 'undefined' ? {
-    labelName: value.split('#')[1],
-  } : {
-    labelId: value.split('#')[0],
-    labelName: value.split('#')[1],
-  });
   /**
      *标签更改
      *
      * @memberof EditIssueNarrow
      */
   const renderSelectLabel = () => {
+    const { labelLists } = store;
     const { lableIds } = issueInfo;
     return (
       <TextEditToggle
@@ -83,21 +85,20 @@ function Detail({
         style={{ width: '100%' }}
         formKey="lableIds"
         onSubmit={(value, done) => {
-          // console.log(getUpdateLabelData(value));
-          // onUpdate({
-          //   lableIds: getUpdateLabelData(value), 
-          // }, done); 
+          onUpdate({
+            labels: getUpdateLabelData(value), 
+          }, done); 
         }}
-        originData={transToArr(lableIds, 'labelName', 'array')}
+        originData={lableIds || []}
       >
         <Text>
           {data => (
-            data.length > 0 ? (
+            data && data.length > 0 ? (
               <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {
-                  transToArr(data, 'labelName', 'array').map(label => (
+                  data.map(labelId => (
                     <div
-                      key={label}
+                      key={labelId}
                       className="c7ntest-text-dot"
                       style={{
                         color: '#000',
@@ -108,10 +109,9 @@ function Detail({
                         maxWidth: 100,
                         background: 'rgba(0, 0, 0, 0.08)',
                         marginRight: '8px',
-                        marginBottom: 3,
                       }}
                     >
-                      {label}
+                      {labelLists.find(item => Number(item.labelId) === Number(labelId)) && labelLists.find(item => Number(item.labelId) === Number(labelId)).labelName}
                     </div>
                   ))
                 }
@@ -130,15 +130,16 @@ function Detail({
             onFocus={() => {
               setSelectLoading(true);
               getLabels().then((res) => {
-                setLabelList(res);
+              // setLabelList(res);
+                store.setLabelLists(res);
                 setSelectLoading(false);
               });
             }}
           >
-            {labelList.map(label => (
+            {labelLists.map(label => (
               <Option
                 key={label.labelId}
-                value={`${label.labelId}#${label.labelName}`}
+                value={`${label.labelId}`}
               >
                 {label.labelName}
               </Option>
@@ -246,6 +247,16 @@ function Detail({
       onOk: async (value) => { await onUpdate({ description: value }); },
     });
   }
+
+  useEffect(() => {
+    setSelectLoading(true);
+    getLabels().then((res) => {
+      // setLabelList(res);
+      labelLists = res;
+      setSelectLoading(false);
+    });
+  }, []);
+
   function render() {
     return (
       <React.Fragment>
@@ -262,7 +273,9 @@ function Detail({
             <PropertyWrap
               className="assignee"
               label={<FormattedMessage id="issue_edit_creator" />}
-              valueStyle={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}
+              valueStyle={{
+                display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 5, 
+              }}
             >
               <UserHead user={createUser} />
             </PropertyWrap>
@@ -277,7 +290,12 @@ function Detail({
                   {renderSelectLabel()}
                 </PropertyWrap>
                 {/** 更新人 */}
-                <PropertyWrap label={<FormattedMessage id="issue_edit_updater" />} valueStyle={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <PropertyWrap
+                  label={<FormattedMessage id="issue_edit_updater" />}
+                  valueStyle={{
+                    display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6, 
+                  }}
+                >
                   <UserHead user={lastUpdateUser} />
                 </PropertyWrap>
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>

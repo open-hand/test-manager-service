@@ -12,7 +12,7 @@ import { ResizeAble } from '@/components';
 import {
   returnBeforeTextUpload, testCaseTableLink, testCaseDetailLink,
 } from '@/common/utils';
-import { updateIssue } from '@/api/IssueManageApi';
+import { updateIssue, getLabels } from '@/api/IssueManageApi';
 import Loading from '@/components/Loading';
 import EditIssueContext from './stores';
 import DataLogs from './Component/DataLogs';
@@ -116,7 +116,13 @@ function EditIssue() {
           break;
         }
         issue = { ...issue, ...newValue };
-        await updateIssue(issue);          
+        await updateIssue(issue); 
+        if (key === 'labels') {
+          console.log(1);
+          getLabels().then((res) => { // 防止编辑标签的时候创建新标签，应该重新加载label，防止新创建的label不能正确显示
+            store.setLabelLists(res);
+          });
+        }         
         store.loadIssueData();
         onUpdate();
         done();       

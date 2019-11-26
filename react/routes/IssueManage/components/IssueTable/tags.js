@@ -86,7 +86,7 @@ export function renderAction(record, history, reLoadTable) {
 }
 export function renderSummary(summary, record, onClick) {
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <span style={{ overflow: 'hidden' }}>
       <Tooltip mouseEnterDelay={0.5} placement="topLeft" title={<FormattedMessage id="issue_issueSummary" values={{ summary }} />}>
         <p
           role="none"
@@ -100,6 +100,6 @@ export function renderSummary(summary, record, onClick) {
           {summary}
         </p>
       </Tooltip>
-    </div>
+    </span>
   );
 }

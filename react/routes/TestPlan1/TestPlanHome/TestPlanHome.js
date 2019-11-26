@@ -12,11 +12,13 @@ import { Modal } from 'choerodon-ui/pro';
 import {
   getCycleTree, getExecutesByCycleId,
 } from '../../../api/cycleApi';
+import Injecter from '../../../components/Injecter';
 import CreateAutoTest from '../components/CreateAutoTest'; 
 import openCreatePlan from '../components/CreatePlan';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import TestPlanTreeWrap from '../components/TestPlanTreeWrap';
+import TestPlanTable from '../components/TestPlanTable';
 import Empty from '../../../components/Empty';
 import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
 
@@ -50,7 +52,7 @@ export default observer(() => {
       const currentCycle = testPlanStore.getCurrentCycle;
       const { cycleId, type } = currentCycle;
       const executePagination = testPlanStore.getExecutePagination;
-      const { filters } = this.state;
+      const { filters } = testPlanStore;
       const targetPage = executePagination.current;
       getExecutesByCycleId({
         page: targetPage,
@@ -190,6 +192,24 @@ export default observer(() => {
                     <div style={{ flex: 1 }}>
                       <TestPlanStatusCard />
                     </div>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-table`}>
+                    {/* <Injecter store={testPlanStore} item={['statusList', 'getTestList', 'executePagination', 'rightLoading']}>
+                      {([statusList, testList, executePagination, rightLoading]) => (
+                        <TestPlanTable
+                          statusList={statusList}
+                          loading={rightLoading}
+                          pagination={executePagination}
+                          dataSource={testList}
+                          onLastUpdatedByChange={this.handleLastUpdatedByChange}
+                          onAssignedToChange={this.handleAssignedToChange}
+                          onDragEnd={this.onDragEnd}                        
+                          onTableChange={this.handleExecuteTableChange}
+                          onTableRowClick={this.handleTableRowClick}
+                          onDeleteExecute={this.handleDeleteExecute}
+                        />
+                      )}
+                    </Injecter> */}
                   </div>
                 </div>
          

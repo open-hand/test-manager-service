@@ -46,8 +46,7 @@ export default observer(() => {
           const { issues } = IssueStore;
           issues.unshift(res); // 直接在store中添加一条，省得重新加载一遍
           IssueStore.setIssues(issues); 
-          // IssueStore.loadIssues();
-
+          IssueStore.setClickIssue(res); // 将新创建的测试用例打开
           setCreating(false);
           setCreateLoading(false);
           setCreateIssueValue('');
@@ -67,7 +66,7 @@ export default observer(() => {
           <div style={{ flexGrow: 1 }}>
             <TextField
               autoFocus
-              placeholder="请输入问题概要"
+              placeholder="请输入用例概要"
               onChange={(value) => { // 失焦才会触发onChange
                 setCreateIssueValue(value);
               }}

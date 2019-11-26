@@ -49,6 +49,49 @@ class TestPlanStore extends BaseTreeProto {
       return toJS(this.executePagination);
     }
 
+    @observable statusList = [];
+
+    @action setStatusList(statusList) {
+      this.statusList = statusList;
+    }
+
+    @computed get getStatusList() {
+      return this.statusList;
+    }
+
+    @observable testList = [];
+
+    @action setTestList = (testList) => {
+      this.testList = testList;
+    }
+
+    @computed get getTestList() {
+      return toJS(this.testList);
+    }
+
+    @observable rightLoading = false;
+
+    @action rightEnterLoading() {
+      this.rightLoading = true;
+    }
+  
+    @action rightLeaveLoading() {
+      this.rightLoading = false;
+    }
+
+    @computed get getRightLoading() {
+      return this.rightLoading;
+    }
+
+    @observable filters = {};
+
+    @action setFilters = (filters) => {
+      this.filters = filters;
+    }
+
+    @computed get getFilters() {
+      return this.filters;
+    }
 
     @action clearStore = () => {
       this.treeData = [];  
@@ -58,6 +101,8 @@ class TestPlanStore extends BaseTreeProto {
       this.currentCycle = {};  
       this.preCycle = {};
       this.dataList = [];
+      this.rightLoading = false;
+      this.filters = {};
       this.executePagination = {
         current: 1,
         total: 0,
