@@ -56,6 +56,11 @@ public class TestDataLogServiceImpl implements TestDataLogService {
         return dataLogVOS.stream().sorted(Comparator.comparing(DataLogVO::getCreationDate).reversed()).collect(Collectors.toList());
     }
 
+    @Override
+    public void batchInsert(List<TestDataLogDTO> testDataLogDTOList) {
+        testDataLogMapper.batchInsert(testDataLogDTOList);
+    }
+
     private void fillUserAndStatus(Long projectId, List<DataLogVO> dataLogVOS) {
         List<Long> createByIds = dataLogVOS.stream().filter(dataLogDTO -> dataLogDTO.getCreatedBy() != null && !Objects.equals(dataLogDTO.getCreatedBy(), 0L)).map(DataLogVO::getCreatedBy).distinct().collect(Collectors.toList());
         Map<Long, UserMessageDTO> usersMap = userService.queryUsersMap(createByIds);

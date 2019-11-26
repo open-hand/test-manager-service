@@ -10,15 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import io.choerodon.agile.api.vo.LabelFixVO;
-import io.choerodon.agile.api.vo.LabelIssueRelFixVO;
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProjectInfoFixVO;
+import io.choerodon.agile.api.vo.*;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
@@ -77,6 +75,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private TestProjectInfoMapper testProjectInfoMapper;
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+    @Autowired
+    private TestDataLogFeignClient testDataLogFeignClient;
+    @Autowired
+    private TestDataLogService testDataLogService;
 
     @Async
     @Transactional(rollbackFor = Exception.class)
@@ -97,7 +99,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migrateLink();
         //7.项目
         migrateProject();
-        logger.info("=====Data Migrate Succeed!!!=====");
+        //8.日志
+        migreateDataLog();
+        logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
     @Override
@@ -108,12 +112,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
             }
-            logger.info("=====Insert Test Case By  ProjectId{}=====", projectId);
+            logger.info("=====Insert Test Case By  ProjectId:{}=====", projectId);
         }
         logger.info("=====Test Case Data Migrate Succeed=====");
 
         //更新文件夹相关联的folderid
-        logger.info("======Update Test Case Related Folder=====");
         testCaseMapper.updateTestCaseFolder();
         logger.info("======Update Test Case Related Folder Succeed=====");
     }
@@ -130,7 +133,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 }
             }
         }
-        logger.info("=====Test Case Attachment Migrate Succeed=====");
+        logger.info("===========attachment=============> copy successed");
     }
 
     @Override
@@ -142,8 +145,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
                 testCaseLinkService.batchInsert(testCaseLinkDTOS);
             }
-            logger.info("===========link=============>projectId {}link copy successed", projectId);
+            logger.info("===========link=============>project:{}link copy successed", projectId);
         });
+        logger.info("===========link=============> copy successed");
     }
 
     @Override
@@ -155,9 +159,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
                 }.getType());
                 testCaseLabelService.batchInsert(testCaseLabelDTOList);
-                logger.info("===========label=============> copy successed");
             }
+            logger.info("===========label=============>project:{} copy successed",projectId);
         });
+        logger.info("===========label=============> copy successed");
     }
 
     @Override
@@ -169,6 +174,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueVoTocaseDto).collect(Collectors.toList());
                 testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
             }
+            logger.info("===========label_issue_rel=============>project:{} copy successed");
         });
 
         logger.info("===========label_issue_rel=============> copy successed");
@@ -196,6 +202,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             });
             logger.info("============issueFolder=================>project:{} copy successed", projectFolderId);
         });
+        logger.info("============issueFolder=================> copy successed");
     }
 
     @Override
@@ -206,6 +213,22 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             testProjectInfoMapper.batchInsert(testProjectInfoDTOS);
         }
         logger.info("===========project=============> copy successed");
+    }
+
+    @Override
+    public void migreateDataLog() {
+
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<DataLogFixVO> dataLogFixVOS = testDataLogFeignClient.migrateDataLog(projectId).getBody();
+            if (!CollectionUtils.isEmpty(dataLogFixVOS)) {
+                List<TestDataLogDTO> testDataLogDTOS = dataLogFixVOS.stream().map(this::dataLogVoToDto).collect(Collectors.toList());
+                testDataLogService.batchInsert(testDataLogDTOS);
+            }
+            logger.info("===========data_log=============>project:{} copy successed",projectId);
+        });
+
+        logger.info("===========data_log=============> copy successed");
     }
 
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
@@ -227,5 +250,12 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         BeanUtils.copyProperties(projectInfoFixVO, testProjectInfoDTO);
         testProjectInfoDTO.setCaseMaxNum(projectInfoFixVO.getIssueMaxNum());
         return testProjectInfoDTO;
+    }
+
+    private TestDataLogDTO dataLogVoToDto(DataLogFixVO dataLogFixVO) {
+        TestDataLogDTO testDataLogDTO = new TestDataLogDTO();
+        BeanUtils.copyProperties(dataLogFixVO, testDataLogDTO);
+        testDataLogDTO.setCaseId(dataLogFixVO.getIssueId());
+        return testDataLogDTO;
     }
 }

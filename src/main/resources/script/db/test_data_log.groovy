@@ -27,6 +27,12 @@ databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
 
         }
     }
+    changeSet(author: 'lizhaozhong@hang-china.com', id: '2019-11-26-update-column_old_string') {
+            renameColumn(columnDataType: 'text', newColumnName: 'old_value', oldColumnName: 'old_value', tableName: 'test_data_log')
+            renameColumn(columnDataType: 'text', newColumnName: 'new_value', oldColumnName: 'new_value', tableName: 'test_data_log')
+            renameColumn(columnDataType: 'text', newColumnName: 'old_string', oldColumnName: 'old_string', tableName: 'test_data_log')
+            renameColumn(columnDataType: 'text', newColumnName: 'new_string', oldColumnName: 'new_string', tableName: 'test_data_log')
+    }
 
 }
 
