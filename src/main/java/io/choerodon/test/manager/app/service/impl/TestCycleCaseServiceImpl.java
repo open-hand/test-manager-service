@@ -521,6 +521,21 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageable.getPageNumber()- 1) * pageable.getPageSize(), pageable.getPageSize());
     }
 
+    @Override
+    public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
+        testCaseDTOS.forEach(v -> {
+            TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
+            TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+            testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
+            testCycleCaseDTO.setIssueId(v.getCaseId());
+            testCycleCaseDTO.setComment(v.getDescription());
+            testCycleCaseDTO.setProjectId(v.getProjectId());
+            testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+            TestCycleCaseDTO cycleCaseDTO = baseInsert(testCycleCaseDTO);
+        });
+    }
+
     private TestCycleCaseVO runTestCycleCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
         Assert.notNull(projectId, "error.projectId.illegal");
 
@@ -586,5 +601,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return cycleMapper.selectCyclesInVersions(versionIds);
         }
         return new ArrayList<>();
+    }
+
+    private TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO){
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+           throw  new CommonException("error.insert.cycle.case.is.not.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::insertSelective,testCycleCaseDTO,1,"error.insert.cycle.case");
+        return testCycleCaseDTO;
     }
 }

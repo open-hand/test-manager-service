@@ -594,8 +594,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
         List<Long> caseIdList = testCaseMapper.listCaseIds(projectId, folderIds, null);
-
         return caseIdList;
+    }
+
+    @Override
+    public List<TestCaseDTO> listCaseByProjectId(Long projectId) {
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        testCaseDTO.setProjectId(projectId);
+        return testCaseMapper.select(testCaseDTO);
     }
 
 

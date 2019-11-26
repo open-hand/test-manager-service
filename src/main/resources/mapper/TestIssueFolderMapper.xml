@@ -39,4 +39,13 @@
     <update id="updateByVersionId" >
         update test_issue_folder set parent_id=#{parentId} where version_id=#{versionId} and project_id=#{projectId}
     </update>
+
+    <select id="listFolderByFolderIds" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
+         select * from test_issue_folder
+         where
+         folder_id in
+         <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
+             #{folderId}
+         </foreach>
+    </select>
 </mapper>

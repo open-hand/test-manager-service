@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -815,6 +816,23 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testCycleDTOS != null && !testCycleDTOS.isEmpty();
     }
 
+    @Override
+    public List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO,List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setFromDate(testPlanDTO.getStartDate());
+        testCycleDTO.setToDate(testPlanDTO.getEndDate());
+        testCycleDTO.setProjectId(testPlanDTO.getProjectId());
+        testCycleDTO.setVersionId(1L);
+        List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
+        testIssueFolderDTOS.forEach(v -> {
+            testCycleDTO.setCycleName(v.getName());
+            testCycleDTO.setFolderId(v.getFolderId());
+            testCycleDTO.setType(TestCycleType.FOLDER);
+            testCycleDTOS.add(baseInsert(testCycleDTO));
+        });
+        return testCycleDTOS;
+    }
+
     private Long getCount(TestCycleVO testCycleVO) {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
@@ -1175,4 +1193,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testCycleCaseDTO;
     }
 
+    private TestCycleDTO baseInsert(TestCycleDTO testCycleDTO){
+        if(ObjectUtils.isEmpty(testCycleDTO)){
+            throw new CommonException("error.insert.test.cycle.is.not.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insertSelective,testCycleDTO,1,"error.insert.test.cycle");
+    }
 }

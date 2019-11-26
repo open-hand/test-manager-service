@@ -49,4 +49,6 @@ public interface TestIssueFolderService {
      * @return
      */
     List<TestIssueFolderVO> queryListByProjectId(Long projectId);
+
+    List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds);
 }

@@ -1,9 +1,12 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
@@ -64,4 +67,6 @@ public interface TestCycleCaseService {
     void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 
     List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable);
+
+    void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS);
 }

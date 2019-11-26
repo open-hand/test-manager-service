@@ -173,5 +173,10 @@ public interface TestCaseService {
      */
     List<Long> listAllCaseByFolderId(Long projectId, Long folderId);
 
-
+    /**
+     * 查询项目下的所有用例
+     * @param projectId
+     * @return
+     */
+    List<TestCaseDTO> listCaseByProjectId(Long projectId);
 }
