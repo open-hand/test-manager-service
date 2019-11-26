@@ -35,7 +35,7 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 @Component
 public class TestManagerEventHandler {
 
-    public static final String TASK_PROJECT_CREATE = "agile-create-project";
+    public static final String TASK_PROJECT_CREATE = "test-create-project";
 
     public static final String PROJECT_CREATE = "iam-create-project";
 
@@ -146,7 +146,7 @@ public class TestManagerEventHandler {
 
 
     @SagaTask(code = TASK_PROJECT_CREATE,
-            description = "agile消费创建项目事件初始化项目数据",
+            description = "test消费创建项目事件初始化项目数据",
             sagaCode = PROJECT_CREATE,
             seq = 2)
     public String handleProjectInitByConsumeSagaTask(String message) {
