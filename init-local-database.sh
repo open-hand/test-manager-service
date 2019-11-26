@@ -9,8 +9,8 @@ mvn org.apache.maven.plugins:maven-dependency-plugin:get \
  -Dtransitive=false
 
 java -Dspring.datasource.url="jdbc:mysql://localhost/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true" \
- -Dspring.datasource.username=choerodon \
- -Dspring.datasource.password=123456 \
+ -Dspring.datasource.username=root \
+ -Dspring.datasource.password=root \
  -Ddata.drop=false -Ddata.init=true \
  -Ddata.dir=src/main/resources \
  -jar ${TOOL_JAR_PATH}
