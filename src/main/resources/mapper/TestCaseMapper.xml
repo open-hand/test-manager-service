@@ -151,5 +151,6 @@
        <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
            #{caseId}
        </foreach>
+       order by last_update_date DESC
    </select>
 </mapper>
