@@ -39,8 +39,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public static final String TYPE_TEMP = "temp";
 
     private Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
-    @Autowired
-    private TestCycleService testCycleService;
+
     @Autowired
     private TestCaseService testCaseService;
     @Autowired
@@ -101,9 +100,9 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
-                if(longs.contains(testIssueFolderDTO.getFolderId())){
+                if (longs.contains(testIssueFolderDTO.getFolderId())) {
                     folderVO.setHasCase(true);
-                }else {
+                } else {
                     folderVO.setHasCase(false);
                 }
 
@@ -148,7 +147,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         //删除文件夹下用例
         if (!CollectionUtils.isEmpty(caseIdList)) {
             caseIdList.forEach(caseId -> {
-                testCaseService.deleteCase(projectId,caseId);
+                testCaseService.deleteCase(projectId, caseId);
             });
         }
         //删除文件夹

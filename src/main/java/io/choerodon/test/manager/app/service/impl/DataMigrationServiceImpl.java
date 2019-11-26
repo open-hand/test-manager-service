@@ -29,7 +29,7 @@ import io.choerodon.test.manager.infra.mapper.*;
 @Transactional(rollbackFor = Exception.class)
 public class DataMigrationServiceImpl implements DataMigrationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataMigrationServiceImpl.class);
 
     @Autowired
     TestCaseService testCaseService;
