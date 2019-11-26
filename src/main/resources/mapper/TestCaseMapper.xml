@@ -3,27 +3,43 @@
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseMapper">
     <select id="listCaseByFolderIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
         SELECT
-            case_id,
-            summary,
-            folder_id,
-            project_id,
-            case_num,
-            created_by,
-            last_updated_by,
-            creation_date,
-            last_update_date,
-            object_version_number
+        tci.case_id,
+        tci.summary,
+        tci.folder_id,
+        tci.project_id,
+        tci.case_num,
+        tci.created_by,
+        tci.last_updated_by,
+        tci.creation_date,
+        tci.last_update_date,
+        tci.object_version_number
         FROM
-            test_case
+        (
+        SELECT
+        tc.case_id,
+        tc.summary,
+        tc.folder_id,
+        tc.project_id,
+        CONCAT_WS( '-', tpi.project_code, tc.case_num ) as case_num,
+        tc.created_by,
+        tc.last_updated_by,
+        tc.creation_date,
+        tc.last_update_date,
+        tc.object_version_number
+        FROM
+        test_case tc
+        left join test_project_info tpi on tpi.project_id = tc.project_id
         WHERE
-            project_id = #{projectId}
-            AND
-            folder_id IN
-            <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
-                 #{folderId}
-            </foreach>
+        tc.project_id = #{projectId}
+        AND
+        tc.folder_id IN
+        <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
+            #{folderId}
+        </foreach>
+        ) as tci
+        WHERE
             <include refid="sqlParam"/>
-            order by  last_update_date DESC
+            order by tci.last_update_date DESC
     </select>
 
     <select id="listCopyCase" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
@@ -50,15 +66,15 @@
             <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
                 AND
                 <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
-                    (summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                    (tci.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
                 </foreach>
             </if>
             <if test="searchDTO.searchArgs != null">
                 <if test='searchDTO.searchArgs.summary != null'>
-                    AND summary = #{searchDTO.searchArgs.summary}
+                    AND tci.summary = #{searchDTO.searchArgs.summary}
                 </if>
                 <if test="searchDTO.searchArgs.caseNum != null">
-                    AND case_num = #{searchDTO.searchArgs.caseNum}
+                    AND tci.case_num = #{searchDTO.searchArgs.caseNum}
                 </if>
             </if>
         </if>
@@ -93,18 +109,35 @@
 
     <select id="listCaseIds" resultType="long">
         SELECT
-        case_id
+        tci.case_id
         FROM
-        test_case
+        (
+        SELECT
+        tc.case_id,
+        tc.summary,
+        tc.folder_id,
+        tc.project_id,
+        CONCAT_WS( '-', tpi.project_code, tc.case_num ) as case_num,
+        tc.created_by,
+        tc.last_updated_by,
+        tc.creation_date,
+        tc.last_update_date,
+        tc.object_version_number
+        FROM
+        test_case tc
+        right join test_project_info tpi on tpi.project_id = tc.project_id
         WHERE
-        project_id = #{projectId}
+        tc.project_id = #{projectId}
         AND
-        folder_id IN
+        tc.folder_id IN
         <foreach collection="folderIds" item="folderId" open="(" separator="," close=")">
             #{folderId}
         </foreach>
-        <include refid="sqlParam"/>
-        order by  last_update_date DESC
+        ) as tci
+        <where>
+            <include refid="sqlParam"/>
+        </where>
+        order by tci.last_update_date DESC
     </select>
    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
        SELECT

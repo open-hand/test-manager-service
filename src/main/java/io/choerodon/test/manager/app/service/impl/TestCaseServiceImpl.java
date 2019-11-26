@@ -325,7 +325,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-        testIssueFolder.setProjectId(folderId);
+        testIssueFolder.setProjectId(projectId);
         Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
