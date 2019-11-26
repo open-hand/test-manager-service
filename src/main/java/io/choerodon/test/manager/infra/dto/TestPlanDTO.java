@@ -39,6 +39,9 @@ public class TestPlanDTO extends BaseDTO {
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
 
+    @ApiModelProperty(value = "状态")
+    private String statusCode;
+
     public Long getPlanId() {
         return planId;
     }
@@ -93,5 +96,13 @@ public class TestPlanDTO extends BaseDTO {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

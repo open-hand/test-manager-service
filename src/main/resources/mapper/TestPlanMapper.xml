@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestPlanMapper">
 
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO test_plan(plan_id,name,description,manager_id,start_date,end_date,
+        status_code,project_id ,object_version_number,created_by, creation_date, last_updated_by, last_update_date) VALUES
+        <foreach collection="testPlanDTOList" item="testplan" separator=",">
+            (#{testplan.planId}, #{testplan.name}, #{testplan.description},#{testplan.managerId},
+            #{testplan.startDate}, #{testplan.endDate},#{testplan.statusCode},#{testplan.projectId},
+            #{testplan.objectVersionNumber},#{testplan.createdBy}, #{testplan.creationDate},
+            #{testplan.lastUpdatedBy}, #{testplan.lastUpdateDate})
+        </foreach>
+    </insert>
 </mapper>

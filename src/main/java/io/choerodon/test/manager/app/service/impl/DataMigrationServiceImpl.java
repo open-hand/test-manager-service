@@ -1,16 +1,15 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +85,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private TestDataLogService testDataLogService;
+    @Autowired
+    private TestVersionFeignClient testVersionFeignClient;
+    @Autowired
+    private TestPlanServcie testPlanServcie;
 
     @Async
     @Override
@@ -107,6 +110,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migrateProject();
         //8.日志
         migreateDataLog();
+        //9.版本
+        migreateVersion();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -229,6 +234,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===========data_log=============> copy successed");
     }
 
+    private void migreateVersion(){
+        List<TestVersionFixVO> testVersionFixVOS = testVersionFeignClient.migrateVersion().getBody();
+        List<TestPlanDTO> testPlanDTOS = testVersionFixVOS.stream().map(this::planVOToDto).collect(Collectors.toList());
+        testPlanServcie.batchInsert(testPlanDTOS);
+        logger.info("===========version=============> copy successed");
+    }
+
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         BeanUtils.copyProperties(issueLinkFixVOList, testCaseLinkDTO);
@@ -255,5 +267,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         BeanUtils.copyProperties(dataLogFixVO, testDataLogDTO);
         testDataLogDTO.setCaseId(dataLogFixVO.getIssueId());
         return testDataLogDTO;
+    }
+    private TestPlanDTO planVOToDto(TestVersionFixVO testVersionFixVO){
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        BeanUtils.copyProperties(testVersionFixVO,testPlanDTO);
+        testPlanDTO.setPlanId(testVersionFixVO.getVersionId());
+        testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate():testVersionFixVO.getReleaseDate());
+        testPlanDTO.setStartDate(testVersionFixVO.getStartDate()==null?testVersionFixVO.getReleaseDate():testVersionFixVO.getStartDate());
+        return testPlanDTO;
     }
 }
