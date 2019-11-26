@@ -181,7 +181,7 @@ function ImportIssue(props) {
   const exportExcel = () => {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const oneFileName = '导入模板.xlsx';
+      const oneFileName = '导入测试用例模板.xlsx';
       FileSaver.saveAs(blob, oneFileName);
     });
   };
