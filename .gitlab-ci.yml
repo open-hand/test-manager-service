@@ -45,8 +45,8 @@ build-combine:
       -Dsonar.projectKey=${GROUP_NAME}:${PROJECT_NAME}
     - mvn package spring-boot:repackage
     - mv target/app.jar docker
-    - npm install --registry https://nexus.choerodon.com.cn/repository/choerodon-npm/ --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
-    - chmod -R 755 node_modules
+#    - npm install --registry https://nexus.choerodon.com.cn/repository/choerodon-npm/ --sass-binary-site=http://npm.taobao.org/mirrors/node-sass
+#    - chmod -R 755 node_modules
 #    - npm run dist
 #    - mv src/main/resources/lib/dist docker
 #    - npm run compile
