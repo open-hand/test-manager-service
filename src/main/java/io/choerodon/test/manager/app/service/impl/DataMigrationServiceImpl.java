@@ -26,6 +26,7 @@ import io.choerodon.test.manager.infra.feign.*;
 import io.choerodon.test.manager.infra.mapper.*;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class DataMigrationServiceImpl implements DataMigrationService {
 
     private static final Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
@@ -44,11 +45,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     TestIssueFolderRelMapper testIssueFolderRelMapper;
+
     @Autowired
     private TestCaseLinkService testCaseLinkService;
 
     @Autowired
     private IssueLinkFeignClient issueLinkFeignClient;
+
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -71,17 +74,20 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private ProjectInfoFeignClient projectInfoFeignClient;
+
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
+
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+
     @Autowired
     private TestDataLogFeignClient testDataLogFeignClient;
+
     @Autowired
     private TestDataLogService testDataLogService;
 
     @Async
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void fixData() {
         logger.info("=====Data Migrate Start=====");
@@ -104,84 +110,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
-    @Override
-    public void migrateIssue() {
-        List<Long> projectIds = testIssueFolderService.queryProjectIdList();
-        for (Long projectId : projectIds) {
-            List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
-            for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
-                testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
-            }
-            logger.info("=====Insert Test Case By  ProjectId:{}=====", projectId);
-        }
-        logger.info("=====Test Case Data Migrate Succeed=====");
-
-        //更新文件夹相关联的folderid
-        testCaseMapper.updateTestCaseFolder();
-        logger.info("======Update Test Case Related Folder Succeed=====");
-    }
-
-    @Override
-    public void migrateAttachment() {
-
-        List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment().getBody();
-        if (!CollectionUtils.isEmpty(attachmentDTOS)) {
-            for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
-                if (testCaseAttachmentDTO != null) {
-                    logger.info("=====Insert Test Case Attachment{}=====", testCaseAttachmentDTO.getCaseId());
-                    testAttachmentMapper.insert(testCaseAttachmentDTO);
-                }
-            }
-        }
-        logger.info("===========attachment=============> copy successed");
-    }
-
-    @Override
-    public void migrateLink() {
-        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectId -> {
-            List<IssueLinkFixVO> issueLinkFixVOList = issueLinkFeignClient.listIssueLinkByIssueIds(projectId).getBody();
-            if (!CollectionUtils.isEmpty(issueLinkFixVOList)) {
-                List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
-                testCaseLinkService.batchInsert(testCaseLinkDTOS);
-            }
-            logger.info("===========link=============>project:{}link copy successed", projectId);
-        });
-        logger.info("===========link=============> copy successed");
-    }
-
-    @Override
-    public void migrateLabel() {
-        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectId -> {
-            List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(projectId).getBody();
-            if (!CollectionUtils.isEmpty(issueLabelDTOS)) {
-                List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
-                }.getType());
-                testCaseLabelService.batchInsert(testCaseLabelDTOList);
-            }
-            logger.info("===========label=============>project:{} copy successed",projectId);
-        });
-        logger.info("===========label=============> copy successed");
-    }
-
-    @Override
-    public void migrateLabelCaseRel() {
-        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectId -> {
-            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
-            if (!CollectionUtils.isEmpty(labelIssueRelDTOS)) {
-                List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueVoTocaseDto).collect(Collectors.toList());
-                testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
-            }
-            logger.info("===========label_issue_rel=============>project:{} copy successed");
-        });
-
-        logger.info("===========label_issue_rel=============> copy successed");
-    }
-
-    @Override
-    public void migrateFolder() {
+    private void migrateFolder() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
         projectIdList.forEach(projectFolderId -> {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
@@ -205,8 +134,78 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("============issueFolder=================> copy successed");
     }
 
-    @Override
-    public void migrateProject() {
+    private void migrateIssue() {
+        List<Long> projectIds = testIssueFolderService.queryProjectIdList();
+        for (Long projectId : projectIds) {
+            List<TestCaseMigrateDTO> testCaseMigrateDTOS = testCaseFeignClient.migrateTestCase(projectId).getBody();
+            for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
+                testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
+            }
+            logger.info("=====Insert Test Case By  ProjectId:{}=====", projectId);
+        }
+        logger.info("=====Test Case Data Migrate Succeed=====");
+
+        //更新文件夹相关联的folderid
+        testCaseMapper.updateTestCaseFolder();
+        logger.info("======Update Test Case Related Folder Succeed=====");
+    }
+
+    private void migrateLabelCaseRel() {
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<LabelIssueRelFixVO> labelIssueRelDTOS = testIssueLabelRelFeignClient.queryIssueLabelRelList(projectId).getBody();
+            if (!CollectionUtils.isEmpty(labelIssueRelDTOS)) {
+                List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = labelIssueRelDTOS.stream().map(this::caseIssueVoTocaseDto).collect(Collectors.toList());
+                testCaseLabelRelService.batchInsert(testCaseLabelRelDTOS);
+            }
+            logger.info("===========label_issue_rel=============>project:{} copy successed");
+        });
+
+        logger.info("===========label_issue_rel=============> copy successed");
+    }
+
+    private void migrateLabel() {
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<LabelFixVO> issueLabelDTOS = testIssueLabelFeignClient.listAllLabel(projectId).getBody();
+            if (!CollectionUtils.isEmpty(issueLabelDTOS)) {
+                List<TestCaseLabelDTO> testCaseLabelDTOList = modelMapper.map(issueLabelDTOS, new TypeToken<List<TestCaseLabelDTO>>() {
+                }.getType());
+                testCaseLabelService.batchInsert(testCaseLabelDTOList);
+            }
+            logger.info("===========label=============>project:{} copy successed",projectId);
+        });
+        logger.info("===========label=============> copy successed");
+    }
+
+    private void migrateAttachment() {
+
+        List<TestCaseAttachmentDTO> attachmentDTOS = testCaseFeignClient.migrateAttachment().getBody();
+        if (!CollectionUtils.isEmpty(attachmentDTOS)) {
+            for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
+                if (testCaseAttachmentDTO != null) {
+                    logger.info("=====Insert Test Case Attachment{}=====", testCaseAttachmentDTO.getCaseId());
+                    testAttachmentMapper.insert(testCaseAttachmentDTO);
+                }
+            }
+        }
+        logger.info("===========attachment=============> copy successed");
+    }
+
+    private void migrateLink() {
+        List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        projectIdList.forEach(projectId -> {
+            List<IssueLinkFixVO> issueLinkFixVOList = issueLinkFeignClient.listIssueLinkByIssueIds(projectId).getBody();
+            if (!CollectionUtils.isEmpty(issueLinkFixVOList)) {
+                List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
+                testCaseLinkService.batchInsert(testCaseLinkDTOS);
+            }
+            logger.info("===========link=============>project:{}link copy successed", projectId);
+        });
+        logger.info("===========link=============> copy successed");
+    }
+
+    private void migrateProject() {
         List<ProjectInfoFixVO> projectInfoFixVOS = projectInfoFeignClient.queryAllProjectInfo().getBody();
         if (!CollectionUtils.isEmpty(projectInfoFixVOS)) {
             List<TestProjectInfoDTO> testProjectInfoDTOS = projectInfoFixVOS.stream().map(this::projectInfVoToDto).collect(Collectors.toList());
@@ -215,8 +214,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===========project=============> copy successed");
     }
 
-    @Override
-    public void migreateDataLog() {
+    private void migreateDataLog() {
 
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
         projectIdList.forEach(projectId -> {

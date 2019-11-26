@@ -20,7 +20,7 @@ import io.choerodon.test.manager.app.service.DataMigrationService;
  */
 @RestController
 @RequestMapping(value = "/v1/projects/fix")
-public class TestDataFix {
+public class TestDataFixController {
 
     @Autowired
     private DataMigrationService dataMigrationService;
