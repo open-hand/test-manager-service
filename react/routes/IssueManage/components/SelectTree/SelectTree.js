@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Select, Icon, Tree, TextField,
 } from 'choerodon-ui/pro';
@@ -14,7 +14,7 @@ import treeDataSet from './treeDataSet';
  * 下拉选择树
  * @param {*} name 字段名
  * @param {*} renderSelect select显示渲染器
- * @param {*} pDataSet 控制select的DataSet
+ * @param {*} parentDataSet 控制select的DataSet
  */
 const propTypes = {
   name: PropTypes.string,
@@ -25,10 +25,11 @@ const propTypes = {
 };
 function SelectTree(props) {
   const {
-    name, renderSelect, defaultValue, pDataSet, data, onChange, isForbidRoot = true, ...restProps
+    name, renderSelect, defaultValue, parentDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
+  const selectRef = useRef();
   const [searchValue, setSearchValue] = useState('');// 搜索框内值
-  const dataSet = useMemo(() => treeDataSet(pDataSet, name, defaultValue, onChange, isForbidRoot), [isForbidRoot, name, onChange, pDataSet]);
+  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), [defaultValue, isForbidRoot, name, onChange, parentDataSet]);
   /**
   * 渲染树节点
   * @param {*} record  
@@ -38,7 +39,6 @@ function SelectTree(props) {
     const index = fileName.toLowerCase().indexOf(String(searchValue).toLowerCase());
     const beforeFileName = fileName.substr(0, index);
     const afterFileName = fileName.substr(index + String(searchValue).length);
-
     return (
       <div className="test-select-tree-node">
         <Icon
@@ -92,31 +92,6 @@ function SelectTree(props) {
     }
   }
 
-  /**
- * 根据文件名ID找寻树节点并展开
- * @param {*} value 
- * 
- */
-  const handleFilterNodeByFolerId = (value) => {
-    dataSet.forEach((record) => {
-      record.set('expanded', false);
-    });
-    let result;
-    if (value) {
-      dataSet.forEach((record) => {
-        if (record.get('folderId') === value) {
-          try {
-            searchParent(record);
-            result = record;
-          } catch (error) {
-            Choerodon.prompt('数据错误');
-          }
-        }
-      });
-    }
-    return result;
-  };
-
 
   /**
    * 输入回调
@@ -157,7 +132,7 @@ function SelectTree(props) {
         dataSet={dataSet}
         renderer={renderNode}
         className="test-select-tree-body"
-
+  
       />
     </div>
   );
@@ -173,12 +148,16 @@ function SelectTree(props) {
   function handleSelectClear(e) {
     dataSet.unSelectAll();
   }
-
+  function renderValidation(validationResult, validationProps) {
+    return '请选择文件夹';
+  }
   return (
     <Select
       name={name}
+      ref={selectRef}
       popupContent={renderTree}
       trigger={['click']}
+      validationRenderer={renderValidation}
       popupCls="test-select-tree-wrap"
       onClear={handleSelectClear}
       renderer={renderSelect || defaultRenderSelect}

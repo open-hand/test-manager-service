@@ -1,4 +1,5 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
+import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import { getProjectId } from '../../../../common/utils';
 
 /**
@@ -16,15 +17,15 @@ function forbidRootsSelect({ dataSet }) {
  * 有默认值时初始化数据
  */
 const initData = ({ dataSet }, {
-  folderId, pDataSet, name,
+  folderId, parentDataSet, name,
 }) => {
   dataSet.forEach((record) => {
     if (record.get('folderId') === folderId) {
       const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
       // 当前节点可选 才进行默认值回显
-      if (pDataSet && record.selectable) {
+      if (parentDataSet && record.selectable) {
         dataSet.select(record);
-        pDataSet.current.set(name, selectData);
+        parentDataSet.current.set(name, selectData);
       }
     }
   });
@@ -40,12 +41,12 @@ function initLoad(isForbidRoot, defaultValue, props, dataSet) {
 }
 /**
  * 
- * @param {*} pDataSet  控制Select下拉框 DataSet
+ * @param {*} parentDataSet  控制Select下拉框 DataSet
  * @param {*} name  字段名
  * @param {*} setData  设置当前选中项数据
  * @param {*} isForbidRoot  是否禁止根节点可选 默认禁止
  */
-const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot = true) => new DataSet({
+const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbidRoot = true, selectRef) => new DataSet({
   primaryKey: 'folderId',
   paging: false,
   autoQuery: true,
@@ -81,21 +82,25 @@ const treeDataSet = (pDataSet, name, defaultValue, setData = false, isForbidRoot
     select: ({ record, dataSet }) => {
       // console.log('record', record);
       dataSet.select(record);
+      // 待选数据
       const selectData = { fileName: record.get('name'), folderId: record.get('folderId'), versionId: record.get('versionId') };
-      if (pDataSet) {
-        pDataSet.current.set(name, selectData);
+      selectRef.current.collapse();
+      if (parentDataSet) {
+        selectRef.current.choose(new Record(selectData));
+        // parentDataSet.current.set(name, selectData);
       }
       if (setData) {
         setData(selectData);
       }
     },
     // 数据加载完成后初始化事件
-    load: initLoad.bind(this, isForbidRoot, defaultValue, { pDataSet, name }),
+    load: initLoad.bind(this, isForbidRoot, defaultValue, { parentDataSet, name }),
     // 取消选中事件
     unSelect: ({ record, dataSet }) => {
       dataSet.unSelect(record);
-      if (pDataSet) {
-        pDataSet.current.set(name, undefined);
+      if (parentDataSet) {
+        selectRef.current.unChoose();
+        // parentDataSet.current.set(name, undefined);
       }
       if (setData) {
         setData({ folderId: undefined });

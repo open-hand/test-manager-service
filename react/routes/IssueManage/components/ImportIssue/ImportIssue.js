@@ -55,7 +55,6 @@ function ImportIssue(props) {
   const [visible, setVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [importRecord, setImportRecord] = useState({});
-  const [file, setFile] = useState(null);
   const [folder, setFolder] = useState(null);
   const [isImport, setIsImport] = useState(false);
   const uploadInput = useRef(null);
@@ -71,7 +70,7 @@ function ImportIssue(props) {
   };
 
 
-  const upload = () => {
+  const upload = (file) => {
     if (!folder) {
       Choerodon.prompt('请选择文件夹');
       return;
@@ -82,7 +81,6 @@ function ImportIssue(props) {
     setIsImport(true);
     importIssue(formData, dataSet.current.get('folderId')).then(() => {
       uploadInput.current.value = '';
-      setFile(null);
       setUploading(false);
       setVisible(false);
       setImportRecord({
@@ -148,7 +146,7 @@ function ImportIssue(props) {
 
   const beforeUpload = (e) => {
     if (e.target.files[0]) {
-      setFile(e.target.files[0]);
+      upload(e.target.files[0]);
     }
   };
 
@@ -171,7 +169,6 @@ function ImportIssue(props) {
   const handleImportClose = () => {
     setVisible(false);
     setImportRecord(null);
-    setFile(null);
   };
 
   const handleCancelImport = () => {
@@ -184,13 +181,17 @@ function ImportIssue(props) {
   const exportExcel = () => {
     downloadTemplate().then((excel) => {
       const blob = new Blob([excel], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const oneFileName = '导入模板.xlsx';
+      const oneFileName = '导入测试用例模板.xlsx';
       FileSaver.saveAs(blob, oneFileName);
     });
   };
 
   const importExcel = () => {
-    setVisible(true);
+    dataSet.validate().then((res) => {
+      if (res) {
+        uploadInput.current.click();
+      }
+    });
   };
 
   const renderProgress = () => {
@@ -229,12 +230,12 @@ function ImportIssue(props) {
   };
   // import Divider from './Component/Divider';
   const ImportIssueForm = (formProps) => {
-    const { title, children, buttom } = formProps;
+    const { title, children, bottom } = formProps;
     return (
       <div className="c7ntest-ImportIssue-form-one">
         <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
         <span className="c7ntest-ImportIssue-form-one-content">{children}</span>
-        {buttom}
+        {bottom}
       </div>
     );
   };
@@ -245,54 +246,35 @@ function ImportIssue(props) {
 
 
   return (
-    <React.Fragment>
-      <div className="c7ntest-ImportIssue-form">
-        {/* {renderOneForm('下载模板', ,
+    <div className="c7ntest-ImportIssue-form">
+      {/* {renderOneForm('下载模板', ,
       )} */}
-        <ImportIssueForm
-          title="下载模板"
-          buttom={(
-            <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
-              <Icon type="get_app icon" />
-              <FormattedMessage id="issue_download_tpl" />
-            </Button>
-          )}
-        >
-          您必须使用模版文件，录入用例信息
-        </ImportIssueForm>
-        <Divider />
-        <ImportIssueForm
-          title="导入测试用例"
-          buttom={isImport || (
-            <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
-              <Icon type="file_upload" />
-              <FormattedMessage id="issue_import" />
-            </Button>
-          )}
-        >
-          {renderProgress()}
-        </ImportIssueForm>
-      </div>
-      <Modal
-        title="导入用例"
-        visible={visible}
-        okText={<FormattedMessage id="upload" />}
-        confirmLoading={uploading}
-        cancelText={<FormattedMessage id="close" />}
-        onOk={upload}
-        onCancel={handleClose}
+      <ImportIssueForm
+        title="下载模板"
+        bottom={(
+          <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
+            <Icon type="get_app icon" />
+            <FormattedMessage id="issue_download_tpl" />
+          </Button>
+        )}
       >
-        <Form dataSet={dataSet} columns={2} style={{ width: 200, height: 60 }}>
+        您必须使用模版文件，录入用例信息
+      </ImportIssueForm>
+      <Divider />
+      <ImportIssueForm
+        title="导入测试用例"
+        bottom={isImport || (
+          <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
+            <Icon type="file_upload" />
+            <FormattedMessage id="issue_import" />
+          </Button>
+        )}
+      >
+        <Form dataSet={dataSet}>
           <SelectTree
             name="folder"
-            pDataSet={dataSet}
+            parentDataSet={dataSet}
             onChange={setFolder}
-          />
-          <Input
-            style={{ width: 340, marginLeft: '18px' }}
-            value={file && file.name}
-            prefix={<Icon type="attach_file" style={{ color: 'black', fontSize: '14px' }} />}
-            suffix={<Tooltip title="选择文件"><Icon type="create_new_folder" style={{ color: 'black', cursor: 'pointer' }} onClick={() => { uploadInput.current.click(); }} /></Tooltip>}
           />
         </Form>
         <input
@@ -302,8 +284,9 @@ function ImportIssue(props) {
           style={{ display: 'none' }}
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         />
-      </Modal>
-    </React.Fragment>
+        {renderProgress()}
+      </ImportIssueForm>
+    </div>
   );
 }
 

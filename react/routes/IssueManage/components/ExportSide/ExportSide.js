@@ -15,7 +15,7 @@ import { exportRetry } from '@/api/IssueManageApi';
 import './ExportSide.less';
 import SelectTree from '../SelectTree';
 import ExportSideDataSet from './store';
-import { humanizeDuration } from '@/common/utils';
+import { humanizeDuration, renameDownload } from '@/common/utils';
 
 const { Column } = Table;
 const { AppState } = stores;
@@ -76,12 +76,7 @@ function ExportSide(props) {
       return;
     }
     if (fileUrl) {
-      const ele = document.createElement('a');
-      ele.href = fileUrl;
-      ele.target = '_blank';
-      document.body.appendChild(ele);
-      ele.click();
-      document.body.removeChild(ele);
+      renameDownload(fileUrl, `${AppState.currentMenuType.name}-${record.get('name')}.xlsx`);
     }
   };
   /**
@@ -157,7 +152,7 @@ function ExportSide(props) {
       <div className="test-export-issue">
         <div className="test-export-issue-header">
           <Form dataSet={dataSet} className="test-export-issue-form">
-            <SelectTree defaultValue={folderId} name="folder" pDataSet={dataSet} onChange={setFolder} placeholder="文件夹" isForbidRoot={false} />
+            <SelectTree defaultValue={folderId} name="folder" parentDataSet={dataSet} onChange={setFolder} placeholder="文件夹" isForbidRoot={false} />
           </Form>
           <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>
