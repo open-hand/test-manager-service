@@ -82,8 +82,7 @@ ORDER BY
 
     <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
         select * from test_case_step
-        where project_id = #{projectId}
-        AND
+        where
         issue_id IN
         <foreach item="caseId" index="index" collection="caseIds"
                  open="(" separator="," close=")">

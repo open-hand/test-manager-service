@@ -34,6 +34,7 @@ public class TestCycleCaseStepDTO extends BaseDTO {
 
     private String testData;
 
+    @Column(name = "expect_result")
     private String expectedResult;
 
     @Transient

@@ -23,5 +23,5 @@ public interface TestCaseStepMapper extends Mapper<TestCaseStepDTO> {
 
     void updateAuditFields(@Param("issueIds") Long[] issueId, @Param("userId") Long userId, @Param("date") Date date);
 
-    List<TestCaseStepDTO> listByCaseIds(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
+    List<TestCaseStepDTO> listByCaseIds(@Param("caseIds") List<Long> caseIds);
 }

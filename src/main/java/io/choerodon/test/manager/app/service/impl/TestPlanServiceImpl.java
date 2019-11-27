@@ -52,9 +52,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 创建计划
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setProjectId(projectId);
-        testPlan.setStatusCode(TestPlanStatus.NOTSTARTED.getStatus());
+        testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
-
         // 获取用例和文件夹信息
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
@@ -79,8 +78,12 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
         testCycleCaseService.batchInsertByTestCase(testCycleMap,testCaseDTOS);
-        //  是否同步
         return testPlanDTO;
+    }
+
+    @Override
+    public void batchInsert(List<TestPlanDTO> testPlanDTOS) {
+
     }
 
 

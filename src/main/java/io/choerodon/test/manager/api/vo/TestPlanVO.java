@@ -37,7 +37,7 @@ public class TestPlanVO {
     private Boolean isOptional;
 
     @ApiModelProperty(value = "是否自动同步")
-    private Boolean autoSynch;
+    private Boolean isAutoSync;
 
     @ApiModelProperty(value = "文件夹")
     private List<TestIssueFolderDTO> folders;
@@ -109,12 +109,12 @@ public class TestPlanVO {
         isOptional = optional;
     }
 
-    public Boolean getAutoSynch() {
-        return autoSynch;
+    public Boolean getAutoSync() {
+        return isAutoSync;
     }
 
-    public void setAutoSynch(Boolean autoSynch) {
-        this.autoSynch = autoSynch;
+    public void setAutoSync(Boolean autoSync) {
+        isAutoSync = autoSync;
     }
 
     public List<TestIssueFolderDTO> getFolders() {

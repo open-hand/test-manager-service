@@ -32,6 +32,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -83,13 +84,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private TestCycleCaseStepService testCycleCaseStepService;
 
     @Autowired
-    private TestCaseLabelRelMapper testCaseLabelRelMapper;
-
-    @Autowired
-    private TestLabelRelService testLabelRelService;
-
-    @Autowired
     private TestAttachmentMapper testAttachmentMapper;
+
+    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -535,14 +532,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
         List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
         // 获取case关联的步骤
-        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(testCaseDTOS.get(0).getProjectId(), caseIds);
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
         Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
-        // 获取case关联的标签
-        List<TestCaseLabelRelDTO> labelRelDTOS = testCaseLabelRelMapper.listByCaseIds(caseIds);
-        Map<Long, List<TestCaseLabelRelDTO>> labelRelMap = labelRelDTOS.stream().collect(Collectors.groupingBy(TestCaseLabelRelDTO::getCaseId));
-//        // 获取case关联的附件
-//        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
-//        Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
+        // 获取case关联的附件
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
         // 插入
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         testCaseDTOS.forEach(v -> {
@@ -554,12 +548,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testCycleCaseDTO.setProjectId(v.getProjectId());
             testCycleCaseDTO.setVersionNum(v.getVersionNum());
             testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+            testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0,8));
             TestCycleCaseDTO cycleCaseDTO = baseInsert(testCycleCaseDTO);
             // 插入循环步骤
-            testCycleCaseStepService.batchInsert(cycleCaseDTO.getExecuteId(),caseStepMap.get(v.getCaseId()));
-            //插入标签
-            testLabelRelService.batchInsert(cycleCaseDTO.getExecuteId(),labelRelMap.get(v.getCaseId()));
-            // 插入附件 --待定
+            if(!CollectionUtils.isEmpty(caseStepMap.get(v.getCaseId()))){
+                testCycleCaseStepService.batchInsert(cycleCaseDTO.getExecuteId(),caseStepMap.get(v.getCaseId()));
+            }
+            // 插入附件
+            if(!CollectionUtils.isEmpty(attachmentMap.get(v.getCaseId()))){
+                testCycleCaseAttachmentRelService.batchInsert(cycleCaseDTO.getExecuteId(),attachmentMap.get(v.getCaseId()));
+            }
         });
     }
 

@@ -176,8 +176,8 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     }
 
     @Override
-    public List<TestCaseStepDTO> listByCaseIds(Long projectId, List<Long> caseIds) {
-        return testCaseStepMapper.listByCaseIds(projectId,caseIds);
+    public List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds) {
+        return testCaseStepMapper.listByCaseIds(caseIds);
     }
 
     private String getLastedStepRank(Long issueId) {

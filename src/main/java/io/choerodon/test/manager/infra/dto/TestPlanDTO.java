@@ -42,6 +42,9 @@ public class TestPlanDTO extends BaseDTO {
     @ApiModelProperty(value = "状态码")
     private String statusCode;
 
+    @ApiModelProperty(value = "自动同步")
+    private Boolean isAutoSync;
+
     public Long getPlanId() {
         return planId;
     }
@@ -104,5 +107,13 @@ public class TestPlanDTO extends BaseDTO {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public Boolean getAutoSync() {
+        return isAutoSync;
+    }
+
+    public void setAutoSync(Boolean autoSync) {
+        isAutoSync = autoSync;
     }
 }

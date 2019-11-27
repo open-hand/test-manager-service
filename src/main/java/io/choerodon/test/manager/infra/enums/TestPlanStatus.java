@@ -5,9 +5,9 @@ package io.choerodon.test.manager.infra.enums;
  * @since 2019/11/26
  */
 public enum TestPlanStatus {
-    PROCESSING("processing"),
-    COMPLETED("completed"),
-    NOTSTARTED("not_started");
+    DOING("doing"),
+    DONE("done"),
+    TODO("todo");
     private String status;
      TestPlanStatus(String status) { this.status =status;}
 

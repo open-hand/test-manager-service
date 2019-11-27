@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
@@ -28,4 +29,6 @@ public interface TestCycleCaseAttachmentRelService {
      * @return TestCycleCaseAttachmentRelVO
      */
     List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType);
+
+    void batchInsert(Long executeId, List<TestCaseAttachmentDTO> testCaseAttachmentDTOS);
 }
