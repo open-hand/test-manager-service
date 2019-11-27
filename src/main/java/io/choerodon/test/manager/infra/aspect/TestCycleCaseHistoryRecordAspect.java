@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.infra.aop;
+package io.choerodon.test.manager.infra.aspect;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
  */
 @Aspect
 @Component
-public class TestCycleCaseHistoryRecordAOP {
+public class TestCycleCaseHistoryRecordAspect {
 
     @Autowired
     private TestCycleCaseHistoryService testCycleCaseHistoryService;

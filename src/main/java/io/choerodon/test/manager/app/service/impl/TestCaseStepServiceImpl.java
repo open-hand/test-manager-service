@@ -175,6 +175,11 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         });
     }
 
+    @Override
+    public List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds) {
+        return testCaseStepMapper.listByCaseIds(caseIds);
+    }
+
     private String getLastedStepRank(Long issueId) {
         Assert.notNull(issueId, "error.case.step.insert.issueId.not.null");
         return testCaseStepMapper.getLastedRank(issueId);

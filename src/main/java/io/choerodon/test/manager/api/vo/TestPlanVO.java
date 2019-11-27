@@ -1,24 +1,18 @@
-package io.choerodon.test.manager.infra.dto;
+package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import java.util.List;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.mybatis.entity.BaseDTO;
-
 /**
- * @author: 25499
- * @date: 2019/11/26 14:11
- * @description:
+ * @author zhaotianxin
+ * @since 2019/11/26
  */
-@Table(name = "test_plan")
-public class TestPlanDTO extends BaseDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TestPlanVO {
+
+    @ApiModelProperty(value = "计划Id")
     private Long planId;
 
     @ApiModelProperty(value = "计划名称")
@@ -39,11 +33,17 @@ public class TestPlanDTO extends BaseDTO {
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
 
-    @ApiModelProperty(value = "状态码")
-    private String statusCode;
+    @ApiModelProperty(value = "是否自选用例")
+    private Boolean isOptional;
 
-    @ApiModelProperty(value = "自动同步")
+    @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
+
+    @ApiModelProperty(value = "文件夹")
+    private List<TestIssueFolderDTO> folders;
+
+    @ApiModelProperty(value = "测试用例")
+    private List<TestCaseDTO> testCases;
 
     public Long getPlanId() {
         return planId;
@@ -101,12 +101,12 @@ public class TestPlanDTO extends BaseDTO {
         this.projectId = projectId;
     }
 
-    public String getStatusCode() {
-        return statusCode;
+    public Boolean getOptional() {
+        return isOptional;
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setOptional(Boolean optional) {
+        isOptional = optional;
     }
 
     public Boolean getAutoSync() {
@@ -115,5 +115,21 @@ public class TestPlanDTO extends BaseDTO {
 
     public void setAutoSync(Boolean autoSync) {
         isAutoSync = autoSync;
+    }
+
+    public List<TestIssueFolderDTO> getFolders() {
+        return folders;
+    }
+
+    public void setFolders(List<TestIssueFolderDTO> folders) {
+        this.folders = folders;
+    }
+
+    public List<TestCaseDTO> getTestCases() {
+        return testCases;
+    }
+
+    public void setTestCases(List<TestCaseDTO> testCases) {
+        this.testCases = testCases;
     }
 }

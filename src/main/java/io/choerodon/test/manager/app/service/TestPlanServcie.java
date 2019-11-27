@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 
 /**
@@ -10,5 +11,16 @@ import io.choerodon.test.manager.infra.dto.TestPlanDTO;
  * @description:
  */
 public interface TestPlanServcie {
-    void batchInsert(List<TestPlanDTO> testPlanDTOList);
+
+    /**
+     * 创建计划
+     * @param projectId
+     * @param testPlanVO
+     * @return
+     */
+    TestPlanDTO create(Long projectId,TestPlanVO testPlanVO);
+
+    void batchInsert(List<TestPlanDTO> testPlanDTOS);
+
+    TestPlanVO update(Long projectId, TestPlanVO testPlanVO);
 }

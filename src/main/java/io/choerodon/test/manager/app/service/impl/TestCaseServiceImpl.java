@@ -3,9 +3,25 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.vo.*;
 import io.choerodon.agile.infra.common.enums.IssueTypeCode;
 import io.choerodon.core.exception.CommonException;
@@ -28,21 +44,6 @@ import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.TypeUtil;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -93,17 +94,10 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestCaseLinkService testCaseLinkService;
 
     @Autowired
-    private TestCaseLabelRelService testCaseLabelRelService;
-
-    @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
-
-    @Autowired
-    private TestCaseLabelService testCaseLabelService;
-
 
     @Autowired
     private TestCaseAssembler testCaseAssembler;
@@ -270,11 +264,7 @@ public class TestCaseServiceImpl implements TestCaseService {
                 testCaseStepService.changeStep(v, projectId, false);
             });
         }
-        // 关联测试用例与标签
-        if (!CollectionUtils.isEmpty(testCaseVO.getLabels())) {
-            changeLabel(projectId, testCaseDTO.getCaseId(), testCaseVO.getLabels());
 
-        }
 
         // 返回数据
         testProjectInfo.setCaseMaxNum(caseNum);
@@ -308,8 +298,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         testDataLogDTO.setProjectId(projectId);
         testDataLogDTO.setCaseId(caseId);
         testDataLogMapper.delete(testDataLogDTO);
-        // 删除测试用例关联的标签
-        testCaseLabelRelService.deleteByCaseId(caseId);
         // 删除附件信息
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setProjectId(projectId);
@@ -360,14 +348,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         map.setVersionNum(testCaseDTO.getVersionNum() + 1);
         baseUpdate(map);
 
-        // 更新标签
-        List<TestCaseLabelDTO> labels = testCaseRepVO.getLabels();
-        if (!CollectionUtils.isEmpty(labels)) {
-            changeLabel(projectId, testCaseDTO.getCaseId(), labels);
-        }
+
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1);
-        testCaseRepVO1.setLabels(labels);
         return testCaseRepVO1;
     }
 
@@ -420,8 +403,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseStepService.batchClone(testCaseStepVO, testCase.getCaseId(), projectId);
             // 复制用例链接
             testCaseLinkService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
-            // 复制标签
-            testCaseLabelRelService.copyByCaseId(projectId, testCase.getCaseId(), oldCaseId);
             // 复制附件
             testCaseAttachmentService.cloneAttachmentByCaseId(projectId, testCase.getCaseId(), oldCaseId);
         }
@@ -594,75 +575,14 @@ public class TestCaseServiceImpl implements TestCaseService {
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
         List<Long> caseIdList = testCaseMapper.listCaseIds(projectId, folderIds, null);
-
         return caseIdList;
     }
 
-
-    private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
-        // 传递过来的labels为空,则删去用例所有的标签关联关系
-        if (CollectionUtils.isEmpty(labels)) {
-            TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
-            testCaseLabelRelDTO.setProjectId(projectId);
-            testCaseLabelRelDTO.setCaseId(caseId);
-            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.query(testCaseLabelRelDTO);
-            testCaseLabelRelService.baseDelete(testCaseLabelRelDTO);
-            // 判断标签是否还有关联,没有就删除标签
-            testCaseLabelRelDTOS.forEach(v -> {
-                TestCaseLabelRelDTO testCaseLabelRel = new TestCaseLabelRelDTO();
-                testCaseLabelRel.setLabelId(v.getLabelId());
-                if (CollectionUtils.isEmpty(testCaseLabelRelService.query(testCaseLabelRel))) {
-                    testCaseLabelService.baseDelete(v.getLabelId());
-                }
-            });
-            return;
-        }
-        // 查询已有的标签
-        List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
-        List<Long> olderIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
-        List<Long> newIds = new ArrayList<>();
-        labels.forEach(v -> {
-            if (ObjectUtils.isEmpty(v.getLabelId())) {
-                TestCaseLabelDTO orUpdate = testCaseLabelService.createOrUpdate(projectId, v);
-                newIds.add(orUpdate.getLabelId());
-            } else {
-                newIds.add(v.getLabelId());
-            }
-        });
-        // 比较 差集
-        List<Long> newLabels = new ArrayList<>();
-        newLabels.addAll(newIds);
-        List<Long> olderLabels = new ArrayList<>();
-        olderLabels.addAll(olderIds);
-
-        newLabels.removeAll(olderIds);
-        olderLabels.removeAll(newIds);
-        // 删除不存在的，添加新增的
-        createOrDeleteLabel(projectId, caseId, olderLabels, false);
-        createOrDeleteLabel(projectId, caseId, newLabels, true);
+    @Override
+    public List<TestCaseDTO> listCaseByProjectId(Long projectId) {
+        TestCaseDTO testCaseDTO = new TestCaseDTO();
+        testCaseDTO.setProjectId(projectId);
+        return testCaseMapper.select(testCaseDTO);
     }
 
-    private void createOrDeleteLabel(Long projectId, Long caseId, List<Long> labels, Boolean isCreate) {
-        // 遍历labelId 集合
-        if (!CollectionUtils.isEmpty(labels)) {
-            labels.forEach(v -> {
-                TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
-                testCaseLabelRelDTO.setProjectId(projectId);
-                testCaseLabelRelDTO.setCaseId(caseId);
-                testCaseLabelRelDTO.setLabelId(v);
-                // 如果是true，就去新建关联
-                // 如果是false,就去删除，删除完成后，看看有没有其他用例关联该标签，没有就删除标签
-                if (isCreate) {
-                    testCaseLabelRelService.baseCreate(testCaseLabelRelDTO);
-                } else {
-                    testCaseLabelRelService.baseDelete(testCaseLabelRelDTO);
-                    TestCaseLabelRelDTO testCaseLabelRel = new TestCaseLabelRelDTO();
-                    testCaseLabelRel.setLabelId(v);
-                    if (CollectionUtils.isEmpty(testCaseLabelRelService.query(testCaseLabelRel))) {
-                        testCaseLabelService.baseDelete(v);
-                    }
-                }
-            });
-        }
-    }
 }

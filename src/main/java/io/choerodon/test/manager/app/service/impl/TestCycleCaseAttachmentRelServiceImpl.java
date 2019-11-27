@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -78,6 +81,21 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         return testCycleCaseAttachmentRelVOS;
     }
 
+    @Override
+    public void batchInsert(Long executeId, List<TestCaseAttachmentDTO> testCaseAttachmentDTOS) {
+        if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
+            return;
+        }
+        testCaseAttachmentDTOS.forEach(v -> {
+            TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+            testCycleCaseAttachmentRelDTO.setAttachmentName(v.getFileName());
+            testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
+            testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
+            testCycleCaseAttachmentRelDTO.setUrl(v.getUrl());
+            baseInsert(testCycleCaseAttachmentRelDTO);
+        });
+    }
+
     private void baseDelete(String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setId(attachId);
@@ -112,5 +130,12 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert, testCycleCaseAttachmentRelDTO, 1, "error.attachment.insert");
 
         return testCycleCaseAttachmentRelDTO;
+    }
+
+    private void baseInsert(TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO){
+       if(ObjectUtils.isEmpty(testCycleCaseAttachmentRelDTO)){
+           throw  new CommonException("error.cycle.attachment.rel.is.null");
+       }
+       DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insertSelective,testCycleCaseAttachmentRelDTO,1,"error.insert.cycle.attachment.rel");
     }
 }

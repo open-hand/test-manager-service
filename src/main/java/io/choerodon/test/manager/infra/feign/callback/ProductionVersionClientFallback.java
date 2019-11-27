@@ -1,15 +1,16 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import java.util.List;
+import java.util.Map;
+
 import com.github.pagehelper.PageInfo;
-import io.choerodon.core.exception.CommonException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -28,12 +29,6 @@ public class ProductionVersionClientFallback implements ProductionVersionClient 
         throw new CommonException(QUERY_ERROR);
 
     }
-
-    @Override
-    public ResponseEntity<List<ProductVersionDTO>> queryForTestManager(Long projectId) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
 //    @Override
 //    public ResponseEntity<List<Long>> listAllVersionId(Long projectId) {
 //        throw new CommonException(QUERY_ERROR);

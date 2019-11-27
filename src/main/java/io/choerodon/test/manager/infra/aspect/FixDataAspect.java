@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.infra.aop;
+package io.choerodon.test.manager.infra.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
-public class FixDataAop {
+public class FixDataAspect {
     private Long startTime;
     @Pointcut("execution(* io.choerodon.test.manager.app.service.impl.DataMigrationServiceImpl.fixData(..))")
     public void aspect(){

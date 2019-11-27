@@ -191,4 +191,14 @@
             #{item}
         </foreach>
     </update>
+
+    <update id="fixCycleCaseStep">
+        UPDATE test_cycle_case_step tccs SET tccs.test_step = (
+            SELECT
+                tcs.test_step FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id),
+         tccs.test_data = (
+            SELECT tcs.test_data FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id),
+         tccs.expect_result = (
+            SELECT tcs.expected_result FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id)
+    </update>
 </mapper>

@@ -79,4 +79,14 @@ ORDER BY
             #{item}
         </foreach>
     </update>
+
+    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
+        select * from test_case_step
+        where
+        issue_id IN
+        <foreach item="caseId" index="index" collection="caseIds"
+                 open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </select>
 </mapper>

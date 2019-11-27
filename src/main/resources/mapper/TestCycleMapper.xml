@@ -48,7 +48,6 @@
         <id column="created_by" property="createdBy"/>
         <id column="rank" property="rank"/>
     </resultMap>
-
     <select id="queryOneCycleBar" resultMap="queryAboutBarResultMap">
         SELECT
             cycle1.cycle_id,
@@ -323,4 +322,49 @@
             #{item}
         </foreach>
     </update>
+
+    <delete id="deleteByType">
+        DELETE
+        FROM
+            test_cycle
+        WHERE
+            type = 'cycle'
+    </delete>
+
+    <select id="selectRepeat" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+        SELECT
+            version_id,
+            folder_id
+        FROM
+            test_cycle
+        WHERE folder_id is not null
+        GROUP BY
+            version_id,
+            folder_id
+        HAVING
+            count(*) > 1
+    </select>
+    <delete id="deleteRepeat"  >
+        DELETE
+        FROM
+            test_cycle
+        WHERE
+            folder_id = #{folderId}
+        AND version_id = #{versionId}
+        AND cycle_id NOT IN (
+            SELECT
+                c.cycle_id
+            FROM
+                (
+                    SELECT
+                        max(cycle_id) AS cycle_id
+                    FROM
+                        test_cycle
+                    WHERE
+                        folder_id = #{folderId}
+                    AND version_id = #{versionId}
+                ) c
+        )
+
+    </delete>
 </mapper>

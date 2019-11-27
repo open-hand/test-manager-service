@@ -645,6 +645,26 @@ ORDER BY
             #{item}
         </foreach>
     </update>
+
+    <update id="fixCycleCase">
+        UPDATE test_cycle_case tcc
+        SET tcc.summary = (
+            SELECT
+                tc.summary
+            FROM
+                test_case tc
+            WHERE
+                tcc.issue_id = tc.case_id
+        ),
+         tcc.version_num = (
+            SELECT
+                tc.version_num
+            FROM
+                test_case tc
+            WHERE
+                tcc.issue_id = tc.case_id
+        )
+    </update>
 </mapper>
 
 

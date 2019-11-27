@@ -244,6 +244,11 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }.getType());
     }
 
+    @Override
+    public List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds) {
+        return testIssueFolderMapper.listFolderByFolderIds(folderIds);
+    }
+
     // 递归查询最底层文件夹
     private List<TestIssueFolderDTO> recurisionQuery(Long parentId, List<TestIssueFolderDTO> folders) {
         List<TestIssueFolderDTO> tmpList = testIssueFolderMapper.selectChildrenByParentId(parentId);

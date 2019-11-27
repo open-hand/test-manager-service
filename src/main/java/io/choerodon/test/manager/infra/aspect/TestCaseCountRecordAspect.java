@@ -1,4 +1,4 @@
-package io.choerodon.test.manager.infra.aop;
+package io.choerodon.test.manager.infra.aspect;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ import org.springframework.data.domain.Sort;
  */
 @Aspect
 @Component
-public class TestCaseCountRecordAOP {
+public class TestCaseCountRecordAspect {
 
     @Autowired
     private TestStatusService testStatusService;

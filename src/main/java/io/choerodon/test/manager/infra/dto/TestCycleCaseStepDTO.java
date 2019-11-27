@@ -29,11 +29,12 @@ public class TestCycleCaseStepDTO extends BaseDTO {
 
     private Date lastUpdateDate;
 
-    @Transient
+
     private String testStep;
-    @Transient
+
     private String testData;
-    @Transient
+
+    @Column(name = "expect_result")
     private String expectedResult;
 
     @Transient

@@ -5,28 +5,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.api.vo.*;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
-
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
@@ -35,6 +20,20 @@ import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -80,6 +79,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private TestCycleCaseStepService testCycleCaseStepService;
+
+    @Autowired
+    private TestAttachmentMapper testAttachmentMapper;
+
+    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -521,6 +528,39 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageable.getPageNumber()- 1) * pageable.getPageSize(), pageable.getPageSize());
     }
 
+    @Override
+    public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
+        List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+        // 获取case关联的步骤
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+        // 获取case关联的附件
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
+        // 插入
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
+        testCaseDTOS.forEach(v -> {
+            TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
+            TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+            testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
+            testCycleCaseDTO.setIssueId(v.getCaseId());
+            testCycleCaseDTO.setComment(v.getDescription());
+            testCycleCaseDTO.setProjectId(v.getProjectId());
+            testCycleCaseDTO.setVersionNum(v.getVersionNum());
+            testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+            testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0,8));
+            TestCycleCaseDTO cycleCaseDTO = baseInsert(testCycleCaseDTO);
+            // 插入循环步骤
+            if(!CollectionUtils.isEmpty(caseStepMap.get(v.getCaseId()))){
+                testCycleCaseStepService.batchInsert(cycleCaseDTO.getExecuteId(),caseStepMap.get(v.getCaseId()));
+            }
+            // 插入附件
+            if(!CollectionUtils.isEmpty(attachmentMap.get(v.getCaseId()))){
+                testCycleCaseAttachmentRelService.batchInsert(cycleCaseDTO.getExecuteId(),attachmentMap.get(v.getCaseId()));
+            }
+        });
+    }
+
     private TestCycleCaseVO runTestCycleCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
         Assert.notNull(projectId, "error.projectId.illegal");
 
@@ -586,5 +626,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return cycleMapper.selectCyclesInVersions(versionIds);
         }
         return new ArrayList<>();
+    }
+
+    private TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO){
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+           throw  new CommonException("error.insert.cycle.case.is.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::insertSelective,testCycleCaseDTO,1,"error.insert.cycle.case");
+        return testCycleCaseDTO;
     }
 }

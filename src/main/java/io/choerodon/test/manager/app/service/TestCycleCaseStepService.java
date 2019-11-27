@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -26,4 +27,11 @@ public interface TestCycleCaseStepService {
      * @return TestCycleCaseStepVO
      */
     List<TestCycleCaseStepVO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
+
+    /**
+     * 将测试用例步骤 转为执行步骤
+     * @param executeId
+     * @param testCaseStepDTOS
+     */
+    void batchInsert(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS);
 }

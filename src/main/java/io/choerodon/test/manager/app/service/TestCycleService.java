@@ -6,6 +6,9 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import org.springframework.http.ResponseEntity;
 
 import io.choerodon.agile.api.vo.ProductVersionDTO;
@@ -65,4 +68,11 @@ public interface TestCycleService {
     void checkRank(TestCycleVO testCycleVO);
 
     Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId);
+
+    /**
+     * 创建计划时批量创建循环
+     * @param testPlanDTO
+     * @param testIssueFolderDTOS
+     */
+    List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
 }
