@@ -815,7 +815,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleDTO> testCycleDTOS = cycleMapper.select(testCycleDTO);
         return testCycleDTOS != null && !testCycleDTOS.isEmpty();
     }
-
     @Override
     public List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO,List<TestIssueFolderDTO> testIssueFolderDTOS) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();

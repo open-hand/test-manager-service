@@ -60,7 +60,12 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     }
     changeSet(author: 'zhaotianxin', id: '2019-11-27-rename-colume-version-num') {
         addColumn(tableName: 'test_cycle_case') {
-            column(name: 'version_num', type: 'BIGINT UNSIGNED', remarks: 'version num')
+                column(name: 'version_num', type: 'BIGINT UNSIGNED', remarks: 'version num')
+        }
+    }
+    changeSet(author: 'lizhaozhong', id: '2019-11-27-add-colume-summary') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'summary', type: 'VARCHAR(255)', remarks: '摘要')
         }
     }
 }

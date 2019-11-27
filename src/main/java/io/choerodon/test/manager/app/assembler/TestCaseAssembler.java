@@ -47,9 +47,6 @@ public class TestCaseAssembler {
     private TestCaseLinkService testCaseLinkService;
 
     @Autowired
-    private TestCaseLabelRelService testCaseLabelRelService;
-
-    @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
     @Value("${services.attachment.url}")
@@ -91,12 +88,6 @@ public class TestCaseAssembler {
         }
         if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
-        }
-        //  获取用例的标签
-        List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(testCaseDTO.getCaseId());
-        if (!CollectionUtils.isEmpty(testCaseLabelRelDTOS)) {
-            List<Long> labelIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
-            testCaseInfoVO.setLableIds(labelIds);
         }
         // 用例的问题链接
         testCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCaseDTO.getProjectId(), testCaseDTO.getCaseId()));

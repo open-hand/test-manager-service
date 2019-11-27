@@ -48,6 +48,15 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     private TestCycleCaseService testCycleCaseService;
 
     @Override
+    public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
+        TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        if(testPlanMapper.updateByPrimaryKeySelective(testPlanDTO)!=1){
+            throw new CommonException("error.update.plan");
+        }
+        return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
+    }
+
+    @Override
     public TestPlanDTO create(Long projectId,TestPlanVO testPlanVO) {
         // 创建计划
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
@@ -94,4 +103,5 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective,testPlanDTO,1,"error.insert.test.plan");
         return testPlanDTO;
     }
+
 }

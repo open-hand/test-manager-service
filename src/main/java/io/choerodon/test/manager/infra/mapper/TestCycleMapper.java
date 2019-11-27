@@ -1,7 +1,9 @@
 package io.choerodon.test.manager.infra.mapper;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -50,4 +52,10 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
     Long getFolderCountInCycle(@Param("cycleId") Long cycleId);
 
     List<TestCycleDTO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
+
+    void deleteByType();
+
+    List<TestCycleDTO> selectRepeat();
+
+    void deleteRepeat(@Param("versionId") Long versionId, @Param("folderId") Long folderId);
 }

@@ -1,15 +1,14 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
+import java.util.List;
+
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.*;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import io.choerodon.agile.api.vo.*;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.
@@ -109,21 +108,6 @@ public class TestCaseFeignClientFallback implements TestCaseFeignClient {
 
     @Override
     public ResponseEntity<IssueNumDTO> queryIssueByIssueNum(Long projectId, String issueNum) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<TestCaseMigrateDTO>> migrateTestCase(Long projectId) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<Long>> queryIds() {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
-    public ResponseEntity<List<TestCaseAttachmentDTO>> migrateAttachment() {
         throw new CommonException(QUERY_ERROR);
     }
 }

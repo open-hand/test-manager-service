@@ -28,10 +28,6 @@ public interface ProductionVersionClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")
     ResponseEntity<List<ProductVersionDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId);
-
-    @GetMapping(value = "/v1/projects/{project_id}/product_version/versions/all")
-    ResponseEntity<List<ProductVersionDTO>> queryForTestManager(@PathVariable(name = "project_id") Long projectId);
-
 //    @GetMapping(value = "/v1/projects/{project_id}/product_version/ids")
 //    ResponseEntity<List<Long>> listAllVersionId(@PathVariable(name = "project_id") Long projectId);
 }

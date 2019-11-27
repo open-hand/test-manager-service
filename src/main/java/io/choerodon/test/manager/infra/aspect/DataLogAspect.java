@@ -1,19 +1,11 @@
 package io.choerodon.test.manager.infra.aspect;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestCaseRepVO;
-import io.choerodon.test.manager.api.vo.TestCaseVO;
-import io.choerodon.test.manager.app.service.TestDataLogService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
-import io.choerodon.test.manager.infra.annotation.DataLog;
-import io.choerodon.test.manager.infra.constant.DataLogConstants;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.mapper.*;
+import javax.annotation.PostConstruct;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -26,6 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.app.service.TestDataLogService;
+import io.choerodon.test.manager.infra.annotation.DataLog;
+import io.choerodon.test.manager.infra.constant.DataLogConstants;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 /**
  * @author zhaotianxin
@@ -54,11 +57,6 @@ public class DataLogAspect {
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
-    @Autowired
-    private TestCaseLabelMapper testCaseLabelMapper;
-
-    @Autowired
-    private TestCaseLabelRelMapper testCaseLabelRelMapper;
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
@@ -171,10 +169,7 @@ public class DataLogAspect {
                     testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
                 }
             }
-            if (!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
-                TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
-                createDataLog(testCaseLabelRelDTO.getProjectId(), testCaseLabelRelDTO.getCaseId(), FIELD_LABELS, testCaseLabelDTO.getLabelName(), null, testCaseLabelRelDTO.getLabelId().toString(), null);
-            }
+
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -188,10 +183,7 @@ public class DataLogAspect {
                     testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
                 }
             }
-            if (!ObjectUtils.isEmpty(testCaseLabelRelDTO)) {
-                TestCaseLabelDTO testCaseLabelDTO = testCaseLabelMapper.selectByPrimaryKey(testCaseLabelRelDTO.getLabelId());
-                createDataLog(testCaseLabelRelDTO.getProjectId(), testCaseLabelRelDTO.getCaseId(), FIELD_LABELS, null, testCaseLabelDTO.getLabelName(), null, testCaseLabelRelDTO.getLabelId().toString());
-            }
+
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

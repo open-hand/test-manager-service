@@ -87,4 +87,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     int batchInsertTestCycleCases(List<TestCycleCaseDTO> testCycleCaseDTOS);
 
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
+
+    void fixCycleCase();
 }
