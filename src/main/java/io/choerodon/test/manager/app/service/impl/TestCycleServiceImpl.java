@@ -1198,5 +1198,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             throw new CommonException("error.insert.test.cycle.is.not.null");
         }
         DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insertSelective,testCycleDTO,1,"error.insert.test.cycle");
+        return testCycleDTO;
     }
+
 }

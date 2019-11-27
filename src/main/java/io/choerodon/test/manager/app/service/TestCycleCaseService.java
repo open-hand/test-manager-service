@@ -68,5 +68,10 @@ public interface TestCycleCaseService {
 
     List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable);
 
+    /**
+     * 创建计划引入测试用例相关信息
+     * @param testCycleMap
+     * @param testCaseDTOS
+     */
     void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS);
 }

@@ -15,4 +15,6 @@ import io.choerodon.test.manager.infra.dto.TestCaseLabelRelDTO;
  */
 public interface TestCaseLabelRelMapper extends Mapper<TestCaseLabelRelDTO> {
     void batchInsert(@Param("testCaseLabelRelDTOList") List<TestCaseLabelRelDTO> testCaseLabelRelDTOList);
+
+    List<TestCaseLabelRelDTO> listByCaseIds(@Param("caseIds") List<Long> caseIds);
 }

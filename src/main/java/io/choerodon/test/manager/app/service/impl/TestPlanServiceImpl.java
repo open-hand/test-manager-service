@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.dto.TestPlanDTO;
+import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -49,6 +46,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Autowired
     private TestCycleCaseService testCycleCaseService;
+
     @Override
     public TestPlanDTO create(Long projectId,TestPlanVO testPlanVO) {
         // 创建计划
@@ -81,8 +79,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
         testCycleCaseService.batchInsertByTestCase(testCycleMap,testCaseDTOS);
-
-
         //  是否同步
         return testPlanDTO;
     }

@@ -24,4 +24,6 @@ public interface TestCaseStepService {
     TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO);
 
     void removeStepByIssueId(Long caseId);
+
+    List<TestCaseStepDTO> listByCaseIds(Long projectId, List<Long> caseIds);
 }

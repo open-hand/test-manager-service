@@ -58,4 +58,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "project_id")
         }
     }
+    changeSet(author: 'zhaotianxin', id: '2019-11-27-rename-colume-version-num') {
+        renameColumn(columnDataType: 'BIGINT UNSIGNED', newColumnName: 'version_num', oldColumnName: 'version_id', tableName: "test_cycle_case")
+    }
 }

@@ -12,4 +12,13 @@
         </if>
     </insert>
 
+    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+        select * from test_case_attachment
+        where
+        case_id in
+        <foreach collection="caseIds" item="caseId" open="(" close=")" separator=",">
+            #{caseId}
+        </foreach>
+    </select>
+
 </mapper>

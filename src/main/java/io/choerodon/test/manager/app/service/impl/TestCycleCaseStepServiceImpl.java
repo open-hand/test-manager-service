@@ -2,9 +2,12 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -74,6 +79,23 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         }
     }
 
+    @Override
+    public void batchInsert(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS) {
+        if(CollectionUtils.isEmpty(testCaseStepDTOS)){
+           return;
+        }
+        testCaseStepDTOS.forEach(v -> {
+            TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+            testCycleCaseStepDTO.setExecuteId(executeId);
+            testCycleCaseStepDTO.setStepId(v.getStepId());
+            testCycleCaseStepDTO.setTestStep(v.getTestStep());
+            testCycleCaseStepDTO.setExpectedResult(v.getExpectedResult());
+            testCycleCaseStepDTO.setTestData(v.getTestData());
+            // TODO 测试循环步骤的初始化状态
+            baseInsert(testCycleCaseStepDTO);
+        });
+    }
+
     private List<TestCycleCaseStepDTO> baseUpdate(List<TestCycleCaseStepDTO> list) {
         List<TestCycleCaseStepDTO> res = new ArrayList<>();
         list.forEach(v -> res.add(updateSelf(v)));
@@ -86,5 +108,12 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             throw new CommonException("error.testStepCase.update");
         }
         return testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepDTO.getExecuteStepId());
+    }
+
+    private void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO) {
+        if(ObjectUtils.isEmpty(testCycleCaseStepDTO)){
+            throw new CommonException("error.insert.cycle.case.step.is.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseStepMapper::insertSelective,testCycleCaseStepDTO,1,"error.insert.cycle.case.step");
     }
 }

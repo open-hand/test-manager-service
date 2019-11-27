@@ -42,8 +42,8 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Transient
     private String folderName;
 
-    @Transient
-    private Long versionId;
+
+    private Long versionNum;
 
     @Transient
     private Long lastExecuteId;
@@ -221,12 +221,12 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.cycleCaseStep = cycleCaseStep;
     }
 
-    public Long getVersionId() {
-        return versionId;
+    public Long getVersionNum() {
+        return versionNum;
     }
 
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
     }
 
     public Long getLastExecuteId() {
