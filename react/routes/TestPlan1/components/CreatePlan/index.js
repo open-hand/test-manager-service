@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, {
+  useEffect, useMemo, useCallback, Fragment,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Modal, Form, TextField, DataSet, TextArea, DateTimePicker, Select, Radio,
@@ -37,28 +39,39 @@ function CreatePlan({
   }, [modal, submit]);
 
   return (
-    <Form dataSet={dataSet} style={{ width: 512 }}>
-      <TextField name="planName" required />
-      <TextArea
-        name="description"
-      />
-      <Select name="assignId" searchable searchMatcher="param" />
-      <DateTimePicker range name="range" min={Date.now()} />
-      <div>
+    <Fragment>
+      <Form dataSet={dataSet} style={{ width: 512 }}>
+        <TextField name="planName" required />
+        <TextArea
+          name="description"
+        />
+        <Select name="assignId" searchable searchMatcher="param" />
+        <DateTimePicker range name="range" min={Date.now()} />
         <div>
-          <span>导入用例方式</span>
-          <Tip title="导入用例方式" />
+          <div>
+            <span>导入用例方式</span>
+            <Tip title="导入用例方式" />
+          </div>
+          <Radio name="importMode" value="all">全部用例</Radio>
+          <Radio name="importMode" value="custom">自选用例</Radio>
         </div>
-        <Radio name="importMode" value="all">全部用例</Radio>
-        <Radio name="importMode" value="custom">自选用例</Radio>
-      </div>
+      </Form>
       {dataSet.current.get('importMode') === 'custom' && (
         <div>
-          自选
           <SelectIssue />
         </div>
       )}
-    </Form>
+      <Form dataSet={dataSet} style={{ width: 512 }}>
+        <div>
+          <div>
+            <span>是否自动同步</span>
+            <Tip title="是否自动同步" />
+          </div>
+          <Radio name="autoSync" value>是</Radio>
+          <Radio name="autoSync" value={false}>否</Radio>
+        </div>
+      </Form>
+    </Fragment>
   );
 }
 CreatePlan.propTypes = propTypes;
@@ -73,7 +86,8 @@ export default function openCreatePlan() {
     },
     children: <ObserverCreatePlan initValue={{
       importMode: 'all',
-    }} 
+      autoSync: true,
+    }}
     />,
   });
 }
