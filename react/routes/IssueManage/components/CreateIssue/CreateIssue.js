@@ -43,8 +43,6 @@ function CreateIssue(props) {
   const handleChangeDes = (value) => {
     createDataset.current.set('description', value);
   };
-  console.log('parents');
-
   useEffect(() => {
     // 初始化属性
     props.modal.handleOk(handleCreateIssue);

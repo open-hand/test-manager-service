@@ -21,10 +21,11 @@ import {
   editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
-import './ExecuteDetail.scss';
+import './ExecuteDetail.less';
 import {
-  StepTable, ExecuteDetailSide, CreateBug,
+  StepTable as OldStepTable, ExecuteDetailSide, CreateBug,
 } from '../components';
+import { StepTable } from './components';
 import { QuickOperate, ExecuteHistoryTable } from './components';
 import Store from '../stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
@@ -63,7 +64,7 @@ const CardWrapper = ({ children, title, style }) => (
 );
 function ExecuteDetail(props) {
   const context = useContext(Store);
-  const { ExecuteDetailStore } = context;
+  const { ExecuteDetailStore, stepTableDataSet } = context;
   const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
     const { id } = context.match.params;
@@ -350,7 +351,11 @@ function ExecuteDetail(props) {
                     dataSource={detailList}
                     stepStatusList={stepStatusList}
                   />
+
                 </CardWrapper>
+                {/* <StepTable
+                  dataSet={stepTableDataSet}
+                /> */}
                 <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
                   <div style={{ padding: '0 20px' }}>
                     <ExecuteHistoryTable
