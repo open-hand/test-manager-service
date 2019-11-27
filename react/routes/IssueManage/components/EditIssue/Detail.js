@@ -251,11 +251,10 @@ function Detail({
   useEffect(() => {
     setSelectLoading(true);
     getLabels().then((res) => {
-      // setLabelList(res);
-      labelLists = res;
+      store.setLabelLists(res);
       setSelectLoading(false);
     });
-  }, []);
+  }, [store]);
 
   function render() {
     return (

@@ -118,7 +118,6 @@ function EditIssue() {
         issue = { ...issue, ...newValue };
         await updateIssue(issue); 
         if (key === 'labels') {
-          console.log(1);
           getLabels().then((res) => { // 防止编辑标签的时候创建新标签，应该重新加载label，防止新创建的label不能正确显示
             store.setLabelLists(res);
           });
