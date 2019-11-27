@@ -1,15 +1,18 @@
-import React, { Component } from 'react';
+import React, {
+  Component, useEffect, useContext, useRef,
+} from 'react';
 import {
-  Button, Icon, Card, Spin, Tooltip,
+  Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
+import { Modal, Button } from 'choerodon-ui/pro/lib';
 import { StatusTags } from '../../../components';
 import {
   executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink,
@@ -23,7 +26,8 @@ import {
   StepTable, ExecuteDetailSide, CreateBug,
 } from '../components';
 import { QuickOperate, ExecuteHistoryTable } from './components';
-import ExecuteDetailStore from '../stores/ExecuteDetailStore';
+import Store from '../stores';
+import EditExecuteIssue from './components/EditExecuteIssue';
 
 function beforeUpload(file) {
   const isLt2M = file.size / 1024 / 1024 < 30;
@@ -57,29 +61,20 @@ const CardWrapper = ({ children, title, style }) => (
     {children}
   </Card>
 );
-@observer
-class ExecuteDetail extends Component {
-  componentDidMount() {
-    // eslint-disable-next-line react/destructuring-assignment
-    const { id } = this.props.match.params;
+function ExecuteDetail(props) {
+  const context = useContext(Store);
+  const { ExecuteDetailStore } = context;
+  const ExecuteDetailSideRef = useRef(null);
+  useEffect(() => {
+    const { id } = context.match.params;
     ExecuteDetailStore.clearPagination();
     ExecuteDetailStore.getInfo(id);
-  }
+  }, [ExecuteDetailStore, context.match.params]);
 
-  saveRef = name => (ref) => {
-    this[name] = ref;
-  }
-
-  // setFileList = (fileList) => {
-  //   this.setState({
-  //     fileList,
-  //   });
-  // }
-
-  goExecute = (mode) => {
+  const goExecute = (mode) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     const { nextExecuteId, lastExecuteId } = cycleData;
-    const { disabled, history } = this.props;
+    const { disabled, history } = props;
     const toExecuteId = mode === 'pre' ? lastExecuteId : nextExecuteId;
     const { cycleId } = getParams(window.location.href);
     if (toExecuteId) {
@@ -90,15 +85,15 @@ class ExecuteDetail extends Component {
       }
       ExecuteDetailStore.clearPagination();
     }
-  }
+  };
 
-  handleToggleExecuteDetailSide = () => {
+  const handleToggleExecuteDetailSide = () => {
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
     ExecuteDetailStore.setExecuteDetailSideVisible(!visible);
-  }
+  };
 
   // 用于文件移除。 传入ExcuteDeailSide组件内， 在UploadButtonExcuteDetail组件内进行调用
-  handleFileRemove = (file) => {
+  const handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
       deleteAttachment(file.uid).then((data) => {
@@ -108,9 +103,9 @@ class ExecuteDetail extends Component {
         Choerodon.prompt(`删除失败 ${error}`);
       });
     }
-  }
+  };
 
-  handleUpload = (files) => {
+  const handleUpload = (files) => {
     if (beforeUpload(files[0])) {
       const formData = new FormData();
       [].forEach.call(files, (file) => {
@@ -129,13 +124,9 @@ class ExecuteDetail extends Component {
         Choerodon.prompt('网络异常');
       });
     }
-  }
+  };
 
-  handleCommentSave = (value) => {
-    beforeTextUpload(value, {}, this.handleSubmit, 'comment');
-  }
-
-  handleSubmit = (updateData) => {
+  const handleSubmit = (updateData) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     const newData = { ...cycleData, ...updateData };
     newData.assignedTo = newData.assignedTo || 0;
@@ -146,27 +137,21 @@ class ExecuteDetail extends Component {
     delete newData.lastRank;
     delete newData.nextRank;
     editCycle(newData).then((Data) => {
-      if (this.ExecuteDetailSide) {
-        this.ExecuteDetailSide.HideFullEditor();
+      if (ExecuteDetailSideRef) {
+        ExecuteDetailSideRef.HideFullEditor();
       }
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
       // console.log(error);
       Choerodon.prompt('网络异常');
     });
-  }
+  };
 
-  quickPass = (e) => {
-    e.stopPropagation();
-    this.quickPassOrFail('通过');
-  }
+  const handleCommentSave = (value) => {
+    beforeTextUpload(value, {}, handleSubmit, 'comment');
+  };
 
-  quickFail = (e) => {
-    e.stopPropagation();
-    this.quickPassOrFail('失败');
-  }
-
-  quickPassOrFail = (text) => {
+  const quickPassOrFail = (text) => {
     const cycleData = { ...ExecuteDetailStore.getCycleData };
     const { statusList } = ExecuteDetailStore;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
@@ -187,42 +172,79 @@ class ExecuteDetail extends Component {
     } else {
       Choerodon.prompt('未找到对应状态');
     }
-  }
+  };
 
-  handleRemoveDefect = (issueId) => {
+  const quickPass = (e) => {
+    e.stopPropagation();
+    quickPassOrFail('通过');
+  };
+
+  const quickFail = (e) => {
+    e.stopPropagation();
+    quickPassOrFail('失败');
+  };
+
+  const handleRemoveDefect = (issueId) => {
     ExecuteDetailStore.enterloading();
     removeDefect(issueId).then((res) => {
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
       ExecuteDetailStore.unloading();
     });
-  }
+  };
 
-  handleHiddenCreateBug = () => {
+  const handleHiddenCreateBug = () => {
     ExecuteDetailStore.setCreateBugShow(false);
-  }
+  };
 
-  handleBugCreate = () => {
+  const handleBugCreate = () => {
     ExecuteDetailStore.setCreateBugShow(false);
     ExecuteDetailStore.getInfo();
-  }
+  };
 
-  handleCreateBugShow = () => {
+  const handleCreateBugShow = () => {
     ExecuteDetailStore.setCreateBugShow(true);
     ExecuteDetailStore.setDefectType('CYCLE_CASE');
     ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
-  }
+  };
+
+  const handleOpenEdit = () => {
+    const { intl } = context;
+    Modal.open({
+      key: 'editExecuteIssue',
+      title: '修改执行',
+      drawer: true,
+      style: {
+        width: 740,
+      },
+      children: (
+        <EditExecuteIssue
+          // onOk={this.handleCreateIssue.bind(this)}
+          intl={intl}
+
+        />
+      ),
+      footer: (okBtn, cancelBtn) => (
+        <div>
+          {okBtn}
+          <Button funcType="raised" color="primary">保存并同步到用例库</Button>
+          {cancelBtn}
+        </div>
+      ),
+      okText: '保存',
+    });
+  };
 
   // 默认只显示15个字其余用... 进行省略
-  renderBreadcrumbTitle = (text) => {
+  const renderBreadcrumbTitle = (text) => {
     const ellipsis = '...';
     const textArr = [...text];
     return textArr.length > 15 ? textArr.slice(0, 15).join('') + ellipsis : text;
-  }
+  };
 
-  render() {
+  function render() {
     // disabled 用于禁止action列
-    const { disabled } = this.props;
+    const { disabled } = props;
     const { loading } = ExecuteDetailStore;
     const detailList = ExecuteDetailStore.getDetailList;
     const historyList = ExecuteDetailStore.getHistoryList;
@@ -239,7 +261,6 @@ class ExecuteDetail extends Component {
     } = cycleData;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
-    // const { fileList } = this.state;
 
     return (
       <Page className="c7ntest-ExecuteDetail">
@@ -249,17 +270,18 @@ class ExecuteDetail extends Component {
         >
           {issueInfosVO && (
             // <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide}>
+            <Button funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
               {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
               <Icon type="find_in_page" />
               {visible ? '隐藏详情' : '查看详情'}
             </Button>
             // {/* </div> */}
           )}
+          <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
           <Button
             disabled={lastExecuteId === null}
             onClick={() => {
-              this.goExecute('pre');
+              goExecute('pre');
             }}
           >
             <Icon type="navigate_before" />
@@ -268,7 +290,7 @@ class ExecuteDetail extends Component {
           <Button
             disabled={nextExecuteId === null}
             onClick={() => {
-              this.goExecute('next');
+              goExecute('next');
             }}
           >
             <span><FormattedMessage id="execute_next" /></span>
@@ -284,7 +306,7 @@ class ExecuteDetail extends Component {
 
         </Header>
 
-        <Breadcrumb title={issueInfosVO ? this.renderBreadcrumbTitle(issueInfosVO.summary) : null} />
+        <Breadcrumb title={issueInfosVO ? renderBreadcrumbTitle(issueInfosVO.summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
           <Spin spinning={loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
@@ -306,10 +328,7 @@ class ExecuteDetail extends Component {
                         name={statusName}
                       />
                       <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
-                      {/* <Button funcType="flat" type="primary" onClick={this.handleToggleExecuteDetailSide} style={{ marginLeft: 15 }}>
-                      <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} />
-                      {visible ? '隐藏详情' : '打开详情'}
-                    </Button> */}
+
                     </div>
                   )}
                 </div>
@@ -317,9 +336,9 @@ class ExecuteDetail extends Component {
                   && (
                     <QuickOperate
                       statusList={statusList}
-                      quickPass={this.quickPass}
-                      quickFail={this.quickFail}
-                      onSubmit={this.handleSubmit}
+                      quickPass={quickPass}
+                      quickFail={quickFail}
+                      onSubmit={handleSubmit}
                     />
                   )}
                 <CardWrapper
@@ -346,19 +365,18 @@ class ExecuteDetail extends Component {
               {visible && (
                 <ExecuteDetailSide
                   disabled={disabled}
-                  ref={this.saveRef('ExecuteDetailSide')}
+                  ref={ExecuteDetailSideRef}
                   issueInfosVO={issueInfosVO}
                   cycleData={cycleData}
                   fileList={fileList}
-                  // setFileList={this.setFileList}
-                  onFileRemove={this.handleFileRemove}
+                  onFileRemove={handleFileRemove}
                   status={{ statusColor, statusName }}
-                  onClose={this.handleToggleExecuteDetailSide}
-                  onUpload={this.handleUpload}
-                  onSubmit={this.handleSubmit}
-                  onCommentSave={this.handleCommentSave}
-                  onRemoveDefect={this.handleRemoveDefect}
-                  onCreateBugShow={this.handleCreateBugShow}
+                  onClose={handleToggleExecuteDetailSide}
+                  onUpload={handleUpload}
+                  onSubmit={handleSubmit}
+                  onCommentSave={handleCommentSave}
+                  onRemoveDefect={handleRemoveDefect}
+                  onCreateBugShow={handleCreateBugShow}
                 />
               )}
               {
@@ -367,8 +385,8 @@ class ExecuteDetail extends Component {
                     visible={createBugShow}
                     defectType={defectType}
                     id={createDectTypeId}
-                    onCancel={this.handleHiddenCreateBug}
-                    onOk={this.handleBugCreate}
+                    onCancel={handleHiddenCreateBug}
+                    onOk={handleBugCreate}
                   />
                 )
               }
@@ -379,7 +397,8 @@ class ExecuteDetail extends Component {
       </Page>
     );
   }
+  return render();
 }
 
 
-export default withRouter(ExecuteDetail);
+export default withRouter(observer(ExecuteDetail));

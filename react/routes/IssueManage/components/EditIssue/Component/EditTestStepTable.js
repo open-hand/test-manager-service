@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '@/api/IssueManageApi';
-import TestStepTable from '../../TestStepTable';
+import TestStepTable from '@/components/TestStepTable';
 import EditIssueContext from '../stores';
 
 function EditTestStepTable() {
