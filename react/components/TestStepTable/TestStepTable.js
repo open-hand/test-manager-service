@@ -6,8 +6,8 @@ import {
   Input, Icon, Modal, Tooltip, Button,
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
-import { DragTable } from '../../../../components';
-import { TextEditToggle } from '../../../../components';
+import { DragTable } from '..';
+import { TextEditToggle } from '..';
 import './TestStepTable.less';
 
 const { confirm } = Modal;

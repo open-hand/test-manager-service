@@ -6,9 +6,10 @@ import IssueTreeStore from '../../stores/IssueTreeStore';
 import IssueStore from '../../stores/IssueStore';
 import {
   addFolder, editFolder, deleteFolder, moveFolders,
-} from '../../../../api/IssueManageApi';
-import { NoVersion, Loading } from '../../../../components';
-import Tree from '../Tree';
+} from '@/api/IssueManageApi';
+import { NoVersion, Loading } from '@/components';
+import Tree from '@/components/Tree';
+import TreeNode from './TreeNode';
 
 @observer
 class IssueTree extends Component {
@@ -18,7 +19,7 @@ class IssueTree extends Component {
     IssueTreeStore.setTreeRef(this.treeRef);
   }
 
-  handleCreate = (value, parentId) => {  
+  handleCreate = (value, parentId) => {
     const data = {
       parentId,
       name: value,
@@ -50,16 +51,18 @@ class IssueTree extends Component {
     IssueStore.loadIssues();
   }
 
+  renderTreeNode = (node, { item }) => <TreeNode item={item}>{node}</TreeNode>
+
   render() {
     const { loading } = IssueTreeStore;
     const treeData = IssueTreeStore.getTreeData;
 
     return (
       <div className="c7ntest-IssueTree">
-        <Loading loading={loading} />        
+        <Loading loading={loading} />
         <Tree
           ref={this.treeRef}
-          empty={loading ? null : <NoVersion onCreateClick={() => { this.treeRef.current.addFirstLevelItem(); }} />}          
+          empty={loading ? null : <NoVersion onCreateClick={() => { this.treeRef.current.addFirstLevelItem(); }} />}
           data={treeData}
           onCreate={this.handleCreate}
           onEdit={this.handleEdit}
@@ -67,7 +70,8 @@ class IssueTree extends Component {
           afterDrag={this.handleDrag}
           selected={IssueTreeStore.getCurrentCycle}
           setSelected={this.setSelected}
-        />   
+          renderTreeNode={this.renderTreeNode}
+        />
       </div>
     );
   }

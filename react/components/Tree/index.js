@@ -48,6 +48,8 @@ function PureTree({
   afterDrag,
   selected,
   setSelected,
+  renderTreeNode,
+  ...restProps
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
   useEffect(() => {
@@ -194,21 +196,24 @@ function PureTree({
   };
   const renderItem = ({
     item, provided,
-  }) => (
-    <TreeNode
-      key={item.id}
-      path={getItemById(flattenedTree, item.id).path}
-      provided={provided}
-      item={item}
-      onExpand={onExpand}
-      onCollapse={onCollapse}
-      onSelect={onSelect}
-      onMenuClick={handleMenuClick}
-      onCreate={handleCreate}
-      onEdit={handleEdit}
-      search={search}
-    />
-  );
+  }) => {
+    const treeNode = (
+      <TreeNode
+        key={item.id}
+        path={getItemById(flattenedTree, item.id).path}
+        provided={provided}
+        item={item}
+        onExpand={onExpand}
+        onCollapse={onCollapse}
+        onSelect={onSelect}
+        onMenuClick={handleMenuClick}
+        onCreate={handleCreate}
+        onEdit={handleEdit}
+        search={search}
+      />
+    );
+    return renderTreeNode ? renderTreeNode(treeNode, { item }) : treeNode;
+  };
   const isEmpty = getRootNode(tree).children.length === 0;
   return (
     isEmpty ? empty : (
@@ -228,6 +233,7 @@ function PureTree({
             offsetPerLevel={PADDING_PER_LEVEL}
             isDragEnabled
             isNestingEnabled
+            {...restProps}
           />
         </div>      
       </div>
