@@ -333,12 +333,14 @@
 
     <select id="selectRepeat" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
         SELECT
+            project_id,
             version_id,
             folder_id
         FROM
             test_cycle
-        WHERE folder_id is not null
+        WHERE type = 'folder' AND folder_id is not null AND folder_id != 0
         GROUP BY
+            project_id,
             version_id,
             folder_id
         HAVING
@@ -349,22 +351,23 @@
         FROM
             test_cycle
         WHERE
-            folder_id = #{folderId}
-        AND version_id = #{versionId}
-        AND cycle_id NOT IN (
-            SELECT
-                c.cycle_id
-            FROM
-                (
-                    SELECT
-                        max(cycle_id) AS cycle_id
-                    FROM
-                        test_cycle
-                    WHERE
-                        folder_id = #{folderId}
-                    AND version_id = #{versionId}
-                ) c
+            project_id = #{projectId}
+            AND folder_id = #{folderId}
+            AND version_id = #{versionId}
+            AND cycle_id NOT IN (
+                SELECT
+                    c.cycle_id
+                FROM
+                    (
+                        SELECT
+                            max(tc2.cycle_id) AS cycle_id
+                        FROM
+                            test_cycle tc2
+                        WHERE
+                            tc2.project_id = #{projectId}
+                            AND tc2.folder_id = #{folderId}
+                            AND tc2.version_id = #{versionId}
+                    ) c
         )
-
     </delete>
 </mapper>

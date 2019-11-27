@@ -215,7 +215,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private void deleteRepeat(){
         List<TestCycleDTO> testCycleDTOS = testCycleMapper.selectRepeat();
         testCycleDTOS.forEach(testCycleDTO->{
-                testCycleMapper.deleteRepeat(testCycleDTO.getVersionId(),testCycleDTO.getFolderId());
+                testCycleMapper.deleteRepeat(testCycleDTO.getProjectId(), testCycleDTO.getVersionId(),testCycleDTO.getFolderId());
         });
         logger.info("===========cycle=============> delete repeat successed");
     }
