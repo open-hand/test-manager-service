@@ -7,7 +7,6 @@ import {
 import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
-import IssueStore from '../../stores/IssueStore';
 
 const PreTextIcon = styled.span`
   display: inline-block;
@@ -83,15 +82,7 @@ const getAction = (item, onMenuClick) => {
 function TreeNode(props) {
   const {
     provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit,
-  } = props;
-  const [dragEnter, setDragEnter] = useState(false);
-  const hasChildren = item.children && item.children.length > 0;
-  const canDrop = !hasChildren && IssueStore.tableDraging;
-  const handleMouseUp = (e) => {
-    setDragEnter(false);
-    const isCopy = e.ctrlKey || e.metaKey;
-    IssueStore.moveOrCopyIssues(item.id, isCopy);
-  };
+  } = props; 
   const onSave = (e) => {
     if (item.id === 'new') {
       onCreate(e.target.value, path, item);
@@ -123,7 +114,7 @@ function TreeNode(props) {
   };
   const renderContent = () => (
     <div     
-      className={`${prefix}-tree-item-wrapper ${dragEnter ? `${prefix}-tree-item-wrapper-over` : ''}`}
+      className={`${prefix}-tree-item-wrapper`}
     >
       <div
         role="none"
@@ -135,30 +126,16 @@ function TreeNode(props) {
         {getAction({ ...item, path }, onMenuClick)}
       </div>
     </div>
-
   );
   // console.log(path);
-  return (
-    <span
-      role="none"
-      {...canDrop ? {
-        onMouseEnter: () => {
-          setDragEnter(true);
-        },
-        onMouseLeave: () => {
-          setDragEnter(false);
-        },
-        onMouseUp: handleMouseUp,
-      } : {}}      
-    > 
-      <div
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-      >
-        {item.isEditing ? renderEditing() : renderContent()}
-      </div>
-    </span>
+  return (    
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+    >
+      {item.isEditing ? renderEditing() : renderContent()}
+    </div>
   );
 }
 export default observer(TreeNode);
