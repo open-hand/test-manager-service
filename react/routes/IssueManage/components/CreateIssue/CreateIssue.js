@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState, useEffect, useMemo, useCallback,
+} from 'react';
 import { withRouter } from 'react-router-dom';
 import {
   Form, TextField, Select, DataSet, Icon,
@@ -11,10 +13,12 @@ import SelectTree from '../SelectTree';
 import { beforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 
+
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const { intl, caseId, defaultFolderValue } = props;
   const createDataset = useMemo(() => new DataSet(CreateIssueDataSet('issue', intl)), [intl]);
+
 
   async function handleCreateIssue() {
     const { onOk } = props;
@@ -36,55 +40,43 @@ function CreateIssue(props) {
       return false;
     }
   }
-
   const handleChangeDes = (value) => {
     createDataset.current.set('description', value);
   };
+  console.log('parents');
 
   useEffect(() => {
     // 初始化属性
     props.modal.handleOk(handleCreateIssue);
   }, [handleCreateIssue, props.modal]);
 
-  function render() {
-    return (
-      <Form dataSet={createDataset} className="test-create-issue-form">
-        <TextField name="summary" />
-        <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
-        <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
-          <div className="test-create-issue-line" />
-          <span className="test-create-issue-head">
-            {
-              visibleDetail ? <Icon type="expand_less" /> : <Icon type="expand_more" />
-            }
+  return (
+    <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
+      <TextField name="summary" />
+      <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
+      <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
+        <div className="test-create-issue-line" />
+        <span className="test-create-issue-head">
+          <Icon type={`${visibleDetail ? 'expand_less' : 'expand_more'}`} />
+          用例详细信息
+        </span>
 
-            用例详细信息
-          </span>
-
-        </div>
-
-        {visibleDetail && [
-          <WYSIWYGEditor
-            style={{ height: 200, width: '100%' }}
-            onChange={handleChangeDes}
-          />,
-          // <TextArea name="description" />,
-          // {/** 这里逻辑待处理， DataSet提交 */ }
-          <div className="test-create-issue-form-file">
-            <span className="test-create-issue-head">附件</span>
-            <UploadButton />
-          </div>,
-          <Select name="issueLink" />]
-        }
-        <div className="test-create-issue-form-step">
-          <div className="test-create-issue-line" />
-          <span className="test-create-issue-head">测试步骤</span>
-          <CreateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={caseId} />
-        </div>
-      </Form>
-    );
-  }
-
-  return render();
+      </div>
+      <WYSIWYGEditor
+        style={{ height: 200, width: '100%' }}
+        onChange={handleChangeDes}
+      />
+      {/* //  这里逻辑待处理， DataSet提交  */}
+      <div className="test-create-issue-form-file">
+        <span className="test-create-issue-head">附件</span>
+        <UploadButton />
+      </div>
+      <div className="test-create-issue-form-step">
+        <div className="test-create-issue-line" />
+        <span className="test-create-issue-head">测试步骤</span>
+        <CreateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={caseId} />
+      </div>
+    </Form>
+  );
 }
 export default withRouter(CreateIssue);
