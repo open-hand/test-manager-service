@@ -54,6 +54,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     private ProductionVersionClient productionVersionClient;
 
@@ -71,12 +72,16 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     @Autowired
     private TestDataLogService testDataLogService;
+
     @Autowired
     private TestPlanMapper testPlanMapper;
+
     @Autowired
     private TestCycleMapper testCycleMapper;
+
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
+
     @Autowired
     private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
@@ -219,6 +224,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         });
         logger.info("===========cycle=============> delete repeat successed");
     }
+
     private void fixCycleCase(){
         testCycleCaseMapper.fixCycleCase();
         logger.info("===========cycle=============> fix repeat successed");
@@ -250,6 +256,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         testDataLogDTO.setCaseId(dataLogFixVO.getIssueId());
         return testDataLogDTO;
     }
+
     private TestPlanDTO planVOToDto(TestVersionFixVO testVersionFixVO){
         TestPlanDTO testPlanDTO = new TestPlanDTO();
         BeanUtils.copyProperties(testVersionFixVO,testPlanDTO);

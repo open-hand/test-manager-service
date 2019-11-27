@@ -346,6 +346,7 @@
         HAVING
             count(*) > 1
     </select>
+
     <delete id="deleteRepeat"  >
         DELETE
         FROM
@@ -370,4 +371,5 @@
                     ) c
         )
     </delete>
+
 </mapper>
