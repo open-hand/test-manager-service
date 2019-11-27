@@ -53,7 +53,7 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
 
     List<TestCycleDTO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
 
-    void deleteByType();
+//    void deleteByType();
 
     List<TestCycleDTO> selectRepeat();
 

@@ -323,13 +323,13 @@
         </foreach>
     </update>
 
-    <delete id="deleteByType">
-        DELETE
-        FROM
-            test_cycle
-        WHERE
-            type = 'cycle'
-    </delete>
+    <!--<delete id="deleteByType">-->
+        <!--DELETE-->
+        <!--FROM-->
+            <!--test_cycle-->
+        <!--WHERE-->
+            <!--type = 'cycle'-->
+    <!--</delete>-->
 
     <select id="selectRepeat" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
         SELECT

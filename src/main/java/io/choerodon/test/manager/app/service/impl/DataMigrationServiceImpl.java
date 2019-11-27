@@ -98,8 +98,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migreateDataLog();
         //7.版本
         migreateVersion();
-        //8.删除
-        deleteStage();
+//        //8.删除
+//        deleteStage();
         //9.删除重复
         deleteRepeat();
         //10.cycle()
@@ -207,10 +207,10 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===========version=============> copy successed");
     }
 
-    private void deleteStage(){
-        testCycleMapper.deleteByType();
-        logger.info("===========cycle=============> delete successed");
-    }
+//    private void deleteStage(){
+//        testCycleMapper.deleteByType();
+//        logger.info("===========cycle=============> delete successed");
+//    }
 
     private void deleteRepeat(){
         List<TestCycleDTO> testCycleDTOS = testCycleMapper.selectRepeat();
