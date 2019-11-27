@@ -198,9 +198,9 @@ export default observer((props) => {
       if (item[0] === 'summary') {
         // eslint-disable-next-line prefer-destructuring
         res.summary = item[1][0];
-      } else if (item[0] === 'issueNum') {
+      } else if (item[0] === 'caseNum') {
         // eslint-disable-next-line prefer-destructuring
-        res.issueNum = item[1][0];
+        res.caseNum = item[1][0];
       }
     });
     return res;
