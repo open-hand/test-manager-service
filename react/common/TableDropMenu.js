@@ -35,7 +35,12 @@ const TableDropMenu = (props) => {
     return onClickEdit ? textA : text;
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer' }} className={className || 'table-drop-menu-base'}>
+    <div
+      style={{
+        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', 
+      }}
+      className={className || 'table-drop-menu-base'}
+    >
       <span style={{ display: 'flex' }}>
         {permission
           ? (

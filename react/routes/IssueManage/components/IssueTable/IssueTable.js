@@ -159,6 +159,7 @@ export default observer((props) => {
       IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
     }
     IssueStore.setTableDraging(true);
+    IssueStore.setClickIssue({});
     document.addEventListener('keydown', enterCopy);
     document.addEventListener('keyup', leaveCopy);
   };

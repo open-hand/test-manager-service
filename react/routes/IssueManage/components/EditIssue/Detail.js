@@ -1,5 +1,5 @@
 import React, {
-  Fragment, useState, useContext, useRef, useEffect, useImperativeHandle,
+  Fragment, useState, useContext, useRef, useEffect, useImperativeHandle, useMemo,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Choerodon } from '@choerodon/boot';
@@ -51,104 +51,6 @@ function Detail({
   const [editDescriptionShow, setEditDescriptionShow] = useState(false);
   const [createLinkTaskShow, setCreateLinkTaskShow] = useState(false);
   const [showMore, setShowMore] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(true);
-
-  const getUpdateLabelData = (values) => {
-    const { labelLists } = store;
-    const labelData = [];
-    values.forEach((value) => {
-      // eslint-disable-next-line no-restricted-globals
-      if (!isNaN(Number(value))) { // 如果可转为数字
-        if (_.map(labelLists, 'labelName').includes(value) || _.map(labelLists, 'labelId').includes(Number(value))) {
-          labelData.push({ labelId: value });
-        } else {
-          labelData.push({ labelName: value });
-        }
-      } else {
-        labelData.push({ labelName: value });
-      }
-    });
-    return labelData;
-  };
-
-  /**
-     *标签更改
-     *
-     * @memberof EditIssueNarrow
-     */
-  const renderSelectLabel = () => {
-    const { labelLists } = store;
-    const { lableIds } = issueInfo;
-    return (
-      <TextEditToggle
-        // disabled={disabled}
-        style={{ width: '100%' }}
-        formKey="lableIds"
-        onSubmit={(value, done) => {
-          onUpdate({
-            labels: getUpdateLabelData(value), 
-          }, done); 
-        }}
-        originData={lableIds || []}
-      >
-        <Text>
-          {data => (
-            data && data.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {
-                  data.map(labelId => (
-                    <div
-                      key={labelId}
-                      className="c7ntest-text-dot"
-                      style={{
-                        color: '#000',
-                        borderRadius: '100px',
-                        fontSize: '13px',
-                        lineHeight: '24px',
-                        padding: '2px 12px',
-                        maxWidth: 100,
-                        background: 'rgba(0, 0, 0, 0.08)',
-                        marginRight: '8px',
-                      }}
-                    >
-                      {labelLists.find(item => Number(item.labelId) === Number(labelId)) && labelLists.find(item => Number(item.labelId) === Number(labelId)).labelName}
-                    </div>
-                  ))
-                }
-              </div>
-            ) : '无'
-          )}
-        </Text>
-        <Edit>
-          <Select
-            loading={selectLoading}
-            mode="tags"
-            autoFocus
-            getPopupContainer={triggerNode => triggerNode.parentNode}
-            tokenSeparators={[',']}
-            style={{ width: '200px', marginTop: 0, paddingTop: 0 }}
-            onFocus={() => {
-              setSelectLoading(true);
-              getLabels().then((res) => {
-              // setLabelList(res);
-                store.setLabelLists(res);
-                setSelectLoading(false);
-              });
-            }}
-          >
-            {labelLists.map(label => (
-              <Option
-                key={label.labelId}
-                value={`${label.labelId}`}
-              >
-                {label.labelName}
-              </Option>
-            ))}
-          </Select>
-        </Edit>
-      </TextEditToggle>
-    );
-  };
 
   const setFileList = (newFileList) => {
     store.setIssueInfo({
@@ -248,14 +150,6 @@ function Detail({
     });
   }
 
-  useEffect(() => {
-    setSelectLoading(true);
-    getLabels().then((res) => {
-      store.setLabelLists(res);
-      setSelectLoading(false);
-    });
-  }, [store]);
-
   function render() {
     return (
       <React.Fragment>
@@ -284,11 +178,6 @@ function Detail({
             </PropertyWrap>
             {showMore ? (
               <Fragment>
-                {/* 标签 */}
-                <PropertyWrap label={<FormattedMessage id="summary_label" />}>
-                  {renderSelectLabel()}
-                </PropertyWrap>
-                {/** 更新人 */}
                 <PropertyWrap
                   label={<FormattedMessage id="issue_edit_updater" />}
                   valueStyle={{

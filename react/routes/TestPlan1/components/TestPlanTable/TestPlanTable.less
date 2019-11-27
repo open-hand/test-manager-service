@@ -1,21 +1,50 @@
 @base: black;
 @baseblue: #3F51B5;
-
-.c7n-table {
-  &-TestPlanTable-table {
-    &-p {
-      color: @base;
+.c7ntest-testPlan-testPlanTableCard {
+  margin-top: 16px;
+  .c7n-card-head {
+    border: none;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    height: 0.6rem;
+    .c7n-card-head-wrapper {
+      display: flex;
+      align-items: center;
+      height: 0.6rem;
+      .c7n-card-head-title {
+        font-size: 0.16rem;
+        font-weight: 500;
+        color: #000000;
+      }
     }
-
-    &-p:hover {
-      color: @baseblue;
-      text-decoration: underline;
-      cursor: pointer;
+    
+}
+.c7n-card-body {
+  padding: 0.2rem;
+  padding-top: 0;
+  .c7n-table {
+    &-TestPlanTable-table {
+      &-p {
+        color: @base;
+      }
+  
+      &-p:hover {
+        color: @baseblue;
+        text-decoration: underline;
+        cursor: pointer;
+      }
     }
-  }
-  &-TestPlanTable-table {
-    &-span {
-      color: fade(@base, 65%);
+    &-TestPlanTable-table {
+      &-span {
+        color: fade(@base, 65%);
+      }
     }
   }
 }
+}
+.c7ntest-testPlan-userDropDown {
+  .c7n-select-dropdown-menu-item {
+    display: flex;
+  }
+}
+

@@ -210,7 +210,9 @@ const zhCN = {
   cycle_totalExecute: '执行数',
   cycle_totalExecuted: '已执行数',
   cycle_comment: '描述',
-  cycle_executeBy: '执行方',
+  cycle_executeBy: '执行人',
+  cycle_testSource: '测试来源',
+  cycle_updatedDate: '更新时间',
   cycle_executeTime: '执行时间',
   cycle_assignedTo: '被指定人',
   // 循环树

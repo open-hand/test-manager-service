@@ -43,31 +43,33 @@
             width: calc(~"100% - 2.42rem");
             padding-left: 0.2rem;
             padding-right: 0.2rem;
-            .c7ntest-testPlan-contentWrap-baseInfo {
-                &-currentPlanName, &-warning {
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 0.16rem;
-                    .icon {
-                        margin-right: 0.06rem;
-                    }
+            &-currentPlanName, &-warning {
+                display: flex;
+                align-items: center;
+                margin-bottom: 0.16rem;
+                .icon {
+                    margin-right: 0.06rem;
                 }
-                &-currentPlanName {
-                    margin-top: 15px;
-                    span {
-                        font-size: 0.2rem;
-                        color: #000000;
-                    }
+            }
+            &-currentPlanName {
+                padding-top: 15px;
+                span {
+                    font-size: 0.2rem;
+                    color: #000000;
                 }
-                &-warning {
-                    .icon {
-                        color: red;
-                    }
-                    span {
-                        font-size: 0.12rem;
-                        color: rgba(0,0,0,0.65);
-                    }  
+            }
+            &-warning {
+                .icon {
+                    color: red;
                 }
+                span {
+                    font-size: 0.12rem;
+                    color: rgba(0,0,0,0.65);
+                }  
+            }
+            &-card {
+                height: calc(~"100% - 0.95rem");
+                overflow: scroll;
             }
         }
        

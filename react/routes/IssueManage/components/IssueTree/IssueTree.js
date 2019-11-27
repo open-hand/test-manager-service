@@ -3,10 +3,10 @@ import { observer } from 'mobx-react';
 import { handleRequestFailed } from '@/common/utils';
 import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
+import IssueStore from '../../stores/IssueStore';
 import {
   addFolder, editFolder, deleteFolder, moveFolders,
 } from '../../../../api/IssueManageApi';
-import IssueStore from '../../stores/IssueStore';
 import { NoVersion, Loading } from '../../../../components';
 import Tree from '../Tree';
 
@@ -40,7 +40,9 @@ class IssueTree extends Component {
 
   handleDelete = item => handleRequestFailed(deleteFolder(item.id))
 
-  handleDrag = (sourceItem, destination) => handleRequestFailed(moveFolders([sourceItem.id], destination.parentId))
+  handleDrag = (sourceItem, destination) => {
+    handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
+  }
   
 
   setSelected = (item) => {

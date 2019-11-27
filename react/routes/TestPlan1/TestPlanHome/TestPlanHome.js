@@ -10,8 +10,10 @@ import {
 import { Button, Icon, Tabs } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import {
-  getCycleTree, getExecutesByCycleId,
-} from '../../../api/cycleApi';
+  getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
+} from '../../../api/cycleApi'; 
+import { editCycle } from '../../../api/ExecuteDetailApi';
+import { getStatusList } from '../../../api/TestStatusApi';
 import Injecter from '../../../components/Injecter';
 import CreateAutoTest from '../components/CreateAutoTest'; 
 import openCreatePlan from '../components/CreatePlan';
@@ -24,10 +26,12 @@ import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
 
 import Store from '../stores';
 import './TestPlanHome.less';
-import { getParams } from '../../../common/utils';
+import { getParams, getDragRank, executeDetailShowLink } from '../../../common/utils';
 
 
 const { TabPane } = Tabs;
+const { confirm } = Modal;
+
 export default observer(() => {
   const { prefixCls, createAutoTestStore, testPlanStore } = useContext(Store);
   const [activeKey, setActiveKey] = useState('notStart');
@@ -43,34 +47,6 @@ export default observer(() => {
     openCreatePlan();
   };
 
-  const /**
-  *右侧reload
-  *
-  * @memberof TestExecuteHomeContainer
-  */
-    loadExecutes = () => {
-      const currentCycle = testPlanStore.getCurrentCycle;
-      const { cycleId, type } = currentCycle;
-      const executePagination = testPlanStore.getExecutePagination;
-      const { filters } = testPlanStore;
-      const targetPage = executePagination.current;
-      getExecutesByCycleId({
-        page: targetPage,
-        size: executePagination.pageSize,
-      }, cycleId,
-      {
-        ...filters,
-        lastUpdatedBy: [Number(this.lastUpdatedBy)],
-      }, type).then((res) => {
-        testPlanStore.setExecutePagination({
-          current: res.pageNum,
-          pageSize: res.pageSize,
-          total: res.total,
-        });
-        testPlanStore.setTableLoading(false);
-      });
-    };
-
   const loadCycle = (selectedKeys, {
     selected, selectedNodes, node, event,
   } = {}, flag) => {
@@ -85,10 +61,10 @@ export default observer(() => {
       }
       testPlanStore.setCurrentCycle(data);
       if (data.type === 'folder' || data.type === 'cycle') {
-        if (!flag) {
-          testPlanStore.setTableLoading(true);
-        }
-        loadExecutes(data);
+        // if (!flag) {
+        //   testPlanStore.setTableLoading(true);
+        // }
+        testPlanStore.loadExecutes();
       }
     }
   };
@@ -115,19 +91,125 @@ export default observer(() => {
 
   const loadTreeAndExecute = () => {
     testPlanStore.setLoading(true);
-    getCycleTree().then((data) => {
-      // traverseTree({ title: '所有版本', key: '0', children: data.versions });
-      testPlanStore.setTreeData(data.versions);
+    Promise.all([getStatusList('CYCLE_CASE'), getCycleTree()]).then(([statusList, planTreeData]) => {
+      testPlanStore.setStatusList(statusList);
+      testPlanStore.setTreeData(planTreeData.versions);
       testPlanStore.setLoading(false);
-      generateList(data.versions);
-
-      // window.console.log(dataList);
+      generateList(planTreeData.versions);
+      // 默认选中一个项
+      // if (planTreeData.versions && planTreeData.versions.length > 0) {
+      //   testPlanStore.setCurrentCycle(planTreeData.versions[0]);
+      //   // 如果选中了项，就刷新table数据
+      //   loadCycle(null, { node: { props: { planTreeData: planTreeData.versions[0] } } }, true);
+      // }
     });
-    // 如果选中了项，就刷新table数据
-    const currentCycle = testPlanStore.getCurrentCycle;
-    if (currentCycle.cycleId) {
-      loadCycle(null, { node: { props: { data: currentCycle } } }, true);
+  };
+
+  const onDragEnd = (sourceIndex, targetIndex) => {
+    const { testList } = testPlanStore;
+    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
+    const source = testList[sourceIndex];
+    const temp = { ...source };
+    delete temp.defects;
+    delete temp.caseAttachment;
+    delete temp.testCycleCaseStepES;
+    delete temp.issueInfosVO;
+    temp.assignedTo = temp.assignedTo || 0;
+    testPlanStore.rightEnterLoading();
+    editExecuteDetail({
+      ...temp,
+      ...{
+        lastRank,
+        nextRank,
+      },
+    }).then((res) => {
+      testPlanStore.loadExecutes();
+    }).catch((err) => {    
+      Choerodon.prompt('网络错误');
+      testPlanStore.rightLeaveLoading();
+    });
+  };
+
+  const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
     }
+    if (pagination.current) {
+      testPlanStore.setFilters(Filters);
+      testPlanStore.rightEnterLoading();
+      testPlanStore.setExecutePagination(pagination);
+      testPlanStore.loadExecutes();
+    }
+  };
+
+  /**
+   * 点击table的一项
+   *
+   * @memberof TestPlanHome
+   */
+  const handleTableRowClick = (record) => {
+    const { history } = this.props;
+    history.push(executeDetailShowLink(record.executeId));
+  };
+
+  const handleDeleteExecute = (record) => {
+    const { executeId } = record;
+    confirm({
+      width: 560,
+      title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
+      content: Choerodon.getMessage('当您点击删除后，该条执行将从此计划阶段中移除!', 'When you click delete, after which the data will be deleted !'),
+      onOk: () => {
+        testPlanStore.rightEnterLoading();
+        deleteExecute(executeId)
+          .then((res) => {           
+            testPlanStore.loadExecutes();
+          }).catch((err) => {
+            /* console.log(err); */
+            Choerodon.prompt('网络异常');
+            testPlanStore.rightLeaveLoading();
+          });
+      },
+      okText: '删除',
+      okType: 'danger',
+    });
+  };
+
+  const quickPassOrFail = (execute, text) => {
+    // const { statusList } = testPlanStore;
+    // const cycleData = { ...execute };
+    // if (_.find(statusList, { projectId: 0, statusName: text })) {
+    //   cycleData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
+    //   delete cycleData.defects;
+    //   delete cycleData.caseAttachment;
+    //   delete cycleData.testCycleCaseStepES;
+    //   delete cycleData.lastRank;
+    //   delete cycleData.nextRank;
+    //   // 加载所有数据，因为进度条需要更新
+    //   this.setState({
+    //     loading: true,
+    //   });
+    //   editCycle(cycleData).then((Data) => {
+    //     this.loadTreeAndExecute();
+    //   }).catch((error) => {
+    //     this.setState({
+    //       loading: false,
+    //     });
+    //     Choerodon.prompt('网络错误');
+    //   });
+    // } else {
+    //   Choerodon.prompt('未找到对应状态');
+    // }
+  };
+
+  const handleQuickPass = (execute, e) => {
+    e.stopPropagation();
+    quickPassOrFail(execute, '通过');
+  };
+
+  const handleQuickFail = (execute, e) => {
+    e.stopPropagation();
+    quickPassOrFail(execute, '失败');
   };
 
   useEffect(() => {
@@ -137,6 +219,7 @@ export default observer(() => {
 
   const { treeData, loading } = testPlanStore;
   const noPlan = treeData.length === 0 || treeData[0].children.length === 0;
+
   return (
     <Page className={prefixCls}>
       <Header
@@ -158,7 +241,16 @@ export default observer(() => {
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
         {
-          noPlan ? <Empty loading={loading} pic={testCaseEmpty} title="" description="" /> : (
+              
+          noPlan ? (
+            <Empty 
+              loading={loading} 
+              pic={testCaseEmpty} 
+              title="暂无计划" 
+              description="当前项目下无计划，请创建"
+              extra={<Button type="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
+            />
+          ) : (
             <div className={`${prefixCls}-contentWrap`}>
               <div className={`${prefixCls}-contentWrap-left`}>
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
@@ -176,15 +268,15 @@ export default observer(() => {
                 </div>
               </div>
               <div className={`${prefixCls}-contentWrap-right`}>
-                <div className={`${prefixCls}-contentWrap-baseInfo`}>
-                  <div className={`${prefixCls}-contentWrap-baseInfo-currentPlanName`}>
-                    <Icon type="insert_invitation" />
-                    <span>0.20.0版本测试计划</span>
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-baseInfo-warning`}>
-                    <Icon type="error" />
-                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                  </div>
+                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                  <Icon type="insert_invitation" />
+                  <span>0.20.0版本测试计划</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-warning`}>
+                  <Icon type="error" />
+                  <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-card`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
                     <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
                       <TestPlanDetailCard />
@@ -194,25 +286,25 @@ export default observer(() => {
                     </div>
                   </div>
                   <div className={`${prefixCls}-contentWrap-table`}>
-                    {/* <Injecter store={testPlanStore} item={['statusList', 'getTestList', 'executePagination', 'rightLoading']}>
-                      {([statusList, testList, executePagination, rightLoading]) => (
+                    <Injecter store={testPlanStore} item={['statusList', 'getTestList', 'executePagination', 'tableLoading', 'checkIdMap']}>
+                      {([statusList, testList, executePagination, tableLoading, checkIdMap]) => (
                         <TestPlanTable
                           statusList={statusList}
-                          loading={rightLoading}
+                          loading={tableLoading}
                           pagination={executePagination}
                           dataSource={testList}
-                          onLastUpdatedByChange={this.handleLastUpdatedByChange}
-                          onAssignedToChange={this.handleAssignedToChange}
-                          onDragEnd={this.onDragEnd}                        
-                          onTableChange={this.handleExecuteTableChange}
-                          onTableRowClick={this.handleTableRowClick}
-                          onDeleteExecute={this.handleDeleteExecute}
+                          onDragEnd={onDragEnd}
+                          onTableChange={handleExecuteTableChange}
+                          onTableRowClick={handleTableRowClick}
+                          onDeleteExecute={handleDeleteExecute}
+                          onQuickPass={handleQuickPass}
+                          onQuickFail={handleQuickFail}
+                          checkIdMap={checkIdMap}
                         />
                       )}
-                    </Injecter> */}
+                    </Injecter>
                   </div>
                 </div>
-         
               </div>
             </div>
           )
