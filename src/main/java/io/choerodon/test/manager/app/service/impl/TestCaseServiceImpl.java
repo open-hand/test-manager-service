@@ -600,6 +600,23 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 
     private void changeLabel(Long projectId, Long caseId, List<TestCaseLabelDTO> labels) {
+        // 传递过来的labels为空,则删去用例所有的标签关联关系
+        if (CollectionUtils.isEmpty(labels)) {
+            TestCaseLabelRelDTO testCaseLabelRelDTO = new TestCaseLabelRelDTO();
+            testCaseLabelRelDTO.setProjectId(projectId);
+            testCaseLabelRelDTO.setCaseId(caseId);
+            List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.query(testCaseLabelRelDTO);
+            testCaseLabelRelService.baseDelete(testCaseLabelRelDTO);
+            // 判断标签是否还有关联,没有就删除标签
+            testCaseLabelRelDTOS.forEach(v -> {
+                TestCaseLabelRelDTO testCaseLabelRel = new TestCaseLabelRelDTO();
+                testCaseLabelRel.setLabelId(v.getLabelId());
+                if (CollectionUtils.isEmpty(testCaseLabelRelService.query(testCaseLabelRel))) {
+                    testCaseLabelService.baseDelete(v.getLabelId());
+                }
+            });
+            return;
+        }
         // 查询已有的标签
         List<TestCaseLabelRelDTO> testCaseLabelRelDTOS = testCaseLabelRelService.listLabelByCaseId(caseId);
         List<Long> olderIds = testCaseLabelRelDTOS.stream().map(TestCaseLabelRelDTO::getLabelId).collect(Collectors.toList());
