@@ -37,7 +37,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAttachmentServiceImpl.class);
 
-    private static final String BACKETNAME = "agile-service";
+    private static final String BACKETNAME = "test";
 
 
     private final FileFeignClient fileFeignClient;
@@ -62,7 +62,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         issueAttachmentDTO.setProjectId(projectId);
         issueAttachmentDTO.setCaseId(issueId);
         issueAttachmentDTO.setFileName(fileName);
-        issueAttachmentDTO.setUrl(url);
+        issueAttachmentDTO.setUrl(String.format("/%s/%s",BACKETNAME,url));
         iIssueAttachmentService.createBase(issueAttachmentDTO);
     }
 
@@ -115,7 +115,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<TestCaseAttachmentDTO> issueAttachmentDTOList = testAttachmentMapper.select(issueAttachmentDTO);
         if (issueAttachmentDTOList != null && !issueAttachmentDTOList.isEmpty()) {
             issueAttachmentDTOList.forEach(attachment -> {
-                attachment.setUrl(attachmentUrl + "/" + BACKETNAME + "/" + attachment.getUrl());
+                attachment.setUrl(attachmentUrl + attachment.getUrl());
             });
         }
         return issueAttachmentDTOList;
@@ -131,7 +131,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         String url = null;
         try {
             url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-            fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + "/" + BACKETNAME + "/" + url);
+            fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + url);
         } catch (Exception e) {
             LOGGER.error("error.attachment.delete", e);
         }
