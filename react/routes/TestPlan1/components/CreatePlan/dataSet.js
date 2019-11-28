@@ -5,7 +5,7 @@ export default function DataSetFactory({ initValue = {}, edit = false, SelectIss
   const { id, objectVersionNumber } = initValue;
   return {
     autoCreate: true,
-    data: [initValue],
+    data: edit ? [initValue] : undefined,
     transport: {
       submit: {
         url: `/test/v1/projects/${getProjectId()}/plan`,
@@ -65,7 +65,7 @@ export default function DataSetFactory({ initValue = {}, edit = false, SelectIss
         name: 'custom', type: 'boolean', label: '导入方式',
       },
       {
-        name: 'autoSync', type: 'boolean', label: '自动同步',
+        name: 'autoSync', type: 'boolean', label: '自动同步', defaultValue: true,
       },
     ],
   };

@@ -28,7 +28,7 @@ function CreatePlan({
   const submit = useCallback(async () => {
     // console.log('click');
     try {
-      dataSet.validate();
+      // dataSet.validate();
       const result = await dataSet.submit();
       // if (result.success) {
       //   onSubmit(result.list[0]);
@@ -88,10 +88,6 @@ export default function openCreatePlan() {
     style: {
       width: 1090,
     },
-    children: <ObserverCreatePlan initValue={{
-      custom: false,
-      autoSync: true,
-    }}
-    />,
+    children: <ObserverCreatePlan />,
   });
 }
