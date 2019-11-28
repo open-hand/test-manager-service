@@ -29,4 +29,6 @@ public interface TestPlanServcie {
      * @return
      */
     List<TestPlanTreeVO> ListPlanAndFolderTree(Long projectId,String statusCode);
+
+    void baseUpdate(TestPlanDTO testPlanDTO);
 }

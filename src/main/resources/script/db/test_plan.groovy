@@ -23,6 +23,8 @@ databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
                 column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
                 column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
                 column(name: "is_auto_sync", type: "tinyint",remarks: '自动同步')
+                column(name: "init_status", type: "VARCHAR(255)",remarks: '初始化状态')
+
             }
         }
 

@@ -179,4 +179,12 @@ public interface TestCaseService {
      * @return
      */
     List<TestCaseDTO> listCaseByProjectId(Long projectId);
+
+    /**
+     * 根据caseIds 查询用例
+     * @param projectId
+     * @param caseIds
+     * @return
+     */
+    List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds);
 }

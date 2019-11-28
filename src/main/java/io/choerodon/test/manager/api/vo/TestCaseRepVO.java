@@ -51,6 +51,9 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "附件")
     private List<TestCaseAttachmentDTO> attachment;
 
+    @ApiModelProperty(value = "文件夹名称")
+    private String folderName;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -153,5 +156,13 @@ public class TestCaseRepVO {
 
     public void setAttachment(List<TestCaseAttachmentDTO> attachment) {
         this.attachment = attachment;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }

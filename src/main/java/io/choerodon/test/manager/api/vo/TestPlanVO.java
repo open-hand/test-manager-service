@@ -2,6 +2,7 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,16 +35,14 @@ public class TestPlanVO {
     private Long projectId;
 
     @ApiModelProperty(value = "是否自选用例")
-    private Boolean isOptional;
+    private Boolean custom;
 
     @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
 
-    @ApiModelProperty(value = "文件夹")
-    private List<TestIssueFolderDTO> folders;
+    private Map<Long, CaseSelectVO> caseSelected;
 
-    @ApiModelProperty(value = "测试用例")
-    private List<TestCaseDTO> testCases;
+    private Long objectVersionNumber;
 
     public Long getPlanId() {
         return planId;
@@ -101,13 +100,6 @@ public class TestPlanVO {
         this.projectId = projectId;
     }
 
-    public Boolean getOptional() {
-        return isOptional;
-    }
-
-    public void setOptional(Boolean optional) {
-        isOptional = optional;
-    }
 
     public Boolean getAutoSync() {
         return isAutoSync;
@@ -117,19 +109,27 @@ public class TestPlanVO {
         isAutoSync = autoSync;
     }
 
-    public List<TestIssueFolderDTO> getFolders() {
-        return folders;
+    public Map<Long, CaseSelectVO> getCaseSelected() {
+        return caseSelected;
     }
 
-    public void setFolders(List<TestIssueFolderDTO> folders) {
-        this.folders = folders;
+    public void setCaseSelected(Map<Long, CaseSelectVO> caseSelected) {
+        this.caseSelected = caseSelected;
     }
 
-    public List<TestCaseDTO> getTestCases() {
-        return testCases;
+    public Boolean getCustom() {
+        return custom;
     }
 
-    public void setTestCases(List<TestCaseDTO> testCases) {
-        this.testCases = testCases;
+    public void setCustom(Boolean custom) {
+        this.custom = custom;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }
