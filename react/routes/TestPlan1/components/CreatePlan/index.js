@@ -51,7 +51,7 @@ function CreatePlan({
         <TextArea
           name="description"
         />
-        <Select name="assignId" searchable searchMatcher="param" />
+        <Select name="managerId" searchable searchMatcher="param" />
         <DateTimePicker range name="range" min={Date.now()} />
         <div>
           <div>

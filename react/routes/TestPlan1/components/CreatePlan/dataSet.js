@@ -44,18 +44,18 @@ export default function DataSetFactory({ initValue = {}, edit = false, SelectIss
         name: 'description', type: 'string', label: '描述',
       },
       {
-        name: 'assignId',
+        name: 'managerId',
         type: 'number',
         label: '负责人', 
         required: true,      
         lookupAxiosConfig: ({ record, dataSet: ds }) => {
-          let assignId = null;
-          if (record && record.data.assignId) {
+          let managerId = null;
+          if (record && record.data.managerId) {
             // eslint-disable-next-line prefer-destructuring
-            assignId = record.data.assignId;
+            managerId = record.data.managerId;
           }
           return {
-            url: `/base/v1/projects/${getProjectId()}/users${assignId && assignId === initValue.assignId ? `?id=${assignId}` : ''}`,
+            url: `/base/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
           };          
         },
         textField: 'realName',
