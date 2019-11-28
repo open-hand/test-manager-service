@@ -60,7 +60,8 @@ const propTypes = {
   enableAddFolder: PropTypes.func,
 };
 const defaultProps = {
-  enableAddFolder: () => true,
+  enableAction: true,
+  enableAddFolder: () => false,
 };
 function PureTree({
   data,
