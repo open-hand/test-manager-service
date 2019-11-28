@@ -19,11 +19,10 @@ function IssueTable({
       read: {
         url: `/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}`,
         method: 'post',
-        transformRequest: (data) => {
-          // console.log(data);
-          const { summary, caseNum } = data;
+        transformRequest: (data) => {   
+          const { params, summary, caseNum } = data;
           return JSON.stringify({
-            // contents:
+            contents: params ? [params] : [],
             searchArgs: {
               summary,
               caseNum,
