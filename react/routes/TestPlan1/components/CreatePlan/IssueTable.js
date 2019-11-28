@@ -14,7 +14,6 @@ function IssueTable({
     primaryKey: 'caseId',
     autoQuery: true,
     selection: 'multiple',
-    cacheSelection: true,
     transport: {
       read: {
         url: `/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}`,
@@ -44,18 +43,23 @@ function IssueTable({
           record.set('source', undefined);
           return;
         }
-        // console.log('select');
-        SelectIssueStore.handleCheckChange(true, record.get('folderId'));
+        const caseId = record.get('caseId');
+        const caseFolderId = record.get('folderId');    
+        // 选中树
+        SelectIssueStore.handleCheckChange(true, caseFolderId);
+        SelectIssueStore.addFolderSelectedCase(caseFolderId, caseId);
       },
       unSelect: ({ record }) => {
-        // console.log('unselect');
+        const caseId = record.get('caseId');
+        const caseFolderId = record.get('folderId');
+        SelectIssueStore.removeFolderSelectedCase(caseFolderId, caseId);
       },
       selectAll: () => {
-        // console.log('selectAll');
-        SelectIssueStore.handleCheckChange(true, folderId);
+        if (dataSet.length > 0) {
+          SelectIssueStore.handleCheckChange(true, folderId);
+        }
       },
       unSelectAll: () => {
-        // console.log('unSelectAll');
         SelectIssueStore.handleCheckChange(false, folderId);
       },
     },

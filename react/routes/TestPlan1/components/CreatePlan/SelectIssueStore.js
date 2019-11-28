@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { find } from 'lodash';
+import { find, pull } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
 
 class IssueTreeStore {
@@ -112,9 +112,9 @@ class IssueTreeStore {
     const item = this.treeMap.get(folderId);
     const { data: { parentId } } = item;
     // 如果
-    // if (item.checked === checked) {
-    //   return;
-    // }
+    if (item.checked === checked && !item.isIndeterminate) {
+      return;
+    }
     item.checked = checked;
     // 处理子集
     this.autoHandleChildren(item, checked);
@@ -155,29 +155,54 @@ class IssueTreeStore {
     }
   }
 
-  @action handleParentWhenCheckChild(id) {
-    const parent = this.treeMap.get(id);
-    const { children, data: { parentId } } = parent;
-    // 如果没有自动选中，就选中
-    if (!parent.checked) {
-      parent.checked = true;
-    }
-    // 如果有一个子没选中，就是中间态
-    const isIndeterminate = children.some(childId => !this.treeMap.get(childId).checked);
-    parent.isIndeterminate = isIndeterminate;
-    if (parentId) {
-      this.handleParentWhenCheckChild(parentId);
+  // 选中单个case的处理
+  addFolderSelectedCase(folderId, caseId) {
+    const item = this.treeMap.get(folderId);
+    // 已未选中为主
+    if (item.unSelectedCases) {
+      // 从取消选中去掉，代表选中
+      pull(item.unSelectedCases, caseId);    
+    } else {
+      // 以选中为主
+      if (!item.selectedCases) {
+        item.selectedCases = [];
+      }
+      item.selectedCases.push(caseId);
     }
   }
 
-  @action handleParentWhenUnCheckChild(parent) {
-    const { children } = parent;
-    // 如果有一个子选中，就选中
-    const checked = children.some(childId => this.treeMap.get(childId).checked);
-    parent.checked = checked;
-    // 如果有一个子没选中，就是中间态
-    const isIndeterminate = children.some(childId => !this.treeMap.get(childId).checked);
-    parent.isIndeterminate = isIndeterminate;
+  // 取消单个选中
+  removeFolderSelectedCase(folderId, caseId) {
+    const item = this.treeMap.get(folderId);
+    // 已选中为主
+    if (item.selectedCases) {
+      // 从选中去掉，代表未选中
+      pull(item.selectedCases, caseId);
+      // 如果全移除了，就取消树的选中
+      if (item.selectedCases.length === 0) {
+        this.handleCheckChange(false, folderId);
+      }
+    } else {
+      // 以未选中为主
+      if (!item.unSelectedCases) {
+        item.unSelectedCases = [];
+      }
+      item.unSelectedCases.push(caseId);
+    }
+  }
+
+  getSelectedFolders() {
+    const result = {};
+    for (const [id, item] of this.treeMap) {
+      // 只取树最后一层的文件夹
+      if (item.checked && item.children.length === 0) {
+        const { unSelectedCases, selectedCases } = item;
+        result[id] = {
+          unSelectedCases, selectedCases,
+        };
+      }
+    }
+    return result;
   }
 }
 

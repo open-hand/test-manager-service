@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react';
+import { Button } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import Tree from '@/components/Tree';
 import SelectIssueStore from './SelectIssueStore';
@@ -51,6 +52,10 @@ function SelectIssue() {
       </div>
     </div>
   ), [handleCheckChange, treeMap]);
+  const log = () => {
+    // eslint-disable-next-line no-console
+    console.log(SelectIssueStore.getSelectedFolders());
+  };
   return (
     <div className={prefix}>
       <div className={`${prefix}-tree`}>
@@ -69,6 +74,7 @@ function SelectIssue() {
         <IssueTable folderId={folderId} saveDataSet={saveDataSet} />
       </div>
       )}
+      <Button onClick={log}>查看结果</Button>
     </div>
   );
 }
