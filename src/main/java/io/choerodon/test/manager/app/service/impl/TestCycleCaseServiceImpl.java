@@ -12,6 +12,7 @@ import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
@@ -86,6 +87,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
+
+    @Autowired
+    private TestCaseAssembler testCaseAssembler;
 
     @Autowired
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
@@ -531,6 +535,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
+    public List<ExecutionStatusVO> queryStepStatus(Long planId) {
+        return testCycleCaseMapper.queryExecutionStatus(planId);
+    }
+    @Override
+    public TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId) {
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.queryByCaseId(executeId);
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+            throw new CommonException("error cycle case not exist");
+        }
+        return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO);
+    }
+
+    @Override
     public void  batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
         List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
         // 获取case关联的步骤
@@ -546,8 +563,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             if(!ObjectUtils.isEmpty(testCycleDTO)){
             TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
             testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
-            testCycleCaseDTO.setIssueId(v.getCaseId());
-            testCycleCaseDTO.setComment(v.getDescription());
+            testCycleCaseDTO.setCaseId(v.getCaseId());
+            testCycleCaseDTO.setDescription(v.getDescription());
             testCycleCaseDTO.setProjectId(v.getProjectId());
             testCycleCaseDTO.setVersionNum(v.getVersionNum());
             testCycleCaseDTO.setExecutionStatus(defaultStatusId);
@@ -572,7 +589,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseVO.getLastRank(), testCycleCaseVO.getNextRank()));
         testCycleCaseDTO.setProjectId(projectId);
         testCycleCaseDTO.setCycleId(testCycleCaseVO.getCycleId());
-        testCycleCaseDTO.setIssueId(testCycleCaseVO.getIssueId());
+        testCycleCaseDTO.setCaseId(testCycleCaseVO.getIssueId());
         testCycleCaseDTO.setExecutionStatus(testCycleCaseVO.getExecutionStatus());
         if (testCycleCaseMapper.validateCycleCaseInCycle(testCycleCaseDTO).longValue() > 0) {
             throw new CommonException("error.cycle.case.insert.have.one.case.in.cycle");
@@ -584,7 +601,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     public void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO) {
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
-        testCaseStepDTO.setIssueId(testCycleCaseDTO.getIssueId());
+        testCaseStepDTO.setIssueId(testCycleCaseDTO.getCaseId());
         List<TestCaseStepDTO> testCaseStepES = testCaseStepMapper.query(testCaseStepDTO);
         Long defaultStepStatusId = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
         testCaseStepES.forEach(v -> {

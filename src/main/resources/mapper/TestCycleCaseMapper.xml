@@ -646,6 +646,31 @@ ORDER BY
         </foreach>
     </update>
 
+    <select id="queryByCaseId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+        SELECT
+            tcc.*, ts.status_name executionStatusName,
+            ts.status_color statusColor
+        FROM
+            `test_cycle_case` tcc
+        LEFT JOIN test_status ts ON ts.status_id = tcc.execution_status
+        WHERE
+            tcc.execute_id = #{executeId};
+    </select>
+
+    <select id="queryExecutionStatus" resultType="io.choerodon.test.manager.api.vo.ExecutionStatusVO">
+        SELECT
+            ts.status_name statusName,
+            count(execution_status) count
+        FROM
+            `test_cycle_case` tcc
+        LEFT JOIN test_cycle tc ON tcc.cycle_id = tc.cycle_id
+        LEFT JOIN test_status ts ON ts.status_id = tcc.execution_status
+        WHERE
+            tc.plan_id = #{planId}
+        GROUP BY
+            tcc.execution_status;
+    </select>
+
     <update id="fixCycleCase">
         UPDATE test_cycle_case tcc
         SET tcc.summary = (
@@ -654,7 +679,7 @@ ORDER BY
             FROM
                 test_case tc
             WHERE
-                tcc.issue_id = tc.case_id
+                tcc.case_id = tc.case_id
         ),
          tcc.version_num = (
             SELECT
@@ -662,7 +687,7 @@ ORDER BY
             FROM
                 test_case tc
             WHERE
-                tcc.issue_id = tc.case_id
+                tcc.case_id = tc.case_id
         )
     </update>
 </mapper>

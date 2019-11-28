@@ -1,27 +1,29 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-import com.github.pagehelper.PageInfo;
 
 import io.choerodon.core.annotation.Permission;
-import org.springframework.data.domain.Sort;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.SortDefault;
+import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
@@ -183,4 +185,24 @@ public class TestCycleCaseController {
         excelServiceHandler.exportCycleCaseInOneCycle(cycleId, projectId, request, response, organizationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询测试执行详情")
+    @GetMapping("/{executeId}/info")
+    public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
+                                                             @PathVariable(name = "executeId", required = true) Long executeId) {
+        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(projectId,executeId), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询计划下的执行状态总览")
+    @GetMapping("/query/status")
+    public ResponseEntity<List<ExecutionStatusVO>> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
+                                                                        @ApiParam(value = "planId", required = true)
+                                                                        @RequestParam(name = "planId") Long planId) {
+        return Optional.ofNullable(testCycleCaseService.queryStepStatus(planId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.plan.status.query"));
+
+    }
+
 }

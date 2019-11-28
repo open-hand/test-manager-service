@@ -40,4 +40,12 @@ public class TestPlanController {
                                                            @RequestParam("status_code") String statusCode) {
         return new ResponseEntity<>(testPlanServcie.ListPlanAndFolderTree(projectId, statusCode), HttpStatus.OK);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("更新测试计划")
+    @PutMapping()
+    public ResponseEntity<TestPlanVO> update(@PathVariable("project_id") Long projectId,
+                                              @RequestBody TestPlanVO testPlanVO) {
+        return new ResponseEntity<>(testPlanServcie.update(projectId, testPlanVO), HttpStatus.OK);
+    }
 }

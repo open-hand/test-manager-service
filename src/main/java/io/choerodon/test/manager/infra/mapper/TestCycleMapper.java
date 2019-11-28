@@ -60,4 +60,9 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
     void deleteRepeat(@Param("projectId") Long projectId, @Param("versionId") Long versionId, @Param("folderId") Long folderId);
 
     List<TestCycleDTO> listByPlanIds(@Param("planIds") List<Long> planIds);
+    List<Long> selectVersionId();
+
+    void deleteRepeat(@Param("versionId") Long versionId, @Param("folderId") Long folderId);
+
+    void fixPlanId(@Param("versionId") Long versionId, @Param("planId") Long planId);
 }

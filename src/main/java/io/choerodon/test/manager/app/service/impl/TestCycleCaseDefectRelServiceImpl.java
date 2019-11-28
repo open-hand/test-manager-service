@@ -139,7 +139,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
         List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
         if (res != null && !res.isEmpty()) {
-            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getIssueId).collect(Collectors.toList());
+            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
             Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
             List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
             res.forEach(testCycleCaseDTO -> {

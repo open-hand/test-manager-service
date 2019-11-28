@@ -162,7 +162,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseDTO> caseList = Optional.ofNullable(testCycleCaseMapper.select(cycleCaseE)).orElseGet(ArrayList::new);
-        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseDTO::getIssueId, TestCycleCaseDTO::getExecuteId));
+        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseDTO::getCaseId, TestCycleCaseDTO::getExecuteId));
         //对比执行和folder中的issue添加未添加的执行
         TestCycleCaseVO dto = new TestCycleCaseVO();
         dto.setCycleId(cycleId);
