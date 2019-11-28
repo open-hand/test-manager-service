@@ -1,6 +1,7 @@
 import React, {
   useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef,
 } from 'react';
+import PropTypes from 'prop-types';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -39,9 +40,24 @@ function mapDataToTree(data) {
   });
   return treeData;
 }
+const propTypes = {
+  data: PropTypes.shape({
+    rootIds: PropTypes.arrayOf(PropTypes.number),
+    treeFolder: PropTypes.arrayOf({}),
+  }),
+  onCreate: PropTypes.func,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+  afterDrag: PropTypes.func,
+  selected: PropTypes.shape({
+    id: PropTypes.number,
+  }),
+  setSelected: PropTypes.func,
+  renderTreeNode: PropTypes.func,
+  enableAction: PropTypes.boolean,
+};
 function PureTree({
   data,
-  empty,
   onCreate,
   onEdit,
   onDelete,
@@ -49,6 +65,7 @@ function PureTree({
   selected,
   setSelected,
   renderTreeNode,
+  enableAction,
   ...restProps
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
@@ -210,34 +227,33 @@ function PureTree({
         onCreate={handleCreate}
         onEdit={handleEdit}
         search={search}
+        enableAction={enableAction}
       />
     );
     return renderTreeNode ? renderTreeNode(treeNode, { item }) : treeNode;
   };
-  const isEmpty = getRootNode(tree).children.length === 0;
   return (
-    isEmpty ? empty : (
-      <div className={prefix}>
-        <div className={`${prefix}-top`}>
-          <FilterInput
-            onChange={filterTree}
-          />
-        </div>      
-        <div className={`${prefix}-scroll`}>
-          <Tree        
-            tree={tree}
-            renderItem={renderItem}
-            onExpand={onExpand}
-            onCollapse={onCollapse}
-            onDragEnd={onDragEnd}
-            offsetPerLevel={PADDING_PER_LEVEL}
-            isDragEnabled
-            isNestingEnabled
-            {...restProps}
-          />
-        </div>      
-      </div>
-    )
+    <div className={prefix}>
+      <div className={`${prefix}-top`}>
+        <FilterInput
+          onChange={filterTree}
+        />
+      </div>      
+      <div className={`${prefix}-scroll`}>
+        <Tree        
+          tree={tree}
+          renderItem={renderItem}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          onDragEnd={onDragEnd}
+          offsetPerLevel={PADDING_PER_LEVEL}
+          isDragEnabled
+          isNestingEnabled
+          {...restProps}
+        />
+      </div>      
+    </div>
   );
 }
+PureTree.propTypes = propTypes;
 export default forwardRef(PureTree);

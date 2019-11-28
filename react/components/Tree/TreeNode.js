@@ -78,10 +78,12 @@ const getAction = (item, onMenuClick) => {
   );
 };
 
-
+const defaultProps = {
+  enableAction: true,
+};
 function TreeNode(props) {
   const {
-    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit,
+    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction,
   } = props; 
   const onSave = (e) => {
     if (item.id === 'new') {
@@ -123,7 +125,7 @@ function TreeNode(props) {
       >
         <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
         <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
-        {getAction({ ...item, path }, onMenuClick)}
+        {enableAction && getAction({ ...item, path }, onMenuClick)}
       </div>
     </div>
   );
@@ -138,4 +140,5 @@ function TreeNode(props) {
     </div>
   );
 }
+TreeNode.defaultProps = defaultProps;
 export default observer(TreeNode);
