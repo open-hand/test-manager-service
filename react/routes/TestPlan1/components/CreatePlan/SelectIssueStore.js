@@ -108,44 +108,56 @@ class IssueTreeStore {
     this.treeRef = treeRef;
   }
 
-  @action handleCheckChange(checked, item) {
+  @action handleCheckChange(checked, folderId) {
+    const item = this.treeMap.get(folderId);
     const { data: { parentId } } = item;
-    if (checked) {
-      item.checked = true;
-      // 如果是子项目      
-      if (parentId) {
-        const parent = this.treeMap.get(parentId);
-        this.handleParentWhenCheckChild(parent);
-      } else {
-        this.autoCheckChildren(item);
-      }
-    } else {
-      item.checked = false;
-      if (parentId) {
-        const parent = this.treeMap.get(parentId);
-        this.handleParentWhenUnCheckChild(parent);
-      } else {
-        this.autoUnCheckChildren(item);
-      }
+    // 如果
+    // if (item.checked === checked) {
+    //   return;
+    // }
+    item.checked = checked;
+    // 处理子集
+    this.autoHandleChildren(item, checked);
+    // 处理父级      
+    if (parentId) {
+      this.autoHandleParent(parentId, checked);
     }
   }
 
-  @action autoCheckChildren(item) {
+  // 递归自动选中或取消所有子文件夹
+  @action autoHandleChildren(item, checked) {
     item.isIndeterminate = false;
     item.children.forEach((folderId) => {
-      this.treeMap.get(folderId).checked = true;
+      const child = this.treeMap.get(folderId);
+      const { children } = child;
+      child.checked = checked;
+      if (children.length > 0) {
+        this.autoHandleChildren(child, checked);
+      }
     });
   }
 
-  @action autoUnCheckChildren(item) {
-    item.isIndeterminate = false;
-    item.children.forEach((folderId) => {
-      this.treeMap.get(folderId).checked = false;
-    });
+  @action autoHandleParent(id, checked) {
+    const item = this.treeMap.get(id);
+    const { children, data: { parentId } } = item;
+    // 子选中，父一定选中
+    if (checked) {
+      item.checked = true;
+    } else {
+      // 如果有一个子选中，就选中
+      item.checked = children.some(childId => this.treeMap.get(childId).checked);
+    }
+    // 如果有一个子没选中，就是中间态
+    const isIndeterminate = item.checked ? children.some(childId => !this.treeMap.get(childId).checked) : false;
+    item.isIndeterminate = isIndeterminate;
+    if (parentId) {
+      this.autoHandleParent(parentId, checked);
+    }
   }
 
-  @action handleParentWhenCheckChild(parent) {
-    const { children } = parent;
+  @action handleParentWhenCheckChild(id) {
+    const parent = this.treeMap.get(id);
+    const { children, data: { parentId } } = parent;
     // 如果没有自动选中，就选中
     if (!parent.checked) {
       parent.checked = true;
@@ -153,6 +165,9 @@ class IssueTreeStore {
     // 如果有一个子没选中，就是中间态
     const isIndeterminate = children.some(childId => !this.treeMap.get(childId).checked);
     parent.isIndeterminate = isIndeterminate;
+    if (parentId) {
+      this.handleParentWhenCheckChild(parentId);
+    }
   }
 
   @action handleParentWhenUnCheckChild(parent) {
