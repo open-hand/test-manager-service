@@ -71,6 +71,7 @@ class IssueTree extends Component {
           selected={IssueTreeStore.getCurrentCycle}
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
+          enableAddFolder={item => !item.hasCase}
         />
       </div>
     );
