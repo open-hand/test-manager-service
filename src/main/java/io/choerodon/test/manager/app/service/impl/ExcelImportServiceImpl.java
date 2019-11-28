@@ -257,7 +257,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         //ExcelUtil.dropDownList2007(workbook, testCaseSheet, priorityList, 1, 500, 2, 2, HIDDEN_PRIORITY, 2);
         ExcelUtil.dropDownList2007(workbook, testCaseSheet, userNameList, 1, 500, 2, 2, HIDDEN_USER, 2);
-        ExcelUtil.dropDownList2007(workbook, testCaseSheet, componentList, 1, 500, 3, 3, HIDDEN_COMPONENT, 3);
+//        ExcelUtil.dropDownList2007(workbook, testCaseSheet, componentList, 1, 500, 3, 3, HIDDEN_COMPONENT, 3);
     }
 
     // 填充测试用例页内容

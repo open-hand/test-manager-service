@@ -557,10 +557,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 插入测试用例
         testCaseMapper.insert(testCaseDTO);
         // 更新记录关联表
-        for (TestCaseLinkDTO testCaseLinkDTO : issueCreateDTO.getTestCaseLinkDTOList()) {
-            testCaseLinkDTO.setProjectId(projectId);
-            testCaseLinkDTO.setLinkCaseId(testCaseDTO.getCaseId());
-            testCaseLinkMapper.insert(testCaseLinkDTO);
+        List<TestCaseLinkDTO> testCaseLinkDTOList = issueCreateDTO.getTestCaseLinkDTOList();
+        if (testCaseLinkDTOList != null && !testCaseLinkDTOList.isEmpty()) {
+            for (TestCaseLinkDTO testCaseLinkDTO : testCaseLinkDTOList) {
+                testCaseLinkDTO.setProjectId(projectId);
+                testCaseLinkDTO.setLinkCaseId(testCaseDTO.getCaseId());
+                testCaseLinkMapper.insert(testCaseLinkDTO);
+            }
         }
         return testCaseDTO;
     }
