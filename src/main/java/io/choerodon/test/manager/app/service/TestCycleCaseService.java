@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 
+import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import org.springframework.data.domain.Pageable;
@@ -74,4 +76,9 @@ public interface TestCycleCaseService {
      * @param testCaseDTOS
      */
     void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS);
+
+    TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
+
+
+    List<ExecutionStatusVO> queryStepStatus(Long planId);
 }

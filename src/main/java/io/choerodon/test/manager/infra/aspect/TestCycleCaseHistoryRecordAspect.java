@@ -76,7 +76,7 @@ public class TestCycleCaseHistoryRecordAspect {
         if (!testCycleCaseVO.getAssignedTo().equals(before.getAssignedTo())) {
             testCycleCaseHistoryService.createAssignedHistory(testCycleCaseVO, beforeCeaseDTO);
         }
-        if (!StringUtils.equals(testCycleCaseVO.getComment(), before.getComment())) {
+        if (!StringUtils.equals(testCycleCaseVO.getComment(), before.getDescription())) {
             testCycleCaseHistoryService.createCommentHistory(testCycleCaseVO, beforeCeaseDTO);
         }
         return o;

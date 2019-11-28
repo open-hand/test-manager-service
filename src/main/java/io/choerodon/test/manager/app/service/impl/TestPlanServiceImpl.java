@@ -20,6 +20,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -61,6 +62,13 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             throw new CommonException("error.update.plan");
         }
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
+    }
+
+    @Override
+    @Async
+    @Transactional(rollbackFor =Exception.class)
+    public void delete(Long projectId, Long planId) {
+        //todo
     }
 
     @Override

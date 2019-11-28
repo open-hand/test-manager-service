@@ -161,6 +161,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
                 if (testCaseAttachmentDTO != null) {
                     logger.info("=====Insert Test Case Attachment{}=====", testCaseAttachmentDTO.getCaseId());
+                    testCaseAttachmentDTO.setUrl("/agile-service/"+testCaseAttachmentDTO.getUrl());
                     testAttachmentMapper.insert(testCaseAttachmentDTO);
                 }
             }
@@ -207,8 +208,14 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migreateVersion(){
         List<TestVersionFixVO> testVersionFixVOS = dataFixFeignClient.migrateVersion().getBody();
-        List<TestPlanDTO> testPlanDTOS = testVersionFixVOS.stream().map(this::planVOToDto).collect(Collectors.toList());
-        testPlanMapper.batchInsert(testPlanDTOS);
+        List<Long> versionIds = testCycleMapper.selectVersionId();
+        List<TestVersionFixVO> collect = testVersionFixVOS.stream().filter(e -> versionIds.contains(e.getVersionId())).collect(Collectors.toList());
+        List<TestPlanDTO> testPlanDTOS = collect.stream().map(this::planVOToDto).collect(Collectors.toList());
+        testPlanDTOS.forEach(t->{
+            testPlanMapper.insert(t);
+            fixCycle(t.getVersionId(),t.getPlanId());
+        });
+
         logger.info("===========version=============> copy successed");
     }
 
@@ -235,6 +242,12 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===========cycle step=============> fix repeat successed");
     }
 
+
+    private void fixCycle(Long versionId,Long planId){
+        testCycleMapper.fixPlanId(versionId, planId);
+        logger.info("===========cycle cycle=============> fix cycle successed");
+    }
+
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         BeanUtils.copyProperties(issueLinkFixVOList, testCaseLinkDTO);
@@ -258,11 +271,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
 
     private TestPlanDTO planVOToDto(TestVersionFixVO testVersionFixVO){
-        TestPlanDTO testPlanDTO = new TestPlanDTO();
-        BeanUtils.copyProperties(testVersionFixVO,testPlanDTO);
-        testPlanDTO.setPlanId(testVersionFixVO.getVersionId());
-        testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate():testVersionFixVO.getReleaseDate());
-        testPlanDTO.setStartDate(testVersionFixVO.getStartDate()==null?testVersionFixVO.getReleaseDate():testVersionFixVO.getStartDate());
-        return testPlanDTO;
+            TestPlanDTO testPlanDTO = new TestPlanDTO();
+            BeanUtils.copyProperties(testVersionFixVO,testPlanDTO);
+            testPlanDTO.setPlanId(testVersionFixVO.getVersionId());
+            testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate():testVersionFixVO.getReleaseDate());
+            testPlanDTO.setStartDate(testVersionFixVO.getStartDate()==null?testVersionFixVO.getReleaseDate():testVersionFixVO.getStartDate());
+            return testPlanDTO;
     }
 }

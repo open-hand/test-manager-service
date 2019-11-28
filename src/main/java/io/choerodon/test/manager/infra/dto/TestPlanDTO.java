@@ -1,10 +1,7 @@
 package io.choerodon.test.manager.infra.dto;
 
 import java.util.Date;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -44,6 +41,17 @@ public class TestPlanDTO extends BaseDTO {
 
     @ApiModelProperty(value = "自动同步")
     private Boolean isAutoSync;
+
+    @Transient
+    private Long versionId;
+
+    public Long getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(Long versionId) {
+        this.versionId = versionId;
+    }
 
     @ApiModelProperty(value = "初始化状态")
     private String initStatus;

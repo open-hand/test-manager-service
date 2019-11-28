@@ -32,4 +32,6 @@ public interface TestPlanServcie {
     TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode);
 
     void baseUpdate(TestPlanDTO testPlanDTO);
+
+    void delete(Long projectId, Long planId);
 }

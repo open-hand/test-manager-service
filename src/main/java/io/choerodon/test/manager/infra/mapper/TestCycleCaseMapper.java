@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 
 /**
@@ -88,5 +89,18 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
 
+    /**
+     * 查询执行详情
+     * @param executeId
+     * @return
+     */
+    TestCycleCaseDTO queryByCaseId(@Param("executeId") Long executeId);
+
+    /**
+     * 查询状态总览
+     */
+    List<ExecutionStatusVO> queryExecutionStatus(@Param("planId")Long planId);
+
     void fixCycleCase();
+
 }

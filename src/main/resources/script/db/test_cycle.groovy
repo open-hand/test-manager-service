@@ -64,9 +64,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "project_id")
         }
     }
-    changeSet(id: '2019-05-10-add-column-test-cycle-plan-id', author: 'shinan.chenX@gmail') {
+    changeSet(author: 'lizhaozhong', id: '2019-11-27-add-colume-plan_id') {
         addColumn(tableName: 'test_cycle') {
-            column(name: 'plan_id', type: 'BIGINT UNSIGNED', remarks: '测试计划Id')
+            column(name: 'plan_id', type: 'BIGINT UNSIGNED', remarks: 'plan id')
         }
     }
 }

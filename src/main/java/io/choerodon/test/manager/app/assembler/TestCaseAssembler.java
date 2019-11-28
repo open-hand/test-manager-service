@@ -1,17 +1,12 @@
 package io.choerodon.test.manager.app.assembler;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import io.choerodon.mybatis.entity.BaseDTO;
-import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
-import io.choerodon.test.manager.api.vo.TestCaseRepVO;
-import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.mapper.*;
+import javax.annotation.PostConstruct;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
@@ -20,6 +15,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
+import io.choerodon.test.manager.app.service.TestCaseLinkService;
+import io.choerodon.test.manager.app.service.UserService;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.*;
 
 /**
  * @author zhaotianxin
@@ -49,6 +54,9 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
+
+    @Autowired
+    private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -136,5 +144,24 @@ public class TestCaseAssembler {
         }
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
         return  userMessageDTOMap;
+    }
+
+    public TestCycleCaseInfoVO dtoToInfoVO(TestCycleCaseDTO testCycleCaseDTO) {
+        TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
+        BaseDTO baseDTO = new BaseDTO();
+        baseDTO.setCreatedBy(testCycleCaseDTO.getCreatedBy());
+        baseDTO.setLastUpdatedBy(testCycleCaseDTO.getLastUpdatedBy());
+        Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
+        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCycleCaseDTO.getCreatedBy()))) {
+            testCycleCaseInfoVO.setExecutor(UserMessageDTOMap.get(testCycleCaseDTO.getLastUpdatedBy()));
+        }
+        testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
+        // 查询附件信息
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
+        testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+        }.getType()));
+        return testCycleCaseInfoVO;
     }
 }

@@ -381,4 +381,14 @@
         )
     </delete>
 
+    <update id="fixPlanId">
+        UPDATE test_cycle
+        SET plan_id = #{planId}
+        WHERE
+            version_id = #{versionId}
+    </update>
+
+    <select id="selectVersionId" resultType="Long">
+        SELECT DISTINCT version_id FROM `test_cycle`
+    </select>
 </mapper>

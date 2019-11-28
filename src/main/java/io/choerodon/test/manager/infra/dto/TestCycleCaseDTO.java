@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
@@ -17,7 +17,7 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     private Long cycleId;
 
-    private Long issueId;
+    private Long caseId;
 
     private String rank;
 
@@ -27,8 +27,9 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     private Long projectId;
 
-    @Column(name = "description")
-    private String comment;
+    private String summary;
+
+    private String description;
 
     @Transient
     private String executionStatusName;
@@ -121,14 +122,6 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.cycleId = cycleId;
     }
 
-    public Long getIssueId() {
-        return issueId;
-    }
-
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
-    }
-
     public String getExecutionStatusName() {
         return executionStatusName;
     }
@@ -153,16 +146,12 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.assignedTo = assignedTo;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
     public String getDescription() {
-        return comment;
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRank() {
@@ -281,5 +270,21 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     public String getStatusColor() {
         return statusColor;
+    }
+
+    public Long getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }
