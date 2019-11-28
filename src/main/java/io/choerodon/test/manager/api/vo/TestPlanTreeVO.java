@@ -2,17 +2,13 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @author zhaotianxin
- * @since 2019/11/26
+ * @since 2019/11/27
  */
-public class TestPlanVO {
-
+public class TestPlanTreeVO {
     @ApiModelProperty(value = "计划Id")
     private Long planId;
 
@@ -35,14 +31,13 @@ public class TestPlanVO {
     private Long projectId;
 
     @ApiModelProperty(value = "是否自选用例")
-    private Boolean custom;
+    private Boolean isOptional;
 
     @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
 
-    private Map<Long, CaseSelectVO> caseSelected;
-
-    private Long objectVersionNumber;
+    @ApiModelProperty(value = "文件夹树")
+    private TestTreeIssueFolderVO testTreeIssueFolderVO;
 
     public Long getPlanId() {
         return planId;
@@ -100,6 +95,13 @@ public class TestPlanVO {
         this.projectId = projectId;
     }
 
+    public Boolean getOptional() {
+        return isOptional;
+    }
+
+    public void setOptional(Boolean optional) {
+        isOptional = optional;
+    }
 
     public Boolean getAutoSync() {
         return isAutoSync;
@@ -109,27 +111,11 @@ public class TestPlanVO {
         isAutoSync = autoSync;
     }
 
-    public Map<Long, CaseSelectVO> getCaseSelected() {
-        return caseSelected;
+    public TestTreeIssueFolderVO getTestTreeIssueFolderVO() {
+        return testTreeIssueFolderVO;
     }
 
-    public void setCaseSelected(Map<Long, CaseSelectVO> caseSelected) {
-        this.caseSelected = caseSelected;
-    }
-
-    public Boolean getCustom() {
-        return custom;
-    }
-
-    public void setCustom(Boolean custom) {
-        this.custom = custom;
-    }
-
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
-    }
-
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
+    public void setTestTreeIssueFolderVO(TestTreeIssueFolderVO testTreeIssueFolderVO) {
+        this.testTreeIssueFolderVO = testTreeIssueFolderVO;
     }
 }

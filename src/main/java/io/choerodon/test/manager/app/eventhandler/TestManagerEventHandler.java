@@ -3,11 +3,21 @@ package io.choerodon.test.manager.app.eventhandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.api.vo.CaseSelectVO;
+import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
+import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.dto.*;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +25,9 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.api.vo.event.InstancePayload;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
@@ -49,6 +60,24 @@ public class TestManagerEventHandler {
 
     @Autowired
     private TestProjectInfoService testProjectInfoService;
+
+    @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
+    private TestIssueFolderService testIssueFolderService;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    private TestCycleService testCycleService;
+
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private TestPlanServcie testPlanServcie;
 
 //    @Autowired
 //    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
@@ -175,5 +204,64 @@ public class TestManagerEventHandler {
             testAppInstanceService.updateStatus(instanceId, 3L);
             testAutomationHistoryService.shutdownInstance(instanceId, u.getStatus());
         });
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
+    public void createPlan(String message) throws IOException {
+        LOGGER.info(message);
+        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+        // 获取用例和文件夹信息
+        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
+        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
+        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
+
+        // 是否自选
+        if (!testPlanVO.getCustom()) {
+            testCaseDTOS.addAll(allTestCase);
+            List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
+            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+        } else {
+            Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
+            List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
+            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+            Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+            List<Long> caseIds = new ArrayList<>();
+            for (Long key : maps.keySet()) {
+                CaseSelectVO caseSelectVO = maps.get(key);
+                // 判断是否是自选
+                if (!caseSelectVO.getCustom()) {
+                    testCaseDTOS.addAll(caseMap.get(key));
+                } else {
+                    // 判断是反选还是正向选择
+                    if (ObjectUtils.isEmpty(caseSelectVO.getSelected())) {
+                        // 反选就
+                        List<Long> unSelected = caseSelectVO.getUnSelected();
+                        // 获取文件夹所有的测试用例
+                        List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                        allList.removeAll(unSelected);
+                        caseIds.addAll(allList);
+                    } else {
+                        caseIds.addAll(caseSelectVO.getSelected());
+                    }
+                }
+            }
+
+            if (!CollectionUtils.isEmpty(caseIds)) {
+                testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
+            }
+
+        }
+        TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        // 创建测试循环
+        List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
+        // 创建测试循环用例
+        Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
+        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
+        TestPlanDTO testPlan = new TestPlanDTO();
+        testPlan.setPlanId(testPlanDTO.getPlanId());
+        testPlan.setInitStatus("done");
+        testPlan.setObjectVersionNumber(testPlanDTO.getObjectVersionNumber());
+        testPlanServcie.baseUpdate(testPlan);
+
     }
 }

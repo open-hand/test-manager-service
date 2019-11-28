@@ -44,6 +44,8 @@ public class TestCycleDTO extends BaseDTO {
 
     private Long projectId;
 
+    private Long planId;
+
     @Transient
     private List<Map<Long, Object>> cycleCaseList;
 
@@ -177,5 +179,13 @@ public class TestCycleDTO extends BaseDTO {
     @Override
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
     }
 }

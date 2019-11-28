@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -86,6 +87,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
+    @Autowired
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Transactional(rollbackFor = Exception.class)
@@ -529,7 +531,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
+    public void  batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
         List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
         // 获取case关联的步骤
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
@@ -541,6 +543,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         testCaseDTOS.forEach(v -> {
             TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
+            if(!ObjectUtils.isEmpty(testCycleDTO)){
             TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
             testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
             testCycleCaseDTO.setIssueId(v.getCaseId());
@@ -557,6 +560,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             // 插入附件
             if(!CollectionUtils.isEmpty(attachmentMap.get(v.getCaseId()))){
                 testCycleCaseAttachmentRelService.batchInsert(cycleCaseDTO.getExecuteId(),attachmentMap.get(v.getCaseId()));
+             }
             }
         });
     }

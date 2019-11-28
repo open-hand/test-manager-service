@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
@@ -59,7 +60,7 @@ public class TestCaseAssembler {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO) {
+    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO,Map<Long, TestIssueFolderDTO> folderMap) {
         Map<Long, UserMessageDTO> map = getUserMap(testCaseDTO, null);
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
         modelMapper.map(testCaseDTO, testCaseRepVO);
@@ -68,14 +69,17 @@ public class TestCaseAssembler {
         testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
+        testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
         return testCaseRepVO;
     }
 
-    public List<TestCaseRepVO> listDtoToRepVo(List<TestCaseDTO> list){
+    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list){
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         List<TestCaseRepVO> collect = list.stream()
-                .map(v -> dtoToRepVo(v)).collect(Collectors.toList());
+                .map(v -> dtoToRepVo(v,folderMap)).collect(Collectors.toList());
         return collect;
     }
 

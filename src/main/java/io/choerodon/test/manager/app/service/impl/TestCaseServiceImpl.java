@@ -269,7 +269,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         // 返回数据
         testProjectInfo.setCaseMaxNum(caseNum);
         testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
-        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO);
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        TestCaseRepVO testCaseRepVO = testCaseAssembler.dtoToRepVo(testCaseDTO,folderMap);
         return testCaseRepVO;
     }
 
@@ -324,7 +326,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             return pageRepList;
         }
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList());
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(testCaseDTOS);
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS);
         pageRepList.setList(repVOS);
         return pageRepList;
     }
@@ -350,7 +352,10 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
-        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1);
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1,folderMap);
+
         return testCaseRepVO1;
     }
 
@@ -580,9 +585,12 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<TestCaseDTO> listCaseByProjectId(Long projectId) {
-        TestCaseDTO testCaseDTO = new TestCaseDTO();
-        testCaseDTO.setProjectId(projectId);
-        return testCaseMapper.select(testCaseDTO);
+        return testCaseMapper.listByProject(projectId);
+    }
+
+    @Override
+    public List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds) {
+        return testCaseMapper.listByCaseIds(projectId,caseIds);
     }
 
 }

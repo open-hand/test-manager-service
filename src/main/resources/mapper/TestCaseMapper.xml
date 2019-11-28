@@ -153,4 +153,14 @@
        </foreach>
        order by last_update_date DESC
    </select>
+
+    <select id="listByProject" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
+          SELECT
+	            tc.*
+            FROM
+	        test_case tc
+	        LEFT JOIN test_issue_folder tif ON tif.folder_id = tc.folder_id
+            WHERE
+	        tif.project_id = #{projectId}
+    </select>
 </mapper>

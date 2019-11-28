@@ -1,8 +1,9 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
-
+import io.choerodon.test.manager.api.vo.TestPlanTreeVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 
 /**
@@ -23,4 +24,12 @@ public interface TestPlanServcie {
     void batchInsert(List<TestPlanDTO> testPlanDTOS);
 
     TestPlanVO update(Long projectId, TestPlanVO testPlanVO);
+
+    /**
+     * 查询测试计划信息和文件夹目录
+     * @return
+     */
+    TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode);
+
+    void baseUpdate(TestPlanDTO testPlanDTO);
 }

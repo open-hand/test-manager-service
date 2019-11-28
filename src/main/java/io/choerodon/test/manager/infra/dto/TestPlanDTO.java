@@ -45,6 +45,9 @@ public class TestPlanDTO extends BaseDTO {
     @ApiModelProperty(value = "自动同步")
     private Boolean isAutoSync;
 
+    @ApiModelProperty(value = "初始化状态")
+    private String initStatus;
+
     public Long getPlanId() {
         return planId;
     }
@@ -115,5 +118,13 @@ public class TestPlanDTO extends BaseDTO {
 
     public void setAutoSync(Boolean autoSync) {
         isAutoSync = autoSync;
+    }
+
+    public String getInitStatus() {
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }
