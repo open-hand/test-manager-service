@@ -124,7 +124,11 @@ export default class IssueManage extends Component {
       children: (
         <ImportSide />
       ),
-      // onOk: this.handleCreateIssue.bind(this),
+      okText: '取消导入',
+      cancelText: '关闭',
+      okProps: {
+        hidden: true,
+      },
     });
   }
 
