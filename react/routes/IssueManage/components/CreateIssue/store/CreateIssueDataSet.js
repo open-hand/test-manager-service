@@ -1,7 +1,6 @@
 /* eslint-disable indent */
-import { DataSet } from 'choerodon-ui/pro/lib';
 import { stores } from '@choerodon/boot';
-import { getProjectId, beforeTextUpload } from '../../../../../common/utils';
+import { getProjectId } from '../../../../../common/utils';
 
 const { AppState } = stores;
 
@@ -10,7 +9,6 @@ function CreateIssueDataSet(intlPrefix, intl) {
     const description = '描述';
     const folderId = intl.formatMessage({ id: `${intlPrefix}_folder` });
     const Issuelabel = intl.formatMessage({ id: 'summary_label' });
-
     return {
         autoQuery: false,
         selection: false,
@@ -62,15 +60,16 @@ function CreateIssueDataSet(intlPrefix, intl) {
         transport: {
             // eslint-disable-next-line arrow-body-style
             submit: ({ data, dataSet }) => {
-                // console.log('submit', data);
                 const newData = {
                     ...data[0],
-                    caseStepVOS: data[0].caseStepVOS.map(i => ({
+                    caseStepVOS: data[0].caseStepVOS.filter(i => i.stepIsCreating !== true).map(i => ({
                         testStep: i.testStep,
                         testData: i.testData,
                         expectedResult: i.expectedResult,
                     })),
                 };
+
+                // return false;
                 return ({
                     url: `test/v1/projects/${getProjectId()}/case/create`,
                     method: 'post',

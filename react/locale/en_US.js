@@ -179,7 +179,8 @@ const enUS = {
 
   testPlan_createPlan: 'create Plan',
   testPlan_editPlan: 'edit Paln',
-  testPlan_manualTest: 'Manual test',
+  testPlan_manualTest: 'start Manual test',
+  testPlan_completePlan: 'complete Plan',
   testPlan_autoTest: 'automatic test',
 
   // 测试执行

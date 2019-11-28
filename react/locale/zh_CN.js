@@ -190,7 +190,8 @@ const zhCN = {
 
   testPlan_createPlan: '创建计划',
   testPlan_editPlan: '修改计划',
-  testPlan_manualTest: '手工测试',
+  testPlan_manualTest: '开始手工测试',
+  testPlan_completePlan: '完成计划',
   testPlan_autoTest: '自动测试',
 
   // 测试循环

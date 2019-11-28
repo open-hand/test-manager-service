@@ -123,7 +123,7 @@ class DragTable extends Component {
     const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1, width: column.width }}>
         {column.key !== 'checkbox' ? column.title : (
-          <CustomCheckBox value="all" checkedMap={checkedMap} indeterminate dataSource={dataSource} field={checkField} />
+          <CustomCheckBox value="all" checkedMap={checkedMap} dataSource={dataSource} field={checkField} />
         )}
       </th>
     ));
@@ -136,7 +136,7 @@ class DragTable extends Component {
     } = this.props;
     const judgeProps = props => (customDragHandle ? {} : props);
     const Columns = columns.filter(column => this.shouldColumnShow(column));
-    const rows = data.map((item, index) => (
+    const rows = data && data.length > 0 && data.map((item, index) => (
       disabled
         ? (
           <tr onClick={this.handleRow.bind(this, item)}>
