@@ -129,7 +129,6 @@ function TreeNode(props) {
       </div>
     </div>
   );
-  // console.log(path);
   return (    
     <div
       ref={provided.innerRef}

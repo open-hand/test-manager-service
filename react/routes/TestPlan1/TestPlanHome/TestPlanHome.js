@@ -21,7 +21,7 @@ import CreateAutoTest from '../components/CreateAutoTest';
 import openCreatePlan from '../components/CreatePlan';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
-import TestPlanTreeWrap from '../components/TestPlanTreeWrap';
+import IssueTree from '../components/IssueTree';
 import TestPlanTable from '../components/TestPlanTable';
 import Empty from '../../../components/Empty';
 import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
@@ -35,7 +35,9 @@ const { TabPane } = Tabs;
 const { confirm } = Modal;
 
 export default observer(() => {
-  const { prefixCls, createAutoTestStore, testPlanStore } = useContext(Store);
+  const {
+    prefixCls, createAutoTestStore, testPlanStore, issueTreeStore, 
+  } = useContext(Store);
   const {
     treeData, loading, testPlanStatus, rightLoading, dataList, checkIdMap, testList,
   } = testPlanStore;
@@ -51,63 +53,6 @@ export default observer(() => {
     openCreatePlan();
   };
 
-  const loadCycle = (selectedKeys, {
-    selected, selectedNodes, node, event,
-  } = {}, flag) => {
-    if (selectedKeys) {
-      testPlanStore.setSelectedKeys(selectedKeys);
-    }
-    const data = node ? node.props.data : testPlanStore.getCurrentCycle;
-    if (data.cycleId) {
-      // 切换时，将分页回到第一页
-      if (data.cycleId !== testPlanStore.getCurrentCycle.cycleId) {
-        testPlanStore.setExecutePagination({ current: 1 });
-      }
-      testPlanStore.setCurrentCycle(data);
-      if (data.type === 'folder' || data.type === 'cycle') {
-        // if (!flag) {
-        //   testPlanStore.setRightLoading(true);
-        // }
-        testPlanStore.loadExecutes();
-      }
-    }
-  };
-
-  const generateList = (data) => {
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const { key, title } = node;
-      // 找出url上的cycleId
-      const { cycleId } = getParams(window.location.href);
-      const currentCycle = testPlanStore.getCurrentCycle;
-      if (!currentCycle.cycleId && Number(cycleId) === node.cycleId) {
-        this.setExpandDefault(node);
-      } else if (currentCycle.cycleId === node.cycleId) {
-        testPlanStore.setCurrentCycle(node);
-      }
-      dataList.push({ key, title });
-      if (node.children) {
-        generateList(node.children, node.key);
-      }
-    }
-  };
-
-  const loadTreeAndExecute = () => {
-    testPlanStore.setLoading(true);
-    Promise.all([getStatusList('CYCLE_CASE'), getCycleTree()]).then(([statusList, planTreeData]) => {
-      testPlanStore.setStatusList(statusList);
-      testPlanStore.setTreeData(planTreeData.versions);
-      testPlanStore.setLoading(false);
-      generateList(planTreeData.versions);
-      // 默认选中一个项
-      // if (planTreeData.versions && planTreeData.versions.length > 0) {
-      //   testPlanStore.setCurrentCycle(planTreeData.versions[0]);
-      //   // 如果选中了项，就刷新table数据
-      //   loadCycle(null, { node: { props: { planTreeData: planTreeData.versions[0] } } }, true);
-      // }
-    });
-  };
-
   const onDragEnd = (sourceIndex, targetIndex) => {
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
     const source = testList[sourceIndex];
@@ -117,7 +62,7 @@ export default observer(() => {
     delete temp.testCycleCaseStepES;
     delete temp.issueInfosVO;
     temp.assignedTo = temp.assignedTo || 0;
-    testPlanStore.rightEnterLoading();
+    testPlanStore.setTableLoading(true);
     editExecuteDetail({
       ...temp,
       ...{
@@ -128,7 +73,7 @@ export default observer(() => {
       testPlanStore.loadExecutes();
     }).catch((err) => {    
       Choerodon.prompt('网络错误');
-      testPlanStore.rightLeaveLoading();
+      testPlanStore.setTableLoading(false);
     });
   };
 
@@ -178,30 +123,6 @@ export default observer(() => {
   };
 
   const quickPassOrFail = (execute, text) => {
-    // const { statusList } = testPlanStore;
-    // const cycleData = { ...execute };
-    // if (_.find(statusList, { projectId: 0, statusName: text })) {
-    //   cycleData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
-    //   delete cycleData.defects;
-    //   delete cycleData.caseAttachment;
-    //   delete cycleData.testCycleCaseStepES;
-    //   delete cycleData.lastRank;
-    //   delete cycleData.nextRank;
-    //   // 加载所有数据，因为进度条需要更新
-    //   this.setState({
-    //     loading: true,
-    //   });
-    //   editCycle(cycleData).then((Data) => {
-    //     this.loadTreeAndExecute();
-    //   }).catch((error) => {
-    //     this.setState({
-    //       loading: false,
-    //     });
-    //     Choerodon.prompt('网络错误');
-    //   });
-    // } else {
-    //   Choerodon.prompt('未找到对应状态');
-    // }
   };
 
   const handleQuickPass = (execute, e) => {
@@ -223,11 +144,10 @@ export default observer(() => {
   };
 
   useEffect(() => {
-    loadTreeAndExecute();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    testPlanStore.loadAllData();
+  }, [testPlanStore]);
 
-  const noPlan = treeData.length === 0 || treeData[0].children.length === 0;
+  const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
 
   return (
     <Page className={prefixCls}>
@@ -238,13 +158,13 @@ export default observer(() => {
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
         {
-          testPlanStatus !== 'finished' ? (
+          testPlanStatus !== 'done' ? (
             <React.Fragment>
               <Button icon="mode_edit">
                 <FormattedMessage id="testPlan_editPlan" />
               </Button>
               {
-                testPlanStatus === 'notStart' ? (
+                testPlanStatus === 'todo' ? (
                   <Button icon="play_circle_filled">
                     <FormattedMessage id="testPlan_manualTest" />
                   </Button>
@@ -278,15 +198,15 @@ export default observer(() => {
             <div className={`${prefixCls}-contentWrap`}>
               <div className={`${prefixCls}-contentWrap-left`}>
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-                  <Tabs defaultActiveKey="notStart" onChange={handleTabsChange}>
-                    <TabPane tab="未开始" key="notStart">
-                      <TestPlanTreeWrap onTreeNodeSelect={loadCycle} />
+                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
+                    <TabPane tab="未开始" key="todo">
+                      <IssueTree />
                     </TabPane>
                     <TabPane tab="进行中" key="doing">
-                      <TestPlanTreeWrap onTreeNodeSelect={loadCycle} />
+                      <IssueTree />
                     </TabPane>
-                    <TabPane tab="已完成" key="finished">
-                      <TestPlanTreeWrap onTreeNodeSelect={loadCycle} />
+                    <TabPane tab="已完成" key="done">
+                      <IssueTree />
                     </TabPane>
                   </Tabs>
                 </div>
