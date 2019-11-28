@@ -11,9 +11,9 @@ export function autoSelect(dataSet, treeMap) {
       if (record.isSelected) {
         return;
       }
-      const { unSelected = [], selected = [] } = folder;
+      const { unSelected, selected } = folder;      
       // 未选中不包括，或者选中包括，就选中
-      if ((unSelected.length > 0 && !unSelected.includes(caseId)) || (selected.length > 0 && selected.includes(caseId))) {
+      if ((!unSelected && !selected) || (unSelected && !unSelected.includes(caseId)) || (selected && selected.includes(caseId))) {
         record.set('source', 'auto');
         dataSet.select(record);
       }
