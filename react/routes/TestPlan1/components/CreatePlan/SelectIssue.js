@@ -67,7 +67,9 @@ function SelectIssue() {
           isDragEnabled={false}
           selected={currentCycle}
           setSelected={setSelected}
-          enableAction={false}
+          treeNodeProps={{
+            enableAction: false,
+          }}
           renderTreeNode={renderTreeNode}
         />
       </div>

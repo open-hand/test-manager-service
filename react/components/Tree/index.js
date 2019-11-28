@@ -54,14 +54,10 @@ const propTypes = {
   }),
   setSelected: PropTypes.func,
   renderTreeNode: PropTypes.func,
-  enableAction: PropTypes.boolean,
-  menuItems: PropTypes.any,
-  onMenuClick: PropTypes.func,
-  enableAddFolder: PropTypes.func,
+
 };
 const defaultProps = {
-  enableAction: true,
-  enableAddFolder: () => false,
+
 };
 function PureTree({
   data,
@@ -72,10 +68,8 @@ function PureTree({
   selected,
   setSelected,
   renderTreeNode,
-  enableAction,
-  menuItems,
+  treeNodeProps,
   onMenuClick,
-  enableAddFolder,
   ...restProps
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
@@ -239,9 +233,7 @@ function PureTree({
         onCreate={handleCreate}
         onEdit={handleEdit}
         search={search}
-        enableAction={enableAction}
-        menuItems={menuItems}
-        enableAddFolder={enableAddFolder}
+        {...treeNodeProps}
       />
     );
     return renderTreeNode ? renderTreeNode(treeNode, { item }) : treeNode;
