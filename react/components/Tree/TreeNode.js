@@ -9,8 +9,8 @@ import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
 
 const defaultProps = {
+  enableAddFolder: false,
   enableAction: true,
-  enableAddFolder: () => false,
 };
 const PreTextIcon = styled.span`
   display: inline-block;
@@ -75,7 +75,7 @@ const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   );
   return (
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
-      {enableAddFolder(item) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
+      {(typeof enableAddFolder === 'function' ? enableAddFolder(item) : enableAddFolder) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
       <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
         <Button funcType="flat" icon="more_vert" size="small" />
       </Dropdown>
@@ -128,7 +128,7 @@ function TreeNode(props) {
       >
         <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
         <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
-        {enableAction && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
+        {(typeof enableAction === 'function' ? enableAction(item) : enableAction) && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
       </div>
     </div>
   );
