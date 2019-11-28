@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { DataSet, Table } from 'choerodon-ui/pro';
 import { getProjectId } from '@/common/utils';
-import SelectIssueStore from './SelectIssueStore';
+import Context from './context';
 import { autoSelect } from './utils';
 
 const { Column } = Table;
@@ -9,6 +9,7 @@ const { Column } = Table;
 function IssueTable({
   folderId, saveDataSet,
 }) {
+  const { SelectIssueStore } = useContext(Context);
   const { treeMap } = SelectIssueStore;
   const dataSet = useMemo(() => new DataSet({
     primaryKey: 'caseId',
@@ -72,7 +73,7 @@ function IssueTable({
       { name: 'summary', type: 'string', label: '用例名称' },
       { name: 'caseNum', type: 'string', label: '用例编号' },
     ],
-  }), [folderId, treeMap]);
+  }), [SelectIssueStore, folderId, treeMap]);
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (

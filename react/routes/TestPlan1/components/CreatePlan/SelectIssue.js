@@ -1,8 +1,10 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, {
+  useEffect, useCallback, useRef, useContext, 
+} from 'react';
 import { Button } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import Tree from '@/components/Tree';
-import SelectIssueStore from './SelectIssueStore';
+import Context from './context';
 import IssueTable from './IssueTable';
 import CheckBox from './CheckBox';
 import { autoSelect } from './utils';
@@ -12,17 +14,18 @@ import './SelectIssue.scss';
 const prefix = 'c7ntest-TestPlan-SelectIssue';
 function SelectIssue() {
   const dataSetRef = useRef();
+  const { SelectIssueStore } = useContext(Context);
   const { currentCycle, treeData, treeMap } = SelectIssueStore;
   const { id: folderId } = currentCycle;
   useEffect(() => {
     SelectIssueStore.loadIssueTree();
-  }, []);
+  }, [SelectIssueStore]);
   const saveDataSet = useCallback((dataSet) => {
     dataSetRef.current = dataSet;
   }, []);
   const setSelected = useCallback((item) => {
     SelectIssueStore.setCurrentCycle(item);
-  }, []);
+  }, [SelectIssueStore]);
   const handleCheckChange = useCallback((checked, item) => {
     SelectIssueStore.handleCheckChange(checked, item.id);
     const dataSet = dataSetRef.current;
@@ -40,7 +43,7 @@ function SelectIssue() {
         autoSelect(dataSet, treeMap);
       }
     }
-  }, [folderId, treeMap]);
+  }, [SelectIssueStore, folderId, treeMap]);
   const renderTreeNode = useCallback((node, { item }) => (
     <div className={`${prefix}-TreeNode`}>
       <CheckBox

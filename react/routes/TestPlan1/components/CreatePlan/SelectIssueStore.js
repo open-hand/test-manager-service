@@ -206,4 +206,4 @@ class IssueTreeStore {
   }
 }
 
-export default new IssueTreeStore();
+export default IssueTreeStore;
