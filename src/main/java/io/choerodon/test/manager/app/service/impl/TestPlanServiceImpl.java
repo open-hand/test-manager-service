@@ -57,7 +57,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
-        if(testPlanMapper.updateByPrimaryKeySelective(testPlanDTO)!=1){
+        if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
             throw new CommonException("error.update.plan");
         }
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
@@ -96,7 +96,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public TestTreeIssueFolderVO  ListPlanAndFolderTree(Long projectId, String statusCode) {
+    public TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode) {
         TestPlanDTO testPlanDTO = new TestPlanDTO();
         testPlanDTO.setProjectId(projectId);
         testPlanDTO.setStatusCode(statusCode);
@@ -132,11 +132,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                 TestTreeFolderVO plantreeVO = new TestTreeFolderVO();
                 plantreeVO.setId(v.getPlanId());
                 plantreeVO.setIssueFolderVO(testIssueFolderVO);
-                if(!CollectionUtils.isEmpty(folderRoot)){
+                if (!CollectionUtils.isEmpty(folderRoot)) {
                     plantreeVO.setHasChildren(true);
                     plantreeVO.setChildren(folderRoot);
-                 }
-                else {
+                } else {
                     plantreeVO.setHasChildren(false);
                 }
                 plantreeVO.setChildrenLoading(false);
