@@ -16,6 +16,7 @@ import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,13 +96,13 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public List<TestPlanTreeVO> ListPlanAndFolderTree(Long projectId, String statusCode) {
+    public TestTreeIssueFolderVO  ListPlanAndFolderTree(Long projectId, String statusCode) {
         TestPlanDTO testPlanDTO = new TestPlanDTO();
         testPlanDTO.setProjectId(projectId);
         testPlanDTO.setStatusCode(statusCode);
         List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
         if (CollectionUtils.isEmpty(testPlanDTOS)) {
-            return new ArrayList<>();
+            return new TestTreeIssueFolderVO();
         }
         List<TestPlanTreeVO> testPlanTreeVOS = new ArrayList<>();
         testPlanTreeVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanTreeVO>>() {
@@ -115,19 +116,41 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryListByProjectId(projectId);
         Map<Long, TestIssueFolderVO> allFolderMap = testIssueFolderVOS.stream().collect(Collectors.toMap(TestIssueFolderVO::getFolderId, Function.identity()));
         Map<Long, List<TestIssueFolderVO>> parentMap = testIssueFolderVOS.stream().collect(Collectors.groupingBy(TestIssueFolderVO::getParentId));
+        TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
+        Map<Long, TestTreeFolderVO> map = new HashMap<>();
+        List<TestTreeFolderVO> planTreeList = new ArrayList<>();
+        List<Long> root = new ArrayList<>();
         testPlanTreeVOS.forEach(v -> {
-            List<Long> root = new ArrayList<>();
-            Map<Long, TestTreeFolderVO> map = new HashMap<>();
+            root.add(v.getPlanId());
+            List<Long> folderRoot = new ArrayList<>();
             List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId());
             if (!CollectionUtils.isEmpty(testCycles)) {
-                testCycles.forEach(testCycleDTO -> buildTree(root, testCycleDTO.getFolderId(), allFolderMap, map, parentMap));
-                List<TestTreeFolderVO> testTreeFolderVOS = map.values().stream().collect(Collectors.toList());
-                TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO(root, testTreeFolderVOS);
-                v.setTestTreeIssueFolderVO(testTreeIssueFolderVO);
+                TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+                testIssueFolderVO.setProjectId(v.getProjectId());
+                testIssueFolderVO.setName(v.getName());
+                testIssueFolderVO.setFolderId(v.getPlanId());
+                TestTreeFolderVO plantreeVO = new TestTreeFolderVO();
+                plantreeVO.setId(v.getPlanId());
+                plantreeVO.setIssueFolderVO(testIssueFolderVO);
+                if(!CollectionUtils.isEmpty(folderRoot)){
+                    plantreeVO.setHasChildren(true);
+                    plantreeVO.setChildren(folderRoot);
+                 }
+                else {
+                    plantreeVO.setHasChildren(false);
+                }
+                plantreeVO.setChildrenLoading(false);
+                plantreeVO.setExpanded(false);
+                plantreeVO.setTopLevel(true);
+                testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getFolderId(), allFolderMap, map, parentMap));
+                planTreeList.add(plantreeVO);
             }
         });
-
-        return testPlanTreeVOS;
+        List<TestTreeFolderVO> testTreeFolderVOS = map.values().stream().collect(Collectors.toList());
+        planTreeList.addAll(testTreeFolderVOS);
+        testTreeIssueFolderVO.setRootIds(root);
+        testTreeIssueFolderVO.setTreeFolder(planTreeList);
+        return testTreeIssueFolderVO;
     }
 
     @Override

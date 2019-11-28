@@ -31,4 +31,7 @@ public class TestTreeIssueFolderVO {
     public void setTreeFolder(List<TestTreeFolderVO> treeFolder) {
         this.treeFolder = treeFolder;
     }
+
+    public TestTreeIssueFolderVO() {
+    }
 }
