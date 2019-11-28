@@ -76,7 +76,7 @@ function IssueTable({
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
-    <Table dataSet={dataSet} labelLayout="none">
+    <Table dataSet={dataSet}>
       <Column name="summary" />
       <Column name="caseNum" />
       <Column name="folder" />

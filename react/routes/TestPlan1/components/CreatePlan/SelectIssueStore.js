@@ -79,6 +79,7 @@ class IssueTreeStore {
           ...other,
         };
         this.treeMap.set(folder.id, {
+          id: folder.id,
           children: children || [],
           data: issueFolderVO,
           checked: false,
@@ -160,23 +161,23 @@ class IssueTreeStore {
 
   @action setItemCheck(item, checked) {
     item.checked = checked;
-    delete item.selectedCases;
-    delete item.unSelectedCases;
+    delete item.selected;
+    delete item.unSelected;
   }
 
   // 选中单个case的处理
   addFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已未选中为主
-    if (item.unSelectedCases) {
+    if (item.unSelected) {
       // 从取消选中去掉，代表选中
-      pull(item.unSelectedCases, caseId);    
+      pull(item.unSelected, caseId);    
     } else {
       // 以选中为主
-      if (!item.selectedCases) {
-        item.selectedCases = [];
+      if (!item.selected) {
+        item.selected = [];
       }
-      item.selectedCases.push(caseId);
+      item.selected.push(caseId);
     }
   }
 
@@ -184,19 +185,19 @@ class IssueTreeStore {
   removeFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已选中为主
-    if (item.selectedCases) {
+    if (item.selected) {
       // 从选中去掉，代表未选中
-      pull(item.selectedCases, caseId);
+      pull(item.selected, caseId);
       // 如果全移除了，就取消树的选中
-      if (item.selectedCases.length === 0) {
+      if (item.selected.length === 0) {
         this.handleCheckChange(false, folderId);
       }
     } else {
       // 以未选中为主
-      if (!item.unSelectedCases) {
-        item.unSelectedCases = [];
+      if (!item.unSelected) {
+        item.unSelected = [];
       }
-      item.unSelectedCases.push(caseId);
+      item.unSelected.push(caseId);
     }
   }
 
@@ -205,22 +206,22 @@ class IssueTreeStore {
     for (const [id, item] of this.treeMap) {
       // 只取树最后一层的文件夹
       if (item.checked && item.children.length === 0) {
-        const { unSelectedCases, selectedCases } = item;
+        const { unSelected, selected } = item;
         // 有一个就是custom
-        const custom = unSelectedCases || selectedCases;
+        const custom = unSelected || selected;
         if (!custom) {
           result[id] = {
             custom: false,
           };
-        } else if (unSelectedCases) {
+        } else if (unSelected) {
           result[id] = {
             custom: true,
-            unSelectedCases, 
+            unSelected, 
           };
         } else {
           result[id] = {
             custom: true,
-            selectedCases,
+            selected,
           };
         }
       }
