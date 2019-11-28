@@ -224,7 +224,7 @@ public class TestManagerEventHandler {
             Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
             List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
             testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
-            Map<Long, List<TestCaseDTO>> caseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+            Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
             List<Long> caseIds = new ArrayList<>();
             for (Long key : maps.keySet()) {
                 CaseSelectVO caseSelectVO = maps.get(key);
