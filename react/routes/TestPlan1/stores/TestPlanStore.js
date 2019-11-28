@@ -26,6 +26,16 @@ class TestPlanStore extends BaseTreeProto {
       return this.dataList;
     }
 
+    @observable rightLoading = false;
+
+    @action setRightLoading = (rightLoading) => {
+      this.rightLoading = rightLoading;
+    }
+
+    @computed get getRightLoading() {
+      return this.rightLoading;
+    }
+
     @observable tableLoading = false;
 
     @action setTableLoading = (tableLoading) => {
@@ -96,6 +106,12 @@ class TestPlanStore extends BaseTreeProto {
 
     checkIdMap = observable.map();
 
+    @observable testPlanStatus = 'notStart';
+
+    @action setTestPlanStatus = (testPlanStatus) => {
+      this.testPlanStatus = testPlanStatus;
+    }
+
     @action clearStore = () => {
       this.treeData = [];  
       this.expandedKeys = ['0-0'];  
@@ -118,7 +134,7 @@ class TestPlanStore extends BaseTreeProto {
       const data = this.getCurrentCycle;
       const { executePagination, filters } = this;
       if (data.type === 'folder') {
-        this.setTableLoading(true);
+        this.setRightLoading(true);
         getExecutesByCycleId({
           page: executePagination.current,
           size: executePagination.pageSize,
@@ -126,7 +142,7 @@ class TestPlanStore extends BaseTreeProto {
         {
           ...filters,
         }).then((cycle) => {
-          this.setTableLoading(false);
+          this.setRightLoading(false);
           this.setTestList(cycle.list);
           this.setExecutePagination({
             current: executePagination.current,

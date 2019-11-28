@@ -7,7 +7,9 @@ import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import { Button, Icon, Tabs } from 'choerodon-ui';
+import {
+  Button, Icon, Tabs, Spin, 
+} from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro';
 import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
@@ -34,10 +36,12 @@ const { confirm } = Modal;
 
 export default observer(() => {
   const { prefixCls, createAutoTestStore, testPlanStore } = useContext(Store);
-  const [activeKey, setActiveKey] = useState('notStart');
+  const {
+    treeData, loading, testPlanStatus, rightLoading, dataList, checkIdMap, testList,
+  } = testPlanStore;
 
   const handleTabsChange = (value) => {
-    setActiveKey(value);
+    testPlanStore.setTestPlanStatus(value);
   };
 
   const handleCreateAutoTest = () => {
@@ -62,7 +66,7 @@ export default observer(() => {
       testPlanStore.setCurrentCycle(data);
       if (data.type === 'folder' || data.type === 'cycle') {
         // if (!flag) {
-        //   testPlanStore.setTableLoading(true);
+        //   testPlanStore.setRightLoading(true);
         // }
         testPlanStore.loadExecutes();
       }
@@ -70,7 +74,6 @@ export default observer(() => {
   };
 
   const generateList = (data) => {
-    const { dataList } = testPlanStore;
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const { key, title } = node;
@@ -106,7 +109,6 @@ export default observer(() => {
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
-    const { testList } = testPlanStore;
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
     const source = testList[sourceIndex];
     const temp = { ...source };
@@ -212,12 +214,19 @@ export default observer(() => {
     quickPassOrFail(execute, '失败');
   };
 
+  const handleAssignToChange = (value) => {
+    console.log('失焦了');
+    console.log(value, checkIdMap.size, checkIdMap.keys());
+    if (value && checkIdMap.size) {
+      checkIdMap.clear();
+    }
+  };
+
   useEffect(() => {
     loadTreeAndExecute();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { treeData, loading } = testPlanStore;
   const noPlan = treeData.length === 0 || treeData[0].children.length === 0;
 
   return (
@@ -228,15 +237,30 @@ export default observer(() => {
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
-        <Button icon="mode_edit">
-          <FormattedMessage id="testPlan_editPlan" />
-        </Button>
-        <Button icon="play_circle_filled">
-          <FormattedMessage id="testPlan_manualTest" />
-        </Button>
-        <Button icon="auto_test" onClick={handleCreateAutoTest}>
-          <FormattedMessage id="testPlan_autoTest" />
-        </Button>
+        {
+          testPlanStatus !== 'finished' ? (
+            <React.Fragment>
+              <Button icon="mode_edit">
+                <FormattedMessage id="testPlan_editPlan" />
+              </Button>
+              {
+                testPlanStatus === 'notStart' ? (
+                  <Button icon="play_circle_filled">
+                    <FormattedMessage id="testPlan_manualTest" />
+                  </Button>
+                ) : (
+                  <Button icon="check_circle">
+                    <FormattedMessage id="testPlan_completePlan" />
+                  </Button>
+                )
+              }
+              <Button icon="auto_test" disabled={testPlanStatus === 'doing'} onClick={handleCreateAutoTest}>
+                <FormattedMessage id="testPlan_autoTest" />
+              </Button>
+            </React.Fragment>
+          ) : ''
+        }
+        
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
@@ -268,43 +292,38 @@ export default observer(() => {
                 </div>
               </div>
               <div className={`${prefixCls}-contentWrap-right`}>
-                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                  <Icon type="insert_invitation" />
-                  <span>0.20.0版本测试计划</span>
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-warning`}>
-                  <Icon type="error" />
-                  <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-card`}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                    <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
-                      <TestPlanDetailCard />
+                <Spin spinning={rightLoading}>
+                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                    <Icon type="insert_invitation" />
+                    <span>0.20.0版本测试计划</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-warning`}>
+                    <Icon type="error" />
+                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-card`}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                      <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                        <TestPlanDetailCard />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <TestPlanStatusCard />
+                      </div>
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <TestPlanStatusCard />
+                    <div className={`${prefixCls}-contentWrap-table`}>
+                      <TestPlanTable
+                        onDragEnd={onDragEnd}
+                        onTableChange={handleExecuteTableChange}
+                        onTableRowClick={handleTableRowClick}
+                        onDeleteExecute={handleDeleteExecute}
+                        onQuickPass={handleQuickPass}
+                        onQuickFail={handleQuickFail}
+                        onAssignToChange={handleAssignToChange}
+                      />
                     </div>
                   </div>
-                  <div className={`${prefixCls}-contentWrap-table`}>
-                    <Injecter store={testPlanStore} item={['statusList', 'getTestList', 'executePagination', 'tableLoading', 'checkIdMap']}>
-                      {([statusList, testList, executePagination, tableLoading, checkIdMap]) => (
-                        <TestPlanTable
-                          statusList={statusList}
-                          loading={tableLoading}
-                          pagination={executePagination}
-                          dataSource={testList}
-                          onDragEnd={onDragEnd}
-                          onTableChange={handleExecuteTableChange}
-                          onTableRowClick={handleTableRowClick}
-                          onDeleteExecute={handleDeleteExecute}
-                          onQuickPass={handleQuickPass}
-                          onQuickFail={handleQuickFail}
-                          checkIdMap={checkIdMap}
-                        />
-                      )}
-                    </Injecter>
-                  </div>
-                </div>
+                </Spin>
+                
               </div>
             </div>
           )
