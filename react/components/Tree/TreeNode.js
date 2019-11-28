@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -8,6 +8,10 @@ import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
 
+const defaultProps = {
+  enableAction: true,
+  enableAddFolder: () => false,
+};
 const PreTextIcon = styled.span`
   display: inline-block;
   visibility: hidden;
@@ -79,9 +83,7 @@ const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   );
 };
 
-const defaultProps = {
-  enableAction: true,
-};
+
 function TreeNode(props) {
   const {
     provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder,
