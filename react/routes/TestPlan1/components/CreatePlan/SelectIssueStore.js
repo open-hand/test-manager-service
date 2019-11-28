@@ -75,12 +75,16 @@ class IssueTreeStore {
           children: children || [],
           data: issueFolderVO,
           isExpanded: expanded,
-          selected: folder.id === selectedId,
-          checked: false,
-          isIndeterminate: false,
+          selected: folder.id === selectedId,         
           ...other,
         };
-        this.treeMap.set(folder.id, result);
+        this.treeMap.set(folder.id, {
+          id: folder.id,
+          children: children || [],
+          data: issueFolderVO,
+          checked: false,
+          isIndeterminate: false,
+        });
         return result;
       }),
     };
@@ -115,7 +119,7 @@ class IssueTreeStore {
     if (item.checked === checked && !item.isIndeterminate) {
       return;
     }
-    item.checked = checked;
+    this.setItemCheck(item, checked);
     // 处理子集
     this.autoHandleChildren(item, checked);
     // 处理父级      
@@ -130,7 +134,7 @@ class IssueTreeStore {
     item.children.forEach((folderId) => {
       const child = this.treeMap.get(folderId);
       const { children } = child;
-      child.checked = checked;
+      this.setItemCheck(child, checked);
       if (children.length > 0) {
         this.autoHandleChildren(child, checked);
       }
@@ -142,10 +146,10 @@ class IssueTreeStore {
     const { children, data: { parentId } } = item;
     // 子选中，父一定选中
     if (checked) {
-      item.checked = true;
+      this.setItemCheck(item, true);
     } else {
       // 如果有一个子选中，就选中
-      item.checked = children.some(childId => this.treeMap.get(childId).checked);
+      this.setItemCheck(item, children.some(childId => this.treeMap.get(childId).checked));
     }
     // 如果有一个子没选中，就是中间态
     const isIndeterminate = item.checked ? children.some(childId => !this.treeMap.get(childId).checked) : false;
@@ -155,19 +159,25 @@ class IssueTreeStore {
     }
   }
 
+  @action setItemCheck(item, checked) {
+    item.checked = checked;
+    delete item.selected;
+    delete item.unSelected;
+  }
+
   // 选中单个case的处理
   addFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已未选中为主
-    if (item.unSelectedCases) {
+    if (item.unSelected) {
       // 从取消选中去掉，代表选中
-      pull(item.unSelectedCases, caseId);    
+      pull(item.unSelected, caseId);    
     } else {
       // 以选中为主
-      if (!item.selectedCases) {
-        item.selectedCases = [];
+      if (!item.selected) {
+        item.selected = [];
       }
-      item.selectedCases.push(caseId);
+      item.selected.push(caseId);
     }
   }
 
@@ -175,19 +185,19 @@ class IssueTreeStore {
   removeFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已选中为主
-    if (item.selectedCases) {
+    if (item.selected) {
       // 从选中去掉，代表未选中
-      pull(item.selectedCases, caseId);
+      pull(item.selected, caseId);
       // 如果全移除了，就取消树的选中
-      if (item.selectedCases.length === 0) {
+      if (item.selected.length === 0) {
         this.handleCheckChange(false, folderId);
       }
     } else {
       // 以未选中为主
-      if (!item.unSelectedCases) {
-        item.unSelectedCases = [];
+      if (!item.unSelected) {
+        item.unSelected = [];
       }
-      item.unSelectedCases.push(caseId);
+      item.unSelected.push(caseId);
     }
   }
 
@@ -196,10 +206,24 @@ class IssueTreeStore {
     for (const [id, item] of this.treeMap) {
       // 只取树最后一层的文件夹
       if (item.checked && item.children.length === 0) {
-        const { unSelectedCases, selectedCases } = item;
-        result[id] = {
-          unSelectedCases, selectedCases,
-        };
+        const { unSelected, selected } = item;
+        // 有一个就是custom
+        const custom = unSelected || selected;
+        if (!custom) {
+          result[id] = {
+            custom: false,
+          };
+        } else if (unSelected) {
+          result[id] = {
+            custom: true,
+            unSelected, 
+          };
+        } else {
+          result[id] = {
+            custom: true,
+            selected,
+          };
+        }
       }
     }
     return result;

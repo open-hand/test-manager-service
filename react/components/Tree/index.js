@@ -55,6 +55,12 @@ const propTypes = {
   setSelected: PropTypes.func,
   renderTreeNode: PropTypes.func,
   enableAction: PropTypes.boolean,
+  menuItems: PropTypes.any,
+  onMenuClick: PropTypes.func,
+  enableAddFolder: PropTypes.func,
+};
+const defaultProps = {
+  enableAddFolder: () => true,
 };
 function PureTree({
   data,
@@ -66,6 +72,9 @@ function PureTree({
   setSelected,
   renderTreeNode,
   enableAction,
+  menuItems,
+  onMenuClick,
+  enableAddFolder,
   ...restProps
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
@@ -142,7 +151,7 @@ function PureTree({
       // console.log(error);
     }
   }, [onDelete, selected.id, setSelected]);
-  const handleMenuClick = useCallback((node, { item, key, keyPath }) => {
+  const handleMenuClick = useCallback((node, { key }) => {
     switch (key) {
       case 'rename': {      
         setTree(oldTree => mutateTree(oldTree, node.id, { isEditing: true }));
@@ -158,7 +167,7 @@ function PureTree({
         });               
         break;
       }
-      case 'add': {      
+      case 'add': {
         const newChild = {
           id: 'new',
           parentId: node.id, // 放入父id，方便创建时读取
@@ -174,9 +183,11 @@ function PureTree({
         setTree(oldTree => addItem(oldTree, node, newChild));
         break;
       }
-      default: break;
+      default:
+        onMenuClick(key, node);
+        break;
     }
-  }, [handleDelete]);
+  }, [handleDelete, onMenuClick]);
   const handleCreate = async (value, path, item) => {
     if (value.trim()) {
       try {
@@ -228,6 +239,8 @@ function PureTree({
         onEdit={handleEdit}
         search={search}
         enableAction={enableAction}
+        menuItems={menuItems}
+        enableAddFolder={enableAddFolder}
       />
     );
     return renderTreeNode ? renderTreeNode(treeNode, { item }) : treeNode;
@@ -256,4 +269,5 @@ function PureTree({
   );
 }
 PureTree.propTypes = propTypes;
+PureTree.defaultProps = defaultProps;
 export default forwardRef(PureTree);

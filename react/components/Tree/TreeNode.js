@@ -57,20 +57,21 @@ const getIcon = (
     </Fragment>
   );
 };
-const getAction = (item, onMenuClick) => {
+const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   const menu = (
     <Menu onClick={(target) => { onMenuClick(item, target); }}>
-      <Menu.Item key="rename">
-        重命名
-      </Menu.Item>
-      <Menu.Item key="delete">
-        删除
-      </Menu.Item>
+      {menuItems || [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>]}
     </Menu>
   );
   return (
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
-      {!item.hasCase && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
+      {enableAddFolder(item) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
       <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
         <Button funcType="flat" icon="more_vert" size="small" />
       </Dropdown>
@@ -83,8 +84,8 @@ const defaultProps = {
 };
 function TreeNode(props) {
   const {
-    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction,
-  } = props; 
+    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder,
+  } = props;
   const onSave = (e) => {
     if (item.id === 'new') {
       onCreate(e.target.value, path, item);
@@ -115,7 +116,7 @@ function TreeNode(props) {
     return <SmartTooltip title={name}>{result}</SmartTooltip>;
   };
   const renderContent = () => (
-    <div     
+    <div
       className={`${prefix}-tree-item-wrapper`}
     >
       <div
@@ -125,7 +126,7 @@ function TreeNode(props) {
       >
         <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
         <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
-        {enableAction && getAction({ ...item, path }, onMenuClick)}
+        {enableAction && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
       </div>
     </div>
   );
