@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
+import { Menu } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
 import './IssueTree.scss';
 import {
@@ -57,7 +58,12 @@ class IssueTree extends Component {
       return node;
     } else {
       return (
-        <TreeNode item={item}>{node}</TreeNode>
+        <TreeNode
+          
+          item={item}
+        >
+          {node}
+        </TreeNode>
       );
     }
   }
@@ -79,6 +85,29 @@ class IssueTree extends Component {
           selected={testPlanStore.getCurrentCycle}
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
+          isDragEnabled={false}
+          menuItems={[
+            <Menu.Item key="copy">
+                复制此计划
+            </Menu.Item>,
+            <Menu.Item key="rename">
+                重命名
+            </Menu.Item>,
+            <Menu.Item key="delete">
+               删除
+            </Menu.Item>,
+          ]} 
+          onMenuClick={(nodeItem, key) => {
+            switch (key) {
+              case 'copy': {
+                console.log('copy');
+                break;
+              }
+              default: {
+                break;
+              }
+            }
+          }}
         />
       </div>
     );
