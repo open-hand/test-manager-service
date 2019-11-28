@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useEffect, useMemo, useCallback,
+  useState, useRef, useEffect, useMemo, useCallback, useReducer,
 } from 'react';
 import {
   WSHandler, stores,
@@ -52,26 +52,59 @@ function ImportIssue(props) {
       }),
     },
   }), []);
-  const [uploading, setUploading] = useState(false);
   const [importRecord, setImportRecord] = useState({});
   const [folder, setFolder] = useState(null);
-  const [isImport, setIsImport] = useState(false);
   const uploadInput = useRef(null);
   const { modal } = props;
-
+  const [importBtn, dispatch] = useReducer((state, action) => {
+    const { props: modalProps } = modal;
+    switch (action.type) {
+      case 'import':
+        return {
+          ...state,
+          visibleImportBtn: false,
+        };
+      case 'process':
+        if (state.visibleCancelBtm !== true) {
+          modalProps.okProps.hidden = false;
+          modal.update(modalProps);
+          return {
+            ...state,
+            visibleCancelBtm: true,
+          };
+        }
+        return { ...state };
+      case 'finish':
+        if (state.visibleCancelBtm !== false) {
+          modalProps.okProps.hidden = true;
+          modal.update(modalProps);
+        }
+        return {
+          visibleImportBtn: true,
+          visibleCancelBtm: false,
+        };
+      case 'cancel':
+       
+        return {
+          visibleImportBtn: true,
+          visibleCancelBtm: false,
+        };
+      default:
+        return {
+          ...state,
+        };
+    }
+  }, {
+    visibleImportBtn: true,
+    visibleCancelBtm: false,
+  });
+  const { visibleImportBtn, visibleCancelBtm } = importBtn;
   const loadImportHistory = () => {
     getImportHistory().then((data) => {
       setImportRecord(data);
     });
   };
 
-  const setHiddenCancelBtn = useCallback((value) => {
-    const { props: modalProps } = modal;
-    if (value !== modalProps.okProps.hidden) {
-      modalProps.okProps.hidden = value;
-      modal.update(modalProps);
-    }
-  }, [modal]);
   const upload = (file) => {
     if (!folder) {
       Choerodon.prompt('请选择文件夹');
@@ -79,17 +112,15 @@ function ImportIssue(props) {
     }
     const formData = new FormData();
     formData.append('file', file);
-    setUploading(true);
-    setIsImport(true);
+    dispatch({ type: 'import' });
     importIssue(formData, dataSet.current.get('folderId')).then(() => {
+      dispatch({ type: 'process' });
       uploadInput.current.value = '';
-      setUploading(false);
       setImportRecord({
         ...importRecord,
         status: 1,
       });
     }).catch((e) => {
-      setUploading(false);
       Choerodon.prompt('网络错误');
     });
   };
@@ -118,7 +149,7 @@ function ImportIssue(props) {
         <div className="c7ntest-ImportIssue-record-normal-text">
           <span className="c7ntest-ImportIssue-text">
             上次导入完成时间
-            {<span>lastUpdateDate</span>}
+            {<span>{lastUpdateDate}</span>}
             {' '}
             (耗时
             {onHumanizeDuration(importRecord)}
@@ -150,10 +181,7 @@ function ImportIssue(props) {
       upload(e.target.files[0]);
     }
   };
-
   const handleMessage = (res) => {
-    // console.log('handleMessage', res);
-    setHiddenCancelBtn(false);
     if (res !== 'ok') {
       const data = JSON.parse(res);
       const {
@@ -172,14 +200,14 @@ function ImportIssue(props) {
 
   const handleCancelImport = useCallback(() => {
     cancelImport(importRecord.id).then((res) => {
-      setHiddenCancelBtn(true);
+      dispatch({ type: 'cancel' });
       return true;
     }).catch((error) => {
       Choerodon.prompt(error);
       return false;
     });
     return false;
-  }, [importRecord.id, setHiddenCancelBtn]);
+  }, [importRecord.id]);
 
 
   const exportExcel = () => {
@@ -210,7 +238,6 @@ function ImportIssue(props) {
           messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
           onMessage={handleMessage}
         >
-          {lastUpdateDate && renderRecord()}
           <div className="c7ntest-ImportIssue-progress-area">
             <Progress
               className="c7ntest-ImportIssue-progress"
@@ -226,12 +253,11 @@ function ImportIssue(props) {
           </div>
         </WSHandler>
       );
-    } else if (lastUpdateDate || status === 2) {
-      return renderRecord();
+    } else if (status === 2) {
+      dispatch({ type: 'finish' });
     }
     return '';
   };
-  // import Divider from './Component/Divider';
   const ImportIssueForm = (formProps) => {
     const { title, children, bottom } = formProps;
     return (
@@ -242,11 +268,12 @@ function ImportIssue(props) {
       </div>
     );
   };
-
   useEffect(() => {
     modal.handleOk(handleCancelImport);
-    loadImportHistory();
-  }, [handleCancelImport, modal]);
+    if (visibleCancelBtm !== true) {
+      loadImportHistory();
+    }
+  }, [handleCancelImport, modal, visibleCancelBtm]);
 
 
   return (
@@ -266,8 +293,8 @@ function ImportIssue(props) {
       <Divider />
       <ImportIssueForm
         title="导入测试用例"
-        bottom={isImport || (
-          <Button loading={uploading} icon="file_upload" funcType="flat" color="primary" onClick={() => importExcel()}>
+        bottom={visibleImportBtn && (
+          <Button icon="file_upload" funcType="flat" color="primary" onClick={() => importExcel()}>
             <FormattedMessage id="issue_import" />
           </Button>
         )}
@@ -286,6 +313,7 @@ function ImportIssue(props) {
           style={{ display: 'none' }}
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         />
+        {renderRecord()}
         {renderProgress()}
       </ImportIssueForm>
     </div>
