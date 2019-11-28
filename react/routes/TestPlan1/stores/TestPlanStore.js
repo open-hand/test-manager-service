@@ -2,7 +2,8 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 
-import BaseTreeProto from '../../../store/BaseTreeProto';
+import BaseTreeProto from '../../../store/BaseTreeProto'; 
+import { getExecutesByCycleId } from '../../../api/cycleApi';
 
 class TestPlanStore extends BaseTreeProto {
     @observable loading = false;
@@ -25,7 +26,7 @@ class TestPlanStore extends BaseTreeProto {
       return this.dataList;
     }
 
-    @observable tableLoading = true;
+    @observable tableLoading = false;
 
     @action setTableLoading = (tableLoading) => {
       this.tableLoading = tableLoading;
@@ -93,6 +94,8 @@ class TestPlanStore extends BaseTreeProto {
       return this.filters;
     }
 
+    checkIdMap = observable.map();
+
     @action clearStore = () => {
       this.treeData = [];  
       this.expandedKeys = ['0-0'];  
@@ -108,6 +111,30 @@ class TestPlanStore extends BaseTreeProto {
         total: 0,
         pageSize: 50,
       };
+      this.checkIdMap = observable.map();
+    }
+
+    loadExecutes = () => {
+      const data = this.getCurrentCycle;
+      const { executePagination, filters } = this;
+      if (data.type === 'folder') {
+        this.setTableLoading(true);
+        getExecutesByCycleId({
+          page: executePagination.current,
+          size: executePagination.pageSize,
+        }, data.cycleId,
+        {
+          ...filters,
+        }).then((cycle) => {
+          this.setTableLoading(false);
+          this.setTestList(cycle.list);
+          this.setExecutePagination({
+            current: executePagination.current,
+            pageSize: executePagination.pageSize,
+            total: cycle.total,
+          });
+        });
+      }
     }
 }
 

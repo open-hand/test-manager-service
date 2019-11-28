@@ -1,11 +1,15 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { Tooltip, Menu } from 'choerodon-ui';
+import { observer } from 'mobx-react-lite';
+import {
+  Tooltip, Menu, Card, Button, 
+} from 'choerodon-ui';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../components';
+import CustomCheckBox from '../../../../components/CustomCheckBox';
 import './TestPlanTable.less';
 import TableDropMenu from '../../../../common/TableDropMenu';
 
@@ -14,24 +18,26 @@ const propTypes = {
   statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   pagination: PropTypes.shape({}).isRequired,
   dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  checkIdMap: PropTypes.object.isRequired,
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,
-  onLastUpdatedByChange: PropTypes.func.isRequired,
-  onAssignedToChange: PropTypes.func.isRequired,
   onTableRowClick: PropTypes.func.isRequired,
   onDeleteExecute: PropTypes.func.isRequired,
+  onQuickPass: PropTypes.func.isRequired,
+  onQuickFail: PropTypes.func.isRequired,
 };
-const TestPlanTable = ({
+const TestPlanTable = observer(({
   loading,
   statusList,
   pagination,
   dataSource,
   onDragEnd,
   onTableChange,
-  onLastUpdatedByChange,
-  onAssignedToChange,
   onTableRowClick,
   onDeleteExecute,
+  onQuickPass,
+  onQuickFail,
+  checkIdMap,
 }) => {
   const renderMenu = (text, record) => {
     const handleItemClick = ({ key }) => {
@@ -59,7 +65,18 @@ const TestPlanTable = ({
   };
 
   const columns = [{
-    title: <span>用例名称</span>,
+    title: '',
+    key: 'checkbox',
+    width: 40,
+    render: (text, record) => (
+      <CustomCheckBox
+        checkedMap={checkIdMap}
+        value={record.executeId}
+        field="executeId"
+      />
+    ),
+  }, {
+    title: <span>用例名</span>,
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
@@ -80,16 +97,30 @@ const TestPlanTable = ({
       );
     },
   }, {
-    title: <FormattedMessage id="cycle_assignedTo" />,
-    dataIndex: 'assigneeUser',
-    key: 'assigneeUser',
+    title: <FormattedMessage id="cycle_testSource" />,
+    dataIndex: 'testSource',
+    key: 'testSource',
     flex: 1,
-    render(assigneeUser) {
+    render(testSource) {
       return (
         <div
           className="c7ntest-text-dot"
         >
-          {assigneeUser && assigneeUser.realName}
+          {testSource && testSource.realName}
+        </div>
+      );
+    },
+  }, {
+    title: <FormattedMessage id="cycle_updatedDate" />,
+    dataIndex: 'lastUpdateDate',
+    key: 'lastUpdateDate',
+    flex: 1,
+    render(lastUpdateDate) {
+      return (
+        <div
+          className="c7ntest-text-dot"
+        >
+          {lastUpdateDate}
         </div>
       );
     },
@@ -111,38 +142,43 @@ const TestPlanTable = ({
         )
       );
     },
+  }, {
+    title: '',
+    key: 'action',
+    width: 90,
+    render: (text, record) => (
+      record.projectId !== 0
+      && (
+        <div style={{ display: 'flex' }}>
+          <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
+            <Button shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPass.bind(this, record)} />
+          </Tooltip>
+          <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
+            <Button shape="circle" funcType="flat" icon="cancel" onClick={onQuickFail.bind(this, record)} />
+          </Tooltip>
+        </div>
+      )
+    ),
   }];
 
   return (
-    <div className="c7ntest-TestPlan-content-right-bottom">
-      <div style={{ display: 'flex', margin: '20px 0px', alignItems: 'center' }}>
-        <div style={{
-          fontWeight: 600,
-          marginRight: 10,
-          fontSize: '14px',
-        }}
-        >
-          快速筛选:
+    <Card
+      className="c7ntest-testPlan-testPlanTableCard"
+      title="测试用例"
+      extra={(
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <SelectFocusLoad
+            allowClear
+            className="c7ntest-select"
+            dropdownClassName="c7ntest-testPlan-userDropDown"
+            style={{ width: 216 }}
+            placeholder="指派给"
+            getPopupContainer={trigger => trigger.parentNode}
+            type="user"
+          />
         </div>
-        <SelectFocusLoad
-          allowClear
-          className="c7ntest-select"
-          style={{ width: 200 }}
-          placeholder={<FormattedMessage id="cycle_executeBy" />}
-          getPopupContainer={trigger => trigger.parentNode}
-          type="user"
-          onChange={onLastUpdatedByChange}
-        />
-        <SelectFocusLoad
-          allowClear
-          style={{ marginLeft: 20, width: 200 }}
-          className="c7ntest-select"
-          placeholder={<FormattedMessage id="cycle_assignedTo" />}
-          getPopupContainer={trigger => trigger.parentNode}
-          type="user"
-          onChange={onAssignedToChange}
-        />
-      </div>
+      )}
+    >
       <DragTable
         pagination={pagination}
         loading={loading}
@@ -151,9 +187,11 @@ const TestPlanTable = ({
         columns={columns}
         onDragEnd={onDragEnd}
         dragKey="executeId"
+        checkedMap={checkIdMap}
+        checkField="executeId"
       />
-    </div>
+    </Card>
   );
-};
+});
 TestPlanTable.propTypes = propTypes;
 export default memo(TestPlanTable);

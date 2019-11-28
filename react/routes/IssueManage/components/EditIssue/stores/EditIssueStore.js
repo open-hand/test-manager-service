@@ -18,16 +18,6 @@ class EditIssueStore {
 
   @observable issueSteps = [];
 
-  @observable labelLists = [];
-
-  @action setLabelLists = (labelLists) => {
-    this.labelLists = labelLists;
-  }
-
-  @computed get getLabelLists() {
-    return this.labelLists;
-  }
-
   @action
   setIssueInfo(issueInfo) {
     this.issueInfo = issueInfo;

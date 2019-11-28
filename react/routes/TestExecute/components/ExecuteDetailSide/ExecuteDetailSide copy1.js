@@ -1,10 +1,8 @@
-import React, {
-  Component, useRef, useState, useEffect, useContext,
-} from 'react';
+import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { observer, inject } from 'mobx-react-lite';
+import { observer, inject } from 'mobx-react';
 import { throttle } from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -19,7 +17,7 @@ import {
   ResizeAble,
 } from '../../../../components';
 import { addDefects, removeDefect } from '../../../../api/ExecuteDetailApi';
-import Store from '../../stores';
+import ExecuteDetailStore from '../../stores/ExecuteDetailStore';
 import TypeTag from '../../../IssueManage/components/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
@@ -76,64 +74,50 @@ const propTypes = {
   onRemoveDefect: PropTypes.func.isRequired,
   onCreateBugShow: PropTypes.func.isRequired,
 };
+// console.log('propTypes', propTypes);
+@observer
+class ExecuteDetailSide extends Component {
+  constructor(props) {
+    super(props);
+    this.container = React.createRef();
+  }
 
-function ExecuteDetailSide(props) {
-  const context = useContext(Store);
-  const { ExecuteDetailStore } = context;
-  const container = useRef();
-  const bugsToggle = useRef();
-  const [currentNav, setCurrentNav] = useState('detail');
-  const [FullEditorShow, setFullEditorShow] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(''); // 待改
+  state = { currentNav: 'detail', FullEditorShow: false, editing: false }
+
+  componentDidMount() {
+    document.getElementById('scroll-area').addEventListener('scroll', this.handleScroll);
+    this.setQuery();
+  }
+
+  componentWillUnmount() {
+    if (document.getElementById('scroll-area')) {
+      document.getElementById('scroll-area').removeEventListener('scroll', this.handleScroll);
+    }
+  }
 
 
-  function isInLook(ele) {
+  getCurrentNav(e) {
+    return find(navs.map(nav => nav.code), i => this.isInLook(document.getElementById(i)));
+  }
+
+  handleScroll = (e) => {
+    if (sign) {
+      const currentNav = this.getCurrentNav(e);
+      if (this.state.currentNav !== currentNav && currentNav) {
+        this.setState({
+          currentNav,
+        });
+      }
+    }
+  }
+
+  isInLook(ele) {
     const a = ele.offsetTop;
     const target = document.getElementById('scroll-area');
     return a + ele.offsetHeight > target.scrollTop;
   }
 
-  function getCurrentNav(e) {
-    return find(navs.map(nav => nav.code), i => isInLook(document.getElementById(i)));
-  }
-
-  const handleScroll = (e) => {
-    if (sign) {
-      const newCurrentNav = getCurrentNav(e);
-      if (currentNav !== newCurrentNav && newCurrentNav) {
-        setCurrentNav(newCurrentNav);
-      }
-    }
-  };
-
-  const setQuery = (width = container.current.clientWidth) => {
-    if (width <= 600) {
-      container.current.setAttribute('max-width', '600px');
-    } else {
-      container.current.removeAttribute('max-width');
-    }
-  };
-
-  // componentDidMount() {
-  //   document.getElementById('scroll-area').addEventListener('scroll', handleScroll);
-  //   setQuery();
-  // }
-  useEffect(() => {
-    if (document.getElementById('scroll-area')) {
-      document.getElementById('scroll-area').removeEventListener('scroll', handleScroll);
-    }
-    document.getElementById('scroll-area').addEventListener('scroll', handleScroll);
-    setQuery();
-  }, [handleScroll]);
-
-  // componentWillUnmount() {
-  //   if (document.getElementById('scroll-area')) {
-  //     document.getElementById('scroll-area').removeEventListener('scroll', handleScroll);
-  //   }
-  // }
-
-  const scrollToAnchor = (anchorName) => {
+  scrollToAnchor = (anchorName) => {
     if (anchorName) {
       const anchorElement = document.getElementById(anchorName);
       if (anchorElement) {
@@ -148,47 +132,57 @@ function ExecuteDetailSide(props) {
         }, 2000);
       }
     }
-  };
+  }
 
 
-  const renderNavs = () => navs.map(nav => (
+  renderNavs = () => navs.map(nav => (
     <Tooltip placement="right" title={nav.tooltip} key={nav.code}>
-      <li className={`c7ntest-li ${currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
+      <li className={`c7ntest-li ${this.state.currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
         <Icon
           type={`${nav.icon} c7ntest-icon-li`}
           role="none"
           onClick={() => {
-            setCurrentNav(nav.code);
-            scrollToAnchor(nav.code);
+            this.setState({ currentNav: nav.code });
+            this.scrollToAnchor(nav.code);
           }}
         />
       </li>
     </Tooltip>
-  ));
+  ))
 
 
-  const ShowFullEditor = () => {
-    setFullEditorShow(true);
-  };
+  ShowFullEditor = () => {
+    this.setState({
+      FullEditorShow: true,
+    });
+  }
 
-  const HideFullEditor = () => {
-    setFullEditorShow(false);
-  };
+  HideFullEditor = () => {
+    this.setState({
+      FullEditorShow: false,
+    });
+  }
 
-  const handleCommentSave = (comment) => {
-    setEditing(false);
-    props.onCommentSave(comment);
-  };
+  handleCommentSave = (comment) => {
+    this.setState({
+      editing: false,
+    });
+    this.props.onCommentSave(comment);
+  }
 
-  const handleCommentCancel = () => {  
-    setEditing(false);
-  };
+  handleCommentCancel = () => {
+    this.setState({
+      editing: false,
+    });
+  }
 
-  const enterEditing = () => {
-    setEditing(true);
-  };
+  enterEditing = () => {
+    this.setState({
+      editing: true,
+    });
+  }
 
-  const onAddDefects = (issueList) => {
+  addDefects = (issueList) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const { executeId } = cycleData;
@@ -205,18 +199,26 @@ function ExecuteDetailSide(props) {
         ExecuteDetailStore.getInfo();
       });
     }
-  };
+  }
 
-  const handleResizeEnd = ({ width }) => {
+  handleResizeEnd = ({ width }) => {
     localStorage.setItem('agile.ExecuteDetail.width', `${width}px`);
-  };
+  }
 
-  const handleResize = throttle(({ width }) => {
-    setQuery(width);
+  setQuery = (width = this.container.current.clientWidth) => {
+    if (width <= 600) {
+      this.container.current.setAttribute('max-width', '600px');
+    } else {
+      this.container.current.removeAttribute('max-width');
+    }
+  }
+
+  handleResize = throttle(({ width }) => {
+    this.setQuery(width);
     // console.log(width, parseInt(width / 100) * 100);
-  }, 150);
+  }, 150)
 
-  const handleRemoveDefect = (issueId) => {
+  handleRemoveDefect = (issueId) => {
     const cycleData = ExecuteDetailStore.getCycleData;
     if (find(cycleData.defects, { issueId: Number(issueId) })) {
       const defectId = find(cycleData.defects, { issueId: Number(issueId) }).id;
@@ -224,18 +226,19 @@ function ExecuteDetailSide(props) {
         ExecuteDetailStore.removeLocalDefect(defectId);
       });
     }
-  };
+  }
 
-  function render() {
+  render() {
     const {
       issueInfosVO, cycleData, fileList, setFileList, onFileRemove, status, onClose, onUpload,
       onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit, disabled,
-    } = props;
-    // console.log('render', props);
+    } = this.props;
+    // console.log('render', this.props);
     const issueList = ExecuteDetailStore.getIssueList;
     const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
     const userList = ExecuteDetailStore.getUserList;
     const { selectLoading } = ExecuteDetailStore;
+    const { FullEditorShow, editing } = this.state;
     const {
       issueNum, summary, issueId, issueTypeVO: { typeCode },
     } = issueInfosVO || { issueTypeVO: {} };
@@ -243,7 +246,7 @@ function ExecuteDetailSide(props) {
     const {
       lastUpdateDate, cycleName, lastUpdateUser, assigneeUser, comment, defects,
     } = cycleData;
-    const newProps = {
+    const props = {
       onRemove: onFileRemove,
     };
     // 默认18个字启动省略
@@ -288,11 +291,11 @@ function ExecuteDetailSide(props) {
             width: localStorage.getItem('agile.ExecuteDetail.width') || 600,
             height: '100%',
           }}
-          onResizeEnd={handleResizeEnd}
-          onResize={handleResize}
+          onResizeEnd={this.handleResizeEnd}
+          onResize={this.handleResize}
         >
 
-          <div className="c7ntest-ExecuteDetailSide" ref={container}>
+          <div className="c7ntest-ExecuteDetailSide" ref={this.container}>
             <div className="c7ntest-ExecuteDetailSide-divider" />
 
             <div className="c7ntest-content">
@@ -331,7 +334,7 @@ function ExecuteDetailSide(props) {
                       {statusColor && (
                         <StatusTags
                           style={{
-                            height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15,
+                            height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15, 
                           }}
                           color={statusColor}
                           name={statusName}
@@ -368,7 +371,7 @@ function ExecuteDetailSide(props) {
                             ? assigneeUser.id
                             : <User user={assigneeUser} />
                           : null}
-                        // onCancel={cancelEdit}
+                        onCancel={this.cancelEdit}
                       >
                         <Text>
                           {assigneeUser ? <User user={assigneeUser} />
@@ -405,14 +408,14 @@ function ExecuteDetailSide(props) {
                   title="描述"
                   style={{ padding: '0 15px 0 0' }}
                   action={(
-                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={ShowFullEditor} />
+                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={this.ShowFullEditor} />
                   )}
                 >
                   {comment && !editing
                     ? (
                       <div
                         role="none"
-                        onClick={enterEditing}
+                        onClick={this.enterEditing}
                       >
                         <RichTextShow data={delta2Html(comment)} />
                       </div>
@@ -421,10 +424,12 @@ function ExecuteDetailSide(props) {
                       <WYSIWYGEditor
                         bottomBar
                         defaultValue={text2Delta(comment)}
-                        onChange={setEditValue}
+                        onChange={(value) => {
+                          this.editValue = value;
+                        }}
                         style={{ height: 200, width: '100%' }}
-                        handleSave={handleCommentSave}
-                        handleDelete={handleCommentCancel}
+                        handleSave={this.handleCommentSave}
+                        handleDelete={this.handleCommentCancel}
                       />
                     )}
                 </Section>
@@ -446,10 +451,10 @@ function ExecuteDetailSide(props) {
                     className="upload-button"
                   /> */}
                   <UploadButtonExcuteDetail
-                    {...newProps}
+                    {...props}
                     // onRemove={handleRemove}
                     onBeforeUpload={setFileList}
-                    // updateNow={onChangeFileList}
+                    updateNow={this.onChangeFileList}
                     fileList={fileList}
                   />
                 </Section>
@@ -462,11 +467,11 @@ function ExecuteDetailSide(props) {
                     <TextEditToggle
                       className="c7ntest-button-defect-select"
                       simpleMode
-                      saveRef={bugsToggle}
+                      saveRef={(bugsToggle) => { this.bugsToggle = bugsToggle; }}
                       formKey="defects"
-                      onSubmit={onAddDefects}
+                      onSubmit={this.addDefects}
                       originData={defectIssueIds}
-                    // onCancel={cancelEdit}
+                      onCancel={this.cancelEdit}
                     >
                       <Text>
                         <Button type="primary" funcType="flat">
@@ -489,7 +494,7 @@ function ExecuteDetailSide(props) {
                               style={{ cursor: 'pointer' }}
                               role="none"
                               onClick={() => {
-                                bugsToggle.handleSubmit();
+                                this.bugsToggle.handleSubmit();
                                 ExecuteDetailStore.setCreateBugShow(true);
                                 ExecuteDetailStore.setDefectType('CYCLE_CASE');
                                 ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
@@ -499,7 +504,7 @@ function ExecuteDetailSide(props) {
                             </div>
                           )}
                           style={{ width: 300 }}
-                          onDeselect={handleRemoveDefect}
+                          onDeselect={this.handleRemoveDefect}
                           onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
                         >
                           {defectsOptions}
@@ -518,15 +523,17 @@ function ExecuteDetailSide(props) {
             </div>
             {
               FullEditorShow && (
-                <FullEditor
-                  initValue={editValue || text2Delta(comment)}
-                  visible={FullEditorShow}
-                  onCancel={() => setFullEditorShow(false)}
-                  onOk={(value) => {
-                    setFullEditorShow(false);
-                    handleCommentSave(value);
-                  }}
-                />
+              <FullEditor
+                initValue={this.editValue || text2Delta(comment)}
+                visible={FullEditorShow}
+                onCancel={() => this.setState({ FullEditorShow: false })}
+                onOk={(value) => {
+                  this.setState({
+                    FullEditorShow: false,
+                  });
+                  this.handleCommentSave(value);
+                }}
+              />
               )
             }
           </div>
@@ -535,9 +542,8 @@ function ExecuteDetailSide(props) {
 
     );
   }
-  return render();
 }
 
 ExecuteDetailSide.propTypes = propTypes;
 ExecuteDetailSide.defaultProps = defaultProps;
-export default observer(ExecuteDetailSide);
+export default ExecuteDetailSide;

@@ -117,14 +117,9 @@ function EditIssue() {
         }
         issue = { ...issue, ...newValue };
         await updateIssue(issue); 
-        if (key === 'labels') {
-          getLabels().then((res) => { // 防止编辑标签的时候创建新标签，应该重新加载label，防止新创建的label不能正确显示
-            store.setLabelLists(res);
-          });
-        }         
-        store.loadIssueData();
+        await store.loadIssueData();
         onUpdate();
-        done();       
+        done(); // done() 为了更新完之后用服务器数据替换之前选中的数据，因此应该等待前边数据加载完再更新       
         break;
       }
     }

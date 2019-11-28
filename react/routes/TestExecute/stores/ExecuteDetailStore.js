@@ -3,7 +3,6 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
-import { store } from '@choerodon/boot';
 import _ from 'lodash';
 import { getParams } from '../../../common/utils';
 import {
@@ -13,7 +12,6 @@ import { getStatusList } from '../../../api/TestStatusApi';
 import { getUsers } from '../../../api/IamApi';
 import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
 
-@store('ExecuteDetailStore')
 class ExecuteDetailStore {
   @observable id = null;
 
@@ -300,5 +298,4 @@ class ExecuteDetailStore {
   }
 }
 
-const executeDetailStore = new ExecuteDetailStore();
-export default executeDetailStore;
+export default ExecuteDetailStore;

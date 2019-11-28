@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { Table } from 'choerodon-ui';
+import CustomCheckBox from '../CustomCheckBox';
 import './DragTable.less';
 
 const reorder = (list, startIndex, endIndex) => {
@@ -115,12 +116,15 @@ class DragTable extends Component {
   }
 
   renderThead = () => {
-    const { columns } = this.props;
+    const {
+      columns, checkedMap, dataSource, checkField, 
+    } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
       <th style={{ flex: column.flex || 1, width: column.width }}>
-        {column.title}
-        {' '}
+        {column.key !== 'checkbox' ? column.title : (
+          <CustomCheckBox value="all" checkedMap={checkedMap} indeterminate dataSource={dataSource} field={checkField} />
+        )}
       </th>
     ));
     return (<tr>{ths}</tr>);

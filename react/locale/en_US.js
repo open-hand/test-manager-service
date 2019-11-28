@@ -200,6 +200,8 @@ const enUS = {
   cycle_totalExecuted: 'Total Executed',
   cycle_comment: 'Description',
   cycle_executeBy: 'Execute by',
+  cycle_testSource: 'test source',
+  cycle_updatedDate: 'Update Time',
   cycle_executeTime: 'Execute time',
   cycle_assignedTo: 'Assigned to',
   // 循环树
