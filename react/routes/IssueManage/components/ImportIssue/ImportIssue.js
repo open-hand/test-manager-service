@@ -1,15 +1,15 @@
 import React, {
-  useState, useRef, useEffect, useMemo,
+  useState, useRef, useEffect, useMemo, useCallback,
 } from 'react';
 import {
   WSHandler, stores,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Button, Input, Modal, Progress,
-  Icon, Divider, Tooltip,
+  Progress,
+  Icon, Divider,
 } from 'choerodon-ui';
-import { DataSet, Form } from 'choerodon-ui/pro';
+import { DataSet, Form, Button } from 'choerodon-ui/pro';
 import moment from 'moment';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
@@ -52,12 +52,12 @@ function ImportIssue(props) {
       }),
     },
   }), []);
-  const [visible, setVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [importRecord, setImportRecord] = useState({});
   const [folder, setFolder] = useState(null);
   const [isImport, setIsImport] = useState(false);
   const uploadInput = useRef(null);
+  const { modal } = props;
 
   const loadImportHistory = () => {
     getImportHistory().then((data) => {
@@ -65,11 +65,13 @@ function ImportIssue(props) {
     });
   };
 
-  const handleClose = () => {
-    setVisible(false);
-  };
-
-
+  const setHiddenCancelBtn = useCallback((value) => {
+    const { props: modalProps } = modal;
+    if (value !== modalProps.okProps.hidden) {
+      modalProps.okProps.hidden = value;
+      modal.update(modalProps);
+    }
+  }, [modal]);
   const upload = (file) => {
     if (!folder) {
       Choerodon.prompt('请选择文件夹');
@@ -82,7 +84,6 @@ function ImportIssue(props) {
     importIssue(formData, dataSet.current.get('folderId')).then(() => {
       uploadInput.current.value = '';
       setUploading(false);
-      setVisible(false);
       setImportRecord({
         ...importRecord,
         status: 1,
@@ -151,6 +152,8 @@ function ImportIssue(props) {
   };
 
   const handleMessage = (res) => {
+    // console.log('handleMessage', res);
+    setHiddenCancelBtn(false);
     if (res !== 'ok') {
       const data = JSON.parse(res);
       const {
@@ -166,16 +169,17 @@ function ImportIssue(props) {
     }
   };
 
-  const handleImportClose = () => {
-    setVisible(false);
-    setImportRecord(null);
-  };
 
-  const handleCancelImport = () => {
+  const handleCancelImport = useCallback(() => {
     cancelImport(importRecord.id).then((res) => {
-      handleImportClose();
+      setHiddenCancelBtn(true);
+      return true;
+    }).catch((error) => {
+      Choerodon.prompt(error);
+      return false;
     });
-  };
+    return false;
+  }, [importRecord.id, setHiddenCancelBtn]);
 
 
   const exportExcel = () => {
@@ -219,7 +223,6 @@ function ImportIssue(props) {
             />
             <span className="c7ntest-ImportIssue-progress-area-text">正在导入中</span>
             <span className="c7ntest-ImportIssue-progress-area-prompt">( 本次导入耗时较长，您可先返回进行其他操作）</span>
-
           </div>
         </WSHandler>
       );
@@ -241,8 +244,9 @@ function ImportIssue(props) {
   };
 
   useEffect(() => {
+    modal.handleOk(handleCancelImport);
     loadImportHistory();
-  }, []);
+  }, [handleCancelImport, modal]);
 
 
   return (
@@ -252,8 +256,7 @@ function ImportIssue(props) {
       <ImportIssueForm
         title="下载模板"
         bottom={(
-          <Button type="primary" funcType="flat" onClick={() => exportExcel()}>
-            <Icon type="get_app icon" />
+          <Button icon="get_app icon" funcType="flat" color="primary" onClick={() => exportExcel()}>
             <FormattedMessage id="issue_download_tpl" />
           </Button>
         )}
@@ -264,8 +267,7 @@ function ImportIssue(props) {
       <ImportIssueForm
         title="导入测试用例"
         bottom={isImport || (
-          <Button loading={uploading} type="primary" funcType="flat" onClick={() => importExcel()}>
-            <Icon type="file_upload" />
+          <Button loading={uploading} icon="file_upload" funcType="flat" color="primary" onClick={() => importExcel()}>
             <FormattedMessage id="issue_import" />
           </Button>
         )}
