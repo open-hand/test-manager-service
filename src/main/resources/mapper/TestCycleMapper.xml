@@ -323,6 +323,15 @@
         </foreach>
     </update>
 
+    <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+      select * from test_cycle
+      where
+      plan_id in
+      <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
+            #{planId}
+      </foreach>
+    </select>
+
     <!--<delete id="deleteByType">-->
         <!--DELETE-->
         <!--FROM-->

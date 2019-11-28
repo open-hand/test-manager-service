@@ -817,19 +817,25 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
     @Override
     public List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO,List<TestIssueFolderDTO> testIssueFolderDTOS) {
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
-        testCycleDTO.setFromDate(testPlanDTO.getStartDate());
-        testCycleDTO.setToDate(testPlanDTO.getEndDate());
-        testCycleDTO.setProjectId(testPlanDTO.getProjectId());
-        testCycleDTO.setVersionId(1L);
         List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
         testIssueFolderDTOS.forEach(v -> {
+            TestCycleDTO testCycleDTO = new TestCycleDTO();
+            testCycleDTO.setFromDate(testPlanDTO.getStartDate());
+            testCycleDTO.setToDate(testPlanDTO.getEndDate());
+            testCycleDTO.setProjectId(testPlanDTO.getProjectId());
+            testCycleDTO.setVersionId(1L);
+            testCycleDTO.setPlanId(testPlanDTO.getPlanId());
             testCycleDTO.setCycleName(v.getName());
             testCycleDTO.setFolderId(v.getFolderId());
             testCycleDTO.setType(TestCycleType.FOLDER);
             testCycleDTOS.add(baseInsert(testCycleDTO));
         });
         return testCycleDTOS;
+    }
+
+    @Override
+    public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
+        return cycleMapper.listByPlanIds(planIds);
     }
 
     private Long getCount(TestCycleVO testCycleVO) {

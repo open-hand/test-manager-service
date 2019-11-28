@@ -75,4 +75,6 @@ public interface TestCycleService {
      * @param testIssueFolderDTOS
      */
     List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
+
+    List<TestCycleDTO> listByPlanIds(List<Long> planIds);
 }

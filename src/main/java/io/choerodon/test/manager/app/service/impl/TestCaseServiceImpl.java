@@ -580,9 +580,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<TestCaseDTO> listCaseByProjectId(Long projectId) {
-        TestCaseDTO testCaseDTO = new TestCaseDTO();
-        testCaseDTO.setProjectId(projectId);
-        return testCaseMapper.select(testCaseDTO);
+        return testCaseMapper.listByProject(projectId);
     }
 
 }

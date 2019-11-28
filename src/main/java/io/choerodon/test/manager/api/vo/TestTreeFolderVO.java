@@ -72,4 +72,17 @@ public class TestTreeFolderVO {
     public void setHasCase(Boolean hasCase) {
         this.hasCase = hasCase;
     }
+
+    @Override
+    public String toString() {
+        return "TestTreeFolderVO{" +
+                "id=" + id +
+                ", children=" + children +
+                ", hasChildren=" + hasChildren +
+                ", isExpanded=" + isExpanded +
+                ", isChildrenLoading=" + isChildrenLoading +
+                ", issueFolderVO=" + issueFolderVO +
+                ", hasCase=" + hasCase +
+                '}';
+    }
 }

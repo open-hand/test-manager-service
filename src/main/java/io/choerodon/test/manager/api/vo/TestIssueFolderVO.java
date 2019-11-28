@@ -108,4 +108,17 @@ public class TestIssueFolderVO {
     public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
+
+    @Override
+    public String toString() {
+        return "TestIssueFolderVO{" +
+                "folderId=" + folderId +
+                ", parentId=" + parentId +
+                ", name='" + name + '\'' +
+                ", versionId=" + versionId +
+                ", projectId=" + projectId +
+                ", type='" + type + '\'' +
+                ", objectVersionNumber=" + objectVersionNumber +
+                '}';
+    }
 }

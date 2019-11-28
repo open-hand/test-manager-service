@@ -1,22 +1,22 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestPlanVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import io.reactivex.internal.functions.Functions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -57,7 +57,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public TestPlanDTO create(Long projectId,TestPlanVO testPlanVO) {
+    public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
         // 创建计划
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setProjectId(projectId);
@@ -67,26 +67,25 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         // 是否自选
-        if(!testPlanVO.getOptional()){
-            testCaseDTOS = testCaseService.listCaseByProjectId(projectId);
-            if(CollectionUtils.isEmpty(testCaseDTOS)){
+        if (!testPlanVO.getOptional()) {
+            testCaseDTOS = testCaseService.listCaseByProjectId(projectId);;
+            if (CollectionUtils.isEmpty(testCaseDTOS)) {
                 return testPlanDTO;
             }
             List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
             testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
-        }
-        else{
+        } else {
             testIssueFolderDTOS = testPlanVO.getFolders();
             testCaseDTOS = testPlanVO.getTestCases();
-            if(CollectionUtils.isEmpty(testIssueFolderDTOS) || CollectionUtils.isEmpty(testCaseDTOS)){
-             return testPlanDTO;
+            if (CollectionUtils.isEmpty(testIssueFolderDTOS) || CollectionUtils.isEmpty(testCaseDTOS)) {
+                return testPlanDTO;
             }
         }
         // 创建测试循环
         List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
-        testCycleCaseService.batchInsertByTestCase(testCycleMap,testCaseDTOS);
+        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
         return testPlanDTO;
     }
 
@@ -95,13 +94,117 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     }
 
-
-    private TestPlanDTO baseCreate(TestPlanDTO testPlanDTO){
-        if(ObjectUtils.isEmpty(testPlanDTO)){
-           throw  new CommonException("error.test.plan.is.not.null");
+    @Override
+    public List<TestPlanTreeVO> ListPlanAndFolderTree(Long projectId, String statusCode) {
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        testPlanDTO.setProjectId(projectId);
+        testPlanDTO.setStatusCode(statusCode);
+        List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
+        if (CollectionUtils.isEmpty(testPlanDTOS)) {
+            return new ArrayList<>();
         }
-        DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective,testPlanDTO,1,"error.insert.test.plan");
+        List<TestPlanTreeVO> testPlanTreeVOS = new ArrayList<>();
+        testPlanTreeVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanTreeVO>>() {}.getType());
+
+        // 获取planIds,查询出所有底层文件夹Id
+        List<Long> planIds = testPlanTreeVOS.stream().map(TestPlanTreeVO::getPlanId).collect(Collectors.toList());
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
+        Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
+        // 获取项目下所有的文件夹
+        List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryListByProjectId(projectId);
+        Map<Long, TestIssueFolderVO> allFolderMap = testIssueFolderVOS.stream().collect(Collectors.toMap(TestIssueFolderVO::getFolderId, Function.identity()));
+        Map<Long, List<TestIssueFolderVO>> parentMap = testIssueFolderVOS.stream().collect(Collectors.groupingBy(TestIssueFolderVO::getParentId));
+        testPlanTreeVOS.forEach(v -> {
+           List<Long> root = new ArrayList<>();
+           Map<Long, TestTreeFolderVO> map = new HashMap<>();
+           List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId());
+           if(!CollectionUtils.isEmpty(testCycles)) {
+               testCycles.forEach(testCycleDTO -> buildTree(root, testCycleDTO.getFolderId(), allFolderMap, map, parentMap));
+               List<TestTreeFolderVO> testTreeFolderVOS = map.values().stream().collect(Collectors.toList());
+               TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO(root, testTreeFolderVOS);
+               v.setTestTreeIssueFolderVO(testTreeIssueFolderVO);
+           }
+        });
+
+        return testPlanTreeVOS;
+    }
+
+
+    private TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
+        if (ObjectUtils.isEmpty(testPlanDTO)) {
+            throw new CommonException("error.test.plan.is.not.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective, testPlanDTO, 1, "error.insert.test.plan");
         return testPlanDTO;
+    }
+
+    private void buildTree(List<Long> root,Long folderId,Map<Long, TestIssueFolderVO> allFolderMap,Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap){
+        TestIssueFolderVO testIssueFolderVO = allFolderMap.get(folderId);
+        System.out.println(testIssueFolderVO.getFolderId());
+        TestTreeFolderVO testTreeFolderVO = null;
+        if (!ObjectUtils.isEmpty(map.get(folderId))){
+            testTreeFolderVO = map.get(folderId);
+        }
+
+        if(ObjectUtils.isEmpty(testTreeFolderVO)){
+            testTreeFolderVO = new TestTreeFolderVO();
+            testTreeFolderVO.setId(testIssueFolderVO.getFolderId());
+            if(CollectionUtils.isEmpty(parentMap.get(testIssueFolderVO.getFolderId()))){
+                testTreeFolderVO.setHasChildren(false);
+            }
+            else{
+                testTreeFolderVO.setHasChildren(true);
+            }
+            testTreeFolderVO.setIssueFolderVO(testIssueFolderVO);
+            testTreeFolderVO.setExpanded(false);
+            testTreeFolderVO.setChildrenLoading(false);
+            map.put(folderId,testTreeFolderVO);
+        }
+
+        if(testIssueFolderVO.getParentId() == 0){
+            if(!root.contains(testIssueFolderVO.getFolderId())){
+                root.add(testIssueFolderVO.getFolderId());
+            }
+            return;
+        }
+        else {
+            TestTreeFolderVO parentTreeFolderVO = null;
+            if (!ObjectUtils.isEmpty(map.get(testIssueFolderVO.getParentId()))){
+                parentTreeFolderVO = map.get(testIssueFolderVO.getParentId());
+            }
+
+            if(ObjectUtils.isEmpty(parentTreeFolderVO)){
+                parentTreeFolderVO = new TestTreeFolderVO();
+                if(ObjectUtils.isEmpty(allFolderMap.get(testIssueFolderVO.getParentId()))){
+                    return;
+                }
+                TestIssueFolderVO parentFolderVO = allFolderMap.get(testIssueFolderVO.getParentId());
+                if(CollectionUtils.isEmpty(parentMap.get(parentFolderVO.getFolderId()))){
+                    testTreeFolderVO.setHasChildren(false);
+                }
+                else{
+                    testTreeFolderVO.setHasChildren(true);
+                }
+                parentTreeFolderVO.setId(parentFolderVO.getFolderId());
+                parentTreeFolderVO.setIssueFolderVO(parentFolderVO);
+                parentTreeFolderVO.setExpanded(false);
+                parentTreeFolderVO.setChildrenLoading(false);
+                parentTreeFolderVO.setChildren(Arrays.asList(testIssueFolderVO.getFolderId()));
+                map.put(testIssueFolderVO.getParentId(),parentTreeFolderVO);
+            }
+            else {
+                List<Long> children = new ArrayList<>();
+                 if(!ObjectUtils.isEmpty(parentTreeFolderVO.getChildren())){
+                     children.addAll(parentTreeFolderVO.getChildren());
+                 }
+                if(!children.contains(testIssueFolderVO.getFolderId())){
+                    children.add(testIssueFolderVO.getFolderId());
+                }
+                parentTreeFolderVO.setChildren(children);
+                map.put(testIssueFolderVO.getParentId(),parentTreeFolderVO);
+            }
+            buildTree(root,testIssueFolderVO.getParentId(),allFolderMap,map,parentMap);
+        }
     }
 
 }

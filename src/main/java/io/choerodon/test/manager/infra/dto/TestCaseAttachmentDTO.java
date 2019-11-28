@@ -57,4 +57,14 @@ public class TestCaseAttachmentDTO extends BaseDTO {
         this.projectId = projectId;
     }
 
+    @Override
+    public String toString() {
+        return "TestCaseAttachmentDTO{" +
+                "attachmentId=" + attachmentId +
+                ", caseId=" + caseId +
+                ", url='" + url + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", projectId=" + projectId +
+                '}';
+    }
 }

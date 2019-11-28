@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -32,7 +33,7 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
 public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttachmentRelService {
 
     @Autowired
