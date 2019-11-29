@@ -2,6 +2,7 @@ import React, { createContext, useMemo } from 'react';
 import { DataSet } from 'choerodon-ui/pro';
 import CreateAutoTestStore from './CreateAutoTestStore';
 import TestPlanStore from './TestPlanStore';
+import IssueTreeStore from './IssueTreeStore';
 
 const Store = createContext();
 
@@ -11,11 +12,13 @@ export const StoreProvider = (props) => {
   const { children } = props;
   const createAutoTestStore = useMemo(() => new CreateAutoTestStore(), []);
   const testPlanStore = useMemo(() => new TestPlanStore(), []);
+  const issueTreeStore = useMemo(() => new IssueTreeStore(), []);
  
   const value = {
     ...props,
     createAutoTestStore,
     testPlanStore,
+    issueTreeStore,
     prefixCls: 'c7ntest-testPlan',
   };
   return (

@@ -71,7 +71,7 @@ const TestPlanTable = observer(({
     key: 'summary',
     filters: [],
     flex: 2,
-    render: (text, record) => renderMenu(record.issueInfosVO.summary, record),
+    render: (text, record) => renderMenu(record.summary, record),
   }, {
     title: <FormattedMessage id="cycle_executeBy" />,
     dataIndex: 'lastUpdateUser',
@@ -120,7 +120,7 @@ const TestPlanTable = observer(({
     },
   }];
 
-  if (testPlanStatus !== 'finished') {
+  if (testPlanStatus !== 'done') {
     columns.unshift({
       title: '',
       key: 'checkbox',
@@ -128,8 +128,8 @@ const TestPlanTable = observer(({
       render: (text, record) => (
         <CustomCheckBox
           checkedMap={checkIdMap}
-          value={record.executeId}
-          field="executeId"
+          value={record.caseId}
+          field="caseId"
           dataSource={testList}
         />
       ),
@@ -157,7 +157,7 @@ const TestPlanTable = observer(({
     });
   }
 
-  if (testPlanStatus !== 'notStart') {
+  if (testPlanStatus !== 'todo') {
     columns.splice(testPlanStatus === 'doing' ? 3 : 2, 0, {
       title: <FormattedMessage id="cycle_testSource" />,
       dataIndex: 'testSource',
@@ -201,9 +201,9 @@ const TestPlanTable = observer(({
         dataSource={testList}
         columns={columns}
         onDragEnd={onDragEnd}
-        dragKey="executeId"
+        dragKey="caseId"
         checkedMap={checkIdMap}
-        checkField="executeId"
+        checkField="caseId"
       />
     </Card>
   );
