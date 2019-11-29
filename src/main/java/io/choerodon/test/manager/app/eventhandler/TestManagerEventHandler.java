@@ -63,11 +63,6 @@ public class TestManagerEventHandler {
     @Autowired
     private TestCaseService testCaseService;
 
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Autowired
     private TestCycleService testCycleService;
@@ -214,23 +209,6 @@ public class TestManagerEventHandler {
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_UPDATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN, seq = 1)
     public void sagaUpdatePlan(String message) throws IOException {
         TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
-
-        // 查询已有的cycle的信息
-        List<TestCycleDTO> oldTestCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(testPlanVO.getPlanId()));
-        Map<Long, TestCycleDTO> oldTestCycleMap = oldTestCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
-        Map<Long, List<Long>> oldCycleCaseMap = new HashMap<>();
-        // 查询已有的cycle_case 的信息
-        if (CollectionUtils.isEmpty(oldTestCycleDTOS)) {
-            List<Long> cycleIds = oldTestCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
-            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
-            oldCycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId, Collectors.mapping(TestCycleCaseDTO::getCaseId, Collectors.toList())));
-        }
-
-        // 获取当前插入的文件夹
-        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
-        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
-        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
-
-
+        testPlanServcie.sagaUpdatePlan(testPlanVO);
     }
 }

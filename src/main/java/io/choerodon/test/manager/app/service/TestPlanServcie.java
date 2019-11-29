@@ -48,4 +48,6 @@ public interface TestPlanServcie {
      * @param testPlanVO
      */
     public void sagaCreatePlan(TestPlanVO testPlanVO);
+
+    public void sagaUpdatePlan(TestPlanVO testPlanVO);
 }
