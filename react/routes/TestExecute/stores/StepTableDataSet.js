@@ -9,10 +9,13 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
   const comment = intl.formatMessage({ id: 'execute_comment' });
 
   return {
-    autoQuery: true,
+    autoQuery: false,
     selection: false,
     paging: true,
     dataKey: null,
+    data: [{
+      testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: '123', comment: '2222',
+    }],
     fields: [
       {
         name: 'index', type: 'string', label: '编号',
@@ -27,7 +30,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         name: 'stepStatus', type: 'string', label: stepStatus,
       },
       {
-        name: 'stepAttachment', type: 'string', label: stepAttachment,
+        name: 'stepAttachment', type: 'array', label: stepAttachment,
       },
       {
         name: 'defects', type: 'object', label: defects,
@@ -40,6 +43,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
+        transformResponse: data => ({
+          ...JSON.parse(data),
+        }),
       },
     },
   };
