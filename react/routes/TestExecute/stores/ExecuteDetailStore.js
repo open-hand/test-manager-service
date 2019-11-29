@@ -15,39 +15,19 @@ import { getIssueList, getIssuesForDefects } from '../../../api/agileApi';
 class ExecuteDetailStore {
   @observable id = null;
 
-  @observable issueList = [];
-
   @observable loading = false;
 
   @observable selectLoading = false;
 
   @observable ExecuteDetailSideVisible = true;
 
-  @observable userList = [];
-
-  // 用户列表
   @observable statusList = [];
 
   // 状态列表
   @observable stepStatusList = [];
 
-  @observable detailList = [];
+  @observable detailData = {};
 
-  @observable historyList = [];
-
-  @observable historyPagination = {
-    current: 1,
-    total: 0,
-    pageSize: 5,
-  };
-
-  @observable cycleData = {
-    caseAttachment: [], //
-    defects: [], // 缺陷
-  };
-  // constructor() {
-
-  // }
   @observable createBugShow = false;
 
   @computed get getCreateBugShow() {
@@ -79,33 +59,25 @@ class ExecuteDetailStore {
   }
 
   getInfo = (id = this.id) => {
-    const { cycleId } = getParams(window.location.href);
     this.enterloading();
     this.setId(id);
     const { historyPagination } = this;
     Promise.all([
-      getCycle(id, cycleId),
+      // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
       getCycleDetails(id),
       getStatusList('CASE_STEP'),
-      getCycleHistiorys({
-        page: historyPagination.current,
-        size: historyPagination.pageSize,
-      }, id),
+      // getCycleHistiorys({
+      //   page: historyPagination.current,
+      //   size: historyPagination.pageSize,
+      // }, id),
       getIssuesForDefects(),
     ])
-      .then(([cycleData, statusList, detailList, stepStatusList, historyData, issueData]) => {
-        this.setCycleData(cycleData);
+      .then(([statusList, detailData, stepStatusList, issueData]) => {
+        this.setDetailData(detailData);
         this.setStatusList(statusList);
-        this.setDetailList(detailList);
         this.setStepStatusList(stepStatusList);
-        this.setHistoryPagination({
-          current: historyPagination.current,
-          pageSize: historyPagination.pageSize,
-          total: historyData.total,
-        });
-        this.setHistoryList(historyData.list);
-        this.setIssueList(issueData.list);
+      
         this.unloading();
       }).catch((error) => {
         Choerodon.prompt('网络异常');
@@ -113,71 +85,14 @@ class ExecuteDetailStore {
       });
   }
 
-  loadHistoryList = (pagination = this.historyPagination) => {
-    const { id } = this;
-    this.enterloading();
-    getCycleHistiorys({
-      page: pagination.current,
-      size: pagination.pageSize,
-    }, id).then((history) => {
-      this.setHistoryPagination({
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        total: history.total,
-      });
-      this.setHistoryList(history.list);
-      this.unloading();
-    });
-  }
-
-  loadDetailList = () => {
-    const { id } = this;
-    this.enterloading();
-    getCycleDetails(id).then((detail) => {
-      this.setDetailList(detail);
-      this.unloading();
-    });
-  }
-
-  loadIssueList = (value) => {
-    this.selectEnterLoading();
-    // 加载不含测试类型的issue
-    getIssuesForDefects(value).then((issueData) => {
-      this.setIssueList(issueData.list);
-      this.selectUnLoading();
-    });
-  }
-
-  loadUserList = (value) => {
-    this.selectEnterLoading();
-    getUsers(value).then((userData) => {
-      this.setUserList(userData.list);
-      this.selectUnLoading();
-    });
-    getIssueList(value).then((issueData) => {
-      this.setIssueList(issueData.list);
-      this.selectUnLoading();
-    });
-  }
 
   @computed get getLoading() {
     return this.loading;
   }
 
-  @computed get getHistoryPagination() {
-    return toJS(this.historyPagination);
-  }
 
-  @computed get getCycleData() {
-    return this.cycleData;
-  }
-
-  @computed get getHistoryList() {
-    return toJS(this.historyList);
-  }
-
-  @computed get getDetailList() {
-    return toJS(this.detailList);
+  @computed get getDetailData() {
+    return toJS(this.detailData);
   }
 
   @computed get getStatusList() {
@@ -188,16 +103,12 @@ class ExecuteDetailStore {
     return toJS(this.stepStatusList);
   }
 
-  @computed get getIssueList() {
-    return toJS(this.issueList);
-  }
-
   @computed get getUserList() {
     return toJS(this.userList);
   }
 
   @computed get getFileList() {
-    return this.cycleData.caseAttachment.map((attachment) => {
+    return this.detailData.caseAttachment.map((attachment) => {
       const { url, attachmentName } = attachment;
       return {
         uid: attachment.id,
@@ -209,7 +120,7 @@ class ExecuteDetailStore {
   }
 
   @computed get getDefectIssueIds() {
-    return this.cycleData.defects.map(defect => defect.issueId.toString());
+    return [];
   }
 
   getStatusById = (status) => {
@@ -232,11 +143,6 @@ class ExecuteDetailStore {
     this.id = id;
   }
 
-  @action setCycleData = (cycleData) => {
-    // window.console.log(cycleData, 'set');
-    this.cycleData = cycleData;
-  }
-
   @action removeLocalDefect = (defectId) => {
     _.remove(this.cycleData.defects, { id: defectId });
   }
@@ -249,32 +155,9 @@ class ExecuteDetailStore {
     this.stepStatusList = stepStatusList;
   }
 
-  @action setIssueList = (issueList) => {
-    this.issueList = issueList;
-  }
 
-  @action setUserList = (userList) => {
-    this.userList = userList;
-  }
-
-  @action clearPagination = () => {
-    this.historyPagination = {
-      current: 1,
-      total: 0,
-      pageSize: 5,
-    };
-  }
-
-  @action setHistoryPagination = (historyPagination) => {
-    this.historyPagination = historyPagination;
-  }
-
-  @action setHistoryList = (historyList) => {
-    this.historyList = historyList;
-  }
-
-  @action setDetailList = (detailList) => {
-    this.detailList = detailList;
+  @action setDetailData = (data) => {
+    this.detailData = data;
   }
 
   @action selectEnterLoading = () => {

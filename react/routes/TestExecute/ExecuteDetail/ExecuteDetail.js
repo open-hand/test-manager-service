@@ -21,7 +21,7 @@ import {
   editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
-import './ExecuteDetail.less';
+// import './ExecuteDetail.less';
 import {
   StepTable as OldStepTable, ExecuteDetailSide, CreateBug,
 } from '../components';
@@ -54,7 +54,8 @@ const CardWrapper = ({ children, title, style }) => (
   <Card
     title={null}
     style={style}
-    bodyStyle={styles.cardBodyStyle}
+    bordered={false}
+    bodyStyle={styles}
   >
     <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
       <span style={styles.cardTitleText}>{title}</span>
@@ -64,11 +65,10 @@ const CardWrapper = ({ children, title, style }) => (
 );
 function ExecuteDetail(props) {
   const context = useContext(Store);
-  const { ExecuteDetailStore, stepTableDataSet } = context;
+  const { ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet } = context;
   const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
     const { id } = context.match.params;
-    ExecuteDetailStore.clearPagination();
     ExecuteDetailStore.getInfo(id);
   }, [ExecuteDetailStore, context.match.params]);
 
@@ -218,11 +218,16 @@ function ExecuteDetail(props) {
       style: {
         width: 740,
       },
-      children: (
-        <EditExecuteIssue
-          // onOk={this.handleCreateIssue.bind(this)}
-          intl={intl}
+      // children: (
+      //   <EditExecuteIssue
+      //     // onOk={this.handleCreateIssue.bind(this)}
+      //     intl={intl}
 
+      //   />
+      // ),
+      children: (
+        <StepTable
+          dataSet={stepTableDataSet}
         />
       ),
       footer: (okBtn, cancelBtn) => (
@@ -246,30 +251,24 @@ function ExecuteDetail(props) {
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
+
     const { loading } = ExecuteDetailStore;
-    const detailList = ExecuteDetailStore.getDetailList;
-    const historyList = ExecuteDetailStore.getHistoryList;
-    const historyPagination = ExecuteDetailStore.getHistoryPagination;
-    const cycleData = ExecuteDetailStore.getCycleData;
+    const detailData = ExecuteDetailStore.getDetailData;
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
-    const fileList = ExecuteDetailStore.getFileList;
+    const fileList = [];
     const statusList = ExecuteDetailStore.getStatusList;
     const createBugShow = ExecuteDetailStore.getCreateBugShow;
     const defectType = ExecuteDetailStore.getDefectType;
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
-    const {
-      nextExecuteId, lastExecuteId, issueInfosVO, executionStatus,
-    } = cycleData;
-    const { statusColor, statusName } = ExecuteDetailStore.getStatusById(executionStatus);
+    const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
-
     return (
       <Page className="c7ntest-ExecuteDetail">
         <Header
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
-          {issueInfosVO && (
+          {detailData && (
             // <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
               {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
@@ -278,9 +277,10 @@ function ExecuteDetail(props) {
             </Button>
             // {/* </div> */}
           )}
+
           <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
           <Button
-            disabled={lastExecuteId === null}
+            disabled={false}
             onClick={() => {
               goExecute('pre');
             }}
@@ -289,7 +289,7 @@ function ExecuteDetail(props) {
             <span><FormattedMessage id="execute_pre" /></span>
           </Button>
           <Button
-            disabled={nextExecuteId === null}
+            disabled={false}
             onClick={() => {
               goExecute('next');
             }}
@@ -307,9 +307,10 @@ function ExecuteDetail(props) {
 
         </Header>
 
-        <Breadcrumb title={issueInfosVO ? renderBreadcrumbTitle(issueInfosVO.summary) : null} />
+        <Breadcrumb title={detailData ? renderBreadcrumbTitle('detailData.summary') : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
-          <Spin spinning={loading} style={{ display: 'flex' }}>
+
+          <Spin spinning={false} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div
@@ -321,14 +322,14 @@ function ExecuteDetail(props) {
                 }}
               >
                 <div style={{ marginBottom: 24 }}>
-                  {issueInfosVO && (
+                  {detailData && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <StatusTags
                         style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
                         color={statusColor}
                         name={statusName}
                       />
-                      <span style={{ fontSize: '20px' }}>{issueInfosVO.summary}</span>
+                      <span style={{ fontSize: '20px' }}>{detailData.summary}</span>
 
                     </div>
                   )}
@@ -344,24 +345,22 @@ function ExecuteDetail(props) {
                   )}
                 <CardWrapper
                   style={{ margin: '24px 0' }}
-                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailList.length}）`}</span>]}
+                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailData.length}）`}</span>]}
                 >
-                  <StepTable
+                  {/* <StepTable
                     disabled={disabled}
                     dataSource={detailList}
                     stepStatusList={stepStatusList}
+                  /> */}
+                  <StepTable
+                    dataSet={stepTableDataSet}
                   />
-
                 </CardWrapper>
-                {/* <StepTable
-                  dataSet={stepTableDataSet}
-                /> */}
+
                 <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
                   <div style={{ padding: '0 20px' }}>
                     <ExecuteHistoryTable
-                      dataSource={historyList}
-                      pagination={historyPagination}
-                      onChange={ExecuteDetailStore.loadHistoryList}
+                      dataSet={executeHistoryDataSet}
                     />
                   </div>
                 </CardWrapper>
@@ -371,17 +370,10 @@ function ExecuteDetail(props) {
                 <ExecuteDetailSide
                   disabled={disabled}
                   ref={ExecuteDetailSideRef}
-                  issueInfosVO={issueInfosVO}
-                  cycleData={cycleData}
+                  detailData={detailData}
                   fileList={fileList}
-                  onFileRemove={handleFileRemove}
                   status={{ statusColor, statusName }}
                   onClose={handleToggleExecuteDetailSide}
-                  onUpload={handleUpload}
-                  onSubmit={handleSubmit}
-                  onCommentSave={handleCommentSave}
-                  onRemoveDefect={handleRemoveDefect}
-                  onCreateBugShow={handleCreateBugShow}
                 />
               )}
               {

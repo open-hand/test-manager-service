@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm } from 'choerodon-ui';
 import _ from 'lodash';
-import UserHead from '../../UserHead';
+import UserHead from '@/components/UserHead';
 import { WYSIWYGEditor } from '../../../../../components';
 import { IssueDescription } from '../../CommonComponent';
 import {

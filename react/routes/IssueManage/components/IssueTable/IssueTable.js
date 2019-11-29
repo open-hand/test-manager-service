@@ -6,7 +6,6 @@ import {
   Spin, Table, Pagination, Tooltip,
 } from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { FormattedMessage } from 'react-intl';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
@@ -14,7 +13,7 @@ import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
   renderIssueNum, renderSummary, renderAction,
 } from './tags';
-import UserHead from '../UserHead';
+import UserHead from '@/components/UserHead';
 import './IssueTable.less';
 import useAvoidClosure from '@/hooks/useAvoidClosure';
 

@@ -1,33 +1,27 @@
 import React, {
-  Fragment, useState, useContext, useRef, useEffect, useImperativeHandle, useMemo,
+  Fragment, useState, useContext,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Choerodon } from '@choerodon/boot';
-import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Select, Button, Tooltip, Icon,
+  Button, Tooltip, Icon,
 } from 'choerodon-ui';
 import { UploadButtonNow, FileList } from '../UploadButtonNow/UploadButtonNow';
 import IssueDescription from './Component/IssueDescription';
-import { TextEditToggle } from '@/components';
 import {
   delta2Html, text2Delta,
 } from '@/common/utils';
-import SelectFocusLoad from '@/components/SelectFocusLoad';
 import Timeago from '@/components/DateTimeAgo/DateTimeAgo';
-import { uploadFile, getLabels } from '@/api/IssueManageApi';
+import { uploadFile } from '@/api/IssueManageApi';
 import { openFullEditor, WYSIWYGEditor } from '@/components';
 import CreateLinkTask from '../CreateLinkTask';
-import UserHead from '../UserHead';
+import UserHead from '@/components/UserHead';
 import Divider from './Component/Divider';
 import EditIssueContext from './stores';
 import EditDetailWrap from './Component/EditDetailWrap';
 import './Detail.less';
 import LinkIssues from './link-issues';
-// 问题链接
-const { Text, Edit } = TextEditToggle;
-const { Option } = Select;
 
 const { TitleWrap, ContentWrap, PropertyWrap } = EditDetailWrap;
 /**

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
-import UserHead from '../../UserHead';
+import UserHead from '@/components/UserHead';
 import DatetimeAgo from '../../../../../components/DateTimeAgo';
 import './DataLog.scss';
 

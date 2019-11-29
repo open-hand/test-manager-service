@@ -7,7 +7,7 @@ import { deleteLink } from '../../../../../api/IssueManageApi';
 import PriorityTag from '../../PriorityTag';
 import StatusTag from '../../StatusTag';
 import TypeTag from '../../TypeTag';
-import UserHead from '../../UserHead';
+import UserHead from '@/components/UserHead';
 import { issueLink } from '../../../../../common/utils';
 
 class LinkList extends Component {
