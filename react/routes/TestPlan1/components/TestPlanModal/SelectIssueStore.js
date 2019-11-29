@@ -51,20 +51,17 @@ class IssueTreeStore {
     this.selectedKeys = selectedKeys;
   }
 
-  async loadIssueTree(defaultSelectId) {
+  async loadIssueTree(initCaseSelected) {
     this.setLoading(true);
     const treeData = await getIssueTree();
-    this.setTreeData(treeData, defaultSelectId);
+    this.setTreeData(treeData, initCaseSelected);
     this.setLoading(false);
   }
 
-  @action setTreeData(treeData, defaultSelectId) {
+  @action setTreeData(treeData, initCaseSelected) {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
-    let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
-    if (!this.currentCycle.id && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
-    }
+    const selectedId = this.currentCycle.id || rootIds[0];    
     this.treeData = {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
@@ -84,12 +81,24 @@ class IssueTreeStore {
           data: issueFolderVO,
           checked: false,
           isIndeterminate: false,
-        });
+        });       
         return result;
       }),
     };
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
+    }
+    // 数据初始化之后，设置选中的值
+    if (initCaseSelected) {
+      Object.keys(initCaseSelected).forEach((key) => {
+        const folderId = Number(key);
+        this.handleCheckChange(true, folderId);
+        const mapData = this.treeMap.get(folderId);
+        if (mapData) {
+          mapData.selected = initCaseSelected[key].selected;
+          mapData.unSelected = initCaseSelected[key].unSelected;
+        }
+      });
     }
   }
 

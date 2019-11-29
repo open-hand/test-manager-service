@@ -18,7 +18,7 @@ import { editCycle } from '../../../api/ExecuteDetailApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import Injecter from '../../../components/Injecter';
 import CreateAutoTest from '../components/CreateAutoTest'; 
-import openCreatePlan from '../components/CreatePlan';
+import { openCreatePlan } from '../components/TestPlanModal';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import TestPlanTreeWrap from '../components/TestPlanTreeWrap';

@@ -6,8 +6,6 @@ import {
   Modal, Form, TextField, DataSet, TextArea, DateTimePicker, Select, Radio,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import { Choerodon } from '@choerodon/boot';
-import { handleRequestFailed } from '@/common/utils';
 import Tip from '@/components/Tip';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
@@ -20,11 +18,15 @@ const propTypes = {
   initValue: PropTypes.shape({}).isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
-function CreatePlan({
-  modal, initValue, onSubmit,
+function TestPlanModal({
+  modal, initValue, onSubmit, mode = 'create',
 }) {
+  const { caseSelected: initCaseSelected } = initValue || {};
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
-  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue, edit: false, SelectIssueStore: selectIssueStore })), [initValue, selectIssueStore]);
+  const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue, mode, SelectIssueStore: selectIssueStore })), [initValue, mode, selectIssueStore]);
+  useEffect(() => {
+    selectIssueStore.loadIssueTree(initCaseSelected);
+  }, [initCaseSelected, selectIssueStore]);
   const submit = useCallback(async () => {
     // console.log('click');
     try {
@@ -78,9 +80,9 @@ function CreatePlan({
     </Context.Provider>
   );
 }
-CreatePlan.propTypes = propTypes;
-const ObserverCreatePlan = observer(CreatePlan);
-export default function openCreatePlan() {
+TestPlanModal.propTypes = propTypes;
+const ObserverTestPlanModal = observer(TestPlanModal);
+export function openCreatePlan() {
   Modal.open({
     title: '创建计划',
     key,
@@ -88,6 +90,28 @@ export default function openCreatePlan() {
     style: {
       width: 1090,
     },
-    children: <ObserverCreatePlan />,
+    children: <ObserverTestPlanModal mode="create" />,
+  });
+}
+export function openEditPlan() {
+  Modal.open({
+    title: '编辑计划',
+    key,
+    drawer: true,
+    style: {
+      width: 1090,
+    },
+    children: <ObserverTestPlanModal mode="edit" />,
+  });
+}
+export function openClonePlan() {
+  Modal.open({
+    title: '克隆计划',
+    key,
+    drawer: true,
+    style: {
+      width: 1090,
+    },
+    children: <ObserverTestPlanModal mode="clone" />,
   });
 }

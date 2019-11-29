@@ -1,15 +1,15 @@
 import moment from 'moment';
 import { getProjectId } from '@/common/utils';
 
-export default function DataSetFactory({ initValue = {}, edit = false, SelectIssueStore } = {}) {
+export default function DataSetFactory({ initValue = {}, mode, SelectIssueStore } = {}) {
   const { id, objectVersionNumber } = initValue;
   return {
     autoCreate: true,
-    data: edit ? [initValue] : undefined,
+    data: mode === 'create' ? undefined : [initValue],
     transport: {
       submit: {
         url: `/test/v1/projects/${getProjectId()}/plan`,
-        method: edit ? 'put' : 'post',
+        method: mode === 'create' ? 'post' : 'put',
         transformRequest: ([data]) => {
           const {
             range, custom, __id, __status, ...rest
