@@ -14,13 +14,11 @@ import { Modal } from 'choerodon-ui/pro';
 import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../api/cycleApi'; 
-import { editCycle } from '../../../api/ExecuteDetailApi';
-import { getStatusList } from '../../../api/TestStatusApi';
-import Injecter from '../../../components/Injecter';
 import CreateAutoTest from '../components/CreateAutoTest'; 
 import openCreatePlan from '../components/CreatePlan';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
+import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
 import IssueTree from '../components/IssueTree';
 import TestPlanTable from '../components/TestPlanTable';
 import Empty from '../../../components/Empty';
@@ -33,6 +31,7 @@ import { getParams, getDragRank, executeDetailShowLink } from '../../../common/u
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
+const updateRemindModal = Modal.key();
 
 export default observer(() => {
   const {
@@ -49,6 +48,18 @@ export default observer(() => {
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
+
+  const handleOpenUpdateRemind = () => {
+    Modal.open({
+      key: updateRemindModal,
+      drawer: true,
+      title: '用例变更提醒',
+      children: <UpdateRemindModalChildren />,
+      style: { width: '10.9rem' },
+      className: 'c7ntest-testPlan-updateRemind-modal',
+    });
+  };
+
   const handleOpenCreatePlan = () => {
     openCreatePlan();
   };
@@ -154,6 +165,9 @@ export default observer(() => {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
+        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
+          用例变更提醒
+        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>

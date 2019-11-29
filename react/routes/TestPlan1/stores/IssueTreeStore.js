@@ -3,8 +3,8 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 import { find } from 'lodash';
-import { getPlanTree } from '@/api/TestPlanApi';
-// import { getIssueTree } from '@/api/IssueManageApi';
+// import { getPlanTree } from '@/api/TestPlanApi';
+import { getIssueTree } from '@/api/IssueManageApi';
 
 class IssueTreeStore {
   @observable testPlanStatus = 'todo';
@@ -57,8 +57,8 @@ class IssueTreeStore {
 
   async loadIssueTree(defaultSelectId) {
     this.setTreeLoading(true);
-    const treeData = await getPlanTree(this.testPlanStatus); 
-    // const treeData = await getIssueTree();   
+    // const treeData = await getPlanTree(this.testPlanStatus); 
+    const treeData = await getIssueTree();   
     this.setTreeData(treeData, defaultSelectId);
     this.setTreeLoading(false);
   }

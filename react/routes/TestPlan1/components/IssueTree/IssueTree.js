@@ -55,7 +55,9 @@ class IssueTree extends Component {
 
   renderTreeNode = (node, { item }) => {
     if (item.data.parentId) {
-      return node;
+      return (
+        node
+      );
     } else {
       return (
         <TreeNode
@@ -86,17 +88,22 @@ class IssueTree extends Component {
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
-          menuItems={[
-            <Menu.Item key="copy">
-                复制此计划
-            </Menu.Item>,
-            <Menu.Item key="rename">
-                重命名
-            </Menu.Item>,
-            <Menu.Item key="delete">
-               删除
-            </Menu.Item>,
-          ]} 
+          treeNodeProps={
+            {
+              enableAction: item => !item.data.parentId,
+              menuItems: [
+                <Menu.Item key="copy">
+                  复制此计划
+                </Menu.Item>,
+                <Menu.Item key="rename">
+                  重命名
+                </Menu.Item>,
+                <Menu.Item key="delete">
+                 删除
+                </Menu.Item>,
+              ],
+            }
+          }
           onMenuClick={(nodeItem, key) => {
             switch (key) {
               case 'copy': {
