@@ -1,79 +1,84 @@
-import React, { Component } from 'react';
-import { observer } from 'mobx-react';
-import {
-  Page, Header, Content, Breadcrumb, 
-} from '@choerodon/boot';
-import { Choerodon } from '@choerodon/boot';
+import React, {
+  useCallback, useContext, useEffect,
+} from 'react';
+import { observer } from 'mobx-react-lite';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
-  Button, Icon, Spin, Modal,
-} from 'choerodon-ui';
-import { editExecuteDetail, deleteExecute } from '../../../api/cycleApi';
+  Page, Header, Content, Breadcrumb, Choerodon,
+} from '@choerodon/boot';
 import {
-  EventCalendar, CreateCycle, EditStage, EditCycle, ExportSide, TreeArea,
-} from '../components';
-import { Injecter, NoCycle, Loading } from '../../../components';
-import { TestPlanTable, BatchClone } from './components';
-import TestPlanStore from '../stores/TestPlanStore';
-import { executeDetailShowLink, getDragRank } from '../../../common/utils';
-import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
-import './TestPlanHome.scss';
+  Icon, Tabs, Spin,
+} from 'choerodon-ui';
+import { Modal, Button } from 'choerodon-ui/pro';
+import {
+  getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
+} from '../../../api/cycleApi';
+import CreateAutoTest from '../components/CreateAutoTest';
+import TestPlanDetailCard from '../components/TestPlanDetailCard';
+import TestPlanStatusCard from '../components/TestPlanStatusCard';
+import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
+import TestPlanTree from '../components/TestPlanTree';
+import TestPlanTable from '../components/TestPlanTable';
+import TestPlanHeader from '../components/TestPlanHeader';
+import { openCreatePlan } from '../components/TestPlanModal';
+import Empty from '../../../components/Empty';
+import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
 
+import Store from '../stores';
+import './TestPlanHome.less';
+import { getParams, getDragRank, executeDetailShowLink } from '../../../common/utils';
+
+
+const { TabPane } = Tabs;
 const { confirm } = Modal;
-@observer
-class TestPlanHome extends Component { 
-  componentDidMount() {
-    RunWhenProjectChange(TestPlanStore.clearStore);
-    TestPlanStore.setFilters({});
-    TestPlanStore.setAssignedTo(null);
-    TestPlanStore.setLastUpdatedBy(null);
-    this.refresh();
-  }
+const updateRemindModal = Modal.key();
 
-  saveRef = name => (ref) => {
-    this[name] = ref;
-  }
+function TestPlanHome() {
+  const {
+    prefixCls, createAutoTestStore, testPlanStore, oldStepTableDataSet, newStepTableDataSet,
+  } = useContext(Store);
+  const {
+    treeData, loading, rightLoading, checkIdMap, testList,
+  } = testPlanStore;
 
-  refresh = () => { 
-    TestPlanStore.getTree();
-  }
+  const handleTabsChange = (value) => {
+    testPlanStore.setTestPlanStatus(value);
+  };
 
-  handleItemClick = (item) => {
-    const { type } = item;
-    if (type === 'folder') {
-      TestPlanStore.EditStage(item);
-    } else if (type === 'cycle') {
-      TestPlanStore.EditCycle(item);
-    }
-  }
+  const handleUpdateOk = () => {
 
-  /**
-   * 点击table的一项
-   *
-   * @memberof TestPlanHome
-   */
-  handleTableRowClick=(record) => {
-    const { history } = this.props;
-    history.push(executeDetailShowLink(record.executeId));
-  }
+  };
 
-  handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
-    const Filters = { ...filters };
-    if (barFilters && barFilters.length > 0) {
-      Filters.summary = barFilters;
-    }
-    if (pagination.current) {
-      TestPlanStore.setFilters(Filters);
-      TestPlanStore.rightEnterLoading();
-      TestPlanStore.setExecutePagination(pagination);
-      TestPlanStore.reloadCycle();
-    }
-  }
+  const handleIgnoreUpdate = () => {
 
-  onDragEnd = (sourceIndex, targetIndex) => {
-    const { testList } = TestPlanStore;
-    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
+  };
+  const handleOpenCreatePlan = () => {
+    openCreatePlan();
+  };
+  const handleOpenUpdateRemind = () => {
+    Modal.open({
+      key: updateRemindModal,
+      drawer: true,
+      title: '用例变更提醒',
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} oldStepTableDataSet={oldStepTableDataSet} newStepTableDataSet={newStepTableDataSet} />,
+      style: { width: '10.9rem' },
+      className: 'c7ntest-testPlan-updateRemind-modal',
+      okText: '更新',
+      cancelText: '取消',
+      onOk: handleUpdateOk,
+      footer: (okBtn, cancelBtn) => (
+        <div>
+          {okBtn}
+          <Button funcType="funcType" onClick={handleIgnoreUpdate}>忽略更新</Button>
+          {cancelBtn}
+        </div>
+      ),
+    });
+  };
+
+  const onDragEnd = (sourceIndex, targetIndex) => {
+    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);
     const source = testList[sourceIndex];
     const temp = { ...source };
     delete temp.defects;
@@ -81,7 +86,7 @@ class TestPlanHome extends Component {
     delete temp.testCycleCaseStepES;
     delete temp.issueInfosVO;
     temp.assignedTo = temp.assignedTo || 0;
-    TestPlanStore.rightEnterLoading();
+    testPlanStore.setTableLoading(true);
     editExecuteDetail({
       ...temp,
       ...{
@@ -89,130 +94,155 @@ class TestPlanHome extends Component {
         nextRank,
       },
     }).then((res) => {
-      TestPlanStore.reloadCycle();
-    }).catch((err) => {    
+      testPlanStore.loadExecutes();
+    }).catch((err) => {
       Choerodon.prompt('网络错误');
-      TestPlanStore.rightLeaveLoading();
+      testPlanStore.setTableLoading(false);
     });
-  }
+  };
 
-  handleLastUpdatedByChange=(value) => {
-    TestPlanStore.setLastUpdatedBy(value);
-    TestPlanStore.loadCycle();
-  }
+  const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    const Filters = { ...filters };
+    if (barFilters && barFilters.length > 0) {
+      Filters.summary = barFilters;
+    }
+    if (pagination.current) {
+      testPlanStore.setFilters(Filters);
+      testPlanStore.rightEnterLoading();
+      testPlanStore.setExecutePagination(pagination);
+      testPlanStore.loadExecutes();
+    }
+  };
 
-  handleAssignedToChange=(value) => {
-    TestPlanStore.setAssignedTo(value);
-    TestPlanStore.loadCycle();
-  }
-
-  handleDeleteExecute = (record) => {
+  const handleDeleteExecute = (record) => {
     const { executeId } = record;
     confirm({
       width: 560,
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content: Choerodon.getMessage('当您点击删除后，该条执行将从此计划阶段中移除!', 'When you click delete, after which the data will be deleted !'),
       onOk: () => {
-        TestPlanStore.rightEnterLoading();
+        testPlanStore.rightEnterLoading();
         deleteExecute(executeId)
-          .then((res) => {           
-            TestPlanStore.reloadCycle();
+          .then((res) => {
+            testPlanStore.loadExecutes();
           }).catch((err) => {
             /* console.log(err); */
             Choerodon.prompt('网络异常');
-            TestPlanStore.rightLeaveLoading();
+            testPlanStore.rightLeaveLoading();
           });
       },
       okText: '删除',
       okType: 'danger',
     });
-  }
+  };
 
-  render() {    
-    const {
-      setCreateCycleVisible, 
-    } = TestPlanStore;
-    return (
-      <Page className="c7ntest-TestPlan">
-        <Header title={<FormattedMessage id="testPlan_name" />}>
-          <Button icon="playlist_add" onClick={() => { setCreateCycleVisible(true); }}>            
-            <FormattedMessage id="testPlan_creatCycle" />
-          </Button>
-          <Button icon="archive" onClick={() => this.ExportSide.open()}>           
-            <FormattedMessage id="testPlan_export" />
-          </Button>
-          <Button icon="collections_bookmark" onClick={() => this.BatchClone.open()}>            
-            批量克隆
-          </Button>
-          {/* <Button icon="autorenew" onClick={this.refresh}>           
-            <FormattedMessage id="refresh" />
-          </Button> */}
-        </Header>
-        <Breadcrumb title="" />
-        <div className="breadcrumb-border" />
-        <Content
-          style={{ padding: 0, display: 'flex' }}
-        >
-          <Injecter store={TestPlanStore} item="loading">
-            {loading => <Loading loading={loading} />}
-          </Injecter>
-          <div className="c7ntest-TestPlan-content">
-            <Injecter store={TestPlanStore} item="EditCycleVisible">
-              {visible => <EditCycle visible={visible} />}
-            </Injecter>
-            <Injecter store={TestPlanStore} item="EditStageVisible">
-              {visible => <EditStage visible={visible} />}
-            </Injecter>
-            <Injecter store={TestPlanStore} item="CreateCycleVisible">
-              {visible => (
-                <CreateCycle
-                  visible={visible}
-                  onCancel={() => { setCreateCycleVisible(false); }}
-                  onOk={() => { setCreateCycleVisible(false); this.refresh(); }}
-                />
-              )}
-            </Injecter>              
-            <ExportSide ref={this.saveRef('ExportSide')} />
-            <BatchClone ref={this.saveRef('BatchClone')} onOk={this.refresh} />
-            <Injecter store={TestPlanStore} item={['loading', 'isTreeVisible']}>
-              {([loading, isTreeVisible]) => <TreeArea loading={loading} isTreeVisible={isTreeVisible} setIsTreeVisible={TestPlanStore.setIsTreeVisible} />}
-            </Injecter>
-            <Injecter store={TestPlanStore} item={['currentCycle', 'getTimes', 'calendarShowMode', 'getTimesLength']}>
-              {([currentCycle, times, calendarShowMode, getTimesLength]) => (currentCycle.key && getTimesLength ? (
-                <div className="c7ntest-TestPlan-content-right">
-                  <EventCalendar key={`${currentCycle.key}_${times.length}`} showMode={calendarShowMode} times={times} onItemClick={this.handleItemClick} />
-                  {calendarShowMode === 'single' && (
-                    <Injecter store={TestPlanStore} item={['statusList', 'prioritys', 'getTestList', 'executePagination', 'rightLoading']}>
-                      {([statusList, prioritys, testList, executePagination, rightLoading]) => (
-                        <TestPlanTable
-                          prioritys={prioritys}
-                          statusList={statusList}
-                          loading={rightLoading}
-                          pagination={executePagination}
-                          dataSource={testList}
-                          onLastUpdatedByChange={this.handleLastUpdatedByChange}
-                          onAssignedToChange={this.handleAssignedToChange}
-                          onDragEnd={this.onDragEnd}                        
-                          onTableChange={this.handleExecuteTableChange}
-                          onTableRowClick={this.handleTableRowClick}
-                          onDeleteExecute={this.handleDeleteExecute}
-                        />
-                      )}
-                    </Injecter>
-                  
-                  )}
-                </div> 
-              ) : !TestPlanStore.loading && <NoCycle />)}
-            </Injecter>
-          </div>
-        </Content>
-      </Page>
-    );
-  }
+  const quickPassOrFail = (execute, text) => {
+  };
+
+  const handleQuickPass = (execute, e) => {
+    e.stopPropagation();
+    quickPassOrFail(execute, '通过');
+  };
+
+  const handleQuickFail = (execute, e) => {
+    e.stopPropagation();
+    quickPassOrFail(execute, '失败');
+  };
+
+  const handleAssignToChange = (value) => {
+    // console.log('失焦了');
+    // console.log(value, checkIdMap.size, checkIdMap.keys());
+    if (value && checkIdMap.size) {
+      checkIdMap.clear();
+    }
+  };
+
+  useEffect(() => {
+    testPlanStore.loadAllData();
+  }, [testPlanStore]);
+
+  const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
+
+  return (
+    <Page className={prefixCls}>
+      <Header
+        title={<FormattedMessage id="testPlan_name" />}
+      >
+        <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
+          <FormattedMessage id="testPlan_createPlan" />
+        </Button>
+        <TestPlanHeader />
+      </Header>
+      <Breadcrumb />
+      <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
+        {
+
+          noPlan ? (
+            <Empty
+              loading={loading}
+              pic={testCaseEmpty}
+              title="暂无计划"
+              description="当前项目下无计划，请创建"
+              extra={<Button type="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
+            />
+          ) : (
+            <div className={`${prefixCls}-contentWrap`}>
+              <div className={`${prefixCls}-contentWrap-left`}>
+                <div className={`${prefixCls}-contentWrap-testPlanTree`}>
+                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
+                    <TabPane tab="未开始" key="todo">
+                      <TestPlanTree />
+                    </TabPane>
+                    <TabPane tab="进行中" key="doing">
+                      <TestPlanTree />
+                    </TabPane>
+                    <TabPane tab="已完成" key="done">
+                      <TestPlanTree />
+                    </TabPane>
+                  </Tabs>
+                </div>
+              </div>
+              <div className={`${prefixCls}-contentWrap-right`}>
+                <Spin spinning={rightLoading}>
+                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                    <Icon type="insert_invitation" />
+                    <span>0.20.0版本测试计划</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-warning`}>
+                    <Icon type="error" />
+                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-card`}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                      <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                        <TestPlanDetailCard />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <TestPlanStatusCard />
+                      </div>
+                    </div>
+                    <div className={`${prefixCls}-contentWrap-table`}>
+                      <TestPlanTable
+                        onDragEnd={onDragEnd}
+                        onTableChange={handleExecuteTableChange}                        
+                        onDeleteExecute={handleDeleteExecute}
+                        onQuickPass={handleQuickPass}
+                        onQuickFail={handleQuickFail}
+                        onAssignToChange={handleAssignToChange}
+                        onOpenUpdateRemind={handleOpenUpdateRemind}
+                      />
+                    </div>
+                  </div>
+                </Spin>
+
+              </div>
+            </div>
+          )
+        }
+      </Content>
+      <CreateAutoTest createAutoTestStore={createAutoTestStore} />
+    </Page>
+  );
 }
 
-TestPlanHome.propTypes = {
-
-};
-
-export default TestPlanHome;
+export default observer(TestPlanHome);
