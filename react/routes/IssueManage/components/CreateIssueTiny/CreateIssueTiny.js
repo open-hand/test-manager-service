@@ -35,7 +35,7 @@ export default observer(() => {
       createValue = createIssueValue;
     }
     if (createValue !== '' && createValue.trim() !== '') {  // 不等于''并且 不能只是空格
-      const folderId = IssueTreeStore.currentCycle.id;
+      const folderId = IssueTreeStore.currentFolder.id;
       const data = {
         folderId,
         summary: createValue,

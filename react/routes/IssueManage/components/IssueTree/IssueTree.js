@@ -47,7 +47,7 @@ class IssueTree extends Component {
   
 
   setSelected = (item) => {
-    IssueTreeStore.setCurrentCycle(item);
+    IssueTreeStore.setCurrentFolder(item);
     IssueStore.loadIssues();
   }
 
@@ -68,7 +68,7 @@ class IssueTree extends Component {
           onEdit={this.handleEdit}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
-          selected={IssueTreeStore.getCurrentCycle}
+          selected={IssueTreeStore.getCurrentFolder}
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
           treeNodeProps={{

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { observer } from 'mobx-react';
-import _ from 'lodash';
 import {
   Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
@@ -48,8 +47,8 @@ export default class IssueManage extends Component {
 
   getTestCase = async (defaultSelectId) => {
     await IssueTreeStore.loadIssueTree(defaultSelectId);
-    const { currentCycle } = IssueTreeStore;
-    const { id } = currentCycle;
+    const { currentFolder } = IssueTreeStore;
+    const { id } = currentFolder;
     if (id) {
       IssueStore.loadIssues();
     }
@@ -64,7 +63,7 @@ export default class IssueManage extends Component {
    */
   handleCreateIssue(issue, folderId) {
     if (folderId) {
-      IssueTreeStore.setCurrentCycleById(folderId);
+      IssueTreeStore.setCurrentFolderById(folderId);
     }
     IssueStore.loadIssues();
   }
@@ -105,7 +104,7 @@ export default class IssueManage extends Component {
           onOk={this.handleCreateIssue.bind(this)}
           intl={intl}
           caseId={clickIssue && clickIssue.caseId}
-          defaultFolderValue={IssueTreeStore.getCurrentCycle}
+          defaultFolderValue={IssueTreeStore.getCurrentFolder}
         />
       ),
       okText: '创建',
@@ -144,7 +143,7 @@ export default class IssueManage extends Component {
       okText: '关闭',
       children: (
         <ExportSide
-          folderId={IssueTreeStore.getCurrentCycle.id}
+          folderId={IssueTreeStore.getCurrentFolder.id}
         />
       ),
     });
@@ -166,7 +165,7 @@ export default class IssueManage extends Component {
 
   render() {
     const { clickIssue } = IssueStore;
-    const currentCycle = IssueTreeStore.getCurrentCycle;
+    const currentFolder = IssueTreeStore.getCurrentFolder;
     const treeData = IssueTreeStore.getTreeData;
     const { loading } = IssueTreeStore;
     const noFolder = treeData.rootIds.length === 0;
@@ -205,7 +204,7 @@ export default class IssueManage extends Component {
           ) : (
             <Fragment>
               <IssueTree />
-              {currentCycle.id && (
+              {currentFolder.id && (
               <div
                 className="c7ntest-content-issue"
                 style={{
@@ -217,7 +216,7 @@ export default class IssueManage extends Component {
                 }}
               >
                 <div className="c7ntest-content-issueFolderName">
-                  {currentCycle.data.name}
+                  {currentFolder.data.name}
                 </div>
                 <IssueTable
                   onClick={this.handleTableRowClick}
