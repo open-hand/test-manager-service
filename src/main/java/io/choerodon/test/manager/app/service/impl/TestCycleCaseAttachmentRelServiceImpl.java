@@ -10,6 +10,7 @@ import java.util.Optional;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${services.attachment.url}")
+    private String attachmentUrl;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -92,7 +96,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
             testCycleCaseAttachmentRelDTO.setAttachmentName(v.getFileName());
             testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
             testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
-            testCycleCaseAttachmentRelDTO.setUrl(v.getUrl());
+            testCycleCaseAttachmentRelDTO.setUrl(String.format("%s%s",attachmentUrl,v.getUrl()));
             baseInsert(testCycleCaseAttachmentRelDTO);
         });
     }

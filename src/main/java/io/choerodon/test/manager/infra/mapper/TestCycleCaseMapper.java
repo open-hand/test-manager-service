@@ -103,4 +103,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     void fixCycleCase();
 
+    List<TestCycleCaseDTO> listByCycleIds(@Param("cycleIds") List<Long> cycleId);
+
 }
