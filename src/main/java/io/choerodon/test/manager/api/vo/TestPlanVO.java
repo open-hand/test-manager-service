@@ -40,6 +40,9 @@ public class TestPlanVO {
     @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
 
+    @ApiModelProperty(value = "选中的用例是否有改变")
+    private Boolean caseHasChange;
+
     private Map<Long, CaseSelectVO> caseSelected;
 
     private Long objectVersionNumber;
@@ -131,5 +134,13 @@ public class TestPlanVO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Boolean getCaseHasChange() {
+        return caseHasChange;
+    }
+
+    public void setCaseHasChange(Boolean caseHasChange) {
+        this.caseHasChange = caseHasChange;
     }
 }

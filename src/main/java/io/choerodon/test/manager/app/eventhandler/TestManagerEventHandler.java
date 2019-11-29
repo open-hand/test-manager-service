@@ -209,7 +209,6 @@ public class TestManagerEventHandler {
 
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
     public void createPlan(String message) throws IOException {
-        LOGGER.info(message);
         TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
         // 获取用例和文件夹信息
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
@@ -263,6 +262,13 @@ public class TestManagerEventHandler {
         testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
         testPlan.setObjectVersionNumber(testPlanDTO.getObjectVersionNumber());
         testPlanServcie.baseUpdate(testPlan);
-
+    }
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_UPDATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN, seq = 1)
+    public void sagaUpdatePlan(String message) throws IOException {
+        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+        // 获取用例和文件夹信息
+        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
+        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
+        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
     }
 }

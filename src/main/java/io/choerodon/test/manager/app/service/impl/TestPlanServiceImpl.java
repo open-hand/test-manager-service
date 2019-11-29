@@ -58,8 +58,24 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     private TransactionalProducer producer;
 
     @Override
+    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
+            description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        if(testPlanVO.getCaseHasChange()){
+            testPlanDTO.setInitStatus(TestPlanStatus.DOING.getStatus());
+            producer.apply(
+                    StartSagaBuilder
+                            .newBuilder()
+                            .withLevel(ResourceLevel.PROJECT)
+                            .withRefType("")
+                            .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN)
+                            .withPayloadAndSerialize(testPlanVO)
+                            .withRefId("")
+                            .withSourceId(projectId),
+                    builder -> {
+                    });
+        }
         if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
             throw new CommonException("error.update.plan");
         }
