@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.api.vo;
 
+import java.util.Date;
+
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
@@ -39,9 +41,17 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "经办人")
     private UserMessageDTO assignedUser;
 
+    @ApiModelProperty(value = "状态名")
     private String executionStatusName;
 
+    @ApiModelProperty(value = "状态颜色")
     private String statusColor;
+
+    @ApiModelProperty(value = "版本号")
+    private Long objectVersionNumber;
+
+    @ApiModelProperty(value = "跟新时间")
+    private Date lastUpdateDate;
 
     public Long getExecuteId() {
         return executeId;
@@ -136,6 +146,23 @@ public class TestFolderCycleCaseVO {
     }
 
     public void setStatusColor(String statusColor) {
+
         this.statusColor = statusColor;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }
