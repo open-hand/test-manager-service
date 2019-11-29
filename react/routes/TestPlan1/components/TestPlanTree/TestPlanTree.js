@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
-import './IssueTree.scss';
+import './TestPlanTree.scss';
 import {
   addFolder, editFolder, deleteFolder, moveFolders,
 } from '@/api/IssueManageApi';
@@ -12,7 +12,7 @@ import TreeNode from './TreeNode';
 import Store from '../../stores';
 
 @observer
-class IssueTree extends Component {
+class TestPlanTree extends Component {
   constructor(props) {
     super(props);
     this.treeRef = createRef();
@@ -75,7 +75,7 @@ class IssueTree extends Component {
     const { treeLoading } = testPlanStore;
     const { treeData } = testPlanStore;
     return (
-      <div className="c7ntest-IssueTree">
+      <div className="c7ntest-TestPlanTree">
         <Loading loading={treeLoading} />
         <Tree
           ref={this.treeRef}
@@ -121,14 +121,14 @@ class IssueTree extends Component {
   }
 }
 
-IssueTree.propTypes = {
+TestPlanTree.propTypes = {
 
 };
 
 export default props => (
   <Store.Consumer>
     {context => (
-      <IssueTree {...props} context={context} />
+      <TestPlanTree {...props} context={context} />
     )}
   </Store.Consumer>
 );
