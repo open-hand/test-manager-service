@@ -59,7 +59,6 @@ const QuickOperate = ({
         }}
         role="button"
         onClick={quickPass}
-        className="c7ntest-quick-pass"
         onKeyDown
       >
         通过
@@ -72,14 +71,37 @@ const QuickOperate = ({
         }}
         role="button"
         onClick={quickFail}
-        className="c7ntest-quick-fail"
         onKeyDown
       >
         失败
       </span>
+      <span
+        style={{
+          ...style,
+          color: '#4D90FE',
+          borderColor: '#4D90FE',
+        }}
+        role="button"
+        onClick={quickFail}
+        onKeyDown
+      >
+        无需测试
+      </span>
+      <span
+        style={{
+          ...style,
+          color: '#FFB100',
+          borderColor: '#FFB100',
+        }}
+        role="button"
+        onClick={quickFail}
+        onKeyDown
+      >
+        重测
+      </span>
       <Dropdown overlay={menu} trigger="click">
         <Button style={{ padding: '0 5px', marginLeft: 15 }}>
-          其它状态
+          变更状态
           <Icon type="arrow_drop_down" />
         </Button>
       </Dropdown>

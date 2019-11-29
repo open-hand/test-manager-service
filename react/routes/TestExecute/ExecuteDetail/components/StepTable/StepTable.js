@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { Table } from 'choerodon-ui/pro';
 
 import './StepTable.less';
+import { UploadInTable } from '../../../../../components';
 
 
 const { Column } = Table;
@@ -32,18 +33,34 @@ function StepTable(props) {
     );
   }
   function renderIndex({ record }) {
-    return record.id;
+    return record.id % 1000;
+  }
+  function renderAttachment({ record }) {
+    return (
+      <UploadInTable
+        // fileList={that.getFileList(stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
+        // onOk={ExecuteDetailStore.loadDetailList}
+        // enterLoad={ExecuteDetailStore.enterloading}
+        // leaveLoad={ExecuteDetailStore.unloading}
+        //
+        fileList={[]}
+        config={{
+          attachmentLinkId: record.executeStepId,
+          attachmentType: 'CYCLE_STEP',
+        }}
+      />
+    );
   }
   return (
     <Table dataSet={dataSet}>
-      <Column name="index" renderer={renderIndex} width={50} align="left" />
-      <Column name="testStep" align="left" />
-      <Column name="testData" align="left" />
-      <Column name="expectedResult" align="left" />
+      <Column name="index" renderer={renderIndex} width={80} align="left" />
+      <Column name="testStep" align="left" minWidth={200} />
+      <Column name="testData" align="left" minWidth={120} />
+      <Column name="expectedResult" align="left" minWidth={150} />
       <Column name="stepStatus" width={80} />
-      <Column name="stepAttachment" />
-      <Column name="comment" />
-      <Column name="defects" />
+      <Column name="stepAttachment" renderer={renderAttachment} align="left" />
+      <Column name="comment" editor align="left" />
+      <Column name="defects" editor />
       <Column name="action" lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
     </Table>
   );
