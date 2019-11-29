@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'choerodon-ui/pro';
+import { openEditPlan, openClonePlan } from '../TestPlanModal';
 import Store from '../../stores';
 
 function TestPlanHeader() {
@@ -10,34 +11,40 @@ function TestPlanHeader() {
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
-
+  const handleOpenEditPlan = useCallback(async () => {
+    // const planDetail = await getPlanDetail(planId);
+    // openEditPlan({
+    //   // initValue: planDetail,
+    // });
+    openClonePlan();
+  }, []);
   return (
     <React.Fragment>
       {
-            testPlanStatus !== 'done' ? (
-              <React.Fragment>
-                <Button icon="mode_edit">
-                  <FormattedMessage id="testPlan_editPlan" />
+        testPlanStatus !== 'done' ? (
+          <React.Fragment>
+            <Button icon="mode_edit">
+              <FormattedMessage id="testPlan_editPlan" onClick={handleOpenEditPlan} />
+            </Button>
+            {
+              testPlanStatus === 'todo' ? (
+                <Button icon="play_circle_filled">
+                  <FormattedMessage id="testPlan_manualTest" />
                 </Button>
-                {
-                  testPlanStatus === 'todo' ? (
-                    <Button icon="play_circle_filled">
-                      <FormattedMessage id="testPlan_manualTest" />
-                    </Button>
-                  ) : (
-                    <Button icon="check_circle">
-                      <FormattedMessage id="testPlan_completePlan" />
-                    </Button>
-                  )
-                }
-                <Button icon="auto_test" disabled={testPlanStatus === 'doing'} onClick={handleCreateAutoTest}>
-                  <FormattedMessage id="testPlan_autoTest" />
+              ) : (
+                <Button icon="check_circle">
+                  <FormattedMessage id="testPlan_completePlan" />
                 </Button>
-              </React.Fragment>
-            ) : ''
-          }
+              )
+            }
+            <Button icon="auto_test" disabled={testPlanStatus === 'doing'} onClick={handleCreateAutoTest}>
+              <FormattedMessage id="testPlan_autoTest" />
+            </Button>
+          </React.Fragment>
+        ) : ''
+      }
     </React.Fragment>
-        
+
   );
 }
 export default observer(TestPlanHeader);

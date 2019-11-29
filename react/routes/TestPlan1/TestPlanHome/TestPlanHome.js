@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext, useEffect, 
+  useCallback, useContext, useEffect,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import _ from 'lodash';
@@ -8,20 +8,20 @@ import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
 import {
-  Icon, Tabs, Spin, 
+  Icon, Tabs, Spin,
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
-} from '../../../api/cycleApi'; 
-import CreateAutoTest from '../components/CreateAutoTest'; 
-import { openCreatePlan, openEditPlan, openClonePlan } from '../components/TestPlanModal';
+} from '../../../api/cycleApi';
+import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
 import TestPlanTree from '../components/TestPlanTree';
 import TestPlanTable from '../components/TestPlanTable';
 import TestPlanHeader from '../components/TestPlanHeader';
+import { openCreatePlan } from '../components/TestPlanModal';
 import Empty from '../../../components/Empty';
 import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
 
@@ -53,7 +53,9 @@ export default observer(() => {
   const handleIgnoreUpdate = () => {
 
   };
-
+  const handleOpenCreatePlan = () => {
+    openCreatePlan();
+  };
   const handleOpenUpdateRemind = () => {
     Modal.open({
       key: updateRemindModal,
@@ -75,19 +77,8 @@ export default observer(() => {
     });
   };
 
-  const handleOpenCreatePlan = () => {
-    openCreatePlan();
-  };
-  const handleOpenEditPlan = useCallback(async () => {
-    console.log('click');
-    // const planDetail = await getPlanDetail(planId);
-    // openEditPlan({
-    //   // initValue: planDetail,
-    // });
-    openClonePlan();
-  }, []);
   const onDragEnd = (sourceIndex, targetIndex) => {
-    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
+    const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);
     const source = testList[sourceIndex];
     const temp = { ...source };
     delete temp.defects;
@@ -104,7 +95,7 @@ export default observer(() => {
       },
     }).then((res) => {
       testPlanStore.loadExecutes();
-    }).catch((err) => {    
+    }).catch((err) => {
       Choerodon.prompt('网络错误');
       testPlanStore.setTableLoading(false);
     });
@@ -142,7 +133,7 @@ export default observer(() => {
       onOk: () => {
         testPlanStore.rightEnterLoading();
         deleteExecute(executeId)
-          .then((res) => {           
+          .then((res) => {
             testPlanStore.loadExecutes();
           }).catch((err) => {
             /* console.log(err); */
@@ -190,17 +181,17 @@ export default observer(() => {
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
-        <TestPlanHeader /> 
+        <TestPlanHeader />
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
         {
-              
+
           noPlan ? (
-            <Empty 
-              loading={loading} 
-              pic={testCaseEmpty} 
-              title="暂无计划" 
+            <Empty
+              loading={loading}
+              pic={testCaseEmpty}
+              title="暂无计划"
               description="当前项目下无计划，请创建"
               extra={<Button type="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
@@ -208,52 +199,52 @@ export default observer(() => {
             <div className={`${prefixCls}-contentWrap`}>
               <div className={`${prefixCls}-contentWrap-left`}>
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
-                    <TabPane tab="未开始" key="todo">
-                      <TestPlanTree />
-                    </TabPane>
-                    <TabPane tab="进行中" key="doing">
-                      <TestPlanTree />
-                    </TabPane>
-                    <TabPane tab="已完成" key="done">
-                      <TestPlanTree />
-                    </TabPane>
-                  </Tabs>
-                </div>
+                    <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
+                      <TabPane tab="未开始" key="todo">
+                        <TestPlanTree />
+                      </TabPane>
+                      <TabPane tab="进行中" key="doing">
+                        <TestPlanTree />
+                      </TabPane>
+                      <TabPane tab="已完成" key="done">
+                        <TestPlanTree />
+                      </TabPane>
+                    </Tabs>
+                  </div>
               </div>
               <div className={`${prefixCls}-contentWrap-right`}>
                 <Spin spinning={rightLoading}>
-                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                    <Icon type="insert_invitation" />
-                    <span>0.20.0版本测试计划</span>
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-right-warning`}>
-                    <Icon type="error" />
-                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-right-card`}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                      <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
-                        <TestPlanDetailCard />
+                    <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                      <Icon type="insert_invitation" />
+                      <span>0.20.0版本测试计划</span>
+                    </div>
+                    <div className={`${prefixCls}-contentWrap-right-warning`}>
+                      <Icon type="error" />
+                      <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                    </div>
+                    <div className={`${prefixCls}-contentWrap-right-card`}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                        <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                          <TestPlanDetailCard />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <TestPlanStatusCard />
+                        </div>
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <TestPlanStatusCard />
+                      <div className={`${prefixCls}-contentWrap-table`}>
+                        <TestPlanTable
+                          onDragEnd={onDragEnd}
+                          onTableChange={handleExecuteTableChange}
+                          onTableRowClick={handleTableRowClick}
+                          onDeleteExecute={handleDeleteExecute}
+                          onQuickPass={handleQuickPass}
+                          onQuickFail={handleQuickFail}
+                          onAssignToChange={handleAssignToChange}
+                        />
                       </div>
                     </div>
-                    <div className={`${prefixCls}-contentWrap-table`}>
-                      <TestPlanTable
-                        onDragEnd={onDragEnd}
-                        onTableChange={handleExecuteTableChange}
-                        onTableRowClick={handleTableRowClick}
-                        onDeleteExecute={handleDeleteExecute}
-                        onQuickPass={handleQuickPass}
-                        onQuickFail={handleQuickFail}
-                        onAssignToChange={handleAssignToChange}
-                      />
-                    </div>
-                  </div>
-                </Spin>
-                
+                  </Spin>
+
               </div>
             </div>
           )
