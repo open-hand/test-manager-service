@@ -2,20 +2,18 @@ import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import isEqual from 'react-fast-compare';
 import { FormattedMessage } from 'react-intl';
-import { Table, Tooltip } from 'choerodon-ui';
+import { Tooltip } from 'choerodon-ui';
+import { Table } from 'choerodon-ui/pro';
 import { delta2Html, delta2Text } from '../../../../../common/utils';
 import { RichTextShow, User } from '../../../../../components';
 import './ExecuteHistoryTable.less';
 
+const { Column } = Table;
 const propTypes = {
-  dataSource: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  pagination: PropTypes.shape({}).isRequired,
-  onChange: PropTypes.func.isRequired,
+  dataSet: PropTypes.shape({}).isRequired,
 };
 const ExecuteHistoryTable = ({
-  dataSource,
-  pagination,
-  onChange,
+  dataSet,
 }) => {
   const columns = [{
     title: <FormattedMessage id="execute_executive" />,
@@ -29,7 +27,7 @@ const ExecuteHistoryTable = ({
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     width: '25%',
-    render: (lastUpdateDate) => <div className="c7ntest-text-dot">{lastUpdateDate}</div>,
+    render: lastUpdateDate => <div className="c7ntest-text-dot">{lastUpdateDate}</div>,
   }, {
     title: '操作类型',
     dataIndex: 'field',
@@ -103,14 +101,22 @@ const ExecuteHistoryTable = ({
     },
   }];
   return (
-    <Table
-      className="c7ntest-ExecuteHistoryTable"
-      filterBar={false}
-      dataSource={dataSource}
-      columns={columns}
-      pagination={pagination}
-      onChange={onChange}
-    />
+    // <Table
+    //   className="c7ntest-ExecuteHistoryTable"
+    //   filterBar={false}
+    //   dataSource={dataSource}
+    //   columns={columns}
+    //   pagination={pagination}
+    //   onChange={onChange}
+    // />
+    // 状态
+    <Table dataSet={dataSet}>
+      <Column name="user" />
+      <Column name="lastUpdateDate" />
+      <Column name="user" />
+      <Column name="oldValue" />
+      <Column name="newValue" />
+    </Table>
   );
 };
 ExecuteHistoryTable.propTypes = propTypes;
