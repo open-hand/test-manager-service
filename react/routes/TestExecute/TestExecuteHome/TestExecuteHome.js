@@ -14,7 +14,7 @@ import { ShowCycleData } from './components';
 import { NoCycle } from '../../../components';
 import { TestExecuteTreeToggle } from './components';
 import { TestExecuteTable } from './components';
-import './TestExecuteHome.scss';
+// import './TestExecuteHome.scss';
 
 const propTypes = {
   loading: PropTypes.bool.isRequired,

@@ -8,9 +8,9 @@ import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
 import {
-  Button, Icon, Tabs, Spin, 
+  Icon, Tabs, Spin, 
 } from 'choerodon-ui';
-import { Modal } from 'choerodon-ui/pro';
+import { Modal, Button } from 'choerodon-ui/pro';
 import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../api/cycleApi'; 
@@ -19,8 +19,9 @@ import { openCreatePlan, openEditPlan, openClonePlan } from '../components/TestP
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
-import IssueTree from '../components/IssueTree';
+import TestPlanTree from '../components/TestPlanTree';
 import TestPlanTable from '../components/TestPlanTable';
+import TestPlanHeader from '../components/TestPlanHeader';
 import Empty from '../../../components/Empty';
 import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
 
@@ -35,18 +36,22 @@ const updateRemindModal = Modal.key();
 
 export default observer(() => {
   const {
-    prefixCls, createAutoTestStore, testPlanStore, issueTreeStore, 
+    prefixCls, createAutoTestStore, testPlanStore, oldStepTableDataSet, newStepTableDataSet,
   } = useContext(Store);
   const {
-    treeData, loading, testPlanStatus, rightLoading, dataList, checkIdMap, testList,
+    treeData, loading, testPlanStatus, rightLoading, checkIdMap, testList,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
     testPlanStore.setTestPlanStatus(value);
   };
 
-  const handleCreateAutoTest = () => {
-    createAutoTestStore.setVisible(true);
+  const handleUpdateOk = () => {
+
+  };
+
+  const handleIgnoreUpdate = () => {
+
   };
 
   const handleOpenUpdateRemind = () => {
@@ -54,9 +59,19 @@ export default observer(() => {
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',
-      children: <UpdateRemindModalChildren />,
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} oldStepTableDataSet={oldStepTableDataSet} newStepTableDataSet={newStepTableDataSet} />,
       style: { width: '10.9rem' },
       className: 'c7ntest-testPlan-updateRemind-modal',
+      okText: '更新',
+      cancelText: '取消',
+      onOk: handleUpdateOk,
+      footer: (okBtn, cancelBtn) => (
+        <div>
+          {okBtn}
+          <Button funcType="funcType" onClick={handleIgnoreUpdate}>忽略更新</Button>
+          {cancelBtn}
+        </div>
+      ),
     });
   };
 
@@ -172,36 +187,10 @@ export default observer(() => {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
-          用例变更提醒
-        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
-        {
-          testPlanStatus !== 'done' ? (
-            <React.Fragment>
-              <Button icon="mode_edit" onClick={handleOpenEditPlan}>
-                <FormattedMessage id="testPlan_editPlan" />
-              </Button>
-              {
-                testPlanStatus === 'todo' ? (
-                  <Button icon="play_circle_filled">
-                    <FormattedMessage id="testPlan_manualTest" />
-                  </Button>
-                ) : (
-                  <Button icon="check_circle">
-                    <FormattedMessage id="testPlan_completePlan" />
-                  </Button>
-                )
-              }
-              <Button icon="auto_test" disabled={testPlanStatus === 'doing'} onClick={handleCreateAutoTest}>
-                <FormattedMessage id="testPlan_autoTest" />
-              </Button>
-            </React.Fragment>
-          ) : ''
-        }
-        
+        <TestPlanHeader /> 
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
@@ -221,13 +210,13 @@ export default observer(() => {
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
                   <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
                     <TabPane tab="未开始" key="todo">
-                      <IssueTree />
+                      <TestPlanTree />
                     </TabPane>
                     <TabPane tab="进行中" key="doing">
-                      <IssueTree />
+                      <TestPlanTree />
                     </TabPane>
                     <TabPane tab="已完成" key="done">
-                      <IssueTree />
+                      <TestPlanTree />
                     </TabPane>
                   </Tabs>
                 </div>

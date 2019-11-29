@@ -81,12 +81,8 @@ function ExecuteDetailSide(props) {
   const context = useContext(Store);
   const { ExecuteDetailStore } = context;
   const container = useRef();
-  const bugsToggle = useRef();
   const [currentNav, setCurrentNav] = useState('detail');
-  const [FullEditorShow, setFullEditorShow] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(''); // 待改
-
 
   function isInLook(ele) {
     const a = ele.offsetTop;
@@ -167,46 +163,6 @@ function ExecuteDetailSide(props) {
   ));
 
 
-  const ShowFullEditor = () => {
-    setFullEditorShow(true);
-  };
-
-  const HideFullEditor = () => {
-    setFullEditorShow(false);
-  };
-
-  const handleCommentSave = (comment) => {
-    setEditing(false);
-    props.onCommentSave(comment);
-  };
-
-  const handleCommentCancel = () => {  
-    setEditing(false);
-  };
-
-  const enterEditing = () => {
-    setEditing(true);
-  };
-
-  const onAddDefects = (issueList) => {
-    const cycleData = ExecuteDetailStore.getCycleData;
-    const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
-    const { executeId } = cycleData;
-    const needAdd = issueList.filter(issueId => !defectIssueIds.includes(issueId))
-      .map(issueId => ({
-        defectType: 'CYCLE_CASE',
-        defectLinkId: executeId,
-        issueId,
-        // defectName: item.issueNum,
-      }));
-    if (needAdd.length > 0) {
-      ExecuteDetailStore.enterloading();
-      addDefects(needAdd).then((res) => {
-        ExecuteDetailStore.getInfo();
-      });
-    }
-  };
-
   const handleResizeEnd = ({ width }) => {
     localStorage.setItem('agile.ExecuteDetail.width', `${width}px`);
   };
@@ -216,36 +172,16 @@ function ExecuteDetailSide(props) {
     // console.log(width, parseInt(width / 100) * 100);
   }, 150);
 
-  const handleRemoveDefect = (issueId) => {
-    const cycleData = ExecuteDetailStore.getCycleData;
-    if (find(cycleData.defects, { issueId: Number(issueId) })) {
-      const defectId = find(cycleData.defects, { issueId: Number(issueId) }).id;
-      removeDefect(defectId).then((res) => {
-        ExecuteDetailStore.removeLocalDefect(defectId);
-      });
-    }
-  };
 
   function render() {
     const {
-      issueInfosVO, cycleData, fileList, setFileList, onFileRemove, status, onClose, onUpload,
-      onCommentSave, onRemoveDefect, onCreateBugShow, onSubmit, disabled,
+      fileList, detailData, status, onClose, 
     } = props;
     // console.log('render', props);
-    const issueList = ExecuteDetailStore.getIssueList;
-    const defectIssueIds = ExecuteDetailStore.getDefectIssueIds;
-    const userList = ExecuteDetailStore.getUserList;
-    const { selectLoading } = ExecuteDetailStore;
-    const {
-      issueNum, summary, issueId, issueTypeVO: { typeCode },
-    } = issueInfosVO || { issueTypeVO: {} };
     const { statusColor, statusName } = status;
     const {
-      lastUpdateDate, cycleName, lastUpdateUser, assigneeUser, comment, defects,
-    } = cycleData;
-    const newProps = {
-      onRemove: onFileRemove,
-    };
+      executor, description, executorDate, executionStatus, summary, 
+    } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
       const ellipsis = '...';
@@ -256,16 +192,8 @@ function ExecuteDetailSide(props) {
         </Tooltip>
       );
     };
-    const defectsOptions = issueList.map(issue => (
-      <Option key={issue.issueId} value={issue.issueId.toString()}>
-        {renderIssueSummary(`${issue.issueNum} ${issue.summary}`)}
-      </Option>
-    ));
-    const userOptions = userList.map(user => (
-      <Option key={user.id} value={user.id}>
-        <User user={user} />
-      </Option>
-    ));
+
+
     return (
       <div style={{
         position: 'fixed',
@@ -305,7 +233,7 @@ function ExecuteDetailSide(props) {
                     >
                       <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link>
+                      {/* <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link> */}
                     </div>
 
                   </div>
@@ -339,54 +267,11 @@ function ExecuteDetailSide(props) {
                       )}
                     </div>
                   </div>
-                  {/* 阶段名称 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">阶段名称：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      {cycleName}
-                    </div>
-                  </div>
                   {/* 执行人 */}
                   <div className="c7ntest-item-one-line">
                     <div className="c7ntest-item-one-line-left">执行人：</div>
                     <div className="c7ntest-item-one-line-right">
-                      <User user={lastUpdateUser} />
-                    </div>
-                  </div>
-                  {/* 被指定人 */}
-                  <div className="c7ntest-item-one-line">
-                    <div className="c7ntest-item-one-line-left">被指定人：</div>
-                    <div className="c7ntest-item-one-line-right">
-                      <TextEditToggle
-                        style={{ maxWidth: 200 }}
-                        disabled={!disabled}
-                        formKey="assignedTo"
-                        onSubmit={(id) => { onSubmit({ assignedTo: id || 0 }); }}
-                        // eslint-disable-next-line no-nested-ternary
-                        originData={assigneeUser
-                          ? find(userList, { id: assigneeUser.id })
-                            ? assigneeUser.id
-                            : <User user={assigneeUser} />
-                          : null}
-                        // onCancel={cancelEdit}
-                      >
-                        <Text>
-                          {assigneeUser ? <User user={assigneeUser} />
-                            : '无'}
-                        </Text>
-                        <Edit>
-                          <Select
-                            filter
-                            allowClear
-                            autoFocus
-                            filterOption={false}
-                            onFilterChange={(value) => { ExecuteDetailStore.loadUserList(value); }}
-                            loading={selectLoading}
-                          >
-                            {userOptions}
-                          </Select>
-                        </Edit>
-                      </TextEditToggle>
+                      <User user={executor} />
                     </div>
                   </div>
 
@@ -394,7 +279,7 @@ function ExecuteDetailSide(props) {
                   <div className="c7ntest-item-one-line">
                     <div className="c7ntest-item-one-line-left">执行日期：</div>
                     <div className="c7ntest-item-one-line-right">
-                      <DateTimeAgo date={lastUpdateDate} />
+                      <DateTimeAgo date={executorDate} />
                     </div>
                   </div>
                 </Section>
@@ -404,131 +289,29 @@ function ExecuteDetailSide(props) {
                   icon="subject"
                   title="描述"
                   style={{ padding: '0 15px 0 0' }}
-                  action={(
-                    <Button type="primary" funcType="flat" icon="zoom_out_map" onClick={ShowFullEditor} />
-                  )}
                 >
-                  {comment && !editing
-                    ? (
-                      <div
-                        role="none"
-                        onClick={enterEditing}
-                      >
-                        <RichTextShow data={delta2Html(comment)} />
-                      </div>
-                    )
-                    : (
-                      <WYSIWYGEditor
-                        bottomBar
-                        defaultValue={text2Delta(comment)}
-                        onChange={setEditValue}
-                        style={{ height: 200, width: '100%' }}
-                        handleSave={handleCommentSave}
-                        handleDelete={handleCommentCancel}
-                      />
-                    )}
+                  <RichTextShow data={delta2Html(description)} />
+
                 </Section>
                 {/* 附件 */}
                 <Section
                   id="attachment"
                   icon="attach_file"
                   title="附件"
-                  action={(
-                    <UploadButton handleUpload={onUpload}>
-                      <Icon type="file_upload" />
-                      {/* <FormattedMessage id="upload_attachment" /> */}
-                    </UploadButton>
-
-                  )}
                 >
                   {/* <Upload
                     fileList={fileList}
                     className="upload-button"
                   /> */}
                   <UploadButtonExcuteDetail
-                    {...newProps}
                     // onRemove={handleRemove}
-                    onBeforeUpload={setFileList}
                     // updateNow={onChangeFileList}
                     fileList={fileList}
-                  />
-                </Section>
-                {/* 缺陷 */}
-                <Section
-                  id="bug"
-                  icon="bug_report"
-                  title="缺陷"
-                  action={(
-                    <TextEditToggle
-                      className="c7ntest-button-defect-select"
-                      simpleMode
-                      saveRef={bugsToggle}
-                      formKey="defects"
-                      onSubmit={onAddDefects}
-                      originData={defectIssueIds}
-                    // onCancel={cancelEdit}
-                    >
-                      <Text>
-                        <Button type="primary" funcType="flat">
-                          <Icon type="playlist_add" style={{ marginRight: 2 }} />
-                          {/* <span>缺陷</span> */}
-                        </Button>
-                      </Text>
-                      <Edit>
-                        <Select
-                          defaultOpen
-                          filter
-                          mode="multiple"
-                          filterOption={false}
-                          getPopupContainer={() => document.getElementById('scroll-area')}
-                          dropdownMatchSelectWidth={false}
-                          dropdownClassName="dropdown"
-                          footer={(
-                            <div
-                              className="primary"
-                              style={{ cursor: 'pointer' }}
-                              role="none"
-                              onClick={() => {
-                                bugsToggle.handleSubmit();
-                                ExecuteDetailStore.setCreateBugShow(true);
-                                ExecuteDetailStore.setDefectType('CYCLE_CASE');
-                                ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
-                              }}
-                            >
-                              <FormattedMessage id="issue_create_bug" />
-                            </div>
-                          )}
-                          style={{ width: 300 }}
-                          onDeselect={handleRemoveDefect}
-                          onFilterChange={(value) => { ExecuteDetailStore.loadIssueList(value); }}
-                        >
-                          {defectsOptions}
-                        </Select>
-                      </Edit>
-                    </TextEditToggle>
-                  )}
-                >
-                  <DefectList
-                    defects={defects}
-                    onRemoveDefect={onRemoveDefect}
                   />
                 </Section>
 
               </div>
             </div>
-            {
-              FullEditorShow && (
-                <FullEditor
-                  initValue={editValue || text2Delta(comment)}
-                  visible={FullEditorShow}
-                  onCancel={() => setFullEditorShow(false)}
-                  onOk={(value) => {
-                    setFullEditorShow(false);
-                    handleCommentSave(value);
-                  }}
-                />
-              )
-            }
           </div>
         </ResizeAble>
       </div>

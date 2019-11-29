@@ -2,11 +2,11 @@ import {
   observable, action, computed, toJS,
 } from 'mobx';
 
-import IssueTreeStore from './IssueTreeStore'; 
+import TestPlanTreeStore from './TestPlanTreeStore'; 
 import { getStatusList } from '@/api/TestStatusApi';
 import { getIssuesByFolder } from '@/api/IssueManageApi';
 
-class TestPlanStore extends IssueTreeStore {
+class TestPlanStore extends TestPlanTreeStore {
     @observable loading = true;
 
     @action setLoading = (loading) => {
@@ -91,6 +91,18 @@ class TestPlanStore extends IssueTreeStore {
 
     @computed get getFilters() {
       return this.filter;
+    }
+
+    @observable executeOldData = {};
+
+    @action setExecuteOldData = (executeOldData) => {
+      this.executeOldData = executeOldData;
+    }
+
+    @observable executeNewData = {};
+
+    @action setExecuteNewData = (executeNewData) => {
+      this.executeNewData = executeNewData;
     }
 
     checkIdMap = observable.map();

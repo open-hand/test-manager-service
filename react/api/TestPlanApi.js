@@ -8,7 +8,7 @@ import { getProjectId, request } from '../common/utils';
  * @returns
  */
 export function getPlanTree(testPlanStatus) {
-  return request.post(`/test/v1/project/${getProjectId()}/plan/tree?status_code=${testPlanStatus}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/plan/tree?status_code=${testPlanStatus}`);
 }
 export function createPlan(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/plan`, data);

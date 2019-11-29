@@ -38,7 +38,7 @@ export function editCycleStep(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
 export function getCycleDetails(cycleCaseId) {
-  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}`);
+  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info`);
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
