@@ -21,6 +21,9 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "循环ID")
     private Long cycleId;
 
+    @ApiModelProperty(value = "用例ID")
+    private Long caseId;
+
     @ApiModelProperty(value = "用例case名称")
     private String summary;
 
@@ -130,6 +133,14 @@ public class TestCycleCaseInfoVO {
 
     public void setExecutorDate(Date executorDate) {
         this.executorDate = executorDate;
+    }
+
+    public Long getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 
     public List<TestCycleCaseAttachmentRelVO> getAttachment() {

@@ -3,9 +3,11 @@ package io.choerodon.test.manager.infra.mapper;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
+import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
@@ -101,7 +103,15 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      */
     List<ExecutionStatusVO> queryExecutionStatus(@Param("planId")Long planId);
 
+    /**
+     * 查询文件下的执行
+     */
+
+    List<TestCycleCaseDTO> queryFolderCycleCase(@Param("planId") Long planId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
+
     void fixCycleCase();
+
+    void fixSource();
 
     List<TestCycleCaseDTO> listByCycleIds(@Param("cycleIds") List<Long> cycleId);
 

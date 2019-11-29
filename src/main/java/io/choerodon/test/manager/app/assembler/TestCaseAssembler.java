@@ -17,10 +17,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.mybatis.entity.BaseDTO;
-import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
-import io.choerodon.test.manager.api.vo.TestCaseRepVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
@@ -81,6 +78,17 @@ public class TestCaseAssembler {
         return testCaseRepVO;
     }
 
+    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO){
+        Long assignedTo = testCycleCaseDTO.getAssignedTo();
+        TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
+        BaseDTO baseDTO = new BaseDTO();
+        baseDTO.setCreatedBy(assignedTo);
+        Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
+        UserMessageDTO userMessageDTO = userMap.get(assignedTo);
+        testFolderCycleCaseVO.setAssignedUser(userMessageDTO);
+        return testFolderCycleCaseVO;
+    }
+
     public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list){
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
@@ -90,6 +98,7 @@ public class TestCaseAssembler {
                 .map(v -> dtoToRepVo(v,folderMap)).collect(Collectors.toList());
         return collect;
     }
+
 
     public TestCaseInfoVO dtoToInfoVO(TestCaseDTO testCaseDTO){
         TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO, TestCaseInfoVO.class);

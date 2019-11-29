@@ -31,6 +31,8 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     private String description;
 
+    private String source;
+
     @Transient
     private String executionStatusName;
 
@@ -286,5 +288,13 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

@@ -5,9 +5,27 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.exception.CommonException;
@@ -21,21 +39,6 @@ import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -93,6 +96,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
+
+    @Autowired
+    private TestIssueFolderMapper testIssueFolderMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -540,6 +546,30 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
+    public TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+
+//        testCycleCaseStepService.update()
+        return null;
+    }
+
+    @Override
+    public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId,Long folderId, Pageable pageable, SearchDTO searchDTO) {
+        // 查询文件夹下所有的目录
+        Set<Long> folderIds = new HashSet<>();
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(projectId);
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        queryAllFolderIds(folderId, folderIds, folderMap);
+        // 查询文件夹下的的用例
+        PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
+                testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
+        List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(testCaseAssembler::setAssianUser).collect(Collectors.toList());
+        PageInfo<TestFolderCycleCaseVO> testFolderCycleCaseVOPageInfo = modelMapper.map(caseDTOPageInfo, PageInfo.class);
+        testFolderCycleCaseVOPageInfo.setList(testFolderCycleCaseVOS);
+        return testFolderCycleCaseVOPageInfo;
+    }
+
+    @Override
     public TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId) {
         TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.queryByCaseId(executeId);
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
@@ -661,5 +691,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::insertSelective, testCycleCaseDTO, 1, "error.insert.cycle.case");
         return testCycleCaseDTO;
+    }
+    private void queryAllFolderIds(Long folderId, Set<Long> folderIds, Map<Long, List<TestIssueFolderDTO>> folderMap) {
+        folderIds.add(folderId);
+        List<TestIssueFolderDTO> testIssueFolderDTOS = folderMap.get(folderId);
+        if (!CollectionUtils.isEmpty(testIssueFolderDTOS)) {
+            testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
+        }
     }
 }
