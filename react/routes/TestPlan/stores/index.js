@@ -14,16 +14,12 @@ export const StoreProvider = (props) => {
   const createAutoTestStore = useMemo(() => new CreateAutoTestStore(), []);
   const testPlanStore = useMemo(() => new TestPlanStore(), []);
   const issueTreeStore = useMemo(() => new TestPlanTreeStore(), []);
-  const oldStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: testPlanStore.executeOldData.stepData })), [testPlanStore.executeOldData.stepData]);
-  const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: testPlanStore.executeNewData.stepData })), [testPlanStore.executeNewData.stepData]);
   
   const value = {
     ...props,
     createAutoTestStore,
     testPlanStore,
     issueTreeStore,
-    oldStepTableDataSet,
-    newStepTableDataSet,
     prefixCls: 'c7ntest-testPlan',
   };
   return (
