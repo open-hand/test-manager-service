@@ -161,6 +161,6 @@
 	        test_case tc
 	        LEFT JOIN test_issue_folder tif ON tif.folder_id = tc.folder_id
             WHERE
-	        tif.project_id = #{projectId}
+	        tif.project_id = #{projectId} and tc.folder_id is not null
     </select>
 </mapper>

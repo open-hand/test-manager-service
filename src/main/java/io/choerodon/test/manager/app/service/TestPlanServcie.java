@@ -42,4 +42,10 @@ public interface TestPlanServcie {
      * @return
      */
     TestPlanVO queryPlanInfo(Long projectId, Long planId);
+
+    /**
+     * saga调用创建计划
+     * @param testPlanVO
+     */
+    public void sagaCreatePlan(TestPlanVO testPlanVO);
 }
