@@ -16,6 +16,7 @@ public class TestTreeFolderVO {
     private TestIssueFolderVO issueFolderVO;
     private Boolean hasCase;
     private Boolean topLevel;
+    private Boolean caseNum;
 
     public Long getId() {
         return id;
@@ -82,6 +83,14 @@ public class TestTreeFolderVO {
         this.topLevel = topLevel;
     }
 
+    public Boolean getCaseNum() {
+        return caseNum;
+    }
+
+    public void setCaseNum(Boolean caseNum) {
+        this.caseNum = caseNum;
+    }
+
     @Override
     public String toString() {
         return "TestTreeFolderVO{" +
@@ -94,4 +103,5 @@ public class TestTreeFolderVO {
                 ", hasCase=" + hasCase +
                 '}';
     }
+
 }

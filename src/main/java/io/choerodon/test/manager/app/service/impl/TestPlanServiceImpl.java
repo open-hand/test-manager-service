@@ -11,6 +11,8 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
@@ -66,7 +68,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Override
     @Async
-    @Transactional(rollbackFor =Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long projectId, Long planId) {
         //todo
     }
@@ -79,7 +81,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setProjectId(projectId);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
-        testPlan.setInitStatus("doing");
+        testPlan.setInitStatus(TestPlanStatus.DOING.getStatus());
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
         testPlanVO.setPlanId(testPlan.getPlanId());
         testPlanVO.setObjectVersionNumber(testPlan.getObjectVersionNumber());
@@ -176,6 +178,62 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::updateByPrimaryKeySelective, testPlanDTO, 1, "error.update.test.plan");
     }
 
+    @Override
+    public TestPlanVO queryPlanInfo(Long projectId, Long planId) {
+        // 查询计划的信息
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
+        if (ObjectUtils.isEmpty(testPlanDTO)) {
+            return new TestPlanVO();
+        }
+        TestPlanVO testPlanVO = modelMapper.map(testPlanDTO, TestPlanVO.class);
+        // 查询cycle的信息
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId));
+        if (CollectionUtils.isEmpty(testCycleDTOS)) {
+            return testPlanVO;
+        }
+        // 查询cycle_case 的信息
+        List<Long> cycleIds = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
+        Map<Long, List<Long>> cycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId, Collectors.mapping(TestCycleCaseDTO::getCaseId, Collectors.toList())));
+
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByProjectId(projectId);
+        Map<Long, List<Long>> caseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
+        // 如果用例数与选中的计划执行数相同,是全部用例类型
+        if (testCaseDTOS.size() == testCycleCaseDTOS.size()) {
+            testPlanVO.setCustom(false);
+            return testPlanVO;
+        }
+        testPlanVO.setCustom(true);
+        // 筛选自选的数据
+        Map<Long, CaseSelectVO> caseSelectMap = new HashMap<>();
+        testCycleDTOS.forEach(v -> {
+            CaseSelectVO caseSelectVO = new CaseSelectVO();
+            List<Long> folderAllCaseIds = caseMap.get(v.getFolderId());
+            List<Long> selectCase = cycleCaseMap.get(v.getCycleId());
+            if (CollectionUtils.isEmpty(folderAllCaseIds) || CollectionUtils.isEmpty(folderAllCaseIds)) {
+                caseSelectMap.put(v.getFolderId(), caseSelectVO);
+                return;
+            }
+            // 文件夹中选中的用例包含文件夹下所有的用例,没有自选过
+            if (selectCase.contains(folderAllCaseIds)) {
+                caseSelectVO.setCustom(false);
+                caseSelectMap.put(v.getFolderId(), caseSelectVO);
+            } else {
+                caseSelectVO.setCustom(false);
+                // 如果所有用例数的一半还大于选中的用例数,则直接赋值给selected属性，相反就求差集，返回未选中的
+                if (folderAllCaseIds.size() / 2 > selectCase.size()) {
+                    caseSelectVO.setSelected(selectCase);
+                } else {
+                    folderAllCaseIds.removeAll(selectCase);
+                    caseSelectVO.setSelected(folderAllCaseIds);
+                }
+                caseSelectMap.put(v.getFolderId(), caseSelectVO);
+            }
+        });
+        testPlanVO.setCaseSelected(caseSelectMap);
+        return testPlanVO;
+    }
+
 
     private TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
         if (ObjectUtils.isEmpty(testPlanDTO)) {
@@ -192,7 +250,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (!ObjectUtils.isEmpty(map.get(folderId))) {
             testTreeFolderVO = map.get(folderId);
         }
-         // 不存在就新建
+        // 不存在就新建
         if (ObjectUtils.isEmpty(testTreeFolderVO)) {
             testTreeFolderVO = new TestTreeFolderVO();
             testTreeFolderVO.setId(testIssueFolderVO.getFolderId());

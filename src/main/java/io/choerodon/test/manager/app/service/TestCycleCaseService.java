@@ -81,4 +81,6 @@ public interface TestCycleCaseService {
 
 
     List<ExecutionStatusVO> queryStepStatus(Long planId);
+
+    List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);
 }

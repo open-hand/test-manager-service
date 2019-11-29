@@ -103,6 +103,9 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
         Map<Long, List<IssueLinkVO>> collect = issueInfos.stream().collect(Collectors.groupingBy(IssueLinkVO::getIssueId));
         List<IssueLinkVO> result = new ArrayList<>();
         caseLinkList.forEach(v -> {
+            if(ObjectUtils.isEmpty(collect.get(v.getIssueId()))){
+              return;
+             }
             IssueLinkVO issueLinkVO = collect.get(v.getIssueId()).get(0);
             modelMapper.map(v,issueLinkVO);
             result.add(issueLinkVO);

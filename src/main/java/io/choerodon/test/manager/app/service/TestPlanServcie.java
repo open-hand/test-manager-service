@@ -34,4 +34,12 @@ public interface TestPlanServcie {
     void baseUpdate(TestPlanDTO testPlanDTO);
 
     void delete(Long projectId, Long planId);
+
+    /**
+     * 查询计划的信息
+     * @param projectId
+     * @param planId
+     * @return
+     */
+    TestPlanVO queryPlanInfo(Long projectId, Long planId);
 }

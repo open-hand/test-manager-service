@@ -17,6 +17,7 @@ import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +260,7 @@ public class TestManagerEventHandler {
         testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanDTO.getPlanId());
-        testPlan.setInitStatus("done");
+        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
         testPlan.setObjectVersionNumber(testPlanDTO.getObjectVersionNumber());
         testPlanServcie.baseUpdate(testPlan);
 

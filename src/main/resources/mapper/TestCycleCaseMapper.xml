@@ -690,6 +690,15 @@ ORDER BY
                 tcc.case_id = tc.case_id
         )
     </update>
+
+    <select id="listByCycleIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+          select * from test_cycle_case
+          where
+          cycle_id in
+          <foreach collection="cycleIds" item="cycleId"  open="(" close=")" separator=",">
+           #{cycleId}
+          </foreach>
+    </select>
 </mapper>
 
 
