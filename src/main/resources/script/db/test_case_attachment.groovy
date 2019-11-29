@@ -1,3 +1,4 @@
+package script.db
 
 databaseChangeLog(logicalFilePath: "script/db/test_case_attachment.groovy") {
     changeSet(author: 'yzj', id: '2019-11-20-init_table_test_case_attatchment.groovy') {
@@ -14,6 +15,15 @@ databaseChangeLog(logicalFilePath: "script/db/test_case_attachment.groovy") {
             column(name: "creation_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
+        }
+    }
+
+    changeSet(id: '2019-11-29-test-case-attachment-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_case_attachment", indexName: "idx_project_id") {
+            column(name: "project_id")
+        }
+        createIndex(tableName: "test_case_attachment", indexName: "idx_case_id") {
+            column(name: "case_id")
         }
     }
 }

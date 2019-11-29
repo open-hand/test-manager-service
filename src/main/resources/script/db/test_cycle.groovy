@@ -64,9 +64,16 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "project_id")
         }
     }
+
     changeSet(author: 'lizhaozhong', id: '2019-11-27-add-colume-plan_id') {
         addColumn(tableName: 'test_cycle') {
             column(name: 'plan_id', type: 'BIGINT UNSIGNED', remarks: 'plan id')
+        }
+    }
+
+    changeSet(id: '2019-11-29-test-plan-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_cycle", indexName: "idx_plan_id") {
+            column(name: "plan_id")
         }
     }
 }

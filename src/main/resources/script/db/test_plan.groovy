@@ -32,5 +32,11 @@ databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
             column(name: "init_status", type: "VARCHAR(255)", remarks: '初始化状态')
         }
     }
+
+    changeSet(id: '2019-11-29-test-plan-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_plan", indexName: "idx_project_id") {
+            column(name: "project_id")
+        }
+    }
 }
 

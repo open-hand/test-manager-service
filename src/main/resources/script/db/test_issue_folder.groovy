@@ -44,4 +44,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(id: '2019-11-15-test_issue_folder-drop-index', author: 'lizhaozhong@hang-china.com') {
         dropIndex(tableName: 'test_issue_folder', indexName: 'uk_version_id_project_id')
     }
+
+    changeSet(id: '2019-11-29-test-issue-folder-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_issue_folder", indexName: "idx_parent_id") {
+            column(name: "parent_id")
+        }
+    }
 }

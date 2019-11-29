@@ -29,4 +29,13 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
         renameColumn(columnDataType: 'BIGINT UNSIGNED', newColumnName: 'version_num', oldColumnName: 'version_id', tableName: "test_case")
     }
 
+    changeSet(id: '2019-11-29-test-case-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_case", indexName: "idx_project_id") {
+            column(name: "project_id")
+        }
+        createIndex(tableName: "test_case", indexName: "idx_folder_id") {
+            column(name: "folder_id")
+        }
+    }
+
 }

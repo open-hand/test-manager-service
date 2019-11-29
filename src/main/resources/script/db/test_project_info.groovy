@@ -24,4 +24,10 @@ databaseChangeLog(logicalFilePath: "script/db/test_project_info.groovy") {
         }
     }
 
+    changeSet(id: '2019-11-29-test-project-info-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_project_info", indexName: "idx_project_id") {
+            column(name: "project_id")
+        }
+    }
+
 }
