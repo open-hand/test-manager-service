@@ -11,10 +11,7 @@ import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleDTO;
-import io.choerodon.test.manager.infra.dto.TestPlanDTO;
+import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -94,8 +91,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
         // 创建计划
+        testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
-        testPlan.setProjectId(projectId);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
         testPlan.setInitStatus(TestPlanStatus.DOING.getStatus());
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
@@ -193,7 +190,63 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
         DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::updateByPrimaryKeySelective, testPlanDTO, 1, "error.update.test.plan");
     }
+    @Override
+    public void sagaCreatePlan(TestPlanVO testPlanVO){
+        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
+        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
+        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
 
+        // 是否自选
+        if (!testPlanVO.getCustom()) {
+            testCaseDTOS.addAll(allTestCase);
+            List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
+            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+        } else {
+            Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
+            List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
+            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+            Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+            List<Long> caseIds = new ArrayList<>();
+            for (Long key : maps.keySet()) {
+                CaseSelectVO caseSelectVO = maps.get(key);
+                // 判断是否是自选
+                if (!caseSelectVO.getCustom()) {
+                    if (CollectionUtils.isEmpty(caseMap.get(key))) {
+                        testCaseDTOS.addAll(caseMap.get(key));
+                    }
+                } else {
+                    // 判断是反选还是正向选择
+                    if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
+                        // 反选就
+                        List<Long> unSelected = caseSelectVO.getUnSelected();
+                        // 获取文件夹所有的测试用例
+                        List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                        allList.removeAll(unSelected);
+                        caseIds.addAll(allList);
+                    } else {
+                        caseIds.addAll(caseSelectVO.getSelected());
+                    }
+                }
+            }
+
+            if (!CollectionUtils.isEmpty(caseIds)) {
+                testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
+            }
+
+        }
+        TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        // 创建测试循环
+        List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
+        // 创建测试循环用例
+        Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
+        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
+
+        TestPlanDTO testPlan = new TestPlanDTO();
+        testPlan.setPlanId(testPlanVO.getPlanId());
+        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
+        testPlan.setObjectVersionNumber(testPlanVO.getObjectVersionNumber());
+        baseUpdate(testPlan);
+    }
     @Override
     public TestPlanVO queryPlanInfo(Long projectId, Long planId) {
         // 查询计划的信息

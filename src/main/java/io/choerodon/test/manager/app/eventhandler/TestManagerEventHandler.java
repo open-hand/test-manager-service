@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.app.eventhandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -210,65 +208,29 @@ public class TestManagerEventHandler {
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
     public void createPlan(String message) throws IOException {
         TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
-        // 获取用例和文件夹信息
-        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
-        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
-        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
-
-        // 是否自选
-        if (!testPlanVO.getCustom()) {
-            testCaseDTOS.addAll(allTestCase);
-            List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
-            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
-        } else {
-            Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
-            List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
-            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
-            Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-            List<Long> caseIds = new ArrayList<>();
-            for (Long key : maps.keySet()) {
-                CaseSelectVO caseSelectVO = maps.get(key);
-                // 判断是否是自选
-                if (!caseSelectVO.getCustom()) {
-                    testCaseDTOS.addAll(caseMap.get(key));
-                } else {
-                    // 判断是反选还是正向选择
-                    if (ObjectUtils.isEmpty(caseSelectVO.getSelected())) {
-                        // 反选就
-                        List<Long> unSelected = caseSelectVO.getUnSelected();
-                        // 获取文件夹所有的测试用例
-                        List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-                        allList.removeAll(unSelected);
-                        caseIds.addAll(allList);
-                    } else {
-                        caseIds.addAll(caseSelectVO.getSelected());
-                    }
-                }
-            }
-
-            if (!CollectionUtils.isEmpty(caseIds)) {
-                testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
-            }
-
-        }
-        TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
-        // 创建测试循环
-        List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
-        // 创建测试循环用例
-        Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
-        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
-        TestPlanDTO testPlan = new TestPlanDTO();
-        testPlan.setPlanId(testPlanDTO.getPlanId());
-        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
-        testPlan.setObjectVersionNumber(testPlanDTO.getObjectVersionNumber());
-        testPlanServcie.baseUpdate(testPlan);
+        testPlanServcie.sagaCreatePlan(testPlanVO);
     }
+
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_UPDATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN, seq = 1)
     public void sagaUpdatePlan(String message) throws IOException {
         TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
-        // 获取用例和文件夹信息
+
+        // 查询已有的cycle的信息
+        List<TestCycleDTO> oldTestCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(testPlanVO.getPlanId()));
+        Map<Long, TestCycleDTO> oldTestCycleMap = oldTestCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        Map<Long, List<Long>> oldCycleCaseMap = new HashMap<>();
+        // 查询已有的cycle_case 的信息
+        if (CollectionUtils.isEmpty(oldTestCycleDTOS)) {
+            List<Long> cycleIds = oldTestCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
+            oldCycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId, Collectors.mapping(TestCycleCaseDTO::getCaseId, Collectors.toList())));
+        }
+
+        // 获取当前插入的文件夹
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
+
+
     }
 }
