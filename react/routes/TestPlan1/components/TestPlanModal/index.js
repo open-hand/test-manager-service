@@ -6,6 +6,7 @@ import {
   Modal, Form, TextField, DataSet, TextArea, DateTimePicker, Select, Radio,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
+import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
@@ -53,7 +54,13 @@ function TestPlanModal({
         <TextArea
           name="description"
         />
-        <Select name="managerId" searchable searchMatcher="param" />
+        <Select
+          name="managerId"
+          searchable
+          searchMatcher="param"
+          optionRenderer={({ record }) => <UserHead user={record.toData()} />}
+          // renderer={({ record }) => <UserHead user={record.toData()} />}
+        />
         <DateTimePicker range name="range" min={Date.now()} />
         <div>
           <div>
@@ -71,7 +78,7 @@ function TestPlanModal({
         <div>
           <div>
             <span>是否自动同步</span>
-            <Tip title="是否自动同步" />
+            <Tip title="即用例库的用例更新之后是否同步更新计划中的用例" />
           </div>
           <Radio name="autoSync" value defaultChecked>是</Radio>
           <Radio name="autoSync" value={false}>否</Radio>

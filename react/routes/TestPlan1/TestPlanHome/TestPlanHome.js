@@ -1,5 +1,5 @@
 import React, {
-  Component, useState, useContext, useEffect, 
+  useCallback, useContext, useEffect, 
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import _ from 'lodash';
@@ -15,7 +15,7 @@ import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../api/cycleApi'; 
 import CreateAutoTest from '../components/CreateAutoTest'; 
-import { openCreatePlan } from '../components/TestPlanModal';
+import { openCreatePlan, openEditPlan } from '../components/TestPlanModal';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
@@ -63,7 +63,12 @@ export default observer(() => {
   const handleOpenCreatePlan = () => {
     openCreatePlan();
   };
-
+  // const handleOpenEditPlan = useCallback(async (planId) => {
+  //   const planDetail = await getPlanDetail(planId);
+  //   openEditPlan({
+  //     initValue: planDetail,
+  //   });
+  // }, []);
   const onDragEnd = (sourceIndex, targetIndex) => {
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
     const source = testList[sourceIndex];
@@ -147,8 +152,8 @@ export default observer(() => {
   };
 
   const handleAssignToChange = (value) => {
-    console.log('失焦了');
-    console.log(value, checkIdMap.size, checkIdMap.keys());
+    // console.log('失焦了');
+    // console.log(value, checkIdMap.size, checkIdMap.keys());
     if (value && checkIdMap.size) {
       checkIdMap.clear();
     }
