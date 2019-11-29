@@ -67,8 +67,8 @@ class IssueStore {
     const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
-    const { currentCycle } = IssueTreeStore;
-    const { id } = currentCycle;
+    const { currentFolder } = IssueTreeStore;
+    const { id } = currentFolder;
     try {
       const res = await handleRequestFailed(getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType));
       this.setIssues(res.list);

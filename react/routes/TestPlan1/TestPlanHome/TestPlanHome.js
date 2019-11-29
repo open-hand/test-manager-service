@@ -34,7 +34,7 @@ const { TabPane } = Tabs;
 const { confirm } = Modal;
 const updateRemindModal = Modal.key();
 
-export default observer(() => {
+function TestPlanHome() {
   const {
     prefixCls, createAutoTestStore, testPlanStore, oldStepTableDataSet, newStepTableDataSet,
   } = useContext(Store);
@@ -112,16 +112,6 @@ export default observer(() => {
       testPlanStore.setExecutePagination(pagination);
       testPlanStore.loadExecutes();
     }
-  };
-
-  /**
-   * 点击table的一项
-   *
-   * @memberof TestPlanHome
-   */
-  const handleTableRowClick = (record) => {
-    const { history } = this.props;
-    history.push(executeDetailShowLink(record.executeId));
   };
 
   const handleDeleteExecute = (record) => {
@@ -234,8 +224,7 @@ export default observer(() => {
                     <div className={`${prefixCls}-contentWrap-table`}>
                       <TestPlanTable
                         onDragEnd={onDragEnd}
-                        onTableChange={handleExecuteTableChange}
-                        onTableRowClick={handleTableRowClick}
+                        onTableChange={handleExecuteTableChange}                        
                         onDeleteExecute={handleDeleteExecute}
                         onQuickPass={handleQuickPass}
                         onQuickFail={handleQuickFail}
@@ -254,4 +243,6 @@ export default observer(() => {
       <CreateAutoTest createAutoTestStore={createAutoTestStore} />
     </Page>
   );
-});
+}
+
+export default observer(TestPlanHome);

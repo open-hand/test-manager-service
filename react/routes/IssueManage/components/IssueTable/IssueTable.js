@@ -304,7 +304,7 @@ export default observer((props) => {
     },
   ]);
 
-  const { currentCycle } = IssueTreeStore;
+  const { currentFolder } = IssueTreeStore;
 
   return (
     <div className="c7ntest-issueArea">
@@ -341,7 +341,7 @@ export default observer((props) => {
             }}
           >
             {
-              currentCycle && currentCycle.children && currentCycle.children.length === 0 ? <CreateIssueTiny key={currentCycle.id} /> : null
+              currentFolder && currentFolder.children && currentFolder.children.length === 0 ? <CreateIssueTiny key={currentFolder.id} /> : null
             }
           </div>
         </div>

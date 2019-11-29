@@ -13,14 +13,14 @@ class IssueTreeStore {
 
   @observable selectedKeys = [];
 
-  @observable currentCycle = {};
+  @observable currentFolder = {};
 
   @observable loading = false;
 
   treeRef = null;
 
   @action clearStore = () => {
-    this.currentCycle = {};
+    this.currentFolder = {};
     this.treeData = {
       rootIds: [],
       treeFolder: [],
@@ -36,12 +36,12 @@ class IssueTreeStore {
     return toJS(this.selectedKeys);
   }
 
-  @computed get getCurrentCycle() {
-    return toJS(this.currentCycle);
+  @computed get getCurrentFolder() {
+    return toJS(this.currentFolder);
   }
 
-  @computed get getPreCycle() {
-    return toJS(this.preCycle);
+  @computed get getPreFolder() {
+    return toJS(this.preFolder);
   }
 
   @action setSelectedKeys(selectedKeys) {
@@ -58,8 +58,8 @@ class IssueTreeStore {
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
-    let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
-    if (!this.currentCycle.id && rootIds.length > 0) {
+    let selectedId = this.currentFolder ? this.currentFolder.id : undefined;
+    if (!this.currentFolder.id && rootIds.length > 0) {
       selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
     }
     this.treeData = {
@@ -78,18 +78,18 @@ class IssueTreeStore {
       }),
     };
     if (selectedId) {
-      this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
+      this.setCurrentFolder(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }
 
-  @action setCurrentCycle(currentCycle) {
-    this.currentCycle = currentCycle;
+  @action setCurrentFolder(currentFolder) {
+    this.currentFolder = currentFolder;
   }
 
-  @action setCurrentCycleById(id) {
+  @action setCurrentFolderById(id) {
     const data = find(this.treeData.treeFolder, { id });
     if (data) {
-      this.setCurrentCycle(data);
+      this.setCurrentFolder(data);
     }
   }
 
