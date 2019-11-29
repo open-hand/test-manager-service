@@ -5,12 +5,12 @@ import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
+import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import org.springframework.data.domain.Pageable;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
+
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 
 /**
@@ -81,6 +81,11 @@ public interface TestCycleCaseService {
 
 
     List<ExecutionStatusVO> queryStepStatus(Long planId);
+
+    TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+
+    PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
+
 
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);
 }

@@ -18,15 +18,15 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseInfoVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
 import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.
@@ -203,6 +203,30 @@ public class TestCycleCaseController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.plan.status.query"));
 
+    }
+
+//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//    @ApiOperation("更新测试执行")
+//    @PutMapping("")
+//    public ResponseEntity<List<TestCycleCaseUpdateVO>> update(@PathVariable(name = "project_id") Long projectId,
+//                                                              @ApiParam(value = "exectuteId", required = true)
+//                                                                        @RequestParam(name = "exectuteId") Long exectuteId) {
+//        return Optional.ofNullable()
+//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//                .orElseThrow(() -> new CommonException("error.plan.status.query"));
+//
+//    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
+    @PostMapping("/list_by_folder_id")
+    public ResponseEntity<PageInfo<TestFolderCycleCaseVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
+                                                                      @RequestParam(name = "folder_id") Long folderId,
+                                                                        @RequestParam(name = "plan_id") Long planId,
+                                                                      @SortDefault Pageable pageable,
+                                                                      @RequestBody(required = false) SearchDTO searchDTO) {
+
+        return new ResponseEntity<>( testCycleCaseService.listAllCaseByFolderId(projectId, planId, folderId, pageable, searchDTO), HttpStatus.OK);
     }
 
 }

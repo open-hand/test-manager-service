@@ -671,6 +671,23 @@ ORDER BY
             tcc.execution_status;
     </select>
 
+    <select id="queryFolderCycleCase" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+        SELECT
+            tcc.*,ts.status_color AS statusColor,ts.status_name AS executionStatusName
+        FROM
+            `test_cycle_case` tcc
+        LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
+        LEFT JOIN test_status ts ON ts.status_id=tcc.execution_status
+        WHERE
+            tc.plan_id = #{planId}
+        AND tc.folder_id IN
+        <foreach item="folderId" index="index" collection="folderIds"
+                 open="(" separator="," close=")">
+            #{folderId}
+        </foreach>
+        <include refid="sqlParam"/>
+        order by tcc.last_update_date DESC
+    </select>
     <update id="fixCycleCase">
         UPDATE test_cycle_case tcc
         SET tcc.summary = (
@@ -689,6 +706,30 @@ ORDER BY
             WHERE
                 tcc.case_id = tc.case_id
         )
+    </update>
+
+    <sql id="sqlParam">
+        <if test="searchDTO != null">
+            <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
+                AND
+                <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
+                    (tcc.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                </foreach>
+            </if>
+            <if test="searchDTO.searchArgs != null">
+                <if test='searchDTO.searchArgs.summary != null'>
+                    AND tcc.summary = #{searchDTO.searchArgs.summary}
+                </if>
+                <if test="searchDTO.searchArgs.caseNum != null">
+                    AND tcc.case_num = #{searchDTO.searchArgs.caseNum}
+                </if>
+            </if>
+        </if>
+    </sql>
+    <update id="fixSource">
+        UPDATE test_cycle_case
+        SET source =
+        if(execution_status=1,'none','manual')
     </update>
 
     <select id="listByCycleIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">

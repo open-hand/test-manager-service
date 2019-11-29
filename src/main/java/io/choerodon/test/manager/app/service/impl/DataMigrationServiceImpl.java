@@ -111,6 +111,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixCycleCase();
         //11.step
         fixCycleCaseStep();
+        //12.source
+        fixCycleSource();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -246,6 +248,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private void fixCycle(Long versionId,Long planId){
         testCycleMapper.fixPlanId(versionId, planId);
         logger.info("===========cycle cycle=============> fix cycle successed");
+    }
+    private  void fixCycleSource(){
+        testCycleCaseMapper.fixSource();
     }
 
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {

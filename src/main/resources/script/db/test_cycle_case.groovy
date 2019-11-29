@@ -72,4 +72,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     changeSet(author: 'lizhaozhong', id: '2019-11-28-rename-colume-issueId') {
         renameColumn(columnDataType:'BIGINT UNSIGNED',newColumnName:'case_id',oldColumnName:'issue_id',tableName:"test_cycle_case")
     }
+
+    changeSet(author: 'lizhaozhong', id: '2019-11-29-add-colume-source') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'source', type: 'VARCHAR(255)', remarks: '来源')
+        }
+    }
 }

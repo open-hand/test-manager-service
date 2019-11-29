@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
