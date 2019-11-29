@@ -1,34 +1,16 @@
-import moment from 'moment';
 import { getProjectId } from '@/common/utils';
 
-export default function DataSetFactory({ initValue = {}, mode, SelectIssueStore } = {}) {
-  const { id, objectVersionNumber } = initValue;
+export default function DataSetFactory({ initValue = {} } = {}) {
+  const {
+    startDate, endDate, 
+  } = initValue;  
+  if (startDate && endDate) {
+    // eslint-disable-next-line no-param-reassign
+    initValue.range = [startDate, endDate];
+  }  
   return {
     autoCreate: true,
-    data: mode === 'create' ? undefined : [initValue],
-    transport: {
-      submit: {
-        url: `/test/v1/projects/${getProjectId()}/plan`,
-        method: mode === 'create' ? 'post' : 'put',
-        transformRequest: ([data]) => {
-          const {
-            range, custom, __id, __status, ...rest
-          } = data;
-          const plan = {
-            ...rest,    
-            custom,
-            id,
-            objectVersionNumber,
-            startDate: moment(range[0]).format('YYYY-MM-DD HH:mm:ss'),
-            endDate: moment(range[1]).format('YYYY-MM-DD HH:mm:ss'),
-            projectId: getProjectId(),
-            caseSelected: custom ? SelectIssueStore.getSelectedFolders() : undefined,
-          };
-          // console.log(plan);
-          return JSON.stringify(plan);
-        },
-      },
-    },
+    data: [initValue],
     fields: [
       {
         name: 'name', type: 'string', label: '计划名称', required: true, 

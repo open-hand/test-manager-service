@@ -7,7 +7,7 @@ import { getStatusList } from '@/api/TestStatusApi';
 import { getIssuesByFolder } from '@/api/IssueManageApi';
 
 class TestPlanStore extends IssueTreeStore {
-    @observable loading = false;
+    @observable loading = true;
 
     @action setLoading = (loading) => {
       this.loading = loading;

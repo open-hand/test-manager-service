@@ -15,7 +15,7 @@ import {
   getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
 } from '../../../api/cycleApi'; 
 import CreateAutoTest from '../components/CreateAutoTest'; 
-import { openCreatePlan, openEditPlan } from '../components/TestPlanModal';
+import { openCreatePlan, openEditPlan, openClonePlan } from '../components/TestPlanModal';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
 import UpdateRemindModalChildren from '../components/UpdateRemindModalChildren';
@@ -63,12 +63,14 @@ export default observer(() => {
   const handleOpenCreatePlan = () => {
     openCreatePlan();
   };
-  // const handleOpenEditPlan = useCallback(async (planId) => {
-  //   const planDetail = await getPlanDetail(planId);
-  //   openEditPlan({
-  //     initValue: planDetail,
-  //   });
-  // }, []);
+  const handleOpenEditPlan = useCallback(async () => {
+    console.log('click');
+    // const planDetail = await getPlanDetail(planId);
+    // openEditPlan({
+    //   // initValue: planDetail,
+    // });
+    openClonePlan();
+  }, []);
   const onDragEnd = (sourceIndex, targetIndex) => {
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);    
     const source = testList[sourceIndex];
@@ -179,7 +181,7 @@ export default observer(() => {
         {
           testPlanStatus !== 'done' ? (
             <React.Fragment>
-              <Button icon="mode_edit">
+              <Button icon="mode_edit" onClick={handleOpenEditPlan}>
                 <FormattedMessage id="testPlan_editPlan" />
               </Button>
               {
