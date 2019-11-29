@@ -87,7 +87,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
+    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
         // 创建计划
@@ -103,7 +103,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                         .newBuilder()
                         .withLevel(ResourceLevel.PROJECT)
                         .withRefType("")
-                        .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN)
+                        .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN)
                         .withPayloadAndSerialize(testPlanVO)
                         .withRefId("")
                         .withSourceId(projectId),
@@ -127,8 +127,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (CollectionUtils.isEmpty(testPlanDTOS)) {
             return new TestTreeIssueFolderVO();
         }
-        List<TestPlanTreeVO> testPlanTreeVOS = new ArrayList<>();
-        testPlanTreeVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanTreeVO>>() {
+        List<TestPlanTreeVO> testPlanTreeVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanTreeVO>>() {
         }.getType());
 
         // 获取planIds,查询出所有底层文件夹Id
@@ -192,47 +191,16 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
     @Override
     public void sagaCreatePlan(TestPlanVO testPlanVO){
-        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
+        List<TestIssueFolderDTO> testIssueFolderDTOS = null;
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
-
         // 是否自选
         if (!testPlanVO.getCustom()) {
             testCaseDTOS.addAll(allTestCase);
             List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
             testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
         } else {
-            Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
-            List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
-            testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
-            Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-            List<Long> caseIds = new ArrayList<>();
-            for (Long key : maps.keySet()) {
-                CaseSelectVO caseSelectVO = maps.get(key);
-                // 判断是否是自选
-                if (!caseSelectVO.getCustom()) {
-                    if (CollectionUtils.isEmpty(caseMap.get(key))) {
-                        testCaseDTOS.addAll(caseMap.get(key));
-                    }
-                } else {
-                    // 判断是反选还是正向选择
-                    if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
-                        // 反选就
-                        List<Long> unSelected = caseSelectVO.getUnSelected();
-                        // 获取文件夹所有的测试用例
-                        List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-                        allList.removeAll(unSelected);
-                        caseIds.addAll(allList);
-                    } else {
-                        caseIds.addAll(caseSelectVO.getSelected());
-                    }
-                }
-            }
-
-            if (!CollectionUtils.isEmpty(caseIds)) {
-                testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
-            }
-
+            createPlanCustomCase(testPlanVO,testIssueFolderDTOS,allTestCase,testCaseDTOS);
         }
         TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
         // 创建测试循环
@@ -341,44 +309,96 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             }
             return;
         } else {
-            // 查看当前文件夹的父文件夹是否存在
-            TestTreeFolderVO parentTreeFolderVO = null;
-            if (!ObjectUtils.isEmpty(map.get(testIssueFolderVO.getParentId()))) {
-                parentTreeFolderVO = map.get(testIssueFolderVO.getParentId());
-            }
-            if (ObjectUtils.isEmpty(parentTreeFolderVO)) {
-                // 不存在就创建父级文件夹,并加入map中
-                parentTreeFolderVO = new TestTreeFolderVO();
-                if (ObjectUtils.isEmpty(allFolderMap.get(testIssueFolderVO.getParentId()))) {
-                    return;
-                }
-                TestIssueFolderVO parentFolderVO = allFolderMap.get(testIssueFolderVO.getParentId());
-                if (CollectionUtils.isEmpty(parentMap.get(parentFolderVO.getFolderId()))) {
-                    testTreeFolderVO.setHasChildren(false);
-                } else {
-                    testTreeFolderVO.setHasChildren(true);
-                }
-                parentTreeFolderVO.setId(parentFolderVO.getFolderId());
-                parentTreeFolderVO.setIssueFolderVO(parentFolderVO);
-                parentTreeFolderVO.setExpanded(false);
-                parentTreeFolderVO.setChildrenLoading(false);
-                parentTreeFolderVO.setChildren(Arrays.asList(testIssueFolderVO.getFolderId()));
-                map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
-            } else {
-                //存在就更新父文件夹的Children值
-                List<Long> children = new ArrayList<>();
-                if (!ObjectUtils.isEmpty(parentTreeFolderVO.getChildren())) {
-                    children.addAll(parentTreeFolderVO.getChildren());
-                }
-                if (!children.contains(testIssueFolderVO.getFolderId())) {
-                    children.add(testIssueFolderVO.getFolderId());
-                }
-                parentTreeFolderVO.setChildren(children);
-                map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
-            }
-            //使用父文件夹递归
-            buildTree(root, testIssueFolderVO.getParentId(), allFolderMap, map, parentMap);
+            folderParentNotZero(root,testIssueFolderVO,allFolderMap,map,parentMap);
         }
     }
 
+    /**
+     * 构建测试计划树时，文件夹的父文件夹不为0时的处理逻辑
+     * @param root
+     * @param testIssueFolderVO
+     * @param allFolderMap
+     * @param map
+     * @param parentMap
+     */
+    private void folderParentNotZero(List<Long> root,TestIssueFolderVO testIssueFolderVO,Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap){
+        // 查看当前文件夹的父文件夹是否存在
+        TestTreeFolderVO parentTreeFolderVO = null;
+        if (!ObjectUtils.isEmpty(map.get(testIssueFolderVO.getParentId()))) {
+            parentTreeFolderVO = map.get(testIssueFolderVO.getParentId());
+        }
+        if (ObjectUtils.isEmpty(parentTreeFolderVO)) {
+            // 不存在就创建父级文件夹,并加入map中
+            parentTreeFolderVO = new TestTreeFolderVO();
+            if (ObjectUtils.isEmpty(allFolderMap.get(testIssueFolderVO.getParentId()))) {
+                return;
+            }
+            TestIssueFolderVO parentFolderVO = allFolderMap.get(testIssueFolderVO.getParentId());
+            if (CollectionUtils.isEmpty(parentMap.get(parentFolderVO.getFolderId()))) {
+                parentTreeFolderVO.setHasChildren(false);
+            } else {
+                parentTreeFolderVO.setHasChildren(true);
+            }
+            parentTreeFolderVO.setId(parentFolderVO.getFolderId());
+            parentTreeFolderVO.setIssueFolderVO(parentFolderVO);
+            parentTreeFolderVO.setExpanded(false);
+            parentTreeFolderVO.setChildrenLoading(false);
+            parentTreeFolderVO.setChildren(Arrays.asList(testIssueFolderVO.getFolderId()));
+            map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
+        } else {
+            //存在就更新父文件夹的Children值
+            List<Long> children = new ArrayList<>();
+            if (!ObjectUtils.isEmpty(parentTreeFolderVO.getChildren())) {
+                children.addAll(parentTreeFolderVO.getChildren());
+            }
+            if (!children.contains(testIssueFolderVO.getFolderId())) {
+                children.add(testIssueFolderVO.getFolderId());
+            }
+            parentTreeFolderVO.setChildren(children);
+            map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
+        }
+        //使用父文件夹递归
+        buildTree(root, testIssueFolderVO.getParentId(), allFolderMap, map, parentMap);
+    }
+
+    /**
+     * 创建计划自选用例时，对用例的逻辑处理
+     * @param testPlanVO
+     * @param testIssueFolderDTOS
+     * @param allTestCase
+     * @param testCaseDTOS
+     */
+    private void createPlanCustomCase(TestPlanVO testPlanVO,List<TestIssueFolderDTO> testIssueFolderDTOS,List<TestCaseDTO> allTestCase,List<TestCaseDTO> testCaseDTOS){
+        Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
+        List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
+        testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+        Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        List<Long> caseIds = new ArrayList<>();
+        for (Long key : maps.keySet()) {
+            CaseSelectVO caseSelectVO = maps.get(key);
+            // 判断是否是自选
+            if (!caseSelectVO.getCustom()) {
+                if (CollectionUtils.isEmpty(caseMap.get(key))) {
+                    testCaseDTOS.addAll(caseMap.get(key));
+                }
+            } else {
+                // 判断是反选还是正向选择
+                if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
+                    // 反选就
+                    List<Long> unSelected = caseSelectVO.getUnSelected();
+                    // 获取文件夹所有的测试用例
+                    List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                    allList.removeAll(unSelected);
+                    caseIds.addAll(allList);
+                } else {
+                    caseIds.addAll(caseSelectVO.getSelected());
+                }
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(caseIds)) {
+            testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
+        }
+
+    }
 }
