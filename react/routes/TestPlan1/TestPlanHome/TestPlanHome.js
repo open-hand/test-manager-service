@@ -39,7 +39,7 @@ export default observer(() => {
     prefixCls, createAutoTestStore, testPlanStore, oldStepTableDataSet, newStepTableDataSet,
   } = useContext(Store);
   const {
-    treeData, loading, testPlanStatus, rightLoading, checkIdMap, testList,
+    treeData, loading, rightLoading, checkIdMap, testList,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
@@ -199,51 +199,52 @@ export default observer(() => {
             <div className={`${prefixCls}-contentWrap`}>
               <div className={`${prefixCls}-contentWrap-left`}>
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-                    <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
-                      <TabPane tab="未开始" key="todo">
-                        <TestPlanTree />
-                      </TabPane>
-                      <TabPane tab="进行中" key="doing">
-                        <TestPlanTree />
-                      </TabPane>
-                      <TabPane tab="已完成" key="done">
-                        <TestPlanTree />
-                      </TabPane>
-                    </Tabs>
-                  </div>
+                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
+                    <TabPane tab="未开始" key="todo">
+                      <TestPlanTree />
+                    </TabPane>
+                    <TabPane tab="进行中" key="doing">
+                      <TestPlanTree />
+                    </TabPane>
+                    <TabPane tab="已完成" key="done">
+                      <TestPlanTree />
+                    </TabPane>
+                  </Tabs>
+                </div>
               </div>
               <div className={`${prefixCls}-contentWrap-right`}>
                 <Spin spinning={rightLoading}>
-                    <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                      <Icon type="insert_invitation" />
-                      <span>0.20.0版本测试计划</span>
-                    </div>
-                    <div className={`${prefixCls}-contentWrap-right-warning`}>
-                      <Icon type="error" />
-                      <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                    </div>
-                    <div className={`${prefixCls}-contentWrap-right-card`}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                        <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
-                          <TestPlanDetailCard />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <TestPlanStatusCard />
-                        </div>
+                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                    <Icon type="insert_invitation" />
+                    <span>0.20.0版本测试计划</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-warning`}>
+                    <Icon type="error" />
+                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                  </div>
+                  <div className={`${prefixCls}-contentWrap-right-card`}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                      <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                        <TestPlanDetailCard />
                       </div>
-                      <div className={`${prefixCls}-contentWrap-table`}>
-                        <TestPlanTable
-                          onDragEnd={onDragEnd}
-                          onTableChange={handleExecuteTableChange}
-                          onTableRowClick={handleTableRowClick}
-                          onDeleteExecute={handleDeleteExecute}
-                          onQuickPass={handleQuickPass}
-                          onQuickFail={handleQuickFail}
-                          onAssignToChange={handleAssignToChange}
-                        />
+                      <div style={{ flex: 1 }}>
+                        <TestPlanStatusCard />
                       </div>
                     </div>
-                  </Spin>
+                    <div className={`${prefixCls}-contentWrap-table`}>
+                      <TestPlanTable
+                        onDragEnd={onDragEnd}
+                        onTableChange={handleExecuteTableChange}
+                        onTableRowClick={handleTableRowClick}
+                        onDeleteExecute={handleDeleteExecute}
+                        onQuickPass={handleQuickPass}
+                        onQuickFail={handleQuickFail}
+                        onAssignToChange={handleAssignToChange}
+                        onOpenUpdateRemind={handleOpenUpdateRemind}
+                      />
+                    </div>
+                  </div>
+                </Spin>
 
               </div>
             </div>

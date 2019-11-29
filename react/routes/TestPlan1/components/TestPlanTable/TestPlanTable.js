@@ -22,6 +22,7 @@ const propTypes = {
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
   onAssignToChange: PropTypes.func.isRequired,
+  onOpenUpdateRemind: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
   onDragEnd,
@@ -31,6 +32,7 @@ const TestPlanTable = observer(({
   onQuickPass,
   onQuickFail,
   onAssignToChange,
+  onOpenUpdateRemind,
 }) => {
   const { 
     testPlanStore,

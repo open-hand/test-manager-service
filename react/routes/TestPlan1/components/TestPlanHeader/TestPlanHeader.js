@@ -44,7 +44,6 @@ function TestPlanHeader() {
         ) : ''
       }
     </React.Fragment>
-
   );
 }
 export default observer(TestPlanHeader);
