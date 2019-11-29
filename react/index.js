@@ -6,7 +6,7 @@ import { asyncLocaleProvider, asyncRouter, nomatch } from '@choerodon/boot';
 import 'moment/locale/zh-cn';
 import 'moment/locale/en-nz';
 import moment from 'moment';
-import './assets/index.scss';
+import './index.scss';
 
 const TestExecuteIndex = asyncRouter(() => import('./routes/TestExecute'));
 const TestPlanIndex = asyncRouter(() => import('./routes/TestPlan'));

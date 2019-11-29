@@ -9,13 +9,16 @@ function ExecuteHistoryDataSet(projectId, intl, caseId) {
     autoQuery: true,
     selection: false,
     paging: true,
-    dataKey: null,
+    primaryKey: 'executeId',
     fields: [
       {
-        name: 'user', type: 'string', label: user,
+        name: 'user', type: 'object', label: user,
       },
       {
         name: 'lastUpdateDate', type: 'string', label: lastUpdateDate,
+      },
+      {
+        name: 'field', type: 'string', label: '字段',
       },
       {
         name: 'oldValue', type: 'string', label: oldValue,
@@ -30,6 +33,9 @@ function ExecuteHistoryDataSet(projectId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/history/${caseId}`,
         method: 'get',
+        transformResponse: data => ({
+          ...JSON.parse(data),
+        }),
       },
     },
   };

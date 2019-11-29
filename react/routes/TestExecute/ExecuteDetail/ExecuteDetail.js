@@ -21,7 +21,7 @@ import {
   editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
 import { uploadFile, deleteAttachment } from '../../../api/FileApi';
-// import './ExecuteDetail.less';
+import './ExecuteDetail.less';
 import {
   StepTable as OldStepTable, ExecuteDetailSide, CreateBug,
 } from '../components';
@@ -37,29 +37,15 @@ function beforeUpload(file) {
   }
   return isLt2M;
 }
-const styles = {
-  cardTitle: {
-    fontWeight: 500,
-    display: 'flex',
-  },
-  cardTitleText: {
-    lineHeight: '20px',
-    marginLeft: '5px',
-  },
-  cardBodyStyle: {
-    padding: 12,
-  },
-};
+
 const CardWrapper = ({ children, title, style }) => (
   <Card
     title={null}
     style={style}
+    bodyStyle={{ paddingBottom: 0 }}
     bordered={false}
-    bodyStyle={styles}
   >
-    <div style={{ ...styles.cardTitle, marginBottom: 10 }}>
-      <span style={styles.cardTitleText}>{title}</span>
-    </div>
+    <span className="c7n-test-execute-detail-card-title">{title}</span>
     {children}
   </Card>
 );
@@ -263,7 +249,7 @@ function ExecuteDetail(props) {
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
     const stepStatusList = ExecuteDetailStore.getStepStatusList;
     return (
-      <Page className="c7ntest-ExecuteDetail">
+      <Page className="c7n-test-execute-detail">
         <Header
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
@@ -318,51 +304,42 @@ function ExecuteDetail(props) {
                   flex: 1,
                   overflowX: 'hidden',
                   overflowY: 'auto',
-                  padding: 20,
                 }}
               >
-                <div style={{ marginBottom: 24 }}>
+                <div className="c7n-test-execute-detail-header">
                   {detailData && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ fontSize: '20px' }}>{'执行用例' || detailData.summary}</span>
                       <StatusTags
-                        style={{ height: 20, lineHeight: '20px', marginRight: 15 }}
+                        style={{ height: 20, lineHeight: '20px', marginLeft: 10 }}
                         color={statusColor}
                         name={statusName}
                       />
-                      <span style={{ fontSize: '20px' }}>{detailData.summary}</span>
-
                     </div>
                   )}
+                  {!disabled
+                    && (
+                      <QuickOperate
+                        statusList={statusList}
+                        quickPass={quickPass}
+                        quickFail={quickFail}
+                        onSubmit={handleSubmit}
+                      />
+                    )}
                 </div>
-                {!disabled
-                  && (
-                    <QuickOperate
-                      statusList={statusList}
-                      quickPass={quickPass}
-                      quickFail={quickFail}
-                      onSubmit={handleSubmit}
-                    />
-                  )}
+
                 <CardWrapper
-                  style={{ margin: '24px 0' }}
-                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${detailData.length}）`}</span>]}
+                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.length}）`}</span>]}
                 >
-                  {/* <StepTable
-                    disabled={disabled}
-                    dataSource={detailList}
-                    stepStatusList={stepStatusList}
-                  /> */}
                   <StepTable
                     dataSet={stepTableDataSet}
                   />
                 </CardWrapper>
 
                 <CardWrapper title={<FormattedMessage id="execute_executeHistory" />}>
-                  <div style={{ padding: '0 20px' }}>
-                    <ExecuteHistoryTable
-                      dataSet={executeHistoryDataSet}
-                    />
-                  </div>
+                  <ExecuteHistoryTable
+                    dataSet={executeHistoryDataSet}
+                  />
                 </CardWrapper>
               </div>
               {/* 右侧侧边栏 */}

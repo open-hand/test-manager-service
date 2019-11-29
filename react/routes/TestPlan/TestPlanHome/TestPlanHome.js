@@ -23,7 +23,7 @@ import TestPlanTable from '../components/TestPlanTable';
 import TestPlanHeader from '../components/TestPlanHeader';
 import { openCreatePlan } from '../components/TestPlanModal';
 import Empty from '../../../components/Empty';
-import testCaseEmpty from '../../../assets/testCaseEmpty.svg';
+import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
 import './TestPlanHome.less';

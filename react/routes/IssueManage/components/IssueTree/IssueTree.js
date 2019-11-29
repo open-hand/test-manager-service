@@ -7,7 +7,7 @@ import IssueStore from '../../stores/IssueStore';
 import {
   addFolder, editFolder, deleteFolder, moveFolders,
 } from '@/api/IssueManageApi';
-import { NoVersion, Loading } from '@/components';
+import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import TreeNode from './TreeNode';
 
@@ -61,8 +61,7 @@ class IssueTree extends Component {
       <div className="c7ntest-IssueTree">
         <Loading loading={loading} />
         <Tree
-          ref={this.treeRef}
-          empty={loading ? null : <NoVersion onCreateClick={() => { this.treeRef.current.addFirstLevelItem(); }} />}
+          ref={this.treeRef}          
           data={treeData}
           onCreate={this.handleCreate}
           onEdit={this.handleEdit}
