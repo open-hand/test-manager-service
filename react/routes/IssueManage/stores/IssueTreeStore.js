@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { find } from 'lodash';
+import { find, pull } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
 
 class IssueTreeStore {
@@ -80,6 +80,10 @@ class IssueTreeStore {
     if (selectedId) {
       this.setCurrentFolder(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
+  }
+  
+  @action removeRootItem(folderId) {
+    pull(this.treeData.rootIds, folderId);
   }
 
   @action setCurrentFolder(currentFolder) {

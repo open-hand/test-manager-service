@@ -175,10 +175,12 @@ export default class IssueManage extends Component {
         <Header
           title={<FormattedMessage id="issue_name" />}
         >
+          {!noFolder && (
           <Button className="leftBtn" onClick={() => this.handleOpenCreateIssue()}>
             <Icon type="playlist_add icon" />
             <FormattedMessage id="issue_createTestIssue" />
           </Button>
+          )}
           <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
             创建一级目录
           </Button>
