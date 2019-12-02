@@ -62,7 +62,7 @@ const TestPlanTable = observer(({
         menu={menu}
         text={text}
         isHasMenu={record.projectId !== 0}
-        onClickEdit={onTableRowClick.bind(this, record)}
+        // onClickEdit={onTableRowClick.bind(this, record)}
       />
     );
   };
@@ -76,15 +76,15 @@ const TestPlanTable = observer(({
     render: (text, record) => renderMenu(record.summary, record),
   }, {
     title: <FormattedMessage id="cycle_executeBy" />,
-    dataIndex: 'lastUpdateUser',
-    key: 'lastUpdateUser',
+    dataIndex: 'assignedUser',
+    key: 'assignedUser',
     flex: 1,
-    render(lastUpdateUser) {
+    render(assignedUser) {
       return (
         <div
           className="c7ntest-text-dot"
         >
-          {lastUpdateUser && lastUpdateUser.realName}
+          {assignedUser && assignedUser.realName}
         </div>
       );
     },
