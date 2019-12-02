@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
 import io.choerodon.asgard.saga.producer.TransactionalProducer;
@@ -15,6 +16,7 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import jodd.util.ArraysUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Autowired
     private TransactionalProducer producer;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN,
@@ -208,7 +213,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
         testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
-
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
         testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
@@ -233,6 +237,23 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
+    }
+
+    @Override
+    public TestPlanVO queryPlan(Long projectId, Long planId) {
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        testPlanDTO.setPlanId(planId);
+        TestPlanDTO testPlan = testPlanMapper.selectOne(testPlanDTO);
+        TestPlanVO testPlanVO = modelMapper.map(testPlan, TestPlanVO.class);
+        Long managerId = testPlan.getManagerId();
+        if(!ObjectUtils.isEmpty(managerId)){
+            Map<Long, UserDO> query = userService.query(ArraysUtil.array(managerId));
+            UserDO userDO = query.get(managerId);
+            if(!ObjectUtils.isEmpty(userDO)){
+                testPlanVO.setManagerUser(userDO);
+            }
+        }
+        return testPlanVO;
     }
 
     @Override

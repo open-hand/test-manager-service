@@ -47,7 +47,9 @@ public interface TestPlanServcie {
      * saga调用创建计划
      * @param testPlanVO
      */
-    public void sagaCreatePlan(TestPlanVO testPlanVO);
+     void sagaCreatePlan(TestPlanVO testPlanVO);
 
-    public void sagaUpdatePlan(TestPlanVO testPlanVO);
+     void sagaUpdatePlan(TestPlanVO testPlanVO);
+
+    TestPlanVO queryPlan(Long projectId, Long planId);
 }

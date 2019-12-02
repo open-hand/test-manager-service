@@ -3,8 +3,10 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -46,6 +48,8 @@ public class TestPlanVO {
     private Map<Long, CaseSelectVO> caseSelected;
 
     private Long objectVersionNumber;
+
+    private UserDO managerUser;
 
     public Long getPlanId() {
         return planId;
@@ -142,5 +146,13 @@ public class TestPlanVO {
 
     public void setCaseHasChange(Boolean caseHasChange) {
         this.caseHasChange = caseHasChange;
+    }
+
+    public UserDO getManagerUser() {
+        return managerUser;
+    }
+
+    public void setManagerUser(UserDO managerUser) {
+        this.managerUser = managerUser;
     }
 }
