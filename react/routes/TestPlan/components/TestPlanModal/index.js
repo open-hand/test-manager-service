@@ -11,7 +11,9 @@ import { isEqual } from 'lodash';
 import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import { getProjectId } from '@/common/utils';
-import { createPlan, editPlan, clonePlan } from '@/api/TestPlanApi';
+import {
+  createPlan, getPlan, editPlan, clonePlan,
+} from '@/api/TestPlanApi';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
 import SelectIssueStore from './SelectIssueStore';
@@ -27,7 +29,7 @@ const defaultProps = {
   initValue: {},
 };
 function TestPlanModal({
-  modal, initValue, onSubmit, mode = 'create',
+  modal, initValue, submit, onSubmit, mode = 'create',
 }) {
   const { caseSelected: initCaseSelected } = initValue;
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
@@ -35,19 +37,20 @@ function TestPlanModal({
   useEffect(() => {
     selectIssueStore.loadIssueTree(initCaseSelected);
   }, [initCaseSelected, selectIssueStore]);
-  const submit = useCallback(async () => {
-    if (mode === 'edit' && !dataSet.isModified()) {
+  const handleSubmit = useCallback(async () => {
+    const data = dataSet.toData()[0];
+    const {
+      range, custom, __id, __status, objectVersionNumber, id, ...rest
+    } = data;
+    const caseSelected = custom ? selectIssueStore.getSelectedFolders() : undefined;
+    const caseChanged = !isEqual(initValue.caseSelected, caseSelected);
+    if (mode === 'edit' && !dataSet.isModified() && !caseChanged) {
       return true;
     }
     try {
       if (dataSet.validate()) {
-        const data = dataSet.toData()[0];
-        const {
-          range, custom, __id, __status, objectVersionNumber, id, ...rest
-        } = data;
-        const caseSelected = custom ? selectIssueStore.getSelectedFolders() : undefined;
         const plan = {
-          ...rest,    
+          ...rest,
           custom,
           id,
           objectVersionNumber,
@@ -55,9 +58,10 @@ function TestPlanModal({
           endDate: moment(range[1]).format('YYYY-MM-DD HH:mm:ss'),
           projectId: getProjectId(),
           caseSelected,
-          caseChanged: !isEqual(initValue.caseSelected, caseSelected),
-        };   
-        await onSubmit(plan);
+          caseChanged,
+        };
+        const result = await submit(plan);
+        onSubmit(result);
         return true;
       }
       return false;
@@ -65,10 +69,10 @@ function TestPlanModal({
       // console.log(error);
       return false;
     }
-  }, [dataSet, initValue.caseSelected, mode, onSubmit, selectIssueStore]);
+  }, [dataSet, initValue.caseSelected, mode, onSubmit, selectIssueStore, submit]);
   useEffect(() => {
-    modal.handleOk(submit);
-  }, [modal, submit]);
+    modal.handleOk(handleSubmit);
+  }, [modal, handleSubmit]);
 
   return (
     <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
@@ -113,7 +117,9 @@ function TestPlanModal({
 TestPlanModal.propTypes = propTypes;
 TestPlanModal.defaultProps = defaultProps;
 const ObserverTestPlanModal = observer(TestPlanModal);
-export function openCreatePlan() {
+export function openCreatePlan({
+  onCreate,
+}) {
   Modal.open({
     title: '创建计划',
     key,
@@ -121,10 +127,11 @@ export function openCreatePlan() {
     style: {
       width: 1090,
     },
-    children: <ObserverTestPlanModal mode="create" onSubmit={createPlan} />,
+    children: <ObserverTestPlanModal mode="create" submit={createPlan} onSubmit={onCreate} />,
   });
 }
-export function openEditPlan() {
+export async function openEditPlan({ planId }) {
+  const planDetail = await getPlan(planId);
   Modal.open({
     title: '编辑计划',
     key,
@@ -134,21 +141,14 @@ export function openEditPlan() {
     },
     children: <ObserverTestPlanModal
       mode="edit"
-      onSubmit={editPlan}
-      initValue={{
-        autoSync: true,
-        caseSelected: { 1: { custom: false }, 8: { custom: true, selected: [18986] }, 112: { custom: false } },
-        custom: true,
-        endDate: '2019-11-30 11:14:33',
-        managerId: 7631,
-        name: 'dddd',
-        projectId: '28',
-        startDate: '2019-11-29 11:14:33',
-      }}
+      submit={editPlan}
+      initValue={planDetail}
     />,
   });
 }
-export function openClonePlan() {
+export async function openClonePlan({ planId }) {
+  const planDetail = await getPlan(planId);
+
   Modal.open({
     title: '复制计划',
     key,
@@ -158,17 +158,8 @@ export function openClonePlan() {
     },
     children: <ObserverTestPlanModal
       mode="clone"
-      onSubmit={clonePlan}
-      initValue={{
-        autoSync: true,
-        caseSelected: { 1: { custom: false }, 8: { custom: true, selected: [18986] }, 112: { custom: false } },
-        custom: true,
-        endDate: '2019-11-30 11:14:33',
-        managerId: 7631,
-        name: 'dddd',
-        projectId: '28',
-        startDate: '2019-11-29 11:14:33',
-      }}
+      submit={clonePlan}
+      initValue={planDetail}
     />,
   });
 }

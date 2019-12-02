@@ -8,6 +8,7 @@ import {
 } from '@/api/IssueManageApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
+import { openClonePlan } from '../TestPlanModal';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 
@@ -49,7 +50,7 @@ class TestPlanTree extends Component {
 
   getParent = (treeFolders, folderId) => {
     let parent;
-    for (let i = 0; i < treeFolders.length; i++) {
+    for (let i = 0; i < treeFolders.length; i += 1) {
       if (treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId)) {
         parent = treeFolders[i];
         if (parent.data.parentId) {
@@ -59,6 +60,7 @@ class TestPlanTree extends Component {
         }
       }
     }
+    return parent;
   };
 
   setSelected = (item) => {
@@ -119,10 +121,12 @@ class TestPlanTree extends Component {
               ],
             }
           }
-          onMenuClick={(nodeItem, key) => {
+          onMenuClick={(key, nodeItem) => {
             switch (key) {
               case 'copy': {
-                console.log('copy');
+                openClonePlan({
+                  planId: nodeItem.id,
+                });
                 break;
               }
               default: {

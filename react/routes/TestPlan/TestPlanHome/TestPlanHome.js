@@ -39,7 +39,7 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
-    treeData, loading, rightLoading, checkIdMap, testList,
+    treeData, loading, rightLoading, checkIdMap, testList, testPlanStatus,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
@@ -55,7 +55,14 @@ function TestPlanHome() {
 
   };
   const handleOpenCreatePlan = () => {
-    openCreatePlan();
+    openCreatePlan({
+      onCreate: (newPlan) => {
+        if (testPlanStatus !== 'todo') {
+          testPlanStore.setTestPlanStatus('todo');
+        }      
+        testPlanStore.loadAllData();
+      },
+    });
   };
   const handleOpenUpdateRemind = () => {
     Modal.open({
@@ -163,7 +170,7 @@ function TestPlanHome() {
   }, [testPlanStore]);
 
   const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
-  
+
   return (
     <Page className={prefixCls}>
       <Header
@@ -180,7 +187,6 @@ function TestPlanHome() {
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
         {
-
           noPlan ? (
             <Empty
               loading={loading}
@@ -193,7 +199,7 @@ function TestPlanHome() {
             <div className={`${prefixCls}-contentWrap`}>
               <div className={`${prefixCls}-contentWrap-left`}>
                 <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange}>
+                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange} value={testPlanStatus}>
                     <TabPane tab="未开始" key="todo">
                       <TestPlanTree />
                     </TabPane>
@@ -227,7 +233,7 @@ function TestPlanHome() {
                   <div className={`${prefixCls}-contentWrap-table`}>
                     <TestPlanTable
                       onDragEnd={onDragEnd}
-                      onTableChange={handleExecuteTableChange}                        
+                      onTableChange={handleExecuteTableChange}
                       onDeleteExecute={handleDeleteExecute}
                       onQuickPass={handleQuickPass}
                       onQuickFail={handleQuickFail}

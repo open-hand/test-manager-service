@@ -82,7 +82,7 @@ function PureTree({
   useEffect(() => {
     setTree(oldTree => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
-  const addFirstLevelItem = () => {
+  const addFirstLevelItem = (item) => {
     if (getRootNode(tree).children.includes('new')) {
       return;
     }
@@ -98,7 +98,7 @@ function PureTree({
         name: '',
       },
     };
-    setTree(oldTree => addItem(oldTree, getRootNode(oldTree), newChild));
+    setTree(oldTree => addItem(oldTree, getRootNode(oldTree), item || newChild));
   };
   useImperativeHandle(ref, () => ({
     addFirstLevelItem,
