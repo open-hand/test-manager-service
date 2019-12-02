@@ -164,7 +164,7 @@ function ExportSide(props) {
             <Column name="name" align="left" />
             <Column name="action" width={50} renderer={renderDropDownMenu} />
             <Column name="successfulCount" width={120} align="left" />
-            <Column name="creationDate" width={200} align="left" />
+            <Column name="lastUpdateDate" width={200} align="left" />
             <Column name="during" width={200} align="left" />
             <Column name="status" renderer={renderStatus} align="left" />
           </Table>
