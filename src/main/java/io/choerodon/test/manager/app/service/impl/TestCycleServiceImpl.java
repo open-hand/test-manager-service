@@ -851,7 +851,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(needDeleteCycleIds)) {
             return;
         }
-        testCycleCaseService.batchDeleteByCycleIds(needDeleteCycleIds);
+        List<TestCycleCaseDTO> needDeleteCycleCase = testCycleCaseService.listByCycleIds(needDeleteCycleIds);
+        List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+        testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         cycleMapper.batchDelete(needDeleteCycleIds);
     }
 
