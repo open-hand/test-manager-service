@@ -1,5 +1,7 @@
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, {
+  useState, useMemo, useRef,
+} from 'react';
 import {
   Select, Icon, Tree, TextField,
 } from 'choerodon-ui/pro';
@@ -28,8 +30,11 @@ function SelectTree(props) {
     name, renderSelect, defaultValue, parentDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
   const selectRef = useRef();
-  const [searchValue, setSearchValue] = useState('');// 搜索框内值
-  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), [defaultValue, isForbidRoot, name, onChange, parentDataSet]);
+  const [searchValue, setSearchValue] = useState('');// 搜索框内值  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), []);
+
+  
   /**
   * 渲染树节点
   * @param {*} record  
@@ -132,7 +137,7 @@ function SelectTree(props) {
         dataSet={dataSet}
         renderer={renderNode}
         className="test-select-tree-body"
-  
+
       />
     </div>
   );

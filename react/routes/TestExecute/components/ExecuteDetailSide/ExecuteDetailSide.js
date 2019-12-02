@@ -20,10 +20,11 @@ import {
 } from '../../../../components';
 import { addDefects, removeDefect } from '../../../../api/ExecuteDetailApi';
 import Store from '../../stores';
-import TypeTag from '../../../IssueManage/components/TypeTag';
+import TypeTag from '../../../../components/TypeTag';
 import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
 import UploadButtonExcuteDetail from './UploadButtonExcuteDetail';
+import LinkIssues from './link-issues';
 
 const { HeaderStore } = stores;
 
@@ -175,12 +176,12 @@ function ExecuteDetailSide(props) {
 
   function render() {
     const {
-      fileList, detailData, status, onClose, 
+      fileList, detailData, status, onClose,
     } = props;
     // console.log('render', props);
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, executionStatus, summary, 
+      executor, description, executorDate, executionStatus, summary, issuesInfos,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -308,6 +309,17 @@ function ExecuteDetailSide(props) {
                     // updateNow={onChangeFileList}
                     fileList={fileList}
                   />
+                </Section>
+                {/* 问题链接 */}
+                <Section
+                  id="attachment"
+                  icon="attach_file"
+                  title="问题链接"
+                >
+                  <LinkIssues
+                    linkIssues={issuesInfos}
+                  />
+
                 </Section>
 
               </div>

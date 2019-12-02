@@ -6,19 +6,22 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
   const stepStatus = intl.formatMessage({ id: 'execute_stepStatus' });
   const stepAttachment = intl.formatMessage({ id: 'attachment' });
   const defects = intl.formatMessage({ id: 'bug' });
-  const comment = intl.formatMessage({ id: 'execute_comment' });
+  const description = intl.formatMessage({ id: 'execute_comment' });
 
   return {
-    autoQuery: false,
+    autoQuery: true,
     selection: false,
     paging: true,
     dataKey: null,
     data: [{
-      testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: '123', comment: '2222',
+      testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: [], comment: '2222',
     }],
     fields: [
       {
         name: 'index', type: 'string', label: '编号',
+      },
+      {
+        name: 'testStep', type: 'string', label: testStep,
       },
       {
         name: 'testData', type: 'string', label: testData,
@@ -30,12 +33,16 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         name: 'stepStatus', type: 'string', label: stepStatus,
       },
       {
-        name: 'stepAttachment', type: 'array', label: stepAttachment,
+        name: 'stepAttachment', type: 'object', label: stepAttachment,
       },
       {
-        name: 'defects', type: 'object', label: defects,
+        name: 'defects',
+        type: 'object', 
+        label: defects,
       },
-      { name: 'comment', type: 'string', label: comment },
+      {
+        name: 'description', type: 'string', label: description,  
+      },
 
     ],
 
@@ -43,9 +50,13 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
-        transformResponse: data => ({
-          ...JSON.parse(data),
-        }),
+        // transformResponse: (data) => {
+        //   const newData = JSON.parse(data).map(i => ({
+        //     ...i,
+        //     description: i.description === null ? '-' : i.description,
+        //   }));
+        //   return newData;
+        // },
       },
     },
   };

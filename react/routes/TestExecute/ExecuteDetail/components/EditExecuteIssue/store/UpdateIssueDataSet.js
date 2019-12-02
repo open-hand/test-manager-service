@@ -5,7 +5,7 @@ import { getProjectId, beforeTextUpload } from '@/common/utils';
 
 const { AppState } = stores;
 
-function CreateIssueDataSet(intlPrefix, intl) {
+function UpdateIssueDataSet(intlPrefix, intl) {
     const summary = intl.formatMessage({ id: `${intlPrefix}_issueFilterBySummary` });
     const description = '描述';
     const folderId = intl.formatMessage({ id: `${intlPrefix}_folder` });
@@ -80,4 +80,4 @@ function CreateIssueDataSet(intlPrefix, intl) {
         },
     };
 }
-export default CreateIssueDataSet;
+export default UpdateIssueDataSet;

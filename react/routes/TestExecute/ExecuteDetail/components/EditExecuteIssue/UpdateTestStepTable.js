@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TestStepTable from '@/components/TestStepTable';
 
-function CreateTestStepTable(props) {
+function UpdateTestStepTable(props) {
   const { name, parentDataSet, caseId } = props;
   const [testStepData, setTestStepData] = useState([]);
   useEffect(() => {
@@ -16,4 +16,4 @@ function CreateTestStepTable(props) {
     />
   );
 }
-export default CreateTestStepTable;
+export default UpdateTestStepTable;

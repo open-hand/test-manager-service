@@ -18,7 +18,7 @@ const ExecuteHistoryTable = ({
   return (
 
     // 状态
-    <Table dataSet={dataSet}>
+    <Table dataSet={dataSet} queryBar="none">
       <Column name="user" renderer={renderUser} />
       <Column name="lastUpdateDate" />
       <Column name="field" />

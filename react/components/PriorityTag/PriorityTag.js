@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
-import { color2rgba } from '../../../../common/utils';
+import { color2rgba } from '../../common/utils';
 
 const PriorityTag = ({ style, priority }) => {
   const { colour, name } = priority;

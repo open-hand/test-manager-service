@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
-import TypeTag from '../../../IssueManage/components/TypeTag';
-import PriorityTag from '../../../IssueManage/components/PriorityTag';
-import StatusTag from '../../../IssueManage/components/StatusTag';
+import TypeTag from '../../../../components/TypeTag';
+import PriorityTag from '../../../../components/PriorityTag';
+import StatusTag from '../../../../components/StatusTag';
 import { issueLink } from '../../../../common/utils';
 
 const DefectList = ({ defects, onRemoveDefect }) => {
