@@ -5,12 +5,10 @@ import {
   WSHandler, stores,
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
-import {
-  Progress,
-  Icon, Divider,
-} from 'choerodon-ui';
+import { Progress, Divider } from 'choerodon-ui';
 import { DataSet, Form, Button } from 'choerodon-ui/pro';
 import moment from 'moment';
+import _ from 'lodash';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '@/api/FileApi';
@@ -20,6 +18,16 @@ import './ImportIssue.less';
 import SelectTree from '../SelectTree';
 
 const { AppState } = stores;
+const ImportIssueForm = (formProps) => {
+  const { title, children, bottom } = formProps;
+  return (
+    <div className="c7ntest-ImportIssue-form-one">
+      <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
+      <span className="c7ntest-ImportIssue-form-one-content">{children}</span>
+      {bottom}
+    </div>
+  );
+};
 
 function ImportIssue(props) {
   const dataSet = useMemo(() => new DataSet({
@@ -43,6 +51,21 @@ function ImportIssue(props) {
     ],
 
     transport: {
+      read: () => ({
+        url: `/test/v1/projects/${AppState.currentMenuType.id}/issueFolder/query`,
+        method: 'get',
+        transformResponse: (res) => {
+          const resObj = JSON.parse(res);
+          const newArr = resObj.treeFolder.map(item => ({
+            folder: {
+              fileName: item.name,
+              folderId: item.folderId,
+            },
+          }));
+          // console.log('read', newArr);
+          return newArr;
+        },
+      }),
       submit: ({ data }) => ({
         url: `/test/v1/projects/${AppState.currentMenuType.id}/case/download/excel/folder?organizationId=${AppState.currentMenuType.organizationId}&userId=${AppState.userInfo.id}`,
         method: 'get',
@@ -52,6 +75,7 @@ function ImportIssue(props) {
       }),
     },
   }), []);
+  const [lastRecord, setLastRecord] = useState({});
   const [importRecord, setImportRecord] = useState({});
   const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
@@ -84,7 +108,10 @@ function ImportIssue(props) {
           visibleCancelBtm: false,
         };
       case 'cancel':
-       
+        if (state.visibleCancelBtm !== false) {
+          modalProps.okProps.hidden = true;
+          modal.update(modalProps);
+        }
         return {
           visibleImportBtn: true,
           visibleCancelBtm: false,
@@ -101,7 +128,7 @@ function ImportIssue(props) {
   const { visibleImportBtn, visibleCancelBtm } = importBtn;
   const loadImportHistory = () => {
     getImportHistory().then((data) => {
-      setImportRecord(data);
+      setLastRecord(data);
     });
   };
 
@@ -138,12 +165,12 @@ function ImportIssue(props) {
   };
 
   const renderRecord = () => {
-    if (!importRecord) {
+    if (!lastRecord) {
       return '';
     }
     const {
       failedCount, fileUrl, successfulCount, lastUpdateDate,
-    } = importRecord;
+    } = lastRecord;
     if (lastUpdateDate) {
       return (
         <div className="c7ntest-ImportIssue-record-normal-text">
@@ -152,7 +179,7 @@ function ImportIssue(props) {
             {<span>{lastUpdateDate}</span>}
             {' '}
             (耗时
-            {onHumanizeDuration(importRecord)}
+            {onHumanizeDuration(lastRecord)}
             )
           </span>
           <span className="c7ntest-ImportIssue-text">
@@ -181,11 +208,12 @@ function ImportIssue(props) {
       upload(e.target.files[0]);
     }
   };
+  const debounceSetImportRecord = _.debounce(setImportRecord, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
     if (res !== 'ok') {
       const data = JSON.parse(res);
       const {
-        rate, id, status, fileUrl,
+        id, status, fileUrl,
       } = data;
       if (importRecord.status === 4 && id === importRecord.id && status !== 4) {
         return;
@@ -193,7 +221,7 @@ function ImportIssue(props) {
       if (fileUrl) {
         window.location.href = fileUrl;
       }
-      setImportRecord(data);
+      debounceSetImportRecord(data);
     }
   };
 
@@ -225,12 +253,10 @@ function ImportIssue(props) {
       }
     });
   };
-
   const renderProgress = () => {
     const {
       rate = 0,
       status,
-      lastUpdateDate,
     } = importRecord;
     if (status === 1) {
       return (
@@ -258,16 +284,7 @@ function ImportIssue(props) {
     }
     return '';
   };
-  const ImportIssueForm = (formProps) => {
-    const { title, children, bottom } = formProps;
-    return (
-      <div className="c7ntest-ImportIssue-form-one">
-        <span className="c7ntest-ImportIssue-form-one-title">{title}</span>
-        <span className="c7ntest-ImportIssue-form-one-content">{children}</span>
-        {bottom}
-      </div>
-    );
-  };
+
   useEffect(() => {
     modal.handleOk(handleCancelImport);
     if (visibleCancelBtm !== true) {
