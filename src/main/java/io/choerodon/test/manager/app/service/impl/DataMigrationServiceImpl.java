@@ -220,6 +220,21 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         List<TestVersionFixVO> collect = testVersionFixVOS.stream().filter(e -> versionIds.contains(e.getVersionId())).collect(Collectors.toList());
         List<TestPlanDTO> testPlanDTOS = collect.stream().map(this::planVOToDto).collect(Collectors.toList());
         testPlanDTOS.forEach(t->{
+            switch (t.getStatusCode()) {
+                case "version_planning":
+                    t.setStatusCode("todo");
+                    break;
+                case "released":
+                    t.setStatusCode("done");
+                    break;
+                case "archived":
+                    t.setStatusCode("done");
+                    break;
+                default:
+                    break;
+            }
+            t.setAutoSync(false);
+            t.setInitStatus("done");
             testPlanMapper.insert(t);
             fixCycle(t.getVersionId(),t.getPlanId());
         });
