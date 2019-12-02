@@ -1,5 +1,5 @@
 # Choerodon Test Manager Service
-Choerodon Test Manager Service 提供一些测试管理功能 ，主要包括工作列表、故事地图、迭代计划、问题、图表等。
+Choerodon Test Manager Service 提供一些测试管理功能 ，主要包括用例库、计划、执行、自动化、图表等。
                               
 ## Introduction
 
