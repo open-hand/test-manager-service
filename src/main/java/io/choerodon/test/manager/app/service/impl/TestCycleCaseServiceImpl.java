@@ -3,14 +3,12 @@ package io.choerodon.test.manager.app.service.impl;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -39,6 +37,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 
@@ -546,7 +545,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId) {
-        AtomicInteger total = new AtomicInteger();
+        Long total = 0L;
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         if(!ObjectUtils.isEmpty(folderId)){
@@ -561,16 +560,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testStatusDTO.setStatusType("CYCLE_CASE");
         List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
         List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, folderIds);
-        testStatusDTOS.stream().forEach(e->{
-            total.addAndGet(e.getCount().intValue());
+        for (TestStatusDTO test:testStatusDTOS) {
+            total += test.getCount();
             testStatusDTOList.forEach(status->{
-                if(e.getStatusId().equals(status.getStatusId())){
-                    status.setCount(e.getCount());
+                if(test.getStatusId().equals(status.getStatusId())){
+                    status.setCount(test.getCount());
                 }else {
                     status.setCount(0L);
                 }
             });
-        });
+        }
         List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
         }.getType());
 

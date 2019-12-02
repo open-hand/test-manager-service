@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: 25499
@@ -9,20 +8,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @description:
  */
 public class ExecutionStatusVO {
-    private AtomicInteger total;
+    private Long total;
 
     private List<TestStatusVO> statusVOList;
 
-    public ExecutionStatusVO(AtomicInteger total, List<TestStatusVO> statusVOList) {
+    public ExecutionStatusVO(Long total, List<TestStatusVO> statusVOList) {
         this.total = total;
         this.statusVOList = statusVOList;
     }
 
-    public AtomicInteger getTotal() {
+    public Long getTotal() {
         return total;
     }
 
-    public void setTotal(AtomicInteger total) {
+    public void setTotal(Long total) {
         this.total = total;
     }
 
