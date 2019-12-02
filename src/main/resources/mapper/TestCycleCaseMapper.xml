@@ -747,6 +747,15 @@ ORDER BY
            #{cycleId}
           </foreach>
     </select>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="executeId">
+      insert into test_cycle_case(cycle_id,case_id,rank,description,project_id,version_num,execution_status,created_by,last_updated_by)
+      values
+      <foreach collection="list" item="item" separator=",">
+          (#{item.cycleId},#{item.caseId},#{item.rank},#{item.description},#{item.projectId}
+          ,#{item.versionNum},#{item.executionStatus},#{item.createdBy},#{item.lastUpdatedBy})
+      </foreach>
+    </insert>
 </mapper>
 
 

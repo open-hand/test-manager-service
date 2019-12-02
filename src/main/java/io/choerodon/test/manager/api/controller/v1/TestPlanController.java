@@ -48,10 +48,18 @@ public class TestPlanController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询计划的详情")
+    @ApiOperation("修改计划时查询计划的详情")
     @GetMapping("/{plan_id}/query")
     public ResponseEntity<TestPlanVO> query(@PathVariable(name = "project_id") Long projectId,
                                                @PathVariable(name = "plan_id")Long planId){
        return new ResponseEntity<>(testPlanServcie.queryPlanInfo(projectId,planId),HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询计划的详情")
+    @GetMapping("/{plan_id}/info")
+    public ResponseEntity<TestPlanVO> queryInfo(@PathVariable(name = "project_id") Long projectId,
+                                            @PathVariable(name = "plan_id")Long planId){
+        return new ResponseEntity<>(testPlanServcie.queryPlan(projectId,planId),HttpStatus.OK);
     }
 }

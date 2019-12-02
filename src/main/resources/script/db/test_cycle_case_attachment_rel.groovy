@@ -60,5 +60,14 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         modifyDataType(tableName: 'test_cycle_case_attach_rel', columnName: 'attachment_name', newDataType: "VARCHAR(255)")
     }
 
+    changeSet(id: '2019-11-29-test-cycle-case-attach-rel-drop-index', author: 'zhaotianxin') {
+        dropIndex(tableName: 'test_cycle_case_attach_rel', indexName: 'uk_test_attachment')
+    }
+
+    changeSet(id:'2019-12-2-add-attach-key',author: 'zhaotianxin'){
+        createIndex(indexName: 'uk_attachment_type', tableName: 'test_cycle_case_attach_rel') {
+            column(name: 'attachment_type')
+        }
+    }
 
 }

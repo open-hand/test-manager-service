@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -45,6 +46,8 @@ import io.choerodon.test.manager.infra.util.PageUtil;
  */
 @Component
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
+
+    private final static double AVG_NUM = 500.00;
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -566,7 +569,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId,Long folderId, Pageable pageable, SearchDTO searchDTO) {
+    public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         if(!ObjectUtils.isEmpty(folderId)){
@@ -597,7 +600,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS) {
         List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-        // 获取case关联的步骤
+        if (CollectionUtils.isEmpty(caseIds)) {
+            return;
+        }       // 获取case关联的步骤
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
         Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
         // 获取case关联的附件
@@ -605,28 +610,18 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
         // 插入
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
-        testCaseDTOS.forEach(v -> {
-            TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
-            if (!ObjectUtils.isEmpty(testCycleDTO)) {
-                TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-                testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
-                testCycleCaseDTO.setCaseId(v.getCaseId());
-                testCycleCaseDTO.setDescription(v.getDescription());
-                testCycleCaseDTO.setProjectId(v.getProjectId());
-                testCycleCaseDTO.setVersionNum(v.getVersionNum());
-                testCycleCaseDTO.setExecutionStatus(defaultStatusId);
-                testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0, 8));
-                TestCycleCaseDTO cycleCaseDTO = baseInsert(testCycleCaseDTO);
-                // 插入循环步骤
-                if (!CollectionUtils.isEmpty(caseStepMap.get(v.getCaseId()))) {
-                    testCycleCaseStepService.batchInsert(cycleCaseDTO.getExecuteId(), caseStepMap.get(v.getCaseId()));
-                }
-                // 插入附件
-                if (!CollectionUtils.isEmpty(attachmentMap.get(v.getCaseId()))) {
-                    testCycleCaseAttachmentRelService.batchInsert(cycleCaseDTO.getExecuteId(), attachmentMap.get(v.getCaseId()));
-                }
-            }
+        List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOS, testCycleMap, defaultStatusId);
+        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM));
+
+        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
+        lists.forEach(v -> {
+            bathcInsert(v);
+            testCycleCaseDTOList.addAll(v);
         });
+        // 同步步骤
+        testCycleCaseStepService.batchInsert(testCycleCaseDTOList, caseStepMap);
+        // 同步附件
+        testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOList, attachmentMap);
     }
 
     @Override
@@ -713,11 +708,45 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseMapper::insertSelective, testCycleCaseDTO, 1, "error.insert.cycle.case");
         return testCycleCaseDTO;
     }
+
     private void queryAllFolderIds(Long folderId, Set<Long> folderIds, Map<Long, List<TestIssueFolderDTO>> folderMap) {
         folderIds.add(folderId);
         List<TestIssueFolderDTO> testIssueFolderDTOS = folderMap.get(folderId);
         if (!CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
         }
+    }
+
+    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, Map<Long, TestCycleDTO> testCycleMap, Long defaultStatusId) {
+        if (CollectionUtils.isEmpty(testCaseDTOS)) {
+            return new ArrayList<>();
+        }
+        List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
+        testCaseDTOS.forEach(v -> {
+            TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
+            if (!ObjectUtils.isEmpty(testCycleDTO)) {
+                TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+                testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
+                testCycleCaseDTO.setCaseId(v.getCaseId());
+                testCycleCaseDTO.setDescription(v.getDescription());
+                testCycleCaseDTO.setProjectId(v.getProjectId());
+                testCycleCaseDTO.setVersionNum(v.getVersionNum());
+                testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+                testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0, 8));
+                testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
+                testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
+                testCycleCaseDTO.setSummary(v.getSummary());
+                testCycleCaseDTO.setSource("none");
+                testCycleCaseDTOS.add(testCycleCaseDTO);
+            }
+        });
+        return testCycleCaseDTOS;
+    }
+
+    private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
+        if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
+            return;
+        }
+        testCycleCaseMapper.batchInsert(testCycleCaseDTOS);
     }
 }

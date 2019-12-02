@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,18 +89,30 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public void batchInsert(Long executeId, List<TestCaseAttachmentDTO> testCaseAttachmentDTOS) {
-        if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
+    public void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap) {
+        if(CollectionUtils.isEmpty(testCycleCaseDTOS)){
             return;
         }
-        testCaseAttachmentDTOS.forEach(v -> {
-            TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-            testCycleCaseAttachmentRelDTO.setAttachmentName(v.getFileName());
-            testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
-            testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
-            testCycleCaseAttachmentRelDTO.setUrl(String.format("%s%s",attachmentUrl,v.getUrl()));
-            baseInsert(testCycleCaseAttachmentRelDTO);
+        List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS = new ArrayList<>();
+        testCycleCaseDTOS.forEach(v -> {
+            List<TestCaseAttachmentDTO> attachmentDTOS = attachmentMap.get(v.getCaseId());
+            if(CollectionUtils.isEmpty(attachmentDTOS)){
+                return;
+            }
+            attachmentDTOS.forEach(attachmentDTO ->{
+                TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+                testCycleCaseAttachmentRelDTO.setAttachmentName(attachmentDTO.getFileName());
+                testCycleCaseAttachmentRelDTO.setAttachmentLinkId(v.getExecuteId());
+                testCycleCaseAttachmentRelDTO.setAttachmentType(TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
+                testCycleCaseAttachmentRelDTO.setUrl(String.format("%s%s",attachmentUrl,attachmentDTO.getUrl()));
+                testCycleCaseAttachmentRelDTO.setCreatedBy(attachmentDTO.getCreatedBy());
+                testCycleCaseAttachmentRelDTO.setLastUpdatedBy(attachmentDTO.getLastUpdatedBy());
+                attachmentRelDTOS.add(testCycleCaseAttachmentRelDTO);
+            });
         });
+        if(!CollectionUtils.isEmpty(attachmentRelDTOS)){
+            testCycleCaseAttachmentRelMapper.batchInsert(attachmentRelDTOS);
+        }
     }
 
     private void baseDelete(String bucketName, Long attachId) {
