@@ -662,27 +662,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
     }
 
-    @Override
-    public void batchDeleteByCycleIds(List<Long> needDeleteCycleIds) {
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listByCycleIds(needDeleteCycleIds);
-        List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(executeIds)){
-            return;
-        }
-        // 删除步骤
-        testCycleCaseStepMapper.batchDeleteByExecutIds(executeIds);
-        // 删除附件信息
-        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds);
-        // 删除测试执行
-        testCycleCaseMapper.batchDeleteByExecutIds(executeIds);
-        //删除关联的缺陷
-        testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
-        // 删除日志
-        testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
-    }
 
     @Override
     public void batchDeleteByExecuteIds(List<Long> executeIds) {
+        if(CollectionUtils.isEmpty(executeIds)){
+            return;
+        }
         // 删除步骤
         testCycleCaseStepMapper.batchDeleteByExecutIds(executeIds);
         // 删除附件信息

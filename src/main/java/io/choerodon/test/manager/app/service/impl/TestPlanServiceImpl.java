@@ -285,10 +285,11 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 校验case改变逻辑
         Map<Long, List<Long>> finalOldCycleCaseMap = oldCycleCaseMap;
         Map<Long, List<Long>> newCaseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
+        List<TestCycleCaseDTO> needDeleteCycleCase = testCycleCaseService.listByCycleIds(needDeleteCycleIds);
+        List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
 
         // 获取哪些文件夹下的用例有了变化
         Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
-        List<Long> executeIds = new ArrayList<>();
         List<TestCaseDTO> insertCase = new ArrayList<>();
         List<TestCycleCaseDTO> finalTestCycleCaseDTOS = testCycleCaseDTOS;
 
