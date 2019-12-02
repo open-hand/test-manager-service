@@ -309,6 +309,18 @@ function ExecuteDetailSide(props) {
                     fileList={fileList}
                   />
                 </Section>
+                {/* 问题链接 */}
+                <Section
+                  id="attachment"
+                  icon="attach_file"
+                  title="问题链接"
+                >
+                  {/* <Upload
+                    fileList={fileList}
+                    className="upload-button"
+                  /> */}
+                  
+                </Section>
 
               </div>
             </div>
