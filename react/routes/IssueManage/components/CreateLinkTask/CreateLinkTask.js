@@ -8,7 +8,7 @@ import { Select, Form, Modal } from 'choerodon-ui';
 
 import './CreateLinkTask.scss';
 import { createLink, loadIssuesInLink } from '../../../../api/IssueManageApi';
-import TypeTag from '../TypeTag';
+import TypeTag from '../../../../components/TypeTag';
 
 const { AppState } = stores;
 const { Sidebar } = Modal;

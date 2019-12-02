@@ -6,7 +6,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
   const stepStatus = intl.formatMessage({ id: 'execute_stepStatus' });
   const stepAttachment = intl.formatMessage({ id: 'attachment' });
   const defects = intl.formatMessage({ id: 'bug' });
-  const comment = intl.formatMessage({ id: 'execute_comment' });
+  const description = intl.formatMessage({ id: 'execute_comment' });
 
   return {
     autoQuery: true,
@@ -40,7 +40,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         type: 'object', 
         label: defects,
       },
-      { name: 'comment', type: 'string', label: comment },
+      {
+        name: 'description', type: 'string', label: description,  
+      },
 
     ],
 
@@ -48,9 +50,13 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
-        // transformResponse: data => ({
-        //   ...JSON.parse(data),
-        // }),
+        // transformResponse: (data) => {
+        //   const newData = JSON.parse(data).map(i => ({
+        //     ...i,
+        //     description: i.description === null ? '-' : i.description,
+        //   }));
+        //   return newData;
+        // },
       },
     },
   };

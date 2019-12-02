@@ -204,16 +204,11 @@ function ExecuteDetail(props) {
       style: {
         width: 740,
       },
-      // children: (
-      //   <EditExecuteIssue
-      //     // onOk={this.handleCreateIssue.bind(this)}
-      //     intl={intl}
-
-      //   />
-      // ),
       children: (
-        <StepTable
-          dataSet={stepTableDataSet}
+        <EditExecuteIssue
+          // onOk={this.handleCreateIssue.bind(this)}
+          intl={intl}
+
         />
       ),
       footer: (okBtn, cancelBtn) => (

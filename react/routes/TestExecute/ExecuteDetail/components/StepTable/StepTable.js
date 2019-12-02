@@ -56,7 +56,7 @@ function StepTable(props) {
   }
 
   function renderDefects({ record, value: defects }) {
-    const disabled = !!defects;
+    const disabled = defects.length !== 0;
     // return defects;
     return (
       <TextEditToggle
@@ -88,7 +88,6 @@ function StepTable(props) {
                   <div
                     style={{
                       width: 100,
-                      height: 20,
                       color: '#3f51b5',
                     }}
                   >
@@ -117,7 +116,13 @@ function StepTable(props) {
       </TextEditToggle>
     );
   }
-
+  function renderDescription({ value }) {
+    if (value) {
+      return value;
+    } else {
+      return '-';
+    }
+  }
   return (
     <Table dataSet={dataSet} queryBar="none">
       <Column name="index" renderer={renderIndex} width={80} align="left" />
@@ -126,8 +131,8 @@ function StepTable(props) {
       <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" />
       <Column name="stepStatus" width={80} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" />
-      <Column name="comment" editor align="left" tooltip="overflow" />
-      <Column name="defects" renderer={renderDefects} />
+      <Column name="description" editor align="left" tooltip="overflow" renderer={renderDescription} />
+      <Column name="defects" renderer={renderDefects} width={165} />
       <Column name="action" width={100} lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
     </Table>
   );
