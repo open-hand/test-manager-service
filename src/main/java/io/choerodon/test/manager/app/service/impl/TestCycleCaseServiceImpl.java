@@ -682,13 +682,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void batchDeleteByExecuteIds(List<Long> deleteCycleCaseIds) {
+    public void batchDeleteByExecuteIds(List<Long> executeIds) {
         // 删除步骤
-        testCycleCaseStepMapper.batchDeleteByExecutIds(deleteCycleCaseIds);
+        testCycleCaseStepMapper.batchDeleteByExecutIds(executeIds);
         // 删除附件信息
-        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(deleteCycleCaseIds);
+        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds);
         // 删除测试执行
-        testCycleCaseMapper.batchDeleteByExecutIds(deleteCycleCaseIds);
+        testCycleCaseMapper.batchDeleteByExecutIds(executeIds);
+
+        testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
+        // 删除日志
+        testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
     }
 
     @Override

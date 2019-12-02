@@ -288,7 +288,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
         // 获取哪些文件夹下的用例有了变化
         Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
-        List<Long> deleteCycleCaseIds = new ArrayList<>();
+        List<Long> executeIds = new ArrayList<>();
         List<TestCaseDTO> insertCase = new ArrayList<>();
         List<TestCycleCaseDTO> finalTestCycleCaseDTOS = testCycleCaseDTOS;
 
@@ -315,7 +315,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             List<Long> filterIds = finalTestCycleCaseDTOS.stream()
                     .filter(v -> testCycleDTO.getCycleId().equals(v.getCycleId()) && caseDeleteIds.contains(v.getCaseId()))
                     .map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-            deleteCycleCaseIds.addAll(filterIds);
+            executeIds.addAll(filterIds);
 
             // 新增测试执行
             List<TestCaseDTO> caseDTOS = allTestCase.stream().filter(v -> caseInsertIds.contains(v.getCaseId())).collect(Collectors.toList());
@@ -329,8 +329,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testCycleCaseService.batchInsertByTestCase(cycleMap, insertCase);
         }
         // 在循环下删除测试执行
-        if (!CollectionUtils.isEmpty(deleteCycleCaseIds)) {
-            testCycleCaseService.batchDeleteByExecuteIds(deleteCycleCaseIds);
+        if (!CollectionUtils.isEmpty(executeIds)) {
+            testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         }
 
 
