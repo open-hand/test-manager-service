@@ -47,10 +47,26 @@ class TestPlanTree extends Component {
   }
   
 
+  getParent = (treeFolders, folderId) => {
+    let parent;
+    for (let i = 0; i < treeFolders.length; i++) {
+      if (treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId)) {
+        parent = treeFolders[i];
+        if (parent.data.parentId) {
+          return this.getParent(treeFolders, parent.id);
+        } else {
+          return parent;
+        }
+      }
+    }
+  };
+
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
+    const { currentPlanId, treeData } = testPlanStore;
     testPlanStore.setCurrentCycle(item);
-    testPlanStore.loadExecutes();
+    const planId = (this.getParent(treeData.treeFolder, item.id) && this.getParent(treeData.treeFolder, item.id).id) || item.id;
+    testPlanStore.loadRightData(planId !== currentPlanId);
   }
 
   renderTreeNode = (node, { item }) => {
@@ -61,7 +77,6 @@ class TestPlanTree extends Component {
     } else {
       return (
         <TreeNode
-          
           item={item}
         >
           {node}

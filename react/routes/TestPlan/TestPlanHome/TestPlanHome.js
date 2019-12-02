@@ -44,6 +44,7 @@ function TestPlanHome() {
 
   const handleTabsChange = (value) => {
     testPlanStore.setTestPlanStatus(value);
+    testPlanStore.loadAllData();
   };
 
   const handleUpdateOk = () => {
@@ -162,7 +163,7 @@ function TestPlanHome() {
   }, [testPlanStore]);
 
   const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
-
+  
   return (
     <Page className={prefixCls}>
       <Header
@@ -206,38 +207,35 @@ function TestPlanHome() {
                 </div>
               </div>
               <div className={`${prefixCls}-contentWrap-right`}>
-                <Spin spinning={rightLoading}>
-                  <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                    <Icon type="insert_invitation" />
-                    <span>0.20.0版本测试计划</span>
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-right-warning`}>
-                    <Icon type="error" />
-                    <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                  </div>
-                  <div className={`${prefixCls}-contentWrap-right-card`}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                      <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
-                        <TestPlanDetailCard />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <TestPlanStatusCard />
-                      </div>
+                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                  <Icon type="insert_invitation" />
+                  <span>0.20.0版本测试计划</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-warning`}>
+                  <Icon type="error" />
+                  <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-card`}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                    <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                      <TestPlanDetailCard />
                     </div>
-                    <div className={`${prefixCls}-contentWrap-table`}>
-                      <TestPlanTable
-                        onDragEnd={onDragEnd}
-                        onTableChange={handleExecuteTableChange}                        
-                        onDeleteExecute={handleDeleteExecute}
-                        onQuickPass={handleQuickPass}
-                        onQuickFail={handleQuickFail}
-                        onAssignToChange={handleAssignToChange}
-                        onOpenUpdateRemind={handleOpenUpdateRemind}
-                      />
+                    <div style={{ flex: 1 }}>
+                      <TestPlanStatusCard />
                     </div>
                   </div>
-                </Spin>
-
+                  <div className={`${prefixCls}-contentWrap-table`}>
+                    <TestPlanTable
+                      onDragEnd={onDragEnd}
+                      onTableChange={handleExecuteTableChange}                        
+                      onDeleteExecute={handleDeleteExecute}
+                      onQuickPass={handleQuickPass}
+                      onQuickFail={handleQuickFail}
+                      onAssignToChange={handleAssignToChange}
+                      onOpenUpdateRemind={handleOpenUpdateRemind}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )

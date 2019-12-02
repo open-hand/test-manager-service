@@ -5,12 +5,17 @@ import {
 import { find } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
-
 class TestPlanTreeStore {
   @observable testPlanStatus = 'todo';
 
   @action setTestPlanStatus = (testPlanStatus) => {
     this.testPlanStatus = testPlanStatus;
+  }
+
+  @observable currentPlanId = undefined;
+
+  @action setCurrentPlanId = (currentPlanId) => {
+    this.currentPlanId = currentPlanId;
   }
 
   @observable treeData = {
@@ -86,6 +91,7 @@ class TestPlanTreeStore {
       }),
     };
     if (selectedId) {
+      this.setCurrentPlanId(selectedId);
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }

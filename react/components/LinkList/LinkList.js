@@ -3,30 +3,26 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
 import _ from 'lodash';
-import { deleteLink } from '../../../../../api/IssueManageApi';
-import PriorityTag from '../../PriorityTag';
-import StatusTag from '../../StatusTag';
-import TypeTag from '../../TypeTag';
+import PriorityTag from '../PriorityTag';
+import StatusTag from '../StatusTag';
+import TypeTag from '../TypeTag';
 import UserHead from '@/components/UserHead';
-import { issueLink } from '../../../../../common/utils';
+import { issueLink } from '@/common/utils';
 
-class LinkList extends Component {
-  confirm(issueId, e) {
-    this.handleDeleteIssue(issueId);
+function LinkList(props) {
+
+  function confirm(issueId, e) {
+    const { deleteLink } = props;
+    if (deleteLink) {
+      deleteLink();
+    }
   }
 
-  handleDeleteIssue(linkId) {
-    deleteLink(linkId)
-      .then((res) => {
-        this.props.onRefresh();
-      });
-  }
-
-  render() {
-    const { issue, i } = this.props;
+  function render() {
+    const { issue, i } = props;
     const {
       priorityVO, issueTypeVO, issueNum, summary, issueId, linkedIssueId, assigneeId, assigneeName, imageUrl,
-      linkId, ward, statusVO,
+      linkId, ward, statusVO, deleteLink,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
     const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
@@ -56,9 +52,6 @@ class LinkList extends Component {
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 0,
               }}
               role="none"
-            // onClick={() => {
-            //   this.props.onOpen(issue.issueId, issue.linkedIssueId);
-            // }}
             >
               <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
@@ -102,21 +95,25 @@ class LinkList extends Component {
             marginBottom: '5px',
           }}
         >
-          <Popconfirm
-            title="确认要删除吗?"
-            placement="left"
-            onConfirm={this.confirm.bind(this, linkId)}
-            onCancel={this.cancel}
-            okText="删除"
-            cancelText="取消"
-            okType="danger"
-          >
-            <Icon type="delete_forever mlr-3 pointer" />
-          </Popconfirm>
+          {
+            deleteLink && <Popconfirm
+              title="确认要删除吗?"
+              placement="left"
+              onConfirm={confirm.bind(this, linkId)}
+              onCancel={null}
+              okText="删除"
+              cancelText="取消"
+              okType="danger"
+            >
+              <Icon type="delete_forever mlr-3 pointer" />
+            </Popconfirm>
+          }
+
         </div>
       </div>
     );
   }
+  return render();
 }
 
 export default LinkList;

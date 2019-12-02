@@ -4,8 +4,21 @@ import {
 
 import TestPlanTreeStore from './TestPlanTreeStore'; 
 import { getStatusList } from '@/api/TestStatusApi';
-import { getIssuesByFolder } from '@/api/IssueManageApi';
+import { getExecutesByFolder, getStatusByFolder, getPlanDetail } from '@/api/TestPlanApi';
 
+const getParent = (treeFolders, folderId) => {
+  let parent;
+  for (let i = 0; i < treeFolders.length; i++) {
+    if (treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId)) {
+      parent = treeFolders[i];
+      if (parent.data.parentId) {
+        return getParent(treeFolders, parent.id);
+      } else {
+        return parent;
+      }
+    }
+  }
+};
 class TestPlanStore extends TestPlanTreeStore {
     @observable loading = true;
 
@@ -15,26 +28,6 @@ class TestPlanStore extends TestPlanTreeStore {
 
     @computed get getLoading() {
       return this.loading;
-    }
-
-    @observable dataList = [];
-
-    @action setDataList = (dataList) => {
-      this.dataList = dataList;
-    }
-
-    @computed get getDataList() {
-      return this.dataList;
-    }
-
-    @observable rightLoading = false;
-
-    @action setRightLoading = (rightLoading) => {
-      this.rightLoading = rightLoading;
-    }
-
-    @computed get getRightLoading() {
-      return this.rightLoading;
     }
 
     @observable tableLoading = false;
@@ -50,7 +43,7 @@ class TestPlanStore extends TestPlanTreeStore {
     @observable executePagination = {
       current: 1,
       total: 0,
-      pageSize: 50,
+      pageSize: 20,
     };
      
     @action setExecutePagination(executePagination) {
@@ -115,7 +108,6 @@ class TestPlanStore extends TestPlanTreeStore {
       this.currentCycle = {};  
       this.preCycle = {};
       this.dataList = [];
-      this.rightLoading = false;
       this.filter = {};
       this.executePagination = {
         current: 1,
@@ -128,6 +120,7 @@ class TestPlanStore extends TestPlanTreeStore {
         orderType: '',
       };
       this.testPlanStatus = 'todo';
+      this.currentPlanId = undefined;
     }
 
     /**
@@ -137,9 +130,21 @@ class TestPlanStore extends TestPlanTreeStore {
      */
     loadAllData = () => Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList, treeData]) => {
       this.setStatusList(statusList);
+      this.loadPlanDetail();
       this.loadExecutes();
       this.loadStatusRes();
     })
+
+    loadRightData = async (isLoadPlamDetail = false) => {
+      const promiseArr = [this.loadExecutes(), this.loadStatusRes()];
+      if (isLoadPlamDetail) {
+        promiseArr.push(this.loadPlanDetail());
+      }
+      Promise.all(promiseArr).then(() => {
+      }).catch((e) => {
+        console.log(e);
+      });
+    }
 
     /**
      * 加载测试计划的表格
@@ -149,12 +154,16 @@ class TestPlanStore extends TestPlanTreeStore {
     async loadExecutes() {
       const currentCycle = this.getCurrentCycle;
       const { executePagination, filter, order } = this;
-      const { id } = currentCycle;
+      const { id: folderId } = currentCycle;
+      const planId = (getParent(this.treeData.treeFolder, folderId) && getParent(this.treeData.treeFolder, folderId).id) || folderId;
+      this.setCurrentPlanId(planId);
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
-      this.setRightLoading(true);
-      const executes = await getIssuesByFolder(id, current, pageSize, filter, orderField, orderType);
-      this.setRightLoading(false);
+      this.setTableLoading(true);
+      const executes = await getExecutesByFolder({ 
+        planId, folderId, current, pageSize, filter, orderField, orderType, 
+      });
+      this.setTableLoading(false);
       this.setTestList(executes.list);
       this.setExecutePagination({
         current: executePagination.current,
@@ -168,8 +177,25 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    async loadStatusRes() {
+    loadStatusRes() {
+      const currentCycle = this.getCurrentCycle;
+      const { id: folderId } = currentCycle;
+      const planId = getParent(this.treeData.treeFolder, folderId) && getParent(this.treeData.treeFolder, folderId).id;
+      getStatusByFolder({ planId, folderId }).then((res) => {
+        console.log(res);
+      });
+    }
 
+    /**
+     * 获取计划详情
+     *
+     * @memberof TestPlanStore
+     */
+    loadPlanDetail() {
+      console.log(this.currentPlanId);
+      getPlanDetail(this.currentPlanId).then((res) => {
+        console.log(res);
+      });
     }
 }
 
