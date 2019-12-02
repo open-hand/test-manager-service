@@ -102,5 +102,6 @@
                 #{folderId}
             </foreach>
         </if>
+        order by tfh.last_update_date desc
     </select>
 </mapper>
