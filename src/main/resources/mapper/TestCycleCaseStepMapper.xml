@@ -225,4 +225,12 @@
          tccs.expect_result = (
             SELECT tcs.expected_result FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id)
     </update>
+
+    <delete id="batchDeleteByExecutIds">
+        delete from test_cycle_case_step where
+        execute_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </delete>
 </mapper>

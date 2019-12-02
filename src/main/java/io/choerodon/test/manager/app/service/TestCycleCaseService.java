@@ -105,4 +105,8 @@ public interface TestCycleCaseService {
      * @param cycleCaseId
      */
     void batchAssignCycleCase(Long projectId, Long userId,  List<Long> cycleCaseId);
+
+    void batchDeleteByCycleIds(List<Long> needDeleteCycleIds);
+
+    void batchDeleteByExecuteIds(List<Long> deleteCycleCaseIds);
 }

@@ -122,4 +122,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      * 批量指派执行用例
      */
     void batchAssign(@Param("assignUserId") Long assignUserId, @Param("cycleCaseIds") List<Long> cycleCaseIds);
+
+    void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
 }

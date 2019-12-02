@@ -36,6 +36,8 @@ public class TestPlanTreeVO {
     @ApiModelProperty(value = "是否自动同步")
     private Boolean isAutoSync;
 
+    private String initStatus;
+
     @ApiModelProperty(value = "文件夹树")
     private TestTreeIssueFolderVO testTreeIssueFolderVO;
 
@@ -117,5 +119,13 @@ public class TestPlanTreeVO {
 
     public void setTestTreeIssueFolderVO(TestTreeIssueFolderVO testTreeIssueFolderVO) {
         this.testTreeIssueFolderVO = testTreeIssueFolderVO;
+    }
+
+    public String getInitStatus() {
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }

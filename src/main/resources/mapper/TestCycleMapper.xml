@@ -400,4 +400,13 @@
             ,#{testCycle.createdBy},#{testCycle.type},#{testCycle.fromDate},#{testCycle.toDate},#{testCycle.versionId})
         </foreach>
     </insert>
+
+    <delete id="batchDelete">
+        delete from test_cycle
+        where
+        cycle_id in
+        <foreach collection="list" item="cycleId" open="(" close=")" separator=",">
+            #{cycleId}
+        </foreach>
+    </delete>
 </mapper>

@@ -28,6 +28,8 @@ public class TestIssueFolderVO {
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    private String initStatus;
+
     public TestIssueFolderVO() {
     }
 
@@ -120,5 +122,14 @@ public class TestIssueFolderVO {
                 ", type='" + type + '\'' +
                 ", objectVersionNumber=" + objectVersionNumber +
                 '}';
+    }
+
+    public String getInitStatus() {
+
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }

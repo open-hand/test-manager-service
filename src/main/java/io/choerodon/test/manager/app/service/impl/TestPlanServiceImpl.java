@@ -63,8 +63,15 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        testPlanVO.setProjectId(projectId);
         if (testPlanVO.getCaseHasChange()) {
             testPlanDTO.setInitStatus(TestPlanStatus.DOING.getStatus());
+        }
+        if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
+            throw new CommonException("error.update.plan");
+        }
+        if (testPlanVO.getCaseHasChange()) {
+            testPlanVO.setObjectVersionNumber(testPlanVO.getObjectVersionNumber() + 1);
             producer.apply(
                     StartSagaBuilder
                             .newBuilder()
@@ -77,9 +84,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                     builder -> {
                     });
         }
-        if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
-            throw new CommonException("error.update.plan");
-        }
+
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
     }
 
@@ -155,28 +160,30 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             root.add(v.getPlanId());
             List<Long> folderRoot = new ArrayList<>();
             List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId());
+            // 构建顶层
+            TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+            testIssueFolderVO.setProjectId(v.getProjectId());
+            testIssueFolderVO.setName(v.getName());
+            testIssueFolderVO.setFolderId(v.getPlanId());
+            testIssueFolderVO.setInitStatus(v.getInitStatus());
+            TestTreeFolderVO plantreeVO = new TestTreeFolderVO();
+            plantreeVO.setId(v.getPlanId());
+            plantreeVO.setIssueFolderVO(testIssueFolderVO);
+            plantreeVO.setChildrenLoading(false);
+            plantreeVO.setExpanded(false);
+            plantreeVO.setTopLevel(true);
             if (!CollectionUtils.isEmpty(testCycles)) {
-                // 构建顶层
-                TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-                testIssueFolderVO.setProjectId(v.getProjectId());
-                testIssueFolderVO.setName(v.getName());
-                testIssueFolderVO.setFolderId(v.getPlanId());
-                TestTreeFolderVO plantreeVO = new TestTreeFolderVO();
-                plantreeVO.setId(v.getPlanId());
-                plantreeVO.setIssueFolderVO(testIssueFolderVO);
-                plantreeVO.setChildrenLoading(false);
-                plantreeVO.setExpanded(false);
-                plantreeVO.setTopLevel(true);
                 // 构建文件夹树
                 testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getFolderId(), allFolderMap, map, parentMap));
-                if (!CollectionUtils.isEmpty(folderRoot)) {
-                    plantreeVO.setHasChildren(true);
-                    plantreeVO.setChildren(folderRoot);
-                } else {
-                    plantreeVO.setHasChildren(false);
-                }
-                planTreeList.add(plantreeVO);
             }
+            if (!CollectionUtils.isEmpty(folderRoot)) {
+                plantreeVO.setHasChildren(true);
+                plantreeVO.setChildren(folderRoot);
+            } else {
+                plantreeVO.setHasChildren(false);
+            }
+            planTreeList.add(plantreeVO);
+
         });
         // 合并、构建树
         List<TestTreeFolderVO> testTreeFolderVOS = map.values().stream().collect(Collectors.toList());
@@ -222,21 +229,116 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Override
     public void sagaUpdatePlan(TestPlanVO testPlanVO) {
-        // 查询已有的cycle的信息
+        // 查询数据库中同步的测试执行信息
         List<TestCycleDTO> oldTestCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(testPlanVO.getPlanId()));
-        Map<Long, TestCycleDTO> oldTestCycleMap = oldTestCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        List<Long> existFolderIds = oldTestCycleDTOS.stream().map(TestCycleDTO::getFolderId).collect(Collectors.toList());
+        Map<Long, TestCycleDTO> oldTestCycleMap = oldTestCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
         Map<Long, List<Long>> oldCycleCaseMap = new HashMap<>();
+        List<TestCycleCaseDTO> testCycleCaseDTOS = null;
         // 查询已有的cycle_case 的信息
         if (CollectionUtils.isEmpty(oldTestCycleDTOS)) {
             List<Long> cycleIds = oldTestCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
-            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
+            testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
             oldCycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId, Collectors.mapping(TestCycleCaseDTO::getCaseId, Collectors.toList())));
         }
 
-        // 获取当前插入的文件夹
-        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
+        // 更该计划时更新用例后的文件夹信息和用例信息
+        List<TestIssueFolderDTO> updateFolder = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
+        List<Long> allFolderIds = allTestCase.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
+        Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        // 是否自选
+        if (!testPlanVO.getCustom()) {
+            testCaseDTOS.addAll(allTestCase);
+            List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
+            updateFolder = testIssueFolderService.listFolderByFolderIds(folderIds);
+        } else {
+            createPlanCustomCase(testPlanVO, updateFolder, allTestCase, testCaseDTOS);
+        }
+        List<Long> folderIds = updateFolder.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
+
+
+        //已存在cycle 和更新的folderId,没有的删除，不存在的添加
+        List<Long> needInsert = new ArrayList<>();
+        List<Long> needDelete = new ArrayList<>();
+        List<Long> needCheck = new ArrayList<>();
+        needInsert.addAll(folderIds);
+        needDelete.addAll(existFolderIds);
+        // 需要新增的
+        needInsert.removeAll(existFolderIds);
+        // 需要删除的
+        needDelete.removeAll(folderIds);
+        // 需要验证的
+        existFolderIds.retainAll(folderIds);
+        needCheck.addAll(existFolderIds);
+
+        // 新增逻辑
+        List<TestIssueFolderDTO> needInsetFolder = updateFolder.stream().filter(v -> needInsert.contains(v.getFolderId())).collect(Collectors.toList());
+        List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(modelMapper.map(testPlanVO, TestPlanDTO.class), needInsetFolder);
+        // 创建测试循环用例
+        Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
+        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
+        // 删除逻辑
+        List<Long> needDeleteCycleIds = oldTestCycleDTOS.stream().filter(v -> needDelete.contains(v.getFolderId())).map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+        testCycleService.batchDelete(needDeleteCycleIds);
+        // 校验case改变逻辑
+        Map<Long, List<Long>> finalOldCycleCaseMap = oldCycleCaseMap;
+        Map<Long, List<Long>> newCaseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
+
+        // 获取哪些文件夹下的用例有了变化
+        Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
+        List<Long> deleteCycleCaseIds = new ArrayList<>();
+        List<TestCaseDTO> insertCase = new ArrayList<>();
+        List<TestCycleCaseDTO> finalTestCycleCaseDTOS = testCycleCaseDTOS;
+
+        needCheck.forEach(folderId -> {
+            TestCycleDTO testCycleDTO = oldTestCycleMap.get(folderId);
+            if (ObjectUtils.isEmpty(testCycleDTO)) {
+                return;
+            }
+            List<Long> existCaseIds = finalOldCycleCaseMap.get(testCycleDTO.getCycleId());
+            if (CollectionUtils.isEmpty(existCaseIds)) {
+                return;
+            }
+            List<Long> checkCase = newCaseMap.get(folderId);
+            List<Long> caseInsertIds = new ArrayList<>();
+            caseInsertIds.addAll(checkCase);
+
+            List<Long> caseDeleteIds = new ArrayList<>();
+            caseDeleteIds.addAll(existCaseIds);
+
+            caseInsertIds.removeAll(existCaseIds);
+            caseDeleteIds.removeAll(checkCase);
+
+            // 筛选将要删除的执行
+            List<Long> filterIds = finalTestCycleCaseDTOS.stream()
+                    .filter(v -> testCycleDTO.getCycleId().equals(v.getCycleId()) && caseDeleteIds.contains(v.getCaseId()))
+                    .map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+            deleteCycleCaseIds.addAll(filterIds);
+
+            // 新增测试执行
+            List<TestCaseDTO> caseDTOS = allTestCase.stream().filter(v -> caseInsertIds.contains(v.getCaseId())).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(caseDTOS)) {
+                cycleMap.put(testCycleDTO.getFolderId(), testCycleDTO);
+                insertCase.addAll(caseDTOS);
+            }
+        });
+        // 再循环下增加测试执行
+        if (!CollectionUtils.isEmpty(insertCase)) {
+            testCycleCaseService.batchInsertByTestCase(cycleMap, insertCase);
+        }
+        // 在循环下删除测试执行
+        if (!CollectionUtils.isEmpty(deleteCycleCaseIds)) {
+            testCycleCaseService.batchDeleteByExecuteIds(deleteCycleCaseIds);
+        }
+
+
+        TestPlanDTO testPlan = new TestPlanDTO();
+        testPlan.setPlanId(testPlanVO.getPlanId());
+        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
+        testPlan.setObjectVersionNumber(testPlanVO.getObjectVersionNumber());
+        baseUpdate(testPlan);
     }
 
     @Override
@@ -246,10 +348,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         TestPlanDTO testPlan = testPlanMapper.selectOne(testPlanDTO);
         TestPlanVO testPlanVO = modelMapper.map(testPlan, TestPlanVO.class);
         Long managerId = testPlan.getManagerId();
-        if(!ObjectUtils.isEmpty(managerId)){
+        if (!ObjectUtils.isEmpty(managerId)) {
             Map<Long, UserDO> query = userService.query(ArraysUtil.array(managerId));
             UserDO userDO = query.get(managerId);
-            if(!ObjectUtils.isEmpty(userDO)){
+            if (!ObjectUtils.isEmpty(userDO)) {
                 testPlanVO.setManagerUser(userDO);
             }
         }
@@ -287,23 +389,25 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testCycleDTOS.forEach(v -> {
             CaseSelectVO caseSelectVO = new CaseSelectVO();
             List<Long> folderAllCaseIds = caseMap.get(v.getFolderId());
-            List<Long> selectCase = cycleCaseMap.get(v.getCycleId());
-            if (CollectionUtils.isEmpty(folderAllCaseIds) || CollectionUtils.isEmpty(folderAllCaseIds)) {
+            if (CollectionUtils.isEmpty(folderAllCaseIds)) {
                 caseSelectMap.put(v.getFolderId(), caseSelectVO);
                 return;
             }
+            List<Long> selectCase = cycleCaseMap.get(v.getCycleId());
             // 文件夹中选中的用例包含文件夹下所有的用例,没有自选过
             if (selectCase.contains(folderAllCaseIds)) {
                 caseSelectVO.setCustom(false);
                 caseSelectMap.put(v.getFolderId(), caseSelectVO);
             } else {
-                caseSelectVO.setCustom(false);
+                caseSelectVO.setCustom(true);
                 // 如果所有用例数的一半还大于选中的用例数,则直接赋值给selected属性，相反就求差集，返回未选中的
-                if (folderAllCaseIds.size() / 2 > selectCase.size()) {
+                if (folderAllCaseIds.size() / 2 > selectCase.size() && !CollectionUtils.isEmpty(selectCase)) {
                     caseSelectVO.setSelected(selectCase);
                 } else {
                     folderAllCaseIds.removeAll(selectCase);
-                    caseSelectVO.setSelected(folderAllCaseIds);
+                    if (!CollectionUtils.isEmpty(folderAllCaseIds)) {
+                        caseSelectVO.setUnSelected(folderAllCaseIds);
+                    }
                 }
                 caseSelectMap.put(v.getFolderId(), caseSelectVO);
             }
@@ -444,4 +548,5 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
 
     }
+
 }

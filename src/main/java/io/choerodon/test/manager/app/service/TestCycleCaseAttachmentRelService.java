@@ -33,4 +33,6 @@ public interface TestCycleCaseAttachmentRelService {
     List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType);
 
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap);
+
+    void batchDeleteByExecutIds(List<Long> executeIds);
 }

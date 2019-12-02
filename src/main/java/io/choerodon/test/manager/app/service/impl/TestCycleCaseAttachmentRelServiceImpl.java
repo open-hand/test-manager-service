@@ -115,6 +115,11 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         }
     }
 
+    @Override
+    public void batchDeleteByExecutIds(List<Long> executeIds) {
+        testCycleCaseAttachmentRelMapper.batchDeleteByExecutIds(executeIds);
+    }
+
     private void baseDelete(String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setId(attachId);
