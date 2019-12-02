@@ -39,7 +39,7 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
-    treeData, loading, rightLoading, checkIdMap, testList, testPlanStatus,
+    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
