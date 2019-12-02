@@ -29,6 +29,8 @@ public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
 
     List<TestCycleCaseStepDTO> querListByexecuteId(@Param("executeId") Long executeId);
 
+    void batchDelete(@Param("executeStepIds") List<Long> executeStepIds);
+
     void fixCycleCaseStep();
 
     void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);

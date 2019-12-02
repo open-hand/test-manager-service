@@ -77,6 +77,12 @@ public interface TestCycleCaseService {
      */
     void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS);
 
+    /**
+     * 查看测试执行的详情
+     * @param projectId
+     * @param executeId
+     * @return
+     */
     TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
 
 
@@ -89,7 +95,7 @@ public interface TestCycleCaseService {
      */
     ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId);
 
-    TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+    void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
 
     PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
 

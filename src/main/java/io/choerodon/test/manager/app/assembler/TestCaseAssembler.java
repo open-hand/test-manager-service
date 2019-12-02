@@ -175,7 +175,7 @@ public class TestCaseAssembler {
         testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseDTO.getProjectId(), testCycleCaseDTO.getCaseId()));
         // 查询用例信息
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
-        testCycleCaseInfoVO.setCaseNum(testCaseDTO.getCaseNum());
+        testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         return testCycleCaseInfoVO;
     }
 }

@@ -8,7 +8,6 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.checkerframework.checker.units.qual.C;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,6 +113,16 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
+    public void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
+        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(testCycleCaseStepDTOS);
+    }
+
+    @Override
+    public void batchDelete(List<Long> executeStepIds) {
+        testCycleCaseStepMapper.batchDelete(executeStepIds);
+    }
+
+    @Override
     public void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOList, Map<Long, List<TestCaseStepDTO>> caseStepMap) {
         if (CollectionUtils.isEmpty(testCycleCaseDTOList)) {
             return;
@@ -142,15 +151,16 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteStepId(executeStepId);
        if(testCycleCaseStepMapper.delete(testCycleCaseStepDTO)!=1){
-           throw new CommonException("error delete step");
+           throw new CommonException("error.delete.cycle.step");
        }
     }
 
     @Override
-    public void create(List<TestCycleCaseStepVO> testCycleCaseStepVO) {
+    public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
+        testCycleCaseStepDTO.setStepStatus(4L);
         if(testCycleCaseStepMapper.insert(testCycleCaseStepDTO)!=1){
-            throw new CommonException("error insert step");
+            throw new CommonException("error.insert.cycle.step");
         }
     }
 
