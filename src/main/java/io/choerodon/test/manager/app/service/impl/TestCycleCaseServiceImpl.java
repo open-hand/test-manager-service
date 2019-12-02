@@ -544,7 +544,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId) {
+    public ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId) {
         Long total = 0L;
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
@@ -642,6 +642,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseStepService.batchInsert(testCycleCaseDTOList, caseStepMap);
         // 同步附件
         testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOList, attachmentMap);
+    }
+
+    @Override
+    public void batchAssignCycleCase(Long projectId, Long userId, List<Long> cycleCaseId) {
+        if(CollectionUtils.isEmpty(cycleCaseId)){
+            throw new CommonException("error cycleCase id is null ");
+        }
+        testCycleCaseMapper.batchAssign(userId,cycleCaseId);
     }
 
     @Override

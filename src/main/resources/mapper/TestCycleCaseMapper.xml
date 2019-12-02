@@ -5,13 +5,13 @@
     <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO" id="BaseResultMap">
         <id column="execute_id" property="executeId"/>
         <id column="cycle_id" property="cycleId"/>
-        <id column="issue_id" property="issueId"/>
+        <id column="issue_id" property="caseId"/>
         <id column="rank" property="rank"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="execution_status" property="executionStatus"/>
         <id column="status_name" property="executionStatusName"/>
         <id column="assigned_to" property="assignedTo"/>
-        <id column="description" property="comment"/>
+        <id column="description" property="description"/>
         <id column="cycle_name" property="cycleName"/>
         <id column="folder_name" property="folderName"/>
         <id column="version_id" property="versionId"/>
@@ -38,7 +38,7 @@
         </collection>
         <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
             <id column="step_id" property="stepId"/>
-            <id column="comment" property="description"/>
+            <id column="description" property="description"/>
             <id column="step_status_name" property="statusName"/>
             <id column="test_step" property="testStep"/>
             <id column="test_data" property="testData"/>
@@ -47,7 +47,7 @@
     </resultMap>
 
     <select id="filter" resultMap="BaseResultMap">
-        SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.case_id,cycle.rank,cycle.object_version_number,
         cycle.execution_status,cycle.assigned_to,cycle.description,cycle.last_update_date,cycle.last_updated_by,
         defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id
         FROM test_cycle_case cycle
@@ -69,7 +69,7 @@
         SELECT
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         cycle.execution_status,
@@ -105,8 +105,8 @@
         FROM
         test_cycle_case
         <where>
-            <if test="dto!=null and dto.issueId != null">
-                AND issue_id = #{dto.issueId}
+            <if test="dto!=null and dto.caseId != null">
+                AND issue_id = #{dto.caseId}
             </if>
             <if test="dto!=null and dto.cycleId != null">
                 AND cycle_id = #{dto.cycleId}
@@ -117,8 +117,8 @@
             <if test="dto!=null and dto.executionStatus != null">
                 AND execution_status = #{dto.executionStatus}
             </if>
-            <if test="dto!=null and dto.comment != null">
-                AND description like CONCAT(CONCAT('%', #{dto.comment}), '%')
+            <if test="dto!=null and dto.description != null">
+                AND description like CONCAT(CONCAT('%', #{dto.description}), '%')
             </if>
             <if test="dto!=null and dto.assignedTo != null">
                 AND assigned_to = #{dto.assignedTo}
@@ -154,7 +154,7 @@
         SELECT
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         cycle.execution_status,
@@ -177,8 +177,8 @@
         FROM
         ( SELECT * FROM test_cycle_case
         <where>
-            <if test="dto!=null and dto.issueId != null">
-                AND issue_id = #{dto.issueId}
+            <if test="dto!=null and dto.caseId != null">
+                AND issue_id = #{dto.caseId}
             </if>
             <if test="dto!=null and dto.cycleId != null">
                 AND cycle_id = #{dto.cycleId}
@@ -192,8 +192,8 @@
             <if test="dto!=null and dto.executionStatus != null">
                 AND execution_status = #{dto.executionStatus}
             </if>
-            <if test="dto!=null and dto.comment != null">
-                AND description like CONCAT(CONCAT('%', #{dto.comment}), '%')
+            <if test="dto!=null and dto.description != null">
+                AND description like CONCAT(CONCAT('%', #{dto.description}), '%')
             </if>
             <if test="dto!=null and dto.assignedTo != null">
                 AND assigned_to = #{dto.assignedTo}
@@ -222,7 +222,7 @@
         rCycle.cycle_name,
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         cycle.execution_status,
@@ -254,8 +254,8 @@
             <if test="!dtos.isEmpty and dtos.get(0).executionStatus != null">
                 AND execution_status = #{dtos[0].executionStatus}
             </if>
-            <if test="!dtos.isEmpty and dtos.get(0).comment != null">
-                AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
+            <if test="!dtos.isEmpty and dtos.get(0).description != null">
+                AND description like CONCAT(CONCAT('%', #{dtos[0].description}), '%')
             </if>
         </where>
         <if test="sort != null">
@@ -277,7 +277,7 @@
         rCycle.cycle_name,
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         cycle.execution_status,
@@ -318,8 +318,8 @@
             <if test="!dtos.isEmpty and dtos.get(0).executionStatus != null">
                 AND execution_status = #{dtos[0].executionStatus}
             </if>
-            <if test="!dtos.isEmpty and dtos.get(0).comment != null">
-                AND description like CONCAT(CONCAT('%', #{dtos[0].comment}), '%')
+            <if test="!dtos.isEmpty and dtos.get(0).description != null">
+                AND description like CONCAT(CONCAT('%', #{dtos[0].description}), '%')
             </if>
         </where>
         order by cycle_id
@@ -344,8 +344,8 @@
     <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">
         SELECT count(execute_id) FROM test_cycle_case
         <where>
-            <if test="dto!=null and dto.issueId != null">
-                AND issue_id = #{dto.issueId}
+            <if test="dto!=null and dto.caseId != null">
+                AND issue_id = #{dto.caseId}
             </if>
             <if test="dto!=null and dto.cycleId != null">
                 AND cycle_id = #{dto.cycleId}
@@ -356,8 +356,8 @@
             <if test="dto!=null and dto.executionStatus != null">
                 AND execution_status = #{dto.executionStatus}
             </if>
-            <if test="dto!=null and dto.comment != null">
-                AND description like CONCAT(CONCAT('%', #{dto.comment}), '%')
+            <if test="dto!=null and dto.description != null">
+                AND description like CONCAT(CONCAT('%', #{dto.description}), '%')
             </if>
             <if test="dto!=null and dto.assignedTo != null">
                 AND assigned_to = #{dto.assignedTo}
@@ -371,7 +371,7 @@
         </where>
     </select>
     <select id="queryByIssue" resultMap="BaseResultMap">
-                SELECT cycle.execute_id,cycle.cycle_id,cycle.issue_id,cycle.rank,cycle.object_version_number,
+                SELECT cycle.execute_id,cycle.cycle_id,cycle.case_id,cycle.rank,cycle.object_version_number,
         defect.defect_type,defect.id defece_id,defect.defect_link_id,defect.issue_id defect_issue_id,
         cycle.execution_status,cycle.assigned_to,cycle.description,cycle.last_update_date,cycle.last_updated_by,
         case cycle1.type
@@ -385,14 +385,14 @@
         left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
         left join test_cycle_case_defect_rel defect
         on cycle.execute_id=defect.defect_link_id and defect.defect_type='CYCLE_CASE'
-        where cycle.issue_id=#{issueId}
+        where cycle.case_id=#{caseId}
     </select>
 
     <select id="queryCaseAllInfoInCyclesOrVersions" resultMap="BaseResultMap">
         SELECT
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         cycle.execution_status,
@@ -486,7 +486,7 @@
         <id column="execution_status" property="executionStatus"/>
         <id column="status_name" property="executionStatusName"/>
         <id column="assigned_to" property="assignedTo"/>
-        <id column="description" property="comment"/>
+        <id column="description" property="description"/>
         <id column="cycle_name" property="cycleName"/>
         <id column="folder_name" property="folderName"/>
         <id column="last_update_date" property="lastUpdateDate"/>
@@ -513,7 +513,7 @@
         SELECT
         cycle.execute_id,
         cycle.cycle_id,
-        cycle.issue_id,
+        cycle.case_id,
         cycle.rank,
         cycle.object_version_number,
         defect.defect_type,
@@ -546,7 +546,7 @@
         AND defect.defect_type = 'CYCLE_CASE'
         LEFT JOIN ( SELECT execute_id, id, defect_type, defect_link_id, issue_id FROM test_cycle_case_step INNER JOIN test_cycle_case_defect_rel ON execute_step_id = defect_link_id AND defect_type = 'CASE_STEP' ) step ON step.execute_id = cycle.execute_id
         WHERE
-        cycle.issue_id IN
+        cycle.case_id IN
         <foreach item="item" index="index" collection="ids"
                  open="(" separator="," close=")">
             #{item}
@@ -554,7 +554,7 @@
     </select>
 
     <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
-        SELECT cycle.execute_id,cycle.cycle_id,cycle.execution_status,cycle1.cycle_name,cycle.issue_id
+        SELECT cycle.execute_id,cycle.cycle_id,cycle.execution_status,cycle1.cycle_name,cycle.case_id
         FROM test_cycle_case cycle
         left join test_cycle cycle1 on cycle1.cycle_id=cycle.cycle_id
         where cycle.execute_id in
@@ -761,6 +761,15 @@ ORDER BY
           ,#{item.versionNum},#{item.executionStatus},#{item.createdBy},#{item.lastUpdatedBy})
       </foreach>
     </insert>
+    <update id="batchAssign">
+        update test_cycle_case
+        set assigned_to =#{assignUserId}
+        where execute_id IN
+        <foreach item="caseId" index="index" collection="cycleCaseIds"
+                 open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </update>
 </mapper>
 
 

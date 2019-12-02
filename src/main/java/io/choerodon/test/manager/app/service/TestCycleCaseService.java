@@ -80,7 +80,14 @@ public interface TestCycleCaseService {
     TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
 
 
-    ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId);
+    /**
+     * 查看执行状态总览
+     * @param projectId
+     * @param planId
+     * @param folderId
+     * @return
+     */
+    ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId);
 
     TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
 
@@ -90,4 +97,12 @@ public interface TestCycleCaseService {
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);
 
     void baseUpdate(TestCycleCaseDTO testCycleCaseDTO);
+
+    /**
+     * 批量指派执行用例
+     * @param projectId
+     * @param userId
+     * @param cycleCaseId
+     */
+    void batchAssignCycleCase(Long projectId, Long userId,  List<Long> cycleCaseId);
 }
