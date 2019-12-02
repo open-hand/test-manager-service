@@ -1,6 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
-import { Menu } from 'choerodon-ui';
+import { Menu, Icon } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
@@ -72,7 +72,6 @@ class TestPlanTree extends Component {
   }
 
   renderTreeNode = (node, { item }) => {
-    console.log(node);
     if (item.data.parentId) {
       return (
         node
@@ -81,6 +80,7 @@ class TestPlanTree extends Component {
       return (
         <TreeNode
           item={item}
+          nodeProps={node.props}
         >
           {node}
         </TreeNode>
@@ -120,6 +120,7 @@ class TestPlanTree extends Component {
                  删除
                 </Menu.Item>,
               ],
+              getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
             }
           }
           onMenuClick={(key, nodeItem) => {
