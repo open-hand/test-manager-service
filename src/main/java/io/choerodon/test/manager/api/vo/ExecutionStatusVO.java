@@ -1,27 +1,36 @@
 package io.choerodon.test.manager.api.vo;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author: 25499
  * @date: 2019/11/28 8:49
  * @description:
  */
 public class ExecutionStatusVO {
-    private String StatusName;
-    private Long count;
+    private AtomicInteger total;
 
-    public String getStatusName() {
-        return StatusName;
+    private List<TestStatusVO> statusVOList;
+
+    public ExecutionStatusVO(AtomicInteger total, List<TestStatusVO> statusVOList) {
+        this.total = total;
+        this.statusVOList = statusVOList;
     }
 
-    public void setStatusName(String statusName) {
-        StatusName = statusName;
+    public AtomicInteger getTotal() {
+        return total;
     }
 
-    public Long getCount() {
-        return count;
+    public void setTotal(AtomicInteger total) {
+        this.total = total;
     }
 
-    public void setCount(Long count) {
-        this.count = count;
+    public List<TestStatusVO> getStatusVOList() {
+        return statusVOList;
+    }
+
+    public void setStatusVOList(List<TestStatusVO> statusVOList) {
+        this.statusVOList = statusVOList;
     }
 }

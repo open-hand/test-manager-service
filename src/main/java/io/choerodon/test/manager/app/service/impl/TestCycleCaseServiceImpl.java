@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -544,16 +545,36 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<ExecutionStatusVO> queryStepStatus(Long projectId,Long planId,Long folderId) {
+    public ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId) {
+        AtomicInteger total = new AtomicInteger();
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-        testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
-        queryAllFolderIds(folderId, folderIds, folderMap);
+        if(!ObjectUtils.isEmpty(folderId)){
+            TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+            testIssueFolder.setProjectId(projectId);
+            Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+            queryAllFolderIds(folderId, folderIds, folderMap);
+        }
         // 查询文件夹下的的用例
-        return testCycleCaseMapper.queryExecutionStatus(planId,folderId);
+        TestStatusDTO testStatusDTO = new TestStatusDTO();
+        testStatusDTO.setProjectId(projectId);
+        testStatusDTO.setStatusType("CYCLE_CASE");
+        List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
+        List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, folderIds);
+        testStatusDTOS.stream().forEach(e->{
+            total.addAndGet(e.getCount().intValue());
+            testStatusDTOList.forEach(status->{
+                if(e.getStatusId().equals(status.getStatusId())){
+                    status.setCount(e.getCount());
+                }else {
+                    status.setCount(0L);
+                }
+            });
+        });
+        List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
+        }.getType());
 
+        return new ExecutionStatusVO(total,testStatusVOList);
     }
 
     @Override

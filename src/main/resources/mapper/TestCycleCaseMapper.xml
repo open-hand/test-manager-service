@@ -657,8 +657,9 @@ ORDER BY
             tcc.execute_id = #{executeId};
     </select>
 
-    <select id="queryExecutionStatus" resultType="io.choerodon.test.manager.api.vo.ExecutionStatusVO">
+    <select id="queryExecutionStatus" resultType="io.choerodon.test.manager.infra.dto.TestStatusDTO">
         SELECT
+             ts.status_id statusId,
             ts.status_name statusName,
             count(execution_status) count
         FROM
@@ -669,8 +670,12 @@ ORDER BY
         <if test="planId!=null" >
             tc.plan_id = #{planId}
         </if>
-        <if test="folderId!=null" >
-            tc.folder_id = #{folderId}
+        <if test="folderIds !=null and folderIds.size>0">
+            AND tc.folder_id IN
+            <foreach item="folderId" index="index" collection="folderIds"
+                     open="(" separator="," close=")">
+                #{folderId}
+            </foreach>
         </if>
         GROUP BY
             tcc.execution_status;
