@@ -110,7 +110,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 attachmentRelDTOS.add(testCycleCaseAttachmentRelDTO);
             });
         });
-        testCycleCaseAttachmentRelMapper.batchInsert(attachmentRelDTOS);
+        if(!CollectionUtils.isEmpty(attachmentRelDTOS)){
+            testCycleCaseAttachmentRelMapper.batchInsert(attachmentRelDTOS);
+        }
     }
 
     private void baseDelete(String bucketName, Long attachId) {

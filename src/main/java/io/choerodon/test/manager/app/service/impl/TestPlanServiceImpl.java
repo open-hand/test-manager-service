@@ -191,7 +191,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Override
     public void sagaCreatePlan(TestPlanVO testPlanVO) {
-        List<TestIssueFolderDTO> testIssueFolderDTOS = null;
+        List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
         // 是否自选
@@ -393,14 +393,14 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     private void createPlanCustomCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS, List<TestCaseDTO> allTestCase, List<TestCaseDTO> testCaseDTOS) {
         Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
         List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
-        testIssueFolderDTOS = testIssueFolderService.listFolderByFolderIds(folderIds);
+        testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(folderIds));
         Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
         List<Long> caseIds = new ArrayList<>();
         for (Long key : maps.keySet()) {
             CaseSelectVO caseSelectVO = maps.get(key);
             // 判断是否是自选
             if (!caseSelectVO.getCustom()) {
-                if (CollectionUtils.isEmpty(caseMap.get(key))) {
+                if (!CollectionUtils.isEmpty(caseMap.get(key))) {
                     testCaseDTOS.addAll(caseMap.get(key));
                 }
             } else {
@@ -409,7 +409,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                     // 反选就
                     List<Long> unSelected = caseSelectVO.getUnSelected();
                     // 获取文件夹所有的测试用例
-                    List<Long> allList = caseMap.get(key).stream().filter(v -> ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                    List<Long> allList = caseMap.get(key).stream().filter(v -> !ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
                     allList.removeAll(unSelected);
                     caseIds.addAll(allList);
                 } else {

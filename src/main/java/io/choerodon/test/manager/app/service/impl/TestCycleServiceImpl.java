@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
 
@@ -817,6 +818,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
     @Override
     public List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO,List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        if(CollectionUtils.isEmpty(testIssueFolderDTOS)){
+        return new ArrayList<>();
+        }
         List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
         testIssueFolderDTOS.forEach(v -> {
             TestCycleDTO testCycleDTO = new TestCycleDTO();
