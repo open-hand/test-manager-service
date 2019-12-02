@@ -735,6 +735,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0, 8));
                 testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
+                testCycleCaseDTO.setSummary(v.getSummary());
+                testCycleCaseDTO.setSource("none");
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
         });

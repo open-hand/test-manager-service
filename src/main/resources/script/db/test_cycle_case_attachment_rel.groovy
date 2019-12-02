@@ -64,4 +64,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         dropIndex(tableName: 'test_cycle_case_attach_rel', indexName: 'uk_test_attachment')
     }
 
+    changeSet(id:'2019-12-2-add-attach-key',author: 'zhaotianxin'){
+        createIndex(indexName: 'uk_attachment_type', tableName: 'test_cycle_case_attach_rel', unique: false) {
+            column(name: 'attachment_type')
+        }
+    }
+
 }
