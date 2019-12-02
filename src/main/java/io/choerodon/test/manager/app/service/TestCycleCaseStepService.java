@@ -2,6 +2,9 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
+import com.github.pagehelper.PageInfo;
+import org.springframework.data.domain.Pageable;
+
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 
@@ -29,9 +32,24 @@ public interface TestCycleCaseStepService {
     List<TestCycleCaseStepVO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
 
     /**
+     * 查询用例下的步骤
+     * @param CycleCaseId
+     * @param projectId
+     * @return
+     */
+    PageInfo<TestCycleCaseStepVO> queryCaseStep(Long CycleCaseId, Long projectId, Pageable pageable);
+
+    /**
      * 将测试用例步骤 转为执行步骤
+     *
      * @param executeId
      * @param testCaseStepDTOS
      */
     void batchInsert(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS);
+
+    void batchUpdate(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS );
+
+    void delete(Long executeStepId);
+
+    void create(List<TestCycleCaseStepVO> testCycleCaseStepVO);
 }

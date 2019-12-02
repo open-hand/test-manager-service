@@ -171,6 +171,9 @@ public class TestCaseAssembler {
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
+        // 用例的问题链接
+        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseDTO.getProjectId(), testCycleCaseDTO.getCaseId()));
+        // 查询附件信息
         return testCycleCaseInfoVO;
     }
 }

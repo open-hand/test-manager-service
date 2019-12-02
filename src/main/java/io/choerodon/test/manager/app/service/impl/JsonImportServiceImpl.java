@@ -342,7 +342,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         for (int i = 0; i < allTestCycleCases.size(); i++) {
             Long issueId = issueFolderRels.get(i).getIssueId();
             allTestCycleCases.get(i).setIssueId(issueId);
-            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setIssueId(issueId));
+            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setCaseId(issueId));
             List<TestCaseStepDTO> testCaseStepEs = queryAllStepsUnderIssue(issueId);
             if (allTestCycleCases.get(i).getCycleCaseStep().size() != testCaseStepEs.size()) {
                 logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
@@ -675,7 +675,7 @@ public class JsonImportServiceImpl implements JsonImportService {
                     testCycleCaseSteps.add(cycleCaseStepE);
                     if (issueDTO != null) {
                         testCaseStepE.setIssueId(issueDTO.getIssueId());
-                        cycleCaseStepE.setIssueId(issueDTO.getIssueId());
+                        cycleCaseStepE.setCaseId(issueDTO.getIssueId());
                     }
                 }
             }
@@ -794,7 +794,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         if (!"通过".equals(targetStatusE.getStatusName())) {
             JSONObject err = element.getJSONObject("err");
             if (err != null) {
-                testCycleCaseStepE.setComment(err.getString("message"));
+                testCycleCaseStepE.setDescription(err.getString("message"));
             }
         }
 
@@ -861,7 +861,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
             testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
             testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
-            testCycleCaseStepE.setComment(testNgCase.getExceptionMessage());
+            testCycleCaseStepE.setDescription(testNgCase.getExceptionMessage());
             //查询状态
             TestStatusDTO stepStatusE = new TestStatusDTO();
             stepStatusE.setProjectId(0L);
@@ -872,7 +872,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
             if (issueDTO != null) {
                 testCaseStepE.setIssueId(issueDTO.getIssueId());
-                testCycleCaseStepE.setIssueId(issueDTO.getIssueId());
+                testCycleCaseStepE.setCaseId(issueDTO.getIssueId());
             }
             testCaseSteps.add(testCaseStepE);
             testCycleCaseSteps.add(testCycleCaseStepE);

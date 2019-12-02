@@ -59,7 +59,7 @@ public class DefectReporterFormVO {
         }
 
         for (TestCycleCaseStepVO stepE : testCycleCaseStepES) {
-            stepE.setIssueInfosVO(infos.get(stepE.getIssueId()));
+            stepE.setIssueInfosVO(infos.get(stepE.getCaseId()));
         }
     }
 
@@ -79,7 +79,7 @@ public class DefectReporterFormVO {
 
         for (TestCycleCaseStepVO stepE : testCycleCaseStepES) {
             for (IssueLinkDTO link : issueLinkDTOS) {
-                if (stepE.getIssueId().equals(link.getIssueId())) {
+                if (stepE.getCaseId().equals(link.getIssueId())) {
                     stepE.addIssueLinkDTOS(link);
                 }
             }

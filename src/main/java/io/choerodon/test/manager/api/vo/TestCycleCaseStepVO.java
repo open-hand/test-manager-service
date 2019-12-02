@@ -23,7 +23,7 @@ public class TestCycleCaseStepVO {
     private Long stepId;
 
     @ApiModelProperty(value = "描述")
-    private String comment;
+    private String description;
 
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
@@ -50,7 +50,7 @@ public class TestCycleCaseStepVO {
     private List<TestCycleCaseAttachmentRelVO> stepAttachment;
 
     @ApiModelProperty(value = "用例issueID")
-    private Long issueId;
+    private Long caseId;
 
     @ApiModelProperty(value = "缺陷DTOList")
     private List<TestCycleCaseDefectRelVO> defects;
@@ -143,12 +143,12 @@ public class TestCycleCaseStepVO {
         this.stepId = stepId;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getObjectVersionNumber() {
@@ -176,12 +176,12 @@ public class TestCycleCaseStepVO {
         return defects;
     }
 
-    public Long getIssueId() {
-        return issueId;
+    public Long getCaseId() {
+        return caseId;
     }
 
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 
     public Long getStepStatus() {
