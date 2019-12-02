@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, {
+  useEffect, useState, useContext, useMemo, 
+} from 'react';
 import {
   toJS,
 } from 'mobx';
@@ -6,12 +8,18 @@ import { observer } from 'mobx-react-lite';
 import {
   Input, Icon, Spin, Tree,
 } from 'choerodon-ui';
+import { DataSet } from 'choerodon-ui/pro';
 import _ from 'lodash';
 import UpdateContent from './component/UpdateContent';
 import './UpdateRemindModalChildren.less';
+import UpdateStepTableDataSet from '../../stores/UpdateStepTableDataSet';
+
+const prefix = 'c7ntest-testPlan-updateRemind';
     
 const UpdateRemindModalChildren = (props) => {
-  const { testPlanStore, oldStepTableDataSet, newStepTableDataSet } = props;
+  const { testPlanStore } = props;
+  const oldStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: testPlanStore.executeOldData.stepData })), [testPlanStore.executeOldData.stepData]);
+  const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: testPlanStore.executeNewData.stepData })), [testPlanStore.executeNewData.stepData]);
 
   const getUpdateContent = () => {
 
@@ -22,23 +30,23 @@ const UpdateRemindModalChildren = (props) => {
   }, []);
 
   return (
-    <div className="c7ntest-testPlan-updateRemind-modal-children">
-      <div className="c7ntest-testPlan-updateRemind-item">
-        <span className="c7ntest-testPlan-updateRemind-item-field">更新人</span>
-        <span className="c7ntest-testPlan-updateRemind-item-value">李文斐</span>
+    <div className={`${prefix}-modal-children`}>
+      <div className={`${prefix}-item`}>
+        <span className={`${prefix}-item-field`}>更新人</span>
+        <span className={`${prefix}-item-value`}>李文斐</span>
       </div>
-      <div className="c7ntest-testPlan-updateRemind-item">
-        <span className="c7ntest-testPlan-updateRemind-item-field">更新时间</span>
-        <span className="c7ntest-testPlan-updateRemind-item-value">2019-11-05 10:30:00</span>
+      <div className={`${prefix}-item`}>
+        <span className={`${prefix}-item-field`}>更新时间</span>
+        <span className={`${prefix}-item-value`}>2019-11-05 10:30:00</span>
       </div>
-      <div className="c7ntest-testPlan-updateRemind-updateContent">
-        <span className="c7ntest-testPlan-updateRemind-updateContent-span">变更内容</span>
-        <div className="c7ntest-testPlan-updateRemind-updateContent-div">
+      <div className={`${prefix}-updateContent`}>
+        <span className={`${prefix}-updateContent-span`}>变更内容</span>
+        <div className={`${prefix}-updateContent-div`}>
           <UpdateContent tag="old" updateData={{}} dataSet={oldStepTableDataSet} />
-          <div className="c7ntest-testPlan-updateRemind-updateContent-div-icon">
+          <div className={`${prefix}-updateContent-div-icon`}>
             <Icon type="arrow_forward" />
           </div>
-          <UpdateContent tag="new" updateData={{}} dataSet={oldStepTableDataSet} />
+          <UpdateContent tag="new" updateData={{}} dataSet={newStepTableDataSet} />
         </div>
       </div>
     </div>

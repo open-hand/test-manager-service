@@ -2,16 +2,19 @@ import React, { PureComponent } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes, { func } from 'prop-types';
 import {
-  Input, Icon, Select, Tooltip, Button,
+  Input, Icon, Select, Tooltip,
 } from 'choerodon-ui';
+import { Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Table } from 'choerodon-ui/pro';
 
 import './StepTable.less';
-import { UploadInTable } from '../../../../../components';
+import {
+  TextEditToggle, UploadInTable, DefectSelect, StatusTags,
+} from '../../../../../components';
 
-
+const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
 function StepTable(props) {
   const { dataSet } = props;
@@ -22,14 +25,14 @@ function StepTable(props) {
 
   function renderAction({ record }) {
     return (
-      <div style={{ display: 'flex' }}>
+      <React.Fragment>
         <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-          <Button disabled={false} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, 'success', record)} />
+          <Button key="pass" disabled={false} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, 'success', record)} />
         </Tooltip>
         <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-          <Button disabled={false} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, 'fail', record)} />
+          <Button key="fail" disabled={false} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, 'fail', record)} />
         </Tooltip>
-      </div>
+      </React.Fragment>
     );
   }
   function renderIndex({ record }) {
@@ -51,17 +54,81 @@ function StepTable(props) {
       />
     );
   }
+
+  function renderDefects({ record, value: defects }) {
+    const disabled = !!defects;
+    // return defects;
+    return (
+      <TextEditToggle
+        noButton
+        // saveRef={(bugsToggle) => { this[`bugsToggle_${record.get('id')}`] = bugsToggle; }}
+        onSubmit={() => {
+        }}
+        originData={{ defects }}
+      >
+        <Text>
+          {
+            // eslint-disable-next-line no-nested-ternary
+            defects.length > 0 ? (
+              <div>
+                {defects.map((defect, i) => (
+                  <div
+                    // key={defect.id}
+                    style={{
+                      fontSize: '13px',
+                    }}
+                  >
+                    {defect}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              disabled
+                ? null : (
+                  <div
+                    style={{
+                      width: 100,
+                      height: 20,
+                      color: '#3f51b5',
+                    }}
+                  >
+                      添加缺陷
+                  </div>
+                )
+            )
+          }
+        </Text>
+        <Edit>
+          <div onScroll={(e) => {
+            e.stopPropagation();
+          }}
+          >
+            <DefectSelect
+              defaultOpen
+              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-card-title')[0]}
+              defects={defects}
+              // setNeedAdd={(needAdd) => { that.needAdd = needAdd; }}
+              executeStepId={record.executeStepId}
+            // bugsToggleRef={this[`bugsToggle_${record.stepId}`]}
+            />
+          </div>
+        </Edit>
+
+      </TextEditToggle>
+    );
+  }
+
   return (
-    <Table dataSet={dataSet}>
+    <Table dataSet={dataSet} queryBar="none">
       <Column name="index" renderer={renderIndex} width={80} align="left" />
-      <Column name="testStep" align="left" minWidth={200} />
-      <Column name="testData" align="left" minWidth={120} />
-      <Column name="expectedResult" align="left" minWidth={150} />
+      <Column name="testStep" align="left" minWidth={200} tooltip="overflow" />
+      <Column name="testData" align="left" minWidth={120} tooltip="overflow" />
+      <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" />
       <Column name="stepStatus" width={80} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" />
-      <Column name="comment" editor align="left" />
-      <Column name="defects" editor />
-      <Column name="action" lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
+      <Column name="comment" editor align="left" tooltip="overflow" />
+      <Column name="defects" renderer={renderDefects} />
+      <Column name="action" width={100} lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
     </Table>
   );
 }

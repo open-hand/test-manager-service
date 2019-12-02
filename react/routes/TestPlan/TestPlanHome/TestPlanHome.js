@@ -36,7 +36,7 @@ const updateRemindModal = Modal.key();
 
 function TestPlanHome() {
   const {
-    prefixCls, createAutoTestStore, testPlanStore, oldStepTableDataSet, newStepTableDataSet,
+    prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
     treeData, loading, rightLoading, checkIdMap, testList,
@@ -61,7 +61,7 @@ function TestPlanHome() {
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',
-      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} oldStepTableDataSet={oldStepTableDataSet} newStepTableDataSet={newStepTableDataSet} />,
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} />,
       style: { width: '10.9rem' },
       className: 'c7ntest-testPlan-updateRemind-modal',
       okText: '更新',
@@ -168,6 +168,9 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
+        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
+          <FormattedMessage id="testPlan_createPlan" />
+        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
