@@ -1,4 +1,5 @@
-import React, { PureComponent } from 'react';
+/* eslint-disable no-console */
+import React, { PureComponent, useEffect, useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes, { func } from 'prop-types';
 import {
@@ -16,9 +17,11 @@ import {
 
 const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
+
+
 function StepTable(props) {
   const { dataSet } = props;
-
+  const [statusList, setStatusList] = useState([]);
   const onQuickPassOrFail = (code, record) => {
     // console.log('onQuickPassOrFail', code, record);
   };
@@ -35,26 +38,53 @@ function StepTable(props) {
       </React.Fragment>
     );
   }
-  function renderIndex({ record }) {
-    return record.id % 1000;
+  // 约束附件名长度
+  function limitAttachmentLength(text, length = 5) {
+    const name = text.substring(0, text.indexOf('.'));
+    const suffix = text.substring(text.indexOf('.'));
+    const ellipsis = '···';
+    const nameArr = [...name];
+    return nameArr.length > length ? nameArr.slice(0, length).join('') + ellipsis + suffix : text;
   }
-  function renderAttachment({ record }) {
+
+  const getFileList = attachments => attachments.map((attachment) => {
+    const attachmentName = limitAttachmentLength(attachment.attachmentName);
+    const {
+      attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
+    } = attachment;
+    return {
+      name: attachment.attachmentName,
+      attachmentName,
+      attachmentLinkId,
+      attachmentType,
+      comment,
+      id,
+      objectVersionNumber,
+      url,
+    };
+  });
+  function renderAttachment({ record, value }) {
     return (
       <UploadInTable
-        // fileList={that.getFileList(stepAttachment.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
-        // onOk={ExecuteDetailStore.loadDetailList}
+        fileList={getFileList(value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
+        onOk={() => dataSet.query()}
         // enterLoad={ExecuteDetailStore.enterloading}
         // leaveLoad={ExecuteDetailStore.unloading}
-        //
-        fileList={[]}
+        enterLoad={() => console.log('enterLoad')}
+        leaveLoad={() => console.log('leaveLoad')}
+        
         config={{
-          attachmentLinkId: record.executeStepId,
+          attachmentLinkId: record.get('executeStepId'),
           attachmentType: 'CYCLE_STEP',
         }}
       />
     );
   }
 
+  /**
+   * 渲染缺陷
+   * @param {*} param0 
+   */
   function renderDefects({ record, value: defects }) {
     const disabled = defects.length !== 0;
     // return defects;
@@ -116,22 +146,39 @@ function StepTable(props) {
       </TextEditToggle>
     );
   }
-  function renderDescription({ value }) {
+  /**
+   * 渲染文字部分 无文字显示 -
+   * @param {*} param0 
+   */
+  function renderText({ value }) {
     if (value) {
       return value;
     } else {
       return '-';
     }
   }
+  function renderStatus({ value, record }) {
+    // const { lookup: statusList } = record.getField('stepStatus').fetchLookup(res=>);
+    const status = statusList.length === 0 ? {} : statusList.find(item => item.statusId === Number(value));
+    const { statusName = '', statusColor = false } = status || {};
+
+    return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;
+    // return value;
+  }
+
+  useEffect(() => {
+    dataSet.getField('stepStatus').fetchLookup().then(res => setStatusList(res));
+  }, [dataSet, setStatusList]);
+
   return (
-    <Table dataSet={dataSet} queryBar="none">
-      <Column name="index" renderer={renderIndex} width={80} align="left" />
-      <Column name="testStep" align="left" minWidth={200} tooltip="overflow" />
-      <Column name="testData" align="left" minWidth={120} tooltip="overflow" />
-      <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" />
-      <Column name="stepStatus" width={80} />
-      <Column name="stepAttachment" renderer={renderAttachment} align="left" />
-      <Column name="description" editor align="left" tooltip="overflow" renderer={renderDescription} />
+    <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table">
+      <Column name="index" width={80} align="left" />
+      <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
+      <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
+      <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
+      <Column name="stepStatus" width={100} renderer={renderStatus} />
+      <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} className="c7n-test-execute-detail-step-table-file" headerClassName="c7n-test-execute-detail-step-table-file-head" footerClassName="c7n-test-execute-detail-step-table-file-foot" />
+      <Column name="description" editor align="left" tooltip="overflow" renderer={renderText} />
       <Column name="defects" renderer={renderDefects} width={165} />
       <Column name="action" width={100} lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
     </Table>

@@ -20,7 +20,7 @@ import {
 import {
   editCycle, removeDefect,
 } from '../../../api/ExecuteDetailApi';
-import { uploadFile, deleteAttachment } from '../../../api/FileApi';
+import { uploadFile } from '../../../api/IssueManageApi';
 import './ExecuteDetail.less';
 import {
   StepTable as OldStepTable, ExecuteDetailSide, CreateBug,
@@ -55,7 +55,9 @@ function ExecuteDetail(props) {
   const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
     const { id } = context.match.params;
-    ExecuteDetailStore.getInfo(id);
+    // ExecuteDetailStore.getInfo(id);
+    ExecuteDetailStore.setId(id);
+    ExecuteDetailStore.loadDetailData(id);
   }, [ExecuteDetailStore, context.match.params]);
 
   const goExecute = (mode) => {
@@ -83,12 +85,12 @@ function ExecuteDetail(props) {
   const handleFileRemove = (file) => {
     if (file.url) {
       ExecuteDetailStore.enterloading();
-      deleteAttachment(file.uid).then((data) => {
-        ExecuteDetailStore.getInfo();
-        Choerodon.prompt('删除成功');
-      }).catch((error) => {
-        Choerodon.prompt(`删除失败 ${error}`);
-      });
+      // deleteAttachment(file.uid).then((data) => {
+      //   ExecuteDetailStore.getInfo();
+      //   Choerodon.prompt('删除成功');
+      // }).catch((error) => {
+      //   Choerodon.prompt(`删除失败 ${error}`);
+      // });
     }
   };
 
@@ -242,7 +244,7 @@ function ExecuteDetail(props) {
     const defectType = ExecuteDetailStore.getDefectType;
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
-    const stepStatusList = ExecuteDetailStore.getStepStatusList;
+    const { summary } = detailData;
     return (
       <Page className="c7n-test-execute-detail">
         <Header
@@ -288,7 +290,7 @@ function ExecuteDetail(props) {
 
         </Header>
 
-        <Breadcrumb title={detailData ? renderBreadcrumbTitle('detailData.summary') : null} />
+        <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
           <Spin spinning={false} style={{ display: 'flex' }}>
@@ -304,7 +306,7 @@ function ExecuteDetail(props) {
                 <div className="c7n-test-execute-detail-header">
                   {detailData && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <span style={{ fontSize: '20px' }}>{'执行用例' || detailData.summary}</span>
+                      <span style={{ fontSize: '20px' }}>{renderBreadcrumbTitle(summary)}</span>
                       <StatusTags
                         style={{ height: 20, lineHeight: '20px', marginLeft: 10 }}
                         color={statusColor}

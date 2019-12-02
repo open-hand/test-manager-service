@@ -6,7 +6,7 @@ import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { getParams } from '../../../common/utils';
 import {
-  getCycle, getCycleDetails, getCycleHistiorys,
+  getCycle, geDetailsData, getCycleHistiorys,
 } from '../../../api/ExecuteDetailApi';
 import { getStatusList } from '../../../api/TestStatusApi';
 import { getUsers } from '../../../api/IamApi';
@@ -24,9 +24,8 @@ class ExecuteDetailStore {
   @observable statusList = [];
 
   // 状态列表
-  @observable stepStatusList = [];
 
-  @observable detailData = {};
+  @observable detailData = false;
 
   @observable createBugShow = false;
 
@@ -61,28 +60,27 @@ class ExecuteDetailStore {
   getInfo = (id = this.id) => {
     this.enterloading();
     this.setId(id);
-    const { historyPagination } = this;
     Promise.all([
       // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
-      getCycleDetails(id),
-      getStatusList('CASE_STEP'),
-      // getCycleHistiorys({
-      //   page: historyPagination.current,
-      //   size: historyPagination.pageSize,
-      // }, id),
+      geDetailsData(id),
       getIssuesForDefects(),
     ])
-      .then(([statusList, detailData, stepStatusList, issueData]) => {
+      .then(([statusList, detailData, issueData]) => {
         this.setDetailData(detailData);
         this.setStatusList(statusList);
-        this.setStepStatusList(stepStatusList);
-      
+
         this.unloading();
       }).catch((error) => {
         Choerodon.prompt('网络异常');
         this.unloading();
       });
+  }
+
+  loadDetailData(id = this.id) {
+    geDetailsData(id).then((res) => {
+      this.setDetailData(res);
+    });
   }
 
 
@@ -99,25 +97,11 @@ class ExecuteDetailStore {
     return toJS(this.statusList);
   }
 
-  @computed get getStepStatusList() {
-    return toJS(this.stepStatusList);
-  }
 
   @computed get getUserList() {
     return toJS(this.userList);
   }
 
-  @computed get getFileList() {
-    return this.detailData.caseAttachment.map((attachment) => {
-      const { url, attachmentName } = attachment;
-      return {
-        uid: attachment.id,
-        name: attachmentName,
-        status: 'done',
-        url,
-      };
-    });
-  }
 
   @computed get getDefectIssueIds() {
     return [];
@@ -146,13 +130,9 @@ class ExecuteDetailStore {
   @action removeLocalDefect = (defectId) => {
     _.remove(this.cycleData.defects, { id: defectId });
   }
-  
+
   @action setStatusList = (statusList) => {
     this.statusList = statusList;
-  }
-
-  @action setStepStatusList = (stepStatusList) => {
-    this.stepStatusList = stepStatusList;
   }
 
 
