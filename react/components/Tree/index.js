@@ -83,6 +83,9 @@ function PureTree({
     setTree(oldTree => selectItemWithExpand(oldTree, selected ? selected.id : undefined, previous ? previous.id : undefined));
   }, [previous, selected]);
   const addFirstLevelItem = () => {
+    if (getRootNode(tree).children.includes('new')) {
+      return;
+    }
     const newChild = {
       id: 'new',
       parentId: 0, // 放入父id，方便创建时读取
@@ -118,7 +121,7 @@ function PureTree({
   const onDragEnd = async (
     source,
     destination,
-  ) => {
+  ) => {  
     if (!destination) {
       return;
     }
@@ -148,18 +151,18 @@ function PureTree({
   }, [onDelete, selected.id, setSelected]);
   const handleMenuClick = useCallback((node, { key }) => {
     switch (key) {
-      case 'rename': {      
+      case 'rename': {
         setTree(oldTree => mutateTree(oldTree, node.id, { isEditing: true }));
         break;
       }
-      case 'delete': {  
+      case 'delete': {
         Modal.confirm({
           title: '确认删除文件夹',
         }).then((button) => {
           if (button === 'ok') {
             handleDelete(node);
           }
-        });               
+        });
         break;
       }
       case 'add': {
@@ -214,7 +217,7 @@ function PureTree({
         setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false, data: { name, objectVersionNumber } }));
       } catch (error) {
         setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
-      } 
+      }
     }
   };
   const renderItem = ({
@@ -244,9 +247,9 @@ function PureTree({
         <FilterInput
           onChange={filterTree}
         />
-      </div>      
+      </div>
       <div className={`${prefix}-scroll`}>
-        <Tree        
+        <Tree
           tree={tree}
           renderItem={renderItem}
           onExpand={onExpand}
@@ -257,7 +260,7 @@ function PureTree({
           isNestingEnabled
           {...restProps}
         />
-      </div>      
+      </div>
     </div>
   );
 }
