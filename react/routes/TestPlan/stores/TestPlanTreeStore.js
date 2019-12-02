@@ -63,21 +63,36 @@ class TestPlanTreeStore {
   async loadIssueTree(defaultSelectId) {
     this.setTreeLoading(true);
     const treeData = await getPlanTree(this.testPlanStatus); 
-    // const treeData = await getIssueTree();   
     this.setTreeData(treeData, defaultSelectId);
     this.setTreeLoading(false);
   }
+
+  @action getParent = (rootIds, treeFolders, folderId) => {
+    let parent;
+    for (let i = 0; i < treeFolders.length; i++) {
+      if (!treeFolders[i].topLevel && treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId) && !rootIds.includes(folderId)) {
+        parent = treeFolders[i];
+        if (parent.data.parentId) {
+          return this.getParent(rootIds, treeFolders, parent.id);
+        } else {
+          console.log(i, treeFolders[i]);
+          return parent;
+        }
+      }
+    }
+    return parent;
+  };
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
-    if (!this.currentCycle.id && rootIds.length > 0) {
+    if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
       selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
     }
     this.treeData = {
-      rootIds,
-      treeFolder: treeFolder.map((folder) => {
+      rootIds: rootIds.slice(0, 4) || [],
+      treeFolder: (treeFolder && treeFolder.map((folder) => {
         const {
           issueFolderVO, expanded, children, ...other 
         } = folder;
@@ -88,10 +103,11 @@ class TestPlanTreeStore {
           selected: folder.id === selectedId,
           ...other,
         };
-      }),
+      })) || [],
     };
     if (selectedId) {
-      this.setCurrentPlanId(selectedId);
+      const planId = (this.getParent(this.treeData.rootIds, this.treeData.treeFolder, selectedId) && this.getParent(this.treeData.rootIds, this.treeData.treeFolder, selectedId).id) || selectedId;
+      this.setCurrentPlanId(planId);
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }

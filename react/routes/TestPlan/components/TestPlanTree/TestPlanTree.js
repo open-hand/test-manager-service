@@ -45,27 +45,12 @@ class TestPlanTree extends Component {
   handleDrag = (sourceItem, destination) => {
     handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
   }
-  
-
-  getParent = (treeFolders, folderId) => {
-    let parent;
-    for (let i = 0; i < treeFolders.length; i++) {
-      if (treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId)) {
-        parent = treeFolders[i];
-        if (parent.data.parentId) {
-          return this.getParent(treeFolders, parent.id);
-        } else {
-          return parent;
-        }
-      }
-    }
-  };
 
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
-    const { currentPlanId, treeData } = testPlanStore;
+    const { currentPlanId, treeData, getParent } = testPlanStore;
     testPlanStore.setCurrentCycle(item);
-    const planId = (this.getParent(treeData.treeFolder, item.id) && this.getParent(treeData.treeFolder, item.id).id) || item.id;
+    const planId = (getParent(treeData.rootIds, treeData.treeFolder, item.id) && getParent(treeData.rootIds, treeData.treeFolder, item.id).id) || item.id;
     testPlanStore.loadRightData(planId !== currentPlanId);
   }
 

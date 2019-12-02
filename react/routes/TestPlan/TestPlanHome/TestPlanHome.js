@@ -27,7 +27,7 @@ import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
 import './TestPlanHome.less';
-import { getParams, getDragRank, executeDetailShowLink } from '../../../common/utils';
+import { getDragRank } from '../../../common/utils';
 
 
 const { TabPane } = Tabs;
@@ -39,11 +39,14 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
-    treeData, loading, rightLoading, checkIdMap, testList,
+    treeData, loading, checkIdMap, testList, planInfo,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
+    // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
+    testPlanStore.setCurrentPlanId(undefined);
+    testPlanStore.setCurrentCycle({});
     testPlanStore.loadAllData();
   };
 
@@ -187,7 +190,7 @@ function TestPlanHome() {
               pic={testCaseEmpty}
               title="暂无计划"
               description="当前项目下无计划，请创建"
-              extra={<Button type="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
+              extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
           ) : (
             <div className={`${prefixCls}-contentWrap`}>
@@ -209,7 +212,7 @@ function TestPlanHome() {
               <div className={`${prefixCls}-contentWrap-right`}>
                 <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
                   <Icon type="insert_invitation" />
-                  <span>0.20.0版本测试计划</span>
+                  <span>{planInfo.name}</span>
                 </div>
                 <div className={`${prefixCls}-contentWrap-right-warning`}>
                   <Icon type="error" />
@@ -217,7 +220,7 @@ function TestPlanHome() {
                 </div>
                 <div className={`${prefixCls}-contentWrap-right-card`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                    <div style={{ flex: 1.42, marginRight: '0.16rem' }}>
+                    <div style={{ flex: 1, marginRight: '0.16rem' }}>
                       <TestPlanDetailCard />
                     </div>
                     <div style={{ flex: 1 }}>

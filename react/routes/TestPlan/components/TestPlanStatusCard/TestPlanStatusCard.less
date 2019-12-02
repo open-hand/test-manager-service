@@ -1,5 +1,6 @@
 .c7ntest-testPlan-statusCard {
     height: 1.44rem;
+    overflow-x: scroll;
     .c7n-card-head {
         border: none;
         .c7n-card-head-title {
@@ -14,8 +15,12 @@
         .c7ntest-testPlan-statusCard-content {
             display: flex;
             justify-content: space-between;
-            &-progress {
-
+            .c7ntest-progress:not(:last-child) {
+                margin-right: 0.3rem;
+                &-circle {
+                    width: 0.4rem;
+                    height: 0.4rem;
+                }
             }
         }
     }

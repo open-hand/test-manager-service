@@ -162,15 +162,15 @@ const TestPlanTable = observer(({
   if (testPlanStatus !== 'todo') {
     columns.splice(testPlanStatus === 'doing' ? 3 : 2, 0, {
       title: <FormattedMessage id="cycle_testSource" />,
-      dataIndex: 'testSource',
-      key: 'testSource',
+      dataIndex: 'source',
+      key: 'source',
       flex: 1,
-      render(testSource) {
+      render(source) {
         return (
           <div
             className="c7ntest-text-dot"
           >
-            {testSource && testSource.realName}
+            {source && source}
           </div>
         );
       },
