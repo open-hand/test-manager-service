@@ -76,7 +76,7 @@ class TestPlanTreeStore {
       selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
     }
     this.treeData = {
-      rootIds,
+      rootIds: rootIds.slice(0, 5),
       treeFolder: treeFolder.map((folder) => {
         const {
           issueFolderVO, expanded, children, ...other 

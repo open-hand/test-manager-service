@@ -12,7 +12,7 @@ import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import { getProjectId } from '@/common/utils';
 import {
-  createPlan, getPlan, editPlan, clonePlan,
+  createPlan, getPlan, editPlan,
 } from '@/api/TestPlanApi';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
@@ -158,7 +158,7 @@ export async function openClonePlan({ planId }) {
     },
     children: <ObserverTestPlanModal
       mode="clone"
-      submit={clonePlan}
+      submit={createPlan}
       initValue={planDetail}
     />,
   });

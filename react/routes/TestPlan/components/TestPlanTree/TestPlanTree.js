@@ -72,6 +72,7 @@ class TestPlanTree extends Component {
   }
 
   renderTreeNode = (node, { item }) => {
+    console.log(node);
     if (item.data.parentId) {
       return (
         node
