@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -38,6 +37,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 
@@ -544,16 +544,36 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<ExecutionStatusVO> queryStepStatus(Long projectId,Long planId,Long folderId) {
+    public ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId) {
+        Long total = 0L;
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-        testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
-        queryAllFolderIds(folderId, folderIds, folderMap);
+        if(!ObjectUtils.isEmpty(folderId)){
+            TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+            testIssueFolder.setProjectId(projectId);
+            Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+            queryAllFolderIds(folderId, folderIds, folderMap);
+        }
         // 查询文件夹下的的用例
-        return testCycleCaseMapper.queryExecutionStatus(planId,folderId);
+        TestStatusDTO testStatusDTO = new TestStatusDTO();
+        testStatusDTO.setProjectId(projectId);
+        testStatusDTO.setStatusType("CYCLE_CASE");
+        List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
+        List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, folderIds);
+        for (TestStatusDTO test:testStatusDTOS) {
+            total += test.getCount();
+            testStatusDTOList.forEach(status->{
+                if(test.getStatusId().equals(status.getStatusId())){
+                    status.setCount(test.getCount());
+                }else {
+                    status.setCount(0L);
+                }
+            });
+        }
+        List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
+        }.getType());
 
+        return new ExecutionStatusVO(total,testStatusVOList);
     }
 
     @Override

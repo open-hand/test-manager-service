@@ -6,7 +6,6 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.agile.api.vo.IssueInfoDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 
 /**
@@ -18,8 +17,12 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "测试执行ID")
     private Long executeId;
 
-    @ApiModelProperty(value = "循环ID")
-    private Long cycleId;
+    @ApiModelProperty(value = "caseNum")
+    private String caseNum;
+
+
+    @ApiModelProperty(value = "source")
+    private Long source;
 
     @ApiModelProperty(value = "用例ID")
     private Long caseId;
@@ -65,12 +68,20 @@ public class TestCycleCaseInfoVO {
         this.executeId = executeId;
     }
 
-    public Long getCycleId() {
-        return cycleId;
+    public String getCaseNum() {
+        return caseNum;
     }
 
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
+    public void setCaseNum(String caseNum) {
+        this.caseNum = caseNum;
+    }
+
+    public Long getSource() {
+        return source;
+    }
+
+    public void setSource(Long source) {
+        this.source = source;
     }
 
     public String getSummary() {

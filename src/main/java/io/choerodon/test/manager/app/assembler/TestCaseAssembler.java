@@ -41,7 +41,7 @@ public class TestCaseAssembler {
     private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
-    private TestCaseLinkMapper testCaseLinkMapper;
+    private TestCaseMapper testCaseMapper;
 
     @Autowired
     private TestDataLogMapper testDataLogMapper;
@@ -173,7 +173,9 @@ public class TestCaseAssembler {
         }.getType()));
         // 用例的问题链接
         testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseDTO.getProjectId(), testCycleCaseDTO.getCaseId()));
-        // 查询附件信息
+        // 查询用例信息
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
+        testCycleCaseInfoVO.setCaseNum(testCaseDTO.getCaseNum());
         return testCycleCaseInfoVO;
     }
 }

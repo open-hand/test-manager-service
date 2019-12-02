@@ -196,12 +196,12 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询计划下的执行状态总览")
-    @GetMapping("query/status")
-    public ResponseEntity<List<ExecutionStatusVO>> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
-                                                                        @ApiParam(value = "planId", required = false)
-                                                                        @RequestParam(name = "planId") Long planId,
-                                                                        @ApiParam(value = "folderId", required = false)
-                                                                        @RequestParam(name = "folderId") Long folderId) {
+    @GetMapping("/query/status")
+    public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
+                                                                        @ApiParam(value = "plan_id", required = false)
+                                                                        @RequestParam(name = "plan_id") Long planId,
+                                                                        @ApiParam(value = "folder_id", required = false)
+                                                                        @RequestParam(name = "folder_id") Long folderId) {
         return Optional.ofNullable(testCycleCaseService.queryStepStatus(projectId,planId,folderId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.plan.status.query"));

@@ -80,7 +80,7 @@ public interface TestCycleCaseService {
     TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
 
 
-    List<ExecutionStatusVO> queryStepStatus(Long projectId,Long planId,Long folderId);
+    ExecutionStatusVO queryStepStatus(Long projectId,Long planId,Long folderId);
 
     TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
 

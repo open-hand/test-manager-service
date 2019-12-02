@@ -15,8 +15,6 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "执行ID")
     private Long executeId;
 
-    @ApiModelProperty(value = "循环ID")
-    private Long cycleId;
 
     @ApiModelProperty(value = "用例ID")
     private Long caseId;
@@ -32,11 +30,11 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "用例名")
     private String summary;
 
-    @ApiModelProperty(value = "描述")
-    private String description;
-
     @ApiModelProperty(value = "测试来源")
     private String source;
+
+    @ApiModelProperty(value = "指派人id")
+    private Long assignedTo;
 
     @ApiModelProperty(value = "经办人")
     private UserMessageDTO assignedUser;
@@ -50,7 +48,7 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "版本号")
     private Long objectVersionNumber;
 
-    @ApiModelProperty(value = "跟新时间")
+    @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
 
     public Long getExecuteId() {
@@ -61,13 +59,6 @@ public class TestFolderCycleCaseVO {
         this.executeId = executeId;
     }
 
-    public Long getCycleId() {
-        return cycleId;
-    }
-
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
-    }
 
     public Long getCaseId() {
         return caseId;
@@ -101,20 +92,20 @@ public class TestFolderCycleCaseVO {
         this.projectId = projectId;
     }
 
+    public Long getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(Long assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
     public String getSummary() {
         return summary;
     }
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public UserMessageDTO getAssignedUser() {

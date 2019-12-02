@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -85,6 +86,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Autowired
     private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
+    @Autowired
+    private TestStatusMapper testStatusMapper;
+
     @Async
     @Override
     public void fixData() {
@@ -113,6 +117,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixCycleCaseStep();
         //12.source
         fixCycleSource();
+        //13 isnertStatus
+        fixStatus();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -252,7 +258,37 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     private  void fixCycleSource(){
         testCycleCaseMapper.fixSource();
     }
+    private  void fixStatus(){
+        TestStatusDTO caseStatus = new TestStatusDTO();
+        TestStatusDTO caseStatus1 = new TestStatusDTO();
+        TestStatusDTO stepStatus = new TestStatusDTO();
+        TestStatusDTO stepStatus1 = new TestStatusDTO();
+        caseStatus.setStatusType("CYCLE_CASE");
+        caseStatus.setProjectId(0L);
+        caseStatus.setStatusName("重测");
+        caseStatus.setStatusColor("rgba(255,177,0,100)");
 
+        caseStatus1.setStatusType("CYCLE_CASE");
+        caseStatus1.setProjectId(0L);
+        caseStatus1.setStatusName("无需测试");
+        caseStatus1.setStatusColor("rgba(77,144,254,100)");
+
+        stepStatus.setStatusType("CASE_STEP");
+        stepStatus.setProjectId(0L);
+        stepStatus.setStatusName("重测");
+        stepStatus.setStatusColor("rgba(255,177,0,100)");
+
+        stepStatus1.setStatusType("CASE_STEP");
+        stepStatus1.setProjectId(0L);
+        stepStatus1.setStatusName("无需测试");
+        stepStatus1.setStatusColor("rgba(77,144,254,100)");
+        List<TestStatusDTO> statusDTOS = new ArrayList<>();
+        statusDTOS.add(caseStatus);
+        statusDTOS.add(caseStatus1);
+        statusDTOS.add(stepStatus);
+        statusDTOS.add(stepStatus1);
+        statusDTOS.stream().forEach(e->testStatusMapper.insert(e));
+    }
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         BeanUtils.copyProperties(issueLinkFixVOList, testCaseLinkDTO);

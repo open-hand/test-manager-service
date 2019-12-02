@@ -11,6 +11,7 @@ import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -101,7 +102,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     /**
      * 查询状态总览
      */
-    List<ExecutionStatusVO> queryExecutionStatus(@Param("planId")Long planId,@Param("folderId")Long folderId);
+    List<TestStatusDTO> queryExecutionStatus(@Param("planId")Long planId,  @Param("folderIds") Set<Long> folderIds);
 
     /**
      * 查询文件下的执行
