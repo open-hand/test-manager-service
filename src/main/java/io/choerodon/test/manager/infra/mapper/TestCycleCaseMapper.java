@@ -115,4 +115,5 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     List<TestCycleCaseDTO> listByCycleIds(@Param("cycleIds") List<Long> cycleId);
 
+    void batchInsert(@Param("list") List<TestCycleCaseDTO> testCycleCaseDTOS);
 }

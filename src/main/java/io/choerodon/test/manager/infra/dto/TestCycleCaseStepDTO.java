@@ -233,4 +233,16 @@ public class TestCycleCaseStepDTO extends BaseDTO {
     public void setStatusColor(String statusColor) {
         this.statusColor = statusColor;
     }
+    public TestCycleCaseStepDTO() {
+    }
+
+    public TestCycleCaseStepDTO(Long executeId, Long stepId, Long createdBy, Long lastUpdatedBy, String testStep, String testData, String expectedResult) {
+        this.executeId = executeId;
+        this.stepId = stepId;
+        this.createdBy = createdBy;
+        this.lastUpdatedBy = lastUpdatedBy;
+        this.testStep = testStep;
+        this.testData = testData;
+        this.expectedResult = expectedResult;
+    }
 }

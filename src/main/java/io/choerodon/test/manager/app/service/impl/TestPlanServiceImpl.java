@@ -202,7 +202,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         } else {
             createPlanCustomCase(testPlanVO, testIssueFolderDTOS, allTestCase, testCaseDTOS);
         }
-        TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         // 创建测试循环
         List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
         // 创建测试循环用例

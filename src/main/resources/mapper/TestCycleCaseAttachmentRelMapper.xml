@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper">
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+      insert into test_cycle_case_attach_rel(attachment_type,attachment_link_id,attachment_name,url,created_by,last_updated_by)
+    values
+    <foreach collection="list" item="attachRel" separator=",">
+        (#{attachRel.attachmentType},#{attachRel.attachmentLinkId},#{attachRel.attachmentName},#{attachRel.url},#{attachRel.createdBy},#{attachRel.lastUpdatedBy})
+    </foreach>
+    </insert>
+</mapper>

@@ -828,8 +828,11 @@ public class TestCycleServiceImpl implements TestCycleService {
             testCycleDTO.setCycleName(v.getName());
             testCycleDTO.setFolderId(v.getFolderId());
             testCycleDTO.setType(TestCycleType.FOLDER);
-            testCycleDTOS.add(baseInsert(testCycleDTO));
+            testCycleDTO.setCreatedBy(testPlanDTO.getCreatedBy());
+            testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
+            testCycleDTOS.add(testCycleDTO);
         });
+        cycleMapper.batchInsert(testCycleDTOS);
         return testCycleDTOS;
     }
 
