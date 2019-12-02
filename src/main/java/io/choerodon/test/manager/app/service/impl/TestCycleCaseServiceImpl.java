@@ -581,15 +581,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+    public void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         List<TestCycleCaseStepVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepVOList();
-        //2.更新步骤
-        testCycleCaseStepService.update(testCycleCaseStepVOList);
+        List<Long> executeStepIds = testCycleCaseStepVOList.stream().map(TestCycleCaseStepVO::getExecuteStepId).collect(Collectors.toList());
+        //1.删除执行对应的步骤
+        testCycleCaseStepService.batchDelete(executeStepIds);
+        //2.创建步骤（会有新的步骤）
+        List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepDTO>>() {
+        }.getType());
+        testCycleCaseStepService.batchCreate(testCycleCaseStepDTOList);
 
-        //3.更新用例
+        //3.更新执行用例
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseUpdateVO, TestCycleCaseDTO.class);
         baseUpdate(testCycleCaseDTO);
-        return null;
     }
 
     @Override

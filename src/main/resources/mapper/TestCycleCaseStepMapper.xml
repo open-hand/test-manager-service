@@ -216,6 +216,18 @@
             tccs.execute_id = #{executeId}  ORDER BY
         tccs.step_id asc
     </select>
+
+    <delete id="batchDelete">
+        DELETE
+        FROM
+            test_cycle_case_step
+        WHERE
+	    execute_step_id IN
+	    <foreach collection="executeStepIds" index="index" item="executeStepId"
+                 open="(" separator="," close=")">
+            #{executeStepId}
+        </foreach>
+    </delete>
     <update id="fixCycleCaseStep">
         UPDATE test_cycle_case_step tccs SET tccs.test_step = (
             SELECT

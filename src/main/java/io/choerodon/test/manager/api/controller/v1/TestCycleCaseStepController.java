@@ -3,8 +3,6 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.constraints.PastOrPresent;
-
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,7 +17,6 @@ import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 
 /**
@@ -81,16 +78,18 @@ public class TestCycleCaseStepController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除一个循环步骤")
-    @DeleteMapping()
-    public ResponseEntity delete(@PathVariable(name = "execute_stepId") Long execute_stepId) {
+    @DeleteMapping("/{execute_step_id}")
+    public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
+                                 @PathVariable(name = "execute_step_id") Long execute_stepId) {
         testCycleCaseStepService.delete(execute_stepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建一个循环步骤")
-    @PostMapping("/{executeId}")
-    public ResponseEntity create(@RequestBody List<TestCycleCaseStepVO> testCycleCaseStepVO) {
+    @PostMapping()
+    public ResponseEntity create(@PathVariable(name = "project_id") Long projectId,
+                                 @RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
         testCycleCaseStepService.create(testCycleCaseStepVO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

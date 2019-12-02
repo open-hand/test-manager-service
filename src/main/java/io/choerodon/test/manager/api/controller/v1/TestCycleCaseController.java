@@ -209,7 +209,7 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新测试执行")
-    @PutMapping("")
+    @PutMapping()
     public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         testCycleCaseService.update(testCycleCaseUpdateVO);
