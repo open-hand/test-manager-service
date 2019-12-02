@@ -70,12 +70,13 @@ function TreeNode(props) {
         }}
       />
     );
-    const folderIcon = getFolderIcon ? callFunction(getFolderIcon, item) : (
+    const defaultIcon = (
       <Icon
         type={item.isExpanded ? 'folder_open2' : 'folder_open'}
         className={`${prefix}-icon-folder ${prefix}-icon-primary`}
       />
     );
+    const folderIcon = getFolderIcon ? callFunction(getFolderIcon, item, defaultIcon) : defaultIcon;
     if (item.children && item.children.length > 0) {
       return (
         <Fragment>
