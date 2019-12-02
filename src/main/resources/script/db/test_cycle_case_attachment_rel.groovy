@@ -65,7 +65,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
     }
 
     changeSet(id:'2019-12-2-add-attach-key',author: 'zhaotianxin'){
-        createIndex(indexName: 'uk_attachment_type', tableName: 'test_cycle_case_attach_rel', unique: false) {
+        createIndex(indexName: 'uk_attachment_type', tableName: 'test_cycle_case_attach_rel') {
             column(name: 'attachment_type')
         }
     }
