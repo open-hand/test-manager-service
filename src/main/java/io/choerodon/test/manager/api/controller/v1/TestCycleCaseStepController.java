@@ -87,7 +87,7 @@ public class TestCycleCaseStepController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("创建一个循环步骤")
-    @PostMapping()
+    @PostMapping
     public ResponseEntity create(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
         testCycleCaseStepService.create(testCycleCaseStepVO);
