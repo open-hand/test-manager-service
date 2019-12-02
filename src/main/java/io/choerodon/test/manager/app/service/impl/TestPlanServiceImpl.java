@@ -427,6 +427,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     private void buildTree(List<Long> root, Long folderId, Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap) {
         TestIssueFolderVO testIssueFolderVO = allFolderMap.get(folderId);
+        if (ObjectUtils.isEmpty(testIssueFolderVO)) {
+            return;
+        }
         TestTreeFolderVO testTreeFolderVO = null;
         // 读取map中是否存在当前文件夹信息
         if (!ObjectUtils.isEmpty(map.get(folderId))) {

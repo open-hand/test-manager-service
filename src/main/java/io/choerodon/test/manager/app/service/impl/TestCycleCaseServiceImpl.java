@@ -104,6 +104,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
+    @Autowired
+    private TestCycleCaseHistoryMapper testCycleCaseHistory;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -672,6 +675,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds);
         // 删除测试执行
         testCycleCaseMapper.batchDeleteByExecutIds(executeIds);
+        //删除关联的缺陷
+        testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
+        // 删除日志
+        testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
     }
 
     @Override

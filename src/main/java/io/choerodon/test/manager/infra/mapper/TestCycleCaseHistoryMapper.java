@@ -17,4 +17,6 @@ public interface TestCycleCaseHistoryMapper extends Mapper<TestCycleCaseHistoryD
     List<TestCycleCaseHistoryDTO> queryByPrimaryKey(Long id);
 
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
+
+    void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
 }
