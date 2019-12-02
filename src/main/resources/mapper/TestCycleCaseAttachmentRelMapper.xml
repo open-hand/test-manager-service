@@ -8,4 +8,12 @@
         (#{attachRel.attachmentType},#{attachRel.attachmentLinkId},#{attachRel.attachmentName},#{attachRel.url},#{attachRel.createdBy},#{attachRel.lastUpdatedBy})
     </foreach>
     </insert>
+
+    <delete id="batchDeleteByExecutIds">
+        delete from test_cycle_case_attach_rel where
+        attachment_link_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </delete>
 </mapper>

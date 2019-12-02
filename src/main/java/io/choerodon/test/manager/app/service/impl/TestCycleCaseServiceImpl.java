@@ -45,6 +45,7 @@ import io.choerodon.test.manager.infra.util.PageUtil;
  * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private final static double AVG_NUM = 500.00;
@@ -102,6 +103,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
+
+    @Autowired
+    private TestCycleCaseHistoryMapper testCycleCaseHistory;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -622,7 +626,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<Long> caseIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(caseIds)) {
             return;
-        }       // 获取case关联的步骤
+        }
+        // 获取case关联的步骤
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
         Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
         // 获取case关联的附件
@@ -631,7 +636,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         // 插入
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOS, testCycleMap, defaultStatusId);
-        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM));
+        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM == 0 ? 1 : testCycleCaseDTOS.size() / AVG_NUM));
 
         List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
         lists.forEach(v -> {
@@ -655,6 +660,24 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
         testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
+    }
+
+
+    @Override
+    public void batchDeleteByExecuteIds(List<Long> executeIds) {
+        if(CollectionUtils.isEmpty(executeIds)){
+            return;
+        }
+        // 删除步骤
+        testCycleCaseStepMapper.batchDeleteByExecutIds(executeIds);
+        // 删除附件信息
+        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds);
+        // 删除测试执行
+        testCycleCaseMapper.batchDeleteByExecutIds(executeIds);
+
+        testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
+        // 删除日志
+        testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
     }
 
     @Override

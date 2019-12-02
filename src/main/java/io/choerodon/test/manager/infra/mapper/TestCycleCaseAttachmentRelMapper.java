@@ -10,4 +10,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface TestCycleCaseAttachmentRelMapper extends Mapper<TestCycleCaseAttachmentRelDTO> {
     void batchInsert(@Param("list") List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS);
+
+    void batchDeleteByExecutIds(List<Long> executeIds);
 }

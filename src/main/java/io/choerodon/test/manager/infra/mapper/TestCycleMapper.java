@@ -65,4 +65,6 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
     void fixPlanId(@Param("versionId") Long versionId, @Param("planId") Long planId);
 
     void batchInsert(@Param("list") List<TestCycleDTO> list);
+
+    void batchDelete( @Param("list") List<Long> needDeleteCycleIds);
 }

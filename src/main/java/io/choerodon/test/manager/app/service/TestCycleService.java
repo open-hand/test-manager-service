@@ -77,4 +77,6 @@ public interface TestCycleService {
     List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
     List<TestCycleDTO> listByPlanIds(List<Long> planIds);
+
+    void batchDelete(List<Long> needDeleteCycleIds);
 }

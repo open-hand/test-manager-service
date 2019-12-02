@@ -816,10 +816,11 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleDTO> testCycleDTOS = cycleMapper.select(testCycleDTO);
         return testCycleDTOS != null && !testCycleDTOS.isEmpty();
     }
+
     @Override
-    public List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO,List<TestIssueFolderDTO> testIssueFolderDTOS) {
-        if(CollectionUtils.isEmpty(testIssueFolderDTOS)){
-        return new ArrayList<>();
+    public List<TestCycleDTO> batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS) {
+        if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
+            return new ArrayList<>();
         }
         List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
         testIssueFolderDTOS.forEach(v -> {
@@ -843,6 +844,17 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
         return cycleMapper.listByPlanIds(planIds);
+    }
+
+    @Override
+    public void batchDelete(List<Long> needDeleteCycleIds) {
+        if (CollectionUtils.isEmpty(needDeleteCycleIds)) {
+            return;
+        }
+        List<TestCycleCaseDTO> needDeleteCycleCase = testCycleCaseService.listByCycleIds(needDeleteCycleIds);
+        List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+        testCycleCaseService.batchDeleteByExecuteIds(executeIds);
+        cycleMapper.batchDelete(needDeleteCycleIds);
     }
 
     private Long getCount(TestCycleVO testCycleVO) {
@@ -1205,11 +1217,11 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testCycleCaseDTO;
     }
 
-    private TestCycleDTO baseInsert(TestCycleDTO testCycleDTO){
-        if(ObjectUtils.isEmpty(testCycleDTO)){
+    private TestCycleDTO baseInsert(TestCycleDTO testCycleDTO) {
+        if (ObjectUtils.isEmpty(testCycleDTO)) {
             throw new CommonException("error.insert.test.cycle.is.not.null");
         }
-        DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insertSelective,testCycleDTO,1,"error.insert.test.cycle");
+        DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insertSelective, testCycleDTO, 1, "error.insert.test.cycle");
         return testCycleDTO;
     }
 
