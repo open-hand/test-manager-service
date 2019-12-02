@@ -51,7 +51,7 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
     },
     {
       label: '导出时间',
-      name: 'creationDate',
+      name: 'lastUpdateDate',
       type: 'string',
     },
     {
