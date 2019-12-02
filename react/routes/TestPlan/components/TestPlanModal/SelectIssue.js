@@ -16,9 +16,6 @@ function SelectIssue() {
   const { SelectIssueStore } = useContext(Context);
   const { currentCycle, treeData, treeMap } = SelectIssueStore;
   const { id: folderId } = currentCycle;
-  useEffect(() => {
-    SelectIssueStore.loadIssueTree();
-  }, [SelectIssueStore]);
   const saveDataSet = useCallback((dataSet) => {
     dataSetRef.current = dataSet;
   }, []);

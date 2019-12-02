@@ -2,30 +2,30 @@ import React, { useContext, useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'choerodon-ui/pro';
-import { openEditPlan, openClonePlan } from '../TestPlanModal';
+import { openEditPlan } from '../TestPlanModal';
 import Store from '../../stores';
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
-  const { testPlanStatus } = testPlanStore;
+  const { testPlanStatus, currentPlanId } = testPlanStore;
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
-  const handleOpenEditPlan = useCallback(async () => {
-    // const planDetail = await getPlanDetail(planId);
-    // openEditPlan({
-    //   // initValue: planDetail,
-    // });
-    openClonePlan();
-  }, []);
+  const handleOpenEditPlan = useCallback(async () => {    
+    openEditPlan({
+      planId: currentPlanId,
+    });
+  }, [currentPlanId]);
   return (
     <React.Fragment>
       {
         testPlanStatus !== 'done' ? (
           <React.Fragment>
-            <Button icon="mode_edit">
-              <FormattedMessage id="testPlan_editPlan" onClick={handleOpenEditPlan} />
-            </Button>
+            {currentPlanId && (
+              <Button icon="mode_edit" onClick={handleOpenEditPlan}>
+                <FormattedMessage id="testPlan_editPlan" />
+              </Button>
+            )}
             {
               testPlanStatus === 'todo' ? (
                 <Button icon="play_circle_filled">

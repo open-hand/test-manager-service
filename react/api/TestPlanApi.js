@@ -13,13 +13,12 @@ export function getPlanTree(testPlanStatus) {
 export function createPlan(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/plan`, data);
 }
+export function getPlan(planId) {
+  return request.get(`/test/v1/projects/${getProjectId()}/plan/${planId}/query`);
+}
 export function editPlan(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/plan`, data);
 }
-export function clonePlan(data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/plan`, data);
-}
-
 /**
  *  根据文件夹id和计划id获取执行
  */

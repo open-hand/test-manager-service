@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import {
@@ -8,6 +8,12 @@ import { Menu, Dropdown } from 'choerodon-ui';
 import { observer } from 'mobx-react-lite';
 import SmartTooltip from '@/components/SmartTooltip';
 
+function callFunction(prop, ...args) {
+  if (typeof prop === 'function') {
+    return prop(...args);
+  }
+  return prop;
+}
 const defaultProps = {
   enableAddFolder: false,
   enableAction: true,
@@ -21,46 +27,7 @@ const PreTextIcon = styled.span`
 `;
 
 const prefix = 'c7ntest-tree';
-const getIcon = (
-  item,
-  onExpand,
-  onCollapse,
-) => {
-  const exapndIcon = (
-    <Icon
-      type="baseline-arrow_right"
-      className={classNames(`${prefix}-icon`, { [`${prefix}-icon-expanded`]: item.isExpanded })}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (item.isExpanded) {
-          onCollapse(item.id);
-        } else {
-          onExpand(item.id);
-        }
-      }}
-    />
-  );
-  const folderIcon = (
-    <Icon
-      type={item.isExpanded ? 'folder_open2' : 'folder_open'}
-      className={`${prefix}-icon-folder ${prefix}-icon-primary`}
-    />
-  );
-  if (item.children && item.children.length > 0) {
-    return (
-      <Fragment>
-        {exapndIcon}
-        {folderIcon}
-      </Fragment>
-    );
-  }
-  return (
-    <Fragment>
-      <PreTextIcon>&bull;</PreTextIcon>
-      {folderIcon}
-    </Fragment>
-  );
-};
+
 const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   const menu = (
     <Menu onClick={(target) => { onMenuClick(item, target); }}>
@@ -75,7 +42,7 @@ const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   );
   return (
     <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
-      {(typeof enableAddFolder === 'function' ? enableAddFolder(item) : enableAddFolder) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
+      {(callFunction(enableAddFolder, item)) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
       <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
         <Button funcType="flat" icon="more_vert" size="small" />
       </Dropdown>
@@ -86,8 +53,45 @@ const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
 
 function TreeNode(props) {
   const {
-    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder,
+    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder, getFolderIcon,
   } = props;
+  const getIcon = useCallback(() => {
+    const expandIcon = (
+      <Icon
+        type="baseline-arrow_right"
+        className={classNames(`${prefix}-icon`, { [`${prefix}-icon-expanded`]: item.isExpanded })}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (item.isExpanded) {
+            onCollapse(item.id);
+          } else {
+            onExpand(item.id);
+          }
+        }}
+      />
+    );
+    const defaultIcon = (
+      <Icon
+        type={item.isExpanded ? 'folder_open2' : 'folder_open'}
+        className={`${prefix}-icon-folder ${prefix}-icon-primary`}
+      />
+    );
+    const folderIcon = getFolderIcon ? callFunction(getFolderIcon, item, defaultIcon) : defaultIcon;
+    if (item.children && item.children.length > 0) {
+      return (
+        <Fragment>
+          {expandIcon}
+          {folderIcon}
+        </Fragment>
+      );
+    }
+    return (
+      <Fragment>
+        <PreTextIcon>&bull;</PreTextIcon>
+        {folderIcon}
+      </Fragment>
+    );
+  }, [getFolderIcon, item, onCollapse, onExpand]);
   const onSave = (e) => {
     if (item.id === 'new') {
       onCreate(e.target.value, path, item);
@@ -128,7 +132,7 @@ function TreeNode(props) {
       >
         <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
         <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
-        {(typeof enableAction === 'function' ? enableAction(item) : enableAction) && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
+        {(callFunction(enableAction, item)) && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
       </div>
     </div>
   );

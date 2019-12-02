@@ -1,6 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
-import { Menu } from 'choerodon-ui';
+import { Menu, Icon } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@/api/IssueManageApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
+import { openClonePlan } from '../TestPlanModal';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 
@@ -63,6 +64,7 @@ class TestPlanTree extends Component {
       return (
         <TreeNode
           item={item}
+          nodeProps={node.props}
         >
           {node}
         </TreeNode>
@@ -90,7 +92,7 @@ class TestPlanTree extends Component {
           isDragEnabled={false}
           treeNodeProps={
             {
-              enableAction: item => !item.data.parentId,
+              enableAction: item => item.topLevel,
               menuItems: [
                 <Menu.Item key="copy">
                   复制此计划
@@ -102,12 +104,15 @@ class TestPlanTree extends Component {
                  删除
                 </Menu.Item>,
               ],
+              getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
             }
           }
-          onMenuClick={(nodeItem, key) => {
+          onMenuClick={(key, nodeItem) => {
             switch (key) {
               case 'copy': {
-                console.log('copy');
+                openClonePlan({
+                  planId: nodeItem.id,
+                });
                 break;
               }
               default: {
