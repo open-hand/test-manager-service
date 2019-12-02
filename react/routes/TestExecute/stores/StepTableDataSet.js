@@ -30,18 +30,27 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         name: 'expectedResult', type: 'string', label: expectedResult,
       },
       {
-        name: 'stepStatus', type: 'string', label: stepStatus,
+        name: 'stepStatus',
+        type: 'number',
+        label: stepStatus,
+        lookupAxiosConfig: () => ({
+          url: `/test/v1/projects/${projectId}/status/query?project=${projectId}`,
+          method: 'post',
+          data: {
+            statusType: 'CASE_STEP',
+          },
+        }),
       },
       {
         name: 'stepAttachment', type: 'object', label: stepAttachment,
       },
       {
         name: 'defects',
-        type: 'object', 
+        type: 'object',
         label: defects,
       },
       {
-        name: 'description', type: 'string', label: description,  
+        name: 'description', type: 'string', label: description,
       },
 
     ],
@@ -50,13 +59,13 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
-        // transformResponse: (data) => {
-        //   const newData = JSON.parse(data).map(i => ({
-        //     ...i,
-        //     description: i.description === null ? '-' : i.description,
-        //   }));
-        //   return newData;
-        // },
+        transformResponse: (data) => {
+          const newData = JSON.parse(data).map((i, index) => ({
+            ...i,
+            index: index + 1,
+          }));
+          return newData;
+        },
       },
     },
   };
