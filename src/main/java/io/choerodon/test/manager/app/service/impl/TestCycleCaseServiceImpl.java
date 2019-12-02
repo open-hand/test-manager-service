@@ -541,14 +541,27 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public List<ExecutionStatusVO> queryStepStatus(Long planId) {
-        return testCycleCaseMapper.queryExecutionStatus(planId);
+    public List<ExecutionStatusVO> queryStepStatus(Long projectId,Long planId,Long folderId) {
+        // 查询文件夹下所有的目录
+        Set<Long> folderIds = new HashSet<>();
+        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+        testIssueFolder.setProjectId(projectId);
+        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        queryAllFolderIds(folderId, folderIds, folderMap);
+        // 查询文件夹下的的用例
+        return testCycleCaseMapper.queryExecutionStatus(planId,folderId);
+
     }
 
     @Override
     public TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+        List<TestCycleCaseStepVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepVOList();
+        //2.更新步骤
+        testCycleCaseStepService.update(testCycleCaseStepVOList);
 
-//        testCycleCaseStepService.update()
+        //3.更新用例
+        TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseUpdateVO, TestCycleCaseDTO.class);
+        baseUpdate(testCycleCaseDTO);
         return null;
     }
 
@@ -556,10 +569,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId,Long folderId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-        testIssueFolder.setProjectId(projectId);
-        Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
-        queryAllFolderIds(folderId, folderIds, folderMap);
+        if(!ObjectUtils.isEmpty(folderId)){
+            TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
+            testIssueFolder.setProjectId(projectId);
+            Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+            queryAllFolderIds(folderId, folderIds, folderMap);
+        }
+
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
@@ -611,6 +627,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 }
             }
         });
+    }
+
+    @Override
+    public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
+        testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
     }
 
     @Override

@@ -165,7 +165,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         if (stepIds.length > 0) {
             cycleCaseSteps = modelMapper.map(testCycleCaseStepMapper.queryCycleCaseForReporter(stepIds), new TypeToken<List<TestCycleCaseStepVO>>() {
             }.getType());
-            issueIdLists.addAll(cycleCaseSteps.stream().map(TestCycleCaseStepVO::getIssueId).collect(Collectors.toList()));
+            issueIdLists.addAll(cycleCaseSteps.stream().map(TestCycleCaseStepVO::getCaseId).collect(Collectors.toList()));
 
         }
 

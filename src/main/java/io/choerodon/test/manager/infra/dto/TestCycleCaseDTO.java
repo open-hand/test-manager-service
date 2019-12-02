@@ -96,6 +96,9 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Transient
     List<TestCycleCaseStepDTO> cycleCaseStep;
 
+    @Transient
+    List<TestCaseLinkDTO> testCaseLinks;
+
     public Long getProjectId() {
         return projectId;
     }
@@ -296,5 +299,13 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public List<TestCaseLinkDTO> getTestCaseLinkDTOS() {
+        return testCaseLinks;
+    }
+
+    public void setTestCaseLinkDTOS(List<TestCaseLinkDTO> testCaseLinkDTOS) {
+        this.testCaseLinks = testCaseLinkDTOS;
     }
 }

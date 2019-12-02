@@ -3,10 +3,14 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.checkerframework.checker.units.qual.C;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -54,6 +58,14 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
+    public PageInfo<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, Pageable pageable) {
+        PageInfo<TestCycleCaseStepDTO> cycleCaseStepDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
+                testCycleCaseStepMapper.querListByexecuteId(cycleCaseId));
+        PageInfo<TestCycleCaseStepVO> testCycleCaseStepVOList = modelMapper.map(cycleCaseStepDTOPageInfo, PageInfo.class);
+        return testCycleCaseStepVOList;
+    }
+
+    @Override
     public List<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId) {
         if (cycleCaseId == null) {
             throw new CommonException("error.test.cycle.case.step.caseId.not.null");
@@ -79,6 +91,23 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
+    public void batchUpdate(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS) {
+        if(CollectionUtils.isEmpty(testCaseStepDTOS)){
+            return;
+        }
+        testCaseStepDTOS.forEach(v -> {
+            TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+            testCycleCaseStepDTO.setExecuteId(executeId);
+            testCycleCaseStepDTO.setStepId(v.getStepId());
+            testCycleCaseStepDTO.setTestStep(v.getTestStep());
+            testCycleCaseStepDTO.setExpectedResult(v.getExpectedResult());
+            testCycleCaseStepDTO.setTestData(v.getTestData());
+            // TODO 测试循环步骤的初始化状态
+            baseInsert(testCycleCaseStepDTO);
+        });
+    }
+
+    @Override
     public void batchInsert(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS) {
         if(CollectionUtils.isEmpty(testCaseStepDTOS)){
            return;
@@ -93,6 +122,23 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             // TODO 测试循环步骤的初始化状态
             baseInsert(testCycleCaseStepDTO);
         });
+    }
+
+    @Override
+    public void delete(Long executeStepId) {
+        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+        testCycleCaseStepDTO.setExecuteStepId(executeStepId);
+       if(testCycleCaseStepMapper.delete(testCycleCaseStepDTO)!=1){
+           throw new CommonException("error delete step");
+       }
+    }
+
+    @Override
+    public void create(List<TestCycleCaseStepVO> testCycleCaseStepVO) {
+        TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
+        if(testCycleCaseStepMapper.insert(testCycleCaseStepDTO)!=1){
+            throw new CommonException("error insert step");
+        }
     }
 
     private List<TestCycleCaseStepDTO> baseUpdate(List<TestCycleCaseStepDTO> list) {

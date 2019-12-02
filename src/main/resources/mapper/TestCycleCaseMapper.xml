@@ -666,7 +666,12 @@ ORDER BY
         LEFT JOIN test_cycle tc ON tcc.cycle_id = tc.cycle_id
         LEFT JOIN test_status ts ON ts.status_id = tcc.execution_status
         WHERE
+        <if test="planId!=null" >
             tc.plan_id = #{planId}
+        </if>
+        <if test="folderId!=null" >
+            tc.folder_id = #{folderId}
+        </if>
         GROUP BY
             tcc.execution_status;
     </select>
@@ -680,11 +685,13 @@ ORDER BY
         LEFT JOIN test_status ts ON ts.status_id=tcc.execution_status
         WHERE
             tc.plan_id = #{planId}
+        <if test="folderIds !=null and folderIds.size>0">
         AND tc.folder_id IN
         <foreach item="folderId" index="index" collection="folderIds"
                  open="(" separator="," close=")">
             #{folderId}
         </foreach>
+        </if>
         <include refid="sqlParam"/>
         order by tcc.last_update_date DESC
     </select>

@@ -6,7 +6,7 @@
         <id column="execute_step_id" property="executeStepId"/>
         <id column="execute_id" property="executeId"/>
         <id column="step_id" property="stepId"/>
-        <id column="description" property="comment"/>
+        <id column="description" property="description"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="parent_step_id" property="parentStepId"/>
         <id column="test_step" property="testStep"/>
@@ -14,8 +14,10 @@
         <id column="step_status" property="stepStatus"/>
         <id column="cycle_name" property="cycleName"/>
         <id column="cycle_id" property="cycleId"/>
-        <id column="issue_id" property="issueId"/>
+        <id column="case_id" property="caseId"/>
         <id column="expected_result" property="expectedResult"/>
+        <id column="status_name" property="statusName"/>
+        <id column="status_color" property="statusColor"/>
 
         <collection property="stepAttachment"
                     ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
@@ -192,6 +194,28 @@
         </foreach>
     </update>
 
+    <select id="querListByexecuteId" resultMap="BaseResultMap">
+        SELECT
+        tccs.execute_step_id,
+        tccs.execute_id,
+        tccs.test_step,
+        tccs.test_data,
+        tccs.expect_result,
+        tccs.step_id,
+        ts.status_color,
+        ts.status_name ,
+        tccar.attachment_name,
+        tccar.url,
+        tccdr.defect_type
+        FROM
+            `test_cycle_case_step` tccs
+        LEFT JOIN test_cycle_case_attach_rel tccar ON tccar.attachment_link_id = tccs.execute_id
+        LEFT JOIN test_cycle_case_defect_rel tccdr ON tccdr.defect_link_id = tccs.execute_id
+        LEFT JOIN test_status ts ON ts.status_id = tccs.step_status
+        WHERE
+            tccs.execute_id = #{executeId}  ORDER BY
+        tccs.step_id asc
+    </select>
     <update id="fixCycleCaseStep">
         UPDATE test_cycle_case_step tccs SET tccs.test_step = (
             SELECT

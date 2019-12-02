@@ -101,7 +101,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     /**
      * 查询状态总览
      */
-    List<ExecutionStatusVO> queryExecutionStatus(@Param("planId")Long planId);
+    List<ExecutionStatusVO> queryExecutionStatus(@Param("planId")Long planId,@Param("folderId")Long folderId);
 
     /**
      * 查询文件下的执行

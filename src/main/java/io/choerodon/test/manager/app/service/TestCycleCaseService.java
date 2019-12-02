@@ -80,7 +80,7 @@ public interface TestCycleCaseService {
     TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
 
 
-    List<ExecutionStatusVO> queryStepStatus(Long planId);
+    List<ExecutionStatusVO> queryStepStatus(Long projectId,Long planId,Long folderId);
 
     TestCycleCaseUpdateVO update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
 
@@ -88,4 +88,6 @@ public interface TestCycleCaseService {
 
 
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);
+
+    void baseUpdate(TestCycleCaseDTO testCycleCaseDTO);
 }

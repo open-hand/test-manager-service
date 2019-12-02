@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -195,37 +196,36 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询计划下的执行状态总览")
-    @GetMapping("/query/status")
+    @GetMapping("query/status")
     public ResponseEntity<List<ExecutionStatusVO>> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
-                                                                        @ApiParam(value = "planId", required = true)
-                                                                        @RequestParam(name = "planId") Long planId) {
-        return Optional.ofNullable(testCycleCaseService.queryStepStatus(planId))
+                                                                        @ApiParam(value = "planId", required = false)
+                                                                        @RequestParam(name = "planId") Long planId,
+                                                                        @ApiParam(value = "folderId", required = false)
+                                                                        @RequestParam(name = "folderId") Long folderId) {
+        return Optional.ofNullable(testCycleCaseService.queryStepStatus(projectId,planId,folderId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.plan.status.query"));
 
     }
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("更新测试执行")
-//    @PutMapping("")
-//    public ResponseEntity<List<TestCycleCaseUpdateVO>> update(@PathVariable(name = "project_id") Long projectId,
-//                                                              @ApiParam(value = "exectuteId", required = true)
-//                                                                        @RequestParam(name = "exectuteId") Long exectuteId) {
-//        return Optional.ofNullable()
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.plan.status.query"));
-//
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("更新测试执行")
+    @PutMapping("")
+    public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
+                                                              @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+        testCycleCaseService.update(testCycleCaseUpdateVO);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
-    @PostMapping("/list_by_folder_id")
+    @PostMapping("/query/caseList")
     public ResponseEntity<PageInfo<TestFolderCycleCaseVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
                                                                       @RequestParam(name = "folder_id") Long folderId,
                                                                         @RequestParam(name = "plan_id") Long planId,
                                                                       @SortDefault Pageable pageable,
                                                                       @RequestBody(required = false) SearchDTO searchDTO) {
-
         return new ResponseEntity<>( testCycleCaseService.listAllCaseByFolderId(projectId, planId, folderId, pageable, searchDTO), HttpStatus.OK);
     }
 

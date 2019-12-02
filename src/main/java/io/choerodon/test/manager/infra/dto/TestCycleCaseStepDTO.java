@@ -16,11 +16,10 @@ public class TestCycleCaseStepDTO extends BaseDTO {
     private Long executeStepId;
     private Long executeId;
     private Long stepId;
-
-    @Column(name = "description")
-    private String comment;
+    private String description;
     private Long stepStatus;
 
+    private Long objectVersionNumber;
     private Long createdBy;
 
     private Long lastUpdatedBy;
@@ -43,10 +42,13 @@ public class TestCycleCaseStepDTO extends BaseDTO {
     private Long cycleId;
 
     @Transient
-    private Long issueId;
+    private Long caseId;
 
     @Transient
     private String statusName;
+
+    @Transient
+    private String statusColor;
 
     @Transient
     private List<TestCycleCaseAttachmentRelDTO> stepAttachment;
@@ -82,16 +84,12 @@ public class TestCycleCaseStepDTO extends BaseDTO {
         this.stepId = stepId;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
     public String getDescription() {
-        return comment;
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getCycleId() {
@@ -158,12 +156,12 @@ public class TestCycleCaseStepDTO extends BaseDTO {
         this.cycleName = cycleName;
     }
 
-    public Long getIssueId() {
-        return issueId;
+    public Long getCaseId() {
+        return caseId;
     }
 
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 
     public String getStatusName() {
@@ -218,4 +216,21 @@ public class TestCycleCaseStepDTO extends BaseDTO {
         return "通过".equals(statusName);
     }
 
+    @Override
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    @Override
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public String getStatusColor() {
+        return statusColor;
+    }
+
+    public void setStatusColor(String statusColor) {
+        this.statusColor = statusColor;
+    }
 }
