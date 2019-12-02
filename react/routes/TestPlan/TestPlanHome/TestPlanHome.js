@@ -45,7 +45,6 @@ function TestPlanHome() {
   const handleTabsChange = (value) => {
     // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
-    testPlanStore.setCurrentPlanId(undefined);
     testPlanStore.setCurrentCycle({});
     testPlanStore.loadAllData();
   };

@@ -7,21 +7,21 @@ import Store from '../../stores';
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
-  const { testPlanStatus, currentPlanId } = testPlanStore;
+  const { testPlanStatus, getCurrentPlanId } = testPlanStore;
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
   const handleOpenEditPlan = useCallback(async () => {    
     openEditPlan({
-      planId: currentPlanId,
+      planId: getCurrentPlanId,
     });
-  }, [currentPlanId]);
+  }, [getCurrentPlanId]);
   return (
     <React.Fragment>
       {
         testPlanStatus !== 'done' ? (
           <React.Fragment>
-            {currentPlanId && (
+            {getCurrentPlanId && (
               <Button icon="mode_edit" onClick={handleOpenEditPlan}>
                 <FormattedMessage id="testPlan_editPlan" />
               </Button>
