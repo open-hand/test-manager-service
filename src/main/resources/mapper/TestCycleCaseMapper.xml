@@ -731,7 +731,7 @@ ORDER BY
             </if>
             <if test="searchDTO.searchArgs != null">
                 <if test='searchDTO.searchArgs.summary != null'>
-                    AND tcc.summary = #{searchDTO.searchArgs.summary}
+                    AND tcc.summary  LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.summary, jdbcType=VARCHAR}),'%')
                 </if>
                 <if test="searchDTO.searchArgs.executionStatus != null">
                     AND tcc.execution_status = #{searchDTO.searchArgs.executionStatus}
