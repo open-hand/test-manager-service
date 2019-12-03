@@ -7,7 +7,7 @@ import { removeDefect } from '../../api/ExecuteDetailApi';
 import { getIssuesForDefects } from '../../api/agileApi';
 import './DefectSelect.less';
 // import ExecuteDetailStore from '../../store/ExecuteDetailStore';
-import ExecuteDetailStore from '../../routes/TestExecute/stores/ExecuteDetailStore';
+// import ExecuteDetailStore from '../../sroutes/TestExecute/stores/ExecuteDetailStore';
 
 
 const { Option } = Select;
@@ -81,6 +81,7 @@ class DefectSelect extends Component {
   }
 
   handleHiddenCresteBug = () => {
+    const { ExecuteDetailStore } = this.props;
     ExecuteDetailStore.setCreateBugShow(false);
   }
 
@@ -112,11 +113,12 @@ class DefectSelect extends Component {
   }
 
   render() {
-    const { executeStepId, bugsToggleRef, ...otherProps } = this.props;
+    const {
+      executeStepId, handleSubmit, ExecuteDetailStore, record, ...otherProps
+    } = this.props;
     // const { handleSubmit } = bugsToggleRef;
     // eslint-disable-next-line no-console
-    const handleSubmit = () => console.log('handleSubmit');
-
+    console.log('this.props', this.props);
     const {
       defects, selectLoading, issueList, canLoadMore,
     } = this.state;
@@ -146,7 +148,7 @@ class DefectSelect extends Component {
               style={{ cursor: 'pointer' }}
               role="none"
               onClick={() => {
-                handleSubmit();
+                handleSubmit(record);
                 ExecuteDetailStore.setCreateBugShow(true);
                 ExecuteDetailStore.setDefectType('CASE_STEP');
                 ExecuteDetailStore.setCreateDectTypeId(executeStepId);

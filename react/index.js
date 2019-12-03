@@ -8,7 +8,6 @@ import 'moment/locale/en-nz';
 import moment from 'moment';
 import './index.scss';
 
-const TestExecuteIndex = asyncRouter(() => import('./routes/TestExecute'));
 const TestPlanIndex = asyncRouter(() => import('./routes/TestPlan'));
 const CustomStatusIndex = asyncRouter(() => import('./routes/CustomStatus'));
 const ReportIndex = asyncRouter(() => import('./routes/Report'));
@@ -31,7 +30,6 @@ class TestManagerIndex extends React.Component {
           <React.Fragment>
             <Switch>         
               <Route path={`${match.url}/IssueManage`} component={IssueManageIndex} />
-              <Route path={`${match.url}/TestExecute`} component={TestExecuteIndex} />
               <Route path={`${match.url}/TestPlan`} component={TestPlanIndex} />     
               <Route path={`${match.url}/report`} component={ReportIndex} />
               <Route path={`${match.url}/status`} component={CustomStatusIndex} />
