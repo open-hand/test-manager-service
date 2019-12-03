@@ -326,6 +326,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testTreeFolderVO.setExpanded(false);
             testTreeFolderVO.setChildrenLoading(false);
             testTreeFolderVO.setPlanId(planId);
+            testTreeFolderVO.setTopLevel(false);
             map.put(cycleId, testTreeFolderVO);
         }
 

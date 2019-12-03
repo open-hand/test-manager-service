@@ -879,6 +879,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setName(testCycleDTO.getCycleName());
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
+        testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
         return testIssueFolderVO;
     }
 
