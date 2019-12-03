@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
@@ -183,6 +184,9 @@ public class TestCaseAssembler {
     }
 
     public TestCycleCaseUpdateVO dtoToUpdateVO(TestCycleCaseDTO testCycleCaseDTO) {
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+            throw new CommonException("error.cycle.case.null");
+        }
         TestCycleCaseUpdateVO testCycleCaseUpdateVO = new TestCycleCaseUpdateVO();
         testCycleCaseUpdateVO.setExecuteId(testCycleCaseDTO.getExecuteId());
         testCycleCaseUpdateVO.setDescription(testCycleCaseDTO.getDescription());

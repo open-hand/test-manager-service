@@ -593,6 +593,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds) {
+        if(CollectionUtils.isEmpty(caseIds)){
+            return null;
+        }
         return testCaseMapper.listByCaseIds(projectId,caseIds);
     }
 
