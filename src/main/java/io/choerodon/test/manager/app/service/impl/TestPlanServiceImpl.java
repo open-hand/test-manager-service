@@ -141,11 +141,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (CollectionUtils.isEmpty(testPlanDTOS)) {
             return new TestTreeIssueFolderVO();
         }
-        List<TestPlanTreeVO> testPlanTreeVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanTreeVO>>() {
-        }.getType());
 
         // 获取planIds,查询出所有底层文件夹Id
-        List<Long> planIds = testPlanTreeVOS.stream().map(TestPlanTreeVO::getPlanId).collect(Collectors.toList());
+        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
         Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         // 获取项目下所有的文件夹
@@ -159,7 +157,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestTreeFolderVO> planTreeList = new ArrayList<>();
         List<Long> root = new ArrayList<>();
         List<TestTreeFolderVO> testTreeFolderVOS = new ArrayList<>();
-        testPlanTreeVOS.forEach(v -> {
+        testPlanDTOS.forEach(v -> {
             // 用于接收TestTreeFolderVO,便于判断和构建树
             Map<Long, TestTreeFolderVO> map = new HashMap<>();
             // 将计划Id设置为root
@@ -172,6 +170,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testIssueFolderVO.setName(v.getName());
             testIssueFolderVO.setFolderId(v.getPlanId());
             testIssueFolderVO.setInitStatus(v.getInitStatus());
+            testIssueFolderVO.setObjectVersionNumber(v.getObjectVersionNumber());
             TestTreeFolderVO planTreeVO = new TestTreeFolderVO();
             planTreeVO.setId(v.getPlanId());
             planTreeVO.setIssueFolderVO(testIssueFolderVO);
