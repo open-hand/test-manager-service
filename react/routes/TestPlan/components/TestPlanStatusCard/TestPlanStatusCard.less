@@ -1,6 +1,6 @@
 .c7ntest-testPlan-statusCard {
     height: 1.44rem;
-    overflow-x: scroll;
+    overflow: hidden;
     .c7n-card-head {
         border: none;
         .c7n-card-head-title {
@@ -11,16 +11,19 @@
         }
     }
     .c7n-card-body {
+        overflow-x: scroll;
         padding-top: 0;
         .c7ntest-testPlan-statusCard-content {
             display: flex;
             justify-content: space-between;
-            .c7ntest-progress:not(:last-child) {
-                margin-right: 0.3rem;
-                &-circle {
-                    width: 0.4rem;
-                    height: 0.4rem;
-                }
+            .c7ntest-progress-circle {
+                width: 0.4rem;
+                height: 0.4rem;
+            }
+            .c7ntest-progress-title {
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+                width: 100%;
             }
         }
     }

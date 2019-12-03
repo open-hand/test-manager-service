@@ -228,7 +228,7 @@ function TestPlanHome() {
                     <div style={{ flex: 1, marginRight: '0.16rem' }}>
                       <TestPlanDetailCard />
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, overflowX: 'hidden' }}>
                       <TestPlanStatusCard />
                     </div>
                   </div>
