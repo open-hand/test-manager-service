@@ -98,7 +98,7 @@ class TestPlanTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
-    const planIds = rootIds.slice(0, 5).map(id => `${id}-plan`);
+    const planIds = (rootIds && rootIds.slice(0, 5).map(id => `${id}-plan`)) || [];
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && planIds.length > 0) {
@@ -106,7 +106,7 @@ class TestPlanTreeStore {
     }
     this.treeData = {
       rootIds: planIds,
-      treeFolder: treeFolder.map((folder) => {
+      treeFolder: (treeFolder && treeFolder.map((folder) => {
         const {
           id, issueFolderVO, expanded, children, ...other
         } = folder;
@@ -118,7 +118,7 @@ class TestPlanTreeStore {
           selected: folder.id === selectedId,
           ...other,
         };
-      }) || [],
+      })) || [],
     };
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});

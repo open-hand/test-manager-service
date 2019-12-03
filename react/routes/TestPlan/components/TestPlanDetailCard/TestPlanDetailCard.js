@@ -14,7 +14,7 @@ export default observer(() => {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.16rem' }}>
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">起止时间</span>
-            <span className="c7ntest-testPlan-detailCard-content-item-value">{`${planInfo.startDate && planInfo.startDate.split(' ')[0]}～${planInfo.startDate && planInfo.endDate.split(' ')[0]}`}</span>
+            <span className="c7ntest-testPlan-detailCard-content-item-value">{`${(planInfo.startDate && planInfo.startDate.split(' ')[0]) || ''}～${(planInfo.endDate && planInfo.endDate.split(' ')[0]) || ''}`}</span>
           </div>
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">负责人</span>

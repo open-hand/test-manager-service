@@ -4,7 +4,9 @@ import {
 
 import TestPlanTreeStore from './TestPlanTreeStore'; 
 import { getStatusList } from '@/api/TestStatusApi';
-import { getExecutesByFolder, getStatusByFolder, getPlanDetail } from '@/api/TestPlanApi';
+import {
+  getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo, 
+} from '@/api/TestPlanApi';
 
 class TestPlanStore extends TestPlanTreeStore {
     @observable loading = false;
@@ -199,8 +201,14 @@ class TestPlanStore extends TestPlanTreeStore {
      * @memberof TestPlanStore
      */
     loadPlanDetail() {
-      getPlanDetail(this.currentPlanId).then((res) => {
+      getPlanDetail(this.getCurrentPlanId).then((res) => {
         this.setPlanInfo(res);
+      });
+    }
+
+    executesAssignTo(assignToUserId) {
+      return executesAssignTo(Object.keys(toJS(this.checkIdMap)), assignToUserId).then((res) => {
+        this.loadExecutes();
       });
     }
 }

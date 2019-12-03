@@ -33,10 +33,10 @@ class TestPlanTree extends Component {
   handleEdit = (newName, item) => {
     const { objectVersionNumber } = item.data;
     const data = {
-      folderId: item.id,
+      planId: testPlanStore.getId(item.id),
       objectVersionNumber,
       name: newName,
-      type: 'cycle',
+      caseChanged: false,
     };
     return handleRequestFailed(editFolder(data));
   }
@@ -48,7 +48,6 @@ class TestPlanTree extends Component {
   }
 
   setSelected = (item) => {
-    console.log(item);
     const { context: { testPlanStore } } = this.props;
     const { getCurrentPlanId, treeData, getParent } = testPlanStore;
     testPlanStore.setCurrentCycle(item);

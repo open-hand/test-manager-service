@@ -11,9 +11,8 @@ import {
   Icon, Tabs, Spin,
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
-import {
-  getCycleTree, getExecutesByCycleId, editExecuteDetail, deleteExecute,
-} from '../../../api/cycleApi';
+import { editExecuteDetail } from '../../../api/cycleApi';
+import { deleteExecute } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
@@ -131,14 +130,12 @@ function TestPlanHome() {
       title: Choerodon.getMessage('确认删除吗?', 'Confirm delete'),
       content: Choerodon.getMessage('当您点击删除后，该条执行将从此计划阶段中移除!', 'When you click delete, after which the data will be deleted !'),
       onOk: () => {
-        testPlanStore.rightEnterLoading();
         deleteExecute(executeId)
-          .then((res) => {
+          .then(() => {
             testPlanStore.loadExecutes();
           }).catch((err) => {
             /* console.log(err); */
-            Choerodon.prompt('网络异常');
-            testPlanStore.rightLeaveLoading();
+            Choerodon.prompt('删除失败');
           });
       },
       okText: '删除',
@@ -160,10 +157,10 @@ function TestPlanHome() {
   };
 
   const handleAssignToChange = (value) => {
-    // console.log('失焦了');
-    // console.log(value, checkIdMap.size, checkIdMap.keys());
     if (value && checkIdMap.size) {
-      checkIdMap.clear();
+      testPlanStore.executesAssignTo(value).then(() => {
+        checkIdMap.clear();
+      });
     }
   };
 
@@ -178,9 +175,6 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
-          <FormattedMessage id="testPlan_createPlan" />
-        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>

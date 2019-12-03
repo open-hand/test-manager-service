@@ -130,8 +130,8 @@ const TestPlanTable = observer(({
       render: (text, record) => (
         <CustomCheckBox
           checkedMap={checkIdMap}
-          value={record.caseId}
-          field="caseId"
+          value={record.executeId}
+          field="executeId"
           dataSource={testList}
         />
       ),
@@ -203,9 +203,9 @@ const TestPlanTable = observer(({
         dataSource={testList}
         columns={columns}
         onDragEnd={onDragEnd}
-        dragKey="caseId"
+        dragKey="executeId"
         checkedMap={checkIdMap}
-        checkField="caseId"
+        checkField="executeId"
       />
     </Card>
   );

@@ -53,3 +53,20 @@ export function getStatusByFolder({ planId, folderId }) {
 export function getPlanDetail(planId) {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/${planId}/info`);
 }
+
+
+/**
+ * 批量给执行指定执行人
+ *
+ * @export
+ * @param {*} executeIds
+ * @param {*} assignUserId
+ * @returns
+ */
+export function executesAssignTo(executeIds, assignUserId) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/batchAssign/cycleCase?assign_user_id=${assignUserId}`, executeIds);
+}
+
+export function deleteExecute(executeId) {
+  return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case?cycleCaseId=${executeId}`);
+}

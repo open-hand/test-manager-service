@@ -1,4 +1,5 @@
 import React, { useContext, useCallback } from 'react';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button } from 'choerodon-ui/pro';
@@ -7,7 +8,8 @@ import Store from '../../stores';
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
-  const { testPlanStatus, getCurrentPlanId } = testPlanStore;
+  const { testPlanStatus, getCurrentPlanId, treeData } = testPlanStore;
+  console.log(toJS(treeData));
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
@@ -32,12 +34,12 @@ function TestPlanHeader() {
                   <FormattedMessage id="testPlan_manualTest" />
                 </Button>
               ) : (
-                <Button icon="check_circle">
+                <Button icon="check_circle" disabled={testPlanStatus === 'doing' && treeData.rootIds && treeData.rootIds.length} onClick={handleCreateAutoTest}>
                   <FormattedMessage id="testPlan_completePlan" />
                 </Button>
               )
             }
-            <Button icon="auto_test" disabled={testPlanStatus === 'doing'} onClick={handleCreateAutoTest}>
+            <Button icon="auto_test">
               <FormattedMessage id="testPlan_autoTest" />
             </Button>
           </React.Fragment>
