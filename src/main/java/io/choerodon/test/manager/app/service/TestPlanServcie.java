@@ -49,8 +49,6 @@ public interface TestPlanServcie {
      */
      void sagaCreatePlan(TestPlanVO testPlanVO);
 
-     void sagaUpdatePlan(TestPlanVO testPlanVO);
-
     TestPlanVO queryPlan(Long projectId, Long planId);
 
     void updateStatusCode(Long projectId, TestPlanDTO testPlanDTO);
