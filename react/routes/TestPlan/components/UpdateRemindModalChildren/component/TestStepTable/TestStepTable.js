@@ -14,7 +14,6 @@ const TestStepTable = (props) => {
       <Column name="testStep" />
       <Column name="testData" />
       <Column name="expectedResult" />
-
     </Table>
   );
 };

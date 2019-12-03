@@ -17,7 +17,7 @@ import Store from '../../stores';
 const propTypes = {
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,
-  onTableRowClick: PropTypes.func.isRequired,
+  onTableSummaryClick: PropTypes.func.isRequired,
   onDeleteExecute: PropTypes.func.isRequired,
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
@@ -27,7 +27,7 @@ const propTypes = {
 const TestPlanTable = observer(({
   onDragEnd,
   onTableChange,
-  onTableRowClick,
+  onTableSummaryClick,
   onDeleteExecute,
   onQuickPass,
   onQuickFail,
@@ -62,7 +62,7 @@ const TestPlanTable = observer(({
         menu={menu}
         text={text}
         isHasMenu={record.projectId !== 0}
-        // onClickEdit={onTableRowClick.bind(this, record)}
+        onClickEdit={onTableSummaryClick.bind(this, record)}
       />
     );
   };

@@ -66,11 +66,23 @@ class TestPlanStore extends TestPlanTreeStore {
       this.filter = filter;
     }
 
+    @observable barFilter = [];
+
+    @action setBarFilter = (barFilter) => {
+      this.barFilter = barFilter;
+    }
+
     @observable order = {
       orderField: '',
       orderType: '',
     };
   
+    @computed get getSearchObj() {
+      return {
+        searchArgs: this.filter,
+        contents: this.barFilter,
+      };
+    }
 
     @computed get getFilters() {
       return this.filter;
@@ -111,6 +123,7 @@ class TestPlanStore extends TestPlanTreeStore {
       this.currentCycle = {};  
       this.preCycle = {};
       this.filter = {};
+      this.barFilter = [];
       this.executePagination = {
         current: 1,
         total: 0,
@@ -165,13 +178,17 @@ class TestPlanStore extends TestPlanTreeStore {
      * @memberof TestPlanStore
      */
     async loadExecutes() {
-      const { executePagination, filter, order } = this;
+      const {
+        executePagination, order, getSearchObj, 
+      } = this;
       const [planId, folderId] = this.getId();
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
+      const search = getSearchObj;
+      console.log(search);
       this.setTableLoading(true);
       const executes = await getExecutesByFolder({
-        planId, folderId, current, pageSize, filter, orderField, orderType, 
+        planId, folderId, current, pageSize, search, orderField, orderType, 
       });
       this.setTableLoading(false);
       this.setTestList(executes.list);

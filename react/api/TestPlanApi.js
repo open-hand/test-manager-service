@@ -27,9 +27,9 @@ export function deletePlan(planId) {
  *  根据文件夹id和计划id获取执行
  */
 export function getExecutesByFolder({ 
-  planId, folderId, filter, orderField, orderType, current, pageSize, 
+  planId, folderId, search, orderField, orderType, current, pageSize, 
 }) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?folder_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, filter, {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?folder_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, search, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -71,6 +71,17 @@ export function executesAssignTo(executeIds, assignUserId) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/batchAssign/cycleCase?assign_user_id=${assignUserId}`, executeIds);
 }
 
+/**
+ * 删除状态
+ *
+ * @export
+ * @param {*} executeId
+ * @returns
+ */
 export function deleteExecute(executeId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case?cycleCaseId=${executeId}`);
+}
+
+export function updatePlanStatus(updateData) {
+  return request.post(`/test/v1/projects/${getProjectId()}/plan/update_status`, updateData);
 }

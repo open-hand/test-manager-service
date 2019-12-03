@@ -2,6 +2,7 @@ export default ({ stepData }) => ({
   autoQuery: true,
   selection: false,
   data: stepData,
+  paging: false,
   fields: [
     { name: 'stepId', type: 'string', label: '' },
     { name: 'testStep', type: 'string', label: '测试步骤' },

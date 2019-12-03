@@ -2,6 +2,7 @@ import React, {
   useCallback, useContext, useEffect,
 } from 'react';
 import { observer } from 'mobx-react-lite';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { FormattedMessage } from 'react-intl';
 import {
@@ -26,7 +27,7 @@ import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
 import './TestPlanHome.less';
-import { getDragRank } from '../../../common/utils';
+import { getDragRank, executeDetailLink } from '../../../common/utils';
 
 
 const { TabPane } = Tabs;
@@ -35,7 +36,7 @@ const updateRemindModal = Modal.key();
 
 function TestPlanHome() {
   const {
-    prefixCls, createAutoTestStore, testPlanStore,
+    prefixCls, createAutoTestStore, testPlanStore, history,
   } = useContext(Store);
   const {
     treeData, loading, checkIdMap, testList, testPlanStatus, planInfo,
@@ -65,6 +66,7 @@ function TestPlanHome() {
       },
     });
   };
+
   const handleOpenUpdateRemind = () => {
     Modal.open({
       key: updateRemindModal,
@@ -84,6 +86,10 @@ function TestPlanHome() {
         </div>
       ),
     });
+  };
+
+  const handleTableSummaryClick = (record) => {
+    history.push(executeDetailLink(record.executeId));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
@@ -111,13 +117,14 @@ function TestPlanHome() {
   };
 
   const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    console.log(pagination, filters, sorter, barFilters);
     const Filters = { ...filters };
+    
     if (barFilters && barFilters.length > 0) {
-      Filters.summary = barFilters;
+      testPlanStore.setBarFilter(barFilters);
     }
     if (pagination.current) {
-      testPlanStore.setFilters(Filters);
-      testPlanStore.rightEnterLoading();
+      testPlanStore.setFilter(Filters);
       testPlanStore.setExecutePagination(pagination);
       testPlanStore.loadExecutes();
     }
@@ -182,6 +189,9 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
+        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
+          变更提醒
+        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
@@ -242,6 +252,7 @@ function TestPlanHome() {
                     onQuickFail={handleQuickFail}
                     onAssignToChange={handleAssignToChange}
                     onOpenUpdateRemind={handleOpenUpdateRemind}
+                    onTableSummaryClick={handleTableSummaryClick}
                   />
                 </div>
               </div>
@@ -255,4 +266,4 @@ function TestPlanHome() {
   );
 }
 
-export default observer(TestPlanHome);
+export default withRouter(observer(TestPlanHome));
