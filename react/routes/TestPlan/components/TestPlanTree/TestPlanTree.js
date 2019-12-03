@@ -11,6 +11,8 @@ import { editPlan, deletePlan } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { openClonePlan } from '../TestPlanModal';
+import openDragPlanFolder from '../DragPlanFolder';
+import openImportIssue from '../ImportIssue';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 
@@ -53,12 +55,12 @@ class TestPlanTree extends Component {
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
     const [planId] = testPlanStore.getId(item.id);
-    testPlanStore.setCurrentCycle(item);    
+    testPlanStore.setCurrentCycle(item);
     testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
   }
 
   renderTreeNode = (node, { item }) => {
-    if (item.data.parentId) {
+    if (!item.topLevel) {
       return (
         node
       );
@@ -74,6 +76,46 @@ class TestPlanTree extends Component {
     }
   }
 
+  getMenuItems = (item) => {
+    const isPlan = item.topLevel;
+    if (isPlan) {
+      return [
+        <Menu.Item key="copy">
+          复制此计划
+        </Menu.Item>,
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="drag">
+          调整结构
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ];
+    } else {
+      const canImport = item.children.length === 0;
+      return canImport ? [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="import">
+          导入用例
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ] : [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,        
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ];
+    }
+  }
+
   render() {
     const { context: { testPlanStore } } = this.props;
     const { treeLoading } = testPlanStore;
@@ -84,6 +126,7 @@ class TestPlanTree extends Component {
         <Tree
           ref={this.treeRef}
           data={treeData}
+          onCreate={() => {}}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
@@ -92,26 +135,29 @@ class TestPlanTree extends Component {
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
           treeNodeProps={
-            {
-              enableAction: item => item.topLevel,
-              menuItems: [
-                <Menu.Item key="copy">
-                  复制此计划
-                </Menu.Item>,
-                <Menu.Item key="rename">
-                  重命名
-                </Menu.Item>,
-                <Menu.Item key="delete">
-                  删除
-                </Menu.Item>,
-              ],
+            {              
+              menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
+              // 计划和没有执行的，可以添加子文件夹
+              enableAddFolder: item => item.topLevel || !item.hasCase,
             }
           }
           onMenuClick={(key, nodeItem) => {
             switch (key) {
               case 'copy': {
                 openClonePlan({
+                  planId: nodeItem.id,
+                });
+                break;
+              }
+              case 'drag': {
+                openDragPlanFolder({
+                  planId: nodeItem.id,
+                });
+                break;
+              }
+              case 'import': {
+                openImportIssue({
                   planId: nodeItem.id,
                 });
                 break;

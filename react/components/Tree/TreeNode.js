@@ -31,7 +31,7 @@ const prefix = 'c7ntest-tree';
 const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
   const menu = (
     <Menu onClick={(target) => { onMenuClick(item, target); }}>
-      {menuItems || [
+      {menuItems ? callFunction(menuItems, item) : [
         <Menu.Item key="rename">
           重命名
         </Menu.Item>,
