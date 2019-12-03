@@ -7,7 +7,6 @@ import {
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import moment from 'moment';
-import { isEqual } from 'lodash';
 import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import { getProjectId } from '@/common/utils';
@@ -35,16 +34,17 @@ function TestPlanModal({
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
   const dataSet = useMemo(() => new DataSet(DataSetFactory({ initValue })), [initValue]);
   useEffect(() => {
-    selectIssueStore.loadIssueTree(initCaseSelected);
-  }, [initCaseSelected, selectIssueStore]);
+    if (mode === 'create') {
+      selectIssueStore.loadIssueTree(initCaseSelected);
+    }
+  }, [initCaseSelected, mode, selectIssueStore]);
   const handleSubmit = useCallback(async () => {
     const data = dataSet.toData()[0];
     const {
       range, custom, __id, __status, objectVersionNumber, id, ...rest
     } = data;
-    const caseSelected = custom ? selectIssueStore.getSelectedFolders() : undefined;
-    const caseChanged = !isEqual(initValue.caseSelected, caseSelected);
-    if (mode === 'edit' && !dataSet.isModified() && !caseChanged) {
+    const caseSelected = custom ? selectIssueStore.getSelectedFolders() : null;
+    if (mode === 'edit' && !dataSet.isModified()) {
       return true;
     }
     try {
@@ -58,7 +58,6 @@ function TestPlanModal({
           endDate: moment(range[1]).format('YYYY-MM-DD HH:mm:ss'),
           projectId: getProjectId(),
           caseSelected,
-          caseChanged,
         };
         const result = await submit(plan);
         onSubmit(result);
@@ -69,7 +68,7 @@ function TestPlanModal({
       // console.log(error);
       return false;
     }
-  }, [dataSet, initValue.caseSelected, mode, onSubmit, selectIssueStore, submit]);
+  }, [dataSet, mode, onSubmit, selectIssueStore, submit]);
   useEffect(() => {
     modal.handleOk(handleSubmit);
   }, [modal, handleSubmit]);
@@ -89,18 +88,22 @@ function TestPlanModal({
         // renderer={({ record }) => <UserHead user={record.toData()} />}
         />
         <DateTimePicker range name="range" min={Date.now()} />
-        <div>
+        {mode === 'create' && (
           <div>
-            <span>导入用例方式</span>
-            <Tip title="导入用例方式" />
+            <div>
+              <span>导入用例方式</span>
+              <Tip title="导入用例方式" />
+            </div>
+            <Radio name="custom" value={false} defaultChecked>全部用例</Radio>
+            <Radio name="custom" value>自选用例</Radio>
           </div>
-          <Radio name="custom" value={false} defaultChecked>全部用例</Radio>
-          <Radio name="custom" value>自选用例</Radio>
-        </div>
+        )}
       </Form>
-      <div style={{ display: dataSet.current && dataSet.current.get('custom') ? 'block' : 'none' }}>
-        <SelectIssue />
-      </div>
+      {mode === 'create' && (
+        <div style={{ display: dataSet.current && dataSet.current.get('custom') ? 'block' : 'none' }}>
+          <SelectIssue />
+        </div>
+      )}
       <Form dataSet={dataSet} style={{ width: 512 }}>
         <div>
           <div>

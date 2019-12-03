@@ -93,7 +93,7 @@ class TestPlanTree extends Component {
           isDragEnabled={false}
           treeNodeProps={
             {
-              enableAction: item => item.topLevel,
+              // enableAction: item => item.topLevel,
               menuItems: [
                 <Menu.Item key="copy">
                   复制此计划
