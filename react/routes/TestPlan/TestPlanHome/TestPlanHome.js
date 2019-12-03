@@ -1,6 +1,7 @@
 import React, {
   useCallback, useContext, useEffect,
 } from 'react';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
@@ -117,14 +118,16 @@ function TestPlanHome() {
   };
 
   const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    let filter = {};
     console.log(pagination, filters, sorter, barFilters);
-    const Filters = { ...filters };
-    
-    if (barFilters && barFilters.length > 0) {
-      testPlanStore.setBarFilter(barFilters);
-    }
+    Object.keys(filters).map((key) => {
+      if (filters[key] && filters[key].length > 0) {
+        filter = { ...filter, ...{ [key]: filters[key][0] } };
+      }
+    });    
+    testPlanStore.setBarFilter(barFilters || []);
     if (pagination.current) {
-      testPlanStore.setFilter(Filters);
+      testPlanStore.setFilter(filter);
       testPlanStore.setExecutePagination(pagination);
       testPlanStore.loadExecutes();
     }

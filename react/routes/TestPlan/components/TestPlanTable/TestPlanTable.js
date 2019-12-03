@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Menu, Card, Button, 
+  Tooltip, Menu, Card, Button, Icon, 
 } from 'choerodon-ui';
 import _ from 'lodash';
 import {
@@ -67,6 +67,28 @@ const TestPlanTable = observer(({
     );
   };
 
+  const renderSource = (source) => {
+    if (!source || source === 'none') {
+      return '';
+    } else {
+      return (
+        <div className="c7ntest-text-dot">
+          {source === 'auto' ? (
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+              <Icon style={{ color: '#FA8C16', fontSize: 20 }} type="test-automation" />
+              自动测试
+            </span>
+          ) : (
+            <span style={{ display: 'flex', alignItems: 'center' }}>
+              <Icon style={{ color: '#4D90FE', fontSize: 20 }} type="test-case" />
+              手动测试
+            </span>
+          )}
+        </div>
+      );
+    }
+  };
+  console.log(testPlanStore.filter, testPlanStore.filter && testPlanStore.filter.executionStatus);
   const columns = [{
     title: <span>用例名</span>,
     dataIndex: 'summary',
@@ -79,6 +101,7 @@ const TestPlanTable = observer(({
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1,
+    filters: [],
     render(assignedUser) {
       return (
         <div
@@ -107,6 +130,7 @@ const TestPlanTable = observer(({
     dataIndex: 'executionStatus',
     key: 'executionStatus',
     filters: statusList && statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
+    filteredValue: (testPlanStore.filter && Number(testPlanStore.filter.executionStatus)) || '',
     flex: 1,
     render(executionStatus) {
       const statusColor = _.find(statusList, { statusId: executionStatus })
@@ -165,15 +189,7 @@ const TestPlanTable = observer(({
       dataIndex: 'source',
       key: 'source',
       flex: 1,
-      render(source) {
-        return (
-          <div
-            className="c7ntest-text-dot"
-          >
-            {source && source}
-          </div>
-        );
-      },
+      render: (text, record) => renderSource(text),
     });
   }
 
