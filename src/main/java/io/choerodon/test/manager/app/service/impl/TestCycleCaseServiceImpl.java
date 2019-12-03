@@ -704,8 +704,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCycleCaseVO testCycleCaseVO = dtoToVo(testCycleCaseDTO, testCycleDTO);
         TestCaseInfoVO testCaseInfoVO = testCaseService.queryCaseRep(caseId);
         CaseChangeVO caseChangeVO = new CaseChangeVO();
-        caseChangeVO.setTestCycleCaseVO(testCycleCaseVO);
-        caseChangeVO.setTestCaseInfoVO(testCaseInfoVO);
+        caseChangeVO.setTestCycleCase(testCycleCaseVO);
+        caseChangeVO.setTestCase(testCaseInfoVO);
         return caseChangeVO;
     }
 

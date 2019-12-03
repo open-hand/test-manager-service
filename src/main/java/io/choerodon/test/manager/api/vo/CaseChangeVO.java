@@ -6,23 +6,23 @@ package io.choerodon.test.manager.api.vo;
  */
 public class CaseChangeVO {
 
-    private TestCycleCaseVO testCycleCaseVO;
+    private TestCycleCaseVO testCycleCase;
 
-    private TestCaseInfoVO testCaseInfoVO;
+    private TestCaseInfoVO testCase;
 
-    public TestCycleCaseVO getTestCycleCaseVO() {
-        return testCycleCaseVO;
+    public TestCycleCaseVO getTestCycleCase() {
+        return testCycleCase;
     }
 
-    public void setTestCycleCaseVO(TestCycleCaseVO testCycleCaseVO) {
-        this.testCycleCaseVO = testCycleCaseVO;
+    public void setTestCycleCase(TestCycleCaseVO testCycleCase) {
+        this.testCycleCase = testCycleCase;
     }
 
-    public TestCaseInfoVO getTestCaseInfoVO() {
-        return testCaseInfoVO;
+    public TestCaseInfoVO getTestCase() {
+        return testCase;
     }
 
-    public void setTestCaseInfoVO(TestCaseInfoVO testCaseInfoVO) {
-        this.testCaseInfoVO = testCaseInfoVO;
+    public void setTestCase(TestCaseInfoVO testCase) {
+        this.testCase = testCase;
     }
 }

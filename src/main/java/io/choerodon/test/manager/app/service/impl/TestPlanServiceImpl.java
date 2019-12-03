@@ -367,6 +367,12 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
+    public void updateStatusCode(Long projectId, TestPlanDTO testPlanDTO) {
+        testPlanDTO.setProjectId(projectId);
+        baseUpdate(testPlanDTO);
+    }
+
+    @Override
     public TestPlanVO queryPlanInfo(Long projectId, Long planId) {
         // 查询计划的信息
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
