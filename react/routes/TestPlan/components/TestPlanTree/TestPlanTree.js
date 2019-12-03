@@ -12,6 +12,7 @@ import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { openClonePlan } from '../TestPlanModal';
 import openDragPlanFolder from '../DragPlanFolder';
+import openImportIssue from '../ImportIssue';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 
@@ -59,7 +60,7 @@ class TestPlanTree extends Component {
   }
 
   renderTreeNode = (node, { item }) => {
-    if (item.data.parentId) {
+    if (!item.topLevel) {
       return (
         node
       );
@@ -72,6 +73,38 @@ class TestPlanTree extends Component {
           {node}
         </TreeNode>
       );
+    }
+  }
+
+  getMenuItems = (item) => {
+    const isPlan = item.topLevel;
+    if (isPlan) {
+      return [
+        <Menu.Item key="copy">
+          复制此计划
+        </Menu.Item>,
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="drag">
+          调整结构
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ];
+    } else {
+      return [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="import">
+          导入用例
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ];
     }
   }
 
@@ -93,22 +126,8 @@ class TestPlanTree extends Component {
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
           treeNodeProps={
-            {
-              // enableAction: item => item.topLevel,
-              menuItems: [
-                <Menu.Item key="copy">
-                  复制此计划
-                </Menu.Item>,
-                <Menu.Item key="rename">
-                  重命名
-                </Menu.Item>,
-                <Menu.Item key="drag">
-                  调整结构
-                </Menu.Item>,
-                <Menu.Item key="delete">
-                  删除
-                </Menu.Item>,
-              ],
+            {              
+              menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
             }
           }
@@ -122,6 +141,12 @@ class TestPlanTree extends Component {
               }
               case 'drag': {
                 openDragPlanFolder({
+                  planId: nodeItem.id,
+                });
+                break;
+              }
+              case 'import': {
+                openImportIssue({
                   planId: nodeItem.id,
                 });
                 break;
