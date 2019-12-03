@@ -843,7 +843,7 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
-        return cycleMapper.listByPlanIds(planIds);
+        return cycleMapper.listByPlanIds("folder",planIds);
     }
 
     @Override

@@ -697,6 +697,16 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
+    public void selectUpdateCompare(Long projectId, Long executeId) {
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        Long caseId = testCycleCaseDTO.getCaseId();
+
+//        TestCycleCaseVO testCycleCaseVO = dtoToVo(testCycleCaseDTO);
+//
+//        TestCaseRepVO testCaseRepVO = testCaseService.
+    }
+
+    @Override
     public List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId) {
         return testCycleCaseMapper.listByCycleIds(cycleId);
     }

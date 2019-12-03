@@ -325,7 +325,7 @@
 
     <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
       select * from test_cycle
-      where
+      where type = #{type} and
       plan_id in
       <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
             #{planId}
