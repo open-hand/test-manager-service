@@ -100,7 +100,7 @@ class TestPlanTree extends Component {
                   重命名
                 </Menu.Item>,
                 <Menu.Item key="delete">
-                 删除
+                  删除
                 </Menu.Item>,
               ],
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
@@ -110,7 +110,7 @@ class TestPlanTree extends Component {
             switch (key) {
               case 'copy': {
                 openClonePlan({
-                  planId: Number(nodeItem.id.split('-')[0]),
+                  planId: nodeItem.id,
                 });
                 break;
               }

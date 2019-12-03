@@ -10,7 +10,7 @@ import {
 
 
 class TestPlanStore extends TestPlanTreeStore {
-    @observable loading = false;
+    @observable loading = true;
 
     @action setLoading = (loading) => {
       this.loading = loading;
