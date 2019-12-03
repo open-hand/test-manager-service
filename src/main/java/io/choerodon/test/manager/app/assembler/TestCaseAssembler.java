@@ -55,6 +55,9 @@ public class TestCaseAssembler {
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
+    @Autowired
+    private TestCycleCaseStepMapper testCycleCaseStepMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -177,5 +180,26 @@ public class TestCaseAssembler {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
         testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         return testCycleCaseInfoVO;
+    }
+
+    public TestCycleCaseUpdateVO dtoToUpdateVO(TestCycleCaseDTO testCycleCaseDTO) {
+        TestCycleCaseUpdateVO testCycleCaseUpdateVO = new TestCycleCaseUpdateVO();
+        testCycleCaseUpdateVO.setExecuteId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseUpdateVO.setDescription(testCycleCaseDTO.getDescription());
+        testCycleCaseUpdateVO.setSummary(testCycleCaseDTO.getSummary());
+        //查询步骤信息
+        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+        testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
+        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
+        List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepUpdateVO>>() {
+        }.getType());
+        testCycleCaseUpdateVO.setTestCycleCaseStepUpdateVOS(testCycleCaseStepVOList);
+        // 查询附件信息
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
+        testCycleCaseUpdateVO.setCycleCaseAttachmentRelVOList(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+        }.getType()));
+        return testCycleCaseUpdateVO;
     }
 }

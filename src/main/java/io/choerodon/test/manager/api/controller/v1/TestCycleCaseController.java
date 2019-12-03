@@ -208,11 +208,21 @@ public class TestCycleCaseController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("更新测试执行")
-    @PutMapping
-    public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
+    @ApiOperation("更新测试执行和其对应步骤")
+    @PutMapping("/case_step")
+    public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
-        testCycleCaseService.update(testCycleCaseUpdateVO);
+        testCycleCaseService.updateCaseAndStep(testCycleCaseUpdateVO);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("更新测试执行信息")
+    @PutMapping("/cycle_case")
+    public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
+                                 @RequestBody TestCycleCaseVO testCycleCaseVO) {
+        testCycleCaseService.update(testCycleCaseVO);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
@@ -236,6 +246,16 @@ public class TestCycleCaseController {
                                           @RequestBody(required = true) List<Long>  cycleCaseIds) {
         testCycleCaseService.batchAssignCycleCase(projectId, assignUserId, cycleCaseIds);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询一个执行和步骤")
+    @GetMapping("/case_step/{execute_id}")
+    public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
+                                                    @PathVariable(name = "execute_id") Long executeId) {
+        return Optional.ofNullable(testCycleCaseService.queryCaseAndStep(executeId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
     }
 
 }

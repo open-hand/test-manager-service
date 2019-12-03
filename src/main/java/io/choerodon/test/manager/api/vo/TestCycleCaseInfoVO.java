@@ -53,9 +53,13 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "执行日期")
     private Date executorDate;
 
+    @ApiModelProperty(value = "上一个执行")
+    private Long previousExecuteId;
 
-    @ApiModelProperty(value = "测试用例关联的附件信息")
-    private List<TestCycleCaseAttachmentRelVO> attachment;
+    @ApiModelProperty(value = "下一个执行")
+    private Long nextExecuteId;
+        @ApiModelProperty(value = "测试用例关联的附件信息")
+        private List<TestCycleCaseAttachmentRelVO> attachment;
 
     @ApiModelProperty(value = "用例关联的问题链接")
     private List<IssueInfoDTO> issuesInfos;
@@ -82,6 +86,22 @@ public class TestCycleCaseInfoVO {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public Long getPreviousExecuteId() {
+        return previousExecuteId;
+    }
+
+    public void setPreviousExecuteId(Long previousExecuteId) {
+        this.previousExecuteId = previousExecuteId;
+    }
+
+    public Long getNextExecuteId() {
+        return nextExecuteId;
+    }
+
+    public void setNextExecuteId(Long nextExecuteId) {
+        this.nextExecuteId = nextExecuteId;
     }
 
     public String getSummary() {

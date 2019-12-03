@@ -28,9 +28,6 @@ public class TestCycleCaseStepVO {
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
-    @ApiModelProperty(value = "循环ID")
-    private Long cycleId;
-
     @ApiModelProperty(value = "步骤状态ID")
     private Long stepStatus;
 
@@ -61,23 +58,12 @@ public class TestCycleCaseStepVO {
     @ApiModelProperty(value = "状态名")
     private String statusName;
 
-    @ApiModelProperty(value = "循环名称")
-    private String cycleName;
-
     public IssueInfosVO getIssueInfosVO() {
         return issueInfosVO;
     }
 
     public void setIssueInfosVO(IssueInfosVO issueInfosVO) {
         this.issueInfosVO = issueInfosVO;
-    }
-
-    public Long getCycleId() {
-        return cycleId;
-    }
-
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
     }
 
     public String getTestStep() {
@@ -200,11 +186,4 @@ public class TestCycleCaseStepVO {
         this.statusName = statusName;
     }
 
-    public String getCycleName() {
-        return cycleName;
-    }
-
-    public void setCycleName(String cycleName) {
-        this.cycleName = cycleName;
-    }
 }

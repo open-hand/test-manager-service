@@ -38,10 +38,9 @@ public class TestCycleCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新一个循环步骤")
     @PutMapping
-    public ResponseEntity<List<TestCycleCaseStepVO>> update(@RequestBody List<TestCycleCaseStepVO> testCycleCaseStepVO) {
-        return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepVO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+    public ResponseEntity update(@RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
+        testCycleCaseStepService.update(testCycleCaseStepVO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
@@ -68,9 +67,9 @@ public class TestCycleCaseStepController {
     @GetMapping("/query_list/{execute_id}")
     public ResponseEntity<PageInfo<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
                                                                        @ApiParam(value = "execute_id", required = true)
-                                                                  @PathVariable(name = "execute_id") Long execute_id,
+                                                                       @PathVariable(name = "execute_id") Long execute_id,
                                                                        Pageable pageable) {
-        return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId,pageable))
+        return Optional.ofNullable(testCycleCaseStepService.queryCaseStep(execute_id, projectId, pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 

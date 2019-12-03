@@ -95,7 +95,9 @@ public interface TestCycleCaseService {
      */
     ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId);
 
-    void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+    void updateCaseAndStep(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+
+    void update(TestCycleCaseVO testCycleCaseVO);
 
     PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
 
@@ -111,6 +113,13 @@ public interface TestCycleCaseService {
      * @param cycleCaseId
      */
     void batchAssignCycleCase(Long projectId, Long userId,  List<Long> cycleCaseId);
+
+    /**
+     * 查询执行和步骤信息
+     * @param executeId
+     * @return
+     */
+    TestCycleCaseUpdateVO queryCaseAndStep(Long executeId);
 
     void batchDeleteByExecuteIds(List<Long> deleteCycleCaseIds);
 }
