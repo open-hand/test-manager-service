@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Icon } from 'choerodon-ui';
+import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
@@ -22,6 +23,16 @@ class TestPlanTree extends Component {
     testPlanStore.setTreeRef(this.treeRef);
   }
 
+  editPlanName = (data) => {
+    const { getItem, updateTree } = this.treeRef.current || {};
+    return editPlan(data).then(() => {
+      const planItem = getItem(data.planId);
+      updateTree(data.planId, { data: { ...planItem.data, objectVersionNumber: data.objectVersionNumber + 1 } });
+    }).catch(() => {
+      Choerodon.prompt('重命名失败');
+    });
+  };
+
   handleReName = (newName, item) => {
     const { objectVersionNumber } = item.data;
     const data = {
@@ -30,7 +41,7 @@ class TestPlanTree extends Component {
       name: newName,
       caseChanged: false,
     };
-    return handleRequestFailed(editPlan(data));
+    return handleRequestFailed(this.editPlanName(data));
   }
 
   handleDelete = item => handleRequestFailed(deletePlan(item.id))

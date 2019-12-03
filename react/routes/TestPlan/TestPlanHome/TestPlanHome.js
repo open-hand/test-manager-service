@@ -169,7 +169,14 @@ function TestPlanHome() {
   }, [testPlanStore]);
 
   const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
-
+  let description;
+  if (testPlanStatus === 'todo') {
+    description = '当前项目下无未开始的计划';
+  } else if (testPlanStatus === 'doing') {
+    description = '当前项目下无进行中的计划';
+  } else if (testPlanStatus === 'done') {
+    description = '当前项目下无已完成的计划';
+  }
   return (
     <Page className={prefixCls}>
       <Header
@@ -204,8 +211,8 @@ function TestPlanHome() {
               loading={loading}
               pic={testCaseEmpty}
               title="暂无计划"
-              description="当前项目下无计划，请创建"
-              extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
+              description={description}
+              // extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
           ) : (
             <div className={`${prefixCls}-contentWrap-right`}>
