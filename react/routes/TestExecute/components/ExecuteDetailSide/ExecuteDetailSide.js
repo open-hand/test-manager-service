@@ -148,22 +148,6 @@ function ExecuteDetailSide(props) {
   };
 
 
-  const renderNavs = () => navs.map(nav => (
-    <Tooltip placement="right" title={nav.tooltip} key={nav.code}>
-      <li className={`c7ntest-li ${currentNav === nav.code ? 'c7ntest-li-active' : ''}`}>
-        <Icon
-          type={`${nav.icon} c7ntest-icon-li`}
-          role="none"
-          onClick={() => {
-            setCurrentNav(nav.code);
-            scrollToAnchor(nav.code);
-          }}
-        />
-      </li>
-    </Tooltip>
-  ));
-
-
   const handleResizeEnd = ({ width }) => {
     localStorage.setItem('agile.ExecuteDetail.width', `${width}px`);
   };
@@ -181,7 +165,7 @@ function ExecuteDetailSide(props) {
     // console.log('render', props);
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, executionStatus, summary, issuesInfos,
+      executor, description, executorDate, executionStatus, summary, issuesInfos, caseId, caseNum,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -232,9 +216,8 @@ function ExecuteDetailSide(props) {
                       height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}
                     >
-                      <TypeTag data={{ colour: '#4D90FE', icon: 'test-case' }} />
                       <span style={{ marginLeft: 5 }}>相关用例:</span>
-                      {/* <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(issueId, typeCode, issueNum)}>{issueNum}</Link> */}
+                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'test', caseNum)}>{caseNum}</Link>
                     </div>
 
                   </div>

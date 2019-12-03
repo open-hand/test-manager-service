@@ -119,7 +119,6 @@ class TestPlanStore extends TestPlanTreeStore {
         orderType: '',
       };
       this.testPlanStatus = 'todo';
-      this.currentPlanId = undefined;
       this.executeOldData = {};
       this.executeNewData = {};
       this.planInfo = {};
@@ -135,7 +134,7 @@ class TestPlanStore extends TestPlanTreeStore {
       this.setLoading(true);
       return Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList, treeData]) => {
         this.setLoading(false);
-        if (this.currentPlanId) {
+        if (this.getCurrentPlanId) {
           this.setStatusList(statusList);
           this.loadPlanDetail();
           this.loadExecutes();
@@ -170,7 +169,7 @@ class TestPlanStore extends TestPlanTreeStore {
       const { current, pageSize } = executePagination;
       this.setTableLoading(true);
       const executes = await getExecutesByFolder({ 
-        planId: this.currentPlanId, folderId: id, current, pageSize, filter, orderField, orderType, 
+        planId: this.getCurrentPlanId, folderId: id, current, pageSize, filter, orderField, orderType, 
       });
       this.setTableLoading(false);
       this.setTestList(executes.list);
@@ -189,7 +188,7 @@ class TestPlanStore extends TestPlanTreeStore {
     loadStatusRes() {
       const currentCycle = this.getCurrentCycle;
       const { id: folderId } = currentCycle;
-      getStatusByFolder({ planId: this.currentPlanId, folderId }).then((res) => {
+      getStatusByFolder({ planId: this.getCurrentPlanId, folderId }).then((res) => {
         this.setStatusRes(res);
       });
     }

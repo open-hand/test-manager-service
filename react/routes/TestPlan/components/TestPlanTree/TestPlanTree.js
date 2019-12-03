@@ -48,11 +48,12 @@ class TestPlanTree extends Component {
   }
 
   setSelected = (item) => {
+    console.log(item);
     const { context: { testPlanStore } } = this.props;
-    const { currentPlanId, treeData, getParent } = testPlanStore;
+    const { getCurrentPlanId, treeData, getParent } = testPlanStore;
     testPlanStore.setCurrentCycle(item);
-    const planId = (getParent(treeData.rootIds, treeData.treeFolder, item.id) && getParent(treeData.rootIds, treeData.treeFolder, item.id).id) || item.id;
-    testPlanStore.loadRightData(planId !== currentPlanId);
+    // const planId = (getParent(treeData.rootIds, treeData.treeFolder, item.id) && getParent(treeData.rootIds, treeData.treeFolder, item.id).id) || item.id;
+    testPlanStore.loadRightData(true);
   }
 
   renderTreeNode = (node, { item }) => {
@@ -86,7 +87,7 @@ class TestPlanTree extends Component {
           onEdit={this.handleEdit}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
-          selected={testPlanStore.getCurrentCycle}
+          selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
@@ -111,7 +112,7 @@ class TestPlanTree extends Component {
             switch (key) {
               case 'copy': {
                 openClonePlan({
-                  planId: nodeItem.id,
+                  planId: Number(nodeItem.id.split('-')[0]),
                 });
                 break;
               }

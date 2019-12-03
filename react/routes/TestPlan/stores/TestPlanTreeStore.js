@@ -5,17 +5,23 @@ import {
 import { find } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
+function getId(id) {
+  if (!id) {
+    return id;
+  }
+  if (typeof id === 'number') {
+    return id;
+  } else if (id.split('-').length === 2) {
+    return Number(id.split('-')[0]);
+  } else {
+    return id;
+  }
+}
 class TestPlanTreeStore {
   @observable testPlanStatus = 'todo';
 
   @action setTestPlanStatus = (testPlanStatus) => {
     this.testPlanStatus = testPlanStatus;
-  }
-
-  @observable currentPlanId = undefined;
-
-  @action setCurrentPlanId = (currentPlanId) => {
-    this.currentPlanId = currentPlanId;
   }
 
   @observable treeData = {
@@ -49,7 +55,13 @@ class TestPlanTreeStore {
   }
 
   @computed get getCurrentCycle() {
-    return toJS(this.currentCycle);
+    return { ...this.currentCycle, id: getId(this.currentCycle.id) };
+  }
+
+  @computed get getCurrentPlanId() {
+    const { id } = this.currentCycle;
+    const currentPlan = this.getParent(this.treeData.rootIds, this.treeData.treeFolder, id);  
+    return currentPlan ? getId(currentPlan.id) : undefined;
   }
 
   @computed get getPreCycle() {
@@ -62,22 +74,23 @@ class TestPlanTreeStore {
 
   async loadIssueTree(defaultSelectId) {
     this.setTreeLoading(true);
-    const treeData = await getPlanTree(this.testPlanStatus); 
+    const treeData = await getPlanTree(this.testPlanStatus);
     this.setTreeData(treeData, defaultSelectId);
     this.setTreeLoading(false);
   }
 
   @action getParent = (rootIds, treeFolders, folderId) => {
     let parent;
-    for (let i = 0; i < treeFolders.length; i++) {
+    for (let i = 0; i < treeFolders.length; i += 1) {
       if (!treeFolders[i].topLevel && treeFolders[i].children && treeFolders[i].children.length && treeFolders[i].children.includes(folderId) && !rootIds.includes(folderId)) {
         parent = treeFolders[i];
         if (parent.data.parentId) {
           return this.getParent(rootIds, treeFolders, parent.id);
-        } else {
-          console.log(i, treeFolders[i]);
+        } else {          
           return parent;
         }
+      } else {
+        return treeFolders[i];
       }
     }
     return parent;
@@ -85,29 +98,29 @@ class TestPlanTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
+    const planIds = rootIds.slice(0, 5).map(id => `${id}-plan`);
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
-    if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
+    if (!this.currentCycle.id && planIds.length > 0) {
+      selectedId = defaultSelectId ? Number(defaultSelectId) : planIds[0];
     }
     this.treeData = {
-      rootIds: rootIds.slice(0, 4) || [],
-      treeFolder: (treeFolder && treeFolder.map((folder) => {
+      rootIds: planIds,
+      treeFolder: treeFolder.map((folder) => {
         const {
-          issueFolderVO, expanded, children, ...other 
+          id, issueFolderVO, expanded, children, ...other
         } = folder;
         return {
+          id: rootIds.includes(id) ? `${id}-plan` : id,
           children: children || [],
           data: issueFolderVO,
           isExpanded: expanded,
           selected: folder.id === selectedId,
           ...other,
         };
-      })) || [],
+      }) || [],
     };
     if (selectedId) {
-      const planId = (this.getParent(this.treeData.rootIds, this.treeData.treeFolder, selectedId) && this.getParent(this.treeData.rootIds, this.treeData.treeFolder, selectedId).id) || selectedId;
-      this.setCurrentPlanId(planId);
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }

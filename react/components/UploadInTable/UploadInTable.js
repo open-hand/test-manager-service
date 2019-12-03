@@ -89,7 +89,7 @@ class UploadInTable extends Component {
           }}
         >
           <Button icon="file_upload">
-            <FormattedMessage id="upload_attachment" />
+            {!fileList ? '' : <FormattedMessage id="upload_attachment" />}
           </Button>
         </Upload>
 
