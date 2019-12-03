@@ -38,10 +38,9 @@ public class TestCycleCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新一个循环步骤")
     @PutMapping
-    public ResponseEntity<List<TestCycleCaseStepVO>> update(@RequestBody List<TestCycleCaseStepVO> testCycleCaseStepVO) {
-        return Optional.ofNullable(testCycleCaseStepService.update(testCycleCaseStepVO))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-                .orElseThrow(() -> new CommonException("error.testCycleCaseStep.update"));
+    public ResponseEntity update(@RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
+        testCycleCaseStepService.update(testCycleCaseStepVO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

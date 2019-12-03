@@ -23,7 +23,7 @@ public interface TestCycleCaseStepService {
      * @param testCycleCaseStepVO
      * @return
      */
-    List<TestCycleCaseStepVO> update(List<TestCycleCaseStepVO> testCycleCaseStepVO);
+    void update(TestCycleCaseStepVO testCycleCaseStepVO);
 
     /**
      * 查询循环测试步骤

@@ -95,7 +95,9 @@ public interface TestCycleCaseService {
      */
     ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId);
 
-    void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+    void updateCaseAndStep(TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+
+    void update(TestCycleCaseVO testCycleCaseVO);
 
     PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
 

@@ -569,9 +569,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testStatusDTOList.forEach(status->{
                 if(test.getStatusId().equals(status.getStatusId())){
                     status.setCount(test.getCount());
-                }else {
-                    status.setCount(0L);
                 }
+                status.setCount(status.getCount() == null ? 0 : status.getCount());
             });
         }
         List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
@@ -581,7 +580,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+    public void update(TestCycleCaseVO testCycleCaseVO) {
+        TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class);
+        testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
+    }
+
+    @Override
+    public void updateCaseAndStep(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
         List<Long> executeStepIds = testCycleCaseStepVOList.stream().map(TestCycleCaseStepUpdateVO::getExecuteStepId).collect(Collectors.toList());
         //1.删除执行对应的步骤

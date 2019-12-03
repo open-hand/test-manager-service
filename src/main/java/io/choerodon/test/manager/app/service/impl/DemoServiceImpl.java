@@ -5,23 +5,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import com.github.pagehelper.PageHelper;
-import io.choerodon.web.util.PageableHelper;
+import com.github.pagehelper.PageInfo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
-import com.github.pagehelper.PageInfo;
 
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
-import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-02-15.
@@ -456,7 +454,7 @@ public class DemoServiceImpl implements DemoService {
                 }
                 break;
         }
-        testCycleCaseStepService.update(testCaseStepDTOs);
+//        testCycleCaseStepService.update(testCaseStepDTOs);
     }
 
     private void initExecutionDefect(Long[] defectExecution, Long projectId, Long organizationId, Long userId, Date date) {

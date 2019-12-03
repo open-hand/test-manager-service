@@ -58,8 +58,8 @@ public class TestCycleCaseInfoVO {
 
     @ApiModelProperty(value = "下一个执行")
     private Long nextExecuteId;
-    @ApiModelProperty(value = "测试用例关联的附件信息")
-    private List<TestCycleCaseAttachmentRelVO> attachment;
+        @ApiModelProperty(value = "测试用例关联的附件信息")
+        private List<TestCycleCaseAttachmentRelVO> attachment;
 
     @ApiModelProperty(value = "用例关联的问题链接")
     private List<IssueInfoDTO> issuesInfos;

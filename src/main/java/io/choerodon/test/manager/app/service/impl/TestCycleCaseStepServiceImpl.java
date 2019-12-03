@@ -54,10 +54,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestCycleCaseStepVO> update(List<TestCycleCaseStepVO> testCycleCaseStepVO) {
-        return modelMapper.map(baseUpdate(modelMapper.map(testCycleCaseStepVO, new TypeToken<List<TestCycleCaseStepDTO>>() {
-        }.getType())), new TypeToken<List<TestCycleCaseStepVO>>() {
-        }.getType());
+    public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
+        TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
+        testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO);
     }
 
     @Override
