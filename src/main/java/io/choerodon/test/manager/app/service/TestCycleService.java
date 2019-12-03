@@ -6,6 +6,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
@@ -79,4 +80,6 @@ public interface TestCycleService {
     List<TestCycleDTO> listByPlanIds(List<Long> planIds);
 
     void batchDelete(List<Long> needDeleteCycleIds);
+
+    TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO);
 }

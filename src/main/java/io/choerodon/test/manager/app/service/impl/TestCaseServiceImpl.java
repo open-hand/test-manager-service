@@ -596,4 +596,18 @@ public class TestCaseServiceImpl implements TestCaseService {
         return testCaseMapper.listByCaseIds(projectId,caseIds);
     }
 
+    @Override
+    public TestCaseInfoVO queryCaseRep(Long caseId) {
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(caseId);
+        if(ObjectUtils.isEmpty(testCaseDTO)){
+            return new TestCaseInfoVO();
+        }
+        TestCaseInfoVO testCaseInfoVO = testCaseAssembler.dtoToInfoVO(testCaseDTO);
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepService.listByCaseIds(Arrays.asList(caseId));
+        if(!CollectionUtils.isEmpty(testCaseStepDTOS)){
+            testCaseInfoVO.setTestCaseStepS(testCaseStepDTOS);
+        }
+        return testCaseInfoVO;
+    }
+
 }

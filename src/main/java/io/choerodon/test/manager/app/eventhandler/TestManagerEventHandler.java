@@ -206,9 +206,4 @@ public class TestManagerEventHandler {
         testPlanServcie.sagaCreatePlan(testPlanVO);
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_UPDATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN, seq = 1)
-    public void sagaUpdatePlan(String message) throws IOException {
-        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
-        testPlanServcie.sagaUpdatePlan(testPlanVO);
-    }
 }

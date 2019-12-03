@@ -548,11 +548,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId) {
+    public ExecutionStatusVO queryExecuteStatus(Long projectId, Long planId, Long folderId) {
         Long total = 0L;
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        if(!ObjectUtils.isEmpty(folderId)){
+        if (!ObjectUtils.isEmpty(folderId)) {
             TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
             testIssueFolder.setProjectId(projectId);
             Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
@@ -564,10 +564,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testStatusDTO.setStatusType("CYCLE_CASE");
         List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
         List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, folderIds);
-        for (TestStatusDTO test:testStatusDTOS) {
+        for (TestStatusDTO test : testStatusDTOS) {
             total += test.getCount();
-            testStatusDTOList.forEach(status->{
-                if(test.getStatusId().equals(status.getStatusId())){
+            testStatusDTOList.forEach(status -> {
+                if (test.getStatusId().equals(status.getStatusId())) {
                     status.setCount(test.getCount());
                 }
                 status.setCount(status.getCount() == null ? 0 : status.getCount());
@@ -576,7 +576,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
         }.getType());
 
-        return new ExecutionStatusVO(total,testStatusVOList);
+        return new ExecutionStatusVO(total, testStatusVOList);
     }
 
     @Override
@@ -605,7 +605,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
-        if(!ObjectUtils.isEmpty(folderId)){
+        if (!ObjectUtils.isEmpty(folderId)) {
             TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
             testIssueFolder.setProjectId(projectId);
             Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
@@ -667,10 +667,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void batchAssignCycleCase(Long projectId, Long userId, List<Long> cycleCaseId) {
-        if(CollectionUtils.isEmpty(cycleCaseId)){
+        if (CollectionUtils.isEmpty(cycleCaseId)) {
             throw new CommonException("error cycleCase id is null ");
         }
-        testCycleCaseMapper.batchAssign(userId,cycleCaseId);
+        testCycleCaseMapper.batchAssign(userId, cycleCaseId);
     }
 
     @Override
@@ -681,7 +681,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void batchDeleteByExecuteIds(List<Long> executeIds) {
-        if(CollectionUtils.isEmpty(executeIds)){
+        if (CollectionUtils.isEmpty(executeIds)) {
             return;
         }
         // 删除步骤
@@ -694,6 +694,36 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
         // 删除日志
         testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
+    }
+
+    @Override
+    public CaseChangeVO selectUpdateCompare(Long projectId, Long executeId) {
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        Long caseId = testCycleCaseDTO.getCaseId();
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleCaseDTO.getCycleId());
+        TestCycleCaseVO testCycleCaseVO = dtoToVo(testCycleCaseDTO, testCycleDTO);
+        TestCaseInfoVO testCaseInfoVO = testCaseService.queryCaseRep(caseId);
+        CaseChangeVO caseChangeVO = new CaseChangeVO();
+        caseChangeVO.setTestCycleCase(testCycleCaseVO);
+        caseChangeVO.setTestCase(testCaseInfoVO);
+        return caseChangeVO;
+    }
+
+    private TestCycleCaseVO dtoToVo(TestCycleCaseDTO testCycleCaseDTO, TestCycleDTO testCycleDTO) {
+        TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
+        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCycleDTO.getFolderId());
+        List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.querListByexecuteId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseVO.setFolderName(testIssueFolderDTO.getName());
+        if (!CollectionUtils.isEmpty(cycleCaseStepDTOS)) {
+            List<TestCycleCaseStepVO> cycleCaseStepVOS = modelMapper.map(cycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
+            }.getType());
+            testCycleCaseVO.setCycleCaseStep(cycleCaseStepVOS);
+        }
+        List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = testCycleCaseAttachmentRelService.listByExecuteId(testCycleCaseDTO.getExecuteId());
+        if (!CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)) {
+            testCycleCaseVO.setCaseAttachment(testCycleCaseAttachmentRelVOS);
+        }
+        return testCycleCaseVO;
     }
 
     @Override

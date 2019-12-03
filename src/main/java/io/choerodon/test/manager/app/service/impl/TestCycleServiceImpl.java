@@ -822,28 +822,42 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             return new ArrayList<>();
         }
-        List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
-        testIssueFolderDTOS.forEach(v -> {
-            TestCycleDTO testCycleDTO = new TestCycleDTO();
-            testCycleDTO.setFromDate(testPlanDTO.getStartDate());
-            testCycleDTO.setToDate(testPlanDTO.getEndDate());
-            testCycleDTO.setProjectId(testPlanDTO.getProjectId());
-            testCycleDTO.setVersionId(1L);
-            testCycleDTO.setPlanId(testPlanDTO.getPlanId());
-            testCycleDTO.setCycleName(v.getName());
-            testCycleDTO.setFolderId(v.getFolderId());
-            testCycleDTO.setType(TestCycleType.FOLDER);
-            testCycleDTO.setCreatedBy(testPlanDTO.getCreatedBy());
-            testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
-            testCycleDTOS.add(testCycleDTO);
+        Map<Long, List<TestIssueFolderDTO>> parentMap = testIssueFolderDTOS.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, Long> cycleMap = new HashMap<>();
+        List<TestCycleDTO> endCycle = new ArrayList<>();
+        parentMap.keySet().forEach(key -> {
+            List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
+            List<TestIssueFolderDTO> testIssueFolder = parentMap.get(key);
+            testIssueFolder.forEach(v -> {
+                TestCycleDTO testCycleDTO = new TestCycleDTO();
+                testCycleDTO.setFromDate(testPlanDTO.getStartDate());
+                if (v.getParentId() != 0) {
+                    testCycleDTO.setParentCycleId(cycleMap.get(v.getParentId()));
+                } else {
+                    testCycleDTO.setParentCycleId(0L);
+                }
+                testCycleDTO.setToDate(testPlanDTO.getEndDate());
+                testCycleDTO.setProjectId(testPlanDTO.getProjectId());
+                testCycleDTO.setVersionId(1L);
+                testCycleDTO.setPlanId(testPlanDTO.getPlanId());
+                testCycleDTO.setCycleName(v.getName());
+                testCycleDTO.setFolderId(v.getFolderId());
+                testCycleDTO.setType(TestCycleType.FOLDER);
+                testCycleDTO.setCreatedBy(testPlanDTO.getCreatedBy());
+                testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
+                testCycleDTOS.add(testCycleDTO);
+            });
+            cycleMapper.batchInsert(testCycleDTOS);
+            Map<Long, Long> returnCycleId = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
+            cycleMap.putAll(returnCycleId);
+            endCycle.addAll(testCycleDTOS);
         });
-        cycleMapper.batchInsert(testCycleDTOS);
-        return testCycleDTOS;
+        return endCycle;
     }
 
     @Override
     public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
-        return cycleMapper.listByPlanIds(planIds);
+        return cycleMapper.listByPlanIds("folder", planIds);
     }
 
     @Override
@@ -855,6 +869,18 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
         testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         cycleMapper.batchDelete(needDeleteCycleIds);
+    }
+
+    @Override
+    public TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO) {
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+        testIssueFolderVO.setFolderId(testCycleDTO.getCycleId());
+        testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setName(testCycleDTO.getCycleName());
+        testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
+        testIssueFolderVO.setType(testCycleDTO.getType());
+        testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        return testIssueFolderVO;
     }
 
     private Long getCount(TestCycleVO testCycleVO) {

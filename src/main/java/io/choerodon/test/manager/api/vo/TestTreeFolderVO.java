@@ -16,7 +16,7 @@ public class TestTreeFolderVO {
     private TestIssueFolderVO issueFolderVO;
     private Boolean hasCase;
     private Boolean topLevel;
-    private Boolean caseNum;
+    private Long caseCount;
     private Long  planId;
 
     public Long getId() {
@@ -84,12 +84,13 @@ public class TestTreeFolderVO {
         this.topLevel = topLevel;
     }
 
-    public Boolean getCaseNum() {
-        return caseNum;
+
+    public Long getCaseCount() {
+        return caseCount;
     }
 
-    public void setCaseNum(Boolean caseNum) {
-        this.caseNum = caseNum;
+    public void setCaseCount(Long caseCount) {
+        this.caseCount = caseCount;
     }
 
     public Long getPlanId() {

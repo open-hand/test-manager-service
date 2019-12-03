@@ -62,4 +62,13 @@ public class TestPlanController {
                                             @PathVariable(name = "plan_id")Long planId){
         return new ResponseEntity<>(testPlanServcie.queryPlan(projectId,planId),HttpStatus.OK);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("改变计划的状态")
+    @PostMapping("/update_status")
+    public ResponseEntity updateStatus(@PathVariable(name = "project_id") Long projectId,
+                                                 @RequestBody TestPlanDTO testPlanDTO){
+        testPlanServcie.updateStatusCode(projectId,testPlanDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

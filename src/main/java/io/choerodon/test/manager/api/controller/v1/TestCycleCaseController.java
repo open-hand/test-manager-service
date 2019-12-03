@@ -258,4 +258,13 @@ public class TestCycleCaseController {
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
     }
 
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("更新对比")
+    @GetMapping("/{execute_id}/compared")
+    public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
+                                          @PathVariable(name = "execute_id") Long executeId) {
+
+        return new ResponseEntity<>(testCycleCaseService.selectUpdateCompare(projectId,executeId),HttpStatus.OK);
+    }
+
 }

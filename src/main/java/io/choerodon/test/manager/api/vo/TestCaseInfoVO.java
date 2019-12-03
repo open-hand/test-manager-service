@@ -5,6 +5,7 @@ import java.util.List;
 import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.agile.api.vo.UserDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -62,6 +63,8 @@ public class TestCaseInfoVO {
     @ApiModelProperty(value = "乐观锁")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "测试步骤")
+    private List<TestCaseStepDTO> testCaseStepS;
 
     public Long getCaseId() {
         return caseId;
@@ -191,4 +194,12 @@ public class TestCaseInfoVO {
         this.objectVersionNumber = objectVersionNumber;
     }
 
+    public List<TestCaseStepDTO> getTestCaseStepS() {
+
+        return testCaseStepS;
+    }
+
+    public void setTestCaseStepS(List<TestCaseStepDTO> testCaseStepS) {
+        this.testCaseStepS = testCaseStepS;
+    }
 }

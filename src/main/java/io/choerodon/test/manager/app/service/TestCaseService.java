@@ -187,4 +187,6 @@ public interface TestCaseService {
      * @return
      */
     List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds);
+
+    TestCaseInfoVO queryCaseRep(Long caseId);
 }
