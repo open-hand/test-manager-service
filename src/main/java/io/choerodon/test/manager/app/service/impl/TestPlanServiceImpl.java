@@ -63,6 +63,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_UPDATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
+        TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
+        if(TestPlanStatus.DOING.getStatus().equals(testPlan.getInitStatus())){
+           throw new CommonException("The plan is currently being operated");
+        }
         TestPlanDTO testPlanDTO = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlanVO.setProjectId(projectId);
         if (testPlanVO.getCaseHasChange()) {
