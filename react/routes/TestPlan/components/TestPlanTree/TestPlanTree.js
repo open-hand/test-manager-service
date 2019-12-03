@@ -50,10 +50,9 @@ class TestPlanTree extends Component {
   setSelected = (item) => {
     console.log(item);
     const { context: { testPlanStore } } = this.props;
-    const { getCurrentPlanId, treeData, getParent } = testPlanStore;
-    testPlanStore.setCurrentCycle(item);
-    // const planId = (getParent(treeData.rootIds, treeData.treeFolder, item.id) && getParent(treeData.rootIds, treeData.treeFolder, item.id).id) || item.id;
-    testPlanStore.loadRightData(true);
+    const [planId] = testPlanStore.getId(item.id);
+    testPlanStore.setCurrentCycle(item);    
+    testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
   }
 
   renderTreeNode = (node, { item }) => {

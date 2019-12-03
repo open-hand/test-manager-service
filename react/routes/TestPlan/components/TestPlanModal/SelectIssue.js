@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useCallback, useRef, useContext, 
+  useEffect, useCallback, useRef, useContext,
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import Tree from '@/components/Tree';
@@ -53,24 +53,33 @@ function SelectIssue() {
   ), [handleCheckChange, treeMap]);
   return (
     <div className={prefix}>
-      <div className={`${prefix}-tree`}>
-        <Tree
-          data={treeData}
-          isDragEnabled={false}
-          selected={currentCycle}
-          setSelected={setSelected}
-          treeNodeProps={{
-            enableAction: false,
-          }}
-          renderTreeNode={renderTreeNode}
-        />
+      <div className={`${prefix}-header`}>
+        已添加用例:
+        <span style={{ fontSize: '16px', color: '#3F51B5', marginLeft: 5 }}>
+          {SelectIssueStore.getSelectedIssueNum}
+        </span>
+        条
       </div>
-      {folderId && (
-      <div className={`${prefix}-table`}>
-        <div className={`${prefix}-table-title`}>{currentCycle.data.name}</div>
-        <IssueTable folderId={folderId} saveDataSet={saveDataSet} />
+      <div className={`${prefix}-content`}>
+        <div className={`${prefix}-tree`}>
+          <Tree
+            data={treeData}
+            isDragEnabled={false}
+            selected={currentCycle}
+            setSelected={setSelected}
+            treeNodeProps={{
+              enableAction: false,
+            }}
+            renderTreeNode={renderTreeNode}
+          />
+        </div>
+        {folderId && (
+          <div className={`${prefix}-table`}>
+            <div className={`${prefix}-table-title`}>{currentCycle.data.name}</div>
+            <IssueTable folderId={folderId} saveDataSet={saveDataSet} />
+          </div>
+        )}
       </div>
-      )}
     </div>
   );
 }

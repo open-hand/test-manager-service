@@ -6,6 +6,7 @@ import TestPlanTreeStore from './TestPlanTreeStore';
 import { getStatusList } from '@/api/TestStatusApi';
 import { getExecutesByFolder, getStatusByFolder, getPlanDetail } from '@/api/TestPlanApi';
 
+
 class TestPlanStore extends TestPlanTreeStore {
     @observable loading = false;
 
@@ -162,14 +163,13 @@ class TestPlanStore extends TestPlanTreeStore {
      * @memberof TestPlanStore
      */
     async loadExecutes() {
-      const currentCycle = this.getCurrentCycle;
       const { executePagination, filter, order } = this;
-      const { id } = currentCycle;
+      const [planId, folderId] = this.getId();
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
       this.setTableLoading(true);
-      const executes = await getExecutesByFolder({ 
-        planId: this.getCurrentPlanId, folderId: id, current, pageSize, filter, orderField, orderType, 
+      const executes = await getExecutesByFolder({
+        planId, folderId, current, pageSize, filter, orderField, orderType, 
       });
       this.setTableLoading(false);
       this.setTestList(executes.list);
@@ -185,10 +185,9 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    loadStatusRes() {
-      const currentCycle = this.getCurrentCycle;
-      const { id: folderId } = currentCycle;
-      getStatusByFolder({ planId: this.getCurrentPlanId, folderId }).then((res) => {
+    loadStatusRes() {      
+      const [planId, folderId] = this.getId();
+      getStatusByFolder({ planId, folderId }).then((res) => {
         this.setStatusRes(res);
       });
     }
@@ -199,8 +198,9 @@ class TestPlanStore extends TestPlanTreeStore {
      * @memberof TestPlanStore
      */
     loadPlanDetail() {
-      console.log(this.getCurrentPlanId);
-      getPlanDetail(this.getCurrentPlanId).then((res) => {
+      const [planId, folderId] = this.getId();
+      console.log(planId);
+      getPlanDetail(planId).then((res) => {
         console.log(res);
         this.setPlanInfo(res);
       });
