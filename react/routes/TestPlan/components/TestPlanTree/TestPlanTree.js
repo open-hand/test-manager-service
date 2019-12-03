@@ -94,13 +94,21 @@ class TestPlanTree extends Component {
         </Menu.Item>,
       ];
     } else {
-      return [
+      const canImport = item.children.length === 0;
+      return canImport ? [
         <Menu.Item key="rename">
           重命名
         </Menu.Item>,
         <Menu.Item key="import">
           导入用例
         </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
+      ] : [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,        
         <Menu.Item key="delete">
           删除
         </Menu.Item>,
@@ -118,6 +126,7 @@ class TestPlanTree extends Component {
         <Tree
           ref={this.treeRef}
           data={treeData}
+          onCreate={() => {}}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
@@ -129,6 +138,8 @@ class TestPlanTree extends Component {
             {              
               menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
+              // 计划和没有执行的，可以添加子文件夹
+              enableAddFolder: item => item.topLevel || !item.hasCase,
             }
           }
           onMenuClick={(key, nodeItem) => {

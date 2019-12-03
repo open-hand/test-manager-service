@@ -70,7 +70,7 @@ function SelectIssue() {
             treeNodeProps={{
               enableAction: false,
             }}
-            renderTreeNode={renderTreeNode}
+            // renderTreeNode={renderTreeNode}
           />
         </div>
         {folderId && (
