@@ -182,7 +182,23 @@ function TestPlanHome() {
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
-        {
+        <div className={`${prefixCls}-contentWrap`}>
+          <div className={`${prefixCls}-contentWrap-left`}>
+            <div className={`${prefixCls}-contentWrap-testPlanTree`}>
+              <Tabs defaultActiveKey="todo" onChange={handleTabsChange} value={testPlanStatus}>
+                <TabPane tab="未开始" key="todo">
+                  <TestPlanTree />
+                </TabPane>
+                <TabPane tab="进行中" key="doing">
+                  <TestPlanTree />
+                </TabPane>
+                <TabPane tab="已完成" key="done">
+                  <TestPlanTree />
+                </TabPane>
+              </Tabs>
+            </div>
+          </div>
+          {
           noPlan ? (
             <Empty
               loading={loading}
@@ -192,56 +208,40 @@ function TestPlanHome() {
               extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
           ) : (
-            <div className={`${prefixCls}-contentWrap`}>
-              <div className={`${prefixCls}-contentWrap-left`}>
-                <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-                  <Tabs defaultActiveKey="todo" onChange={handleTabsChange} value={testPlanStatus}>
-                    <TabPane tab="未开始" key="todo">
-                      <TestPlanTree />
-                    </TabPane>
-                    <TabPane tab="进行中" key="doing">
-                      <TestPlanTree />
-                    </TabPane>
-                    <TabPane tab="已完成" key="done">
-                      <TestPlanTree />
-                    </TabPane>
-                  </Tabs>
-                </div>
+            <div className={`${prefixCls}-contentWrap-right`}>
+              <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                <Icon type="insert_invitation" />
+                <span>{planInfo.name}</span>
               </div>
-              <div className={`${prefixCls}-contentWrap-right`}>
-                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                  <Icon type="insert_invitation" />
-                  <span>{planInfo.name}</span>
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-warning`}>
-                  <Icon type="error" />
-                  <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
-                </div>
-                <div className={`${prefixCls}-contentWrap-right-card`}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                    <div style={{ flex: 1, marginRight: '0.16rem' }}>
-                      <TestPlanDetailCard />
-                    </div>
-                    <div style={{ flex: 1, overflowX: 'hidden' }}>
-                      <TestPlanStatusCard />
-                    </div>
+              <div className={`${prefixCls}-contentWrap-right-warning`}>
+                <Icon type="error" />
+                <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+              </div>
+              <div className={`${prefixCls}-contentWrap-right-card`}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                  <div style={{ flex: 1, marginRight: '0.16rem' }}>
+                    <TestPlanDetailCard />
                   </div>
-                  <div className={`${prefixCls}-contentWrap-table`}>
-                    <TestPlanTable
-                      onDragEnd={onDragEnd}
-                      onTableChange={handleExecuteTableChange}
-                      onDeleteExecute={handleDeleteExecute}
-                      onQuickPass={handleQuickPass}
-                      onQuickFail={handleQuickFail}
-                      onAssignToChange={handleAssignToChange}
-                      onOpenUpdateRemind={handleOpenUpdateRemind}
-                    />
+                  <div style={{ flex: 1, overflowX: 'hidden' }}>
+                    <TestPlanStatusCard />
                   </div>
+                </div>
+                <div className={`${prefixCls}-contentWrap-table`}>
+                  <TestPlanTable
+                    onDragEnd={onDragEnd}
+                    onTableChange={handleExecuteTableChange}
+                    onDeleteExecute={handleDeleteExecute}
+                    onQuickPass={handleQuickPass}
+                    onQuickFail={handleQuickFail}
+                    onAssignToChange={handleAssignToChange}
+                    onOpenUpdateRemind={handleOpenUpdateRemind}
+                  />
                 </div>
               </div>
             </div>
           )
         }
+        </div>
       </Content>
       <CreateAutoTest createAutoTestStore={createAutoTestStore} />
     </Page>

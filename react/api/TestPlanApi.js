@@ -19,6 +19,10 @@ export function getPlan(planId) {
 export function editPlan(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/plan`, data);
 }
+
+export function deletePlan(planId) {
+  request.delete();
+}
 /**
  *  根据文件夹id和计划id获取执行
  */

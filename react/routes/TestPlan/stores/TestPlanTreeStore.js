@@ -83,14 +83,14 @@ class TestPlanTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
-    const planIds = (rootIds && rootIds.slice(0, 5).map(id => `${id}-plan`)) || [];
+
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
-    if (!this.currentCycle.id && rootIds.length > 0) {
+    if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
       selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
     }
     this.treeData = {
-      rootIds: planIds,
+      rootIds: rootIds || [],
       treeFolder: (treeFolder && treeFolder.map((folder) => {
         const {
           id, planId, issueFolderVO, expanded, children, ...other

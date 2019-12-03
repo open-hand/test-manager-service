@@ -4,8 +4,9 @@ import { Menu, Icon } from 'choerodon-ui';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  addFolder, editFolder, deleteFolder, moveFolders,
+  moveFolders,
 } from '@/api/IssueManageApi';
+import { editPlan, deletePlan } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { openClonePlan } from '../TestPlanModal';
@@ -21,27 +22,18 @@ class TestPlanTree extends Component {
     testPlanStore.setTreeRef(this.treeRef);
   }
 
-  handleCreate = (value, parentId) => {
-    const data = {
-      parentId,
-      name: value,
-      type: 'cycle',
-    };
-    return handleRequestFailed(addFolder(data));
-  }
-
-  handleEdit = (newName, item) => {
+  handleReName = (newName, item) => {
     const { objectVersionNumber } = item.data;
     const data = {
-      planId: testPlanStore.getId(item.id),
+      planId: item.id,
       objectVersionNumber,
       name: newName,
       caseChanged: false,
     };
-    return handleRequestFailed(editFolder(data));
+    return handleRequestFailed(editPlan(data));
   }
 
-  handleDelete = item => handleRequestFailed(deleteFolder(item.id))
+  handleDelete = item => handleRequestFailed(deletePlan(item.id))
 
   handleDrag = (sourceItem, destination) => {
     handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
@@ -81,8 +73,7 @@ class TestPlanTree extends Component {
         <Tree
           ref={this.treeRef}
           data={treeData}
-          onCreate={this.handleCreate}
-          onEdit={this.handleEdit}
+          onEdit={this.handleReName}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
           selected={testPlanStore.currentCycle}
