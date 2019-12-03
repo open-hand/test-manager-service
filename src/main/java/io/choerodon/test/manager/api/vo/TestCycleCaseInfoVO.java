@@ -22,7 +22,7 @@ public class TestCycleCaseInfoVO {
 
 
     @ApiModelProperty(value = "source")
-    private Long source;
+    private String source;
 
     @ApiModelProperty(value = "用例ID")
     private Long caseId;
@@ -76,11 +76,11 @@ public class TestCycleCaseInfoVO {
         this.caseNum = caseNum;
     }
 
-    public Long getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(Long source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
