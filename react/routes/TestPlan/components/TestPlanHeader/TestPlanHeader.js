@@ -9,11 +9,10 @@ import Store from '../../stores';
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
   const { testPlanStatus, getCurrentPlanId, treeData } = testPlanStore;
-  console.log(toJS(treeData));
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
-  const handleOpenEditPlan = useCallback(async () => {    
+  const handleOpenEditPlan = useCallback(async () => {
     openEditPlan({
       planId: getCurrentPlanId,
     });
@@ -34,14 +33,16 @@ function TestPlanHeader() {
                   <FormattedMessage id="testPlan_manualTest" />
                 </Button>
               ) : (
-                <Button icon="check_circle" disabled={testPlanStatus === 'doing' && treeData.rootIds && treeData.rootIds.length} onClick={handleCreateAutoTest}>
+                getCurrentPlanId && (
+                <Button icon="check_circle" disabled={testPlanStatus !== 'doing'} onClick={handleCreateAutoTest}>
                   <FormattedMessage id="testPlan_completePlan" />
                 </Button>
+                )
               )
             }
-            <Button icon="auto_test">
+            {/* <Button icon="auto_test">
               <FormattedMessage id="testPlan_autoTest" />
-            </Button>
+            </Button> */}
           </React.Fragment>
         ) : ''
       }
