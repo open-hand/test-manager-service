@@ -364,7 +364,7 @@ export function executeDetailLink(executeId) {
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}`);
+  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
