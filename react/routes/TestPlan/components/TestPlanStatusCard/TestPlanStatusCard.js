@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Card } from 'choerodon-ui';
+import { Card, Tooltip } from 'choerodon-ui';
 import Progress from '../../../../components/Progress';
 import './TestPlanStatusCard.less';
 import Store from '../../stores';
@@ -18,7 +18,11 @@ export default observer(() => {
         <Progress className="c7ntest-testPlan-statusCard-content-progress" percent={70} title="未执行" strokeColor="rgba(0, 0, 0, 0.2)" /> */}
         {
           statusRes && statusRes.statusVOList && statusRes.statusVOList.length > 0 && statusRes.statusVOList.map(item => (
-            <Progress percent={(item.count && statusRes.total) ? (item.count / statusRes.total).toFixed(2) * 100 : 0} title={item.statusName} strokeColor={item.statuColor} />
+            <Tooltip title={`${item.statusName}：${item.count || 0}`}>
+              <div style={{ flexShrink: 0, paddingRight: '0.3rem', overflow: 'hidden' }}>
+                <Progress percent={(item.count && statusRes.total) ? (item.count / statusRes.total).toFixed(2) * 100 : 0} title={item.statusName} strokeColor={item.statuColor} />
+              </div>
+            </Tooltip>
           ))
         }
       </div>
