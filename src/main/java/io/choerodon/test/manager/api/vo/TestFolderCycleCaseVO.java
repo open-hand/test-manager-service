@@ -51,6 +51,27 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "更新时间")
     private Date lastUpdateDate;
 
+    @ApiModelProperty(value = "是否更新")
+    private Boolean hasChange;
+
+    private Long versionNum;
+
+    public Long getVersionNum() {
+        return versionNum;
+    }
+
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
+    }
+
+    public Boolean getHasChange() {
+        return hasChange;
+    }
+
+    public void setHasChange(Boolean hasChange) {
+        this.hasChange = hasChange;
+    }
+
     public Long getExecuteId() {
         return executeId;
     }

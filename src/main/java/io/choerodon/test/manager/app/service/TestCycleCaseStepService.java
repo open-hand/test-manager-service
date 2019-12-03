@@ -44,9 +44,9 @@ public interface TestCycleCaseStepService {
     PageInfo<TestCycleCaseStepVO> queryCaseStep(Long CycleCaseId, Long projectId, Pageable pageable);
 
 
+    void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);
 
-
-    void batchUpdate(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS );
+    void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
 
     void delete(Long executeStepId);
 

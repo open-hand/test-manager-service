@@ -586,16 +586,23 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void updateCaseAndStep(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
+    public void updateCaseAndStep(Long projectId,TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
-        List<Long> executeStepIds = testCycleCaseStepVOList.stream().map(TestCycleCaseStepUpdateVO::getExecuteStepId).collect(Collectors.toList());
-        //1.删除执行对应的步骤
-        testCycleCaseStepService.batchDelete(executeStepIds);
-        //2.创建步骤（会有新的步骤）
         List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepDTO>>() {
         }.getType());
-        testCycleCaseStepService.batchCreate(testCycleCaseStepDTOList);
-
+        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+        testCycleCaseStepDTO.setExecuteId(testCycleCaseUpdateVO.getExecuteId());
+        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
+        List<Long> longs = testCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+        testCycleCaseStepDTOList.forEach(e->{
+            if(longs.contains(e.getExecuteStepId())) {
+                //1.批量更新步骤
+                testCycleCaseStepService.baseUpdate(e);
+            }else {
+                //2.批量创建步骤
+                testCycleCaseStepService.batchCreate(testCycleCaseStepDTOList);
+            }
+        });
         //3.更新执行用例
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseUpdateVO, TestCycleCaseDTO.class);
         baseUpdate(testCycleCaseDTO);
@@ -616,6 +623,25 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
         List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(testCaseAssembler::setAssianUser).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(testFolderCycleCaseVOS)){
+            return new PageInfo<TestFolderCycleCaseVO>();
+        }
+        //对比是否更新
+        List<Long> caseIds = testFolderCycleCaseVOS.stream().map(TestFolderCycleCaseVO::getCaseId).collect(Collectors.toList());
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listByCaseIds(projectId, caseIds);
+        if(!CollectionUtils.isEmpty(testCaseDTOS)){
+            testFolderCycleCaseVOS.forEach(cycleCase->{
+                testCaseDTOS.forEach(testCase -> {
+                    if(cycleCase.getCaseId().equals(testCase.getCaseId())){
+                        if(!testCase.getVersionNum().equals(cycleCase.getVersionNum())){
+                            cycleCase.setHasChange(true);
+                        }else {
+                            cycleCase.setHasChange(false);
+                        }
+                    }
+                });
+            });
+        }
         PageInfo<TestFolderCycleCaseVO> testFolderCycleCaseVOPageInfo = modelMapper.map(caseDTOPageInfo, PageInfo.class);
         testFolderCycleCaseVOPageInfo.setList(testFolderCycleCaseVOS);
         return testFolderCycleCaseVOPageInfo;
@@ -627,7 +653,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error cycle case not exist");
         }
-        PageInfo<TestFolderCycleCaseVO> testFolderCycleCaseVOPageInfo = listAllCaseByFolderId(projectId, 0L, 0L, null, null);
         return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO);
     }
 

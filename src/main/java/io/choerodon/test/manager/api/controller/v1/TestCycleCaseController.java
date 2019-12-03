@@ -212,7 +212,7 @@ public class TestCycleCaseController {
     @PutMapping("/case_step")
     public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
-        testCycleCaseService.updateCaseAndStep(testCycleCaseUpdateVO);
+        testCycleCaseService.updateCaseAndStep(projectId,testCycleCaseUpdateVO);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }

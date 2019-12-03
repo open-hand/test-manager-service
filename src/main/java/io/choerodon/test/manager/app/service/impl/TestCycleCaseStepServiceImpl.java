@@ -10,6 +10,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.omg.CORBA.COMM_FAILURE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +61,13 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
+    public void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO) {
+       if( testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO)!=1){
+           throw new CommonException("error.update.cycle.case.step");
+       }
+    }
+
+    @Override
     public PageInfo<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, Pageable pageable) {
         PageInfo<TestCycleCaseStepDTO> cycleCaseStepDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseStepMapper.querListByexecuteId(cycleCaseId));
@@ -95,20 +103,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public void batchUpdate(Long executeId, List<TestCaseStepDTO> testCaseStepDTOS) {
-        if(CollectionUtils.isEmpty(testCaseStepDTOS)){
-            return;
-        }
-        testCaseStepDTOS.forEach(v -> {
-            TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-            testCycleCaseStepDTO.setExecuteId(executeId);
-            testCycleCaseStepDTO.setStepId(v.getStepId());
-            testCycleCaseStepDTO.setTestStep(v.getTestStep());
-            testCycleCaseStepDTO.setExpectedResult(v.getExpectedResult());
-            testCycleCaseStepDTO.setTestData(v.getTestData());
-            // TODO 测试循环步骤的初始化状态
-            baseInsert(testCycleCaseStepDTO);
+    public void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
+        testCycleCaseStepDTOS.forEach(e->{
+            testCycleCaseStepMapper.updateByPrimaryKeySelective(e);
         });
+
     }
 
     @Override
@@ -118,7 +117,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Override
     public void batchDelete(List<Long> executeStepIds) {
-        testCycleCaseStepMapper.batchDelete(executeStepIds);
+        testCycleCaseStepMapper.batchDeleteTestCycleCaseSteps(executeStepIds);
     }
 
     @Override
