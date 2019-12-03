@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
@@ -30,6 +31,7 @@ import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
@@ -256,7 +258,28 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Override
     public List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds) {
-        return testIssueFolderMapper.listFolderByFolderIds(folderIds);
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectAll();
+        Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        Map<Long,TestIssueFolderDTO> map = new HashMap<>();
+        folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
+        List<TestIssueFolderDTO> collect = map.values().stream().sorted(Comparator.comparing(v -> v.getParentId())).collect(Collectors.toList());
+        return collect;
+    }
+
+    private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {
+        TestIssueFolderDTO testIssueFolderDTO = map.get(folderId);
+        if(ObjectUtils.isEmpty(testIssueFolderDTO)){
+           TestIssueFolderDTO testIssueFolder = allFolderMap.get(folderId);
+           if(!ObjectUtils.isEmpty(testIssueFolder)){
+               map.put(folderId,testIssueFolder);
+               if(testIssueFolder.getParentId() != 0){
+                   bulidFolder(testIssueFolder.getParentId(),map,allFolderMap);
+               }
+           }
+         }
+        else {
+            return;
+        }
     }
 
     // 递归查询最底层文件夹

@@ -393,11 +393,11 @@
     </select>
 
     <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="cycleId">
-        insert into test_cycle(cycle_name,plan_id,project_id,rank,folder_id,last_updated_by,created_by,type,from_date,to_date,version_id)
+        insert into test_cycle(cycle_name,plan_id,project_id,rank,folder_id,last_updated_by,created_by,type,from_date,to_date,version_id,parent_cycle_id)
         values
         <foreach collection="list" item="testCycle"  separator=",">
             (#{testCycle.cycleName},#{testCycle.planId},#{testCycle.projectId},#{testCycle.rank},#{testCycle.folderId},#{testCycle.lastUpdatedBy}
-            ,#{testCycle.createdBy},#{testCycle.type},#{testCycle.fromDate},#{testCycle.toDate},#{testCycle.versionId})
+            ,#{testCycle.createdBy},#{testCycle.type},#{testCycle.fromDate},#{testCycle.toDate},#{testCycle.versionId},#{testCycle.parentCycleId})
         </foreach>
     </insert>
 
