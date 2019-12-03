@@ -107,30 +107,8 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
+        testCycleVO.setType("folder");
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
-        if (Objects.equals(testCycleVO.getType(), TestCycleType.FOLDER)) {
-            //如果新增阶段，调整父循环的时间
-            TestCycleDTO parentCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
-            //扩充父循环的时间
-            if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()
-                    || parentCycleDTO.getFromDate().getTime() > testCycleVO.getFromDate().getTime()) {
-                TestCycleDTO testCycleDTO = new TestCycleDTO();
-                testCycleDTO.setCycleId(parentCycleDTO.getCycleId());
-                testCycleDTO.setObjectVersionNumber(parentCycleDTO.getObjectVersionNumber());
-                if (parentCycleDTO.getToDate().getTime() < testCycleVO.getToDate().getTime()) {
-                    testCycleDTO.setToDate(testCycleVO.getToDate());
-                }
-                if (parentCycleDTO.getFromDate().getTime() > testCycleVO.getFromDate().getTime()) {
-                    testCycleDTO.setFromDate(testCycleVO.getFromDate());
-                }
-                if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
-                    throw new CommonException("error.update.cycle");
-                }
-            }
-        }
-        if (testCycleVO.getFolderId() != null) {
-            insertCaseToFolder(testCycleVO.getFolderId(), cycleDTO.getCycleId());
-        }
         return cycleDTO;
     }
 
@@ -265,56 +243,20 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(TestCycleVO testCycleVO, Long projectId) {
-        List<TestCycleDTO> testCycleES = cycleMapper.select(modelMapper.map(testCycleVO, TestCycleDTO.class));
-        testCycleES.forEach(v -> {
-            if (v.getType().equals(TestCycleType.CYCLE)) {
-                TestCycleDTO testCycleDTO = new TestCycleDTO();
-                testCycleDTO.setParentCycleId(v.getCycleId());
-                delete(modelMapper.map(testCycleDTO, TestCycleVO.class), projectId);
-            }
-            deleteCycleWithCase(v, projectId);
-        });
+    public void delete(Long cycleId, Long projectId) {
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(Arrays.asList(cycleId));
+        List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+        testCycleCaseService.batchDeleteByExecuteIds(executeIds);
+        cycleMapper.deleteByPrimaryKey(cycleId);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO update(Long projectId, TestCycleVO testCycleVO) {
-        TestCycleDTO temp = new TestCycleDTO();
-        temp.setCycleId(testCycleVO.getCycleId());
-        TestCycleVO temp1 = modelMapper.map(cycleMapper.selectOne(temp), TestCycleVO.class);
-        Long objectVersionNumber = testCycleVO.getObjectVersionNumber();
-        if (!StringUtils.isEmpty(testCycleVO.getRank())) {
-            checkRank(testCycleVO);
-            temp1.setRank(testCycleVO.getRank());
-            List<String> ranks = queryUpdateRank(temp1);
-            Optional.ofNullable(ranks.get(0)).ifPresent(testCycleVO::setLastRank);
-            Optional.ofNullable(ranks.get(1)).ifPresent(testCycleVO::setNextRank);
-            objectVersionNumber++;
-        }
-        if (temp1.getType().equals(TestCycleType.FOLDER)) {
-            Optional.ofNullable(testCycleVO.getCycleName()).ifPresent(temp1::setCycleName);
-            Optional.ofNullable(testCycleVO.getFromDate()).ifPresent(temp1::setFromDate);
-            Optional.ofNullable(testCycleVO.getToDate()).ifPresent(temp1::setToDate);
-            Optional.ofNullable(testCycleVO.getDescription()).ifPresent(temp1::setDescription);
-            Optional.ofNullable(testCycleVO.getFolderId()).ifPresent(temp1::setFolderId);
-            temp1.setObjectVersionNumber(objectVersionNumber);
-            syncCycleDate(projectId, temp1);
-        } else if (temp1.getType().equals(TestCycleType.CYCLE)) {
-            Optional.ofNullable(testCycleVO.getBuild()).ifPresent(temp1::setBuild);
-            Optional.ofNullable(testCycleVO.getCycleName()).ifPresent(temp1::setCycleName);
-            Optional.ofNullable(testCycleVO.getDescription()).ifPresent(temp1::setDescription);
-            Optional.ofNullable(testCycleVO.getEnvironment()).ifPresent(temp1::setEnvironment);
-            Optional.ofNullable(testCycleVO.getFromDate()).ifPresent(temp1::setFromDate);
-            Optional.ofNullable(testCycleVO.getToDate()).ifPresent(temp1::setToDate);
-            temp1.setObjectVersionNumber(objectVersionNumber);
-            syncFolderDate(projectId, temp1);
-        }
-        if (!StringUtils.isEmpty(testCycleVO.getLastRank()) || !StringUtils.isEmpty(testCycleVO.getNextRank())) {
-            temp1.setRank(RankUtil.Operation.UPDATE.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
-            temp1.setObjectVersionNumber(objectVersionNumber);
-        }
-        return modelMapper.map(baseUpdate(projectId, modelMapper.map(temp1, TestCycleDTO.class)), TestCycleVO.class);
+
+        TestCycleDTO map = modelMapper.map(testCycleVO, TestCycleDTO.class);
+        baseUpdate(projectId, map);
+        return modelMapper.map(cycleMapper.selectByPrimaryKey(map.getCycleId()),TestCycleVO.class);
     }
 
     /**
