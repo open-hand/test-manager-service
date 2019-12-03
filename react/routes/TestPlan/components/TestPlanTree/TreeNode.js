@@ -6,7 +6,8 @@ import SmartTooltip from '@/components/SmartTooltip';
 const prefix = 'c7ntest-tree';
 function TreeNode({ children, nodeProps, item }) {
   const { provided } = nodeProps;
-  if (item.creating) {
+  if (item.data.initStatus === 'doing') {
+    console.log(item.data.initStatus);
     return (
       <div
         ref={provided.innerRef}

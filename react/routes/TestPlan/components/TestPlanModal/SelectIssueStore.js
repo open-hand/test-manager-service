@@ -237,6 +237,24 @@ class IssueTreeStore {
     }
     return result;
   }
+
+  // 获取当前选中的issue数量
+  @computed get getSelectedIssueNum() {
+    const selectedFolders = this.getSelectedFolders();   
+    return Object.keys(selectedFolders).reduce((total, key) => {
+      const folderId = Number(key);
+      const item = this.treeMap.get(folderId);
+      if (item.selected) {
+        total += item.selected.length;
+      } else {
+        total += item.caseNum;
+        if (item.unSelected) {
+          total -= item.unSelected.length;
+        }
+      }
+      return total;
+    }, 0);
+  }
 }
 
 export default IssueTreeStore;

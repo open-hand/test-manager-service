@@ -64,6 +64,7 @@ export default class IssueManage extends Component {
   handleCreateIssue(issue, folderId) {
     if (folderId) {
       IssueTreeStore.setCurrentFolderById(folderId);
+      IssueTreeStore.updateHasCase(folderId, true);// 设置含有用例
     }
     IssueStore.loadIssues();
   }

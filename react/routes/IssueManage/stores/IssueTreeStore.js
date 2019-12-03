@@ -104,6 +104,15 @@ class IssueTreeStore {
   @action setTreeRef = (treeRef) => {
     this.treeRef = treeRef;
   }
+  
+  updateHasCase(itemId, flag) {
+    if (this.treeRef && this.treeRef.current) {
+      const item = this.treeRef.current.getItem(itemId);
+      if (!item.hasCase === flag) {
+        this.treeRef.current.updateTree(itemId, { hasCase: flag });
+      }
+    }
+  }
 }
 
 export default new IssueTreeStore();
