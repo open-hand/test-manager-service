@@ -200,14 +200,7 @@ class TestPlanStore extends TestPlanTreeStore {
      * @memberof TestPlanStore
      */
     loadPlanDetail() {
-<<<<<<< HEAD
       getPlanDetail(this.getCurrentPlanId).then((res) => {
-=======
-      const [planId, folderId] = this.getId();
-      // console.log(planId);
-      getPlanDetail(planId).then((res) => {
-        // console.log(res);
->>>>>>> fe2b8297b2644277801dee49dd21a7b95a48baed
         this.setPlanInfo(res);
       });
     }
