@@ -11,6 +11,7 @@ import { editPlan, deletePlan } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { openClonePlan } from '../TestPlanModal';
+import openDragPlanFolder from '../DragPlanFolder';
 import TreeNode from './TreeNode';
 import Store from '../../stores';
 
@@ -53,7 +54,7 @@ class TestPlanTree extends Component {
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
     const [planId] = testPlanStore.getId(item.id);
-    testPlanStore.setCurrentCycle(item);    
+    testPlanStore.setCurrentCycle(item);
     testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
   }
 
@@ -101,6 +102,9 @@ class TestPlanTree extends Component {
                 <Menu.Item key="rename">
                   重命名
                 </Menu.Item>,
+                <Menu.Item key="drag">
+                  调整结构
+                </Menu.Item>,
                 <Menu.Item key="delete">
                   删除
                 </Menu.Item>,
@@ -112,6 +116,12 @@ class TestPlanTree extends Component {
             switch (key) {
               case 'copy': {
                 openClonePlan({
+                  planId: nodeItem.id,
+                });
+                break;
+              }
+              case 'drag': {
+                openDragPlanFolder({
                   planId: nodeItem.id,
                 });
                 break;
