@@ -100,8 +100,14 @@ function PureTree({
     };
     setTree(oldTree => addItem(oldTree, getRootNode(oldTree), item || newChild));
   };
+  const updateTree = useCallback((itemId, attrs) => {   
+    setTree(oldTree => mutateTree(oldTree, itemId, attrs));
+  }, []);
+  const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
   useImperativeHandle(ref, () => ({
     addFirstLevelItem,
+    updateTree,
+    getItem,
   }));
   const onSelect = (item) => {
     setSelected(item);

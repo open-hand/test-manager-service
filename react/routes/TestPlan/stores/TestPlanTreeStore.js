@@ -47,7 +47,7 @@ class TestPlanTreeStore {
     return this.currentCycle;
   }
 
-  getId(id = this.currentCycle.id) {   
+  getId(id = this.currentCycle.id) {
     if (!id) {
       return [id, ''];
     }
