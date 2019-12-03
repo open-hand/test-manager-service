@@ -208,8 +208,8 @@ public class TestCycleCaseController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("更新测试执行")
-    @PutMapping
+    @ApiOperation("更新测试执行和其对应步骤")
+    @PutMapping("/case_step/{execute_id}")
     public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         testCycleCaseService.update(testCycleCaseUpdateVO);
@@ -240,7 +240,7 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询一个执行和步骤")
-    @GetMapping("/query_case_step/{execute_id}")
+    @GetMapping("/case_step/{execute_id}")
     public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
                                                     @PathVariable(name = "execute_id") Long executeId) {
         return Optional.ofNullable(testCycleCaseService.queryCaseAndStep(executeId))
