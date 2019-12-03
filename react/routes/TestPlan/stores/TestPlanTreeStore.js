@@ -105,7 +105,6 @@ class TestPlanTreeStore {
         };
       }) || [],
     };
-    console.log(toJS(this.treeData));
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }

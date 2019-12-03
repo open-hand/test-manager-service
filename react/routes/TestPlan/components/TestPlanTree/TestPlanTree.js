@@ -48,7 +48,7 @@ class TestPlanTree extends Component {
   }
 
   setSelected = (item) => {
-    console.log(item);
+    // console.log(item);
     const { context: { testPlanStore } } = this.props;
     const [planId] = testPlanStore.getId(item.id);
     testPlanStore.setCurrentCycle(item);    

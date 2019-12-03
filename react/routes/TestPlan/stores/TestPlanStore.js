@@ -153,7 +153,7 @@ class TestPlanStore extends TestPlanTreeStore {
       }
       Promise.all(promiseArr).then(() => {
       }).catch((e) => {
-        console.log(e);
+        // console.log(e);
       });
     }
 
@@ -199,9 +199,9 @@ class TestPlanStore extends TestPlanTreeStore {
      */
     loadPlanDetail() {
       const [planId, folderId] = this.getId();
-      console.log(planId);
+      // console.log(planId);
       getPlanDetail(planId).then((res) => {
-        console.log(res);
+        // console.log(res);
         this.setPlanInfo(res);
       });
     }
