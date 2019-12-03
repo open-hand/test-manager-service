@@ -238,4 +238,14 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询一个执行和步骤")
+    @GetMapping("/query_case_step/{execute_id}")
+    public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
+                                                    @PathVariable(name = "execute_id") Long executeId) {
+        return Optional.ofNullable(testCycleCaseService.queryCaseAndStep(executeId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
+    }
+
 }

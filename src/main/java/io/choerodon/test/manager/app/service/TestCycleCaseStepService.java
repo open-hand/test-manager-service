@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.data.domain.Pageable;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
@@ -68,4 +69,5 @@ public interface TestCycleCaseStepService {
      * 批量创建
      */
     void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
+
 }

@@ -112,5 +112,12 @@ public interface TestCycleCaseService {
      */
     void batchAssignCycleCase(Long projectId, Long userId,  List<Long> cycleCaseId);
 
+    /**
+     * 查询执行和步骤信息
+     * @param executeId
+     * @return
+     */
+    TestCycleCaseUpdateVO queryCaseAndStep(Long executeId);
+
     void batchDeleteByExecuteIds(List<Long> deleteCycleCaseIds);
 }

@@ -582,8 +582,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void update(TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
-        List<TestCycleCaseStepVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepVOList();
-        List<Long> executeStepIds = testCycleCaseStepVOList.stream().map(TestCycleCaseStepVO::getExecuteStepId).collect(Collectors.toList());
+        List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
+        List<Long> executeStepIds = testCycleCaseStepVOList.stream().map(TestCycleCaseStepUpdateVO::getExecuteStepId).collect(Collectors.toList());
         //1.删除执行对应的步骤
         testCycleCaseStepService.batchDelete(executeStepIds);
         //2.创建步骤（会有新的步骤）
@@ -622,6 +622,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error cycle case not exist");
         }
+        PageInfo<TestFolderCycleCaseVO> testFolderCycleCaseVOPageInfo = listAllCaseByFolderId(projectId, 0L, 0L, null, null);
         return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO);
     }
 
@@ -651,6 +652,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseStepService.batchInsert(testCycleCaseDTOList, caseStepMap);
         // 同步附件
         testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOList, attachmentMap);
+    }
+
+    @Override
+    public TestCycleCaseUpdateVO queryCaseAndStep(Long executeId) {
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        return testCaseAssembler.dtoToUpdateVO(testCycleCaseDTO);
     }
 
     @Override
