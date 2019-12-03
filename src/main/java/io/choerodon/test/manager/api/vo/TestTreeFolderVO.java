@@ -17,6 +17,7 @@ public class TestTreeFolderVO {
     private Boolean hasCase;
     private Boolean topLevel;
     private Boolean caseNum;
+    private Long  planId;
 
     public Long getId() {
         return id;
@@ -89,6 +90,14 @@ public class TestTreeFolderVO {
 
     public void setCaseNum(Boolean caseNum) {
         this.caseNum = caseNum;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
     }
 
     @Override

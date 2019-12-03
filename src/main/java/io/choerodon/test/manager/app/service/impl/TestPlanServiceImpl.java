@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.UserDO;
@@ -149,13 +150,14 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         Map<Long, List<TestIssueFolderVO>> parentMap = testIssueFolderVOS.stream().collect(Collectors.groupingBy(TestIssueFolderVO::getParentId));
         // 实例化返回的树
         TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
-        // 用于接收TestTreeFolderVO,便于判断和构建树
-        Map<Long, TestTreeFolderVO> map = new HashMap<>();
 
         // 接收位于树顶层的测试计划
         List<TestTreeFolderVO> planTreeList = new ArrayList<>();
         List<Long> root = new ArrayList<>();
+        List<TestTreeFolderVO> testTreeFolderVOS = new ArrayList<>();
         testPlanTreeVOS.forEach(v -> {
+            // 用于接收TestTreeFolderVO,便于判断和构建树
+            Map<Long, TestTreeFolderVO> map = new HashMap<>();
             // 将计划Id设置为root
             root.add(v.getPlanId());
             List<Long> folderRoot = new ArrayList<>();
@@ -166,28 +168,30 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testIssueFolderVO.setName(v.getName());
             testIssueFolderVO.setFolderId(v.getPlanId());
             testIssueFolderVO.setInitStatus(v.getInitStatus());
-            TestTreeFolderVO plantreeVO = new TestTreeFolderVO();
-            plantreeVO.setId(v.getPlanId());
-            plantreeVO.setIssueFolderVO(testIssueFolderVO);
-            plantreeVO.setChildrenLoading(false);
-            plantreeVO.setExpanded(false);
-            plantreeVO.setTopLevel(true);
+            TestTreeFolderVO planTreeVO = new TestTreeFolderVO();
+            planTreeVO.setId(v.getPlanId());
+            planTreeVO.setIssueFolderVO(testIssueFolderVO);
+            planTreeVO.setChildrenLoading(false);
+            planTreeVO.setExpanded(false);
+            planTreeVO.setTopLevel(true);
             if (!CollectionUtils.isEmpty(testCycles)) {
                 // 构建文件夹树
-                testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getFolderId(), allFolderMap, map, parentMap));
+                testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getFolderId(), allFolderMap, map, parentMap, v.getPlanId()));
             }
             if (!CollectionUtils.isEmpty(folderRoot)) {
-                plantreeVO.setHasChildren(true);
-                plantreeVO.setChildren(folderRoot);
+                planTreeVO.setHasChildren(true);
+                planTreeVO.setChildren(folderRoot);
             } else {
-                plantreeVO.setHasChildren(false);
+                planTreeVO.setHasChildren(false);
             }
-            planTreeList.add(plantreeVO);
+            List<TestTreeFolderVO> collect = map.values().stream().collect(Collectors.toList());
+            planTreeList.add(planTreeVO);
+            if (!CollectionUtils.isEmpty(collect)) {
+                planTreeList.addAll(collect);
+            }
 
         });
         // 合并、构建树
-        List<TestTreeFolderVO> testTreeFolderVOS = map.values().stream().collect(Collectors.toList());
-        planTreeList.addAll(testTreeFolderVOS);
         testTreeIssueFolderVO.setRootIds(root);
         testTreeIssueFolderVO.setTreeFolder(planTreeList);
         return testTreeIssueFolderVO;
@@ -426,7 +430,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         return testPlanDTO;
     }
 
-    private void buildTree(List<Long> root, Long folderId, Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap) {
+    private void buildTree(List<Long> root, Long folderId, Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap, Long planId) {
         TestIssueFolderVO testIssueFolderVO = allFolderMap.get(folderId);
         if (ObjectUtils.isEmpty(testIssueFolderVO)) {
             return;
@@ -448,6 +452,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testTreeFolderVO.setIssueFolderVO(testIssueFolderVO);
             testTreeFolderVO.setExpanded(false);
             testTreeFolderVO.setChildrenLoading(false);
+            testTreeFolderVO.setPlanId(planId);
             map.put(folderId, testTreeFolderVO);
         }
 
@@ -458,7 +463,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             }
             return;
         } else {
-            folderParentNotZero(root, testIssueFolderVO, allFolderMap, map, parentMap);
+            folderParentNotZero(root, testIssueFolderVO, allFolderMap, map, parentMap, planId);
         }
     }
 
@@ -471,7 +476,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
      * @param map
      * @param parentMap
      */
-    private void folderParentNotZero(List<Long> root, TestIssueFolderVO testIssueFolderVO, Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap) {
+    private void folderParentNotZero(List<Long> root, TestIssueFolderVO testIssueFolderVO, Map<Long, TestIssueFolderVO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestIssueFolderVO>> parentMap, Long planId) {
         // 查看当前文件夹的父文件夹是否存在
         TestTreeFolderVO parentTreeFolderVO = null;
         if (!ObjectUtils.isEmpty(map.get(testIssueFolderVO.getParentId()))) {
@@ -494,6 +499,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             parentTreeFolderVO.setExpanded(false);
             parentTreeFolderVO.setChildrenLoading(false);
             parentTreeFolderVO.setChildren(Arrays.asList(testIssueFolderVO.getFolderId()));
+            parentTreeFolderVO.setPlanId(planId);
             map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
         } else {
             //存在就更新父文件夹的Children值
@@ -508,7 +514,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             map.put(testIssueFolderVO.getParentId(), parentTreeFolderVO);
         }
         //使用父文件夹递归
-        buildTree(root, testIssueFolderVO.getParentId(), allFolderMap, map, parentMap);
+        buildTree(root, testIssueFolderVO.getParentId(), allFolderMap, map, parentMap, planId);
     }
 
     /**
