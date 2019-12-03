@@ -90,6 +90,8 @@ public class TestCycleCaseVO {
     @ApiModelProperty(value = "后一位执行ID")
     private Long nextExecuteId;
 
+    private String description;
+
     @ApiModelProperty(value = "执行附件")
     private List<TestCycleCaseAttachmentRelVO> caseAttachment;
 
@@ -374,5 +376,13 @@ public class TestCycleCaseVO {
 
     public void setCycleCaseStep(List<TestCycleCaseStepVO> cycleCaseStep) {
         this.cycleCaseStep = cycleCaseStep;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

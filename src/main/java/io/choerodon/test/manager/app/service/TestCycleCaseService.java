@@ -123,5 +123,10 @@ public interface TestCycleCaseService {
 
     void batchDeleteByExecuteIds(List<Long> deleteCycleCaseIds);
 
-    void selectUpdateCompare(Long projectId, Long executeId);
+    /**
+     * 用例更新对比查询
+     * @param projectId
+     * @param executeId
+     */
+    CaseChangeVO selectUpdateCompare(Long projectId, Long executeId);
 }

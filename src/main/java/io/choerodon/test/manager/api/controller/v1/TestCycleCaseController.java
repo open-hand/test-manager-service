@@ -261,10 +261,10 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新对比")
     @GetMapping("/{execute_id}/compared")
-    public ResponseEntity selectUpdateCompare(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
                                           @PathVariable(name = "execute_id") Long executeId) {
-        testCycleCaseService.selectUpdateCompare(projectId,executeId);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(testCycleCaseService.selectUpdateCompare(projectId,executeId),HttpStatus.OK);
     }
 
 }

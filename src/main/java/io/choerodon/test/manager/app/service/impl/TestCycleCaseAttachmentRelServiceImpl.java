@@ -11,6 +11,7 @@ import java.util.Optional;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -118,6 +119,14 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     @Override
     public void batchDeleteByExecutIds(List<Long> executeIds) {
         testCycleCaseAttachmentRelMapper.batchDeleteByExecutIds(executeIds);
+    }
+
+    @Override
+    public List<TestCycleCaseAttachmentRelVO> listByExecuteId(Long executeId) {
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
+        List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
+        return modelMapper.map(attachmentRelDTOS,new TypeToken<List<TestCycleCaseAttachmentRelVO>>(){}.getType());
     }
 
     private void baseDelete(String bucketName, Long attachId) {
