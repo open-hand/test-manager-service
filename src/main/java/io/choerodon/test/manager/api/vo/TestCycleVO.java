@@ -252,4 +252,12 @@ public class TestCycleVO {
     public void setCycleCaseList(List<Object> cycleCaseList) {
         this.cycleCaseList = cycleCaseList;
     }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
+    }
 }
