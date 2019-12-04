@@ -20,6 +20,11 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "caseNum")
     private String caseNum;
 
+    @ApiModelProperty(value = "cycleID")
+    private Long cycleId;
+
+    @ApiModelProperty(value = "项目id")
+    private Long projectId;
 
     @ApiModelProperty(value = "source")
     private String source;
@@ -38,6 +43,9 @@ public class TestCycleCaseInfoVO {
 
     @ApiModelProperty(value = "执行状态名")
     private String executionStatusName;
+
+    @ApiModelProperty(value = "执行人id")
+    private Long assignedTo;
 
     @ApiModelProperty(value = "执行人")
     private UserMessageDTO executor ;
@@ -191,5 +199,29 @@ public class TestCycleCaseInfoVO {
 
     public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
         this.issuesInfos = issuesInfos;
+    }
+
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
+
+    public Long getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(Long assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 }

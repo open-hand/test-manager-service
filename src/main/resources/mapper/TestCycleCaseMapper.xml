@@ -736,7 +736,7 @@ ORDER BY
                 <if test="searchDTO.searchArgs.executionStatus != null">
                     AND tcc.execution_status = #{searchDTO.searchArgs.executionStatus}
                 </if>
-                <if test="searchDTO.searchArgs.executionStatus != null">
+                <if test="searchDTO.searchArgs.assignUser != null">
                     AND tcc.assigned_to = #{searchDTO.searchArgs.assignUser}
                 </if>
             </if>
