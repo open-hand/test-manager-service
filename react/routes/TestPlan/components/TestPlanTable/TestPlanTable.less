@@ -45,8 +45,18 @@
       &-span {
         color: fade(@base, 65%);
       }
+      
     }
   }
+}
+.c7ntest-dragtable table tbody tr td {
+    overflow: unset;
+    .c7ntest-testPlan-table-summary{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      white-space: nowrap;
+    }
 }
 }
 .c7ntest-testPlan-assignToDropDown {

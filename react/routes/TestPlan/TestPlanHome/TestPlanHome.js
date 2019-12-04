@@ -14,7 +14,7 @@ import {
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import { editExecuteDetail } from '../../../api/cycleApi';
-import { deleteExecute } from '../../../api/TestPlanApi';
+import { deleteExecute, quickPassOrFail } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
@@ -29,6 +29,7 @@ import testCaseEmpty from './testCaseEmpty.svg';
 import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
+import Item from 'choerodon-ui/lib/list/Item';
 
 
 const { TabPane } = Tabs;
@@ -40,7 +41,7 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore, history,
   } = useContext(Store);
   const {
-    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo,
+    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo, statusList,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
@@ -59,7 +60,7 @@ function TestPlanHome() {
   };
   const handleOpenCreatePlan = () => {
     openCreatePlan({
-      onCreate: (newPlan) => {
+      onCreate: () => {
         if (testPlanStatus !== 'todo') {
           testPlanStore.setTestPlanStatus('todo');
         }      
@@ -68,12 +69,13 @@ function TestPlanHome() {
     });
   };
 
-  const handleOpenUpdateRemind = () => {
+  const handleOpenUpdateRemind = (record, e) => {
+    e.stopPropagation();
     Modal.open({
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',
-      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} />,
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} executeId={record.executeId} />,
       style: { width: '10.9rem' },
       className: 'c7ntest-testPlan-updateRemind-modal',
       okText: '更新',
@@ -118,11 +120,12 @@ function TestPlanHome() {
   };
 
   const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
-    let filter = {};
-    console.log(pagination, filters, sorter, barFilters);
+    let { filter } = testPlanStore;
     Object.keys(filters).map((key) => {
       if (filters[key] && filters[key].length > 0) {
-        filter = { ...filter, ...{ [key]: filters[key][0] } };
+        filter = { ...filter, [key]: filters[key][0] };
+      } else {
+        filter[key] = '';
       }
     });    
     testPlanStore.setBarFilter(barFilters || []);
@@ -153,17 +156,30 @@ function TestPlanHome() {
     });
   };
 
-  const quickPassOrFail = (execute, text) => {
-  };
-
-  const handleQuickPass = (execute, e) => {
+  const handleQuickPassOrFail = (execute, isPass = true, e) => {
     e.stopPropagation();
-    quickPassOrFail(execute, '通过');
-  };
-
-  const handleQuickFail = (execute, e) => {
-    e.stopPropagation();
-    quickPassOrFail(execute, '失败');
+    let executionStatus;
+    if (isPass) {
+      const { statusId } = statusList.find(status => status.statusName === '通过') || {};
+      executionStatus = statusId;
+    } else {
+      const { statusId } = statusList.find(status => status.statusName === '失败') || {};
+      executionStatus = statusId;
+    }
+    const data = {
+      executionStatus,
+      executeId: execute.executeId,
+      objectVersionNumber: execute.objectVersionNumber,
+    };
+    quickPassOrFail(data).then(() => {
+      testPlanStore.loadExecutes();
+    }).catch(() => {
+      if (isPass) {
+        Choerodon.prompt('快速通过失败');
+      } else {
+        Choerodon.prompt('快速失败失败');
+      }
+    });
   };
 
   const handleAssignToChange = (value) => {
@@ -192,9 +208,6 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon" onClick={handleOpenUpdateRemind}>
-          变更提醒
-        </Button>
         <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
@@ -251,8 +264,8 @@ function TestPlanHome() {
                     onDragEnd={onDragEnd}
                     onTableChange={handleExecuteTableChange}
                     onDeleteExecute={handleDeleteExecute}
-                    onQuickPass={handleQuickPass}
-                    onQuickFail={handleQuickFail}
+                    onQuickPass={handleQuickPassOrFail}
+                    onQuickFail={handleQuickPassOrFail}
                     onAssignToChange={handleAssignToChange}
                     onOpenUpdateRemind={handleOpenUpdateRemind}
                     onTableSummaryClick={handleTableSummaryClick}

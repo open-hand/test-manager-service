@@ -121,7 +121,7 @@ class DragTable extends Component {
     } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
-      <th style={{ flex: column.flex || 1, width: column.width }}>
+      <th style={{ flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
         {column.key !== 'checkbox' ? column.title : (
           <CustomCheckBox value="all" checkedMap={checkedMap} dataSource={dataSource} field={checkField} />
         )}
@@ -151,7 +151,7 @@ class DragTable extends Component {
                 renderedItem = data[index][dataIndex];
               }
               return (
-                <td className={className} style={{ flex: flex || 1, width }}>
+                <td className={className} style={{ flex: width ? 'unset' : (flex || 1), width }}>
                   {renderedItem}
                 </td>
               );
@@ -178,7 +178,7 @@ class DragTable extends Component {
                     renderedItem = data[index][dataIndex];
                   }
                   return (
-                    <td className={className} style={{ flex: flex || 1, width }}>
+                    <td className={className} style={{ flex: width ? 'unset' : (flex || 1), width }}>
                       {renderedItem}
                     </td>
                   );

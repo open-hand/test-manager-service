@@ -242,16 +242,6 @@ export function getIssueSteps(issueId) {
 export function createIssueStep(testCaseStepDTO) {
   return request.put(`/test/v1/projects/${getProjectId()}/case/step/change`, testCaseStepDTO);
 }
-/**
- *获取用例关联的执行
- *
- * @export
- * @param {*} issueId
- * @returns
- */
-export function getIssueExecutes(issueId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/issue/${issueId}`);
-}
 
 /**
  *获取文件夹中的用例
