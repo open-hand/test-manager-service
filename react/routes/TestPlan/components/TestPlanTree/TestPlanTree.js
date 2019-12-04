@@ -5,7 +5,7 @@ import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  editPlan, deletePlan, addFolder, editFolder, moveFolder,
+  editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -39,7 +39,7 @@ class TestPlanTree extends Component {
         name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };    
+    };
   };
 
   editFolderName = async (newName, item) => {
@@ -58,7 +58,7 @@ class TestPlanTree extends Component {
         name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };    
+    };
   };
 
   handleReName = async (newName, item) => {
@@ -67,8 +67,17 @@ class TestPlanTree extends Component {
     return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
-  handleDelete = item => handleRequestFailed(deletePlan(item.id))
-
+  handleDelete = (item) => {
+    const { context: { testPlanStore } } = this.props;
+    const isPlan = testPlanStore.isPlan(item.id);
+    if (isPlan) {
+      return handleRequestFailed(deletePlan(item.id));
+    } else {
+      const [, folderId] = testPlanStore.getId(item.id);
+      return handleRequestFailed(deleteFolder(folderId));
+    }
+  }
+  
   handleDrag = async (sourceItem, destination) => {
     const { context: { testPlanStore } } = this.props;
     const { parentId } = destination;
@@ -84,7 +93,7 @@ class TestPlanTree extends Component {
         ...sourceItem.data,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };   
+    };
   }
 
   handleCreateFolder = async (value, parentId, item) => {
@@ -104,7 +113,7 @@ class TestPlanTree extends Component {
         name: value,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };   
+    };
   }
 
   setSelected = (item) => {
