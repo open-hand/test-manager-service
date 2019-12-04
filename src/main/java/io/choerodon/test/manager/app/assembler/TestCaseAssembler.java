@@ -83,13 +83,15 @@ public class TestCaseAssembler {
     }
 
     public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO){
-        Long assignedTo = testCycleCaseDTO.getAssignedTo();
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
-        BaseDTO baseDTO = new BaseDTO();
-        baseDTO.setCreatedBy(assignedTo);
-        Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
-        UserMessageDTO userMessageDTO = userMap.get(assignedTo);
-        testFolderCycleCaseVO.setAssignedUser(userMessageDTO);
+        Long assignedTo = testCycleCaseDTO.getAssignedTo();
+        if(!assignedTo.equals(0)){
+            BaseDTO baseDTO = new BaseDTO();
+            baseDTO.setCreatedBy(assignedTo);
+            Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
+            UserMessageDTO userMessageDTO = userMap.get(assignedTo);
+            testFolderCycleCaseVO.setAssignedUser(userMessageDTO);
+        }
         return testFolderCycleCaseVO;
     }
 
@@ -159,31 +161,25 @@ public class TestCaseAssembler {
         return  userMessageDTOMap;
     }
 
-    public TestCycleCaseInfoVO dtoToInfoVO(TestCycleCaseDTO testCycleCaseDTO,Long previousExecuteId,Long nextExecuteId) {
-        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
-            throw new CommonException("error.cycle.case.null");
+    public TestCycleCaseInfoVO cycleCaseExtraInfo(TestCycleCaseInfoVO testCycleCaseInfoVO) {
+        if(!testCycleCaseInfoVO.getAssignedTo().equals(0)){
+            BaseDTO baseDTO = new BaseDTO();
+            baseDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
+            Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
+            if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()))) {
+                testCycleCaseInfoVO.setExecutor(UserMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()));
+            }
         }
-        TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-        testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
-        testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
-        BaseDTO baseDTO = new BaseDTO();
-        baseDTO.setCreatedBy(testCycleCaseDTO.getCreatedBy());
-        baseDTO.setLastUpdatedBy(testCycleCaseDTO.getLastUpdatedBy());
-        Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
-        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCycleCaseDTO.getCreatedBy()))) {
-            testCycleCaseInfoVO.setExecutor(UserMessageDTOMap.get(testCycleCaseDTO.getLastUpdatedBy()));
-        }
-        testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
         // 用例的问题链接
-        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseDTO.getProjectId(), testCycleCaseDTO.getCaseId()));
+        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseInfoVO.getProjectId(), testCycleCaseInfoVO.getCaseId()));
         // 查询用例信息
-        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
         testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
         return testCycleCaseInfoVO;
     }

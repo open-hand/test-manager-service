@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -558,7 +557,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if(!ObjectUtils.isEmpty(cycleId)){
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
-        // 查询文件夹下的的用例
+        // 查询项目下自定义和默认状态
         TestStatusDTO testStatusDTO = new TestStatusDTO();
         testStatusDTO.setProjectId(projectId);
         testStatusDTO.setStatusType("CYCLE_CASE");
@@ -584,7 +583,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public void update(TestCycleCaseVO testCycleCaseVO) {
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class);
-        testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
+        baseUpdate(testCycleCaseDTO);
     }
 
     @Override
@@ -616,13 +615,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Set<Long> cycleIds = new HashSet<>();
         if(!ObjectUtils.isEmpty(cycleId)){
             cycleIds.addAll(queryCycleIds(cycleId, planId));
-        }
-        Map<String, Object> paramsMap = null;
-        if(!ObjectUtils.isEmpty(searchDTO)){
-            Map<String, Object> searchArgs = searchDTO.getSearchArgs();
-            JSONObject params = new JSONObject(searchArgs);
-            paramsMap = params.getInnerMap();
-            String userName = String.valueOf(paramsMap.get("assignUser"));
         }
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
@@ -658,7 +650,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
-        // 查询循环下的的用例
+        // 查询循环下的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
         List<TestCycleCaseDTO> list = caseDTOPageInfo.getList();
@@ -670,19 +662,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 index = list.indexOf(cyclecase);
             }
         }
-        Long previousExecuteId;
-        Long nextExecuteId;
-        if (index - 1 < 0) {
-            previousExecuteId = null;
-        } else {
-            previousExecuteId = list.get(index - 1).getExecuteId();
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+            throw new CommonException("error.cycle.case.not.exist");
         }
-        if (index + 1 >= list.size()) {
-            nextExecuteId = null;
-        } else {
-            nextExecuteId = list.get(index + 1).getExecuteId();
-        }
-        return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO, previousExecuteId, nextExecuteId);
+        TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
+        previousNextId(index,list,testCycleCaseInfoVO);
+        testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
+        return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
 
     @Override
@@ -729,6 +715,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
+        testCycleCaseDTO.setVersionNum(testCycleCaseDTO.getVersionNum()+1);
         testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
     }
 
@@ -926,5 +913,21 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return;
         }
         testCycleCaseMapper.batchInsert(testCycleCaseDTOS);
+    }
+    private void previousNextId(int index,List<TestCycleCaseDTO> list,TestCycleCaseInfoVO testCycleCaseInfoVO){
+        Long previousExecuteId;
+        Long nextExecuteId;
+        if (index - 1 < 0) {
+            previousExecuteId = null;
+        } else {
+            previousExecuteId = list.get(index - 1).getExecuteId();
+        }
+        if (index + 1 >= list.size()) {
+            nextExecuteId = null;
+        } else {
+            nextExecuteId = list.get(index + 1).getExecuteId();
+        }
+        testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
+        testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
     }
 }
