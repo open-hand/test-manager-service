@@ -247,8 +247,8 @@ function TestPlanHome() {
                 <span>{planInfo.name}</span>
               </div>
               <div className={`${prefixCls}-contentWrap-right-warning`}>
-                <Icon type="error" />
-                <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span>
+                {/* <Icon type="error" />
+                <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span> */}
               </div>
               <div className={`${prefixCls}-contentWrap-right-card`}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
