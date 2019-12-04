@@ -12,13 +12,16 @@ const propTypes = {
   fileList: PropTypes.array,
   config: PropTypes.shape({}),
   onOk: PropTypes.func,
+  handleDeleteFile: PropTypes.func,
 };
 const defaultProps = {
   onOk: () => {
   },
 };
 function UploadInTable(props) {
-  const { fileList, config, onOk } = props;
+  const {
+    fileList, config, onOk, handleDeleteFile,
+  } = props;
 
   const handleRemove = (file) => {
     if (file.url) {
@@ -40,7 +43,7 @@ function UploadInTable(props) {
             key={item.id}
             url={item.url}
             fileName={item.attachmentName}
-            onDeleteFile={() => { handleRemove(item); }}
+            onDeleteFile={() => handleDeleteFile(item)}
             hasDeletePermission
           // hasDeletePermission={hasPermission || AppState.userInfo.id === item.userId}
           />

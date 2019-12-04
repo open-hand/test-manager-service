@@ -8,7 +8,7 @@ import {
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
 import EditIssueDataSet from './store/EditIssueDataSet';
-import UpdateTestStepTable from './UpdateTestStepTable';
+import EditTestStepTable from './EditTestStepTable';
 import { beforeTextUpload } from '@/common/utils';
 import './EditExecuteIssue.less';
 
@@ -18,47 +18,49 @@ function EditExecuteIssue(props) {
     intl, executeId, onOk, modal,
   } = props;
 
-  const createDataset = useMemo(() => new DataSet(EditIssueDataSet(executeId, 'issue', intl)), [executeId, intl]);
+  const editDataset = useMemo(() => new DataSet(EditIssueDataSet(executeId, 'issue', intl)), [executeId, intl]);
 
 
-  const handleCreateIssue = useCallback(async () => {
+  const handleUpdateIssue = useCallback(async () => {
     try {
       // 描述富文本转换为字符串
-      const oldDes = createDataset.current.get('description');
-      beforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
-      if (await createDataset.submit().then((res) => {
-        const fileList = createDataset.current.get('fileList');
+      const oldDes = editDataset.current.get('description');
+      beforeTextUpload(oldDes, {}, des => editDataset.current.set('description', des.description));
+      if (await editDataset.submit().then((res) => {
+        const fileList = editDataset.current.get('fileList');
         const formData = new FormData();
         fileList.forEach((file) => {
           formData.append('file', file);
         });
         // uploadFile(res[0].caseId, formData);
-        onOk(res[0], createDataset.current.get('folderId'));
+        onOk(res[0], editDataset.current.get('folderId'));
         return true;
       })) {
         return true;
       } else {
         // error 时 重新将描述恢复富文本格式
-        createDataset.current.set('description', oldDes);
+        editDataset.current.set('description', oldDes);
         return false;
       }
     } catch (e) {
       return false;
     }
-  }, [createDataset, onOk]);
+  }, [editDataset, onOk]);
   const handleChangeDes = (value) => {
-    createDataset.current.set('description', value);
+    editDataset.current.set('description', value);
   };
   const onUploadFile = ({ file, fileList, event }) => {
-    createDataset.current.set('fileList', fileList);
+    editDataset.current.set('fileList', fileList);
   };
   useEffect(() => {
     // 初始化属性
-    modal.handleOk(handleCreateIssue);
-  }, [handleCreateIssue, modal]);
-
+    modal.handleOk(handleUpdateIssue);
+  }, [handleUpdateIssue, modal]);
+  useEffect(() => {
+  
+  }, []);
   return (
-    <Form dataSet={createDataset} className={`test-edit-execute-issue-form ${visibleDetail ? '' : 'test-edit-execute-issue-form-hidden'}`}>
+    <Form dataSet={editDataset} className={`test-edit-execute-issue-form ${visibleDetail ? '' : 'test-edit-execute-issue-form-hidden'}`}>
       <TextField name="summary" />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-edit-execute-issue-line" />
@@ -75,12 +77,15 @@ function EditExecuteIssue(props) {
       {/* //  这里逻辑待处理， DataSet提交  */}
       <div className="test-edit-execute-issue-form-file">
         <span className="test-edit-execute-issue-head">附件</span>
-        <UploadButton onChange={onUploadFile} />
+        <UploadButton
+          fileList={editDataset.current && editDataset.current.get('cycleCaseAttachmentRelVOList')}
+          onChange={onUploadFile}
+        />
       </div>
       <div className="test-edit-execute-issue-form-step">
         <div className="test-edit-execute-issue-line" />
         <span className="test-edit-execute-issue-head">测试步骤</span>
-        <UpdateTestStepTable name="caseStepVOS" parentDataSet={createDataset} caseId={executeId} />
+        <EditTestStepTable name="caseStepVOS" parentDataSet={editDataset} executeId={executeId} />
       </div>
     </Form>
   );

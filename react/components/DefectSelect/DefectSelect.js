@@ -116,9 +116,6 @@ class DefectSelect extends Component {
     const {
       executeStepId, handleSubmit, ExecuteDetailStore, record, ...otherProps
     } = this.props;
-    // const { handleSubmit } = bugsToggleRef;
-    // eslint-disable-next-line no-console
-    console.log('this.props', this.props);
     const {
       defects, selectLoading, issueList, canLoadMore,
     } = this.state;
