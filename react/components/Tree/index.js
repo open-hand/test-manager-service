@@ -11,7 +11,7 @@ import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
 import TreeNode from './TreeNode';
 import {
-  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode,
+  selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode, getSiblingOrParent,
 } from './utils';
 import FilterInput from './FilterInput';
 import './index.less';
@@ -150,12 +150,13 @@ function PureTree({
       await onDelete(item);
       setTree(oldTree => removeItem(oldTree, item.path));
       if (selected.id === item.id) {
-        setSelected({});
+        // 这里取旧的tree数据
+        setSelected(getSiblingOrParent(tree, item));          
       }
     } catch (error) {
       // console.log(error);
     }
-  }, [onDelete, selected.id, setSelected]);
+  }, [onDelete, selected.id, setSelected, tree]);
   const handleMenuClick = useCallback((node, { key }) => {
     switch (key) {
       case 'rename': {
