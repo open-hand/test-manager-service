@@ -14,6 +14,9 @@ public class TestCycleCaseUpdateVO {
 
     private String description;
 
+    private Long objectVersionNumber;
+
+
     private List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList;
 
     private List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS;
@@ -56,5 +59,13 @@ public class TestCycleCaseUpdateVO {
 
     public void setTestCycleCaseStepUpdateVOS(List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS) {
         this.testCycleCaseStepUpdateVOS = testCycleCaseStepUpdateVOS;
+    }
+
+    public Long getObjectVersionNumber() {
+        return objectVersionNumber;
+    }
+
+    public void setObjectVersionNumber(Long objectVersionNumber) {
+        this.objectVersionNumber = objectVersionNumber;
     }
 }
