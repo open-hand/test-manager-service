@@ -80,10 +80,10 @@ public interface TestCycleCaseService {
     /**
      * 查看测试执行的详情
      * @param projectId
-     * @param executeId
+     * @param
      * @return
      */
-    TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId);
+    TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
 
 
     /**
@@ -99,7 +99,7 @@ public interface TestCycleCaseService {
 
     void update(TestCycleCaseVO testCycleCaseVO);
 
-    PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
+    PageInfo<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
 
 
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);

@@ -107,6 +107,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private TestCycleCaseHistoryMapper testCycleCaseHistory;
 
+    @Autowired
+    private TestCycleMapper testCycleMapper;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -548,16 +551,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public ExecutionStatusVO queryExecuteStatus(Long projectId, Long planId, Long folderId) {
+    public ExecutionStatusVO queryExecuteStatus(Long projectId, Long planId, Long cycleId) {
         Long total = 0L;
         // 查询文件夹下所有的目录
-        Set<Long> folderIds = new HashSet<>();
-        if (!ObjectUtils.isEmpty(folderId)) {
-            TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-            testIssueFolder.setProjectId(projectId);
-            Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
-            queryAllFolderIds(folderId, folderIds, folderMap);
-        }
+        Set<Long> folderIds = queryCycleIds(cycleId, planId);
         // 查询文件夹下的的用例
         TestStatusDTO testStatusDTO = new TestStatusDTO();
         testStatusDTO.setProjectId(projectId);
@@ -609,19 +606,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public PageInfo<TestFolderCycleCaseVO> listAllCaseByFolderId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
+    public PageInfo<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long cycleId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
-        Set<Long> folderIds = new HashSet<>();
-        if (!ObjectUtils.isEmpty(folderId)) {
-            TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
-            testIssueFolder.setProjectId(projectId);
-            Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
-            queryAllFolderIds(folderId, folderIds, folderMap);
+        Set<Long> cycleIds = new HashSet<>();
+        if(!ObjectUtils.isEmpty(cycleId)){
+            cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
-
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
-                testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
+                testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
         List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(testCaseAssembler::setAssianUser).collect(Collectors.toList());
         if(CollectionUtils.isEmpty(testFolderCycleCaseVOS)){
             return new PageInfo<TestFolderCycleCaseVO>();
@@ -648,12 +641,33 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseInfoVO queryCycleCaseInfo(Long projectId, Long executeId) {
-        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.queryByCaseId(executeId);
-        if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
-            throw new CommonException("error cycle case not exist");
+    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long cycleId, Pageable pageable, SearchDTO searchDTO) {
+        Set<Long> folderIds = queryCycleIds(cycleId, planId);
+        // 查询循环下的的用例
+        PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
+                testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
+        List<TestCycleCaseDTO> list = caseDTOPageInfo.getList();
+        int index = 0;
+        TestCycleCaseDTO testCycleCaseDTO = null;
+        for (TestCycleCaseDTO cyclecase : list) {
+            if (cyclecase.getExecuteId().equals(executeId)) {
+                testCycleCaseDTO = cyclecase;
+                index = list.indexOf(cyclecase);
+            }
         }
-        return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO);
+        Long previousExecuteId;
+        Long nextExecuteId;
+        if (index - 1 < 0) {
+            previousExecuteId = null;
+        } else {
+            previousExecuteId = list.get(index - 1).getExecuteId();
+        }
+        if (index + 1 >= list.size()) {
+            nextExecuteId = null;
+        } else {
+            nextExecuteId = list.get(index + 1).getExecuteId();
+        }
+        return testCaseAssembler.dtoToInfoVO(testCycleCaseDTO, previousExecuteId, nextExecuteId);
     }
 
     @Override
@@ -842,14 +856,30 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseDTO;
     }
 
-    private void queryAllFolderIds(Long folderId, Set<Long> folderIds, Map<Long, List<TestIssueFolderDTO>> folderMap) {
-        folderIds.add(folderId);
-        List<TestIssueFolderDTO> testIssueFolderDTOS = folderMap.get(folderId);
-        if (!CollectionUtils.isEmpty(testIssueFolderDTOS)) {
-            testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
+    private void queryAllCycleIds(Long cycleId, Set<Long> folderIds, Map<Long, List<TestCycleDTO>> folderMap) {
+        folderIds.add(cycleId);
+        List<TestCycleDTO> testCycleDTOS = folderMap.get(cycleId);
+        if (!CollectionUtils.isEmpty(testCycleDTOS)) {
+            testCycleDTOS.forEach(v -> queryAllCycleIds(v.getCycleId(), folderIds, folderMap));
         }
     }
 
+    private  Set<Long> queryCycleIds(Long cycleId,Long planId){
+        Set<Long> cycleIds = new HashSet<>();
+        if (!ObjectUtils.isEmpty(planId)) {
+            TestCycleDTO testCycleDTO = new TestCycleDTO();
+            testCycleDTO.setPlanId(planId);
+            List<TestCycleDTO> cycleDTOS = testCycleMapper.select(testCycleDTO);
+            cycleDTOS.stream().forEach(e->{
+                if(e.getParentCycleId()==null){
+                    e.setParentCycleId(0L);
+                }
+            });
+            Map<Long, List<TestCycleDTO>> folderMap = cycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+            queryAllCycleIds(cycleId, cycleIds, folderMap);
+        }
+        return cycleIds;
+    }
     private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, Map<Long, TestCycleDTO> testCycleMap, Long defaultStatusId) {
         if (CollectionUtils.isEmpty(testCaseDTOS)) {
             return new ArrayList<>();

@@ -17,6 +17,9 @@ public class TestCycleCaseStepUpdateVO {
     @ApiModelProperty(value = "测试步骤ID")
     private Long stepId;
 
+    @ApiModelProperty(value = "cycleId")
+    private String cycleId;
+
     @ApiModelProperty(value = "描述")
     private String description;
 
@@ -94,5 +97,13 @@ public class TestCycleCaseStepUpdateVO {
 
     public void setExpectedResult(String expectedResult) {
         this.expectedResult = expectedResult;
+    }
+
+    public String getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(String cycleId) {
+        this.cycleId = cycleId;
     }
 }

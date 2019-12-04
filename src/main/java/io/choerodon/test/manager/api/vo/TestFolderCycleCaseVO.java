@@ -15,6 +15,9 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "执行ID")
     private Long executeId;
 
+    @ApiModelProperty(value = "循环Id")
+    private Long cycleId;
+
 
     @ApiModelProperty(value = "用例ID")
     private Long caseId;
@@ -80,6 +83,13 @@ public class TestFolderCycleCaseVO {
         this.executeId = executeId;
     }
 
+    public Long getCycleId() {
+        return cycleId;
+    }
+
+    public void setCycleId(Long cycleId) {
+        this.cycleId = cycleId;
+    }
 
     public Long getCaseId() {
         return caseId;
