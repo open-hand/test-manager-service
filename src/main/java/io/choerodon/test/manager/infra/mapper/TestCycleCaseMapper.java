@@ -108,7 +108,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      * 查询文件下的执行
      */
 
-    List<TestCycleCaseDTO> queryFolderCycleCase(@Param("planId") Long planId, @Param("folderIds") Set<Long> folderIds, @Param("searchDTO") SearchDTO searchDTO);
+    List<TestCycleCaseDTO> queryFolderCycleCase(@Param("planId") Long planId, @Param("cycleIds") Set<Long> cycleIds, @Param("searchDTO") SearchDTO searchDTO);
 
     void fixCycleCase();
 

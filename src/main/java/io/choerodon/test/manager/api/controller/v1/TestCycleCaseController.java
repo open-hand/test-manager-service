@@ -187,10 +187,14 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询测试执行详情")
-    @GetMapping("/{executeId}/info")
+    @PostMapping("/{executeId}/info")
     public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
-                                                             @PathVariable(name = "executeId", required = true) Long executeId) {
-        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(projectId, executeId), HttpStatus.OK);
+                                                             @RequestParam(name = "cycle_id") Long cycleId,
+                                                             @RequestParam(name = "plan_id") Long planId,
+                                                             @SortDefault Pageable pageable,
+                                                             @RequestBody(required = false) SearchDTO searchDTO,
+                                                             @PathVariable(name = "executeId", required     = true) Long executeId) {
+        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId,projectId,planId,cycleId,pageable,searchDTO), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
@@ -199,9 +203,9 @@ public class TestCycleCaseController {
     public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "plan_id", required = false)
                                                                   @RequestParam(name = "plan_id") Long planId,
-                                                                  @ApiParam(value = "folder_id", required = false)
-                                                                  @RequestParam(name = "folder_id") Long folderId) {
-        return Optional.ofNullable(testCycleCaseService.queryExecuteStatus(projectId, planId, folderId))
+                                                                  @ApiParam(value = "cycle_id", required = false)
+                                                                  @RequestParam(name = "cycle_id") Long cycleId) {
+        return Optional.ofNullable(testCycleCaseService.queryExecuteStatus(projectId, planId, cycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.plan.status.query"));
 
@@ -230,12 +234,12 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/query/caseList")
-    public ResponseEntity<PageInfo<TestFolderCycleCaseVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
-                                                                              @RequestParam(name = "folder_id") Long folderId,
+    public ResponseEntity<PageInfo<TestFolderCycleCaseVO>> listCaseByCycleId(@PathVariable("project_id") Long projectId,
+                                                                              @RequestParam(name = "cycle_id") Long cycleId,
                                                                               @RequestParam(name = "plan_id") Long planId,
                                                                               @SortDefault Pageable pageable,
                                                                               @RequestBody(required = false) SearchDTO searchDTO) {
-        return new ResponseEntity<>(testCycleCaseService.listAllCaseByFolderId(projectId, planId, folderId, pageable, searchDTO), HttpStatus.OK);
+        return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageable, searchDTO), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

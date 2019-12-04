@@ -159,8 +159,13 @@ public class TestCaseAssembler {
         return  userMessageDTOMap;
     }
 
-    public TestCycleCaseInfoVO dtoToInfoVO(TestCycleCaseDTO testCycleCaseDTO) {
+    public TestCycleCaseInfoVO dtoToInfoVO(TestCycleCaseDTO testCycleCaseDTO,Long previousExecuteId,Long nextExecuteId) {
+        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+            throw new CommonException("error.cycle.case.null");
+        }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
+        testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
+        testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
         BaseDTO baseDTO = new BaseDTO();
         baseDTO.setCreatedBy(testCycleCaseDTO.getCreatedBy());
         baseDTO.setLastUpdatedBy(testCycleCaseDTO.getLastUpdatedBy());

@@ -670,11 +670,11 @@ ORDER BY
         <if test="planId!=null" >
             tc.plan_id = #{planId}
         </if>
-        <if test="folderIds !=null and folderIds.size>0">
+        <if test="cycleIds !=null and cycleIds.size>0">
             AND tc.folder_id IN
-            <foreach item="folderId" index="index" collection="folderIds"
+            <foreach item="cycleId" index="index" collection="cycleIds"
                      open="(" separator="," close=")">
-                #{folderId}
+                #{cycleId}
             </foreach>
         </if>
         GROUP BY
@@ -690,15 +690,15 @@ ORDER BY
         LEFT JOIN test_status ts ON ts.status_id=tcc.execution_status
         WHERE
             tc.plan_id = #{planId}
-        <if test="folderIds !=null and folderIds.size>0">
-        AND tc.folder_id IN
-        <foreach item="folderId" index="index" collection="folderIds"
+        <if test="cycleIds !=null and cycleIds.size>0">
+        AND tc.cycle_id IN
+        <foreach item="cycle" index="index" collection="cycleIds"
                  open="(" separator="," close=")">
-            #{folderId}
+            #{cycle}
         </foreach>
         </if>
         <include refid="sqlParam"/>
-        order by tcc.last_update_date DESC
+        order by tcc.rank
     </select>
     <update id="fixCycleCase">
         UPDATE test_cycle_case tcc
