@@ -36,21 +36,26 @@ class TestPlanTree extends Component {
     return {
       data: {
         ...item.data,
+        name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
     };    
   };
 
   editFolderName = async (newName, item) => {
+    const { context: { testPlanStore } } = this.props;
+    const [, folderId] = testPlanStore.getId(item.id);
     const { objectVersionNumber } = item.data;
-    const data = { 
+    const data = {
+      cycleId: folderId,
       cycleName: newName,
+      objectVersionNumber,
     };
     const result = await handleRequestFailed(editFolder(data));
     return {
       data: {
         ...item.data,
-        name: result.name,
+        name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
     };    
@@ -70,6 +75,7 @@ class TestPlanTree extends Component {
     const isPlan = testPlanStore.isPlan(parentId);
     const [, folderId] = testPlanStore.getId(parentId);
     const data = {
+      cycleId: folderId,
       parentCycleId: isPlan ? 0 : folderId,
     };
     const result = await handleRequestFailed(editFolder(data));
@@ -84,15 +90,18 @@ class TestPlanTree extends Component {
   handleCreateFolder = async (value, parentId, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(parentId);
-    const [, folderId] = testPlanStore.getId(parentId);
+    const [planId, folderId] = testPlanStore.getId(parentId);
     const data = {
+      planId,
       parentCycleId: isPlan ? 0 : folderId,
       cycleName: value,
     };
     const result = await handleRequestFailed(addFolder(data));
     return {
+      id: `${planId}-${result.cycleId}`,
       data: {
-        ...item.data,
+        parentId: result.parentId,
+        name: value,
         objectVersionNumber: result.objectVersionNumber,
       },
     };   

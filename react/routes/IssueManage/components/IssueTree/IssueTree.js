@@ -19,16 +19,24 @@ class IssueTree extends Component {
     IssueTreeStore.setTreeRef(this.treeRef);
   }
 
-  handleCreate = (value, parentId) => {
+  handleCreate = async (value, parentId) => {
     const data = {
       parentId,
       name: value,
       type: 'cycle',
     };
-    return handleRequestFailed(addFolder(data));
+    const result = await handleRequestFailed(addFolder(data));
+    return {
+      id: result.folderId,
+      data: {
+        parentId: result.parentId,
+        name: value,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };
   }
 
-  handleEdit = (newName, item) => {
+  handleEdit = async (newName, item) => {
     const { objectVersionNumber } = item.data;
     const data = {
       folderId: item.id,
@@ -36,7 +44,14 @@ class IssueTree extends Component {
       name: newName,
       type: 'cycle',
     };
-    return handleRequestFailed(editFolder(data));
+    const result = await handleRequestFailed(editFolder(data));
+    return {
+      data: {
+        ...item.data,
+        name: result.name,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };    
   }
 
   handleDelete = async (item) => {
@@ -45,8 +60,15 @@ class IssueTree extends Component {
     IssueTreeStore.removeRootItem(item.id);
   }
 
-  handleDrag = (sourceItem, destination) => {
-    handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
+  handleDrag = async (sourceItem, destination) => {
+    await handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));    
+    return {
+      data: {
+        ...sourceItem.data,
+        parentId: destination.parentId,
+        objectVersionNumber: sourceItem.data.objectVersionNumber + 1,
+      },
+    };   
   }
   
 

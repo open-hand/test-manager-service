@@ -5,7 +5,7 @@ import {
 import { find } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
-
+// 数据处理成tree形式，便于查看数据
 function makeTree(rootIds, treeFolder) {
   const map = new Map(treeFolder.map(item => ([item.id, item])));
   const transverse = (item) => {   
@@ -125,7 +125,7 @@ class TestPlanTreeStore {
         };
       })) || [],
     };
-    window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
+    // window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }

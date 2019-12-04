@@ -198,8 +198,12 @@ function PureTree({
       try {
         const newItem = await onCreate(value, item.parentId, item);
         setTree(oldTree => createItem(oldTree, path, {
-          ...item,
-          ...newItem,          
+          ...newItem,  
+          children: [],
+          hasChildren: false,
+          isExpanded: false,
+          isChildrenLoading: false,
+          isEditing: false,
         }));
       } catch (error) {
         setTree(oldTree => removeItem(oldTree, path));
