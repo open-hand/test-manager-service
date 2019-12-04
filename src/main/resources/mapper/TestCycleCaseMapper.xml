@@ -671,7 +671,7 @@ ORDER BY
             tc.plan_id = #{planId}
         </if>
         <if test="cycleIds !=null and cycleIds.size>0">
-            AND tc.folder_id IN
+            AND tc.cycle_id IN
             <foreach item="cycleId" index="index" collection="cycleIds"
                      open="(" separator="," close=")">
                 #{cycleId}
@@ -726,7 +726,7 @@ ORDER BY
                 AND
                 <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
                     (tcc.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%') OR tcc.execution_status
-                    LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%') )
+                    LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%') OR tcc.assigned_to = #{content} )
                 </foreach>
             </if>
             <if test="searchDTO.searchArgs != null">
@@ -735,6 +735,9 @@ ORDER BY
                 </if>
                 <if test="searchDTO.searchArgs.executionStatus != null">
                     AND tcc.execution_status = #{searchDTO.searchArgs.executionStatus}
+                </if>
+                <if test="searchDTO.searchArgs.executionStatus != null">
+                    AND tcc.assigned_to = #{searchDTO.searchArgs.assignUser}
                 </if>
             </if>
         </if>
