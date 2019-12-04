@@ -312,6 +312,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
+
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();

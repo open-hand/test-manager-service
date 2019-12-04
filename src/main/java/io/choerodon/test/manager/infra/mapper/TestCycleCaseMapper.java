@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.choerodon.test.manager.api.vo.CaseCompareVO;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.agile.api.vo.SearchDTO;
@@ -124,4 +126,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     void batchAssign(@Param("assignUserId") Long assignUserId, @Param("cycleCaseIds") List<Long> cycleCaseIds);
 
     void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
+
+    @MapKey("caseId")
+    Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds);
 }

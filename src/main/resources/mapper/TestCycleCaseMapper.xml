@@ -784,6 +784,49 @@ ORDER BY
             #{executId}
         </foreach>
     </delete>
+
+    <resultMap id="testCaseMap" type="io.choerodon.test.manager.api.vo.CaseCompareVO">
+        <result  column="case_id" property="caseId"/>
+        <association property="testCase" javaType="io.choerodon.test.manager.api.vo.TestCaseVO">
+            <id column="case_id" property="caseId"/>
+            <result  column="summary" property="summary"/>
+            <result  column="description" property="description"/>
+            <result  column="folderName" property="folderName"/>
+        </association>
+        <collection  property="caseStep" ofType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
+            <id column="step_id" property="stepId"/>
+            <result column="test_step" property="testStep"/>
+            <result column="test_data" property="testData"/>
+            <result column="expected_result" property="expectedResult"/>
+        </collection>
+        <collection property="caseAttach" ofType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+            <id column="attachment_id" property="attachmentId"/>
+            <result column="url" property="url"/>
+            <result column="file_name" property="fileName"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryTestCaseMap" resultMap="testCaseMap">
+        select
+        tc.cycle_name as folderName,
+        tcc.summary as summary,
+        tcc.description as description,
+        tcc.case_id as case_id,
+        tccs.step_id as step_id,
+        tccs.test_step as test_step,
+        tccs.test_data as test_data,
+        tccs.expect_result as expected_result,
+        tccar.attachment_name as file_name,
+        tccar.url
+        from test_cycle_case	tcc
+        left join test_cycle_case_step tccs on tccs.execute_id = tcc.execute_id
+        left join test_cycle tc on tc.cycle_id = tcc.cycle_id
+        left join test_cycle_case_attach_rel tccar on tccar.attachment_link_id = tcc.execute_id
+        where tcc.execute_id in
+        <foreach collection="list" item="caseId" open="(" close=")" separator=",">
+            #{caseId}
+        </foreach>     ORDER BY tcc.case_id
+    </select>
 </mapper>
 
 

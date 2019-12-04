@@ -59,6 +59,12 @@ public class TestFolderCycleCaseVO {
 
     private Long versionNum;
 
+    private Boolean changeCase;
+
+    private Boolean changeStep;
+
+    private Boolean changeAttach;
+
     public Long getVersionNum() {
         return versionNum;
     }
@@ -186,5 +192,29 @@ public class TestFolderCycleCaseVO {
 
     public void setLastUpdateDate(Date lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Boolean getChangeCase() {
+        return changeCase;
+    }
+
+    public void setChangeCase(Boolean changeCase) {
+        this.changeCase = changeCase;
+    }
+
+    public Boolean getChangeStep() {
+        return changeStep;
+    }
+
+    public void setChangeStep(Boolean changeStep) {
+        this.changeStep = changeStep;
+    }
+
+    public Boolean getChangeAttach() {
+        return changeAttach;
+    }
+
+    public void setChangeAttach(Boolean changeAttach) {
+        this.changeAttach = changeAttach;
     }
 }
