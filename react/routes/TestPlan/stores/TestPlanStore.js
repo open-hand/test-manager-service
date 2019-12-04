@@ -185,7 +185,6 @@ class TestPlanStore extends TestPlanTreeStore {
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
       const search = getSearchObj;
-      console.log(search);
       this.setTableLoading(true);
       const executes = await getExecutesByFolder({
         planId, folderId, current, pageSize, search, orderField, orderType, 

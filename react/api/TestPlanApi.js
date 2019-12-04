@@ -88,3 +88,25 @@ export function deleteExecute(executeId) {
 export function updatePlanStatus(updateData) {
   return request.post(`/test/v1/projects/${getProjectId()}/plan/update_status`, updateData);
 }
+
+/**
+ * 快速通过或快速失败
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function quickPassOrFail(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
+}
+
+/**
+ * 
+ *
+ * @export
+ * @param {*} executeId
+ * @returns
+ */
+export function getUpdateCompared(executeId) {
+  return request.get(`/v1/projects/${getProjectId()}/cycle/case/${executeId}/compared`);
+}

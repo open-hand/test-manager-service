@@ -4,6 +4,7 @@ import React, {
 import {
   toJS,
 } from 'mobx';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import {
   Input, Icon, Spin, Tree,
@@ -13,6 +14,7 @@ import _ from 'lodash';
 import UpdateContent from './component/UpdateContent';
 import './UpdateRemindModalChildren.less';
 import UpdateStepTableDataSet from '../../stores/UpdateStepTableDataSet';
+import { getUpdateCompared } from '../../../../api/TestPlanApi';
 
 const prefix = 'c7ntest-testPlan-updateRemind';
     
@@ -22,7 +24,11 @@ const UpdateRemindModalChildren = (props) => {
   const newStepTableDataSet = useMemo(() => new DataSet(UpdateStepTableDataSet({ stepData: testPlanStore.executeNewData.stepData })), [testPlanStore.executeNewData.stepData]);
 
   const getUpdateContent = () => {
-
+    getUpdateCompared().then((res) => {
+      console.log(res);
+    }).catch(() => {
+      Choerodon.prompt('获取更新详情失败');
+    });
   };
   
   useEffect(() => {

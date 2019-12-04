@@ -57,13 +57,33 @@ const TestPlanTable = observer(({
         </Menu.Item>
       </Menu>
     );
-    return (
+    return testPlanStatus !== 'done' ? (
       <TableDropMenu
         menu={menu}
-        text={text}
+        text={(
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <Tooltip title={text}>{text}</Tooltip>
+            <span 
+              style={
+                { 
+                  display: testPlanStatus === 'todo' && record.hasChange ? 'inline-block' : 'none', 
+                  width: 6, 
+                  height: 6, 
+                  borderRadius: '50%', 
+                  background: '#ffb100',
+                  marginLeft: 3,
+                }
+              }
+            />
+          </span>
+        )}
         isHasMenu={record.projectId !== 0}
-        onClickEdit={onTableSummaryClick.bind(this, record)}
+        onClickEdit={(record.hasChange && testPlanStatus === 'todo') ? onOpenUpdateRemind : onTableSummaryClick.bind(this, record)}
       />
+    ) : (
+      <Tooltip title={text}>
+        <span style={{ cursor: 'pointer' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+      </Tooltip>
     );
   };
 
@@ -88,7 +108,14 @@ const TestPlanTable = observer(({
       );
     }
   };
-  console.log(testPlanStore.filter, testPlanStore.filter && testPlanStore.filter.executionStatus);
+
+  const getStatusFilteredValue = () => {
+    if (testPlanStore.filter && testPlanStore.filter.executionStatus) {
+      return [testPlanStore.filter.executionStatus];
+    } else {
+      return [];
+    }
+  };
   const columns = [{
     title: <span>用例名</span>,
     dataIndex: 'summary',
@@ -130,7 +157,7 @@ const TestPlanTable = observer(({
     dataIndex: 'executionStatus',
     key: 'executionStatus',
     filters: statusList && statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
-    filteredValue: (testPlanStore.filter && Number(testPlanStore.filter.executionStatus)) || '',
+    filteredValue: getStatusFilteredValue(),
     flex: 1,
     render(executionStatus) {
       const statusColor = _.find(statusList, { statusId: executionStatus })
@@ -172,10 +199,10 @@ const TestPlanTable = observer(({
         && (
           <div style={{ display: 'flex' }}>
             <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-              <Button shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPass.bind(this, record)} />
+              <Button shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPass.bind(this, record, true)} />
             </Tooltip>
             <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-              <Button shape="circle" funcType="flat" icon="cancel" onClick={onQuickFail.bind(this, record)} />
+              <Button shape="circle" funcType="flat" icon="cancel" onClick={onQuickFail.bind(this, record, false)} />
             </Tooltip>
           </div>
         )
