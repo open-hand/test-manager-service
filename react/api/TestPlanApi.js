@@ -32,7 +32,7 @@ export function deletePlan(planId) {
 export function getExecutesByFolder({ 
   planId, folderId, search, orderField, orderType, current, pageSize, 
 }) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?folder_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, search, {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?cycle_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, search, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },
@@ -108,5 +108,5 @@ export function quickPassOrFail(data) {
  * @returns
  */
 export function getUpdateCompared(executeId) {
-  return request.get(`/v1/projects/${getProjectId()}/cycle/case/${executeId}/compared`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/${executeId}/compared`);
 }

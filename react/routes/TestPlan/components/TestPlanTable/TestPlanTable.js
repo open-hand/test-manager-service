@@ -62,7 +62,7 @@ const TestPlanTable = observer(({
         menu={menu}
         text={(
           <span style={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title={text}>{text}</Tooltip>
+            <Tooltip title={text}><span style={{ maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary">{text}</span></Tooltip>
             <span 
               style={
                 { 
@@ -78,11 +78,11 @@ const TestPlanTable = observer(({
           </span>
         )}
         isHasMenu={record.projectId !== 0}
-        onClickEdit={(record.hasChange && testPlanStatus === 'todo') ? onOpenUpdateRemind : onTableSummaryClick.bind(this, record)}
+        onClickEdit={(record.hasChange && testPlanStatus === 'todo') ? onOpenUpdateRemind.bind(this, record) : onTableSummaryClick.bind(this, record)}
       />
     ) : (
       <Tooltip title={text}>
-        <span style={{ cursor: 'pointer' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+        <span className="c7ntest-testPlan-table-summary" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
       </Tooltip>
     );
   };

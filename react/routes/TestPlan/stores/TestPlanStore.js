@@ -87,17 +87,11 @@ class TestPlanStore extends TestPlanTreeStore {
     @computed get getFilters() {
       return this.filter;
     }
+    
+    @observable comparedInfo = {};
 
-    @observable executeOldData = {};
-
-    @action setExecuteOldData = (executeOldData) => {
-      this.executeOldData = executeOldData;
-    }
-
-    @observable executeNewData = {};
-
-    @action setExecuteNewData = (executeNewData) => {
-      this.executeNewData = executeNewData;
+    @action setComparedInfo = (comparedInfo) => {
+      this.comparedInfo = comparedInfo;
     }
 
     checkIdMap = observable.map();
@@ -135,8 +129,6 @@ class TestPlanStore extends TestPlanTreeStore {
         orderType: '',
       };
       this.testPlanStatus = 'todo';
-      this.executeOldData = {};
-      this.executeNewData = {};
       this.planInfo = {};
       this.statusRes = {};
     }
@@ -190,7 +182,7 @@ class TestPlanStore extends TestPlanTreeStore {
         planId, folderId, current, pageSize, search, orderField, orderType, 
       });
       this.setTableLoading(false);
-      this.setTestList(executes.list);
+      this.setTestList(executes.list || []);
       this.setExecutePagination({
         current: executePagination.current,
         pageSize: executePagination.pageSize,

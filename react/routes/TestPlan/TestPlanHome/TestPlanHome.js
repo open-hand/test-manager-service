@@ -69,13 +69,13 @@ function TestPlanHome() {
     });
   };
 
-  const handleOpenUpdateRemind = (e) => {
+  const handleOpenUpdateRemind = (record, e) => {
     e.stopPropagation();
     Modal.open({
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',
-      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} />,
+      children: <UpdateRemindModalChildren testPlanStore={testPlanStore} executeId={record.executeId} />,
       style: { width: '10.9rem' },
       className: 'c7ntest-testPlan-updateRemind-modal',
       okText: '更新',
