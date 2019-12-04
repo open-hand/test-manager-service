@@ -22,6 +22,7 @@ const propTypes = {
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
   onAssignToChange: PropTypes.func.isRequired,
+  onSerchAssign: PropTypes.func.isRequired,
   onOpenUpdateRemind: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
@@ -32,6 +33,7 @@ const TestPlanTable = observer(({
   onQuickPass,
   onQuickFail,
   onAssignToChange,
+  onSerchAssign,
   onOpenUpdateRemind,
 }) => {
   const { 
@@ -128,7 +130,6 @@ const TestPlanTable = observer(({
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1,
-    filters: [],
     render(assignedUser) {
       return (
         <div
@@ -224,20 +225,35 @@ const TestPlanTable = observer(({
     <Card
       className="c7ntest-testPlan-testPlanTableCard"
       title="测试用例"
-      extra={checkIdMap.size ? (
+      extra={(
         <div style={{ display: 'flex', alignItems: 'center' }}>
+          {
+           checkIdMap.size ? (
+             <SelectFocusLoad
+               allowClear
+               className="c7ntest-select c7ntest-testPlan-assignToSelect"
+               dropdownClassName="c7ntest-testPlan-assignToDropDown"
+               style={{ width: 216 }}
+               placeholder="指派给"
+               getPopupContainer={trigger => trigger.parentNode}
+               type="user"
+               onChange={onAssignToChange}
+             />
+           ) : ''
+         }
           <SelectFocusLoad
             allowClear
             className="c7ntest-select c7ntest-testPlan-assignToSelect"
             dropdownClassName="c7ntest-testPlan-assignToDropDown"
-            style={{ width: 216 }}
-            placeholder="指派给"
+            style={{ width: 216, marginLeft: 10 }}
+            placeholder="执行人"
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
-            onChange={onAssignToChange}
+            onChange={onSerchAssign}
+            value={testPlanStore.filter.assignUser}
           />
         </div>
-      ) : ''}
+      )}
     >
       <DragTable
         pagination={executePagination}
@@ -249,6 +265,7 @@ const TestPlanTable = observer(({
         dragKey="executeId"
         checkedMap={checkIdMap}
         checkField="executeId"
+        key={testPlanStore.currentCycle.id}
       />
     </Card>
   );

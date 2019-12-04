@@ -2,7 +2,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { find } from 'lodash';
+import { find, pull } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
 
@@ -79,6 +79,10 @@ class TestPlanTreeStore {
       return false;
     }
     return false;
+  }
+
+  @action removeRootItem(folderId) {
+    pull(this.treeData.rootIds, folderId);
   }
 
   @computed get getCurrentPlanId() {

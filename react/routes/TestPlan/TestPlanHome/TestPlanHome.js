@@ -29,8 +29,6 @@ import testCaseEmpty from './testCaseEmpty.svg';
 import Store from '../stores';
 import './TestPlanHome.less';
 import { getDragRank, executeDetailLink } from '../../../common/utils';
-import Item from 'choerodon-ui/lib/list/Item';
-
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -41,7 +39,7 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore, history,
   } = useContext(Store);
   const {
-    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo, statusList,
+    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
   } = testPlanStore;
 
   const handleTabsChange = (value) => {
@@ -190,11 +188,18 @@ function TestPlanHome() {
     }
   };
 
+  const handleSerchAssign = (value) => {
+    const { filter } = testPlanStore;
+    filter.assignUser = value || '';
+    testPlanStore.setFilter(filter);
+    testPlanStore.loadExecutes();
+  };
+
   useEffect(() => {
     testPlanStore.loadAllData();
   }, [testPlanStore]);
 
-  const noPlan = treeData.rootIds && treeData.rootIds.length === 0;
+  const noSelected = !currentCycle.id;
   let description;
   if (testPlanStatus === 'todo') {
     description = '当前项目下无未开始的计划';
@@ -232,7 +237,7 @@ function TestPlanHome() {
             </div>
           </div>
           {
-          noPlan ? (
+          noSelected ? (
             <Empty
               loading={loading}
               pic={testCaseEmpty}
@@ -267,6 +272,7 @@ function TestPlanHome() {
                     onQuickPass={handleQuickPassOrFail}
                     onQuickFail={handleQuickPassOrFail}
                     onAssignToChange={handleAssignToChange}
+                    onSerchAssign={handleSerchAssign}
                     onOpenUpdateRemind={handleOpenUpdateRemind}
                     onTableSummaryClick={handleTableSummaryClick}
                   />

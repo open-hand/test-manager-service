@@ -62,7 +62,12 @@ class TestPlanTree extends Component {
     return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
-  handleDelete = item => handleRequestFailed(deletePlan(item.id))
+  handleDelete = async (item) => {
+    const { context: { testPlanStore } } = this.props;
+    await handleRequestFailed(deletePlan(item.id));
+    // 只移除跟节点，作用是删除文件夹后可以正确判断是不是没文件夹了，来显示空插画
+    testPlanStore.removeRootItem(item.id);
+  }
 
   handleDrag = async (sourceItem, destination) => {
     const { context: { testPlanStore } } = this.props;
@@ -101,8 +106,13 @@ class TestPlanTree extends Component {
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
     const [planId] = testPlanStore.getId(item.id);
-    testPlanStore.setCurrentCycle(item);
-    testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
+    if (item.id) {
+      testPlanStore.setFilter({});
+      testPlanStore.setBarFilter([]);
+      testPlanStore.checkIdMap.clear();
+      testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
+    }    
+    testPlanStore.setCurrentCycle(item); 
   }
 
   renderTreeNode = (node, { item }) => {
