@@ -36,7 +36,7 @@ function IssueTable({
       load: ({ dataSet: ds }) => {
         autoSelect(ds, treeMap);
       },
-      select: ({ record }) => {
+      select: ({ record }) => {      
         const source = record.get('source');
         // 如果是自动选中的，不做处理
         if (source === 'auto') {

@@ -5,9 +5,8 @@ import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  moveFolders,
-} from '@/api/IssueManageApi';
-import { editPlan, deletePlan } from '@/api/TestPlanApi';
+  editPlan, deletePlan, addFolder, editFolder, moveFolder,
+} from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
 import { openClonePlan } from '../TestPlanModal';
@@ -25,17 +24,7 @@ class TestPlanTree extends Component {
     testPlanStore.setTreeRef(this.treeRef);
   }
 
-  editPlanName = (data) => {
-    const { getItem, updateTree } = this.treeRef.current || {};
-    return editPlan(data).then(() => {
-      const planItem = getItem(data.planId);
-      updateTree(data.planId, { data: { ...planItem.data, objectVersionNumber: data.objectVersionNumber + 1 } });
-    }).catch(() => {
-      Choerodon.prompt('重命名失败');
-    });
-  };
-
-  handleReName = (newName, item) => {
+  editPlanName = async (newName, item) => {
     const { objectVersionNumber } = item.data;
     const data = {
       planId: item.id,
@@ -43,13 +32,70 @@ class TestPlanTree extends Component {
       name: newName,
       caseChanged: false,
     };
-    return handleRequestFailed(this.editPlanName(data));
+    const result = await handleRequestFailed(editPlan(data));
+    return {
+      data: {
+        ...item.data,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };    
+  };
+
+  editFolderName = async (newName, item) => {
+    const { objectVersionNumber } = item.data;
+    const data = { 
+      cycleName: newName,
+    };
+    const result = await handleRequestFailed(editFolder(data));
+    return {
+      data: {
+        ...item.data,
+        name: result.name,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };    
+  };
+
+  handleReName = async (newName, item) => {
+    const { context: { testPlanStore } } = this.props;
+    const isPlan = testPlanStore.isPlan(item.id);
+    return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
   handleDelete = item => handleRequestFailed(deletePlan(item.id))
 
-  handleDrag = (sourceItem, destination) => {
-    handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
+  handleDrag = async (sourceItem, destination) => {
+    const { context: { testPlanStore } } = this.props;
+    const { parentId } = destination;
+    const isPlan = testPlanStore.isPlan(parentId);
+    const [, folderId] = testPlanStore.getId(parentId);
+    const data = {
+      parentCycleId: isPlan ? 0 : folderId,
+    };
+    const result = await handleRequestFailed(editFolder(data));
+    return {
+      data: {
+        ...sourceItem.data,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };   
+  }
+
+  handleCreateFolder = async (value, parentId, item) => {
+    const { context: { testPlanStore } } = this.props;
+    const isPlan = testPlanStore.isPlan(parentId);
+    const [, folderId] = testPlanStore.getId(parentId);
+    const data = {
+      parentCycleId: isPlan ? 0 : folderId,
+      cycleName: value,
+    };
+    const result = await handleRequestFailed(addFolder(data));
+    return {
+      data: {
+        ...item.data,
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };   
   }
 
   setSelected = (item) => {
@@ -99,18 +145,18 @@ class TestPlanTree extends Component {
         <Menu.Item key="rename">
           重命名
         </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>,
         <Menu.Item key="import">
           导入用例
         </Menu.Item>,
-        <Menu.Item key="delete">
-          删除
-        </Menu.Item>,
       ] : [
         <Menu.Item key="rename">
-          重命名
-        </Menu.Item>,        
+            重命名
+        </Menu.Item>,
         <Menu.Item key="delete">
-          删除
+            删除
         </Menu.Item>,
       ];
     }
@@ -126,7 +172,7 @@ class TestPlanTree extends Component {
         <Tree
           ref={this.treeRef}
           data={treeData}
-          onCreate={() => {}}
+          onCreate={this.handleCreateFolder}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
           afterDrag={this.handleDrag}
@@ -135,7 +181,7 @@ class TestPlanTree extends Component {
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
           treeNodeProps={
-            {              
+            {
               menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
               // 计划和没有执行的，可以添加子文件夹

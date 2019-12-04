@@ -24,7 +24,16 @@ export function editPlan(data) {
 }
 
 export function deletePlan(planId) {
-  request.delete();
+  return request.delete(`/test/v1/projects/${getProjectId()}/plan/${planId}/delete`);
+}
+export function addFolder(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
+}
+export function editFolder(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
+}
+export function moveFolder(data) {
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 /**
  *  根据文件夹id和计划id获取执行

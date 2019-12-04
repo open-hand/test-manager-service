@@ -1,7 +1,7 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-
+import { Choerodon } from '@choerodon/boot';
 import TestPlanTreeStore from './TestPlanTreeStore'; 
 import { getStatusList } from '@/api/TestStatusApi';
 import {
@@ -149,6 +149,7 @@ class TestPlanStore extends TestPlanTreeStore {
           this.loadStatusRes();
         }
       }).catch((e) => {
+        Choerodon.prompt(e.message);
         this.setLoading(false);
       });
     }
