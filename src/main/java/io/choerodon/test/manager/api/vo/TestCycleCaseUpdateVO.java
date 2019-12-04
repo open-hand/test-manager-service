@@ -2,8 +2,6 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
 
-import io.swagger.annotations.ApiModelProperty;
-
 /**
  * @author: 25499
  * @date: 2019/11/29 9:05
@@ -15,7 +13,7 @@ public class TestCycleCaseUpdateVO {
     private String summary;
 
     private String description;
-    @ApiModelProperty(value = "乐观锁版本号")
+
     private Long objectVersionNumber;
 
 
