@@ -104,7 +104,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         //5.项目
         migrateProject();
         //6.日志
-        migreateDataLog();
+//        migreateDataLog();
         //7.版本
         migreateVersion();
 //        //8.删除
