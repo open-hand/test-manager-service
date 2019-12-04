@@ -129,4 +129,12 @@ public interface TestCycleCaseService {
      * @param executeId
      */
     CaseChangeVO selectUpdateCompare(Long projectId, Long executeId);
+
+    /**
+     * 更新用例
+     * @param projectId
+     * @param executeId
+     * @return
+     */
+    CaseChangeVO updateCompare(Long projectId, Long executeId);
 }

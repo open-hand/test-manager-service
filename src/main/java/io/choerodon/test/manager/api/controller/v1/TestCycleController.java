@@ -33,7 +33,7 @@ public class TestCycleController {
     TestCycleService testCycleService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("增加测试循环")
+    @ApiOperation("增加计划文件夹")
     @PostMapping
     public ResponseEntity<TestCycleVO> insert(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCycleVO testCycleVO) {
@@ -43,18 +43,17 @@ public class TestCycleController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除测试循环")
+    @ApiOperation("删除计划文件夹")
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "cycleId") Long cycleId) {
-        TestCycleVO cycleDTO = new TestCycleVO();
-        cycleDTO.setCycleId(cycleId);
-        testCycleService.delete(cycleDTO, projectId);
+
+        testCycleService.delete(cycleId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("修改测试循环")
+    @ApiOperation("修改计划文件夹")
     @PutMapping
     public ResponseEntity<TestCycleVO> update(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCycleVO testCycleVO) {

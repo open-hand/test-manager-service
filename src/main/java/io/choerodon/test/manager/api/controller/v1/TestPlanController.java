@@ -71,4 +71,13 @@ public class TestPlanController {
         testPlanServcie.updateStatusCode(projectId,testPlanDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("删除测试计划")
+    @DeleteMapping("/{plan_id}/delete")
+    public ResponseEntity deletePlan(@PathVariable(name = "project_id") Long projectId,
+                                     @PathVariable(name = "plan_id") Long planId){
+        testPlanServcie.delete(projectId,planId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

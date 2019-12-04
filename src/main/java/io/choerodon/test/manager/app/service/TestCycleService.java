@@ -32,7 +32,7 @@ public interface TestCycleService {
 
     boolean synchroFolderInVersion(Long versionId, Long projectId);
 
-    void delete(TestCycleVO testCycleVO, Long projectId);
+    void delete(Long cycleId, Long projectId);
 
     TestCycleVO update(Long projectId, TestCycleVO testCycleVO);
 

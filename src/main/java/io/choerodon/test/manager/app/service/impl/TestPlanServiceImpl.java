@@ -77,7 +77,10 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Async
     @Transactional(rollbackFor = Exception.class)
     public void delete(Long projectId, Long planId) {
-        //todo
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId));
+        List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+        testCycleService.batchDelete(collect);
+        baseDelete(planId);
     }
 
     @Override
@@ -127,7 +130,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
         Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         // 获取项目下所有的文件夹
-        Map<Long, TestCycleDTO> allCycleMap = testCycleDTOS.stream().filter(v -> !ObjectUtils.isEmpty(v.getParentCycleId())).collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        Map<Long, TestCycleDTO> allCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
         Map<Long, List<TestCycleDTO>> parentCycleMap = testCycleDTOS.stream().filter(v -> !ObjectUtils.isEmpty(v.getParentCycleId())).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
         // 实例化返回的树
         TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
@@ -294,6 +297,11 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         return testPlanVO;
     }
 
+    private void baseDelete(Long planId) {
+        if (testPlanMapper.deleteByPrimaryKey(planId) != 1) {
+            throw new CommonException("error.delete.test.plan");
+        }
+    }
 
     private TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
         if (ObjectUtils.isEmpty(testPlanDTO)) {
@@ -317,7 +325,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (ObjectUtils.isEmpty(testTreeFolderVO)) {
             testTreeFolderVO = new TestTreeFolderVO();
             testTreeFolderVO.setId(cycleId);
-            if (CollectionUtils.isEmpty(parentMap.get(cycleId))) {
+            if (!ObjectUtils.isEmpty(testCycleDTO.getParentCycleId()) && CollectionUtils.isEmpty(parentMap.get(cycleId))) {
                 testTreeFolderVO.setHasChildren(false);
             } else {
                 testTreeFolderVO.setHasChildren(true);
@@ -331,7 +339,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
 
         // 判断是不是顶层文件夹,是顶层文件夹就结束递归
-        if (testCycleDTO.getParentCycleId() == 0) {
+        if (ObjectUtils.isEmpty(testCycleDTO.getParentCycleId()) || testCycleDTO.getParentCycleId() == 0) {
             if (!root.contains(testCycleDTO.getCycleId())) {
                 root.add(testCycleDTO.getCycleId());
             }
@@ -363,7 +371,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                 return;
             }
             TestIssueFolderVO parentFolderVO = testCycleService.cycleToIssueFolderVO(allFolderMap.get(testCycleDTO.getParentCycleId()));
-            if (CollectionUtils.isEmpty(parentMap.get(parentFolderVO.getFolderId()))) {
+            if (!ObjectUtils.isEmpty(parentFolderVO.getParentId()) && CollectionUtils.isEmpty(parentMap.get(parentFolderVO.getFolderId()))) {
                 parentTreeFolderVO.setHasChildren(false);
             } else {
                 parentTreeFolderVO.setHasChildren(true);
