@@ -1,5 +1,5 @@
 import { mutateTree } from '@atlaskit/tree';
-import { getTreePosition } from '@atlaskit/tree/dist/cjs/utils/tree';
+import { getTreePosition, getParent } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { useEffect, useRef } from 'react';
 
 const hasLoadedChildren = item => !!item.hasChildren && item.children.length > 0;
@@ -126,7 +126,23 @@ export function expandTreeBySearch(tree, search) {
 
   return newTree;
 }
-
+function getItemById(tree, id) {
+  return tree.items[id];
+}
+export function getSiblingOrParent(tree, item) {
+  const parent = getParent(tree, item.path);
+  const index = parent.children.indexOf(item.id);
+  if (parent.children[index + 1]) {
+    return getItemById(tree, parent.children[index + 1]);
+  }
+  if (parent.children[index - 1]) {
+    return getItemById(tree, parent.children[index - 1]);
+  }
+  if (parent.id) {
+    return parent;
+  }
+  return {};
+}
 export const usePrevious = (value) => {
   const ref = useRef();
   useEffect(() => {

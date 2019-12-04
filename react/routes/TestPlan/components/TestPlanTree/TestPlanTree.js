@@ -5,7 +5,7 @@ import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  editPlan, deletePlan, addFolder, editFolder, moveFolder,
+  editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -36,24 +36,29 @@ class TestPlanTree extends Component {
     return {
       data: {
         ...item.data,
+        name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };    
+    };
   };
 
   editFolderName = async (newName, item) => {
+    const { context: { testPlanStore } } = this.props;
+    const [, folderId] = testPlanStore.getId(item.id);
     const { objectVersionNumber } = item.data;
-    const data = { 
+    const data = {
+      cycleId: folderId,
       cycleName: newName,
+      objectVersionNumber,
     };
     const result = await handleRequestFailed(editFolder(data));
     return {
       data: {
         ...item.data,
-        name: result.name,
+        name: newName,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };    
+    };
   };
 
   handleReName = async (newName, item) => {
@@ -62,9 +67,15 @@ class TestPlanTree extends Component {
     return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
-  handleDelete = async (item) => {
+  handleDelete = (item) => {
     const { context: { testPlanStore } } = this.props;
-    await handleRequestFailed(deletePlan(item.id));
+    const isPlan = testPlanStore.isPlan(item.id);
+    if (isPlan) {
+      handleRequestFailed(deletePlan(item.id));
+    } else {
+      const [, folderId] = testPlanStore.getId(item.id);
+      handleRequestFailed(deleteFolder(folderId));
+    }
     // 只移除跟节点，作用是删除文件夹后可以正确判断是不是没文件夹了，来显示空插画
     testPlanStore.removeRootItem(item.id);
   }
@@ -75,6 +86,7 @@ class TestPlanTree extends Component {
     const isPlan = testPlanStore.isPlan(parentId);
     const [, folderId] = testPlanStore.getId(parentId);
     const data = {
+      cycleId: folderId,
       parentCycleId: isPlan ? 0 : folderId,
     };
     const result = await handleRequestFailed(editFolder(data));
@@ -83,24 +95,27 @@ class TestPlanTree extends Component {
         ...sourceItem.data,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };   
+    };
   }
 
   handleCreateFolder = async (value, parentId, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(parentId);
-    const [, folderId] = testPlanStore.getId(parentId);
+    const [planId, folderId] = testPlanStore.getId(parentId);
     const data = {
+      planId,
       parentCycleId: isPlan ? 0 : folderId,
       cycleName: value,
     };
     const result = await handleRequestFailed(addFolder(data));
     return {
+      id: `${planId}-${result.cycleId}`,
       data: {
-        ...item.data,
+        parentId: result.parentId,
+        name: value,
         objectVersionNumber: result.objectVersionNumber,
       },
-    };   
+    };
   }
 
   setSelected = (item) => {

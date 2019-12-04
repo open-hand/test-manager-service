@@ -1,3 +1,4 @@
+import Axios from 'axios';
 import { getProjectId, request } from '../common/utils';
 
 export function getCycle(id, cycleId) {
@@ -35,7 +36,8 @@ export function editCycleSide(data) {
   return request.post(`/zuul/test/v1/projects/${getProjectId()}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
 export function editCycleStep(data) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
+  // /v1/projects/28/cycle/case/case_step/25 /v1/projects/28/cycle/case/step
+  return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
 export function geDetailsData(cycleCaseId) {
   return request.get(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info`);

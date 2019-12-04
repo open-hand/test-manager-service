@@ -6,8 +6,7 @@ import SmartTooltip from '@/components/SmartTooltip';
 const prefix = 'c7ntest-tree';
 function TreeNode({ children, nodeProps, item }) {
   const { provided } = nodeProps;
-  if (item.data.initStatus === 'doing') {
-    console.log(item.data.initStatus);
+  if (item.data.initStatus === 'doing') {  
     return (
       <div
         ref={provided.innerRef}
@@ -22,7 +21,7 @@ function TreeNode({ children, nodeProps, item }) {
             className={`${prefix}-tree-item`}     
           >
             <span className={`${prefix}-tree-item-prefix`}>
-              <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 21 }} />
+              <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
             <span className={`${prefix}-tree-item-title`}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Progress type="loading" size="small" />
