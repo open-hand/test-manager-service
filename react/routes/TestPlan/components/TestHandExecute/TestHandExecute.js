@@ -13,6 +13,7 @@ import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Modal, Button } from 'choerodon-ui/pro/lib';
+import queryString from 'query-string';
 import { StatusTags } from '../../../../components';
 import {
   executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink,
@@ -23,7 +24,7 @@ import {
 import { uploadFile } from '../../../../api/IssueManageApi';
 import './TestHandExecute.less';
 import {
-  ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable, 
+  ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
 } from './components';
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
@@ -53,10 +54,11 @@ function TestHandExecute(props) {
   const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
     const { id } = context.match.params;
+    ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
     ExecuteDetailStore.getInfo(id);
     ExecuteDetailStore.setId(id);
     // ExecuteDetailStore.loadDetailData(id);  
-  }, [ExecuteDetailStore, context.match.params]);
+  }, [ExecuteDetailStore, context, context.match.params]);
 
   const goExecute = (mode) => {
     const cycleData = ExecuteDetailStore.getCycleData;

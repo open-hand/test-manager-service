@@ -61,7 +61,7 @@ function TestPlanHome() {
       onCreate: () => {
         if (testPlanStatus !== 'todo') {
           testPlanStore.setTestPlanStatus('todo');
-        }      
+        }
         testPlanStore.loadAllData();
       },
     });
@@ -90,7 +90,7 @@ function TestPlanHome() {
   };
 
   const handleTableSummaryClick = (record) => {
-    history.push(executeDetailLink(record.executeId));
+    history.push(executeDetailLink(record.executeId, testPlanStore.currentCycle.id, testPlanStore.getCurrentPlanId, testPlanStore.executePagination));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
@@ -119,13 +119,14 @@ function TestPlanHome() {
 
   const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     let { filter } = testPlanStore;
+    // eslint-disable-next-line array-callback-return
     Object.keys(filters).map((key) => {
       if (filters[key] && filters[key].length > 0) {
         filter = { ...filter, [key]: filters[key][0] };
       } else {
         filter[key] = '';
       }
-    });    
+    });
     testPlanStore.setBarFilter(barFilters || []);
     if (pagination.current) {
       testPlanStore.setFilter(filter);
@@ -243,25 +244,37 @@ function TestPlanHome() {
               pic={testCaseEmpty}
               title="暂无计划"
               description={description}
-              // extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
           ) : (
-            <div className={`${prefixCls}-contentWrap-right`}>
-              <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                <Icon type="insert_invitation" />
-                <span>{planInfo.name}</span>
-              </div>
-              <div className={`${prefixCls}-contentWrap-right-warning`}>
-                {/* <Icon type="error" />
+              <div className={`${prefixCls}-contentWrap-right`}>
+                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                  <Icon type="insert_invitation" />
+                  <span>{planInfo.name}</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-warning`}>
+                  {/* <Icon type="error" />
                 <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span> */}
-              </div>
-              <div className={`${prefixCls}-contentWrap-right-card`}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                  <div style={{ flex: 1, marginRight: '0.16rem' }}>
-                    <TestPlanDetailCard />
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-card`}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                    <div style={{ flex: 1, marginRight: '0.16rem' }}>
+                      <TestPlanDetailCard />
+                    </div>
+                    <div style={{ flex: 1, overflowX: 'hidden' }}>
+                      <TestPlanStatusCard />
+                    </div>
                   </div>
-                  <div style={{ flex: 1, overflowX: 'hidden' }}>
-                    <TestPlanStatusCard />
+                  <div className={`${prefixCls}-contentWrap-table`}>
+                    <TestPlanTable
+                      onDragEnd={onDragEnd}
+                      onTableChange={handleExecuteTableChange}
+                      onDeleteExecute={handleDeleteExecute}
+                      onQuickPass={handleQuickPassOrFail}
+                      onQuickFail={handleQuickPassOrFail}
+                      onAssignToChange={handleAssignToChange}
+                      onOpenUpdateRemind={handleOpenUpdateRemind}
+                      onTableSummaryClick={handleTableSummaryClick}
+                    />
                   </div>
                 </div>
                 <div className={`${prefixCls}-contentWrap-table`}>
@@ -278,9 +291,8 @@ function TestPlanHome() {
                   />
                 </div>
               </div>
-            </div>
           )
-        }
+          }
         </div>
       </Content>
       <CreateAutoTest createAutoTestStore={createAutoTestStore} />

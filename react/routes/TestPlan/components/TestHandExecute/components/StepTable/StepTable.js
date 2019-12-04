@@ -10,6 +10,7 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Table } from 'choerodon-ui/pro';
 import { editCycleStep, addDefects, removeDefect } from '../../../../../../api/ExecuteDetailApi';
+import { deleteAttachment } from '@/api/FileApi';
 import './StepTable.less';
 import {
   TextEditToggle, UploadInTable, StatusTags,
@@ -40,6 +41,12 @@ function StepTable(props) {
   };
   const handleDeleteFile = (record, value) => {
     console.log('value', value, record);
+    deleteAttachment(value.id).then((data) => {
+      onRefreshCurrent();
+      Choerodon.prompt('删除成功');
+    }).catch((error) => {
+      Choerodon.prompt(`删除失败 ${error}`);
+    });
   };
 
   function renderAction({ record }) {
@@ -79,12 +86,17 @@ function StepTable(props) {
       url,
     };
   });
+  // 增加文件
+  const onAddFile = (record, data) => {
+    const fileList = record.get('stepAttachment');
+    record.set('stepAttachment', [...fileList, ...data]);
+  };
   function renderAttachment({ record, value }) {
-    // return (<div style={{ height: 80, width: 20 }} />);
     return (
       <UploadInTable
         fileList={getFileList(value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
         onOk={onRefreshCurrent}
+        handleUpdateFileList={onAddFile.bind(this, record)}
         handleDeleteFile={handleDeleteFile.bind(this, record)}
         config={{
           attachmentLinkId: record.get('executeStepId'),

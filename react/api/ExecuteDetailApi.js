@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import queryString from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
 export function getCycle(id, cycleId) {
@@ -39,8 +40,8 @@ export function editCycleStep(data) {
   // /v1/projects/28/cycle/case/case_step/25 /v1/projects/28/cycle/case/step
   return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
-export function geDetailsData(cycleCaseId) {
-  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info`);
+export function geDetailsData(cycleCaseId, param) {
+  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`);
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
