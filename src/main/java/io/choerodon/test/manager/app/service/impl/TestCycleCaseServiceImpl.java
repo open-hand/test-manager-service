@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -109,7 +110,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Autowired
     private TestCycleMapper testCycleMapper;
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -553,22 +553,27 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public ExecutionStatusVO queryExecuteStatus(Long projectId, Long planId, Long cycleId) {
         Long total = 0L;
+        Set<Long> cycleIds = new HashSet<>();
         // 查询文件夹下所有的目录
-        Set<Long> folderIds = queryCycleIds(cycleId, planId);
+        if(!ObjectUtils.isEmpty(cycleId)){
+            cycleIds.addAll(queryCycleIds(cycleId, planId));
+        }
         // 查询文件夹下的的用例
         TestStatusDTO testStatusDTO = new TestStatusDTO();
         testStatusDTO.setProjectId(projectId);
         testStatusDTO.setStatusType("CYCLE_CASE");
         List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
-        List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, folderIds);
-        for (TestStatusDTO test : testStatusDTOS) {
-            total += test.getCount();
-            testStatusDTOList.forEach(status -> {
-                if (test.getStatusId().equals(status.getStatusId())) {
-                    status.setCount(test.getCount());
-                }
-                status.setCount(status.getCount() == null ? 0 : status.getCount());
-            });
+        testStatusDTOList.stream().forEach(e->e.setCount(0L));
+        List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, cycleIds);
+        if(!CollectionUtils.isEmpty(testStatusDTOS)){
+            for (TestStatusDTO test : testStatusDTOS) {
+                total += test.getCount();
+                testStatusDTOList.forEach(status -> {
+                    if (test.getStatusId().equals(status.getStatusId())) {
+                        status.setCount(test.getCount());
+                    }
+                });
+            }
         }
         List<TestStatusVO> testStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<TestStatusVO>>() {
         }.getType());
@@ -612,6 +617,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if(!ObjectUtils.isEmpty(cycleId)){
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
+        Map<String, Object> paramsMap = null;
+        if(!ObjectUtils.isEmpty(searchDTO)){
+            Map<String, Object> searchArgs = searchDTO.getSearchArgs();
+            JSONObject params = new JSONObject(searchArgs);
+            paramsMap = params.getInnerMap();
+            String userName = String.valueOf(paramsMap.get("assignUser"));
+        }
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
@@ -642,10 +654,13 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long cycleId, Pageable pageable, SearchDTO searchDTO) {
-        Set<Long> folderIds = queryCycleIds(cycleId, planId);
+        Set<Long> cycleIds = new HashSet<>();
+        if (!ObjectUtils.isEmpty(cycleId)) {
+            cycleIds.addAll(queryCycleIds(cycleId, planId));
+        }
         // 查询循环下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
-                testCycleCaseMapper.queryFolderCycleCase(planId, folderIds, searchDTO));
+                testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
         List<TestCycleCaseDTO> list = caseDTOPageInfo.getList();
         int index = 0;
         TestCycleCaseDTO testCycleCaseDTO = null;
