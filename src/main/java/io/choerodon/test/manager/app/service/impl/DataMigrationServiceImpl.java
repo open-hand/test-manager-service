@@ -110,7 +110,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 //        //8.删除
 //        deleteStage();
         //9.删除重复
-        deleteRepeat();
+//        deleteRepeat();
         //10.cycle()
         fixCycleCase();
         //11.step

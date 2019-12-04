@@ -37,5 +37,10 @@ databaseChangeLog(logicalFilePath: "script/db/test_case.groovy") {
             column(name: "folder_id")
         }
     }
+    changeSet(author: 'lizhaozhong@hang-china.com', id: '2019-12-04-add_sequence_version_step_num') {
+        addColumn(tableName: 'test_case') {
+            column(name: 'version_step_num', type: 'BIGINT UNSIGNED', remarks: '步骤版本号',defaultValue: "1")
+        }
+    }
 
 }

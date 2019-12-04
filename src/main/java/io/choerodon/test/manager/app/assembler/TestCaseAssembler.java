@@ -187,10 +187,7 @@ public class TestCaseAssembler {
         if(ObjectUtils.isEmpty(testCycleCaseDTO)){
             throw new CommonException("error.cycle.case.null");
         }
-        TestCycleCaseUpdateVO testCycleCaseUpdateVO = new TestCycleCaseUpdateVO();
-        testCycleCaseUpdateVO.setExecuteId(testCycleCaseDTO.getExecuteId());
-        testCycleCaseUpdateVO.setDescription(testCycleCaseDTO.getDescription());
-        testCycleCaseUpdateVO.setSummary(testCycleCaseDTO.getSummary());
+        TestCycleCaseUpdateVO testCycleCaseUpdateVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseUpdateVO.class);
         //查询步骤信息
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
