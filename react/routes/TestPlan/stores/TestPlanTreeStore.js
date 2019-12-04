@@ -35,7 +35,7 @@ class TestPlanTreeStore {
 
   @observable treeLoading = false;
 
-  treeRef = null;
+  treeRef = {};
 
   @action clearStore = () => {
     this.currentCycle = {};
@@ -43,7 +43,7 @@ class TestPlanTreeStore {
       rootIds: [],
       treeFolder: [],
     };
-    this.treeRef = null;
+    this.treeRef = {};
   }
 
   @computed get getTreeData() {
@@ -148,7 +148,7 @@ class TestPlanTreeStore {
 
   @action setTreeRef = (treeRef) => {
     this.treeRef = treeRef;
-  }
+  } 
 }
 
 export default TestPlanTreeStore;

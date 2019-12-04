@@ -41,11 +41,27 @@ function TestPlanHeader() {
   const handleCreateAutoTest = () => {
     createAutoTestStore.setVisible(true);
   };
+  const handlePlanEdit = useCallback((newPlan) => {
+    const { getItem, updateTree } = testPlanStore.treeRef.current;
+    const oldPlan = getItem(newPlan.planId);
+    updateTree(newPlan.planId, {
+      data: {
+        ...oldPlan.data,
+        name: newPlan.name,
+        objectVersionNumber: newPlan.objectVersionNumber,
+      },
+    });
+    // 更新右侧数据
+    if (testPlanStore.getCurrentPlanId === newPlan.planId) {
+      testPlanStore.loadPlanDetail();
+    }
+  }, [testPlanStore]);
   const handleOpenEditPlan = useCallback(async () => {
     openEditPlan({
       planId: getCurrentPlanId,
+      onEdit: handlePlanEdit,
     });
-  }, [getCurrentPlanId]);
+  }, [getCurrentPlanId, handlePlanEdit]);
   return (
     <React.Fragment>
       {

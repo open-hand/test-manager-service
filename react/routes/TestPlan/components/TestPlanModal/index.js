@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {
   Modal, Form, TextField, DataSet, TextArea, DateTimePicker, Select, Radio,
 } from 'choerodon-ui/pro';
+import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import UserHead from '@/components/UserHead';
@@ -65,7 +66,7 @@ function TestPlanModal({
       }
       return false;
     } catch (error) {
-      // console.log(error);
+      Choerodon.prompt(error.message);
       return false;
     }
   }, [dataSet, mode, onSubmit, selectIssueStore, submit]);
@@ -133,7 +134,7 @@ export function openCreatePlan({
     children: <ObserverTestPlanModal mode="create" submit={createPlan} onSubmit={onCreate} />,
   });
 }
-export async function openEditPlan({ planId }) {
+export async function openEditPlan({ planId, onEdit }) {
   const planDetail = await getPlan(planId);
   Modal.open({
     title: '编辑计划',
@@ -146,12 +147,12 @@ export async function openEditPlan({ planId }) {
       mode="edit"
       submit={editPlan}
       initValue={planDetail}
+      onSubmit={onEdit}
     />,
   });
 }
 export async function openClonePlan({ planId }) {
   const planDetail = await getPlan(planId);
-
   Modal.open({
     title: '复制计划',
     key,

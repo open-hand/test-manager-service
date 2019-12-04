@@ -77,7 +77,7 @@ class TestPlanTree extends Component {
       return handleRequestFailed(deleteFolder(folderId));
     }
   }
-  
+
   handleDrag = async (sourceItem, destination) => {
     const { context: { testPlanStore } } = this.props;
     const { parentId } = destination;
@@ -118,9 +118,9 @@ class TestPlanTree extends Component {
 
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
-    const [planId] = testPlanStore.getId(item.id);
-    testPlanStore.setCurrentCycle(item);
+    const [planId] = testPlanStore.getId(item.id); 
     testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
+    testPlanStore.setCurrentCycle(item);
   }
 
   renderTreeNode = (node, { item }) => {
