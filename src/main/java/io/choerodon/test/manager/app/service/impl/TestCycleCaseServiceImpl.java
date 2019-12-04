@@ -734,6 +734,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return caseChangeVO;
     }
 
+    @Override
+    public CaseChangeVO updateCompare(Long projectId, Long executeId) {
+        // 获取当前执行下面的所有信息
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.querListByexecuteId(executeId);
+        List<Long> currentStepIds = cycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getStepId).collect(Collectors.toList());
+
+
+        return null;
+    }
+
     private TestCycleCaseVO dtoToVo(TestCycleCaseDTO testCycleCaseDTO, TestCycleDTO testCycleDTO) {
         TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
         TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCycleDTO.getFolderId());
