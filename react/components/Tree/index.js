@@ -139,7 +139,8 @@ function PureTree({
     }
     setTree(oldTree => moveItemOnTree(oldTree, source, destination));
     try {
-      await afterDrag(sourceItem, destination);
+      const newItem = await afterDrag(sourceItem, destination);
+      setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
@@ -195,15 +196,10 @@ function PureTree({
   const handleCreate = async (value, path, item) => {
     if (value.trim()) {
       try {
-        const newItem = await onCreate(value, item.parentId);
-        const { folderId, name, objectVersionNumber } = newItem;
+        const newItem = await onCreate(value, item.parentId, item);
         setTree(oldTree => createItem(oldTree, path, {
-          id: folderId,
-          data: { name, objectVersionNumber },
-          children: [],
-          hasChildren: false,
-          isExpanded: false,
-          isChildrenLoading: false,
+          ...item,
+          ...newItem,          
         }));
       } catch (error) {
         setTree(oldTree => removeItem(oldTree, path));
@@ -218,9 +214,8 @@ function PureTree({
       setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
     } else {
       try {
-        const newItem = await onEdit(value, item);
-        const { name, objectVersionNumber } = newItem;
-        setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false, data: { name, objectVersionNumber } }));
+        const newItem = await onEdit(value, item);     
+        setTree(oldTree => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
       } catch (error) {
         setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
       }

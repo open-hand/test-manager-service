@@ -6,6 +6,17 @@ import { find } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
 
+function makeTree(rootIds, treeFolder) {
+  const map = new Map(treeFolder.map(item => ([item.id, item])));
+  const transverse = (item) => {   
+    item.children = item.children.map(id => transverse(map.get(id)));
+    return item;
+  };
+  return transverse({
+    id: 0,
+    children: rootIds,
+  });
+}
 class TestPlanTreeStore {
   @observable testPlanStatus = 'todo';
 
@@ -61,6 +72,15 @@ class TestPlanTreeStore {
     }
   }
 
+  isPlan(id) {
+    if (typeof id === 'number') {
+      return true;
+    } else if (id.split('-').length === 2) {
+      return false;
+    }
+    return false;
+  }
+
   @computed get getCurrentPlanId() {
     const [planId, folderId] = this.getId();
     return planId;
@@ -83,7 +103,7 @@ class TestPlanTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
-
+    
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
@@ -105,6 +125,7 @@ class TestPlanTreeStore {
         };
       })) || [],
     };
+    window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }

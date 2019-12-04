@@ -14,23 +14,17 @@ import Context from './context';
 const key = Modal.key();
 
 const propTypes = {
-  initValue: PropTypes.shape({}),
   onSubmit: PropTypes.func.isRequired,
 };
-const defaultProps = {
-  initValue: {},
-};
-function TestPlanModal({
-  modal, initValue, submit, onSubmit, mode = 'create',
+
+function ImportIssue({
+  modal, submit, onSubmit, planId,
 }) {
-  const { caseSelected: initCaseSelected } = initValue;
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
 
   useEffect(() => {
-    if (mode === 'create') {
-      selectIssueStore.loadIssueTree(initCaseSelected);
-    }
-  }, [initCaseSelected, mode, selectIssueStore]);
+    selectIssueStore.loadIssueTree();
+  }, [selectIssueStore]);
   const handleSubmit = useCallback(async () => {
     // try {
     //   if () {
@@ -55,11 +49,10 @@ function TestPlanModal({
     </Context.Provider>
   );
 }
-TestPlanModal.propTypes = propTypes;
-TestPlanModal.defaultProps = defaultProps;
-const ObserverTestPlanModal = observer(TestPlanModal);
-export default function openCreatePlan({
-  onCreate,
+ImportIssue.propTypes = propTypes;
+const ObserverImportIssue = observer(ImportIssue);
+export default function openImportIssue({
+  onCreate, planId,
 }) {
   Modal.open({
     title: '导入用例',
@@ -68,6 +61,6 @@ export default function openCreatePlan({
     style: {
       width: 1090,
     },
-    children: <ObserverTestPlanModal submit={createPlan} onSubmit={onCreate} />,
+    children: <ObserverImportIssue planId={planId} submit={createPlan} onSubmit={onCreate} />,
   });
 }
