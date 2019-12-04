@@ -173,6 +173,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             } else {
                 planTreeVO.setHasChildren(false);
             }
+            planTreeVO.setHasCase(false);
             List<TestTreeFolderVO> collect = map.values().stream().collect(Collectors.toList());
             planTreeList.add(planTreeVO);
             if (!CollectionUtils.isEmpty(collect)) {
