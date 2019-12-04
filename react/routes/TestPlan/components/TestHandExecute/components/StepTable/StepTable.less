@@ -1,17 +1,63 @@
 .c7n-test-execute-detail-step-table {
+  &-defects {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &-option {
+      box-sizing: content-box;
+      height: .2rem;
+      line-height: .2rem;
+      padding: 0 .08rem 0 .08rem;
+      background-color: rgba(0, 0, 0, 0.08);
+      position: relative;
+      float: left;
+      max-width: 99%;
+      margin: 0 .08rem .03rem 0;
+      overflow: hidden;
+      border-radius: .1rem;
+      cursor: default;
+
+      &-text {
+        float: left;
+        max-width: 84%;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #000000;
+        text-overflow: ellipsis;
+      }
+
+      &-btn {
+        margin-left: .08rem;
+        // color: #fff;
+        cursor: pointer
+      }
+    }
+
+    &-btn {
+      float: right;
+      position: relative;
+      bottom: .07rem;
+    }
+
+  }
+
   &-file {
+
     //   background-color: aquamarine;
     // display: flex;
-    >span:first-child{
-        height: max-content;
+    >span:first-child {
+      height: max-content;
 
     }
+
     &-head {
-        background-color: antiquewhite;
+      background-color: antiquewhite;
     }
-    &-foot{
-        background-color: aquamarine;
+
+    &-foot {
+      background-color: aquamarine;
     }
- 
+
   }
 }
