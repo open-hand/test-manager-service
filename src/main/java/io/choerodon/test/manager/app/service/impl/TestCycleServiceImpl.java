@@ -902,7 +902,6 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     private void validateCycle(TestCycleDTO testCycleE) {
         Assert.notNull(testCycleE.getProjectId(), "error.cycle.projectId.not.be.null");
-        Assert.notNull(testCycleE.getVersionId(), "error.cycle.versionId.not.be.null");
         Assert.notNull(testCycleE.getCycleName(), "error.cycle.name.not.be.null");
         if (!cycleMapper.validateCycle(testCycleE).equals(0L)) {
             throw new CommonException("error.cycle.in.version.has.existed");
