@@ -47,7 +47,7 @@ export function getExecutesByFolder({
  * @returns
  */
 export function getStatusByFolder({ planId, folderId }) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/status?folder_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/status?cycle_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}`);
 }
 
 /**
