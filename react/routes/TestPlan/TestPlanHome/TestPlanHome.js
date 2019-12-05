@@ -39,9 +39,8 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore, history,
   } = useContext(Store);
   const {
-    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
+    loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
   } = testPlanStore;
-
   const handleTabsChange = (value) => {
     // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
@@ -192,7 +191,9 @@ function TestPlanHome() {
   useEffect(() => {
     testPlanStore.loadAllData();
   }, [testPlanStore]);
-
+  const handleRefresh = useCallback(() => {
+    testPlanStore.loadAllData();
+  }, [testPlanStore]);
   const noSelected = !currentCycle.id;
   let description;
   if (testPlanStatus === 'todo') {
@@ -207,10 +208,13 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
+        <Button icon="playlist_add" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
         <TestPlanHeader />
+        <Button icon="refresh" onClick={handleRefresh}>
+          <FormattedMessage id="refresh" />
+        </Button>
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
@@ -231,54 +235,54 @@ function TestPlanHome() {
             </div>
           </div>
           {
-          noSelected ? (
-            <Empty
-              loading={loading}
-              pic={testCaseEmpty}
-              title="暂无计划"
-              description={description}
-            />
-          ) : (
-            <div className={`${prefixCls}-contentWrap-right`}>
-              <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                <Icon type="insert_invitation" style={{ marginTop: 3 }} />
-                <span>{planInfo.name}</span>
-              </div>
-              <div className={`${prefixCls}-contentWrap-right-warning`}>
-                {/* <Icon type="error" />
+            noSelected ? (
+              <Empty
+                loading={loading}
+                pic={testCaseEmpty}
+                title="暂无计划"
+                description={description}
+              />
+            ) : (
+              <div className={`${prefixCls}-contentWrap-right`}>
+                <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
+                  <Icon type="insert_invitation" style={{ marginTop: 3 }} />
+                  <span>{planInfo.name}</span>
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-warning`}>
+                  {/* <Icon type="error" />
                 <span>该计划正在进行自动化测试，手工测试结果可能会将自动化测试结果覆盖！</span> */}
-              </div>
-              <div className={`${prefixCls}-contentWrap-right-card`}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                  <div style={{
-                    flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
-                  }}
-                  >
-                    <TestPlanDetailCard />
+                </div>
+                <div className={`${prefixCls}-contentWrap-right-card`}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
+                    <div style={{
+                      flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                    }}
+                    >
+                      <TestPlanDetailCard />
+                    </div>
+                    <div style={{
+                      flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                    }}
+                    >
+                      <TestPlanStatusCard />
+                    </div>
                   </div>
-                  <div style={{
-                    flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
-                  }}
-                  >
-                    <TestPlanStatusCard />
+                  <div className={`${prefixCls}-contentWrap-table`}>
+                    <TestPlanTable
+                      onDragEnd={onDragEnd}
+                      onTableChange={handleExecuteTableChange}
+                      onDeleteExecute={handleDeleteExecute}
+                      onQuickPass={handleQuickPassOrFail}
+                      onQuickFail={handleQuickPassOrFail}
+                      onAssignToChange={handleAssignToChange}
+                      onSerchAssign={handleSerchAssign}
+                      onOpenUpdateRemind={handleOpenUpdateRemind}
+                      onTableSummaryClick={handleTableSummaryClick}
+                    />
                   </div>
                 </div>
-                <div className={`${prefixCls}-contentWrap-table`}>
-                  <TestPlanTable
-                    onDragEnd={onDragEnd}
-                    onTableChange={handleExecuteTableChange}
-                    onDeleteExecute={handleDeleteExecute}
-                    onQuickPass={handleQuickPassOrFail}
-                    onQuickFail={handleQuickPassOrFail}
-                    onAssignToChange={handleAssignToChange}
-                    onSerchAssign={handleSerchAssign}
-                    onOpenUpdateRemind={handleOpenUpdateRemind}
-                    onTableSummaryClick={handleTableSummaryClick}
-                  />
-                </div>
               </div>
-            </div>
-          )
+            )
           }
         </div>
       </Content>

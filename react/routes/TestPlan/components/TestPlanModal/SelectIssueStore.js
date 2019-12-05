@@ -66,7 +66,7 @@ class IssueTreeStore {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
         const {
-          issueFolderVO, expanded, children, ...other
+          issueFolderVO, expanded, children, caseCount, ...other
         } = folder;
         const result = {
           children: children || [],
@@ -79,6 +79,7 @@ class IssueTreeStore {
           id: folder.id,
           children: children || [],
           data: issueFolderVO,
+          caseCount,
           checked: false,
           isIndeterminate: false,
         });       
@@ -243,11 +244,11 @@ class IssueTreeStore {
     const selectedFolders = this.getSelectedFolders();   
     return Object.keys(selectedFolders).reduce((total, key) => {
       const folderId = Number(key);
-      const item = this.treeMap.get(folderId);
+      const item = this.treeMap.get(folderId); 
       if (item.selected) {
         total += item.selected.length;
       } else {
-        total += item.caseNum;
+        total += item.caseCount || 0;
         if (item.unSelected) {
           total -= item.unSelected.length;
         }

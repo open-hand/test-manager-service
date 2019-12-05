@@ -66,7 +66,7 @@ class TestPlanTreeStore {
       return [id, ''];
     } else if (id.split('-').length === 2) {
       const [planId, folderId] = id.split('-');
-      return [planId, folderId];
+      return [Number(planId), Number(folderId)];
     } else {
       return [id, ''];
     }

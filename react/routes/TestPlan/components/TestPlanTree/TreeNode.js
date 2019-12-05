@@ -23,7 +23,7 @@ function TreeNode({ children, nodeProps, item }) {
             <span className={`${prefix}-tree-item-prefix`}>
               <Icon type="insert_invitation" style={{ marginRight: 5, marginLeft: 22 }} />
             </span>
-            <span className={`${prefix}-tree-item-title`}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
+            <span className={`${prefix}-tree-item-title`} style={{ color: 'rgba(0,0,0,0.54)' }}><SmartTooltip title={item.data.name}>{item.data.name}</SmartTooltip></span>
             <Progress type="loading" size="small" />
           </div>
         </div>
