@@ -4,10 +4,7 @@ import {
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
-import { getParams } from '@/common/utils';
-import {
-  getCycle, geDetailsData, getCycleHistiorys,
-} from '@/api/ExecuteDetailApi';
+import { geDetailsData } from '@/api/ExecuteDetailApi';
 import { getStatusList } from '@/api/TestStatusApi';
 
 class ExecuteDetailStore {
@@ -21,11 +18,26 @@ class ExecuteDetailStore {
 
   @observable statusList = [];
 
+  @observable detailParams = {};// 查询接口所需参数
   // 状态列表
 
   @observable detailData = false;
 
   @observable createBugShow = false;
+
+  @computed get getDetailParams() {
+    return this.detailParams;
+  }
+
+  @action setDetailParams(data) {
+    this.detailParams = {
+      cycle_id: data.cycle_id,
+      page: data.page,
+      plan_id: data.plan_id,
+      size: data.size,
+    };
+  }
+
 
   @computed get getCreateBugShow() {
     return this.createBugShow;
@@ -61,22 +73,27 @@ class ExecuteDetailStore {
     Promise.all([
       // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
-      geDetailsData(id),
+      geDetailsData(id, this.detailParams),
     ])
       .then(([statusList, detailData]) => {
         // console.log('statusList', statusList);
-        this.setDetailData(detailData);
+        const { failed } = detailData;
+        if (!failed) {
+          this.setDetailData(detailData);
+        } else {
+          throw new Error(detailData.message);
+        }
         this.setStatusList(statusList);
 
         this.unloading();
       }).catch((error) => {
-        Choerodon.prompt('网络异常');
+        Choerodon.prompt(`${error || '网络异常'}`);
         this.unloading();
       });
   }
 
   loadDetailData(id = this.id) {
-    geDetailsData(id).then((res) => {
+    geDetailsData(id, this.detailParams).then((res) => {
       this.setDetailData(res);
     });
   }

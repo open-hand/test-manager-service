@@ -61,7 +61,7 @@ function TestPlanHome() {
       onCreate: () => {
         if (testPlanStatus !== 'todo') {
           testPlanStore.setTestPlanStatus('todo');
-        }      
+        }
         testPlanStore.loadAllData();
       },
     });
@@ -90,7 +90,7 @@ function TestPlanHome() {
   };
 
   const handleTableSummaryClick = (record) => {
-    history.push(executeDetailLink(record.executeId));
+    history.push(executeDetailLink(record.executeId, testPlanStore.currentCycle.id, testPlanStore.getCurrentPlanId, testPlanStore.executePagination));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
@@ -119,13 +119,14 @@ function TestPlanHome() {
 
   const handleExecuteTableChange = (pagination, filters, sorter, barFilters) => {
     let { filter } = testPlanStore;
+    // eslint-disable-next-line array-callback-return
     Object.keys(filters).map((key) => {
       if (filters[key] && filters[key].length > 0) {
         filter = { ...filter, [key]: filters[key][0] };
       } else {
         filter[key] = null;
       }
-    });    
+    });
     testPlanStore.setBarFilter(barFilters || []);
     if (pagination.current) {
       testPlanStore.setFilter(filter);
@@ -243,7 +244,6 @@ function TestPlanHome() {
               pic={testCaseEmpty}
               title="暂无计划"
               description={description}
-              // extra={<Button color="primary" funcType="raised" onClick={handleOpenCreatePlan}>创建计划</Button>}
             />
           ) : (
             <div className={`${prefixCls}-contentWrap-right`}>
@@ -272,15 +272,27 @@ function TestPlanHome() {
                     onQuickPass={handleQuickPassOrFail}
                     onQuickFail={handleQuickPassOrFail}
                     onAssignToChange={handleAssignToChange}
-                    onSerchAssign={handleSerchAssign}
                     onOpenUpdateRemind={handleOpenUpdateRemind}
                     onTableSummaryClick={handleTableSummaryClick}
                   />
                 </div>
               </div>
+              <div className={`${prefixCls}-contentWrap-table`}>
+                <TestPlanTable
+                  onDragEnd={onDragEnd}
+                  onTableChange={handleExecuteTableChange}
+                  onDeleteExecute={handleDeleteExecute}
+                  onQuickPass={handleQuickPassOrFail}
+                  onQuickFail={handleQuickPassOrFail}
+                  onAssignToChange={handleAssignToChange}
+                  onSerchAssign={handleSerchAssign}
+                  onOpenUpdateRemind={handleOpenUpdateRemind}
+                  onTableSummaryClick={handleTableSummaryClick}
+                />
+              </div>
             </div>
           )
-        }
+          }
         </div>
       </Content>
       <CreateAutoTest createAutoTestStore={createAutoTestStore} />

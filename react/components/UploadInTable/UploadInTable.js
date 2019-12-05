@@ -13,14 +13,17 @@ const propTypes = {
   config: PropTypes.shape({}),
   onOk: PropTypes.func,
   handleDeleteFile: PropTypes.func,
+  handleUpdateFileList: PropTypes.func,
 };
 const defaultProps = {
   onOk: () => {
   },
+  handleUpdateFileList: () => {
+  },
 };
 function UploadInTable(props) {
   const {
-    fileList, config, onOk, handleDeleteFile,
+    fileList, config, onOk, handleDeleteFile, handleUpdateFileList,
   } = props;
 
   const handleRemove = (file) => {
@@ -85,7 +88,9 @@ function UploadInTable(props) {
             if (res.failed) {
               Choerodon.prompt('不能有重复附件');
             } else {
-              onOk();
+              // onOk();
+              handleUpdateFileList(res);
+              Choerodon.prompt('上传成功');
             }
           }).catch((error) => {
             window.console.log(error);
