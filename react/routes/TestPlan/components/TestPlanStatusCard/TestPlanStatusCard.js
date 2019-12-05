@@ -28,7 +28,7 @@ export default observer(() => {
                 role="none"
                 onClick={handleQueryExecutesByStatus.bind(this, item)}
               >
-                <Progress percent={(item.count && statusRes.total) ? (item.count / statusRes.total).toFixed(2) * 100 : 0} title={item.statusName} strokeColor={item.statuColor} />
+                <Progress percent={(item.count && statusRes.total) ? (item.count / statusRes.total).toFixed(2) * 100 : 0} title={item.statusName} strokeColor={item.statusColor} />
               </div>
             </Tooltip>
           ))

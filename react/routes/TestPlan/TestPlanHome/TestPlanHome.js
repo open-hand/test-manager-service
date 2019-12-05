@@ -123,7 +123,7 @@ function TestPlanHome() {
       if (filters[key] && filters[key].length > 0) {
         filter = { ...filter, [key]: filters[key][0] };
       } else {
-        filter[key] = '';
+        filter[key] = null;
       }
     });    
     testPlanStore.setBarFilter(barFilters || []);
@@ -248,7 +248,7 @@ function TestPlanHome() {
           ) : (
             <div className={`${prefixCls}-contentWrap-right`}>
               <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
-                <Icon type="insert_invitation" />
+                <Icon type="insert_invitation" style={{ marginTop: 3 }} />
                 <span>{planInfo.name}</span>
               </div>
               <div className={`${prefixCls}-contentWrap-right-warning`}>
