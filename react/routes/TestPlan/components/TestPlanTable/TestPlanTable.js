@@ -231,8 +231,8 @@ const TestPlanTable = observer(({
            checkIdMap.size ? (
              <SelectFocusLoad
                allowClear
-               className="c7ntest-select c7ntest-testPlan-assignToSelect"
-               dropdownClassName="c7ntest-testPlan-assignToDropDown"
+              //  className="c7ntest-select c7ntest-testPlan-assignToSelect"
+              //  dropdownClassName="c7ntest-testPlan-assignToDropDown"
                style={{ width: 216 }}
                placeholder="指派给"
                getPopupContainer={trigger => trigger.parentNode}
@@ -243,8 +243,8 @@ const TestPlanTable = observer(({
          }
           <SelectFocusLoad
             allowClear
-            className="c7ntest-select c7ntest-testPlan-assignToSelect"
-            dropdownClassName="c7ntest-testPlan-assignToDropDown"
+            // className="c7ntest-select c7ntest-testPlan-assignToSelect"
+            // dropdownClassName="c7ntest-testPlan-assignToDropDown"
             style={{ width: 216, marginLeft: 10 }}
             placeholder="执行人"
             getPopupContainer={trigger => trigger.parentNode}

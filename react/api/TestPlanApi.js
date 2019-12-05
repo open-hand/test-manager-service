@@ -99,13 +99,13 @@ export function updatePlanStatus(updateData) {
 }
 
 /**
- * 快速通过或快速失败
+ * 快速通过或快速失败或者给执行排序
  *
  * @export
  * @param {*} data
  * @returns
  */
-export function quickPassOrFail(data) {
+export function updateExecute(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
 }
 
