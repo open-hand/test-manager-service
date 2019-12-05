@@ -191,10 +191,9 @@ public class TestCycleCaseController {
     public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
                                                              @RequestParam(name = "cycle_id") Long cycleId,
                                                              @RequestParam(name = "plan_id") Long planId,
-                                                             @SortDefault Pageable pageable,
                                                              @RequestBody(required = false) SearchDTO searchDTO,
-                                                             @PathVariable(name = "executeId", required     = true) Long executeId) {
-        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId,projectId,planId,cycleId,pageable,searchDTO), HttpStatus.OK);
+                                                             @PathVariable(name = "executeId", required= true) Long executeId) {
+        return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId,projectId,planId,cycleId,searchDTO), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
