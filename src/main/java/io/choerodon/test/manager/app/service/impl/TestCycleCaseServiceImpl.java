@@ -672,7 +672,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
-        testCycleCaseInfoVO.setPlanStetus(testPlanDTO.getStatusCode());
+        testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
         previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
