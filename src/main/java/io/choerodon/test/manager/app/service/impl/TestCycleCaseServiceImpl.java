@@ -716,7 +716,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-        testCycleCaseDTO.setVersionNum(testCycleCaseDTO.getVersionNum()+1);
         testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
     }
 
