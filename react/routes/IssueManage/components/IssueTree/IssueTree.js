@@ -56,7 +56,7 @@ class IssueTree extends Component {
 
   handleDelete = async (item) => {
     await handleRequestFailed(deleteFolder(item.id));
-    // 只移除跟节点，作用是删除文件夹后可以正确判断是不是没文件夹了，来显示空插画
+    // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
     IssueTreeStore.removeRootItem(item.id);
   }
 

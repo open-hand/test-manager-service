@@ -15,7 +15,7 @@ export function CreateFolder({
     autoCreate: true,
     fields: [
       {
-        name: 'name', type: 'string', label: '文件夹名称', required: true, 
+        name: 'name', type: 'string', label: '目录名称', required: true, 
       },     
     ],
   }), []);
@@ -44,7 +44,7 @@ export function CreateFolder({
 }
 export default function openCreatePlan({ onCreate }) {
   Modal.open({
-    title: '创建文件夹',
+    title: '创建目录',
     key,
     drawer: true,
     style: {

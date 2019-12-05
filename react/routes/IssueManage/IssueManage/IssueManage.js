@@ -56,7 +56,7 @@ export default class IssueManage extends Component {
 
   /**
    *
-   * 用例创建后，默认选到目标文件夹
+   * 用例创建后，默认选到目标目录
    * @param {*} issue
    * @param {*} folderId
    * @memberof IssueManage
@@ -200,8 +200,8 @@ export default class IssueManage extends Component {
             <Empty
               loading={loading}
               pic={empty}
-              title="暂无文件夹"
-              description="当前项目下无文件夹，请创建"
+              title="暂无目录"
+              description="当前项目下无目录，请创建"
               extra={<Button type="primary" funcType="raised" onClick={this.handleAddFolderClick}>创建一级目录</Button>}
             />
           ) : (

@@ -38,7 +38,7 @@ function ImportIssue(props) {
         name: 'folder',
         type: 'object',
         required: true,
-        label: '文件夹',
+        label: '目录',
         textField: 'fileName',
         valueField: 'folderId',
         ignore: 'always',
@@ -134,7 +134,7 @@ function ImportIssue(props) {
 
   const upload = (file) => {
     if (!folder) {
-      Choerodon.prompt('请选择文件夹');
+      Choerodon.prompt('请选择目录');
       return;
     }
     const formData = new FormData();

@@ -150,7 +150,7 @@ function Detail({
         <section id="detail">
           <TitleWrap style={{ marginTop: 0 }} title={<FormattedMessage id="detail" />} />
           <ContentWrap style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {/* 文件夹名称 */}
+            {/* 目录名称 */}
             <PropertyWrap label={<FormattedMessage id="issue_create_content_folder" />}>
               <div style={{ marginLeft: 6 }}>
                 {folder || '无'}
