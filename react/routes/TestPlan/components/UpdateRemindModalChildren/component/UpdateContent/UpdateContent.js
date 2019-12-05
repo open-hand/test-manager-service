@@ -12,7 +12,6 @@ const prefix = 'c7ntest-testPlan-updateRemind-updateContent';
 
 function UpdateContent(props) {
   const { tag, updateData, dataSet } = props;
-  console.log(updateData);
   const fileList = tag === 'old' ? ((updateData && updateData.caseAttachment) || []) : ((updateData && updateData.attachment) || []);
   return (
     <div className={`${prefix}-detail`}>
@@ -21,6 +20,10 @@ function UpdateContent(props) {
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>文件夹</div>
           <div className={`${prefix}-item-value`}>{tag === 'old' ? updateData && updateData.folderName : updateData && updateData.folder}</div>
+        </div>
+        <div className={`${prefix}-item`}>
+          <div className={`${prefix}-item-field`}>用例名称</div>
+          <div className={`${prefix}-item-value`}>{updateData && updateData.summary}</div>
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>描述</div>
