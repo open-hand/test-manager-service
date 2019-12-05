@@ -125,7 +125,7 @@ class TestPlanTree extends Component {
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();
-      testPlanStore.loadRightData(planId !== testPlanStore.getCurrentPlanId);
+      testPlanStore.loadRightData(planId);
     }    
     testPlanStore.setCurrentCycle(item); 
   }

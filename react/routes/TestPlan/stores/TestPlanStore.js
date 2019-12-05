@@ -154,10 +154,10 @@ class TestPlanStore extends TestPlanTreeStore {
       });
     }
 
-    loadRightData = async (isLoadPlamDetail = false) => {
+    loadRightData = async (planId) => {
       const promiseArr = [this.loadExecutes(), this.loadStatusRes()];
-      if (isLoadPlamDetail) {
-        promiseArr.push(this.loadPlanDetail());
+      if (planId !== this.getCurrentPlanId) {
+        promiseArr.push(this.loadPlanDetail(planId));
       }
       Promise.all(promiseArr).then(() => {
       }).catch((e) => {
@@ -208,8 +208,8 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    loadPlanDetail() {
-      getPlanDetail(this.getCurrentPlanId).then((res) => {
+    loadPlanDetail(planId = this.getCurrentPlanId) {
+      getPlanDetail(planId).then((res) => {
         this.setPlanInfo(res);
       });
     }

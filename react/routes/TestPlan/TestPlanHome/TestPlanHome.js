@@ -183,7 +183,7 @@ function TestPlanHome() {
 
   const handleSerchAssign = (value) => {
     const { filter } = testPlanStore;
-    filter.assignUser = value || '';
+    filter.assignUser = value || undefined;
     testPlanStore.setFilter(filter);
     testPlanStore.loadExecutes();
   };
