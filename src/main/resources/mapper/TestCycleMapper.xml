@@ -255,14 +255,13 @@
             LIMIT 1
     </select>
 
-    <select id="getFolderLastedRank" resultType="java.lang.String">
+    <select id="getPlanLastedRank" resultType="java.lang.String">
         SELECT
             rank
         FROM
             test_cycle
         WHERE
-            parent_cycle_id = #{cycleId}
-            AND type = 'folder'
+           plan_id=#{planId}
         ORDER BY
             rank DESC
             LIMIT 1

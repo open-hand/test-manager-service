@@ -612,7 +612,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             if (testCycleE.getType().equals(TestCycleType.CYCLE)) {
                 rank = cycleMapper.getCycleLastedRank(testCycleE.getVersionId());
             } else {
-                rank = cycleMapper.getFolderLastedRank(testCycleE.getParentCycleId());
+                rank = cycleMapper.getPlanLastedRank(testCycleE.getParentCycleId());
             }
             testCycleE.setRank(RankUtil.Operation.INSERT.getRank(rank, null));
             cycleMapper.insert(testCycleE);

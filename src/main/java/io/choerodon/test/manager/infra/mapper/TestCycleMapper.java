@@ -43,7 +43,7 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
 
     String getCycleLastedRank(@Param("versionId") Long versionId);
 
-    String getFolderLastedRank(@Param("cycleId") Long cycleId);
+    String getPlanLastedRank(@Param("planId") Long planId);
 
     Long getCycleCountInVersion(@Param("versionId") Long versionId);
 
