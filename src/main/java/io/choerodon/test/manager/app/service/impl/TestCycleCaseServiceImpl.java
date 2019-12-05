@@ -645,28 +645,26 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long cycleId, Pageable pageable, SearchDTO searchDTO) {
+    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long cycleId, SearchDTO searchDTO) {
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
         // 查询循环下的用例
-        PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
-                testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
-        List<TestCycleCaseDTO> list = caseDTOPageInfo.getList();
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO);
         int index = 0;
         TestCycleCaseDTO testCycleCaseDTO = null;
-        for (TestCycleCaseDTO cyclecase : list) {
+        for (TestCycleCaseDTO cyclecase : testCycleCaseDTOS) {
             if (cyclecase.getExecuteId().equals(executeId)) {
                 testCycleCaseDTO = cyclecase;
-                index = list.indexOf(cyclecase);
+                index = testCycleCaseDTOS.indexOf(cyclecase);
             }
         }
         if(ObjectUtils.isEmpty(testCycleCaseDTO)){
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-        previousNextId(index,list,testCycleCaseInfoVO);
+        previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }

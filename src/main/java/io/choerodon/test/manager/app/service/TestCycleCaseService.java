@@ -83,7 +83,7 @@ public interface TestCycleCaseService {
      * @param
      * @return
      */
-    TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
+    TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long folderId, SearchDTO searchDTO);
 
 
     /**
