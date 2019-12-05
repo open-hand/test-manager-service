@@ -721,7 +721,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-        testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
+       if( testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO)!=1){
+           throw new CommonException("error.update.cycle.case");
+       }
     }
 
 
