@@ -583,6 +583,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Override
     public void update(TestCycleCaseVO testCycleCaseVO) {
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class);
+        if (!StringUtils.isEmpty(testCycleCaseVO.getLastRank()) || !StringUtils.isEmpty(testCycleCaseVO.getNextRank())) {
+            testCycleCaseDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseVO.getLastRank(), testCycleCaseVO.getNextRank()));
+        }
         baseUpdate(testCycleCaseDTO);
     }
 
@@ -713,7 +716,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-        testCycleCaseDTO.setVersionNum(testCycleCaseDTO.getVersionNum()+1);
         testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
     }
 
