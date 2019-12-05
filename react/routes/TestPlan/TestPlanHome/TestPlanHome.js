@@ -14,7 +14,7 @@ import {
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import { editExecuteDetail } from '../../../api/cycleApi';
-import { deleteExecute, quickPassOrFail } from '../../../api/TestPlanApi';
+import { deleteExecute, updateExecute } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
@@ -45,6 +45,7 @@ function TestPlanHome() {
     // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
     testPlanStore.setCurrentCycle({});
+    testPlanStore.setFilter({});
     testPlanStore.loadAllData();
   };
 
@@ -95,22 +96,14 @@ function TestPlanHome() {
   const onDragEnd = (sourceIndex, targetIndex) => {
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);
     const source = testList[sourceIndex];
-    const temp = { ...source };
-    delete temp.defects;
-    delete temp.caseAttachment;
-    delete temp.testCycleCaseStepES;
-    delete temp.issueInfosVO;
-    temp.assignedTo = temp.assignedTo || 0;
-    testPlanStore.setTableLoading(true);
     editExecuteDetail({
-      ...temp,
-      ...{
-        lastRank,
-        nextRank,
-      },
-    }).then((res) => {
+      executeId: source.executeId,
+      objectVersionNumber: source.objectVersionNumber,
+      lastRank,
+      nextRank,
+    }).then(() => {
       testPlanStore.loadExecutes();
-    }).catch((err) => {
+    }).catch(() => {
       Choerodon.prompt('网络错误');
       testPlanStore.setTableLoading(false);
     });
@@ -169,7 +162,7 @@ function TestPlanHome() {
       executeId: execute.executeId,
       objectVersionNumber: execute.objectVersionNumber,
     };
-    quickPassOrFail(data).then(() => {
+    updateExecute(data).then(() => {
       testPlanStore.loadExecutes();
     }).catch(() => {
       if (isPass) {
@@ -261,10 +254,16 @@ function TestPlanHome() {
                 </div>
                 <div className={`${prefixCls}-contentWrap-right-card`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
-                    <div style={{ flex: 1, marginRight: '0.16rem' }}>
+                    <div style={{
+                      flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                    }}
+                    >
                       <TestPlanDetailCard />
                     </div>
-                    <div style={{ flex: 1, overflowX: 'hidden' }}>
+                    <div style={{
+                      flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                    }}
+                    >
                       <TestPlanStatusCard />
                     </div>
                   </div>
@@ -276,6 +275,7 @@ function TestPlanHome() {
                       onQuickPass={handleQuickPassOrFail}
                       onQuickFail={handleQuickPassOrFail}
                       onAssignToChange={handleAssignToChange}
+                      onSerchAssign={handleSerchAssign}
                       onOpenUpdateRemind={handleOpenUpdateRemind}
                       onTableSummaryClick={handleTableSummaryClick}
                     />

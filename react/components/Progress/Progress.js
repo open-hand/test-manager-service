@@ -13,8 +13,8 @@ class Progress extends Component {
         <div className="c7ntest-progress-circle">
           <Circle
             percent={percent}
-            strokeWidth="6"
-            trailWidth="6"
+            strokeWidth="8"
+            trailWidth="8"
             strokeLinecap="square"
             strokeColor={strokeColor}
             trailColor={trailColor || 'rgba(0, 0, 0, 0.08'}
