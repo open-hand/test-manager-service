@@ -138,7 +138,7 @@ export function getSiblingOrParent(tree, item) {
   if (parent.children[index - 1]) {
     return getItemById(tree, parent.children[index - 1]);
   }
-  if (parent.id) {
+  if (parent.id !== getRootNode(tree).id) {
     return parent;
   }
   return {};
