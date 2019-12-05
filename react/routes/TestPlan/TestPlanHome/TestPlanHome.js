@@ -39,9 +39,8 @@ function TestPlanHome() {
     prefixCls, createAutoTestStore, testPlanStore, history,
   } = useContext(Store);
   const {
-    treeData, loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
+    loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
   } = testPlanStore;
-
   const handleTabsChange = (value) => {
     // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
@@ -238,14 +237,14 @@ function TestPlanHome() {
             </div>
           </div>
           {
-          noSelected ? (
-            <Empty
-              loading={loading}
-              pic={testCaseEmpty}
-              title="暂无计划"
-              description={description}
-            />
-          ) : (
+            noSelected ? (
+              <Empty
+                loading={loading}
+                pic={testCaseEmpty}
+                title="暂无计划"
+                description={description}
+              />
+            ) : (
               <div className={`${prefixCls}-contentWrap-right`}>
                 <div className={`${prefixCls}-contentWrap-right-currentPlanName`}>
                   <Icon type="insert_invitation" />
@@ -291,7 +290,7 @@ function TestPlanHome() {
                   />
                 </div>
               </div>
-          )
+            )
           }
         </div>
       </Content>
