@@ -1,9 +1,11 @@
 package io.choerodon.test.manager.infra.aspect;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -109,6 +111,12 @@ public class DataLogAspect {
                     case DataLogConstants.BATCH_MOVE:
                         handleCaseMoveFolder(args);
                         break;
+                    case DataLogConstants.BATCH_DELETE_ATTACH:
+                        handleCaseBatchDeleteAttach(args);
+                        break;
+                    case DataLogConstants.BATCH_INSERT_ATTACH:
+                        handleCaseBatchInsertAttach(args);
+                        break;
                 }
             }
         }
@@ -121,6 +129,53 @@ public class DataLogAspect {
             throw new CommonException("error.dataLogEpic.methodExecute", e);
         }
         return result;
+    }
+
+    private void handleCaseBatchInsertAttach(Object[] args) {
+        try {
+            List<String> attachNames = new ArrayList<>();
+            List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = new ArrayList<>();
+            for (Object arg : args) {
+                if (arg instanceof List) {
+                    testCaseAttachmentDTOS.addAll((List<TestCaseAttachmentDTO>) arg);
+                }
+                if (arg instanceof List) {
+                    attachNames.addAll((List<String>) arg);
+                }
+            }
+
+            List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(testCaseAttachmentDTOS.get(0).getCaseId()));
+            if(!CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
+                testCaseAttachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v ->{
+                    createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, null, v.getUrl(), null, null);
+                });
+             }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    private void handleCaseBatchDeleteAttach(Object[] args) {
+        try {
+            Long caseId = null;
+            List<String> attachNames = new ArrayList<>();
+            for (Object arg : args) {
+                if (arg instanceof Long) {
+                    caseId = (Long) arg;
+                }
+                if (arg instanceof List) {
+                    attachNames.addAll((List<String>) arg);
+                }
+            }
+            if (!ObjectUtils.isEmpty(caseId)) {
+                List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
+                attachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v ->{
+                    createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, v.getUrl(), null, v.getAttachmentId().toString(), null);
+                });
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     private void handleAttachmentDeleteLog(Object[] args) {

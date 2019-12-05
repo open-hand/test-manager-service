@@ -850,14 +850,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 baseUpdate(testCycleCaseDTO);
             }
             if (caseCompareRepVO.getChangeAttach()) {
-                testCaseAttachmentService.deleteByIssueId(caseCompareRepVO.getCaseId());
-
                 List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = testCycleCaseAttachmentRelService.listByExecuteId(caseCompareRepVO.getExecuteId());
+                List<String> collect = testCycleCaseAttachmentRelVOS.stream().map(TestCycleCaseAttachmentRelVO::getAttachmentName).collect(Collectors.toList());
+                testCaseAttachmentService.deleteByCaseId(caseCompareRepVO.getCaseId(),collect);
                 if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
                     return;
                 }
                 List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
-                testCaseAttachmentService.batchInsert(caseAttachDTOS);
+                testCaseAttachmentService.batchInsert(caseAttachDTOS,collect);
             }
             if (caseCompareRepVO.getChangeStep()) {
                 testCaseStepMapper.deleteByCaseId(caseCompareRepVO.getCaseId());

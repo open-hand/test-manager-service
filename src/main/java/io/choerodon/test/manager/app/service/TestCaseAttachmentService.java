@@ -36,5 +36,7 @@ public interface TestCaseAttachmentService {
 
     void cloneAttachmentByCaseId(Long projectId,Long caseId,Long oldCaseId);
 
-    void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS);
+    void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS,List<String> fileNames);
+
+    void deleteByCaseId(Long caseId, List<String> collect);
 }
