@@ -166,7 +166,7 @@ function ImportIssue(props) {
 
   const renderRecord = () => {
     if (!lastRecord) {
-      return '';
+      return <span>暂无导入记录</span>;
     }
     const {
       failedCount, fileUrl, successfulCount, lastUpdateDate,
@@ -199,7 +199,7 @@ function ImportIssue(props) {
         </div>
       );
     }
-    return '';
+    return <span>暂无导入记录</span>;
   };
 
 
