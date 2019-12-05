@@ -154,7 +154,7 @@ function SelectTree(props) {
     dataSet.unSelectAll();
   }
   function renderValidation(validationResult, validationProps) {
-    return '请选择文件夹';
+    return '请选择目录';
   }
   return (
     <Select
