@@ -902,7 +902,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setProjectId(v.getProjectId());
                 testCycleCaseDTO.setVersionNum(v.getVersionNum());
                 testCycleCaseDTO.setExecutionStatus(defaultStatusId);
-                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(null,null));
                 testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
@@ -910,7 +909,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
         });
-        return testCycleCaseDTOS;
+        Map<Long, List<TestCycleCaseDTO>> listMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
+        return doRank(listMap);
     }
 
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
@@ -935,4 +935,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
         testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
     }
+
+    private List<TestCycleCaseDTO> doRank(Map<Long, List<TestCycleCaseDTO>> tcycleCaseMap) {
+        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
+        for (Map.Entry<Long, List<TestCycleCaseDTO>> map : tcycleCaseMap.entrySet()
+        ) {
+            String prevRank = RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(map.getKey()), null);
+            for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
+                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
+                prevRank = testCycleCaseDTO.getRank();
+                testCycleCaseDTOList.add(testCycleCaseDTO);
+            }
+        }
+        return testCycleCaseDTOList;
+    }
+
 }
