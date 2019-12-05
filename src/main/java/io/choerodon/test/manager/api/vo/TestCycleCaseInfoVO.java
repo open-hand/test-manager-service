@@ -38,6 +38,9 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "排序值")
     private String rank;
 
+    @ApiModelProperty(value = "计划状态")
+    private String planStatus;
+
     @ApiModelProperty(value = "执行状态")
     private Long executionStatus;
 
@@ -223,5 +226,13 @@ public class TestCycleCaseInfoVO {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public String getPlanStatus() {
+        return planStatus;
+    }
+
+    public void setPlanStatus(String planStatus) {
+        this.planStatus = planStatus;
     }
 }

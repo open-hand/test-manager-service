@@ -84,6 +84,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private TestCaseStepMapper testCaseStepMapper;
 
     @Autowired
+    private TestPlanMapper testPlanMapper;
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -667,8 +670,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-        previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
+        testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
+        previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
 
@@ -716,7 +721,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-        testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO);
+       if( testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO)!=1){
+           throw new CommonException("error.update.cycle.case");
+       }
     }
 
 
