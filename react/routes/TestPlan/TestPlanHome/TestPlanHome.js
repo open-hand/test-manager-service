@@ -14,7 +14,9 @@ import {
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import { editExecuteDetail } from '../../../api/cycleApi';
-import { deleteExecute, updateExecute } from '../../../api/TestPlanApi';
+import {
+  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, 
+} from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
 import TestPlanStatusCard from '../components/TestPlanStatusCard';
@@ -49,13 +51,33 @@ function TestPlanHome() {
     testPlanStore.loadAllData();
   };
 
-  const handleUpdateOk = () => {
-
+  const handleUpdateOk = (record) => {
+    const data = {
+      executeId: record.record,
+      syncToCase: false,
+      changeCase: record.changeCase,
+      changeStep: record.changeStep,
+      changeAttach: record.changeAttach,
+    };
+    comfirmUpdate(data).then(() => {
+      Choerodon.prompt('更新成功');
+      testPlanStore.loadExecutes();
+      return true;
+    }).catch(() => {
+      Choerodon.prompt('更新失败');
+      return false;
+    });
   };
 
-  const handleIgnoreUpdate = () => {
-
+  const handleIgnoreUpdate = (record) => {
+    ignoreUpdate(record.executeId).then(() => {
+      Choerodon.prompt('已忽略本次更新');
+      testPlanStore.loadExecutes();
+    }).catch(() => {
+      Choerodon.prompt('忽略更新失败');
+    });
   };
+
   const handleOpenCreatePlan = () => {
     openCreatePlan({
       onCreate: () => {
@@ -78,11 +100,11 @@ function TestPlanHome() {
       className: 'c7ntest-testPlan-updateRemind-modal',
       okText: '更新',
       cancelText: '取消',
-      onOk: handleUpdateOk,
+      onOk: handleUpdateOk.bind(this, record),
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          <Button funcType="funcType" onClick={handleIgnoreUpdate}>忽略更新</Button>
+          <Button funcType="funcType" onClick={handleIgnoreUpdate.bind(this, record)}>忽略更新</Button>
           {cancelBtn}
         </div>
       ),
