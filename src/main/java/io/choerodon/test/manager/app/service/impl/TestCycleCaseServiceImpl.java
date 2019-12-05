@@ -941,10 +941,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         for (Map.Entry<Long, List<TestCycleCaseDTO>> map : tcycleCaseMap.entrySet()
         ) {
             String prevRank = RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(map.getKey()), null);
-            for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
-                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
-                prevRank = testCycleCaseDTO.getRank();
-                testCycleCaseDTOList.add(testCycleCaseDTO);
+            if (CollectionUtils.isEmpty(map.getValue())) {
+                for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
+                    testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
+                    prevRank = testCycleCaseDTO.getRank();
+                    testCycleCaseDTOList.add(testCycleCaseDTO);
+                }
             }
         }
         return testCycleCaseDTOList;
