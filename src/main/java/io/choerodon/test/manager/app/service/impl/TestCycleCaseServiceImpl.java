@@ -436,9 +436,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseVO changeOneCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
-        testStatusService.populateStatus(testCycleCaseVO);
         TestCycleCaseVO dto = modelMapper.map(changeStep(projectId, testCycleCaseVO), TestCycleCaseVO.class);
-        userService.populateTestCycleCaseDTO(dto);
         return dto;
     }
 
@@ -904,7 +902,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setProjectId(v.getProjectId());
                 testCycleCaseDTO.setVersionNum(v.getVersionNum());
                 testCycleCaseDTO.setExecutionStatus(defaultStatusId);
-                testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0, 8));
+                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(null,null));
                 testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
