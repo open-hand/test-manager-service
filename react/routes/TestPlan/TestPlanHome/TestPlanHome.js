@@ -198,7 +198,9 @@ function TestPlanHome() {
   useEffect(() => {
     testPlanStore.loadAllData();
   }, [testPlanStore]);
-
+  const handleRefresh = useCallback(() => {
+    testPlanStore.loadAllData();
+  }, [testPlanStore]);
   const noSelected = !currentCycle.id;
   let description;
   if (testPlanStatus === 'todo') {
@@ -213,10 +215,13 @@ function TestPlanHome() {
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
-        <Button icon="playlist_add icon" onClick={handleOpenCreatePlan}>
+        <Button icon="playlist_add" onClick={handleOpenCreatePlan}>
           <FormattedMessage id="testPlan_createPlan" />
         </Button>
         <TestPlanHeader />
+        <Button icon="refresh" onClick={handleRefresh}>
+          <FormattedMessage id="refresh" />
+        </Button>
       </Header>
       <Breadcrumb />
       <Content style={{ display: 'flex', padding: '0', borderTop: '0.01rem solid rgba(0,0,0,0.12)' }}>
