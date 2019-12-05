@@ -34,7 +34,7 @@ public class TestCaseInfoVO {
     private String folder;
 
     @ApiModelProperty(value = "版本Id")
-    private Long versionId;
+    private Long versionNum;
 
     @ApiModelProperty(value = "项目Id")
     private Long projectId;
@@ -114,12 +114,12 @@ public class TestCaseInfoVO {
         this.folder = folder;
     }
 
-    public Long getVersionId() {
-        return versionId;
+    public Long getVersionNum() {
+        return versionNum;
     }
 
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
     }
 
     public Long getProjectId() {

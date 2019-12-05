@@ -163,4 +163,55 @@
             WHERE
 	        tif.project_id = #{projectId} and tc.folder_id is not null
     </select>
+
+    <resultMap id="testCaseMap" type="io.choerodon.test.manager.api.vo.CaseCompareVO">
+        <result  column="case_id" property="caseId"/>
+        <association property="testCase" javaType="io.choerodon.test.manager.api.vo.TestCaseVO">
+            <id column="case_id" property="caseId"/>
+            <result  column="summary" property="summary"/>
+            <result  column="description" property="description"/>
+            <result  column="folderName" property="folderName"/>
+        </association>
+        <collection  property="caseStep" ofType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
+            <id column="step_id" property="stepId"/>
+            <result column="test_step" property="testStep"/>
+            <result column="test_data" property="testData"/>
+            <result column="expected_result" property="expectedResult"/>
+        </collection>
+        <collection property="caseAttach" ofType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+            <id column="attachment_id" property="attachmentId"/>
+            <result column="url" property="url"/>
+            <result column="file_name" property="fileName"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryTestCaseMap" resultMap="testCaseMap">
+        SELECT
+        tc.case_id as case_id,
+        tc.summary as summary,
+        tc.description as description,
+        tif.`name` as folderName,
+        cs.step_id as step_id,
+        cs.test_step as test_step,
+        cs.test_data as test_data,
+        cs.expected_result as expected_result,
+        tca.file_name,
+        tca.url
+        FROM
+        test_case tc
+        left join test_case_step cs on cs.issue_id = tc.case_id
+        left join test_issue_folder tif on tif.folder_id = tc.folder_id
+        left join test_case_attachment  tca on tca.case_id =  tc.case_id
+        left join test_cycle_case tcase on tcase.case_id = tc.case_id
+     where tc.case_id in
+     <foreach collection="list" item="caseId" open="(" close=")" separator=",">
+         #{caseId}
+     </foreach>
+     and
+        tcase.execute_id  in
+        <foreach collection="executedIds" item="executedId" open="(" close=")" separator=",">
+            #{executedId}
+        </foreach>
+    ORDER BY tc.case_id
+    </select>
 </mapper>

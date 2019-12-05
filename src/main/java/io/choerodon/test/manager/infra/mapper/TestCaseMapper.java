@@ -1,11 +1,14 @@
 package io.choerodon.test.manager.infra.mapper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.test.manager.api.vo.CaseCompareVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
 
@@ -31,4 +34,7 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
 
     List<TestCaseDTO> listByProject(@Param("projectId") Long projectId);
+
+    @MapKey("caseId")
+    Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds,@Param("executedIds") List<Long> executedId);
 }

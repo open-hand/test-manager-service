@@ -15,7 +15,7 @@
         <id column="cycle_name" property="cycleName"/>
         <id column="cycle_id" property="cycleId"/>
         <id column="case_id" property="caseId"/>
-        <id column="expected_result" property="expectedResult"/>
+        <id column="expect_result" property="expectedResult"/>
         <id column="status_name" property="statusName"/>
         <id column="status_color" property="statusColor"/>
 

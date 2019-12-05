@@ -179,6 +179,21 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         }
     }
 
+    @Override
+    @DataLog(single = false,type = DataLogConstants.BATCH_INSERT_ATTACH)
+    public void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS,List<String> fileNames) {
+        if(CollectionUtils.isEmpty(caseAttachDTOS)){
+            return;
+        }
+        testAttachmentMapper.batchInsert(caseAttachDTOS);
+    }
+
+    @Override
+    @DataLog(type = DataLogConstants.BATCH_DELETE_ATTACH,single = false)
+    public void deleteByCaseId(Long caseId, List<String> collect) {
+        testAttachmentMapper.deleteByCaseId(caseId);
+    }
+
     private void baseInsert(TestCaseAttachmentDTO v) {
         if(testAttachmentMapper.insertSelective(v) != 1){
             throw new CommonException("error.insert.attachment");

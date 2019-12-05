@@ -74,7 +74,7 @@
 
     <delete id="batchDeleteByExecutIds">
         delete from test_cycle_case_defect_rel where
-        execute_id in
+        defect_link_id in
         <foreach collection="list" item="executId" open="(" close=")" separator=",">
             #{executId}
         </foreach>

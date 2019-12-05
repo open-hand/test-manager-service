@@ -37,6 +37,8 @@ public class TestCaseVO {
     private List<TestCaseLabelDTO> labels;
     @ApiModelProperty(value = "测试用例关联的附件")
     private List<TestCaseAttachmentDTO> attachment;
+    @ApiModelProperty(value = "文件夹名字")
+    private String folderName;
 
 
     public Long getCaseId() {
@@ -133,5 +135,13 @@ public class TestCaseVO {
 
     public void setAttachment(List<TestCaseAttachmentDTO> attachment) {
         this.attachment = attachment;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
     }
 }

@@ -3,15 +3,21 @@ package io.choerodon.test.manager.app.assembler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
+import io.choerodon.agile.infra.common.utils.StringUtil;
+import io.choerodon.core.oauth.CustomUserDetails;
+import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
+import org.redisson.liveobject.resolver.UUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -203,5 +209,18 @@ public class TestCaseAssembler {
         testCycleCaseUpdateVO.setCycleCaseAttachmentRelVOList(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
         return testCycleCaseUpdateVO;
+    }
+
+    public TestCaseStepDTO cycleStepToCaseStep(TestCycleCaseStepDTO testCycleCaseStepDTO, TestCaseDTO testCaseDTO, CustomUserDetails userDetails){
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+        // todo rank未写
+        testCaseStepDTO.setTestStep(testCycleCaseStepDTO.getTestStep());
+        testCaseStepDTO.setTestData(testCycleCaseStepDTO.getTestData());
+        testCaseStepDTO.setExpectedResult(testCycleCaseStepDTO.getExpectedResult());
+        testCaseStepDTO.setIssueId(testCaseDTO.getCaseId());
+        testCaseStepDTO.setLastUpdatedBy(userDetails.getUserId());
+        testCaseStepDTO.setCreatedBy(userDetails.getUserId());
+        testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(),8));
+        return testCaseStepDTO;
     }
 }

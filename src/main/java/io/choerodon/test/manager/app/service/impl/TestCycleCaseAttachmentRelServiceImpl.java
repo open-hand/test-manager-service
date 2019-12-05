@@ -3,13 +3,15 @@ package io.choerodon.test.manager.app.service.impl;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.app.service.FileService;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -41,9 +41,6 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttachmentRelService {
 
     @Autowired
-    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
-
-    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -51,6 +48,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private TestAttachmentMapper testAttachmentMapper;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -85,7 +85,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType) {
         List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = new ArrayList<>();
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        files.forEach(v -> testCycleCaseAttachmentRelVOS.add(testCycleCaseAttachmentRelService.upload(bucketName, v.getOriginalFilename(), v, attachmentLinkId, attachmentType, null)));
+        files.forEach(v -> testCycleCaseAttachmentRelVOS.add(upload(bucketName, v.getOriginalFilename(), v, attachmentLinkId, attachmentType, null)));
         return testCycleCaseAttachmentRelVOS;
     }
 
@@ -127,6 +127,17 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
         List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         return modelMapper.map(attachmentRelDTOS,new TypeToken<List<TestCycleCaseAttachmentRelVO>>(){}.getType());
+    }
+
+    @Override
+    public void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO) {
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        testCycleCaseDTO.setLastUpdatedBy(userDetails.getUserId());
+        testCycleCaseDTO.setCreatedBy(userDetails.getUserId());
+        testCycleCaseAttachmentRelMapper.batchDeleteByExecutIds(Arrays.asList(testCycleCaseDTO.getExecuteId()));
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(testCaseDTO.getCaseId()));
+        Map<Long, List<TestCaseAttachmentDTO>> attachMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
+        batchInsert(Arrays.asList(testCycleCaseDTO),attachMap);
     }
 
     private void baseDelete(String bucketName, Long attachId) {

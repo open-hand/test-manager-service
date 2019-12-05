@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,4 +38,6 @@ public interface TestCycleCaseAttachmentRelService {
     void batchDeleteByExecutIds(List<Long> executeIds);
 
     List<TestCycleCaseAttachmentRelVO> listByExecuteId(Long executeId);
+
+    void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO);
 }

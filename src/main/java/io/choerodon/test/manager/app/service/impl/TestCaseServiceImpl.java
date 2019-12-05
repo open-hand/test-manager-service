@@ -79,9 +79,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestProjectInfoMapper testProjectInfoMapper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
@@ -312,6 +309,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
+
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
         TestIssueFolderDTO testIssueFolder = new TestIssueFolderDTO();
@@ -611,6 +609,12 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseInfoVO.setTestCaseStepS(testCaseStepDTOS);
         }
         return testCaseInfoVO;
+    }
+
+    @Override
+    public void syncByCycleCase(TestCaseDTO testCase) {
+        testCase.setVersionNum(testCase.getVersionNum() + 1);
+        baseUpdate(testCase);
     }
 
 }

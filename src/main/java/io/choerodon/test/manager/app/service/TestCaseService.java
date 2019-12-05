@@ -189,4 +189,6 @@ public interface TestCaseService {
     List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds);
 
     TestCaseInfoVO queryCaseRep(Long caseId);
+
+    void syncByCycleCase(TestCaseDTO testCase);
 }
