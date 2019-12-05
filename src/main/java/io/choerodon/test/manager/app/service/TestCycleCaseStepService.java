@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import org.springframework.data.domain.Pageable;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
@@ -37,6 +38,7 @@ public interface TestCycleCaseStepService {
 
     /**
      * 查询用例下的步骤
+     *
      * @param CycleCaseId
      * @param projectId
      * @return
@@ -51,6 +53,7 @@ public interface TestCycleCaseStepService {
     void delete(Long executeStepId);
 
     void create(TestCycleCaseStepVO testCycleCaseStepVO);
+
     /**
      * 将测试用例步骤 转为执行步骤
      *
@@ -61,6 +64,7 @@ public interface TestCycleCaseStepService {
 
     /**
      * 批量删除
+     *
      * @param executeStepIds
      */
     void batchDelete(List<Long> executeStepIds);
@@ -70,4 +74,11 @@ public interface TestCycleCaseStepService {
      */
     void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
 
+    /**
+     * 用例库测试步骤更新到测试执行
+     *
+     * @param testCycleCaseDTO
+     * @param testCaseDTO
+     */
+    void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO);
 }

@@ -1,10 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -41,8 +47,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Value("${spring.datasource.url}")
     private String dsUrl;
 
-    @Autowired
-    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -53,6 +57,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private TestCaseStepMapper testCaseStepMapper;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -62,9 +69,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Override
     public void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO) {
-       if( testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO)!=1){
-           throw new CommonException("error.update.cycle.case.step");
-       }
+        if (testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO) != 1) {
+            throw new CommonException("error.update.cycle.case.step");
+        }
     }
 
     @Override
@@ -104,7 +111,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Override
     public void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
-        testCycleCaseStepDTOS.forEach(e->{
+        testCycleCaseStepDTOS.forEach(e -> {
             testCycleCaseStepMapper.updateByPrimaryKeySelective(e);
         });
 
@@ -113,6 +120,19 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
         testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(testCycleCaseStepDTOS);
+    }
+
+    @Override
+    public void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO) {
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        testCycleCaseDTO.setLastUpdatedBy(userDetails.getUserId());
+        testCycleCaseDTO.setCreatedBy(userDetails.getUserId());
+        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+        testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseStepMapper.delete(testCycleCaseStepDTO);
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(Arrays.asList(testCaseDTO.getCaseId()));
+        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+        batchInsert(Arrays.asList(testCycleCaseDTO), caseStepMap);
     }
 
     @Override
@@ -140,7 +160,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        List<List<TestCycleCaseStepDTO>> lists = ConvertUtils.averageAssign(list, (int)Math.ceil(testCycleCaseDTOList.size()/AVG_NUM));
+        List<List<TestCycleCaseStepDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(testCycleCaseDTOList.size() / AVG_NUM));
         lists.forEach(v -> testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(v));
     }
 
@@ -148,16 +168,16 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     public void delete(Long executeStepId) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteStepId(executeStepId);
-       if(testCycleCaseStepMapper.delete(testCycleCaseStepDTO)!=1){
-           throw new CommonException("error.delete.cycle.step");
-       }
+        if (testCycleCaseStepMapper.delete(testCycleCaseStepDTO) != 1) {
+            throw new CommonException("error.delete.cycle.step");
+        }
     }
 
     @Override
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
         testCycleCaseStepDTO.setStepStatus(4L);
-        if(testCycleCaseStepMapper.insert(testCycleCaseStepDTO)!=1){
+        if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }
     }

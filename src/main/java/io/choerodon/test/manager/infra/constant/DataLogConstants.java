@@ -13,4 +13,6 @@ public class DataLogConstants {
     public static final String BATCH_MOVE = "batchMove";
     public static final String CREATE_ATTACHMENT = "createAttachment";
     public static final String DELETE_ATTACHMENT = "deleteAttachment";
+    public static final String BATCH_DELETE_ATTACH = "batchDeleteAttachment";
+    public static final String BATCH_INSERT_ATTACH = "batchInsertAttachment";
 }

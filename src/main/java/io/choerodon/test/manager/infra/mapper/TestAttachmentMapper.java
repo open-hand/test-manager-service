@@ -11,4 +11,7 @@ public interface TestAttachmentMapper extends Mapper<TestCaseAttachmentDTO> {
 
     List<TestCaseAttachmentDTO> listByCaseIds(@Param("caseIds") List<Long> caseIds);
 
+    void deleteByCaseId(@Param("caseId") Long caseId);
+
+    void batchInsert(@Param("list") List<TestCaseAttachmentDTO> testCaseAttachmentDTOS);
 }

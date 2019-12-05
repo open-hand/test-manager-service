@@ -35,4 +35,6 @@ public interface TestCaseAttachmentService {
     void dealIssue(Long projectId, Long issueId, String fileName, String url);
 
     void cloneAttachmentByCaseId(Long projectId,Long caseId,Long oldCaseId);
+
+    void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS);
 }

@@ -1,12 +1,14 @@
 package io.choerodon.test.manager.api.vo;
 
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+
 /**
  * @author zhaotianxin
  * @since 2019/12/3
  */
 public class CaseChangeVO {
 
-    private TestCycleCaseVO testCycleCase;
+    private TestCycleCaseVO  testCycleCase;
 
     private TestCaseInfoVO testCase;
 

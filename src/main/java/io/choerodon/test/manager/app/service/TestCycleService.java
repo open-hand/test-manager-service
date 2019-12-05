@@ -82,4 +82,6 @@ public interface TestCycleService {
     void batchDelete(List<Long> needDeleteCycleIds);
 
     TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO);
+
+    void syncByCaseFolder(Long folderId, Long cycleId);
 }

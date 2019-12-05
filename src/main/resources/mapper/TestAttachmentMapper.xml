@@ -21,4 +21,21 @@
         </foreach>
     </select>
 
+
+    <delete id="deleteByCaseId">
+        delete from test_case_attachment
+        where case_id = #{caseId}
+    </delete>
+
+    <insert id="batchInsert">
+    insert into test_case_attachment(case_id, url, file_name,
+    project_id,
+    created_by,
+    last_updated_by)
+    values
+     <foreach collection="list" item="attach" separator=",">
+        ( #{attach.caseId}, #{attach.url}, #{attach.fileName}, #{attach.projectId},
+        #{attach.createdBy},  #{attach.lastUpdatedBy})
+    </foreach>
+    </insert>
 </mapper>

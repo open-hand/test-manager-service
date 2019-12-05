@@ -157,6 +157,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     }
 
     @Override
+    @DataLog(type = DataLogConstants.BATCH_DELETE_ATTACH,single = false)
     public int deleteByIssueId(Long issueId) {
         TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
         issueAttachmentDTO.setCaseId(issueId);
@@ -177,6 +178,15 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 baseInsert(v);
             });
         }
+    }
+
+    @Override
+    @DataLog(single = false,type = DataLogConstants.BATCH_INSERT_ATTACH)
+    public void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS) {
+        if(CollectionUtils.isEmpty(caseAttachDTOS)){
+            return;
+        }
+        testAttachmentMapper.batchInsert(caseAttachDTOS);
     }
 
     private void baseInsert(TestCaseAttachmentDTO v) {

@@ -67,4 +67,14 @@ public class TestCaseAttachmentDTO extends BaseDTO {
                 ", projectId=" + projectId +
                 '}';
     }
+
+    public TestCaseAttachmentDTO() {
+    }
+
+    public TestCaseAttachmentDTO(Long attachmentId,Long caseId, String url, String fileName) {
+        this.attachmentId = attachmentId;
+        this.caseId = caseId;
+        this.url = url;
+        this.fileName = fileName;
+    }
 }

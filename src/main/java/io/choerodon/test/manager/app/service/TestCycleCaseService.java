@@ -133,8 +133,10 @@ public interface TestCycleCaseService {
     /**
      * 更新用例
      * @param projectId
-     * @param executeId
+     * @param caseCompareRepVO
      * @return
      */
-    CaseChangeVO updateCompare(Long projectId, Long executeId);
+    void updateCompare(Long projectId, CaseCompareRepVO caseCompareRepVO);
+
+    void ignoreUpdate(Long projectId, Long executedId);
 }

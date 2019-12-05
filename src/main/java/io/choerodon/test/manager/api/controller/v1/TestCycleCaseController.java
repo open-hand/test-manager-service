@@ -262,7 +262,7 @@ public class TestCycleCaseController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("更新对比")
+    @ApiOperation("查询更新对比")
     @GetMapping("/{execute_id}/compared")
     public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
                                           @PathVariable(name = "execute_id") Long executeId) {
@@ -272,9 +272,19 @@ public class TestCycleCaseController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("更新用例")
-    @PostMapping("/{execute_id}/compared")
-    public ResponseEntity<CaseChangeVO> updateCompare(@PathVariable("project_id") Long projectId,
-                                                            @PathVariable(name = "execute_id") Long executeId) {
-        return new ResponseEntity<>(testCycleCaseService.updateCompare(projectId,executeId),HttpStatus.OK);
+    @PostMapping("/compared")
+    public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
+                                                      @RequestBody CaseCompareRepVO caseCompareRepVO) {
+        testCycleCaseService.updateCompare(projectId,caseCompareRepVO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("忽略用例更新")
+    @PostMapping("/{execute_id}/ignore/update")
+    public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
+                                        @PathVariable("execute_id") Long executedId) {
+        testCycleCaseService.ignoreUpdate(projectId,executedId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -79,9 +79,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestProjectInfoMapper testProjectInfoMapper;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
@@ -612,6 +609,12 @@ public class TestCaseServiceImpl implements TestCaseService {
             testCaseInfoVO.setTestCaseStepS(testCaseStepDTOS);
         }
         return testCaseInfoVO;
+    }
+
+    @Override
+    public void syncByCycleCase(TestCaseDTO testCase) {
+        testCase.setVersionNum(testCase.getVersionNum() + 1);
+        baseUpdate(testCase);
     }
 
 }

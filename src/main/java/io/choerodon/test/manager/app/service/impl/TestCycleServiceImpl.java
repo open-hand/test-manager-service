@@ -825,6 +825,14 @@ public class TestCycleServiceImpl implements TestCycleService {
         return testIssueFolderVO;
     }
 
+    @Override
+    public void syncByCaseFolder(Long folderId, Long cycleId) {
+        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        testCycleDTO.setCycleName(testIssueFolderDTO.getName());
+        updateSelf(testCycleDTO);
+    }
+
     private Long getCount(TestCycleVO testCycleVO) {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
