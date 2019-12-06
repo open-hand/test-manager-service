@@ -359,13 +359,12 @@ export function TestPlanLink(cycleId) {
 
   return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
-export function executeDetailLink(executeId, cycleId, planId, pagination) {
+export function executeDetailLink(executeId, cycleId, planId) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  const { current, pageSize } = pagination;
-  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&cycle_id=${cycleId}&plan_id=${planId}&page=${current}&size=${pageSize}`);
+  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&cycle_id=${cycleId}&plan_id=${planId}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);

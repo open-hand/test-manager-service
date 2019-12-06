@@ -119,3 +119,18 @@ export function updateExecute(data) {
 export function getUpdateCompared(executeId) {
   return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/${executeId}/compared`);
 }
+
+/**
+ * 确认更新，在变更提醒弹框点击确认更新
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function comfirmUpdate(data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/compared`, data);
+}
+
+export function ignoreUpdate(executed) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/${executed}/ignore/update`, {});
+}

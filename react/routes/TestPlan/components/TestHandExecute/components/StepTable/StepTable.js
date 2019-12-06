@@ -108,9 +108,12 @@ function StepTable(props) {
 
   const handleAddDefects = (record) => {
     // record.set('defects', record.get('tempDefects'));
-    addDefects(record.get('tempDefects').map(i => i.issueInfosVO)).then(() => {
-      onRefreshCurrent();
-    });
+    if (record.get('tempDefects')) {
+      addDefects(record.get('tempDefects').map(i => i.issueInfosVO)).then(() => {
+        onRefreshCurrent();
+      });
+    }
+
     record.set('tempDefects', []);
   };
   const handleDeleteDefect = (defect, record) => {
@@ -180,7 +183,7 @@ function StepTable(props) {
           >
             <DefectSelect
               defaultOpen
-              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-card-title')[0]}
+              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-step-table-defects')[0]}
               defects={defects}
               ExecuteDetailStore={ExecuteDetailStore}
               setNeedAdd={(needAdd) => { record.set('tempDefects', needAdd); }}

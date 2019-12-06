@@ -18,9 +18,7 @@ import { StatusTags } from '../../../../components';
 import {
   executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink,
 } from '../../../../common/utils';
-import {
-  editCycle, removeDefect,
-} from '../../../../api/ExecuteDetailApi';
+import { updateDetail } from '../../../../api/ExecuteDetailApi';
 import { uploadFile } from '../../../../api/IssueManageApi';
 import './TestHandExecute.less';
 import {
@@ -60,19 +58,15 @@ function TestHandExecute(props) {
     // ExecuteDetailStore.loadDetailData(id);  
   }, [ExecuteDetailStore, context, context.match.params]);
 
+
   const goExecute = (mode) => {
-    const cycleData = ExecuteDetailStore.getCycleData;
-    const { nextExecuteId, lastExecuteId } = cycleData;
-    const { disabled, history } = props;
-    const toExecuteId = mode === 'pre' ? lastExecuteId : nextExecuteId;
-    const { cycleId } = getParams(window.location.href);
+    const detailData = ExecuteDetailStore.getDetailData;
+    const { nextExecuteId, previousExecuteId } = detailData;
+    const { disabled, history } = context;
+    const toExecuteId = mode === 'pre' ? previousExecuteId : nextExecuteId;
+    const { plan_id: planId, cycle_id: cycleId } = ExecuteDetailStore.getDetailParams;
     if (toExecuteId) {
-      if (disabled) {
-        history.replace(executeDetailShowLink(toExecuteId));
-      } else {
-        history.replace(executeDetailLink(toExecuteId, cycleId));
-      }
-      ExecuteDetailStore.clearPagination();
+      history.replace(executeDetailLink(toExecuteId, cycleId, planId));
     }
   };
 
@@ -116,16 +110,10 @@ function TestHandExecute(props) {
   };
 
   const handleSubmit = (updateData) => {
-    const cycleData = ExecuteDetailStore.getCycleData;
-    const newData = { ...cycleData, ...updateData };
-    newData.assignedTo = newData.assignedTo || 0;
+    const detailData = ExecuteDetailStore.getDetailData;
+    const newData = { ...detailData, ...updateData };
     // 删除一些不必要字段
-    delete newData.defects;
-    delete newData.caseAttachment;
-    delete newData.testCycleCaseStepES;
-    delete newData.lastRank;
-    delete newData.nextRank;
-    editCycle(newData).then((Data) => {
+    updateDetail(newData).then((Data) => {
       if (ExecuteDetailSideRef) {
         ExecuteDetailSideRef.HideFullEditor();
       }
@@ -141,21 +129,13 @@ function TestHandExecute(props) {
   };
 
   const quickPassOrFail = (text) => {
-    const cycleData = { ...ExecuteDetailStore.getCycleData };
+    const detailData = { ...ExecuteDetailStore.getDetailData };
     const { statusList } = ExecuteDetailStore;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
-      cycleData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
-      delete cycleData.defects;
-      delete cycleData.caseAttachment;
-      delete cycleData.testCycleCaseStepES;
-      delete cycleData.lastRank;
-      delete cycleData.nextRank;
-      cycleData.assignedTo = cycleData.assignedTo || 0;
-      ExecuteDetailStore.enterloading();
-      editCycle(cycleData).then((Data) => {
+      detailData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
+      updateDetail(detailData).then((Data) => {
         ExecuteDetailStore.getInfo();
       }).catch((error) => {
-        ExecuteDetailStore.unloading();
         Choerodon.prompt('网络错误');
       });
     } else {
@@ -163,23 +143,8 @@ function TestHandExecute(props) {
     }
   };
 
-  const quickPass = (e) => {
-    e.stopPropagation();
-    quickPassOrFail('通过');
-  };
-
-  const quickFail = (e) => {
-    e.stopPropagation();
-    quickPassOrFail('失败');
-  };
-
-  const handleRemoveDefect = (issueId) => {
-    ExecuteDetailStore.enterloading();
-    removeDefect(issueId).then((res) => {
-      ExecuteDetailStore.getInfo();
-    }).catch((error) => {
-      ExecuteDetailStore.unloading();
-    });
+  const quickHandle = (statusName) => {
+    quickPassOrFail(statusName);
   };
 
   const handleHiddenCreateBug = () => {
@@ -244,26 +209,23 @@ function TestHandExecute(props) {
     const defectType = ExecuteDetailStore.getDefectType;
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
-    const { summary } = detailData;
+    const { summary, nextExecuteId, previousExecuteId } = detailData;
     return (
       <Page className="c7n-test-execute-detail">
         <Header
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
-          {detailData && (
-            // <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
-              {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
-              <Icon type="find_in_page" />
-              {visible ? '隐藏详情' : '查看详情'}
-            </Button>
-            // {/* </div> */}
-          )}
+          <Button funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
+            {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
+            <Icon type="find_in_page" />
+            {visible ? '隐藏详情' : '查看详情'}
+          </Button>
+
 
           <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
           <Button
-            disabled={false}
+            disabled={!previousExecuteId}
             onClick={() => {
               goExecute('pre');
             }}
@@ -272,7 +234,7 @@ function TestHandExecute(props) {
             <span><FormattedMessage id="execute_pre" /></span>
           </Button>
           <Button
-            disabled={false}
+            disabled={!nextExecuteId}
             onClick={() => {
               goExecute('next');
             }}
@@ -318,8 +280,7 @@ function TestHandExecute(props) {
                     && (
                       <QuickOperate
                         statusList={statusList}
-                        quickPass={quickPass}
-                        quickFail={quickFail}
+                        quickHandle={quickHandle}
                         onSubmit={handleSubmit}
                       />
                     )}

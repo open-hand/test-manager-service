@@ -3,7 +3,7 @@ import { Upload, Button } from 'choerodon-ui';
 import { randomWord } from '@/common/utils';
 import './UploadButton.less';
 
-const UploadButton = ({ ...props }) => {
+const UploadButton = (props) => {
   const className = randomWord(false, 32);
   useEffect(() => {
     const uploadElement = document.querySelector(`.${className} .c7n-upload-select`);
