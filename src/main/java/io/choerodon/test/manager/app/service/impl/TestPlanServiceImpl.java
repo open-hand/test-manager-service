@@ -146,7 +146,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             // 将计划Id设置为root
             root.add(v.getPlanId());
             List<Long> folderRoot = new ArrayList<>();
-            List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId()).stream().sorted(Comparator.comparing(TestCycleDTO::getRank)).collect(Collectors.toList());
+            List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId());
             // 构建顶层
             TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
             testIssueFolderVO.setProjectId(v.getProjectId());
