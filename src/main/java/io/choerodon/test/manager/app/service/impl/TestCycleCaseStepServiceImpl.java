@@ -196,7 +196,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         return testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepDTO.getExecuteStepId());
     }
 
-    private void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO) {
+    public void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO) {
         if (ObjectUtils.isEmpty(testCycleCaseStepDTO)) {
             throw new CommonException("error.insert.cycle.case.step.is.null");
         }
