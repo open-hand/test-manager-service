@@ -284,7 +284,7 @@ public class TestCycleCaseController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("忽略用例更新")
     @PostMapping("/{execute_id}/ignore/update")
-    public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
+    public ResponseEntity ignoreUpdate(@PathVariable("project_id") Long projectId,
                                         @PathVariable("execute_id") Long executedId) {
         testCycleCaseService.ignoreUpdate(projectId,executedId);
         return new ResponseEntity<>(HttpStatus.OK);

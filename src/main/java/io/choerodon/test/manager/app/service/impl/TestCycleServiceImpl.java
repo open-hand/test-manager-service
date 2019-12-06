@@ -879,6 +879,43 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleCaseService.cloneCycleCase(cycleMapping, cycIds);
     }
 
+    @Override
+    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId) {
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId));
+        List<TestCycleDTO> collect = testCycleDTOS.stream().map(v -> {
+            if (ObjectUtils.isEmpty(v.getParentCycleId())) {
+                v.setParentCycleId(0L);
+            }
+            return v;
+        }).collect(Collectors.toList());
+        Map<Long, TestCycleDTO> allMap = collect.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        Map<Long, List<Long>> parentMap = collect.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId, Collectors.mapping(TestCycleDTO::getCycleId, Collectors.toList())));
+        List<Long> root = new ArrayList<>();
+        List<TestTreeFolderVO> treeFolder = new ArrayList<>();
+        collect.stream().forEach(cycle -> bulidTree(cycle,planId,root,parentMap,treeFolder));
+        TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
+        testTreeIssueFolderVO.setTreeFolder(treeFolder);
+        testTreeIssueFolderVO.setRootIds(root);
+        return testTreeIssueFolderVO;
+    }
+
+    private void bulidTree(TestCycleDTO cycle, Long planId, List<Long> root, Map<Long, List<Long>> parentMap,List<TestTreeFolderVO> treeFolder) {
+        TestTreeFolderVO testTreeFolderVO = new TestTreeFolderVO();
+        testTreeFolderVO.setPlanId(planId);
+        testTreeFolderVO.setId(cycle.getCycleId());
+        testTreeFolderVO.setExpanded(false);
+        TestIssueFolderVO issueFolderVO = new TestIssueFolderVO(cycle.getCycleId(), cycle.getCycleName(), null, cycle.getProjectId(), null, cycle.getObjectVersionNumber());
+        testTreeFolderVO.setIssueFolderVO(issueFolderVO);
+        testTreeFolderVO.setChildren(parentMap.get(cycle.getCycleId()));
+        if (cycle.getParentCycleId() == 0) {
+            root.add(cycle.getCycleId());
+            testTreeFolderVO.setTopLevel(true);
+        } else {
+            testTreeFolderVO.setTopLevel(false);
+        }
+        treeFolder.add(testTreeFolderVO);
+    }
+
     private Long getCount(TestCycleVO testCycleVO) {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             return cycleMapper.getCycleCountInVersion(testCycleVO.getVersionId());
