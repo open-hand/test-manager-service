@@ -54,6 +54,8 @@ public class TestCaseRepVO {
     @ApiModelProperty(value = "文件夹名称")
     private String folderName;
 
+    private Boolean hasDisable;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -164,5 +166,13 @@ public class TestCaseRepVO {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public Boolean getHasDisable() {
+        return hasDisable;
+    }
+
+    public void setHasDisable(Boolean hasDisable) {
+        this.hasDisable = hasDisable;
     }
 }

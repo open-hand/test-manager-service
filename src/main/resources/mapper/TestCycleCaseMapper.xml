@@ -827,6 +827,13 @@ ORDER BY
             #{caseId}
         </foreach>     ORDER BY tcc.case_id
     </select>
+
+    <select id="listByPlanId" resultType="long">
+        select tcc.case_id from test_cycle_case tcc
+        left join test_cycle tc  on tc.cycle_id = tcc.cycle_id
+        left join test_plan tp on tp.plan_id = tc.plan_id
+        where tp.plan_id = #{planId}
+    </select>
 </mapper>
 
 

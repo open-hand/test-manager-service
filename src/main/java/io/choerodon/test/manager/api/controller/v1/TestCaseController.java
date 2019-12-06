@@ -230,8 +230,9 @@ public class TestCaseController {
     public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
                                                                       @RequestParam(name = "folder_id") Long folderId,
                                                                       @SortDefault Pageable pageable,
+                                                                      @RequestParam(name = "plan_id",required = false) Long planId,
                                                                       @RequestBody(required = false) SearchDTO searchDTO) {
-        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageable, searchDTO), HttpStatus.OK);
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageable, searchDTO,planId), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

@@ -31,6 +31,7 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.impl.xb.ltgfmt.TestCase;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -576,7 +577,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Long total = 0L;
         Set<Long> cycleIds = new HashSet<>();
         // 查询文件夹下所有的目录
-        if(!ObjectUtils.isEmpty(cycleId)){
+        if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
         // 查询项目下自定义和默认状态
@@ -584,9 +585,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testStatusDTO.setProjectId(projectId);
         testStatusDTO.setStatusType("CYCLE_CASE");
         List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO);
-        testStatusDTOList.stream().forEach(e->e.setCount(0L));
+        testStatusDTOList.stream().forEach(e -> e.setCount(0L));
         List<TestStatusDTO> testStatusDTOS = testCycleCaseMapper.queryExecutionStatus(planId, cycleIds);
-        if(!CollectionUtils.isEmpty(testStatusDTOS)){
+        if (!CollectionUtils.isEmpty(testStatusDTOS)) {
             for (TestStatusDTO test : testStatusDTOS) {
                 total += test.getCount();
                 testStatusDTOList.forEach(status -> {
@@ -698,7 +699,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId,Long projectId, Long planId, Long cycleId, SearchDTO searchDTO) {
+    public TestCycleCaseInfoVO queryCycleCaseInfo(Long executeId, Long projectId, Long planId, Long cycleId, SearchDTO searchDTO) {
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
@@ -713,14 +714,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 index = testCycleCaseDTOS.indexOf(cyclecase);
             }
         }
-        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+        if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
         testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
-        previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
+        previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
 
@@ -768,9 +769,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-       if( testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO)!=1){
-           throw new CommonException("error.update.cycle.case");
-       }
+        if (testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO) != 1) {
+            throw new CommonException("error.update.cycle.case");
+        }
     }
 
 
@@ -843,24 +844,24 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 //同步执行的文件夹名到用例
                 TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCaseDTO.getFolderId());
                 testIssueFolderDTO.setName(cycleMapper.selectByPrimaryKey(testCycleCaseDTO.getCycleId()).getCycleName());
-                testIssueFolderService.update(modelMapper.map(testIssueFolderDTO,TestIssueFolderVO.class));
+                testIssueFolderService.update(modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
                 baseUpdate(testCycleCaseDTO);
             }
             if (caseCompareRepVO.getChangeAttach()) {
                 List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = testCycleCaseAttachmentRelService.listByExecuteId(caseCompareRepVO.getExecuteId());
                 List<String> collect = testCycleCaseAttachmentRelVOS.stream().map(TestCycleCaseAttachmentRelVO::getAttachmentName).collect(Collectors.toList());
-                testCaseAttachmentService.deleteByCaseId(caseCompareRepVO.getCaseId(),collect);
-                if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
+                testCaseAttachmentService.deleteByCaseId(caseCompareRepVO.getCaseId(), collect);
+                if (CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)) {
                     return;
                 }
                 List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
-                testCaseAttachmentService.batchInsert(caseAttachDTOS,collect);
+                testCaseAttachmentService.batchInsert(caseAttachDTOS, collect);
             }
             if (caseCompareRepVO.getChangeStep()) {
                 testCaseStepMapper.deleteByCaseId(caseCompareRepVO.getCaseId());
                 List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.querListByexecuteId(caseCompareRepVO.getExecuteId());
-                if(CollectionUtils.isEmpty(cycleCaseStepDTOS)){
+                if (CollectionUtils.isEmpty(cycleCaseStepDTOS)) {
                     return;
                 }
                 List<TestCaseStepDTO> stepDTOS = cycleCaseStepDTOS.stream().map(v -> testCaseAssembler.cycleStepToCaseStep(v, testCaseDTO, userDetails)).collect(Collectors.toList());
@@ -875,6 +876,54 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
         testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum());
         baseUpdate(testCycleCaseDTO);
+    }
+
+    @Override
+    public void importCase(Long projectId, Long cycleId, Map<Long, CaseSelectVO> map) {
+        // 校验是不是底层文件夹
+        checkImport(cycleId);
+        if (CollectionUtils.isEmpty(map)) {
+            return;
+        }
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByProject(projectId);
+        Map<Long, TestCaseDTO> caseMap = testCaseDTOS.stream().collect(Collectors.toMap(TestCaseDTO::getCaseId, Function.identity()));
+        Map<Long, List<TestCaseDTO>> folderCaseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        List<TestCaseDTO> list = new ArrayList<>();
+        map.entrySet().forEach(key -> {
+            CaseSelectVO caseSelectVO = map.get(key);
+            List<TestCaseDTO> caseList = folderCaseMap.get(key);
+            if (CollectionUtils.isEmpty(caseList)) {
+                return;
+            }
+            if (!caseSelectVO.getCustom()) {
+                list.addAll(folderCaseMap.get(key));
+            } else {
+                List<Long> caseIds = new ArrayList<>();
+                if (!CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
+                    caseIds.addAll(caseSelectVO.getSelected());
+
+                } else  if (!CollectionUtils.isEmpty(caseSelectVO.getUnSelected())){
+                    List<Long> collect = caseList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                    collect.removeAll(caseSelectVO.getUnSelected());
+                    caseIds.addAll(collect);
+                }
+                caseIds.forEach(v -> {
+                    list.add(caseMap.get(v));
+                });
+            }
+        });
+        Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
+        cycleMap.put(cycleId, cycleMapper.selectByPrimaryKey(cycleId));
+        batchInsertByTestCase(cycleMap, list);
+    }
+
+    private void checkImport(Long cycleId) {
+        TestCycleDTO testCycleDTO = new TestCycleDTO();
+        testCycleDTO.setParentCycleId(cycleId);
+        List<TestCycleDTO> list = cycleMapper.select(testCycleDTO);
+        if (!CollectionUtils.isEmpty(list)) {
+            throw new CommonException("folder.not.bottom");
+        }
     }
 
     private TestCaseAttachmentDTO cycleAttachVoToDTO(TestCaseDTO testCaseDTO, TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO, CustomUserDetails userDetails) {
@@ -999,7 +1048,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
     }
 
-    private  Set<Long> queryCycleIds(Long cycleId,Long planId){
+    private Set<Long> queryCycleIds(Long cycleId, Long planId) {
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(planId)) {
             TestCycleDTO testCycleDTO = new TestCycleDTO();
@@ -1048,7 +1097,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         testCycleCaseMapper.batchInsert(testCycleCaseDTOS);
     }
-    private void previousNextId(int index,List<TestCycleCaseDTO> list,TestCycleCaseInfoVO testCycleCaseInfoVO){
+
+    private void previousNextId(int index, List<TestCycleCaseDTO> list, TestCycleCaseInfoVO testCycleCaseInfoVO) {
         Long previousExecuteId;
         Long nextExecuteId;
         if (index - 1 < 0) {

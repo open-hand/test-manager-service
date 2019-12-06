@@ -1,34 +1,29 @@
 package io.choerodon.test.manager.app.assembler;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-
-import io.choerodon.agile.infra.common.utils.StringUtil;
-import io.choerodon.core.oauth.CustomUserDetails;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.modelmapper.convention.MatchingStrategies;
-import org.redisson.liveobject.resolver.UUIDGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @author zhaotianxin
@@ -64,6 +59,9 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCycleCaseStepMapper testCycleCaseStepMapper;
+
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -101,13 +99,29 @@ public class TestCaseAssembler {
         return testFolderCycleCaseVO;
     }
 
-    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list){
+    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list,Long planId){
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        List<Long> caseIds = null;
+        if(!ObjectUtils.isEmpty(planId)){
+            caseIds = testCycleCaseMapper.listByPlanId(planId);
+        }
+        List<Long> finalCaseIds = caseIds;
         List<TestCaseRepVO> collect = list.stream()
-                .map(v -> dtoToRepVo(v,folderMap)).collect(Collectors.toList());
+                .map(v -> {
+                    TestCaseRepVO testCaseRepVO= dtoToRepVo(v,folderMap);
+                    if(!CollectionUtils.isEmpty(finalCaseIds)){
+                       if(finalCaseIds.contains(v.getCaseId())){
+                           testCaseRepVO.setHasDisable(true);
+                       }
+                       else {
+                           testCaseRepVO.setHasDisable(false);
+                       }
+                    }
+                    return testCaseRepVO;
+                }).collect(Collectors.toList());
         return collect;
     }
 
