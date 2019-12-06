@@ -76,4 +76,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "plan_id")
         }
     }
+
+    changeSet(id: '2019-12-6-test-cycle_drop_uk_version_id', author: 'zhaotianxin') {
+        dropIndex(tableName: 'test_cycle', indexName: 'uk_cycle_name_version_id')
+    }
 }

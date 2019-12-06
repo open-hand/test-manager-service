@@ -152,5 +152,5 @@ public interface TestCycleCaseService {
      * @param cycleId
      * @param map
      */
-    void importCase(Long projectId, Long cycleId, Map<Long,CaseSelectVO> map);
+    void importCase(Long projectId, Long cycleId, Map<Long,CaseSelectVO> map,Long planId);
 }
