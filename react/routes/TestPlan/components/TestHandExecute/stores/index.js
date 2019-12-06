@@ -6,6 +6,7 @@ import { injectIntl } from 'react-intl';
 import ExecuteDetailStoreObject from './ExecuteDetailStore';
 import StepTableDataSet from './StepTableDataSet';
 import ExecuteHistoryDataSet from './ExecuteHistoryDataSet';
+import EditExecuteCaseDataSet from './EditExecuteCaseDataSet';
 
 const Store = createContext();
 
@@ -19,11 +20,15 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     const ExecuteDetailStore = useMemo(() => new ExecuteDetailStoreObject(), []);
     const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId)), [caseId, id, intl, orgId]);
     const executeHistoryDataSet = useMemo(() => new DataSet(ExecuteHistoryDataSet(id, intl, caseId)), [caseId, id, intl]);
+    const editExecuteCaseDataSet = useMemo(() => new DataSet(EditExecuteCaseDataSet(caseId, 'issue', intl)), [caseId, intl]);
+
     const value = {
       ...props,
+      executeId: caseId,
       ExecuteDetailStore,
       stepTableDataSet,
       executeHistoryDataSet,
+      editExecuteCaseDataSet,
     };
     return (
       <Store.Provider value={value}>

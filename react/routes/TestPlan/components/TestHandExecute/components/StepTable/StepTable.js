@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { PureComponent, useEffect, useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes, { func } from 'prop-types';
@@ -21,8 +20,54 @@ const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
 const { Option } = Select;
 
+const DefectSelectText = ({
+  defects, record, disabled, onDelete, children: text,
+}) => {
+  const DefectItem = ({ children, data, delBtnVisible = true }) => (
+    <Tooltip title={children}>
+      <li
+        // key={defect.id}
+        className="c7n-test-execute-detail-step-table-defects-option"
+      >
+        <div className="c7n-test-execute-detail-step-table-defects-option-text">{children}</div>
+        {delBtnVisible && (
+          <span
+            role="none"
+            className="c7n-test-execute-detail-step-table-defects-option-btn"
+            onMouseDown={e => e.stopPropagation()}
+            onClick={onDelete.bind(this, data, record)}
+          >
+            <Icon
+              type="cancel"
+              style={{ float: 'right' }}
+            />
+          </span>
+        )}
+      </li>
+    </Tooltip>
+  );
+
+  if (defects.length > 0) {
+    return (
+      <ul className="c7n-test-execute-detail-step-table-defects">
+        {
+          defects.map((defect, i) => (
+            <DefectItem data={defect} delBtnVisible={!disabled}>
+              {`${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}
+            </DefectItem>
+          ))
+        }
+      </ul>
+    );
+  } else if (!disabled) {
+    return <div style={{ width: 100, color: '#3f51b5' }}>{text}</div>;
+  }
+  return '';
+};
 function StepTable(props) {
-  const { dataSet, ExecuteDetailStore } = props;
+  const {
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false,
+  } = props;
   const [statusList, setStatusList] = useState([]);
   const [lock, setLock] = useState('right');
   /**
@@ -41,7 +86,6 @@ function StepTable(props) {
   };
   const onQuickPassOrFail = (code, record) => {
     const status = _.find(statusList, { projectId: 0, statusName: code });
-    console.log('code', code, status);
     if (status) {
       record.set('stepStatus', status.statusId);
     } else {
@@ -49,7 +93,6 @@ function StepTable(props) {
     }
   };
   const handleDeleteFile = (record, value) => {
-    console.log('value', value, record);
     deleteAttachment(value.id).then((data) => {
       onRefreshCurrent();
       Choerodon.prompt('删除成功');
@@ -57,15 +100,24 @@ function StepTable(props) {
       Choerodon.prompt(`删除失败 ${error}`);
     });
   };
-
+  /**
+   * 获取操作列是否隐藏
+   */
+  const getActionHidden = () => {
+    if (operateStatus && dataSet.length !== 0) {
+      return false;
+    } else {
+      return true;
+    }
+  };
   function renderAction({ record }) {
     return (
       <React.Fragment>
         <Tooltip title={<FormattedMessage id="execute_quickPass" />}>
-          <Button key="pass" disabled={false} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
+          <Button key="pass" disabled={getActionHidden()} shape="circle" funcType="flat" icon="check_circle" onClick={onQuickPassOrFail.bind(this, '通过', record)} />
         </Tooltip>
         <Tooltip title={<FormattedMessage id="execute_quickFail" />}>
-          <Button key="fail" disabled={false} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
+          <Button key="fail" disabled={getActionHidden()} shape="circle" funcType="flat" icon="cancel" onClick={onQuickPassOrFail.bind(this, '失败', record)} />
         </Tooltip>
       </React.Fragment>
     );
@@ -108,6 +160,7 @@ function StepTable(props) {
       <UploadInTable
         fileList={getFileList(value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
         onOk={onRefreshCurrent}
+        readOnly={readOnly}
         handleUpdateFileList={onAddFile.bind(this, record)}
         handleDeleteFile={handleDeleteFile.bind(this, record)}
         config={{
@@ -129,7 +182,6 @@ function StepTable(props) {
     record.set('tempDefects', []);
   };
   const handleDeleteDefect = (defect, record) => {
-    console.log('handleDeleteDefect:', defect, record);
     updateTableHeight(
       () => record.set('defects', _.filter(record.get('defects'), item => item.issueId !== defect.issueId)),
     );
@@ -139,9 +191,10 @@ function StepTable(props) {
    * @param {*} param0 
    */
   function renderDefects({ record, value: defects }) {
-    const disabled = defects.length !== 0;
+    const disabled = readOnly;// 用于未完成 已完成 禁止操作
     return (
       <TextEditToggle
+        disabled={disabled}
         noButton
         onSubmit={() => {
           handleAddDefects(record);
@@ -149,47 +202,9 @@ function StepTable(props) {
         originData={{ defects: defects.map(i => i) }}
       >
         <Text>
-          {
-            // eslint-disable-next-line no-nested-ternary
-            defects.length > 0 ? (
-              <ul className="c7n-test-execute-detail-step-table-defects">
-                {defects.map((defect, i) => (
-                  <Tooltip title={defect.issueInfosVO && `${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}>
-                    <li
-                      // key={defect.id}
-                      className="c7n-test-execute-detail-step-table-defects-option"
-
-                    >
-                      <div className="c7n-test-execute-detail-step-table-defects-option-text">{defect.issueInfosVO && `${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}</div>
-                      <span
-                        role="none"
-                        className="c7n-test-execute-detail-step-table-defects-option-btn"
-                        onMouseDown={e => e.stopPropagation()}
-                        onClick={handleDeleteDefect.bind(this, defect, record)}
-                      >
-                        <Icon
-                          type="cancel"
-                          style={{ float: 'right' }}
-                        />
-                      </span>
-                    </li>
-                  </Tooltip>
-                ))}
-              </ul>
-            ) : (
-              disabled
-                ? null : (
-                  <div
-                    style={{
-                      width: 100,
-                      color: '#3f51b5',
-                    }}
-                  >
-                      添加缺陷
-                  </div>
-                )
-            )
-          }
+          <DefectSelectText defects={defects} record={record} disabled={disabled} onDelete={handleDeleteDefect}>
+            添加缺陷
+          </DefectSelectText>
         </Text>
         <Edit>
           <div
@@ -209,7 +224,6 @@ function StepTable(props) {
             />
           </div>
         </Edit>
-
       </TextEditToggle>
     );
   }
@@ -232,22 +246,24 @@ function StepTable(props) {
     return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;
     // return value;
   }
-
+  function renderIndex({ record }) {
+    return record.index + 1;
+  }
   useEffect(() => {
     dataSet.getField('stepStatus').fetchLookup().then(res => setStatusList(res));
   }, [dataSet, setStatusList]);
 
   return (
     <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">
-      <Column name="index" width={80} align="left" />
+      <Column name="index" width={80} align="left" renderer={renderIndex} />
       <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
       <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
       <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
-      <Column name="stepStatus" width={70} renderer={renderStatus} />
+      <Column name="stepStatus" align="left" width={70} renderer={renderStatus} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} className="c7n-test-execute-detail-step-table-file" headerClassName="c7n-test-execute-detail-step-table-file-head" footerClassName="c7n-test-execute-detail-step-table-file-foot" />
-      <Column name="description" editor align="left" tooltip="overflow" renderer={renderText} />
+      <Column name="description" editor={!readOnly} align="left" tooltip="overflow" renderer={renderText} />
       <Column name="defects" renderer={renderDefects} width={230} />
-      <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={dataSet.length === 0} />
+      <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />
     </Table>
   );
 }

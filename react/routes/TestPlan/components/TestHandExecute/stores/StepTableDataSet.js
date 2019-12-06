@@ -120,13 +120,16 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       read: {
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
-        transformResponse: (data) => {
-          const newData = JSON.parse(data).map((i, index) => ({
-            ...i,
-            index: index + 1,
-            stepStatus: i.stepStatus === null ? 4 : i.stepStatus,
-          }));
-          return newData;
+        transformResponse: (res) => {
+          const data = JSON.parse(res);
+          if (Array.isArray(data)) {
+            const newData = data.map((i, index) => ({
+              ...i,
+              stepStatus: i.stepStatus === null ? 4 : i.stepStatus,
+            }));
+            return newData;
+          }
+          return data;
         },
       },
     },

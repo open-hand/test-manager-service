@@ -51,10 +51,10 @@ function TestHandExecute(props) {
   const { ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet } = context;
   const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
-    const { id } = context.match.params;
+    const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
-    ExecuteDetailStore.getInfo(id);
-    ExecuteDetailStore.setId(id);
+    ExecuteDetailStore.getInfo(executeId);
+    ExecuteDetailStore.setId(executeId);
     // ExecuteDetailStore.loadDetailData(id);  
   }, [ExecuteDetailStore, context, context.match.params]);
 
@@ -158,10 +158,19 @@ function TestHandExecute(props) {
     ExecuteDetailStore.setDefectType('CYCLE_CASE');
     ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
   };
+  /**
+   * 保存同步用例
+   */
+  const handleSaveSyncCase = () => {
+    const { editExecuteCaseDataSet } = context;
+    if (editExecuteCaseDataSet.current && editExecuteCaseDataSet.validate()) {
+      // 进行提交数据
 
+    }
+  };
   const handleOpenEdit = () => {
-    const { id } = context.match.params;
-    const { intl } = context;
+    const { editExecuteCaseDataSet, executeId } = context;
+    editExecuteCaseDataSet.query();
     Modal.open({
       key: 'editExecuteIssue',
       title: '修改执行',
@@ -171,14 +180,15 @@ function TestHandExecute(props) {
       },
       children: (
         <EditExecuteIssue
-          executeId={id}
-          intl={intl}
+          ExecuteDetailStore={ExecuteDetailStore}
+          editDataset={editExecuteCaseDataSet}
+          executeId={executeId}
         />
       ),
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          <Button funcType="raised" color="primary">保存并同步到用例库</Button>
+          <Button funcType="raised" color="primary" onClick={handleSaveSyncCase}>保存并同步到用例库</Button>
           {cancelBtn}
         </div>
       ),
@@ -196,7 +206,6 @@ function TestHandExecute(props) {
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
-
     const { loading } = ExecuteDetailStore;
     const detailData = ExecuteDetailStore.getDetailData;
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
@@ -206,7 +215,9 @@ function TestHandExecute(props) {
     const defectType = ExecuteDetailStore.getDefectType;
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
-    const { summary, nextExecuteId, previousExecuteId } = detailData;
+    const {
+      summary, nextExecuteId, previousExecuteId, planStatus,
+    } = detailData;
     return (
       <Page className="c7n-test-execute-detail">
         <Header
@@ -220,7 +231,9 @@ function TestHandExecute(props) {
           </Button>
 
 
-          <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
+          {planStatus !== 'done'
+            && <Button icon="mode_edit" funcType="flat" type="primary" onClick={handleOpenEdit}>修改用例</Button>
+          }
           <Button
             disabled={!previousExecuteId}
             onClick={() => {
@@ -273,9 +286,10 @@ function TestHandExecute(props) {
                       />
                     </div>
                   )}
-                  {!disabled
+                  {planStatus === 'doing'
                     && (
                       <QuickOperate
+                        readOnly={planStatus !== 'doing'}
                         statusList={statusList}
                         quickHandle={quickHandle}
                         onSubmit={handleSubmit}
@@ -288,6 +302,8 @@ function TestHandExecute(props) {
                 >
                   <StepTable
                     dataSet={stepTableDataSet}
+                    readOnly={planStatus === 'done'}
+                    operateStatus={planStatus === 'doing'}
                     ExecuteDetailStore={ExecuteDetailStore}
                   />
                 </CardWrapper>

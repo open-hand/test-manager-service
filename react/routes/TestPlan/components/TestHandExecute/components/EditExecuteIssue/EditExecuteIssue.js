@@ -9,41 +9,89 @@ import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
-import EditIssueDataSet, { UpdateExecuteData } from './store/EditIssueDataSet';
 import EditTestStepTable from './EditTestStepTable';
-import { beforeTextUpload, text2Delta } from '@/common/utils';
-// import { uploadFile } from '@/common/api/IssueManageApi';
-import Store from '../../stores';
+import { updateSidebarDetail } from '@/api/ExecuteDetailApi';
+import { uploadFile } from '@/api/FileApi';
+import { text2Delta, returnBeforeTextUpload } from '@/common/utils';
 import './EditExecuteIssue.less';
+
+function UpdateExecuteData(data) {
+  const { executeId } = data;
+  const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
+    (i) => {
+      let { stepId } = i;
+      let { executeStepId } = i;
+      if (String(i.stepId).indexOf('.') !== -1) {
+        stepId = 0;
+        executeStepId = null;
+      }
+      return {
+        ...i,
+        stepId,
+        executeId,
+        executeStepId,
+      };
+    },
+  );
+  return new Promise((resolve) => {
+    returnBeforeTextUpload(data.description, data, async (res) => {
+      const newData = {
+        ...res,
+        fileList: [],
+        caseStepVOS: [],
+        testCycleCaseStepUpdateVOS,
+      };
+      const { fileList } = res;
+      await updateSidebarDetail(newData);
+      if (fileList) {
+        const formDataAdd = new FormData();
+        const formDataDel = new FormData();
+        fileList.forEach((file) => {
+          if (file.status && file.status === 'uploading') {
+            formDataAdd.append('file', file);
+          } else if (file.status && file.status === 'removed') {
+            formDataDel.append('file', file);
+          }
+        });
+
+        const config = {
+          bucketName: 'test', attachmentLinkId: res.executeId, attachmentType: 'CYCLE_CASE',
+        };
+        await uploadFile(formDataAdd, config);
+        // 缺少删除附件接口调用
+      }
+      resolve(true);
+    });
+  });
+}
 
 function EditExecuteIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const {
-    intl, executeId, onOk, modal,
+    modal, ExecuteDetailStore, editDataset, executeId,
   } = props;
-  const context = useContext(Store);
-  const editDataset = useMemo(() => new DataSet(EditIssueDataSet(executeId, 'issue', intl)), [executeId, intl]);
 
   const handleUpdateIssue = useCallback(async () => {
-    const { ExecuteDetailStore } = context;
     try {
-      if (await editDataset.current.validate()) {
+      if (editDataset.current && await editDataset.current.validate()) {
         await UpdateExecuteData(editDataset.current.toData());
+        message.success('修改成功');
+        ExecuteDetailStore.getInfo();
+        return true;
       }
-      message.success('修改成功');
-      ExecuteDetailStore.getInfo();
-      return true;
+      return false;
     } catch (e) {
       message.error(e);
       return false;
     }
-  }, [context, editDataset]);
+  }, [ExecuteDetailStore, editDataset]);
   const handleChangeDes = (value) => {
     editDataset.current.set('description', value);
   };
   const onUploadFile = ({ file, fileList, event }) => {
     // console.log('onUploadFile', file, fileList);
     const { status = 'ADD' } = file;
+    // 缺少移除文件判断
     // editDataset.current.get('cycleCaseAttachmentRelVOList').some(item=>{
     //   item.
     // });
