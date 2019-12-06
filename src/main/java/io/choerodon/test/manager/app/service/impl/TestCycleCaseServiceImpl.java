@@ -591,21 +591,29 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateCaseAndStep(Long projectId,TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepDTO>>() {
+        List<TestCycleCaseStepDTO> newTestCycleCaseStepDTOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepDTO>>() {
         }.getType());
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteId(testCycleCaseUpdateVO.getExecuteId());
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
-        List<Long> longs = testCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
-        testCycleCaseStepDTOList.forEach(e->{
-            if(longs.contains(e.getExecuteStepId())) {
-                //1.批量更新步骤
-                testCycleCaseStepService.baseUpdate(e);
+        List<TestCycleCaseStepDTO> oldTestCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
+        List<Long> noldStepIds = oldTestCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+        newTestCycleCaseStepDTOS.forEach(newcCycle -> {
+            if (!noldStepIds.contains(newcCycle.getExecuteStepId())) {
+                //添加步骤
+                testCycleCaseStepService.baseInsert(newcCycle);
             }else {
-                //2.批量创建步骤
-                testCycleCaseStepService.batchCreate(testCycleCaseStepDTOList);
+                //更新步骤
+                testCycleCaseStepService.baseUpdate(newcCycle);
+            }
+        });
+        List<Long> newIds = newTestCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+        oldTestCycleCaseStepDTOS.forEach(oldeCycle -> {
+            if (!newIds.contains(oldeCycle.getExecuteStepId())) {
+                //删除步骤
+                testCycleCaseStepService.delete(oldeCycle.getExecuteStepId());
             }
         });
         //3.更新执行用例

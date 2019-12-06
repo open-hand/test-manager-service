@@ -46,6 +46,8 @@ public interface TestCycleCaseStepService {
 
     void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);
 
+    void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO);
+
     void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
 
     void delete(Long executeStepId);
