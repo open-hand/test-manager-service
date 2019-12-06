@@ -32,9 +32,9 @@ class ExecuteDetailStore {
   @action setDetailParams(data) {
     this.detailParams = {
       cycle_id: data.cycle_id,
-      page: data.page,
+      // page: data.page,
       plan_id: data.plan_id,
-      size: data.size,
+      // size: data.size,
     };
   }
 

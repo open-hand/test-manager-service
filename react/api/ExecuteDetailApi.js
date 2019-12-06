@@ -2,12 +2,19 @@ import Axios from 'axios';
 import queryString from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
-export function getCycle(id, cycleId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}?cycleId=${cycleId || 0}`);
+/**
+ * 更新执行用例详情（用于状态更改）
+ * @param {*} data 
+ */
+export function updateDetail(data) {
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
 }
-
-export function editCycle(cycle) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/update`, cycle);
+/**
+ * 更新执行用例详情（用于弹窗修改内容）
+ * @param {*} data 
+ */
+export function updateSidebarDetail(data) {
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_step`, data);
 }
 /**
  *增加缺陷
@@ -41,7 +48,7 @@ export function editCycleStep(data) {
   return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
 export function geDetailsData(cycleCaseId, param) {
-  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`);
+  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`, { searchArgs: {}, contents: [] });
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;

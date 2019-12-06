@@ -123,6 +123,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
           const newData = JSON.parse(data).map((i, index) => ({
             ...i,
             index: index + 1,
+            stepStatus: i.stepStatus === null ? 4 : i.stepStatus,
           }));
           return newData;
         },

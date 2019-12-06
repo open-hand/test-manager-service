@@ -112,7 +112,9 @@ function TestPlanHome() {
   };
 
   const handleTableSummaryClick = (record) => {
-    history.push(executeDetailLink(record.executeId, testPlanStore.currentCycle.id, testPlanStore.getCurrentPlanId, testPlanStore.executePagination));
+    const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('-');
+    const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
+    history.push(executeDetailLink(record.executeId, cycleId, testPlanStore.getCurrentPlanId, testPlanStore.executePagination));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
