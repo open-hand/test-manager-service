@@ -13,6 +13,7 @@ import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -88,7 +89,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
-        testPlan.setInitStatus(TestPlanStatus.DOING.getStatus());
+        testPlan.setInitStatus("creating");
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
         testPlanVO.setPlanId(testPlan.getPlanId());
         testPlanVO.setObjectVersionNumber(testPlan.getObjectVersionNumber());
@@ -213,7 +214,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
-        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
+        testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);
         testPlan.setObjectVersionNumber(testPlanVO.getObjectVersionNumber());
         baseUpdate(testPlan);
     }
@@ -252,6 +253,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanDTO.setCreationDate(null);
         testPlanDTO.setLastUpdatedBy(null);
         testPlanDTO.setObjectVersionNumber(null);
+        testPlanDTO.setInitStatus(TestPlanInitStatus.CREATING);
         baseCreate(testPlanDTO);
         Map<String, Long> map = new HashMap<>();
         map.put("older", planId);
@@ -275,6 +277,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         Long copyPlanId = map.get("older");
         Long newPlanId = map.get("new");
         testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId);
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
+        testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
+        baseUpdate(testPlanDTO);
     }
 
     @Override
