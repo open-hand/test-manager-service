@@ -44,7 +44,7 @@ export function addCycle(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function editExecuteDetail(data) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/update`, data);
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
 }
 export function deleteExecute(executeId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/case?cycleCaseId=${executeId}`);

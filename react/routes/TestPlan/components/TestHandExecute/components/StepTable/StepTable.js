@@ -24,11 +24,20 @@ const { Option } = Select;
 function StepTable(props) {
   const { dataSet, ExecuteDetailStore } = props;
   const [statusList, setStatusList] = useState([]);
+  const [lock, setLock] = useState('right');
   /**
    * 对当前页刷新
    */
   const onRefreshCurrent = () => {
     dataSet.query(dataSet.currentPage);
+  };
+  /**
+   * 更新表格的高度 放置lock列高度不变
+   */
+  const updateTableHeight = (update) => {
+    setLock(false);
+    update();
+    setLock('right');
   };
   const onQuickPassOrFail = (code, record) => {
     const status = _.find(statusList, { projectId: 0, statusName: code });
@@ -89,7 +98,10 @@ function StepTable(props) {
   // 增加文件
   const onAddFile = (record, data) => {
     const fileList = record.get('stepAttachment');
-    record.set('stepAttachment', [...fileList, ...data]);
+    // onRefreshCurrent();
+    updateTableHeight(
+      () => record.set('stepAttachment', [...fileList, ...data]),
+    );
   };
   function renderAttachment({ record, value }) {
     return (
@@ -118,8 +130,9 @@ function StepTable(props) {
   };
   const handleDeleteDefect = (defect, record) => {
     console.log('handleDeleteDefect:', defect, record);
-
-    record.set('defects', _.filter(record.get('defects'), item => item.issueId !== defect.issueId));
+    updateTableHeight(
+      () => record.set('defects', _.filter(record.get('defects'), item => item.issueId !== defect.issueId)),
+    );
   };
   /**
    * 渲染缺陷
@@ -141,24 +154,26 @@ function StepTable(props) {
             defects.length > 0 ? (
               <ul className="c7n-test-execute-detail-step-table-defects">
                 {defects.map((defect, i) => (
-                  <li
-                    // key={defect.id}
-                    className="c7n-test-execute-detail-step-table-defects-option"
+                  <Tooltip title={defect.issueInfosVO && `${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}>
+                    <li
+                      // key={defect.id}
+                      className="c7n-test-execute-detail-step-table-defects-option"
 
-                  >
-                    <div className="c7n-test-execute-detail-step-table-defects-option-text">{defect.issueInfosVO && `${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}</div>
-                    <span
-                      role="none"
-                      className="c7n-test-execute-detail-step-table-defects-option-btn"
-                      onMouseDown={e => e.stopPropagation()}
-                      onClick={handleDeleteDefect.bind(this, defect, record)}
                     >
-                      <Icon
-                        type="cancel"
-                        style={{ float: 'right' }}
-                      />
-                    </span>
-                  </li>
+                      <div className="c7n-test-execute-detail-step-table-defects-option-text">{defect.issueInfosVO && `${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}</div>
+                      <span
+                        role="none"
+                        className="c7n-test-execute-detail-step-table-defects-option-btn"
+                        onMouseDown={e => e.stopPropagation()}
+                        onClick={handleDeleteDefect.bind(this, defect, record)}
+                      >
+                        <Icon
+                          type="cancel"
+                          style={{ float: 'right' }}
+                        />
+                      </span>
+                    </li>
+                  </Tooltip>
                 ))}
               </ul>
             ) : (
@@ -177,13 +192,14 @@ function StepTable(props) {
           }
         </Text>
         <Edit>
-          <div onScroll={(e) => {
-            e.stopPropagation();
-          }}
+          <div
+            onScroll={(e) => {
+              e.stopPropagation();
+            }}
           >
             <DefectSelect
               defaultOpen
-              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-step-table-defects')[0]}
+              getPopupContainer={() => document.getElementsByClassName('c7n-test-execute-detail-card-title')[0]}
               defects={defects}
               ExecuteDetailStore={ExecuteDetailStore}
               setNeedAdd={(needAdd) => { record.set('tempDefects', needAdd); }}
@@ -230,8 +246,8 @@ function StepTable(props) {
       <Column name="stepStatus" width={70} renderer={renderStatus} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} className="c7n-test-execute-detail-step-table-file" headerClassName="c7n-test-execute-detail-step-table-file-head" footerClassName="c7n-test-execute-detail-step-table-file-foot" />
       <Column name="description" editor align="left" tooltip="overflow" renderer={renderText} />
-      <Column name="defects" renderer={renderDefects} width={220} />
-      <Column name="action" width={100} lock="right" renderer={renderAction} hidden={dataSet.length === 0} />
+      <Column name="defects" renderer={renderDefects} width={230} />
+      <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={dataSet.length === 0} />
     </Table>
   );
 }

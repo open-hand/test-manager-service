@@ -1,7 +1,6 @@
 /* eslint-disable indent */
 import { DataSet } from 'choerodon-ui/pro/lib';
 import { stores } from '@choerodon/boot';
-import { Choerodon, axios } from '@choerodon/boot';
 import {
     getProjectId, returnBeforeTextUpload, getOrganizationId, text2Delta,
 } from '@/common/utils';
@@ -10,6 +9,7 @@ import { uploadFile } from '@/api/FileApi';
 
 const { AppState } = stores;
 export function UpdateExecuteData(data) {
+    const { executeId } = data;
     const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
         (i) => {
             let { stepId } = i;
@@ -21,6 +21,7 @@ export function UpdateExecuteData(data) {
             return {
                 ...i,
                 stepId,
+                executeId,
                 executeStepId,
             };
         },
@@ -30,6 +31,7 @@ export function UpdateExecuteData(data) {
             const newData = {
                 ...res,
                 fileList: [],
+                caseStepVOS: [],
                 testCycleCaseStepUpdateVOS,
             };
             const { fileList } = res;
@@ -102,7 +104,7 @@ function EditIssueDataSet(executeId, intlPrefix, intl) {
                     const newData = JSON.parse(data);
                     return {
                         ...newData,
-                        description: text2Delta(newData.description),
+                        // description: text2Delta(newData.description), 
                         testCycleCaseStepUpdateVOS: [],
                         caseStepVOS: newData.testCycleCaseStepUpdateVOS,
                     };

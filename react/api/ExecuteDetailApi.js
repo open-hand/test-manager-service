@@ -14,7 +14,7 @@ export function updateDetail(data) {
  * @param {*} data 
  */
 export function updateSidebarDetail(data) {
-  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_step`, data);
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/case_step`, data);
 }
 /**
  *增加缺陷
