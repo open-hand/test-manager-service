@@ -308,7 +308,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO) {
+    public PageInfo<TestCaseRepVO> listAllCaseByFolderId(Long projectId, Long folderId, Pageable pageable, SearchDTO searchDTO,Long planId) {
 
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
@@ -324,7 +324,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             return pageRepList;
         }
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList());
-        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS);
+        List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS,planId);
         pageRepList.setList(repVOS);
         return pageRepList;
     }

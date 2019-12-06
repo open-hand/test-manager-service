@@ -145,4 +145,12 @@ public interface TestCycleCaseService {
      * @param executedId
      */
     void ignoreUpdate(Long projectId, Long executedId);
+
+    /**
+     * 导入用例
+     * @param projectId
+     * @param cycleId
+     * @param map
+     */
+    void importCase(Long projectId, Long cycleId, Map<Long,CaseSelectVO> map);
 }

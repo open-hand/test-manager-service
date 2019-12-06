@@ -129,4 +129,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     @MapKey("caseId")
     Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds);
+
+    List<Long> listByPlanId(@Param("planId") Long planId);
 }

@@ -1,11 +1,13 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -285,6 +287,16 @@ public class TestCycleCaseController {
     public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
                                         @PathVariable("execute_id") Long executedId) {
         testCycleCaseService.ignoreUpdate(projectId,executedId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("导入用例")
+    @PostMapping("/import")
+    public ResponseEntity importCase(@PathVariable("project_id") Long projectId,
+                                     @RequestParam("cycle_id") Long cycleId,
+                                     @RequestBody Map<Long,CaseSelectVO> map) {
+        testCycleCaseService.importCase(projectId,cycleId,map);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

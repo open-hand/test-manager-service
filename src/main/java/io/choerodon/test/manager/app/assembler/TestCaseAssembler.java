@@ -60,6 +60,9 @@ public class TestCaseAssembler {
     @Autowired
     private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -96,13 +99,29 @@ public class TestCaseAssembler {
         return testFolderCycleCaseVO;
     }
 
-    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list){
+    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list,Long planId){
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        List<Long> caseIds = null;
+        if(!ObjectUtils.isEmpty(planId)){
+            caseIds = testCycleCaseMapper.listByPlanId(planId);
+        }
+        List<Long> finalCaseIds = caseIds;
         List<TestCaseRepVO> collect = list.stream()
-                .map(v -> dtoToRepVo(v,folderMap)).collect(Collectors.toList());
+                .map(v -> {
+                    TestCaseRepVO testCaseRepVO= dtoToRepVo(v,folderMap);
+                    if(!CollectionUtils.isEmpty(finalCaseIds)){
+                       if(finalCaseIds.contains(v.getCaseId())){
+                           testCaseRepVO.setHasDisable(true);
+                       }
+                       else {
+                           testCaseRepVO.setHasDisable(false);
+                       }
+                    }
+                    return testCaseRepVO;
+                }).collect(Collectors.toList());
         return collect;
     }
 
