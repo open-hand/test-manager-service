@@ -171,18 +171,19 @@ class IssueTreeStore {
 
   @action setItemCheck(item, checked) {
     item.checked = checked;
-    delete item.selected;
-    delete item.unSelected;
+    item.selected = undefined;
+    item.unSelected = undefined;
   }
 
   // 选中单个case的处理
+  @action
   addFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已未选中为主
     if (item.unSelected) {
       // 从取消选中去掉，代表选中
       pull(item.unSelected, caseId);    
-    } else {
+    } else {     
       // 以选中为主
       if (!item.selected) {
         set(item, { selected: [] });
@@ -192,6 +193,7 @@ class IssueTreeStore {
   }
 
   // 取消单个选中
+  @action
   removeFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
     // 已选中为主
