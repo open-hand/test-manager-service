@@ -20,7 +20,7 @@ const statusArr = [
   { name: '无需测试', color: '#4D90FE' },
   { name: '重测', color: '#FFB100' }];
 const QuickStatus = ({
-  name, color, children, onClick,
+  name, color, children, onClick, disable,
 }) => (
   <span
     style={{
@@ -29,7 +29,7 @@ const QuickStatus = ({
       borderColor: color,
     }}
     role="button"
-    onClick={onClick.bind(this, name)}
+    onClick={disable ? null : onClick.bind(this, name)}
     onKeyDown
   >
     {children}
@@ -39,11 +39,13 @@ const propTypes = {
   statusList: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   quickHandle: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
 };
 const QuickOperate = ({
   statusList,
   quickHandle,
   onSubmit,
+  readOnly,
 }) => {
   const menuItems = statusList.map(item => (
     <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
@@ -54,7 +56,12 @@ const QuickOperate = ({
     </Menu.Item>
   ));
   const menu = (
-    <Menu onClick={item => onSubmit({ executionStatus: Number(item.key) })}>
+    <Menu onClick={(item) => {
+      if (!readOnly) {
+        onSubmit({ executionStatus: Number(item.key) });
+      }
+    }}
+    >
       {menuItems}
     </Menu>
   );
@@ -63,7 +70,7 @@ const QuickOperate = ({
       快速操作:
       {
         statusArr.map(status => (
-          <QuickStatus name={status.name} color={status.color} onClick={quickHandle}>
+          <QuickStatus name={status.name} color={status.color} onClick={quickHandle} disable={readOnly}>
             {status.name}
           </QuickStatus>
         ))

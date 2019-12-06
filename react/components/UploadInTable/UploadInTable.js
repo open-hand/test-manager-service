@@ -10,6 +10,7 @@ import './UploadInTable.less';
 
 const propTypes = {
   fileList: PropTypes.array,
+  readOnly: PropTypes.bool,
   config: PropTypes.shape({}),
   onOk: PropTypes.func,
   handleDeleteFile: PropTypes.func,
@@ -23,7 +24,7 @@ const defaultProps = {
 };
 function UploadInTable(props) {
   const {
-    fileList, config, onOk, handleDeleteFile, handleUpdateFileList,
+    fileList, config, onOk, handleDeleteFile, handleUpdateFileList, readOnly,
   } = props;
 
   const handleRemove = (file) => {
@@ -53,56 +54,62 @@ function UploadInTable(props) {
           // </Tooltip>
         ))
       }
-      <Upload
-        // multiple
-        className="c7ntest-upload-reverse"
-        // fileList={fileList.map(attachment => ({
-        //   uid: attachment.id,
-        //   name: attachment.attachmentName,
-        //   status: 'done',
-        //   url: attachment.url,
-        // }))}
-        // onRemove={(file) => {
-        //   if (file.url) {
-        //     this.props.enterLoad();
-        //     deleteAttachment(file.uid).then(() => {
-        //       this.props.onOk();
-        //     }).catch((error) => {
-        //       window.console.log(error);
-        //       this.props.leaveLoad();
-        //       Choerodon.prompt('网络异常');
-        //     });
-        //   }
-        // }}
-        beforeUpload={(file) => {
-          const formData = new FormData();
-          // const config = {
-          //   bucket_name: 'test',
-          //   attachmentLinkId: record.executeStepId,
-          //   attachmentType: 'CYCLE_STEP',
-          // }; 
-          // upload file                
-          formData.append('file', file);
-          // formData.append('file', file);
-          uploadFile(formData, config).then((res) => {
-            if (res.failed) {
-              Choerodon.prompt('不能有重复附件');
-            } else {
-              // onOk();
-              handleUpdateFileList(res);
-              Choerodon.prompt('上传成功');
-            }
-          }).catch((error) => {
-            window.console.log(error);
-            Choerodon.prompt('网络错误');
-          });
-          return false;
-        }}
-      >
-        <Button icon="file_upload">
-          <FormattedMessage id="upload_attachment" />
-        </Button>
-      </Upload>
+      {
+        readOnly || (
+          <Upload
+            // multiple
+            className="c7ntest-upload-reverse"
+            // fileList={fileList.map(attachment => ({
+            //   uid: attachment.id,
+            //   name: attachment.attachmentName,
+            //   status: 'done',
+            //   url: attachment.url,
+            // }))}
+            // onRemove={(file) => {
+            //   if (file.url) {
+            //     this.props.enterLoad();
+            //     deleteAttachment(file.uid).then(() => {
+            //       this.props.onOk();
+            //     }).catch((error) => {
+            //       window.console.log(error);
+            //       this.props.leaveLoad();
+            //       Choerodon.prompt('网络异常');
+            //     });
+            //   }
+            // }}
+            beforeUpload={(file) => {
+              const formData = new FormData();
+              // const config = {
+              //   bucket_name: 'test',
+              //   attachmentLinkId: record.executeStepId,
+              //   attachmentType: 'CYCLE_STEP',
+              // }; 
+              // upload file                
+              formData.append('file', file);
+              // formData.append('file', file);
+              uploadFile(formData, config).then((res) => {
+                if (res.failed) {
+                  Choerodon.prompt('不能有重复附件');
+                } else {
+                  // onOk();
+                  handleUpdateFileList(res);
+                  Choerodon.prompt('上传成功');
+                }
+              }).catch((error) => {
+                window.console.log(error);
+                Choerodon.prompt('网络错误');
+              });
+              return false;
+            }}
+          >
+            <Button icon="file_upload">
+              <FormattedMessage id="upload_attachment" />
+            </Button>
+          </Upload>
+        )
+
+
+      }
 
     </div>
   );
