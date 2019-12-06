@@ -457,9 +457,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseVO changeOneCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
-        testStatusService.populateStatus(testCycleCaseVO);
         TestCycleCaseVO dto = modelMapper.map(changeStep(projectId, testCycleCaseVO), TestCycleCaseVO.class);
-        userService.populateTestCycleCaseDTO(dto);
         return dto;
     }
 
@@ -1033,7 +1031,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setProjectId(v.getProjectId());
                 testCycleCaseDTO.setVersionNum(v.getVersionNum());
                 testCycleCaseDTO.setExecutionStatus(defaultStatusId);
-                testCycleCaseDTO.setRank(UUID.randomUUID().toString().substring(0, 8));
                 testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
@@ -1041,7 +1038,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
         });
-        return testCycleCaseDTOS;
+        Map<Long, List<TestCycleCaseDTO>> listMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
+        return doRank(listMap);
     }
 
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
@@ -1066,4 +1064,21 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
         testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
     }
+
+    private List<TestCycleCaseDTO> doRank(Map<Long, List<TestCycleCaseDTO>> tcycleCaseMap) {
+        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
+        for (Map.Entry<Long, List<TestCycleCaseDTO>> map : tcycleCaseMap.entrySet()
+        ) {
+            String prevRank = RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(map.getKey()), null);
+            if (CollectionUtils.isEmpty(map.getValue())) {
+                for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
+                    testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
+                    prevRank = testCycleCaseDTO.getRank();
+                    testCycleCaseDTOList.add(testCycleCaseDTO);
+                }
+            }
+        }
+        return testCycleCaseDTOList;
+    }
+
 }

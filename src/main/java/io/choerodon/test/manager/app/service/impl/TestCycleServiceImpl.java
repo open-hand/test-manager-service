@@ -789,10 +789,12 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
                 testCycleDTOS.add(testCycleDTO);
             });
-            cycleMapper.batchInsert(testCycleDTOS);
-            Map<Long, Long> returnCycleId = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
+            Map<Long, List<TestCycleDTO>> listMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
+            List<TestCycleDTO> cycleDTOList = doRank(listMap);
+            cycleMapper.batchInsert(cycleDTOList);
+            Map<Long, Long> returnCycleId = cycleDTOList.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
             cycleMap.putAll(returnCycleId);
-            endCycle.addAll(testCycleDTOS);
+            endCycle.addAll(cycleDTOList);
         });
         return endCycle;
     }
@@ -871,7 +873,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (testCycleVO.getType().equals(TestCycleType.CYCLE)) {
             return cycleMapper.getCycleLastedRank(testCycleVO.getVersionId());
         } else {
-            return cycleMapper.getFolderLastedRank(testCycleVO.getParentCycleId());
+            return cycleMapper.getPlanLastedRank(testCycleVO.getParentCycleId());
         }
     }
 
@@ -1199,5 +1201,19 @@ public class TestCycleServiceImpl implements TestCycleService {
         DBValidateUtil.executeAndvalidateUpdateNum(cycleMapper::insertSelective, testCycleDTO, 1, "error.insert.test.cycle");
         return testCycleDTO;
     }
-
+    private List<TestCycleDTO> doRank(Map<Long, List<TestCycleDTO>> listMap) {
+        List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
+        for (Map.Entry<Long, List<TestCycleDTO>> map : listMap.entrySet()
+        ) {
+            String prevRank = RankUtil.Operation.INSERT.getRank(cycleMapper.getPlanLastedRank(map.getKey()), null);
+            if (CollectionUtils.isEmpty(map.getValue())) {
+                for (TestCycleDTO testCycleDTO : map.getValue()) {
+                    testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
+                    prevRank = testCycleDTO.getRank();
+                    testCycleDTOS.add(testCycleDTO);
+                }
+            }
+        }
+        return testCycleDTOS;
+    }
 }
