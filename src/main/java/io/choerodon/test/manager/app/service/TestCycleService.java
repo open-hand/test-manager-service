@@ -84,4 +84,6 @@ public interface TestCycleService {
     void cloneCycleByPlanId(Long copyPlanId, Long newPlanId);
 
     TestTreeIssueFolderVO queryTreeByPlanId(Long planId);
+
+    void moveCycle(Long projectId, Long targetCycleId,Long cycleId,String lastRank,String nextRank);
 }

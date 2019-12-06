@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -38,6 +39,7 @@ import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.TestDateUtil;
 
 /**
@@ -826,6 +828,22 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setType(testCycleDTO.getType());
         testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
         return testIssueFolderVO;
+    }
+
+    @Override
+    public void moveCycle(Long projectId, Long targetCycleId, Long cycleId, String lastRank, String nextRank) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setCycleId(targetCycleId);
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.select(testCycleCaseDTO);
+        if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
+            throw new CommonException("error.issueFolder.has.case");
+        }
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        testCycleDTO.setParentCycleId(targetCycleId);
+        testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+        if(cycleMapper.updateByPrimaryKeySelective(testCycleDTO)!=1){
+            throw new CommonException("error.update.cycle");
+        }
     }
 
     @Override
