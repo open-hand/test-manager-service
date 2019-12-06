@@ -79,4 +79,20 @@
             #{executId}
         </foreach>
     </delete>
+
+    <select id="listByExecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+     select  * from test_cycle_case_defect_rel
+      where  defect_link_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </select>
+
+    <insert id="batchInsert">
+        insert into test_cycle_case_defect_rel(defect_type,defect_link_id,issue_id,project_id,created_by,last_updated_by)
+        values
+        <foreach collection="list" item="defect" separator=",">
+        (#{defect.type},#{defect.defectLinkId},#{defect.issueId},#{defect.projectId},#{defect.createdBy},#{defect.lastUpdatedBy})
+        </foreach>
+    </insert>
 </mapper>

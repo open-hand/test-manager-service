@@ -10,4 +10,10 @@ public class SagaTopicCodeConstants {
      */
     public final  static   String TEST_MANAGER_CREATE_PLAN = "test-manager-create-plan";
 
+    /**
+     * 复制计划
+     */
+    public final  static   String TEST_MANAGER_CLONE_PLAN = "test-manager-clone-plan";
+
+
 }

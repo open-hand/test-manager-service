@@ -12,4 +12,6 @@ public interface TestCycleCaseAttachmentRelMapper extends Mapper<TestCycleCaseAt
     void batchInsert(@Param("list") List<TestCycleCaseAttachmentRelDTO> attachmentRelDTOS);
 
     void batchDeleteByExecutIds(List<Long> executeIds);
+
+    List<TestCycleCaseAttachmentRelDTO> listByExecuteIds(@Param("list") List<Long> olderExecuteId);
 }

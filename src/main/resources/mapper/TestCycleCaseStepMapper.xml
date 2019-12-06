@@ -247,4 +247,13 @@
             #{executId}
         </foreach>
     </delete>
+
+    <select id="listByexecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        select  * from test_cycle_case_step
+        where
+        execute_id in
+        <foreach collection="ids" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </select>
 </mapper>

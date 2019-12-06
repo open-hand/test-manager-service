@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
+import java.util.Map;
 import io.choerodon.test.manager.api.vo.TestPlanTreeVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
@@ -52,4 +53,18 @@ public interface TestPlanServcie {
     TestPlanVO queryPlan(Long projectId, Long planId);
 
     void updateStatusCode(Long projectId, TestPlanDTO testPlanDTO);
+
+    /**
+     * 复制计划
+     * @param projectId
+     * @param planId
+     * @return
+     */
+    TestPlanVO clone(Long projectId, Long planId);
+
+    /**
+     * saga复制计划
+     * @param map
+     */
+    void sagaClonePlan(Map<String,Long> map);
 }

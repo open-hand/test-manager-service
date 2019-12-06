@@ -140,6 +140,22 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         batchInsert(Arrays.asList(testCycleCaseDTO),attachMap);
     }
 
+    @Override
+    public void cloneAttach(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        List<TestCycleCaseAttachmentRelDTO> list = testCycleCaseAttachmentRelMapper.listByExecuteIds(olderExecuteId);
+        if(CollectionUtils.isEmpty(list)){
+            return;
+        }
+        list.forEach(v -> {
+            v.setAttachmentLinkId(caseIdMap.get(v.getAttachmentLinkId()));
+            v.setCreatedBy(userDetails.getUserId());
+            v.setLastUpdatedBy(userDetails.getUserId());
+        });
+        testCycleCaseAttachmentRelMapper.batchInsert(list);
+    }
+
     private void baseDelete(String bucketName, Long attachId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setId(attachId);

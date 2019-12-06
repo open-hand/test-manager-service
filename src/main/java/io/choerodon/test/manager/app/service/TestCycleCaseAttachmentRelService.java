@@ -40,4 +40,6 @@ public interface TestCycleCaseAttachmentRelService {
     List<TestCycleCaseAttachmentRelVO> listByExecuteId(Long executeId);
 
     void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO);
+
+    void cloneAttach(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
 }

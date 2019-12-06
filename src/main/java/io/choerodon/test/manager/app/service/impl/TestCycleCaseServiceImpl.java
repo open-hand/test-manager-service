@@ -932,6 +932,43 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         batchInsertByTestCase(cycleMap, list);
     }
 
+    @Override
+    public void cloneCycleCase(Map<Long, Long> cycleMapping, List<Long> cycIds) {
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listByCycleIds(cycIds);
+        if(CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            return;
+        }
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        Map<Long, Long> olderCycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.toMap(TestCycleCaseDTO::getCycleId, TestCycleCaseDTO::getExecuteId));
+        List<Long> olderExecuteId = new ArrayList<>();
+        testCycleCaseDTOS.stream().map(v -> {
+            olderExecuteId.add(v.getExecuteId());
+            v.setCycleId(cycleMapping.get(v.getCycleId()));
+            v.setCreatedBy(userDetails.getUserId());
+            v.setLastUpdatedBy(userDetails.getUserId());
+            v.setExecuteId(null);
+            return  v;
+        });
+        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM == 0 ? 1 : testCycleCaseDTOS.size() / AVG_NUM));
+        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
+        lists.forEach(v -> {
+            bathcInsert(v);
+            testCycleCaseDTOList.addAll(v);
+        });
+        Map<Long,Long> caseIdMap = new HashMap<>();
+        testCycleCaseDTOList.stream().forEach(v ->{
+            caseIdMap.put(olderCycleCaseMap.get(v.getCycleId()),v.getExecuteId());
+        });
+
+        // 复制步骤
+        testCycleCaseStepService.cloneStep(caseIdMap,olderExecuteId);
+        // 复制附件
+        testCycleCaseAttachmentRelService.cloneAttach(caseIdMap,olderExecuteId);
+
+        // 复制缺陷
+        testCycleCaseDefectRelService.cloneDefect(caseIdMap,olderExecuteId);
+    }
+
     private void checkImport(Long cycleId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setParentCycleId(cycleId);

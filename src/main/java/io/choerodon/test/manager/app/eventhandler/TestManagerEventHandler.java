@@ -206,4 +206,10 @@ public class TestManagerEventHandler {
         testPlanServcie.sagaCreatePlan(testPlanVO);
     }
 
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
+    public void clonePlan(String message) throws IOException {
+        Map<String,Long> map =(Map<String,Long>)objectMapper.readValue(message, Map.class);
+        testPlanServcie.sagaClonePlan(map);
+    }
+
 }

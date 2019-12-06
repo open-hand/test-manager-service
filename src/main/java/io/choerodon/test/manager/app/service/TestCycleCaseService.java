@@ -153,4 +153,11 @@ public interface TestCycleCaseService {
      * @param map
      */
     void importCase(Long projectId, Long cycleId, Map<Long,CaseSelectVO> map,Long planId);
+
+    /**
+     * 复制测试执行
+     * @param cycleMapping
+     * @param cycIds
+     */
+    void cloneCycleCase(Map<Long, Long> cycleMapping, List<Long> cycIds);
 }
