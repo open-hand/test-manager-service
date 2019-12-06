@@ -84,4 +84,6 @@ public interface TestCycleService {
     TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO);
 
     void syncByCaseFolder(Long folderId, Long cycleId);
+
+    void moveCycle(Long projectId, Long targetCycleId,Long cycleId,String lastRank,String nextRank);
 }
