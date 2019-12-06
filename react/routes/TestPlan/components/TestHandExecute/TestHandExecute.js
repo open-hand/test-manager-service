@@ -1,5 +1,5 @@
 import React, {
-  Component, useEffect, useContext, useRef,
+  Component, useEffect, useContext, useRef, useState,
 } from 'react';
 import {
   Icon, Card, Spin, Tooltip,
@@ -114,9 +114,6 @@ function TestHandExecute(props) {
     const newData = { ...detailData, ...updateData };
     // 删除一些不必要字段
     updateDetail(newData).then((Data) => {
-      if (ExecuteDetailSideRef) {
-        ExecuteDetailSideRef.HideFullEditor();
-      }
       ExecuteDetailStore.getInfo();
     }).catch((error) => {
       // console.log(error);
@@ -255,7 +252,7 @@ function TestHandExecute(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <Spin spinning={false} style={{ display: 'flex' }}>
+          <Spin spinning={loading} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div
@@ -305,7 +302,6 @@ function TestHandExecute(props) {
               {visible && (
                 <ExecuteDetailSide
                   disabled={disabled}
-                  ref={ExecuteDetailSideRef}
                   detailData={detailData}
                   fileList={fileList}
                   status={{ statusColor, statusName }}

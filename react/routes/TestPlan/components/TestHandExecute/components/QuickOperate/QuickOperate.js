@@ -54,7 +54,7 @@ const QuickOperate = ({
     </Menu.Item>
   ));
   const menu = (
-    <Menu onClick={item => onSubmit({ executionStatus: item.key })}>
+    <Menu onClick={item => onSubmit({ executionStatus: Number(item.key) })}>
       {menuItems}
     </Menu>
   );

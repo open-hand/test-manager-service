@@ -1,12 +1,13 @@
 import { Choerodon } from '@choerodon/boot';
 import { editCycleStep, addDefects, removeDefect } from '@/api/ExecuteDetailApi';
 
-function updateRecordData(data, record, name, oldValue) {
+function updateRecordData(data, dataSet, record, name, oldValue) {
   // eslint-disable-next-line no-param-reassign
   delete data.defects;
   // eslint-disable-next-line no-param-reassign
   delete data.stepAttachment;
   editCycleStep(data).then((Data) => {
+    dataSet.query(dataSet.currentPage);
   }).catch((error) => {
     window.console.log(error);
     record.set(name, oldValue);
@@ -87,7 +88,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
           case 'defects':
             // eslint-disable-next-line no-case-declarations
             const arrIDs = value.map(i => i.id);
-            removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).catch((error) => {
+            removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => dataSet.query(dataSet.currentPage)).catch((error) => {
               record.set(name, oldValue);
               Choerodon.prompt(error);
             });
@@ -97,11 +98,11 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
               break;
             }
             data.stepStatus = value;
-            updateRecordData(data, record, name, oldValue);
+            updateRecordData(data, dataSet, record, name, oldValue);
             break;
           case 'description':
             data.description = value;
-            updateRecordData(data, record, name, oldValue);
+            updateRecordData(data, dataSet, record, name, oldValue);
             break;
           case 'stepAttachment':
             // deleteAttachment(value.id).then(() => {
