@@ -126,8 +126,44 @@ class TestPlanTree extends Component {
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();
       testPlanStore.loadRightData(planId);
-    }    
-    testPlanStore.setCurrentCycle(item); 
+    }
+    testPlanStore.setCurrentCycle(item);
+  }
+
+  handleMenuClick=(key, nodeItem) => {    
+    const { context: { testPlanStore } } = this.props;
+    switch (key) {
+      case 'copy': {
+        openClonePlan({
+          planId: nodeItem.id,
+        });
+        break;
+      }
+      case 'drag': {
+        openDragPlanFolder({
+          planId: nodeItem.id,
+        });
+        break;
+      }
+      case 'import': {
+        const [planId, folderId] = testPlanStore.getId(nodeItem.id);
+        openImportIssue({
+          planId,
+          folderId,
+          onSubmit: () => {
+            testPlanStore.loadAllData();
+          },
+        });
+        break;
+      }
+      case 'delete': {
+        testPlanStore.treeRef.current.trigger.delete(nodeItem);
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   renderTreeNode = (node, { item }) => {
@@ -140,6 +176,7 @@ class TestPlanTree extends Component {
         <TreeNode
           item={item}
           nodeProps={node.props}
+          onMenuClick={this.handleMenuClick}
         >
           {node}
         </TreeNode>
@@ -149,7 +186,7 @@ class TestPlanTree extends Component {
 
   getMenuItems = (item) => {
     const isPlan = item.topLevel;
-    if (isPlan) {
+    if (isPlan) {      
       return [
         <Menu.Item key="copy">
           复制此计划
@@ -200,6 +237,10 @@ class TestPlanTree extends Component {
           onCreate={this.handleCreateFolder}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
+          getDeleteTitle={(item) => {
+            const isPlan = item.topLevel;
+            return isPlan ? '确认删除计划' : '确认删除文件夹';
+          }}
           afterDrag={this.handleDrag}
           selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}
@@ -213,36 +254,7 @@ class TestPlanTree extends Component {
               enableAddFolder: item => item.topLevel || !item.hasCase,
             }
           }
-          onMenuClick={(key, nodeItem) => {
-            switch (key) {
-              case 'copy': {
-                openClonePlan({
-                  planId: nodeItem.id,
-                });
-                break;
-              }
-              case 'drag': {
-                openDragPlanFolder({
-                  planId: nodeItem.id,
-                });
-                break;
-              }
-              case 'import': {
-                const [planId, folderId] = testPlanStore.getId(nodeItem.id);
-                openImportIssue({
-                  planId,
-                  folderId,
-                  onSubmit: () => {
-                    testPlanStore.loadAllData();
-                  },
-                });
-                break;
-              }
-              default: {
-                break;
-              }
-            }
-          }}
+          onMenuClick={this.handleMenuClick}
         />
       </div>
     );

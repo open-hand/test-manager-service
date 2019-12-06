@@ -18,6 +18,12 @@ import './index.less';
 
 const PADDING_PER_LEVEL = 16;
 const prefix = 'c7ntest-tree';
+function callFunction(prop, ...args) {
+  if (typeof prop === 'function') {
+    return prop(...args);
+  }
+  return prop;
+}
 function mapDataToTree(data) {
   const { rootIds, treeFolder } = data;
   const treeData = {
@@ -70,6 +76,7 @@ function PureTree({
   renderTreeNode,
   treeNodeProps,
   onMenuClick,
+  getDeleteTitle,
   ...restProps
 }, ref) {
   const [tree, setTree] = useState(mapDataToTree(data));
@@ -104,10 +111,31 @@ function PureTree({
     setTree(oldTree => mutateTree(oldTree, itemId, attrs));
   }, []);
   const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
+  const handleDelete = useCallback((item) => {   
+    Modal.confirm({
+      title: getDeleteTitle ? callFunction(getDeleteTitle, item) : '确认删除文件夹',
+    }).then(async (button) => {
+      if (button === 'ok') {
+        try {
+          await onDelete(item);
+          setTree(oldTree => removeItem(oldTree, item.path));
+          if (selected.id === item.id) {
+            // 这里取旧的tree数据
+            setSelected(getSiblingOrParent(tree, item));          
+          }
+        } catch (error) {
+          // console.log(error);
+        }
+      }
+    });
+  }, [getDeleteTitle, onDelete, selected.id, setSelected, tree]);
   useImperativeHandle(ref, () => ({
     addFirstLevelItem,
     updateTree,
     getItem,
+    trigger: {
+      delete: handleDelete,
+    },
   }));
   const onSelect = (item) => {
     setSelected(item);
@@ -145,18 +173,7 @@ function PureTree({
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };
-  const handleDelete = useCallback(async (item) => {
-    try {
-      await onDelete(item);
-      setTree(oldTree => removeItem(oldTree, item.path));
-      if (selected.id === item.id) {
-        // 这里取旧的tree数据
-        setSelected(getSiblingOrParent(tree, item));          
-      }
-    } catch (error) {
-      // console.log(error);
-    }
-  }, [onDelete, selected.id, setSelected, tree]);
+
   const handleMenuClick = useCallback((node, { key }) => {
     switch (key) {
       case 'rename': {
@@ -164,13 +181,7 @@ function PureTree({
         break;
       }
       case 'delete': {
-        Modal.confirm({
-          title: '确认删除文件夹',
-        }).then((button) => {
-          if (button === 'ok') {
-            handleDelete(node);
-          }
-        });
+        handleDelete(node);
         break;
       }
       case 'add': {
