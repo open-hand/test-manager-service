@@ -77,13 +77,13 @@ class SelectVariable extends Component {
           saveList={(list) => { CreateAutoTestStore.setAppVersionList(list); }}
         />
         {/* 选择目标版本 */}
-        <section className="deployApp-section">
+        {/* <section className="deployApp-section">
           <SelectVersion
             value={version.versionId}
             style={{ width: 512 }}
             onChange={this.handleVersionSelect}
           />
-        </section>
+        </section> */}
         {/* 选择环境 */}
         <section className="deployApp-section">
           <Select
