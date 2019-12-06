@@ -31,7 +31,11 @@ public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
 
     void batchDeleteTestCycleCaseSteps(@Param("executeStepIds") List<Long> executeStepIds);
 
+    String getLastedRank(@Param("executeId") Long executeId);
+
     void fixCycleCaseStep();
+
+    void fixCycleCaseStepRank();
 
     void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
 

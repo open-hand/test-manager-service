@@ -2,6 +2,8 @@ package io.choerodon.test.manager.app.service.impl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,15 +12,15 @@ import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -52,13 +54,23 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
 
+    private static final String BACKETNAME = "test";
+
+
+    private final FileFeignClient fileFeignClient;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
+    @Autowired
+    public TestCycleCaseAttachmentRelServiceImpl(FileFeignClient fileFeignClient) {
+        this.fileFeignClient = fileFeignClient;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete(String bucketName, Long attachId) {
-        baseDelete(bucketName, attachId);
+    public void delete(Long attachId) {
+        baseDelete(String.format("%s/%s/",attachmentUrl,BACKETNAME), attachId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -79,13 +91,41 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 m.forEach(v -> baseDelete(TestAttachmentCode.ATTACHMENT_BUCKET, v.getId()))
         );
     }
-
+    @Override
+    public void dealIssue(Long executeId, String type, String description,String fileName, String url) {
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
+        testCycleCaseAttachmentRelDTO.setComment(description);
+        testCycleCaseAttachmentRelDTO.setAttachmentType(type);
+        testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
+        testCycleCaseAttachmentRelDTO.setUrl(String.format("/%s/%s/%s",attachmentUrl,BACKETNAME,url));
+        testCycleCaseAttachmentRelMapper.insertSelective(testCycleCaseAttachmentRelDTO);
+    }
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType) {
-        List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = new ArrayList<>();
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String description, String attachmentType) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        files.forEach(v -> testCycleCaseAttachmentRelVOS.add(upload(bucketName, v.getOriginalFilename(), v, attachmentLinkId, attachmentType, null)));
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile multipartFile : files) {
+                String fileName = multipartFile.getOriginalFilename();
+                ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
+                if (response == null || response.getStatusCode() != HttpStatus.OK) {
+                    throw new CommonException("error.attachment.upload");
+                }
+                dealIssue(executeId, attachmentType,description, fileName, dealUrl(response.getBody()));
+            }
+        }
+
+        TestCycleCaseAttachmentRelDTO issueAttachmentDTO = new TestCycleCaseAttachmentRelDTO();
+        issueAttachmentDTO.setAttachmentLinkId(executeId);
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(issueAttachmentDTO);
+        if (testCycleCaseAttachmentRelDTOS != null && !testCycleCaseAttachmentRelDTOS.isEmpty()) {
+            testCycleCaseAttachmentRelDTOS.forEach(attachment -> {
+                attachment.setUrl(attachmentUrl + attachment.getUrl());
+            });
+        }
+        List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS= modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+        }.getType());
         return testCycleCaseAttachmentRelVOS;
     }
 
@@ -160,17 +200,17 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setId(attachId);
 
-        String url;
-        try {
-            url = URLDecoder.decode(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO).get(0).getUrl(), "UTF-8");
-        } catch (IOException i) {
-            throw new CommonException(i);
-        }
-
-        ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
-        if (response == null || response.getStatusCode() != HttpStatus.OK) {
-            throw new CommonException("error.attachment.upload");
-        }
+//        String url;
+//        try {
+//            url = URLDecoder.decode(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO).get(0).getUrl(), "UTF-8");
+//        } catch (IOException i) {
+//            throw new CommonException(i);
+//        }
+//
+//        ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
+//        if (response == null || response.getStatusCode() != HttpStatus.OK) {
+//            throw new CommonException("error.attachment.upload");
+//        }
         testCycleCaseAttachmentRelMapper.delete(testCycleCaseAttachmentRelDTO);
     }
 
@@ -191,7 +231,16 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
         return testCycleCaseAttachmentRelDTO;
     }
-
+    private String dealUrl(String url) {
+        String dealUrl = null;
+        try {
+            URL netUrl = new URL(url);
+            dealUrl = netUrl.getFile().substring(BACKETNAME.length() + 2);
+        } catch (MalformedURLException e) {
+            throw new CommonException(e.getMessage());
+        }
+        return dealUrl;
+    }
     private void baseInsert(TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO){
        if(ObjectUtils.isEmpty(testCycleCaseAttachmentRelDTO)){
            throw  new CommonException("error.cycle.attachment.rel.is.null");
