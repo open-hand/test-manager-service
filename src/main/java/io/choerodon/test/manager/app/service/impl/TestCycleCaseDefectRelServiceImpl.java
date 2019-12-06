@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import com.google.common.collect.Lists;
 
@@ -151,5 +155,20 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         } else {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        List<TestCycleCaseDefectRelDTO> list = testCycleCaseDefectRelMapper.listByExecuteIds(olderExecuteId);
+        if(CollectionUtils.isEmpty(list)){
+            return;
+        }
+        list.forEach(v -> {
+            v.setDefectLinkId(caseIdMap.get(v.getDefectLinkId()));
+            v.setCreatedBy(userDetails.getUserId());
+            v.setLastUpdatedBy(userDetails.getUserId());
+        });
+        testCycleCaseDefectRelMapper.batchInsert(list);
     }
 }

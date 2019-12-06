@@ -2,21 +2,16 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import org.springframework.http.ResponseEntity;
-
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
-import io.choerodon.test.manager.api.vo.BatchCloneCycleVO;
-import io.choerodon.test.manager.api.vo.TestCycleVO;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -72,10 +67,11 @@ public interface TestCycleService {
 
     /**
      * 创建计划时批量创建循环
+     *
      * @param testPlanDTO
      * @param testIssueFolderDTOS
      */
-    List<TestCycleDTO>  batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
+    List<TestCycleDTO> batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
     List<TestCycleDTO> listByPlanIds(List<Long> planIds);
 
@@ -84,4 +80,8 @@ public interface TestCycleService {
     TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO);
 
     void syncByCaseFolder(Long folderId, Long cycleId);
+
+    void cloneCycleByPlanId(Long copyPlanId, Long newPlanId);
+
+    TestTreeIssueFolderVO queryTreeByPlanId(Long planId);
 }

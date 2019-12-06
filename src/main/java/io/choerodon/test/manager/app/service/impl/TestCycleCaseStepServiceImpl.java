@@ -5,18 +5,26 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.omg.CORBA.COMM_FAILURE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -24,18 +32,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
-import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -133,6 +129,23 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(Arrays.asList(testCaseDTO.getCaseId()));
         Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
         batchInsert(Arrays.asList(testCycleCaseDTO), caseStepMap);
+    }
+
+    @Override
+    public void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(olderExecuteId);
+        if(CollectionUtils.isEmpty(list)){
+            return;
+        }
+        list.forEach(v -> {
+            v.setExecuteId(caseIdMap.get(v.getExecuteId()));
+            v.setExecuteStepId(null);
+            v.setCreatedBy(userDetails.getUserId());
+            v.setLastUpdatedBy(userDetails.getUserId());
+        });
+        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
     }
 
     @Override

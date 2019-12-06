@@ -3,6 +3,7 @@ package io.choerodon.test.manager.infra.mapper;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import org.apache.ibatis.annotations.Param;
 
@@ -26,4 +27,8 @@ public interface TestCycleCaseDefectRelMapper extends Mapper<TestCycleCaseDefect
     List<TestCycleCaseDTO> queryByBug(@Param("projectId") Long projectId, @Param("bugId") Long bugId);
 
     void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
+
+    List<TestCycleCaseDefectRelDTO> listByExecuteIds(@Param("list") List<Long> olderExecuteId);
+
+    void batchInsert(@Param("list") List<TestCycleCaseDefectRelDTO> list);
 }

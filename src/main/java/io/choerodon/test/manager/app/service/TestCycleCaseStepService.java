@@ -83,4 +83,6 @@ public interface TestCycleCaseStepService {
      * @param testCaseDTO
      */
     void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO);
+
+    void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
 }

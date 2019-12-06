@@ -13,6 +13,7 @@ import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -88,7 +89,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());
-        testPlan.setInitStatus(TestPlanStatus.DOING.getStatus());
+        testPlan.setInitStatus("creating");
         TestPlanDTO testPlanDTO = baseCreate(testPlan);
         testPlanVO.setPlanId(testPlan.getPlanId());
         testPlanVO.setObjectVersionNumber(testPlan.getObjectVersionNumber());
@@ -162,7 +163,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             planTreeVO.setTopLevel(true);
             if (!CollectionUtils.isEmpty(testCycles)) {
                 // 构建文件夹树
-                testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getCycleId(), allCycleMap, map, parentCycleMap, v.getPlanId(),testCycleCaseMap));
+                testCycles.forEach(testCycleDTO -> buildTree(folderRoot, testCycleDTO.getCycleId(), allCycleMap, map, parentCycleMap, v.getPlanId(), testCycleCaseMap));
             }
             if (!CollectionUtils.isEmpty(folderRoot)) {
                 planTreeVO.setHasChildren(true);
@@ -213,7 +214,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
-        testPlan.setInitStatus(TestPlanStatus.DONE.getStatus());
+        testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);
         testPlan.setObjectVersionNumber(testPlanVO.getObjectVersionNumber());
         baseUpdate(testPlan);
     }
@@ -238,6 +239,46 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     public void updateStatusCode(Long projectId, TestPlanDTO testPlanDTO) {
         testPlanDTO.setProjectId(projectId);
+        baseUpdate(testPlanDTO);
+    }
+
+    @Override
+    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN,
+            description = "test-manager 复制测试计划", inputSchema = "{}")
+    public TestPlanVO clone(Long projectId, Long planId) {
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
+        testPlanDTO.setPlanId(null);
+        testPlanDTO.setCreatedBy(null);
+        testPlanDTO.setLastUpdateDate(null);
+        testPlanDTO.setCreationDate(null);
+        testPlanDTO.setLastUpdatedBy(null);
+        testPlanDTO.setObjectVersionNumber(null);
+        testPlanDTO.setInitStatus(TestPlanInitStatus.CREATING);
+        baseCreate(testPlanDTO);
+        Map<String, Long> map = new HashMap<>();
+        map.put("older", planId);
+        map.put("new", testPlanDTO.getPlanId());
+        producer.apply(
+                StartSagaBuilder
+                        .newBuilder()
+                        .withLevel(ResourceLevel.PROJECT)
+                        .withRefType("")
+                        .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN)
+                        .withPayloadAndSerialize(map)
+                        .withRefId("")
+                        .withSourceId(projectId),
+                builder -> {
+                });
+        return modelMapper.map(testPlanDTO, TestPlanVO.class);
+    }
+
+    @Override
+    public void sagaClonePlan(Map<String, Long> map) {
+        Long copyPlanId = map.get("older");
+        Long newPlanId = map.get("new");
+        testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId);
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
+        testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
         baseUpdate(testPlanDTO);
     }
 
@@ -313,7 +354,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         return testPlanDTO;
     }
 
-    private void buildTree(List<Long> root, Long cycleId, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId,Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap) {
+    private void buildTree(List<Long> root, Long cycleId, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId, Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap) {
         TestCycleDTO testCycleDTO = allFolderMap.get(cycleId);
         if (ObjectUtils.isEmpty(testCycleDTO)) {
             return;
@@ -326,7 +367,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 不存在就新建
         if (ObjectUtils.isEmpty(testTreeFolderVO)) {
             testTreeFolderVO = new TestTreeFolderVO();
-            bulidTestTreeFolderVO(testTreeFolderVO,testCycleDTO,parentMap,testCycleCaseMap,map);
+            bulidTestTreeFolderVO(testTreeFolderVO, testCycleDTO, parentMap, testCycleCaseMap, map);
         }
 
         // 判断是不是顶层文件夹,是顶层文件夹就结束递归
@@ -336,10 +377,11 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             }
             return;
         } else {
-            folderParentNotZero(root, testCycleDTO, allFolderMap, map, parentMap, planId,testCycleCaseMap);
+            folderParentNotZero(root, testCycleDTO, allFolderMap, map, parentMap, planId, testCycleCaseMap);
         }
     }
-    private void bulidTestTreeFolderVO(TestTreeFolderVO testTreeFolderVO,TestCycleDTO testCycleDTO,Map<Long, List<TestCycleDTO>> parentMap,Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap,Map<Long, TestTreeFolderVO> map){
+
+    private void bulidTestTreeFolderVO(TestTreeFolderVO testTreeFolderVO, TestCycleDTO testCycleDTO, Map<Long, List<TestCycleDTO>> parentMap, Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap, Map<Long, TestTreeFolderVO> map) {
         testTreeFolderVO.setId(testCycleDTO.getCycleId());
         if (!ObjectUtils.isEmpty(testCycleDTO.getParentCycleId()) && CollectionUtils.isEmpty(parentMap.get(testCycleDTO.getCycleId()))) {
             testTreeFolderVO.setHasChildren(false);
@@ -347,10 +389,9 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             testTreeFolderVO.setHasChildren(true);
         }
 
-        if(!CollectionUtils.isEmpty(testCycleCaseMap.get(testCycleDTO.getCycleId()))){
+        if (!CollectionUtils.isEmpty(testCycleCaseMap.get(testCycleDTO.getCycleId()))) {
             testTreeFolderVO.setHasCase(true);
-        }
-        else {
+        } else {
             testTreeFolderVO.setHasCase(true);
         }
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
@@ -360,6 +401,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testTreeFolderVO.setTopLevel(false);
         map.put(testCycleDTO.getCycleId(), testTreeFolderVO);
     }
+
     /**
      * 构建测试计划树时，文件夹的父文件夹不为0时的处理逻辑
      *
@@ -369,7 +411,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
      * @param map
      * @param parentMap
      */
-    private void folderParentNotZero(List<Long> root, TestCycleDTO testCycleDTO, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId,Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap) {
+    private void folderParentNotZero(List<Long> root, TestCycleDTO testCycleDTO, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId, Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap) {
         // 查看当前文件夹的父文件夹是否存在
         TestTreeFolderVO parentTreeFolderVO = null;
         if (!ObjectUtils.isEmpty(map.get(testCycleDTO.getParentCycleId()))) {
@@ -382,7 +424,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                 return;
             }
             TestCycleDTO parentCycle = allFolderMap.get(testCycleDTO.getParentCycleId());
-            bulidTestTreeFolderVO(parentTreeFolderVO,parentCycle,parentMap,testCycleCaseMap,map);
+            bulidTestTreeFolderVO(parentTreeFolderVO, parentCycle, parentMap, testCycleCaseMap, map);
         } else {
             //存在就更新父文件夹的Children值
             List<Long> children = new ArrayList<>();
@@ -396,7 +438,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             map.put(testCycleDTO.getParentCycleId(), parentTreeFolderVO);
         }
         //使用父文件夹递归
-        buildTree(root, testCycleDTO.getParentCycleId(), allFolderMap, map, parentMap, planId,testCycleCaseMap);
+        buildTree(root, testCycleDTO.getParentCycleId(), allFolderMap, map, parentMap, planId, testCycleCaseMap);
     }
 
     /**

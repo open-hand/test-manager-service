@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -237,5 +238,11 @@ public class TestCycleController {
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.cycleName.check"));
     }
-
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询树")
+    @GetMapping(value = "/tree")
+    public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
+                                                           @RequestParam("plan_id") Long planId){
+        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId),HttpStatus.OK);
+    }
 }

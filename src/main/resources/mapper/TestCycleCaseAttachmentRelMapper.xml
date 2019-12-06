@@ -16,4 +16,12 @@
             #{executId}
         </foreach>
     </delete>
+
+    <select id="listByExecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
+        select * from test_cycle_case_attach_rel
+        where   attachment_link_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </select>
 </mapper>

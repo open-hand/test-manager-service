@@ -51,6 +51,8 @@ public class TestPlanVO {
 
     private UserDO managerUser;
 
+    private String initStatus;
+
     public Long getPlanId() {
         return planId;
     }
@@ -154,5 +156,13 @@ public class TestPlanVO {
 
     public void setManagerUser(UserDO managerUser) {
         this.managerUser = managerUser;
+    }
+
+    public String getInitStatus() {
+        return initStatus;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }

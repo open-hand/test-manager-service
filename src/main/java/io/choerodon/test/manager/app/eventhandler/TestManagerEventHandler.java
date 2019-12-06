@@ -15,7 +15,9 @@ import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
+import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,17 +63,10 @@ public class TestManagerEventHandler {
     private TestProjectInfoService testProjectInfoService;
 
     @Autowired
-    private TestCaseService testCaseService;
-
-
-    @Autowired
-    private TestCycleService testCycleService;
-
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
-
-    @Autowired
     private TestPlanServcie testPlanServcie;
+
+    @Autowired
+    private TestPlanMapper testPlanMapper;
 
 //    @Autowired
 //    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
@@ -203,7 +198,28 @@ public class TestManagerEventHandler {
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
     public void createPlan(String message) throws IOException {
         TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
-        testPlanServcie.sagaCreatePlan(testPlanVO);
+        try {
+            testPlanServcie.sagaCreatePlan(testPlanVO);
+        } catch (Exception e) {
+            testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
+            testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
+            throw e;
+        }
+
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
+    public void clonePlan(String message) throws IOException {
+        Map<String, Long> map = (Map<String, Long>) objectMapper.readValue(message, Map.class);
+        try {
+        testPlanServcie.sagaClonePlan(map);
+        }
+        catch (Exception e) {
+            TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(map.get("new"));
+            testPlanDTO.setInitStatus(TestPlanInitStatus.FAIL);
+            testPlanMapper.updateByPrimaryKeySelective(testPlanDTO);
+            throw e;
+            }
     }
 
 }
