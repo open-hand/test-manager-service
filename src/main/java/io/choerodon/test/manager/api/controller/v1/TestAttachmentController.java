@@ -30,12 +30,12 @@ public class TestAttachmentController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加附件")
     @PostMapping
-    public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(@RequestParam("bucket_name") String bucketName,
-                                                                         @RequestParam("attachmentLinkId") Long attachmentLinkId,
-                                                                         @RequestParam("attachmentType") String attachmentType,
+    public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(@RequestParam("executeId") Long executeId,
+                                                                         @RequestParam("description") String description,
+                                                                         @RequestParam("attachmentType") String type,
                                                                          @PathVariable(name = "project_id") Long projectId,
                                                                          HttpServletRequest request) {
-        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request, bucketName, attachmentLinkId, attachmentType))
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request, executeId, description, type))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.upload.file"));
 
@@ -43,10 +43,10 @@ public class TestAttachmentController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除附件")
-    @DeleteMapping("/delete/bucket/{bucketName}/attach/{attachId}")
-    public ResponseEntity removeAttachment(@PathVariable(name = "bucketName") String bucketName, @PathVariable(name = "attachId") Long attachId,
+    @DeleteMapping("/{attachId}")
+    public ResponseEntity removeAttachment(@PathVariable(name = "attachId") Long attachId,
                                            @PathVariable(name = "project_id") Long projectId) {
-        testCycleCaseAttachmentRelService.delete(bucketName, attachId);
+        testCycleCaseAttachmentRelService.delete(attachId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -50,4 +50,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name:'expect_result',type:'varchar(300)',remarks: '预期结果')
         }
     }
+
+    changeSet(id: '2019-12-6-add-column-rank', author:'lizhaozhong') {
+        addColumn(tableName:'test_cycle_case_step'){
+            column(name:'rank',type:'varchar(255)',remarks: 'rank')
+        }
+    }
 }

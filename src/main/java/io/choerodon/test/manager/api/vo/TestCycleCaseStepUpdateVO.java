@@ -35,6 +35,39 @@ public class TestCycleCaseStepUpdateVO {
     @ApiModelProperty(value = "预期结果")
     private String expectedResult;
 
+    @ApiModelProperty(value = "rank")
+    private String rank;
+
+    @ApiModelProperty(value = "上一位排序值")
+    private String lastRank;
+
+    @ApiModelProperty(value = "后一位排序值")
+    private String nextRank;
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
     public Long getExecuteStepId() {
         return executeStepId;
     }

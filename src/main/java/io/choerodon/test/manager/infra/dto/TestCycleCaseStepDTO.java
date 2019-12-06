@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import io.choerodon.mybatis.entity.BaseDTO;
 
 /**
@@ -14,12 +16,17 @@ public class TestCycleCaseStepDTO extends BaseDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long executeStepId;
+
     private Long executeId;
+
     private Long stepId;
+
     private String description;
+
     private Long stepStatus;
 
     private Long objectVersionNumber;
+
     private Long createdBy;
 
     private Long lastUpdatedBy;
@@ -28,11 +35,13 @@ public class TestCycleCaseStepDTO extends BaseDTO {
 
     private Date lastUpdateDate;
 
-
     private String testStep;
 
     private String testData;
 
+    private String rank;
+
+    @Column(name = "expect_result")
     private String expectedResult;
 
     @Transient
@@ -233,6 +242,14 @@ public class TestCycleCaseStepDTO extends BaseDTO {
         this.statusColor = statusColor;
     }
     public TestCycleCaseStepDTO() {
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     public TestCycleCaseStepDTO(Long executeId, Long stepId, Long createdBy, Long lastUpdatedBy, String testStep, String testData, String expectedResult) {

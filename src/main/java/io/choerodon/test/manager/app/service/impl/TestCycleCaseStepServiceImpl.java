@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.core.exception.CommonException;
+
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
@@ -25,6 +27,7 @@ import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.omg.CORBA.COMM_FAILURE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +35,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -56,11 +71,13 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private TestCaseStepMapper testCaseStepMapper;
 
+    private static final Long defStatus = 4L;
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO);
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseStepVO.getLastRank(),testCycleCaseStepVO.getNextRank()));
+        baseUpdate(testCycleCaseStepDTO);
     }
 
     @Override
@@ -189,17 +206,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepDTO.setStepStatus(4L);
+        testCycleCaseStepDTO.setStepStatus(defStatus);
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseStepMapper.getLastedRank(testCycleCaseStepVO.getExecuteId()),null));
         if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }
-    }
-
-    private List<TestCycleCaseStepDTO> baseUpdate(List<TestCycleCaseStepDTO> list) {
-        List<TestCycleCaseStepDTO> res = new ArrayList<>();
-        list.forEach(v -> res.add(updateSelf(v)));
-
-        return res;
     }
 
     private TestCycleCaseStepDTO updateSelf(TestCycleCaseStepDTO testCycleCaseStepDTO) {

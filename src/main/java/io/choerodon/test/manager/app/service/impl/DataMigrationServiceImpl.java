@@ -119,6 +119,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixCycleSource();
         //13 isnertStatus
         fixStatus();
+        //14.cycleCaseRank
+        fixCycleCaseStepRank();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -303,6 +305,9 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         statusDTOS.add(stepStatus);
         statusDTOS.add(stepStatus1);
         statusDTOS.stream().forEach(e->testStatusMapper.insert(e));
+    }
+    private void fixCycleCaseStepRank(){
+        testCycleCaseStepMapper.fixCycleCaseStepRank();
     }
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();

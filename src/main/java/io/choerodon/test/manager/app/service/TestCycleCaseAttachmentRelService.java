@@ -18,7 +18,7 @@ public interface TestCycleCaseAttachmentRelService {
 
     TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
 
-    void delete(String bucketName, Long attachId);
+    void delete(Long attachId);
 
     void delete(Long linkedId, String Type);
 
@@ -26,12 +26,13 @@ public interface TestCycleCaseAttachmentRelService {
      * 上传多个附件
      *
      * @param request          request
-     * @param bucketName       bucketName
-     * @param attachmentLinkId attachmentLinkId
+     * @param description description
      * @param attachmentType   attachmentType
      * @return TestCycleCaseAttachmentRelVO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, String bucketName, Long attachmentLinkId, String attachmentType);
+    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String description, String attachmentType);
+
+    void dealIssue(Long executeId, String type, String description,String fileName, String url);
 
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap);
 
