@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
@@ -60,11 +61,13 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private TestCaseStepMapper testCaseStepMapper;
 
+    private static final Long defStatus = 4L;
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO);
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseStepVO.getLastRank(),testCycleCaseStepVO.getNextRank()));
+        baseUpdate(testCycleCaseStepDTO);
     }
 
     @Override
@@ -176,17 +179,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepDTO.setStepStatus(4L);
+        testCycleCaseStepDTO.setStepStatus(defStatus);
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseStepMapper.getLastedRank(testCycleCaseStepVO.getExecuteId()),null));
         if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }
-    }
-
-    private List<TestCycleCaseStepDTO> baseUpdate(List<TestCycleCaseStepDTO> list) {
-        List<TestCycleCaseStepDTO> res = new ArrayList<>();
-        list.forEach(v -> res.add(updateSelf(v)));
-
-        return res;
     }
 
     private TestCycleCaseStepDTO updateSelf(TestCycleCaseStepDTO testCycleCaseStepDTO) {

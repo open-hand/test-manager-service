@@ -616,22 +616,22 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Transactional(rollbackFor = Exception.class)
     public void updateCaseAndStep(Long projectId,TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
-        List<TestCycleCaseStepDTO> newTestCycleCaseStepDTOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepDTO>>() {
+        List<TestCycleCaseStepVO> newTestCycleCaseStepVOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepVO>>() {
         }.getType());
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteId(testCycleCaseUpdateVO.getExecuteId());
         List<TestCycleCaseStepDTO> oldTestCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
         List<Long> noldStepIds = oldTestCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
-        newTestCycleCaseStepDTOS.forEach(newcCycle -> {
+        newTestCycleCaseStepVOS.forEach(newcCycle -> {
             if (!noldStepIds.contains(newcCycle.getExecuteStepId())) {
                 //添加步骤
-                testCycleCaseStepService.baseInsert(newcCycle);
+                testCycleCaseStepService.create(newcCycle);
             }else {
                 //更新步骤
-                testCycleCaseStepService.baseUpdate(newcCycle);
+                testCycleCaseStepService.update(newcCycle);
             }
         });
-        List<Long> newIds = newTestCycleCaseStepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+        List<Long> newIds = newTestCycleCaseStepVOS.stream().map(TestCycleCaseStepVO::getExecuteStepId).collect(Collectors.toList());
         oldTestCycleCaseStepDTOS.forEach(oldeCycle -> {
             if (!newIds.contains(oldeCycle.getExecuteStepId())) {
                 //删除步骤

@@ -230,6 +230,17 @@
         </foreach>
     </delete>
 
+    <select id="getLastedRank" resultType="java.lang.String">
+        SELECT
+            rank
+        FROM
+            test_cycle_case_step
+        WHERE
+            execute_id = #{executeId}
+        ORDER BY
+            rank DESC
+            LIMIT 1
+    </select>
     <update id="fixCycleCaseStep">
         UPDATE test_cycle_case_step tccs SET tccs.test_step = (
             SELECT
@@ -238,6 +249,17 @@
             SELECT tcs.test_data FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id),
          tccs.expect_result = (
             SELECT tcs.expected_result FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id)
+    </update>
+    <update id="fixCycleCaseStepRank">
+        UPDATE test_cycle_case_step tccs
+        SET rank = (
+            SELECT
+                rank
+            FROM
+                `test_case_step` tcs
+            WHERE
+                tccs.step_id = tcs.step_id
+        )
     </update>
 
     <delete id="batchDeleteByExecutIds">

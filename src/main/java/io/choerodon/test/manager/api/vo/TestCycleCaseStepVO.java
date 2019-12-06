@@ -58,6 +58,15 @@ public class TestCycleCaseStepVO {
     @ApiModelProperty(value = "状态名")
     private String statusName;
 
+    @ApiModelProperty(value = "rank")
+    private String rank;
+
+    @ApiModelProperty(value = "上一位排序值")
+    private String lastRank;
+
+    @ApiModelProperty(value = "后一位排序值")
+    private String nextRank;
+
     public IssueInfosVO getIssueInfosVO() {
         return issueInfosVO;
     }
@@ -186,4 +195,27 @@ public class TestCycleCaseStepVO {
         this.statusName = statusName;
     }
 
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
+    }
 }
