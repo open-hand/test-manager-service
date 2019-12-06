@@ -66,7 +66,7 @@ public class TestAutomationHistoryServiceImpl implements TestAutomationHistorySe
         PageInfo<TestAutomationHistoryVO> list = PageUtil.buildPageInfoWithPageInfoList(serviceDOPage, vos);
         populateAPPVersion(projectId, list);
         userService.populateTestAutomationHistory(list);
-        populateCycles(list);
+//        populateCycles(list);
         return list;
     }
 

@@ -411,23 +411,23 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
         List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
 
-        // 创建测试循环
-        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
-        //遍历suite
-        for (TestNgSuite suite : result.getSuites()) {
-            String folderName = folderBaseName + "-" + suite.getName();
-            // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
-            TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
-            // 创建阶段（应用名+镜像名+suite名+第几次）
-            TestCycleVO testStage = getStage(projectId,
-                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
-            cycleIds.add(testStage.getCycleId());
-            //处理Case
-            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
-
-        }
-        // 若有多个suite，拼接成listStr
-        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
+//        // 创建测试循环
+//        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
+//        //遍历suite
+//        for (TestNgSuite suite : result.getSuites()) {
+//            String folderName = folderBaseName + "-" + suite.getName();
+//            // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
+//            TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
+//            // 创建阶段（应用名+镜像名+suite名+第几次）
+//            TestCycleVO testStage = getStage(projectId,
+//                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+//            cycleIds.add(testStage.getCycleId());
+//            //处理Case
+//            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
+//
+//        }
+//        // 若有多个suite，拼接成listStr
+//        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
 
         // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
