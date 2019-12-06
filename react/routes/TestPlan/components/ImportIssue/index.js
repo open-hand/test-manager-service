@@ -4,9 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { Modal } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
-import {
-  createPlan, getPlan, editPlan,
-} from '@/api/TestPlanApi';
+import { importIssueToFolder } from '@/api/TestPlanApi';
 import SelectIssue from './SelectIssue';
 import SelectIssueStore from './SelectIssueStore';
 import Context from './context';
@@ -18,7 +16,7 @@ const propTypes = {
 };
 
 function ImportIssue({
-  modal, submit, onSubmit, planId,
+  modal, submit, onSubmit, planId, folderId: planFolderId,
 }) {
   const selectIssueStore = useMemo(() => new SelectIssueStore(), []);
 
@@ -26,25 +24,25 @@ function ImportIssue({
     selectIssueStore.loadIssueTree();
   }, [selectIssueStore]);
   const handleSubmit = useCallback(async () => {
-    // try {
-    //   if () {
-
-    //     const result = await submit(plan);
-    //     onSubmit(result);
-    //     return true;
-    //   }
-    //   return false;
-    // } catch (error) {
-    //   // console.log(error);
-    //   return false;
-    // }
-  }, []);
+    try {
+      if (selectIssueStore.getSelectedIssueNum > 0) {
+        const data = selectIssueStore.getSelectedFolders();
+        const result = await submit(planId, planFolderId, data);
+        onSubmit(result);
+        return true;
+      }
+      return true;
+    } catch (error) {
+      // console.log(error);
+      return false;
+    }
+  }, [onSubmit, planFolderId, planId, selectIssueStore, submit]);
   useEffect(() => {
     modal.handleOk(handleSubmit);
   }, [modal, handleSubmit]);
 
   return (
-    <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
+    <Context.Provider value={{ SelectIssueStore: selectIssueStore, planId }}>
       <SelectIssue />
     </Context.Provider>
   );
@@ -52,7 +50,7 @@ function ImportIssue({
 ImportIssue.propTypes = propTypes;
 const ObserverImportIssue = observer(ImportIssue);
 export default function openImportIssue({
-  onCreate, planId,
+  onSubmit, planId, folderId,
 }) {
   Modal.open({
     title: '导入用例',
@@ -61,6 +59,6 @@ export default function openImportIssue({
     style: {
       width: 1090,
     },
-    children: <ObserverImportIssue planId={planId} submit={createPlan} onSubmit={onCreate} />,
+    children: <ObserverImportIssue planId={planId} folderId={folderId} submit={importIssueToFolder} onSubmit={onSubmit} />,
   });
 }

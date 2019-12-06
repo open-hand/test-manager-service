@@ -228,8 +228,13 @@ class TestPlanTree extends Component {
                 break;
               }
               case 'import': {
+                const [planId, folderId] = testPlanStore.getId(nodeItem.id);
                 openImportIssue({
-                  planId: nodeItem.id,
+                  planId,
+                  folderId,
+                  onSubmit: () => {
+                    testPlanStore.loadAllData();
+                  },
                 });
                 break;
               }

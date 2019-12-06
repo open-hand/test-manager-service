@@ -35,6 +35,9 @@ export function editFolder(data) {
 export function deleteFolder(folderId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/delete/${folderId}`);
 }
+export function importIssueToFolder(planId, folderId, data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/import?plan_id=${planId}&cycle_id=${folderId}`, data);
+}
 /**
  *  根据文件夹id和计划id获取执行
  */

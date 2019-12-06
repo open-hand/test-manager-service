@@ -247,7 +247,7 @@ class IssueTreeStore {
       if (item.selected) {
         total += item.selected.length;
       } else {
-        total += item.caseNum;
+        total += item.caseNum || 0;
         if (item.unSelected) {
           total -= item.unSelected.length;
         }

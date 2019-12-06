@@ -4,7 +4,15 @@ export function autoSelect(dataSet, treeMap) {
     // 下面是自动选中相关的代码
     const folderId = record.get('folderId');
     const caseId = record.get('caseId');          
-    const folder = treeMap.get(folderId);         
+    const hasDisable = record.get('hasDisable');          
+    const folder = treeMap.get(folderId);  
+    // 如果已经选中，仅展示
+    if (hasDisable) {
+      dataSet.select(record);
+      // eslint-disable-next-line no-param-reassign
+      record.selectable = false;
+      return;
+    }
     // 如果文件夹被选中，而且这一项没有被取消勾选，就选中
     if (folder.checked) {
       // 如果已经被选中，就不进行下面

@@ -9,7 +9,7 @@ const { Column } = Table;
 function IssueTable({
   folderId, saveDataSet,
 }) {
-  const { SelectIssueStore } = useContext(Context);
+  const { SelectIssueStore, planId } = useContext(Context);
   const { treeMap } = SelectIssueStore;
   const dataSet = useMemo(() => new DataSet({
     primaryKey: 'caseId',
@@ -17,7 +17,7 @@ function IssueTable({
     selection: 'multiple',
     transport: {
       read: {
-        url: `/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}`,
+        url: `/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}&plan_id=${planId}`,
         method: 'post',
         transformRequest: (data) => {   
           const { params, summary, caseNum } = data;
@@ -36,7 +36,11 @@ function IssueTable({
       load: ({ dataSet: ds }) => {
         autoSelect(ds, treeMap);
       },
-      select: ({ record }) => {      
+      select: ({ record }) => {    
+        // 禁用说明已经选上了，不处理  
+        if (record.get('hasDisable')) {
+          return;
+        }
         const source = record.get('source');
         // 如果是自动选中的，不做处理
         if (source === 'auto') {
@@ -72,7 +76,7 @@ function IssueTable({
       { name: 'summary', type: 'string', label: '用例名称' },
       { name: 'caseNum', type: 'string', label: '用例编号' },
     ],
-  }), [SelectIssueStore, folderId, treeMap]);
+  }), [SelectIssueStore, folderId, planId, treeMap]);
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
