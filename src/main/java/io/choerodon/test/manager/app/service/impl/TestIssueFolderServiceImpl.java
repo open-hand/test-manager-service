@@ -3,9 +3,19 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import jodd.util.ArraysUtil;
+import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
+import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
+import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestIssueFolderService;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.exception.IssueFolderException;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -16,21 +26,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
-import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
-import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestIssueFolderService;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.exception.IssueFolderException;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 import org.springframework.util.ObjectUtils;
 
 /**

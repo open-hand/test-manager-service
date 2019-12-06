@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.UserDO;
@@ -17,9 +16,7 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import jodd.util.ArraysUtil;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -229,7 +226,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         TestPlanVO testPlanVO = modelMapper.map(testPlan, TestPlanVO.class);
         Long managerId = testPlan.getManagerId();
         if (!ObjectUtils.isEmpty(managerId)) {
-            Map<Long, UserDO> query = userService.query(ArraysUtil.array(managerId));
+            Map<Long, UserDO> query = userService.query(new Long[]{managerId});
             UserDO userDO = query.get(managerId);
             if (!ObjectUtils.isEmpty(userDO)) {
                 testPlanVO.setManagerUser(userDO);
