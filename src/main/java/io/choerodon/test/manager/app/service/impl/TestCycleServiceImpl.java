@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import com.github.pagehelper.PageInfo;
 
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.agile.api.vo.ProductVersionPageDTO;
