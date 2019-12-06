@@ -4,10 +4,9 @@ import {
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
-import { getPlanTreeById, moveFolders } from '@/api/TestPlanApi';
+import { getPlanTreeById, editFolder } from '@/api/TestPlanApi';
 import Tree from '@/components/Tree';
 import './index.scss';
-import test from './test.json';
 
 const key = Modal.key();
 
@@ -16,10 +15,23 @@ const propTypes = {
 };
 
 function DragPlanFolder({
-  treeData,
+  treeData, 
 }) {
-  const handleDrag = useCallback((sourceItem, destination) => {
-    // handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));
+  const handleDrag = useCallback(async (sourceItem, destination) => { 
+    const { objectVersionNumber, name } = sourceItem.data;
+    const data = {
+      cycleName: name,
+      cycleId: sourceItem.id,
+      parentId: Number(destination.parentId),
+      objectVersionNumber,
+    };
+    const result = await handleRequestFailed(editFolder(data));
+    return {
+      data: {
+        ...sourceItem.data,      
+        objectVersionNumber: result.objectVersionNumber,
+      },
+    };
   }, []);
   return (
     <Tree
@@ -35,9 +47,8 @@ function DragPlanFolder({
 }
 DragPlanFolder.propTypes = propTypes;
 const ObserverDragPlanFolder = observer(DragPlanFolder);
-export default async function openDragPlanFolder({ planId }) {
-  // const planTree = await getPlanTreeById(planId);
-  const planTree = test;
+export default async function openDragPlanFolder({ planId, handleOk }) {
+  const planTree = await getPlanTreeById(planId);
   const { rootIds, treeFolder } = planTree;
   const treeData = {
     rootIds,
@@ -66,5 +77,6 @@ export default async function openDragPlanFolder({ planId }) {
     children: <ObserverDragPlanFolder treeData={treeData} />,
     okText: '关闭',
     footer: okBtn => okBtn,
+    onOk: handleOk,
   });
 }

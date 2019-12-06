@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
-  observable, action, computed, toJS,
+  observable, action, computed, toJS, set,
 } from 'mobx';
 import { find, pull } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
@@ -185,7 +185,7 @@ class IssueTreeStore {
     } else {
       // 以选中为主
       if (!item.selected) {
-        item.selected = [];
+        set(item, { selected: [] });
       }
       item.selected.push(caseId);
     }
@@ -204,8 +204,8 @@ class IssueTreeStore {
       }
     } else {
       // 以未选中为主
-      if (!item.unSelected) {
-        item.unSelected = [];
+      if (!item.unSelected) {       
+        set(item, { unSelected: [] });
       }
       item.unSelected.push(caseId);
     }
@@ -241,7 +241,7 @@ class IssueTreeStore {
 
   // 获取当前选中的issue数量
   @computed get getSelectedIssueNum() {
-    const selectedFolders = this.getSelectedFolders();   
+    const selectedFolders = this.getSelectedFolders();
     return Object.keys(selectedFolders).reduce((total, key) => {
       const folderId = Number(key);
       const item = this.treeMap.get(folderId); 

@@ -11,7 +11,7 @@ export function getPlanTree(testPlanStatus) {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/tree?status_code=${testPlanStatus}`);
 }
 export function getPlanTreeById(planId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/plan/tree?plan_id=${planId}`);
+  return request.get(`/test/v1/projects/${getProjectId()}/cycle/tree?plan_id=${planId}`);
 }
 export function createPlan(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/plan`, data);

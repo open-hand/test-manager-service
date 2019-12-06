@@ -142,6 +142,9 @@ class TestPlanTree extends Component {
       case 'drag': {
         openDragPlanFolder({
           planId: nodeItem.id,
+          handleOk: () => {
+            testPlanStore.loadAllData();
+          },
         });
         break;
       }
