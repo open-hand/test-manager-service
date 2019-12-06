@@ -879,7 +879,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void importCase(Long projectId, Long cycleId, Map<Long, CaseSelectVO> map) {
+    public void importCase(Long projectId, Long cycleId, Map<Long, CaseSelectVO> map, Long planId) {
         // 校验是不是底层文件夹
         checkImport(cycleId);
         if (CollectionUtils.isEmpty(map)) {
@@ -888,32 +888,39 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByProject(projectId);
         Map<Long, TestCaseDTO> caseMap = testCaseDTOS.stream().collect(Collectors.toMap(TestCaseDTO::getCaseId, Function.identity()));
         Map<Long, List<TestCaseDTO>> folderCaseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
+        List<Long> existCaseIds = testCycleCaseMapper.listByPlanId(planId);
         List<TestCaseDTO> list = new ArrayList<>();
-        map.entrySet().forEach(key -> {
+        for (Long key : map.keySet()) {
+            List<Long> insertCaseIds = new ArrayList<>();
             CaseSelectVO caseSelectVO = map.get(key);
             List<TestCaseDTO> caseList = folderCaseMap.get(key);
             if (CollectionUtils.isEmpty(caseList)) {
                 return;
             }
+            List<Long> collect = caseList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
             if (!caseSelectVO.getCustom()) {
-                list.addAll(folderCaseMap.get(key));
+                // 去掉文件夹下已经导入的用例
+                collect.removeAll(existCaseIds);
+                insertCaseIds.addAll(collect);
             } else {
-                List<Long> caseIds = new ArrayList<>();
-                if (!CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
-                    caseIds.addAll(caseSelectVO.getSelected());
 
-                } else  if (!CollectionUtils.isEmpty(caseSelectVO.getUnSelected())){
-                    List<Long> collect = caseList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
+                    insertCaseIds.addAll(caseSelectVO.getSelected());
+
+                } else if (!CollectionUtils.isEmpty(caseSelectVO.getUnSelected())) {
+                    collect.removeAll(existCaseIds);
                     collect.removeAll(caseSelectVO.getUnSelected());
-                    caseIds.addAll(collect);
+                    insertCaseIds.addAll(collect);
                 }
-                caseIds.forEach(v -> {
-                    list.add(caseMap.get(v));
-                });
+
             }
-        });
+            insertCaseIds.forEach(v -> {
+                list.add(caseMap.get(v));
+            });
+        }
         Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
-        cycleMap.put(cycleId, cycleMapper.selectByPrimaryKey(cycleId));
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        cycleMap.put(testCycleDTO.getFolderId(), testCycleDTO);
         batchInsertByTestCase(cycleMap, list);
     }
 
@@ -1120,7 +1127,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         for (Map.Entry<Long, List<TestCycleCaseDTO>> map : tcycleCaseMap.entrySet()
         ) {
             String prevRank = RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(map.getKey()), null);
-            if (CollectionUtils.isEmpty(map.getValue())) {
+            if (!CollectionUtils.isEmpty(map.getValue())) {
                 for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
                     testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
                     prevRank = testCycleCaseDTO.getRank();

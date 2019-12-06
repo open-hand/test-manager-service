@@ -295,8 +295,9 @@ public class TestCycleCaseController {
     @PostMapping("/import")
     public ResponseEntity importCase(@PathVariable("project_id") Long projectId,
                                      @RequestParam("cycle_id") Long cycleId,
+                                     @RequestParam("plan_id") Long planId,
                                      @RequestBody Map<Long,CaseSelectVO> map) {
-        testCycleCaseService.importCase(projectId,cycleId,map);
+        testCycleCaseService.importCase(projectId,cycleId,map,planId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
