@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { Button, Upload } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import SingleFileUpload from '@/components/SingleFileUpload';
 
-import { uploadFile, deleteAttachment } from '../../api/FileApi';
+import { uploadFileStep } from '../../api/FileApi';
 import './UploadInTable.less';
 
 const propTypes = {
@@ -22,21 +22,12 @@ const defaultProps = {
   handleUpdateFileList: () => {
   },
 };
+
 function UploadInTable(props) {
   const {
     fileList, config, onOk, handleDeleteFile, handleUpdateFileList, readOnly,
   } = props;
 
-  const handleRemove = (file) => {
-    if (file.url) {
-      deleteAttachment(file.id).then(() => {
-        onOk();
-      }).catch((error) => {
-        window.console.log(error);
-        Choerodon.prompt('网络异常');
-      });
-    }
-  };
 
   return (
     <div className="c7ntest-upload-table">
@@ -84,10 +75,11 @@ function UploadInTable(props) {
               //   attachmentLinkId: record.executeStepId,
               //   attachmentType: 'CYCLE_STEP',
               // }; 
-              // upload file                
+              // upload file    
+
               formData.append('file', file);
               // formData.append('file', file);
-              uploadFile(formData, config).then((res) => {
+              uploadFileStep(formData, config).then((res) => {
                 if (res.failed) {
                   Choerodon.prompt('不能有重复附件');
                 } else {

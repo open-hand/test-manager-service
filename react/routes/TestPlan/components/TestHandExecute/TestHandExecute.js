@@ -1,8 +1,8 @@
 import React, {
-  Component, useEffect, useContext, useRef, useState,
+  useEffect, useContext,
 } from 'react';
 import {
-  Icon, Card, Spin, Tooltip,
+  Icon, Card, Spin,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
@@ -15,25 +15,14 @@ import _ from 'lodash';
 import { Modal, Button } from 'choerodon-ui/pro/lib';
 import queryString from 'query-string';
 import { StatusTags } from '../../../../components';
-import {
-  executeDetailLink, executeDetailShowLink, beforeTextUpload, getParams, TestExecuteLink, TestPlanLink,
-} from '../../../../common/utils';
+import { executeDetailLink } from '../../../../common/utils';
 import { updateDetail } from '../../../../api/ExecuteDetailApi';
-import { uploadFile } from '../../../../api/IssueManageApi';
 import './TestHandExecute.less';
 import {
   ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
 } from './components';
 import Store from './stores';
 import EditExecuteIssue from './components/EditExecuteIssue';
-
-function beforeUpload(file) {
-  const isLt2M = file.size / 1024 / 1024 < 30;
-  if (!isLt2M) {
-    // console.log('不能超过30MB!');
-  }
-  return isLt2M;
-}
 
 const CardWrapper = ({ children, title, style }) => (
   <Card
@@ -49,7 +38,6 @@ const CardWrapper = ({ children, title, style }) => (
 function TestHandExecute(props) {
   const context = useContext(Store);
   const { ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet } = context;
-  const ExecuteDetailSideRef = useRef(null);
   useEffect(() => {
     const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
@@ -62,7 +50,7 @@ function TestHandExecute(props) {
   const goExecute = (mode) => {
     const detailData = ExecuteDetailStore.getDetailData;
     const { nextExecuteId, previousExecuteId } = detailData;
-    const { disabled, history } = context;
+    const { history } = context;
     const toExecuteId = mode === 'pre' ? previousExecuteId : nextExecuteId;
     const { plan_id: planId, cycle_id: cycleId } = ExecuteDetailStore.getDetailParams;
     if (toExecuteId) {
@@ -75,65 +63,26 @@ function TestHandExecute(props) {
     ExecuteDetailStore.setExecuteDetailSideVisible(!visible);
   };
 
-  // 用于文件移除。 传入ExcuteDeailSide组件内， 在UploadButtonExcuteDetail组件内进行调用
-  const handleFileRemove = (file) => {
-    if (file.url) {
-      ExecuteDetailStore.enterloading();
-      // deleteAttachment(file.uid).then((data) => {
-      //   ExecuteDetailStore.getInfo();
-      //   Choerodon.prompt('删除成功');
-      // }).catch((error) => {
-      //   Choerodon.prompt(`删除失败 ${error}`);
-      // });
-    }
-  };
-
-  const handleUpload = (files) => {
-    if (beforeUpload(files[0])) {
-      const formData = new FormData();
-      [].forEach.call(files, (file) => {
-        formData.append('file', file);
-      });
-      const config = {
-        bucketName: 'test',
-        comment: '',
-        attachmentLinkId: ExecuteDetailStore.getCycleData.executeId,
-        attachmentType: 'CYCLE_CASE',
-      };
-      ExecuteDetailStore.enterloading();
-      uploadFile(formData, config).then(() => {
-        ExecuteDetailStore.getInfo();
-      }).catch(() => {
-        Choerodon.prompt('网络异常');
-      });
-    }
-  };
-
   const handleSubmit = (updateData) => {
     const detailData = ExecuteDetailStore.getDetailData;
     const newData = { ...detailData, ...updateData };
-    // 删除一些不必要字段
-    updateDetail(newData).then((Data) => {
+    updateDetail(newData).then(() => {
       ExecuteDetailStore.getInfo();
-    }).catch((error) => {
-      // console.log(error);
+    }).catch(() => {
       Choerodon.prompt('网络异常');
     });
   };
 
-  const handleCommentSave = (value) => {
-    beforeTextUpload(value, {}, handleSubmit, 'comment');
-  };
 
   const quickPassOrFail = (text) => {
     const detailData = { ...ExecuteDetailStore.getDetailData };
     const { statusList } = ExecuteDetailStore;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
       detailData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
-      updateDetail(detailData).then((Data) => {
+      updateDetail(detailData).then(() => {
         ExecuteDetailStore.getInfo();
       }).catch((error) => {
-        Choerodon.prompt('网络错误');
+        Choerodon.prompt(`${error || '网络错误'}`);
       });
     } else {
       Choerodon.prompt('未找到对应状态');
@@ -153,11 +102,6 @@ function TestHandExecute(props) {
     ExecuteDetailStore.getInfo();
   };
 
-  const handleCreateBugShow = () => {
-    ExecuteDetailStore.setCreateBugShow(true);
-    ExecuteDetailStore.setDefectType('CYCLE_CASE');
-    ExecuteDetailStore.setCreateDectTypeId(ExecuteDetailStore.id);
-  };
   /**
    * 保存同步用例
    */
@@ -168,9 +112,33 @@ function TestHandExecute(props) {
 
     }
   };
+  /**
+   * 取消时数据清空
+   */
+  const handleCloseEdit = async () => {
+    const { editExecuteCaseDataSet } = context;
+    if (editExecuteCaseDataSet.current) {
+      editExecuteCaseDataSet.splice(0, 1);
+    }
+    return true;
+  };
+  /**
+   * 关闭回调，数据有更新则刷新页面
+   * 无论数据是否有变化都删除数据
+   */
+  const onRefreshAfterClose = () => {
+    const { editExecuteCaseDataSet } = context;
+
+    if (editExecuteCaseDataSet.current) {
+      if (editExecuteCaseDataSet.current.status === 'update') {
+        ExecuteDetailStore.getInfo();
+        stepTableDataSet.query();
+      }
+      editExecuteCaseDataSet.splice(0, 1);
+    }
+  };
   const handleOpenEdit = () => {
     const { editExecuteCaseDataSet, executeId } = context;
-    editExecuteCaseDataSet.query();
     Modal.open({
       key: 'editExecuteIssue',
       title: '修改执行',
@@ -178,9 +146,10 @@ function TestHandExecute(props) {
       style: {
         width: 740,
       },
+      afterClose: onRefreshAfterClose,
+      onCancel: handleCloseEdit,
       children: (
         <EditExecuteIssue
-          ExecuteDetailStore={ExecuteDetailStore}
           editDataset={editExecuteCaseDataSet}
           executeId={executeId}
         />
@@ -298,12 +267,12 @@ function TestHandExecute(props) {
                 </div>
 
                 <CardWrapper
-                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.length}）`}</span>]}
+                  title={[<FormattedMessage id="execute_testDetail" />, <span style={{ marginLeft: 5 }}>{`（${stepTableDataSet.totalCount}）`}</span>]}
                 >
                   <StepTable
                     dataSet={stepTableDataSet}
-                    readOnly={planStatus === 'done'}
-                    operateStatus={planStatus === 'doing'}
+                    readOnly={planStatus === 'done'} // 数据是否只读
+                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改
                     ExecuteDetailStore={ExecuteDetailStore}
                   />
                 </CardWrapper>
