@@ -841,7 +841,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
         testCycleDTO.setParentCycleId(targetCycleId);
         testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
-        if(cycleMapper.updateByPrimaryKeySelective(testCycleDTO)!=1){
+        if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
             throw new CommonException("error.update.cycle");
         }
     }
@@ -890,7 +890,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             });
             cycleMapper.batchInsert(testCycle);
             testCycle.forEach(v -> {
-                newMapping.put(v.getOldCycleId(),v.getCycleId());
+                newMapping.put(v.getOldCycleId(), v.getCycleId());
             });
         });
         // 复制执行
@@ -910,14 +910,14 @@ public class TestCycleServiceImpl implements TestCycleService {
         Map<Long, List<Long>> parentMap = collect.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId, Collectors.mapping(TestCycleDTO::getCycleId, Collectors.toList())));
         List<Long> root = new ArrayList<>();
         List<TestTreeFolderVO> treeFolder = new ArrayList<>();
-        collect.stream().forEach(cycle -> bulidTree(cycle,planId,root,parentMap,treeFolder));
+        collect.stream().forEach(cycle -> bulidTree(cycle, planId, root, parentMap, treeFolder));
         TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
         testTreeIssueFolderVO.setTreeFolder(treeFolder);
         testTreeIssueFolderVO.setRootIds(root);
         return testTreeIssueFolderVO;
     }
 
-    private void bulidTree(TestCycleDTO cycle, Long planId, List<Long> root, Map<Long, List<Long>> parentMap,List<TestTreeFolderVO> treeFolder) {
+    private void bulidTree(TestCycleDTO cycle, Long planId, List<Long> root, Map<Long, List<Long>> parentMap, List<TestTreeFolderVO> treeFolder) {
         TestTreeFolderVO testTreeFolderVO = new TestTreeFolderVO();
         testTreeFolderVO.setPlanId(planId);
         testTreeFolderVO.setId(cycle.getCycleId());
@@ -1302,7 +1302,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         for (Map.Entry<Long, List<TestCycleDTO>> map : listMap.entrySet()
         ) {
             String prevRank = RankUtil.Operation.INSERT.getRank(cycleMapper.getPlanLastedRank(map.getKey()), null);
-            if (CollectionUtils.isEmpty(map.getValue())) {
+            if (!CollectionUtils.isEmpty(map.getValue())) {
                 for (TestCycleDTO testCycleDTO : map.getValue()) {
                     testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
                     prevRank = testCycleDTO.getRank();
