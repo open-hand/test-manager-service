@@ -11,7 +11,7 @@ function TreeNode({
   children, nodeProps, item, onMenuClick, 
 }) {
   const { provided } = nodeProps;
-  if (item.data.initStatus === 'doing') {
+  if (item.data.initStatus === 'creating') {
     return (
       <div
         ref={provided.innerRef}
