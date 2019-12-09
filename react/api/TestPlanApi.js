@@ -16,6 +16,9 @@ export function getPlanTreeById(planId) {
 export function createPlan(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/plan`, data);
 }
+export function clonePlan(planId) {
+  return request.post(`/test/v1/projects/${getProjectId()}/plan/${planId}/clone`);
+}
 export function getPlan(planId) {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/${planId}/query`);
 }
