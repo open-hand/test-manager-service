@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useContext,
+  useEffect, useContext, useState,
 } from 'react';
 import {
   Icon, Card, Spin,
@@ -12,11 +12,12 @@ import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
-import { Modal, Button } from 'choerodon-ui/pro/lib';
+import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
 import { StatusTags } from '../../../../components';
-import { executeDetailLink } from '../../../../common/utils';
-import { updateDetail } from '../../../../api/ExecuteDetailApi';
+import { executeDetailLink, returnBeforeTextUpload } from '../../../../common/utils';
+import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
+import { uploadFile, deleteFile } from '@/api/FileApi';
 import './TestHandExecute.less';
 import {
   ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
@@ -38,6 +39,7 @@ const CardWrapper = ({ children, title, style }) => (
 function TestHandExecute(props) {
   const context = useContext(Store);
   const { ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet } = context;
+  const [syncLoading, setSyncLoading] = useState(false);
   useEffect(() => {
     const { executeId } = context;
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
@@ -102,15 +104,98 @@ function TestHandExecute(props) {
     ExecuteDetailStore.getInfo();
   };
 
+
+  /**
+   * 批量删除已上传文件（修改用例 保存）
+   * @param {*} files 
+   */
+  async function deleteFiles(files = []) {
+    files.forEach((file) => {
+      deleteFile(file);
+    });
+    return true;
+  }
+  /**
+   * 更新执行用例数据
+   * @param {*} data 
+   */
+  function UpdateExecuteData(data) {
+    const { executeId } = data;
+    const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
+      (i) => {
+        let { stepId } = i;
+        let { executeStepId } = i;
+        if (String(i.stepId).indexOf('.') !== -1) {
+          stepId = 0;
+          executeStepId = null;
+        }
+        return {
+          ...i,
+          stepId,
+          executeId,
+          executeStepId,
+        };
+      },
+    );
+    return new Promise((resolve) => {
+      returnBeforeTextUpload(data.description, data, async (res) => {
+        const newData = {
+          ...res,
+          fileList: [],
+          caseStepVOS: [],
+          testCycleCaseStepUpdateVOS,
+        };
+        const { isAsync = false } = newData;
+        const { fileList } = res;
+        await updateSidebarDetail(newData);
+        if (fileList) {
+          const formDataAdd = new FormData();
+          const formDataDel = [];
+          fileList.forEach((file) => {
+            if (!file.status) {
+              formDataAdd.append('file', file);
+            } else if (file.status && file.status === 'removed') {
+              formDataDel.push(file);
+            }
+          });
+
+          const config = {
+            description: '', executeId: res.executeId, attachmentType: 'CYCLE_CASE',
+          };
+          if (formDataAdd.has('file')) {
+            await uploadFile(formDataAdd, config);
+          }
+          // 删除文件 只能单个文件删除， 进行遍历删除
+          await deleteFiles(formDataDel.map(i => i.id));
+        }
+        message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
+        resolve(true);
+      });
+    });
+  }
+
   /**
    * 保存同步用例
    */
-  const handleSaveSyncCase = () => {
+  const handleSaveSyncCase = async (modal) => {
     const { editExecuteCaseDataSet } = context;
     if (editExecuteCaseDataSet.current && editExecuteCaseDataSet.validate()) {
       // 进行提交数据
-
+      setSyncLoading(true);
+      const newData = {
+        ...editExecuteCaseDataSet.current.toData(),
+        isAsync: true,
+      };
+      if (editExecuteCaseDataSet.current.status !== 'sync') {
+        if (!await UpdateExecuteData(newData)) {
+          message.info('同步修改失败');
+        }
+      } else {
+        message.info('未做任何修改');
+      }
     }
+    setSyncLoading(false);
+    modal.close();
   };
   /**
    * 取消时数据清空
@@ -139,7 +224,7 @@ function TestHandExecute(props) {
   };
   const handleOpenEdit = () => {
     const { editExecuteCaseDataSet, executeId } = context;
-    Modal.open({
+    const editModal = Modal.open({
       key: 'editExecuteIssue',
       title: '修改执行',
       drawer: true,
@@ -152,12 +237,13 @@ function TestHandExecute(props) {
         <EditExecuteIssue
           editDataset={editExecuteCaseDataSet}
           executeId={executeId}
+          UpdateExecuteData={UpdateExecuteData}
         />
       ),
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          <Button funcType="raised" color="primary" onClick={handleSaveSyncCase}>保存并同步到用例库</Button>
+          <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
           {cancelBtn}
         </div>
       ),
