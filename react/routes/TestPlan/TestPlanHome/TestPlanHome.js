@@ -35,6 +35,7 @@ import { getDragRank, executeDetailLink } from '../../../common/utils';
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 const updateRemindModal = Modal.key();
+let updateModal;
 
 function TestPlanHome() {
   const {
@@ -53,7 +54,8 @@ function TestPlanHome() {
 
   const handleUpdateOk = (record) => {
     const data = {
-      executeId: record.record,
+      caseId: record.caseId,
+      executeId: record.executeId,
       syncToCase: false,
       changeCase: record.changeCase,
       changeStep: record.changeStep,
@@ -62,10 +64,8 @@ function TestPlanHome() {
     comfirmUpdate(data).then(() => {
       Choerodon.prompt('更新成功');
       testPlanStore.loadExecutes();
-      return true;
     }).catch(() => {
       Choerodon.prompt('更新失败');
-      return false;
     });
   };
 
@@ -73,8 +73,10 @@ function TestPlanHome() {
     ignoreUpdate(record.executeId).then(() => {
       Choerodon.prompt('已忽略本次更新');
       testPlanStore.loadExecutes();
+      updateModal.close();
     }).catch(() => {
       Choerodon.prompt('忽略更新失败');
+      return false;
     });
   };
 
@@ -91,7 +93,7 @@ function TestPlanHome() {
 
   const handleOpenUpdateRemind = (record, e) => {
     e.stopPropagation();
-    Modal.open({
+    updateModal = Modal.open({
       key: updateRemindModal,
       drawer: true,
       title: '用例变更提醒',

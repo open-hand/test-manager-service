@@ -120,12 +120,12 @@ class TestPlanTree extends Component {
 
   setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
-    const [planId] = testPlanStore.getId(item.id);
+    const [planId, folderId] = testPlanStore.getId(item.id);
     if (item.id) {
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();
-      testPlanStore.loadRightData(planId);
+      testPlanStore.loadRightData(planId, folderId);
     }
     testPlanStore.setCurrentCycle(item);
   }
