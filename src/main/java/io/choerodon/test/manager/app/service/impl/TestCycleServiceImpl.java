@@ -885,6 +885,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testCycleDTO.setCreatedBy(userDetails.getUserId());
                 testCycleDTO.setLastUpdatedBy(userDetails.getUserId());
                 testCycleDTO.setOldCycleId(olderCycle);
+                testCycleDTO.setPlanId(newPlanId);
                 testCycle.add(testCycleDTO);
             });
             cycleMapper.batchInsert(testCycle);
