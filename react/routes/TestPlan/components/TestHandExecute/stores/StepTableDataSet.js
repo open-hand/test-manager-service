@@ -1,6 +1,6 @@
 import { Choerodon } from '@choerodon/boot';
 import { editCycleStep, addDefects, removeDefect } from '@/api/ExecuteDetailApi';
-import { deleteAttachment } from '@/api/FileApi';
+import { deleteAttachment, deleteFile } from '@/api/FileApi';
 
 function updateRecordData(data, dataSet, record, name, oldValue) {
   // eslint-disable-next-line no-param-reassign
@@ -108,7 +108,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
             break;
           case 'stepAttachment':
             if (value.length < oldValue.length) {
-              deleteAttachment(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
+              deleteFile(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
               }).catch((error) => {
                 window.console.log(error);
                 record.set(name, oldValue);
