@@ -154,8 +154,8 @@ class TestPlanStore extends TestPlanTreeStore {
       });
     }
 
-    loadRightData = async (planId) => {
-      const promiseArr = [this.loadExecutes(), this.loadStatusRes()];
+    loadRightData = async (planId, folderId) => {
+      const promiseArr = [this.loadExecutes(planId, folderId), this.loadStatusRes(planId, folderId)];
       if (planId !== this.getCurrentPlanId) {
         promiseArr.push(this.loadPlanDetail(planId));
       }
@@ -170,11 +170,10 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    async loadExecutes() {
+    async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1]) {
       const {
         executePagination, order, getSearchObj, 
       } = this;
-      const [planId, folderId] = this.getId();
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
       const search = getSearchObj;
@@ -196,8 +195,7 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    loadStatusRes() {      
-      const [planId, folderId] = this.getId();
+    loadStatusRes(planId = this.getId()[0], folderId = this.getId()[1]) {      
       getStatusByFolder({ planId, folderId }).then((res) => {
         this.setStatusRes(res);
       });
