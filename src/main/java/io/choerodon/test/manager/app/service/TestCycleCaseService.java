@@ -95,7 +95,7 @@ public interface TestCycleCaseService {
      */
     ExecutionStatusVO queryExecuteStatus(Long projectId,Long planId,Long folderId);
 
-    void updateCaseAndStep(Long projectId,TestCycleCaseUpdateVO testCycleCaseUpdateVO);
+    void updateCaseAndStep(Long projectId,TestCycleCaseUpdateVO testCycleCaseUpdateVO,Boolean isSync);
 
     void update(TestCycleCaseVO testCycleCaseVO);
 
