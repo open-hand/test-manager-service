@@ -49,7 +49,8 @@ function TestPlanModal({
       return true;
     }
     try {
-      if (dataSet.validate()) {
+      const validate = await dataSet.validate();
+      if (dataSet.isModified() && validate) {
         const plan = {
           ...rest,
           custom,
