@@ -216,8 +216,9 @@ public class TestCycleCaseController {
     @ApiOperation("更新测试执行和其对应步骤")
     @PutMapping("/case_step")
     public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
-                                 @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO) {
-        testCycleCaseService.updateCaseAndStep(projectId,testCycleCaseUpdateVO);
+                                 @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO,
+                                            @RequestParam(name = "isAsync",required = true,defaultValue = "false") Boolean isAsync) {
+        testCycleCaseService.updateCaseAndStep(projectId,testCycleCaseUpdateVO,isAsync);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
