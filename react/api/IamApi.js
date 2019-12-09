@@ -27,11 +27,8 @@ export function getUser(userId) {
  * @param {*} param
  * @returns
  */
-export function getUsers(param) {
-  if (param) {
-    return request.get(`/base/v1/projects/${getProjectId()}/users?size=40&param=${param}`);
-  }
-  return request.get(`/base/v1/projects/${getProjectId()}/users?size=40`);
+export function getUsers(param, size, page) {
+  return request.get(`/base/v1/projects/${getProjectId()}/users?size=20${page ? `&page=${page}` : ''}${param ? `&param=${param}` : ''}`);
 }
 
 export function getUpdateProjectInfoPermission() {
