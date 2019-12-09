@@ -1,15 +1,13 @@
-import React, { PureComponent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
-import PropTypes, { func } from 'prop-types';
 import {
-  Input, Icon, Select, Tooltip,
+  Icon, Tooltip,
 } from 'choerodon-ui';
 import { Button } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Table } from 'choerodon-ui/pro';
-import { editCycleStep, addDefects, removeDefect } from '../../../../../../api/ExecuteDetailApi';
-import { deleteAttachment } from '@/api/FileApi';
+import { addDefects } from '../../../../../../api/ExecuteDetailApi';
 import './StepTable.less';
 import {
   TextEditToggle, UploadInTable, StatusTags,
@@ -18,10 +16,9 @@ import DefectSelect from './DefectSelect';
 
 const { Text, Edit } = TextEditToggle;
 const { Column } = Table;
-const { Option } = Select;
 
 const DefectSelectText = ({
-  defects, record, disabled, onDelete, children: text,
+  defects, record, visibleDel, onDelete, children: text, isShowContent = true, // 是否展示空白文本内容
 }) => {
   const DefectItem = ({ children, data, delBtnVisible = true }) => (
     <Tooltip title={children}>
@@ -29,7 +26,7 @@ const DefectSelectText = ({
         // key={defect.id}
         className="c7n-test-execute-detail-step-table-defects-option"
       >
-        <div className="c7n-test-execute-detail-step-table-defects-option-text">{children}</div>
+        <div className={`c7n-test-execute-detail-step-table-defects-option-text${visibleDel ? '-has-btn' : ' '}`}>{children}</div>
         {delBtnVisible && (
           <span
             role="none"
@@ -51,19 +48,20 @@ const DefectSelectText = ({
     return (
       <ul className="c7n-test-execute-detail-step-table-defects">
         {
-          defects.map((defect, i) => (
-            <DefectItem data={defect} delBtnVisible={!disabled}>
+          defects.map(defect => (
+            <DefectItem data={defect} delBtnVisible={visibleDel}>
               {`${defect.issueInfosVO.issueName} ${defect.issueInfosVO.summary}`}
             </DefectItem>
           ))
         }
       </ul>
     );
-  } else if (!disabled) {
+  } else if (isShowContent) {
     return <div style={{ width: 100, color: '#3f51b5' }}>{text}</div>;
   }
   return '';
 };
+
 function StepTable(props) {
   const {
     dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false,
@@ -77,7 +75,7 @@ function StepTable(props) {
     dataSet.query(dataSet.currentPage);
   };
   /**
-   * 更新表格的高度 放置lock列高度不变
+   * 更新表格的高度 防止lock列高度不变
    */
   const updateTableHeight = (update) => {
     setLock(false);
@@ -93,12 +91,16 @@ function StepTable(props) {
     }
   };
   const handleDeleteFile = (record, value) => {
-    deleteAttachment(value.id).then((data) => {
-      onRefreshCurrent();
-      Choerodon.prompt('删除成功');
-    }).catch((error) => {
-      Choerodon.prompt(`删除失败 ${error}`);
-    });
+    const newFiles = record.get('stepAttachment').filter(file => file.id !== value.id);
+    updateTableHeight(
+      () => record.set('stepAttachment', newFiles),
+    );
+    // deleteAttachment(value.id).then(() => {
+    //   onRefreshCurrent();
+    //   Choerodon.prompt('删除成功');
+    // }).catch((error) => {
+    //   Choerodon.prompt(`删除失败 ${error}`);
+    // });
   };
   /**
    * 获取操作列是否隐藏
@@ -149,30 +151,27 @@ function StepTable(props) {
   });
   // 增加文件
   const onAddFile = (record, data) => {
-    const fileList = record.get('stepAttachment');
-    // onRefreshCurrent();
     updateTableHeight(
-      () => record.set('stepAttachment', [...fileList, ...data]),
+      () => record.set('stepAttachment', data),
     );
   };
   function renderAttachment({ record, value }) {
     return (
       <UploadInTable
         fileList={getFileList(value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
-        onOk={onRefreshCurrent}
         readOnly={readOnly}
         handleUpdateFileList={onAddFile.bind(this, record)}
         handleDeleteFile={handleDeleteFile.bind(this, record)}
         config={{
           attachmentLinkId: record.get('executeStepId'),
           attachmentType: 'CYCLE_STEP',
+          executeId: record.get('executeStepId'),
         }}
       />
     );
   }
 
   const handleAddDefects = (record) => {
-    // record.set('defects', record.get('tempDefects'));
     if (record.get('tempDefects')) {
       addDefects(record.get('tempDefects').map(i => i.issueInfosVO)).then(() => {
         onRefreshCurrent();
@@ -202,7 +201,13 @@ function StepTable(props) {
         originData={{ defects: defects.map(i => i) }}
       >
         <Text>
-          <DefectSelectText defects={defects} record={record} disabled={disabled} onDelete={handleDeleteDefect}>
+          <DefectSelectText
+            defects={defects}
+            record={record}
+            visibleDel={!disabled}
+            onDelete={handleDeleteDefect}
+            isShowContent={!disabled}
+          >
             添加缺陷
           </DefectSelectText>
         </Text>
@@ -238,7 +243,7 @@ function StepTable(props) {
       return '-';
     }
   }
-  function renderStatus({ value, record }) {
+  function renderStatus({ value }) {
     // const { lookup: statusList } = record.getField('stepStatus').fetchLookup(res=>);
     const status = statusList.length === 0 ? {} : statusList.find(item => item.statusId === Number(value));
     const { statusName = '', statusColor = false } = status || {};

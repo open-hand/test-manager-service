@@ -1,8 +1,4 @@
-import { DataSet } from 'choerodon-ui/pro/lib';
-import { stores } from '@choerodon/boot';
 import { getProjectId } from '@/common/utils';
-
-const { AppState } = stores;
 
 function EditExecuteCaseDataSet(executeId, intlPrefix, intl) {
   const summary = intl.formatMessage({ id: `${intlPrefix}_issueFilterBySummary` });
@@ -54,11 +50,19 @@ function EditExecuteCaseDataSet(executeId, intlPrefix, intl) {
         method: 'get',
         transformResponse: (data) => {
           const newData = JSON.parse(data);
+          const fileList = newData.cycleCaseAttachmentRelVOList.map(file => ({
+            uid: -file.id, // 文件唯一标识，建议设置为负数，防止和内部产生的 id 冲突
+            name: file.attachmentName, // 文件名 
+            status: 'done', // 状态有：uploading done error removed
+            ...file,
+            url: file.url.substring(1),
+          }));
           return {
             ...newData,
             // description: text2Delta(newData.description), 
             testCycleCaseStepUpdateVOS: [],
             caseStepVOS: newData.testCycleCaseStepUpdateVOS,
+            cycleCaseAttachmentRelVOList: fileList,
           };
         },
       }),
