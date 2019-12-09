@@ -615,7 +615,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateCaseAndStep(Long projectId, TestCycleCaseUpdateVO testCycleCaseUpdateVO, Boolean isSync) {
+    public void updateCaseAndStep(Long projectId, TestCycleCaseUpdateVO testCycleCaseUpdateVO, Boolean isAsync) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
         List<TestCycleCaseStepVO> newTestCycleCaseStepVOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepVO>>() {
         }.getType());
@@ -643,7 +643,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         TestCycleCaseDTO testCycleCaseDTO = modelMapper.map(testCycleCaseUpdateVO, TestCycleCaseDTO.class);
         baseUpdate(testCycleCaseDTO);
 
-        if (isSync) {
+        if (isAsync) {
             TestCycleCaseDTO testCycleCase = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getExecuteId());
             CaseCompareRepVO caseCompareRepVO = new CaseCompareRepVO();
             caseCompareRepVO.setSyncToCase(true);

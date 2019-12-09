@@ -217,8 +217,8 @@ public class TestCycleCaseController {
     @PutMapping("/case_step")
     public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
                                  @RequestBody TestCycleCaseUpdateVO testCycleCaseUpdateVO,
-                                            @RequestParam(name = "isSync",required = true,defaultValue = "false") Boolean isSync) {
-        testCycleCaseService.updateCaseAndStep(projectId,testCycleCaseUpdateVO,isSync);
+                                            @RequestParam(name = "isAsync",required = true,defaultValue = "false") Boolean isAsync) {
+        testCycleCaseService.updateCaseAndStep(projectId,testCycleCaseUpdateVO,isAsync);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
