@@ -190,11 +190,12 @@ function TestPlanHome() {
     };
     updateExecute(data).then(() => {
       testPlanStore.loadExecutes();
+      testPlanStore.loadStatusRes();
     }).catch(() => {
       if (isPass) {
         Choerodon.prompt('快速通过失败');
       } else {
-        Choerodon.prompt('快速失败失败');
+        Choerodon.prompt('操作失败');
       }
     });
   };
