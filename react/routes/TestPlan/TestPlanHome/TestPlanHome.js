@@ -245,7 +245,7 @@ function TestPlanHome() {
         <div className={`${prefixCls}-contentWrap`}>
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
-              <Tabs defaultActiveKey="todo" onChange={handleTabsChange} value={testPlanStatus}>
+              <Tabs defaultActiveKey="todo" onChange={handleTabsChange} activeKey={testPlanStatus}>
                 <TabPane tab="未开始" key="todo">
                   <TestPlanTree />
                 </TabPane>
