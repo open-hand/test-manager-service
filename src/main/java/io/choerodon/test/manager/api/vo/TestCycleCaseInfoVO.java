@@ -69,11 +69,9 @@ public class TestCycleCaseInfoVO {
 
     @ApiModelProperty(value = "下一个执行")
     private Long nextExecuteId;
-        @ApiModelProperty(value = "测试用例关联的附件信息")
-        private List<TestCycleCaseAttachmentRelVO> attachment;
 
-    @ApiModelProperty(value = "用例关联的问题链接")
-    private List<IssueInfoDTO> issuesInfos;
+    @ApiModelProperty(value = "测试用例关联的附件信息")
+    private List<TestCycleCaseAttachmentRelVO> attachment;
 
     public Long getExecuteId() {
         return executeId;
@@ -194,14 +192,6 @@ public class TestCycleCaseInfoVO {
 
     public void setAttachment(List<TestCycleCaseAttachmentRelVO> attachment) {
         this.attachment = attachment;
-    }
-
-    public List<IssueInfoDTO> getIssuesInfos() {
-        return issuesInfos;
-    }
-
-    public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
-        this.issuesInfos = issuesInfos;
     }
 
     public Long getCycleId() {
