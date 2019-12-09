@@ -1013,8 +1013,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
 
     @Override
-    public List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId) {
-        return testCycleCaseMapper.listByCycleIds(cycleId);
+    public List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleIds) {
+        if (cycleIds.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return testCycleCaseMapper.listByCycleIds(cycleIds);
+        }
     }
 
     private TestCycleCaseVO runTestCycleCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
