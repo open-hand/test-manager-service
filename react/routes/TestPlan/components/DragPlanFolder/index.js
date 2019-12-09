@@ -22,7 +22,7 @@ function DragPlanFolder({
     const data = {
       cycleName: name,
       cycleId: sourceItem.id,
-      parentId: Number(destination.parentId),
+      parentCycleId: Number(destination.parentId),
       objectVersionNumber,
     };
     const result = await handleRequestFailed(editFolder(data));
