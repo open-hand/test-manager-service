@@ -204,7 +204,7 @@ public class TestManagerEventHandler {
         try {
             testPlanServcie.sagaCreatePlan(testPlanVO);
         } catch (Exception e) {
-            testPlanServcie.SetPlanInitStatusFail(testPlanVO);
+            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
             throw e;
         }
 
