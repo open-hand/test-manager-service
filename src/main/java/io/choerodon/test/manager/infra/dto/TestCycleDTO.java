@@ -49,6 +49,9 @@ public class TestCycleDTO extends BaseDTO {
     @Transient
     private List<Map<Long, Object>> cycleCaseList;
 
+    @Transient
+    private Long oldCycleId;
+
     public Long getProjectId() {
         return projectId;
     }
@@ -187,5 +190,13 @@ public class TestCycleDTO extends BaseDTO {
 
     public void setPlanId(Long planId) {
         this.planId = planId;
+    }
+
+    public Long getOldCycleId() {
+        return oldCycleId;
+    }
+
+    public void setOldCycleId(Long oldCycleId) {
+        this.oldCycleId = oldCycleId;
     }
 }

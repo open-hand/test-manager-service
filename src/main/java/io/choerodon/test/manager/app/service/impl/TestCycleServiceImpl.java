@@ -258,7 +258,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     public TestCycleVO update(Long projectId, TestCycleVO testCycleVO) {
 
         TestCycleDTO map = modelMapper.map(testCycleVO, TestCycleDTO.class);
-        baseUpdate(projectId, map);
+        updateSelf(map);
         return modelMapper.map(cycleMapper.selectByPrimaryKey(map.getCycleId()), TestCycleVO.class);
     }
 
@@ -862,39 +862,38 @@ public class TestCycleServiceImpl implements TestCycleService {
             return;
         }
         testCycleDTOS = testCycleDTOS.stream().map(v -> {
-            if (ObjectUtils.isEmpty(v)) {
+            if (ObjectUtils.isEmpty(v.getParentCycleId())) {
                 v.setParentCycleId(0L);
             }
             return v;
         }).sorted(Comparator.comparing(v -> v.getParentCycleId())).collect(Collectors.toList());
         Map<Long, List<TestCycleDTO>> olderCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
-        Map<Long, Long> olderMapping = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
+
         Map<Long, Long> newMapping = new HashMap<>();
+        List<Long> cycIds = new ArrayList<>();
         olderCycleMap.keySet().forEach(key -> {
             List<TestCycleDTO> testCycle = new ArrayList<>();
             List<TestCycleDTO> testCycleDTOS1 = olderCycleMap.get(key);
             testCycleDTOS1.forEach(testCycleDTO -> {
+                Long olderCycle = testCycleDTO.getCycleId();
+                cycIds.add(olderCycle);
                 if (testCycleDTO.getParentCycleId() != 0) {
-                    Long cycleId = olderMapping.get(testCycleDTO.getFolderId());
+                    Long cycleId = newMapping.get(testCycleDTO.getParentCycleId());
                     testCycleDTO.setParentCycleId(cycleId);
                 }
                 testCycleDTO.setCycleId(null);
                 testCycleDTO.setCreatedBy(userDetails.getUserId());
                 testCycleDTO.setLastUpdatedBy(userDetails.getUserId());
+                testCycleDTO.setOldCycleId(olderCycle);
                 testCycle.add(testCycleDTO);
             });
             cycleMapper.batchInsert(testCycle);
-            Map<Long, Long> insertedIdMap = testCycle.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
-            newMapping.putAll(insertedIdMap);
+            testCycle.forEach(v -> {
+                newMapping.put(v.getOldCycleId(),v.getCycleId());
+            });
         });
-        Map<Long, Long> cycleMapping = new HashMap<>();
-        olderMapping.keySet().forEach(v -> {
-            cycleMapping.put(olderMapping.get(v), newMapping.get(v));
-        });
-        List<Long> cycIds = testCycleDTOS.stream().filter(v -> CollectionUtils.isEmpty(olderCycleMap.get(v.getCycleId())))
-                .map(TestCycleDTO::getCycleId).collect(Collectors.toList());
         // 复制执行
-        testCycleCaseService.cloneCycleCase(cycleMapping, cycIds);
+        testCycleCaseService.cloneCycleCase(newMapping, cycIds);
     }
 
     @Override

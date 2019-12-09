@@ -15,5 +15,9 @@ public class SagaTopicCodeConstants {
      */
     public final  static   String TEST_MANAGER_CLONE_PLAN = "test-manager-clone-plan";
 
+    /**
+     * 改变计划状态
+     */
+    public final  static   String TEST_MANAGER_PLAN_FAIL = "test-manager-status-fail";
 
 }

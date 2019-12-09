@@ -939,15 +939,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return;
         }
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        Map<Long, Long> olderCycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.toMap(TestCycleCaseDTO::getCycleId, TestCycleCaseDTO::getExecuteId));
         List<Long> olderExecuteId = new ArrayList<>();
-        testCycleCaseDTOS.stream().map(v -> {
+        testCycleCaseDTOS.forEach(v -> {
             olderExecuteId.add(v.getExecuteId());
+            v.setLastExecuteId(v.getExecuteId());
             v.setCycleId(cycleMapping.get(v.getCycleId()));
             v.setCreatedBy(userDetails.getUserId());
             v.setLastUpdatedBy(userDetails.getUserId());
             v.setExecuteId(null);
-            return  v;
         });
         List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM == 0 ? 1 : testCycleCaseDTOS.size() / AVG_NUM));
         List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
@@ -956,10 +955,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             testCycleCaseDTOList.addAll(v);
         });
         Map<Long,Long> caseIdMap = new HashMap<>();
-        testCycleCaseDTOList.stream().forEach(v ->{
-            caseIdMap.put(olderCycleCaseMap.get(v.getCycleId()),v.getExecuteId());
+        testCycleCaseDTOList.forEach(v -> {
+            caseIdMap.put(v.getLastExecuteId(),v.getExecuteId());
         });
-
         // 复制步骤
         testCycleCaseStepService.cloneStep(caseIdMap,olderExecuteId);
         // 复制附件

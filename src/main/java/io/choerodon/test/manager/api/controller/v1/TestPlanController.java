@@ -83,7 +83,7 @@ public class TestPlanController {
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("复制计划")
-    @DeleteMapping("/{plan_id}/clone")
+    @PostMapping("/{plan_id}/clone")
     public ResponseEntity<TestPlanVO> clonePlan(@PathVariable(name = "project_id") Long projectId,
                                      @PathVariable(name = "plan_id") Long planId){
 
