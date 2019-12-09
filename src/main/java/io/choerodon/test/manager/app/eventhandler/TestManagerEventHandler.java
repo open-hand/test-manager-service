@@ -68,6 +68,9 @@ public class TestManagerEventHandler {
     @Autowired
     private TestPlanMapper testPlanMapper;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
 //    @Autowired
 //    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
@@ -201,8 +204,7 @@ public class TestManagerEventHandler {
         try {
             testPlanServcie.sagaCreatePlan(testPlanVO);
         } catch (Exception e) {
-            testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
-            testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
+            testPlanServcie.SetPlanInitStatusFail(testPlanVO);
             throw e;
         }
 
@@ -210,16 +212,21 @@ public class TestManagerEventHandler {
 
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
     public void clonePlan(String message) throws IOException {
-        Map<String, Long> map = (Map<String, Long>) objectMapper.readValue(message, Map.class);
+        Map<String, Integer> map = null ;
         try {
-        testPlanServcie.sagaClonePlan(map);
-        }
-        catch (Exception e) {
-            TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(map.get("new"));
-            testPlanDTO.setInitStatus(TestPlanInitStatus.FAIL);
-            testPlanMapper.updateByPrimaryKeySelective(testPlanDTO);
+            map = (Map<String, Integer>) objectMapper.readValue(message, Map.class);
+            testPlanServcie.sagaClonePlan(map);
+        } catch (Exception e) {
+            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()),TestPlanVO.class));
             throw e;
-            }
+        }
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
+    public void changeStatusFail(String message) throws IOException {
+        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+        testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
+        testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
     }
 
 }

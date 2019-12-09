@@ -66,5 +66,11 @@ public interface TestPlanServcie {
      * saga复制计划
      * @param map
      */
-    void sagaClonePlan(Map<String,Long> map);
+    void sagaClonePlan(Map<String,Integer> map);
+
+    /**
+     * 改变计划的init状态为fail
+     * @param testPlanVO
+     */
+    void SetPlanInitStatusFail(TestPlanVO testPlanVO);
 }

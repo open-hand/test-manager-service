@@ -273,13 +273,30 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public void sagaClonePlan(Map<String, Long> map) {
-        Long copyPlanId = map.get("older");
-        Long newPlanId = map.get("new");
+    public void sagaClonePlan(Map<String, Integer> map) {
+        Long copyPlanId = map.get("older").longValue();
+        Long newPlanId = map.get("new").longValue();
         testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId);
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
         testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
         baseUpdate(testPlanDTO);
+    }
+
+    @Override
+    @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL,
+            description = "test-manager 改变测试测试计划的状态为fail", inputSchema = "{}")
+    public void SetPlanInitStatusFail(TestPlanVO testPlanVO) {
+        producer.apply(
+                StartSagaBuilder
+                        .newBuilder()
+                        .withLevel(ResourceLevel.PROJECT)
+                        .withRefType("")
+                        .withSagaCode(SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL)
+                        .withPayloadAndSerialize(testPlanVO)
+                        .withRefId("")
+                        .withSourceId(testPlanVO.getProjectId()),
+                builder -> {
+                });
     }
 
     @Override
