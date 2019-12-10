@@ -104,7 +104,7 @@ function ExportSide(props) {
     const { id, rate, successfulCount } = data;
     const newData = {
       ...data,
-      creationDate: moment(data.creationDate).format('YYYY-MM-DD HH:mm:ss'),
+      lastUpdateDate: moment(data.creationDate).format('YYYY-MM-DD HH:mm:ss'),
       during: onHumanizeDuration(data),
     };
     const index = exportSideDataSet.findIndex(record => record.get('id') === id);

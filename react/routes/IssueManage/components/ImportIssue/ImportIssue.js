@@ -89,29 +89,16 @@ function ImportIssue(props) {
           visibleImportBtn: false,
         };
       case 'process':
-        if (state.visibleCancelBtm !== true) {
-          modalProps.okProps.hidden = false;
-          modal.update(modalProps);
-          return {
-            ...state,
-            visibleCancelBtm: true,
-          };
-        }
-        return { ...state };
+        return {
+          visibleImportBtn: false,
+          visibleCancelBtm: true,
+        };
       case 'finish':
-        if (state.visibleCancelBtm !== false) {
-          modalProps.okProps.hidden = true;
-          modal.update(modalProps);
-        }
         return {
           visibleImportBtn: true,
           visibleCancelBtm: false,
         };
       case 'cancel':
-        if (state.visibleCancelBtm !== false) {
-          modalProps.okProps.hidden = true;
-          modal.update(modalProps);
-        }
         return {
           visibleImportBtn: true,
           visibleCancelBtm: false,
@@ -126,11 +113,9 @@ function ImportIssue(props) {
     visibleCancelBtm: false,
   });
   const { visibleImportBtn, visibleCancelBtm } = importBtn;
-  const loadImportHistory = () => {
-    getImportHistory().then((data) => {
-      setLastRecord(data);
-    });
-  };
+  const loadImportHistory = () => getImportHistory().then((data) => {
+    setLastRecord(data);
+  });
 
   const upload = (file) => {
     if (!folder) {
@@ -226,16 +211,14 @@ function ImportIssue(props) {
   };
 
 
-  const handleCancelImport = useCallback(() => {
+  const handleCancelImport = () => {
     cancelImport(importRecord.id).then((res) => {
       dispatch({ type: 'cancel' });
-      return true;
     }).catch((error) => {
-      Choerodon.prompt(error);
-      return false;
+      Choerodon.prompt(`${error || '网络异常'}`);
+      dispatch({ type: 'cancel' });
     });
-    return false;
-  }, [importRecord.id]);
+  };
 
 
   const exportExcel = () => {
@@ -280,18 +263,22 @@ function ImportIssue(props) {
         </WSHandler>
       );
     } else if (status === 2) {
-      dispatch({ type: 'finish' });
+      loadImportHistory().then(() => {
+        dispatch({ type: 'finish' });
+      });
     }
     return '';
   };
 
   useEffect(() => {
-    modal.handleOk(handleCancelImport);
     if (visibleCancelBtm !== true) {
       loadImportHistory();
     }
-  }, [handleCancelImport, modal, visibleCancelBtm]);
+  }, [visibleCancelBtm]);
 
+  const handleCloseModal = () => {
+    modal.close(false);
+  };
 
   return (
     <div className="c7ntest-ImportIssue-form">
@@ -332,7 +319,12 @@ function ImportIssue(props) {
         />
         {renderRecord()}
         {renderProgress()}
+
       </ImportIssueForm>
+      <div className="c7ntest-ImportIssue-form-modal-footer">
+        <Button disabled={!visibleCancelBtm} hidden={!visibleCancelBtm} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
+        <Button funcType="raised" onClick={handleCloseModal}>关闭</Button>
+      </div>
     </div>
   );
 }

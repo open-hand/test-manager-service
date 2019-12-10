@@ -100,7 +100,6 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
       },
       data: {
         advancedSearchArgs: {
-          // name: 
           // status:2,   
           ...data,
         },

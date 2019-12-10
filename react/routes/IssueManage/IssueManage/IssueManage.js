@@ -118,17 +118,15 @@ export default class IssueManage extends Component {
       // title:<FormattedMessage id='issue_create_name'  />,
       title: '导入用例',
       drawer: true,
+      destroyOnClose: false,
       style: {
         width: 380,
       },
       children: (
         <ImportSide />
       ),
-      okText: '取消导入',
-      cancelText: '关闭',
-      okProps: {
-        hidden: true,
-      },
+      footer: () => '',
+      className: 'c7ntest-Issue-import-modal',
     });
   }
 
@@ -177,10 +175,10 @@ export default class IssueManage extends Component {
           title={<FormattedMessage id="issue_name" />}
         >
           {!noFolder && (
-          <Button className="leftBtn" onClick={() => this.handleOpenCreateIssue()}>
-            <Icon type="playlist_add icon" />
-            <FormattedMessage id="issue_createTestIssue" />
-          </Button>
+            <Button className="leftBtn" onClick={() => this.handleOpenCreateIssue()}>
+              <Icon type="playlist_add icon" />
+              <FormattedMessage id="issue_createTestIssue" />
+            </Button>
           )}
           <Button icon="playlist_add" onClick={this.handleAddFolderClick}>
             创建一级目录
