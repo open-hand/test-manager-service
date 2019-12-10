@@ -26,11 +26,14 @@ function CreateIssue(props) {
 
   const handleCreateIssue = useCallback(async () => {
     try {
+      // if (!await createDataset.current.validate()) {
+      //   return false;
+      // }
       // 描述富文本转换为字符串
       const oldDes = createDataset.current.get('description');
       await returnBeforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
-      if (await createDataset.current.validate() && await createDataset.submit().then((res) => {
-        if (res) {
+      if (await createDataset.submit().then((res) => {
+        if (!res) {
           throw new Error('create error');
         }
         const fileList = createDataset.current.get('fileList');
@@ -42,14 +45,13 @@ function CreateIssue(props) {
           });
           uploadFile(res[0].caseId, formData);
         }
-
         onOk(res[0], createDataset.current.get('folderId'));
         return true;
       })) {
         return true;
       } else {
         // error 时 重新将描述恢复富文本格式
-        
+
         createDataset.current.set('description', oldDes);
         return false;
       }

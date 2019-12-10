@@ -1,4 +1,5 @@
 import { DataSet } from 'choerodon-ui/pro/lib';
+import { Choerodon } from '@choerodon/boot';
 import moment from 'moment';
 import { getProjectId, humanizeDuration } from '../../../../../common/utils';
 
@@ -105,7 +106,13 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
         },
       },
       transformResponse(res) {
-        const newList = JSON.parse(res).list.map(item => ({
+        const resObj = JSON.parse(res);
+        const { failed } = resObj;
+        if (failed) {
+          Choerodon.prompt(resObj.message);
+          return resObj;
+        }
+        const newList = resObj.list.map(item => ({
           ...item,
           during: onHumanizeDuration(item),
         }));
