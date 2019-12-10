@@ -151,7 +151,12 @@ class DragTable extends Component {
                 renderedItem = data[index][dataIndex];
               }
               return (
-                <td className={className} style={{ flex: width ? 'unset' : (flex || 1), width }}>
+                <td
+                  className={className}
+                  style={{
+                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', 
+                  }}
+                >
                   {renderedItem}
                 </td>
               );
@@ -166,6 +171,7 @@ class DragTable extends Component {
                 {...provided.draggableProps}
                 {...judgeProps(provided.dragHandleProps)}
                 onClick={this.handleRow.bind(this, item)}
+                style={{ cursor: 'move', ...provided.draggableProps.style }}
               >
                 {Columns.map((column) => {
                   let renderedItem = null;
@@ -177,8 +183,15 @@ class DragTable extends Component {
                   } else {
                     renderedItem = data[index][dataIndex];
                   }
+
+
                   return (
-                    <td className={className} style={{ flex: width ? 'unset' : (flex || 1), width }}>
+                    <td
+                      className={className}
+                      style={{
+                        flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', 
+                      }}
+                    >
                       {renderedItem}
                     </td>
                   );

@@ -37,7 +37,7 @@ const TableDropMenu = (props) => {
   return (
     <div
       style={{
-        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', 
+        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', width: '100%', 
       }}
       className={className || 'table-drop-menu-base'}
     >
