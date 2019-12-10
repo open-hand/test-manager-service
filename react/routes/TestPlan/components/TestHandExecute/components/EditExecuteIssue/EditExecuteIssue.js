@@ -10,82 +10,13 @@ import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
 import EditTestStepTable from './EditTestStepTable';
 import { updateSidebarDetail } from '@/api/ExecuteDetailApi';
-import { uploadFile, deleteFile } from '@/api/FileApi';
 import { text2Delta, returnBeforeTextUpload } from '@/common/utils';
 import './EditExecuteIssue.less';
-
-/**
- * 批量删除已上传文件（修改用例 保存）
- * @param {*} files 
- */
-async function deleteFiles(files = []) {
-  files.forEach((file) => {
-    deleteFile(file);
-  });
-  return true;
-}
-/**
- * 更新执行用例数据
- * @param {*} data 
- */
-function UpdateExecuteData(data) {
-  const { executeId } = data;
-  const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
-    (i) => {
-      let { stepId } = i;
-      let { executeStepId } = i;
-      if (String(i.stepId).indexOf('.') !== -1) {
-        stepId = 0;
-        executeStepId = null;
-      }
-      return {
-        ...i,
-        stepId,
-        executeId,
-        executeStepId,
-      };
-    },
-  );
-  return new Promise((resolve) => {
-    returnBeforeTextUpload(data.description, data, async (res) => {
-      const newData = {
-        ...res,
-        fileList: [],
-        caseStepVOS: [],
-        testCycleCaseStepUpdateVOS,
-      };
-      const { fileList } = res;
-      await updateSidebarDetail(newData);
-      if (fileList) {
-        const formDataAdd = new FormData();
-        const formDataDel = [];
-        fileList.forEach((file) => {
-          if (!file.status) {
-            formDataAdd.append('file', file);
-          } else if (file.status && file.status === 'removed') {
-            formDataDel.push(file);
-          }
-        });
-
-        const config = {
-          description: '', executeId: res.executeId, attachmentType: 'CYCLE_CASE',
-        };
-        if (formDataAdd.has('file')) {
-          await uploadFile(formDataAdd, config);
-        }
-        // 删除文件 只能单个文件删除， 进行遍历删除
-        await deleteFiles(formDataDel.map(i => i.id));
-      }
-      message.success('修改成功');
-      resolve(true);
-    });
-  });
-}
 
 function EditExecuteIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const {
-    modal, editDataset, executeId,
+    modal, editDataset, executeId, UpdateExecuteData,
   } = props;
 
   const handleUpdateIssue = useCallback(async () => {
@@ -105,7 +36,7 @@ function EditExecuteIssue(props) {
       message.error(e);
       return false;
     }
-  }, [editDataset]);
+  }, [UpdateExecuteData, editDataset]);
 
   const handleChangeDes = (value) => {
     editDataset.current.set('description', value);

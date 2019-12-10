@@ -1,35 +1,27 @@
 import React, {
-  Component, useRef, useState, useEffect, useContext,
+  useRef, useState, useEffect, useCallback,
 } from 'react';
-import { Choerodon } from '@choerodon/boot';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { observer, inject } from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 import { throttle } from 'lodash';
-import { FormattedMessage } from 'react-intl';
 import {
-  Button, Tooltip, Icon, Upload, Select,
+  Button, Tooltip,
 } from 'choerodon-ui';
 import { stores } from '@choerodon/boot';
 import { find } from 'lodash';
-import { delta2Html, issueLink, text2Delta } from '../../../../../../common/utils';
+import { delta2Html, issueLink } from '../../../../../../common/utils';
 import {
-  WYSIWYGEditor, Upload as UploadButton, StatusTags, DateTimeAgo, User, RichTextShow, openFullEditor as FullEditor,
-  TextEditToggle,
+  StatusTags, DateTimeAgo, User, RichTextShow,
   ResizeAble,
 } from '../../../../../../components';
-import { addDefects, removeDefect } from '../../../../../../api/ExecuteDetailApi';
-import Store from '../../stores';
-import TypeTag from '../../../../../../components/TypeTag';
-import DefectList from './DefectList';
 import './ExecuteDetailSide.less';
 import UploadButtonExcuteDetail from './UploadButtonExcuteDetail';
 import LinkIssues from './link-issues';
+import { getIssueInfos } from '../../../../../../api/ExecuteDetailApi';
 
 const { HeaderStore } = stores;
 
-const { Edit, Text } = TextEditToggle;
-const { Option } = Select;
 const navs = [
   { code: 'detail', tooltip: '详情', icon: 'error_outline' },
   { code: 'des', tooltip: '描述', icon: 'subject' },
@@ -39,7 +31,6 @@ const navs = [
 let sign = true;
 const Section = ({
   id,
-  icon,
   title,
   action,
   children,
@@ -79,30 +70,26 @@ const propTypes = {
 };
 
 function ExecuteDetailSide(props) {
-  const context = useContext(Store);
-  const { ExecuteDetailStore } = context;
   const container = useRef();
+  const { detailData } = props;
   const [currentNav, setCurrentNav] = useState('detail');
-  const [editing, setEditing] = useState(false);
-
+  const [issueInfosVO, setIssueInfosVO] = useState([]);
   function isInLook(ele) {
     const a = ele.offsetTop;
     const target = document.getElementById('scroll-area');
     return a + ele.offsetHeight > target.scrollTop;
   }
 
-  function getCurrentNav(e) {
-    return find(navs.map(nav => nav.code), i => isInLook(document.getElementById(i)));
-  }
+  const getCurrentNav = useCallback(() => find(navs.map(nav => nav.code), i => isInLook(document.getElementById(i))), []);
 
-  const handleScroll = (e) => {
+  const handleScroll = useCallback((e) => {
     if (sign) {
       const newCurrentNav = getCurrentNav(e);
       if (currentNav !== newCurrentNav && newCurrentNav) {
         setCurrentNav(newCurrentNav);
       }
     }
-  };
+  }, [currentNav, getCurrentNav]);
 
   const setQuery = (width = container.current.clientWidth) => {
     if (width <= 600) {
@@ -124,6 +111,14 @@ function ExecuteDetailSide(props) {
     setQuery();
   }, [handleScroll]);
 
+  useEffect(() => {
+    const { caseId } = detailData;
+    if (caseId) {
+      getIssueInfos(caseId).then((res) => {
+        setIssueInfosVO(res);
+      });
+    }
+  }, [detailData]);
   // componentWillUnmount() {
   //   if (document.getElementById('scroll-area')) {
   //     document.getElementById('scroll-area').removeEventListener('scroll', handleScroll);
@@ -160,12 +155,11 @@ function ExecuteDetailSide(props) {
 
   function render() {
     const {
-      fileList, detailData, status, onClose,
+      fileList, status, onClose,
     } = props;
-    // console.log('render', props);
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, executionStatus, summary, issuesInfos, caseId, caseNum,
+      executor, description, executorDate, summary, caseId, caseNum,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -243,7 +237,12 @@ function ExecuteDetailSide(props) {
                       {statusColor && (
                         <StatusTags
                           style={{
-                            height: 20, fontSize: '12px', lineHeight: '20px', marginRight: 15,
+                            height: 20,
+                            fontSize: '12px',
+                            lineHeight: '20px',
+                            marginRight: 15,
+                            display: 'block',
+                            width: 'max-content',
                           }}
                           color={statusColor}
                           name={statusName}
@@ -300,7 +299,7 @@ function ExecuteDetailSide(props) {
                   title="问题链接"
                 >
                   <LinkIssues
-                    linkIssues={issuesInfos}
+                    linkIssues={issueInfosVO}
                   />
 
                 </Section>
