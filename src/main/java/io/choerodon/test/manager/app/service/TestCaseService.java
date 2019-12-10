@@ -190,5 +190,9 @@ public interface TestCaseService {
 
     TestCaseInfoVO queryCaseRep(Long caseId);
 
+    /**
+     * 同步versionNum到测试执行 versionNum
+     * @param testCase
+     */
     void syncByCycleCase(TestCaseDTO testCase);
 }

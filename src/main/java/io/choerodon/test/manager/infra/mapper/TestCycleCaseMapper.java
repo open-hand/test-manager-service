@@ -135,4 +135,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     List<Long> listByPlanId(@Param("planId") Long planId);
 
     List<TestCycleCaseDTO> selectByPlanId();
+
+    List<TestCycleCaseDTO> listAsyncCycleCase(@Param("projectId")Long projectId,@Param("caseId")Long caseId);
 }

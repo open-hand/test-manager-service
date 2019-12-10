@@ -12,6 +12,7 @@ import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -62,6 +63,9 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
 
     @Value("${services.attachment.url}")
     private String attachmentUrl;
@@ -233,5 +237,20 @@ public class TestCaseAssembler {
         testCaseStepDTO.setCreatedBy(userDetails.getUserId());
         testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(),8));
         return testCaseStepDTO;
+    }
+
+    // 执行同步
+    public void AutoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS,Boolean changeCase,Boolean changeStep,Boolean changeAttach){
+        testCycleCaseDTOS.forEach(v -> {
+            CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
+            caseCompareVO.setCaseId(v.getCaseId());
+            caseCompareVO.setExecuteId(v.getExecuteId());
+            caseCompareVO.setSyncToCase(false);
+            caseCompareVO.setChangeStep(changeStep);
+            caseCompareVO.setChangeCase(changeCase);
+            caseCompareVO.setChangeAttach(changeAttach);
+            testCycleCaseService.updateCompare(v.getProjectId(),caseCompareVO);
+        });
+
     }
 }

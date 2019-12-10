@@ -99,6 +99,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCaseAssembler testCaseAssembler;
 
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -348,12 +351,15 @@ public class TestCaseServiceImpl implements TestCaseService {
         map.setVersionNum(testCaseDTO.getVersionNum() + 1);
         baseUpdate(map);
 
-
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+           testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,true,false,false);
+        }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1,folderMap);
-
+        
         return testCaseRepVO1;
     }
 

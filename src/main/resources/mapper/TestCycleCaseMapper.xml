@@ -749,6 +749,7 @@ ORDER BY
         SET source =
         if(execution_status=1,'none','manual')
     </update>
+
     <update id="fixRank">
         <foreach collection="testCycleCaseDTOS" item="cycleCase" index="index" open="" close="" separator=";">
             UPDATE test_cycle_case
@@ -758,6 +759,7 @@ ORDER BY
             where execute_id= #{cycleCase.executeId}
         </foreach>
     </update>
+
     <select id="listByCycleIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
           select * from test_cycle_case
           where
@@ -852,6 +854,21 @@ ORDER BY
     FROM
         test_cycle_case tcc
     LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
+    </select>
+
+    <select id="listAsyncCycleCase" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+        SELECT
+            tcc.*
+        FROM
+            test_cycle_case tcc
+            INNER JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
+            INNER JOIN test_plan tp ON tp.plan_id = tc.plan_id
+        WHERE
+            tp.project_id = #{projectId}
+            AND tcc.case_id = #{caseId}
+            AND tp.init_status = 'success'
+            AND tp.status_code != 'done'
+            AND tp.is_auto_sync = 1
     </select>
 </mapper>
 
