@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useEffect, useMemo, useCallback, useReducer,
+  useState, useRef, useEffect, useMemo, useReducer,
 } from 'react';
 import {
   WSHandler, stores,
@@ -80,8 +80,10 @@ function ImportIssue(props) {
   const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
   const { modal } = props;
+  const loadImportHistory = () => getImportHistory().then((data) => {
+    setLastRecord(data);
+  });
   const [importBtn, dispatch] = useReducer((state, action) => {
-    const { props: modalProps } = modal;
     switch (action.type) {
       case 'import':
         return {
@@ -91,17 +93,18 @@ function ImportIssue(props) {
       case 'process':
         return {
           visibleImportBtn: false,
-          visibleCancelBtm: true,
+          visibleCancelBtn: true,
         };
       case 'finish':
+        loadImportHistory();
         return {
           visibleImportBtn: true,
-          visibleCancelBtm: false,
+          visibleCancelBtn: false,
         };
       case 'cancel':
         return {
           visibleImportBtn: true,
-          visibleCancelBtm: false,
+          visibleCancelBtn: false,
         };
       default:
         return {
@@ -110,12 +113,10 @@ function ImportIssue(props) {
     }
   }, {
     visibleImportBtn: true,
-    visibleCancelBtm: false,
+    visibleCancelBtn: false,
   });
-  const { visibleImportBtn, visibleCancelBtm } = importBtn;
-  const loadImportHistory = () => getImportHistory().then((data) => {
-    setLastRecord(data);
-  });
+  const { visibleImportBtn, visibleCancelBtn } = importBtn;
+
 
   const upload = (file) => {
     if (!folder) {
@@ -212,10 +213,23 @@ function ImportIssue(props) {
 
 
   const handleCancelImport = () => {
+    // debounceSetImportRecord.cancel();
     cancelImport(importRecord.id).then((res) => {
+      debounceSetImportRecord.flush();
+      setImportRecord({
+        ...importRecord,
+        status: undefined,
+      });
+      loadImportHistory();
       dispatch({ type: 'cancel' });
     }).catch((error) => {
+      debounceSetImportRecord.flush();
       Choerodon.prompt(`${error || '网络异常'}`);
+      setImportRecord({
+        ...importRecord,
+        status: undefined,
+      });
+      loadImportHistory();
       dispatch({ type: 'cancel' });
     });
   };
@@ -263,18 +277,16 @@ function ImportIssue(props) {
         </WSHandler>
       );
     } else if (status === 2) {
-      loadImportHistory().then(() => {
-        dispatch({ type: 'finish' });
-      });
+      // loadImportHistory();
+      setImportRecord({});
+      dispatch({ type: 'finish' });
     }
     return '';
   };
 
   useEffect(() => {
-    if (visibleCancelBtm !== true) {
-      loadImportHistory();
-    }
-  }, [visibleCancelBtm]);
+    loadImportHistory();
+  }, []);
 
   const handleCloseModal = () => {
     modal.close(false);
@@ -322,7 +334,7 @@ function ImportIssue(props) {
 
       </ImportIssueForm>
       <div className="c7ntest-ImportIssue-form-modal-footer">
-        <Button disabled={!visibleCancelBtm} hidden={!visibleCancelBtm} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
+        <Button disabled={!visibleCancelBtn} hidden={!visibleCancelBtn} funcType="raised" color="primary" onClick={handleCancelImport}>取消导入</Button>
         <Button funcType="raised" onClick={handleCloseModal}>关闭</Button>
       </div>
     </div>
