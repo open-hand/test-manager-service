@@ -222,10 +222,10 @@ class TestPlanTree extends Component {
       ] : [
         <Menu.Item key="rename">
             重命名
-          </Menu.Item>,
+        </Menu.Item>,
         <Menu.Item key="delete">
             删除
-          </Menu.Item>,
+        </Menu.Item>,
       ];
     }
   }

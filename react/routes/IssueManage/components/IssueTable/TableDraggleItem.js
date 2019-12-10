@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { Draggable } from 'react-beautiful-dnd';
 import IssueStore from '../../stores/IssueStore';
@@ -20,7 +21,7 @@ export default observer((props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={{
-            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.caseId }) && 'rgb(235, 242, 249)',
+            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { caseId: issue.caseId }) && 'rgb(235, 242, 249)',
             position: 'relative',
             ...provided.draggableProps.style,
           }}
