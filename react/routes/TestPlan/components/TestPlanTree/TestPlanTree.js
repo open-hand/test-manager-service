@@ -130,12 +130,15 @@ class TestPlanTree extends Component {
     testPlanStore.setCurrentCycle(item);
   }
 
-  handleMenuClick=(key, nodeItem) => {    
+  handleMenuClick = (key, nodeItem) => {
     const { context: { testPlanStore } } = this.props;
     switch (key) {
       case 'copy': {
         openClonePlan({
           planId: nodeItem.id,
+          onCLone: () => {
+            testPlanStore.loadAllData();
+          },
         });
         break;
       }
@@ -189,7 +192,7 @@ class TestPlanTree extends Component {
 
   getMenuItems = (item) => {
     const isPlan = item.topLevel;
-    if (isPlan) {      
+    if (isPlan) {
       return [
         <Menu.Item key="copy">
           复制此计划

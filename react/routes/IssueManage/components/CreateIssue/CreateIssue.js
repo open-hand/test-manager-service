@@ -3,14 +3,14 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, TextField, DataSet, Icon,
+  Form, TextField, DataSet, Icon, message,
 } from 'choerodon-ui/pro';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '../../../../components';
 import CreateIssueDataSet from './store/CreateIssueDataSet';
 import CreateTestStepTable from './CreateTestStepTable';
 import SelectTree from '../SelectTree';
-import { beforeTextUpload } from '../../../../common/utils';
+import { beforeTextUpload, returnBeforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 import { uploadFile } from '../../../../api/IssueManageApi';
 
@@ -26,26 +26,37 @@ function CreateIssue(props) {
 
   const handleCreateIssue = useCallback(async () => {
     try {
+      // if (!await createDataset.current.validate()) {
+      //   return false;
+      // }
       // 描述富文本转换为字符串
       const oldDes = createDataset.current.get('description');
-      beforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
+      await returnBeforeTextUpload(oldDes, {}, des => createDataset.current.set('description', des.description));
       if (await createDataset.submit().then((res) => {
+        if (!res) {
+          throw new Error('create error');
+        }
         const fileList = createDataset.current.get('fileList');
         const formData = new FormData();
-        fileList.forEach((file) => {
-          formData.append('file', file);
-        });
-        uploadFile(res[0].caseId, formData);
+
+        if (fileList) {
+          fileList.forEach((file) => {
+            formData.append('file', file);
+          });
+          uploadFile(res[0].caseId, formData);
+        }
         onOk(res[0], createDataset.current.get('folderId'));
         return true;
       })) {
         return true;
       } else {
         // error 时 重新将描述恢复富文本格式
+
         createDataset.current.set('description', oldDes);
         return false;
       }
     } catch (e) {
+      message.error(e);
       return false;
     }
   }, [createDataset, onOk]);

@@ -1,6 +1,7 @@
 
 import React, { useRef, useState } from 'react';
 import _ from 'lodash';
+import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import {
   Spin, Table, Pagination, Tooltip,
@@ -45,21 +46,20 @@ export default observer((props) => {
     return (<tr>{ths}</tr>);
   };
 
-  const handleClickIssue = (issue, index, e) => {
+  const handleClickIssue = useAvoidClosure((issue, index, e) => {
     if (e.shiftKey || e.ctrlKey || e.metaKey) {
       if (e.shiftKey) {
         if (firstIndex !== null) {
           const start = Math.min(firstIndex, index);
           const end = Math.max(firstIndex, index);
           //
-          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
-          // console.log(draggingTableItems);
+          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1); 
           IssueStore.setDraggingTableItems(draggingTableItems);
         }
       } else {
         // 是否已经选择
         const old = IssueStore.getDraggingTableItems;
-        const hasSelected = _.findIndex(old, { issueId: issue.issueId });
+        const hasSelected = _.findIndex(old, { caseId: issue.caseId });
 
         // 已选择就去除
         if (hasSelected >= 0) {
@@ -67,7 +67,6 @@ export default observer((props) => {
         } else {
           old.push(issue);
         }
-        // console.log(hasSelected, old);
         IssueStore.setDraggingTableItems(old);
       }
     } else {
@@ -75,7 +74,7 @@ export default observer((props) => {
       // onRow(issue).onClick();
     }
     setFirstIndex(index);
-  };
+  });
 
 
   const renderTbody = (data, columns) => {
@@ -150,9 +149,9 @@ export default observer((props) => {
     document.removeEventListener('keyup', leaveCopy);
   };
 
-  const onDragStart = (monitor) => {
+  const onDragStart = useAvoidClosure((monitor) => {
     const draggingTableItems = IssueStore.getDraggingTableItems;
-    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
+    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { caseId: monitor.draggableId }) < 0) {
       const { index } = monitor.source;
       setFirstIndex(index);
       IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
@@ -161,7 +160,7 @@ export default observer((props) => {
     IssueStore.setClickIssue({});
     document.addEventListener('keydown', enterCopy);
     document.addEventListener('keyup', leaveCopy);
-  };
+  });
 
   const getComponents = useAvoidClosure(columns => ({
     table: () => {

@@ -12,7 +12,7 @@ import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
 import { getProjectId } from '@/common/utils';
 import {
-  createPlan, getPlan, editPlan,
+  createPlan, getPlan, editPlan, clonePlan,
 } from '@/api/TestPlanApi';
 import DataSetFactory from './dataSet';
 import SelectIssue from './SelectIssue';
@@ -152,19 +152,15 @@ export async function openEditPlan({ planId, onEdit }) {
     />,
   });
 }
-export async function openClonePlan({ planId }) {
-  const planDetail = await getPlan(planId);
+export async function openClonePlan({ planId, onCLone }) {
+  // const planDetail = await getPlan(planId);
   Modal.open({
     title: '复制计划',
     key,
-    drawer: true,
-    style: {
-      width: 1090,
+    children: '确认复制计划',
+    onOk: async () => {
+      await clonePlan(planId);
+      onCLone();
     },
-    children: <ObserverTestPlanModal
-      mode="clone"
-      submit={createPlan}
-      initValue={planDetail}
-    />,
   });
 }

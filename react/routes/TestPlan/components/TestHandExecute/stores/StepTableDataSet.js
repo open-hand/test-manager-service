@@ -1,5 +1,6 @@
 import { Choerodon } from '@choerodon/boot';
 import { editCycleStep, addDefects, removeDefect } from '@/api/ExecuteDetailApi';
+import { deleteAttachment, deleteFile } from '@/api/FileApi';
 
 function updateRecordData(data, dataSet, record, name, oldValue) {
   // eslint-disable-next-line no-param-reassign
@@ -84,14 +85,15 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         });
 
         const data = record.toData();
+        const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
         switch (name) {
           case 'defects':
-            // eslint-disable-next-line no-case-declarations
-            const arrIDs = value.map(i => i.id);
-            removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => dataSet.query(dataSet.currentPage)).catch((error) => {
-              record.set(name, oldValue);
-              Choerodon.prompt(error);
-            });
+            if (value.length < oldValue.length) {
+              removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).catch((error) => {
+                record.set(name, oldValue);
+                Choerodon.prompt(`${error || '网络异常'}`);
+              });
+            }
             break;
           case 'stepStatus':
             if (oldValue === value) {
@@ -105,11 +107,15 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
             updateRecordData(data, dataSet, record, name, oldValue);
             break;
           case 'stepAttachment':
-            // deleteAttachment(value.id).then(() => {
-            // }).catch((error) => {
-            //   window.console.log(error);
-            //   Choerodon.prompt('网络异常');
-            // });
+            if (value.length < oldValue.length) {
+              deleteFile(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
+              }).catch((error) => {
+                window.console.log(error);
+                record.set(name, oldValue);
+                Choerodon.prompt(`删除失败 ${error}`);
+              });
+            }
+
             break;
           default:
             break;
@@ -123,7 +129,7 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         transformResponse: (res) => {
           const data = JSON.parse(res);
           if (Array.isArray(data)) {
-            const newData = data.map((i, index) => ({
+            const newData = data.map(i => ({
               ...i,
               stepStatus: i.stepStatus === null ? 4 : i.stepStatus,
             }));

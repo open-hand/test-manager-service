@@ -1,106 +1,73 @@
 import React, {
-  useState, useEffect, useMemo, useCallback, useContext,
+  useState, useEffect, useCallback,
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, TextField, Select, DataSet, Icon, Spin, message,
+  Form, TextField, Icon, Spin, message,
 } from 'choerodon-ui/pro';
-import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
 import EditTestStepTable from './EditTestStepTable';
 import { updateSidebarDetail } from '@/api/ExecuteDetailApi';
-import { uploadFile } from '@/api/FileApi';
 import { text2Delta, returnBeforeTextUpload } from '@/common/utils';
 import './EditExecuteIssue.less';
-
-function UpdateExecuteData(data) {
-  const { executeId } = data;
-  const testCycleCaseStepUpdateVOS = data.testCycleCaseStepUpdateVOS.map(
-    (i) => {
-      let { stepId } = i;
-      let { executeStepId } = i;
-      if (String(i.stepId).indexOf('.') !== -1) {
-        stepId = 0;
-        executeStepId = null;
-      }
-      return {
-        ...i,
-        stepId,
-        executeId,
-        executeStepId,
-      };
-    },
-  );
-  return new Promise((resolve) => {
-    returnBeforeTextUpload(data.description, data, async (res) => {
-      const newData = {
-        ...res,
-        fileList: [],
-        caseStepVOS: [],
-        testCycleCaseStepUpdateVOS,
-      };
-      const { fileList } = res;
-      await updateSidebarDetail(newData);
-      if (fileList) {
-        const formDataAdd = new FormData();
-        const formDataDel = new FormData();
-        fileList.forEach((file) => {
-          if (file.status && file.status === 'uploading') {
-            formDataAdd.append('file', file);
-          } else if (file.status && file.status === 'removed') {
-            formDataDel.append('file', file);
-          }
-        });
-
-        const config = {
-          bucketName: 'test', attachmentLinkId: res.executeId, attachmentType: 'CYCLE_CASE',
-        };
-        await uploadFile(formDataAdd, config);
-        // 缺少删除附件接口调用
-      }
-      resolve(true);
-    });
-  });
-}
 
 function EditExecuteIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
   const {
-    modal, ExecuteDetailStore, editDataset, executeId,
+    modal, editDataset, executeId, UpdateExecuteData,
   } = props;
 
   const handleUpdateIssue = useCallback(async () => {
     try {
       if (editDataset.current && await editDataset.current.validate()) {
-        await UpdateExecuteData(editDataset.current.toData());
-        message.success('修改成功');
-        ExecuteDetailStore.getInfo();
-        return true;
+        if (editDataset.current.status !== 'sync') {
+          if (await UpdateExecuteData(editDataset.current.toData())) {
+            return true;
+          } else {
+            message.info('修改失败');
+          }
+        }
+        message.info('未做任何修改');
       }
       return false;
     } catch (e) {
       message.error(e);
       return false;
     }
-  }, [ExecuteDetailStore, editDataset]);
+  }, [UpdateExecuteData, editDataset]);
+
   const handleChangeDes = (value) => {
     editDataset.current.set('description', value);
   };
-  const onUploadFile = ({ file, fileList, event }) => {
+
+  const onUploadFile = ({ file }) => {
     // console.log('onUploadFile', file, fileList);
-    const { status = 'ADD' } = file;
-    // 缺少移除文件判断
-    // editDataset.current.get('cycleCaseAttachmentRelVOList').some(item=>{
-    //   item.
-    // });
-    editDataset.current.set('fileList', fileList);
+    const { status = 'add', size } = file;
+    // remove操作的file是新文件 则进行文件列表直接赋值操作，否则 则进行标记 
+    const oldFileList = editDataset.current.get('fileList') || [];
+    if (status === 'removed' && !size) {
+      editDataset.current.set('fileList', [...oldFileList, file]);
+    } else if (size) {
+      const newFileList = [...oldFileList];
+      if (status === 'add') {
+        newFileList.push(file);
+        editDataset.current.set('fileList', newFileList);
+      } else if (status === 'removed') {
+        editDataset.current.set('fileList', newFileList.filter(item => item.uid !== file.uid));
+      }
+    }
   };
   useEffect(() => {
     // 初始化属性
     modal.handleOk(handleUpdateIssue);
   }, [handleUpdateIssue, modal]);
+  useEffect(() => {
+    if (!editDataset.current) {
+      editDataset.query();
+    }
+  }, [editDataset]);
   return (
     <Spin dataSet={editDataset}>
       <Form dataSet={editDataset} className={`test-edit-execute-issue-form ${visibleDetail ? '' : 'test-edit-execute-issue-form-hidden'}`}>
@@ -124,10 +91,12 @@ function EditExecuteIssue(props) {
         {/* //  这里逻辑待处理， DataSet提交  */}
         <div className="test-edit-execute-issue-form-file">
           <span className="test-edit-execute-issue-head">附件</span>
-          <UploadButton
-            defaultFileList={editDataset.current ? [...editDataset.current.get('cycleCaseAttachmentRelVOList')] : []}
-            onChange={onUploadFile}
-          />
+          {editDataset.current && (
+            <UploadButton
+              defaultFileList={[...editDataset.current.get('cycleCaseAttachmentRelVOList')]}
+              onChange={onUploadFile}
+            />
+          )}
         </div>
         <div className="test-edit-execute-issue-form-step">
           <div className="test-edit-execute-issue-line" />

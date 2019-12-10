@@ -240,10 +240,11 @@ function PureTree({
   const renderItem = ({
     item, provided,
   }) => {
+    const { path } = getItemById(flattenedTree, item.id);
     const treeNode = (
       <TreeNode
         key={item.id}
-        path={getItemById(flattenedTree, item.id).path}
+        path={path}
         provided={provided}
         item={item}
         onExpand={onExpand}
@@ -256,7 +257,7 @@ function PureTree({
         {...treeNodeProps}
       />
     );
-    return renderTreeNode ? renderTreeNode(treeNode, { item }) : treeNode;
+    return renderTreeNode ? renderTreeNode(treeNode, { item: { ...item, path } }) : treeNode;
   };
   return (
     <div className={prefix}>
