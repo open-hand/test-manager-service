@@ -15,27 +15,29 @@ function TestPlanHeader() {
   const handleUpdatePlanStatus = (newStatus) => {
     const { getItem } = testPlanStore.treeRef.current || {};
     const planItem = getItem(Number(testPlanStore.getCurrentPlanId)) || {};
-    updatePlanStatus({
-      planId: planItem.item.id,
-      objectVersionNumber: planItem.item.data.objectVersionNumber,
-      statusCode: newStatus,
-    }).then(() => {
-      if (newStatus === 'doing') {
-        Choerodon.prompt('开始测试成功');
-        testPlanStore.setTestPlanStatus('doing');
-        testPlanStore.loadAllData();
-      } else {
-        Choerodon.prompt('完成测试成功');
-        testPlanStore.setTestPlanStatus('done');
-        testPlanStore.loadAllData();
-      }
-    }).catch(() => {
-      if (newStatus === 'doing') {
-        Choerodon.prompt('开始测试失败');
-      } else {
-        Choerodon.prompt('完成测试失败');
-      }
-    });
+    if (planItem.item && planItem.item.id) {
+      updatePlanStatus({
+        planId: planItem.item.id,
+        objectVersionNumber: planItem.item.data.objectVersionNumber,
+        statusCode: newStatus,
+      }).then(() => {
+        if (newStatus === 'doing') {
+          Choerodon.prompt('开始测试成功');
+          testPlanStore.setTestPlanStatus('doing');
+          testPlanStore.loadAllData();
+        } else {
+          Choerodon.prompt('完成测试成功');
+          testPlanStore.setTestPlanStatus('done');
+          testPlanStore.loadAllData();
+        }
+      }).catch(() => {
+        if (newStatus === 'doing') {
+          Choerodon.prompt('开始测试失败');
+        } else {
+          Choerodon.prompt('完成测试失败');
+        }
+      });
+    }
   };
 
   const handleCreateAutoTest = () => {
@@ -73,7 +75,7 @@ function TestPlanHeader() {
               </Button>
             )}
             {
-              testPlanStatus === 'todo' ? (
+              getCurrentPlanId && testPlanStatus === 'todo' ? (
                 <Button icon="play_circle_filled" onClick={handleUpdatePlanStatus.bind(this, 'doing')}>
                   <FormattedMessage id="testPlan_manualTest" />
                 </Button>

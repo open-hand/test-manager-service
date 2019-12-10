@@ -107,11 +107,11 @@ class TestPlanTreeStore {
 
   @action setTreeData(treeData, defaultSelectId) {
     const { rootIds, treeFolder } = treeData;
-    
+    const firstRoot = (treeFolder && treeFolder.find(item => item.issueFolderVO.initStatus === 'success' && item.topLevel)) || {};
     // 选中之前选中的
     let selectedId = this.currentCycle ? this.currentCycle.id : undefined;
     if (!this.currentCycle.id && rootIds && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
+      selectedId = defaultSelectId ? Number(defaultSelectId) : firstRoot.id;
     }
     this.treeData = {
       rootIds: rootIds || [],

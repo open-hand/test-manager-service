@@ -227,24 +227,17 @@ const TestPlanTable = observer(({
       title="测试用例"
       extra={(
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {
-           checkIdMap.size ? (
-             <SelectFocusLoad
-               allowClear
-              //  className="c7ntest-select c7ntest-testPlan-assignToSelect"
-              //  dropdownClassName="c7ntest-testPlan-assignToDropDown"
-               style={{ width: 216 }}
-               placeholder="指派给"
-               getPopupContainer={trigger => trigger.parentNode}
-               type="user"
-               onChange={onAssignToChange}
-             />
-           ) : ''
-         }
           <SelectFocusLoad
             allowClear
-            // className="c7ntest-select c7ntest-testPlan-assignToSelect"
-            // dropdownClassName="c7ntest-testPlan-assignToDropDown"
+            disabled={!checkIdMap.size}
+            style={{ width: 216 }}
+            placeholder="批量指派"
+            getPopupContainer={trigger => trigger.parentNode}
+            type="user"
+            onChange={onAssignToChange}
+          />
+          <SelectFocusLoad
+            allowClear
             style={{ width: 216, marginLeft: 10 }}
             placeholder="执行人"
             getPopupContainer={trigger => trigger.parentNode}

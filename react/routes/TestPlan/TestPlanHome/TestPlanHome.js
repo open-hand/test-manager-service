@@ -86,7 +86,7 @@ function TestPlanHome() {
         if (testPlanStatus !== 'todo') {
           testPlanStore.setTestPlanStatus('todo');
         }
-        testPlanStore.loadAllData();
+        testPlanStore.loadIssueTree();
       },
     });
   };
