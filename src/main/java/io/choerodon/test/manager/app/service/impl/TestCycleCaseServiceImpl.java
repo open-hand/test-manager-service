@@ -967,10 +967,32 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 list.add(caseMap.get(v));
             });
         }
-        Map<Long, TestCycleDTO> cycleMap = new HashMap<>();
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
-        cycleMap.put(testCycleDTO.getFolderId(), testCycleDTO);
-        batchInsertByTestCase(cycleMap, list);
+
+        List<Long> caseIds = list.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(caseIds)) {
+            return;
+        }
+        // 获取case关联的步骤
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+        // 获取case关联的附件
+        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
+        // 插入
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
+        List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(list, testCycleDTO, defaultStatusId);
+        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM == 0 ? 1 : testCycleCaseDTOS.size() / AVG_NUM));
+
+        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
+        lists.forEach(v -> {
+            bathcInsert(v);
+            testCycleCaseDTOList.addAll(v);
+        });
+        // 同步步骤
+        testCycleCaseStepService.batchInsert(testCycleCaseDTOList, caseStepMap);
+        // 同步附件
+        testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOList, attachmentMap);
     }
 
     @Override
@@ -1186,6 +1208,28 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return doRank(listMap);
     }
 
+    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, TestCycleDTO testCycleDTO, Long defaultStatusId) {
+        if (CollectionUtils.isEmpty(testCaseDTOS)) {
+            return new ArrayList<>();
+        }
+        List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
+        testCaseDTOS.forEach(v -> {
+                TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+                testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
+                testCycleCaseDTO.setCaseId(v.getCaseId());
+                testCycleCaseDTO.setDescription(v.getDescription());
+                testCycleCaseDTO.setProjectId(v.getProjectId());
+                testCycleCaseDTO.setVersionNum(v.getVersionNum());
+                testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+                testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
+                testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
+                testCycleCaseDTO.setSummary(v.getSummary());
+                testCycleCaseDTO.setSource("none");
+                testCycleCaseDTOS.add(testCycleCaseDTO);
+        });
+        Map<Long, List<TestCycleCaseDTO>> listMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
+        return doRank(listMap);
+    }
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
         if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             return;
