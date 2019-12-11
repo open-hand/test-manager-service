@@ -637,7 +637,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             if (!noldStepIds.contains(newcCycle.getExecuteStepId())) {
                 //添加步骤
                 testCycleCaseStepService.create(newcCycle);
-            }else {
+            } else {
                 //更新步骤
                 testCycleCaseStepService.update(newcCycle);
             }
@@ -659,13 +659,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             caseCompareRepVO.setSyncToCase(true);
             caseCompareRepVO.setExecuteId(testCycleCase.getExecuteId());
             caseCompareRepVO.setCaseId(testCycleCase.getCaseId());
-            CaseCompareVO caseCompareVO = new CaseCompareVO();
-            caseCompareVO.setCaseId(testCycleCase.getCaseId());
-            caseCompareVO.setTestCase(modelMapper.map(testCycleCaseUpdateVO,TestCaseVO.class));
-            caseCompareVO.setCaseAttach(modelMapper.map(testCycleCaseUpdateVO.getCycleCaseAttachmentRelVOList(),new TypeToken<List<TestCaseAttachmentDTO>>(){}.getType()));
-            caseCompareVO.setCaseStep(modelMapper.map(testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS(),new TypeToken<List<TestCaseStepDTO> >(){}.getType()));
-            Map<Long, CaseCompareVO> cycleCaseMap = new HashMap<>();
-            cycleCaseMap.put(testCycleCase.getCaseId(),caseCompareVO);
+            Map<Long, CaseCompareVO> cycleCaseMap = testCycleCaseMapper.queryTestCaseMap(Arrays.asList(testCycleCase.getExecuteId()));
             Map<Long, CaseCompareVO> caseMap = testCaseMapper.queryTestCaseMap(Arrays.asList(testCycleCase.getCaseId()), Arrays.asList(testCycleCase.getExecuteId()));
             List<TestCycleCaseDTO> testCycleCaseDTOS = Arrays.asList(testCycleCase);
             testCycleCaseDTOS.forEach(CycleCase -> {
@@ -678,17 +672,17 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                     if (!Objects.equals(JSON.toJSON(cycleCaseVo.getTestCase()), JSON.toJSON(caseVo.getTestCase()))) {
                         changeCase = true;
                     }
-                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseStep()), JSON.toJSON(cycleCaseVo.getCaseStep()))) {
+                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseStep()), JSON.toJSON(caseVo.getCaseStep()))) {
                         changeStep = true;
                     }
-                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseAttach()), JSON.toJSON(cycleCaseVo.getCaseAttach()))) {
+                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseAttach()), JSON.toJSON(caseVo.getCaseAttach()))) {
                         changeAttach = true;
                     }
                 }
                 caseCompareRepVO.setChangeCase(changeCase);
                 caseCompareRepVO.setChangeAttach(changeAttach);
                 caseCompareRepVO.setChangeStep(changeStep);
-                updateCompare(projectId,caseCompareRepVO);
+                updateCompare(projectId, caseCompareRepVO);
             });
 
         }
@@ -698,14 +692,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     public PageInfo<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long cycleId, Pageable pageable, SearchDTO searchDTO) {
         // 查询文件夹下所有的目录
         Set<Long> cycleIds = new HashSet<>();
-        if(!ObjectUtils.isEmpty(cycleId)){
+        if (!ObjectUtils.isEmpty(cycleId)) {
             cycleIds.addAll(queryCycleIds(cycleId, planId));
         }
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
         List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(testCaseAssembler::setAssianUser).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(testFolderCycleCaseVOS)){
+        if (CollectionUtils.isEmpty(testFolderCycleCaseVOS)) {
             return new PageInfo<TestFolderCycleCaseVO>();
         }
 
@@ -735,11 +729,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                         hasChange = true;
                         changeCase = true;
                     }
-                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseStep()), JSON.toJSON(cycleCaseVo.getCaseStep()))) {
+                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseStep()), JSON.toJSON(caseVo.getCaseStep()))) {
                         hasChange = true;
                         changeStep = true;
                     }
-                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseAttach()), JSON.toJSON(cycleCaseVo.getCaseAttach()))) {
+                    if (!Objects.equals(JSON.toJSON(cycleCaseVo.getCaseAttach()), JSON.toJSON(caseVo.getCaseAttach()))) {
                         hasChange = true;
                         changeAttach = true;
                     }
@@ -773,14 +767,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 index = testCycleCaseDTOS.indexOf(cyclecase);
             }
         }
-        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+        if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
         testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
-        previousNextId(index,testCycleCaseDTOS,testCycleCaseInfoVO);
+        previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
 
@@ -828,9 +822,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void baseUpdate(TestCycleCaseDTO testCycleCaseDTO) {
-       if( testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO)!=1){
-           throw new CommonException("error.update.cycle.case");
-       }
+        if (testCycleCaseMapper.updateByPrimaryKeySelective(testCycleCaseDTO) != 1) {
+            throw new CommonException("error.update.cycle.case");
+        }
     }
 
 
@@ -1175,14 +1169,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
     }
 
-    private  Set<Long> queryCycleIds(Long cycleId,Long planId){
+    private Set<Long> queryCycleIds(Long cycleId, Long planId) {
         Set<Long> cycleIds = new HashSet<>();
         if (!ObjectUtils.isEmpty(planId)) {
             TestCycleDTO testCycleDTO = new TestCycleDTO();
             testCycleDTO.setPlanId(planId);
             List<TestCycleDTO> cycleDTOS = testCycleMapper.select(testCycleDTO);
-            cycleDTOS.stream().forEach(e->{
-                if(e.getParentCycleId()==null){
+            cycleDTOS.stream().forEach(e -> {
+                if (e.getParentCycleId() == null) {
                     e.setParentCycleId(0L);
                 }
             });
@@ -1198,8 +1192,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
         String preRank = null;
-        for (TestCaseDTO v:testCaseDTOS
-             ) {
+        for (TestCaseDTO v : testCaseDTOS
+        ) {
             TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
             if (!ObjectUtils.isEmpty(testCycleDTO)) {
                 TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
@@ -1227,24 +1221,25 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
         String preRank = null;
-        for (TestCaseDTO v:testCaseDTOS) {
-                TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
-                testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
-                testCycleCaseDTO.setCaseId(v.getCaseId());
-                testCycleCaseDTO.setDescription(v.getDescription());
-                testCycleCaseDTO.setProjectId(v.getProjectId());
-                testCycleCaseDTO.setVersionNum(v.getVersionNum());
-                testCycleCaseDTO.setExecutionStatus(defaultStatusId);
-                testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
-                testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
-                testCycleCaseDTO.setSummary(v.getSummary());
-                 testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
-                 preRank = testCycleCaseDTO.getRank();
-                testCycleCaseDTO.setSource("none");
-                testCycleCaseDTOS.add(testCycleCaseDTO);
+        for (TestCaseDTO v : testCaseDTOS) {
+            TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+            testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
+            testCycleCaseDTO.setCaseId(v.getCaseId());
+            testCycleCaseDTO.setDescription(v.getDescription());
+            testCycleCaseDTO.setProjectId(v.getProjectId());
+            testCycleCaseDTO.setVersionNum(v.getVersionNum());
+            testCycleCaseDTO.setExecutionStatus(defaultStatusId);
+            testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
+            testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
+            testCycleCaseDTO.setSummary(v.getSummary());
+            testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+            preRank = testCycleCaseDTO.getRank();
+            testCycleCaseDTO.setSource("none");
+            testCycleCaseDTOS.add(testCycleCaseDTO);
         }
         return testCycleCaseDTOS;
     }
+
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
         if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             return;
