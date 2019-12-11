@@ -29,6 +29,7 @@ public class TestIssueFolderVO {
     private Long objectVersionNumber;
 
     private String initStatus;
+    private String rank;
 
     public TestIssueFolderVO() {
     }
@@ -101,6 +102,14 @@ public class TestIssueFolderVO {
     public void setType(String type) {
 
         this.type = type;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
     }
 
     public Long getParentId() {

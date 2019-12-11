@@ -70,7 +70,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseStepVO.getLastRank(), testCycleCaseStepVO.getNextRank()));
         baseUpdate(testCycleCaseStepDTO);
     }
 
@@ -253,7 +252,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
         testCycleCaseStepDTO.setStepStatus(defStatus);
-        testCycleCaseStepDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseStepMapper.getLastedRank(testCycleCaseStepVO.getExecuteId()), null));
         if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }

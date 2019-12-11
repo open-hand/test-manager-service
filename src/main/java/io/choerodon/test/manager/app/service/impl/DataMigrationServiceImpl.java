@@ -109,9 +109,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migreateDataLog();
         //7.版本
         migreateVersion();
-//        //8.删除
 //        deleteStage();
-        //9.删除重复
 //        deleteRepeat();
         //10.cycle()
         fixCycleCase();
@@ -123,8 +121,12 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixStatus();
         //14.cycleCaseRank
         fixCycleCaseStepRank();
-        //15 fix CycleCaseRank
+       // 15 fix CycleCaseRank
         fixCycleCaseRank();
+        //16 fixCaseFolderRank
+        fixCaseFolderRank();
+        //17 fixCycleCaseFolderRank
+        fixCycleCaseFolderRank();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -331,7 +333,37 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 testCycleCaseMapper.fixRank(testcycles);
             }
         }
+    }
 
+    private void fixCaseFolderRank() {
+        List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderMapper.selectAll();
+        Map<Long, List<TestIssueFolderDTO>> longListMap = testIssueFolderDTOList.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getProjectId));
+        for (Map.Entry<Long, List<TestIssueFolderDTO>> map : longListMap.entrySet()) {
+            if (!CollectionUtils.isEmpty(map.getValue())) {
+                String preRank = null;
+                for (TestIssueFolderDTO folderDto : map.getValue()) {
+                    folderDto.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+                    preRank = folderDto.getRank();
+                }
+                testIssueFolderMapper.fixRank(map.getValue());
+            }
+        }
+
+    }
+
+    private void fixCycleCaseFolderRank() {
+        List<TestCycleDTO> testCycleDTOS = testCycleMapper.selectAll();
+        Map<Long, List<TestCycleDTO>> longListMap = testCycleDTOS.stream().filter(e->e.getPlanId()!=null).collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
+        for (Map.Entry<Long, List<TestCycleDTO>> map : longListMap.entrySet()) {
+            if (!CollectionUtils.isEmpty(map.getValue())) {
+                String preRank = null;
+                for (TestCycleDTO folderDto : map.getValue()) {
+                    folderDto.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+                    preRank = folderDto.getRank();
+                }
+                testCycleMapper.fixRank(map.getValue());
+            }
+        }
 
     }
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
