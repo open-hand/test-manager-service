@@ -210,7 +210,7 @@ function TestPlanHome() {
     }
   };
 
-  const handleSerchAssign = (value) => {
+  const handleSearchAssign = (value) => {
     const { filter } = testPlanStore;
     filter.assignUser = value || undefined;
     testPlanStore.setFilter(filter);
@@ -304,7 +304,7 @@ function TestPlanHome() {
                       onQuickPass={handleQuickPassOrFail}
                       onQuickFail={handleQuickPassOrFail}
                       onAssignToChange={handleAssignToChange}
-                      onSerchAssign={handleSerchAssign}
+                      onSearchAssign={handleSearchAssign}
                       onOpenUpdateRemind={handleOpenUpdateRemind}
                       onTableSummaryClick={handleTableSummaryClick}
                     />

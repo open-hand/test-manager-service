@@ -3,40 +3,75 @@ import { Choerodon } from '@choerodon/boot';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
-import { Button } from 'choerodon-ui/pro';
+import { Button, Modal } from 'choerodon-ui/pro';
 import { openEditPlan } from '../TestPlanModal';
 import { updatePlanStatus } from '@/api/TestPlanApi';
 import Store from '../../stores';
+import './TestPlanHeader.less';
+
+const confirmCompletePlanModalKey = Modal.key();
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
-  const { testPlanStatus, getCurrentPlanId } = testPlanStore;
+  const { testPlanStatus, getCurrentPlanId, statusRes } = testPlanStore;
+
+  const onUpdatePlanStatus = (planItem, newStatus) => {
+    updatePlanStatus({
+      planId: planItem.item.id,
+      objectVersionNumber: planItem.item.data.objectVersionNumber,
+      statusCode: newStatus,
+    }).then(() => {
+      if (newStatus === 'doing') {
+        Choerodon.prompt('开始测试成功');
+        testPlanStore.setTestPlanStatus('doing');
+        testPlanStore.loadAllData();
+      } else {
+        Choerodon.prompt('完成测试成功');
+        testPlanStore.setTestPlanStatus('done');
+        testPlanStore.loadAllData();
+      }
+    }).catch(() => {
+      if (newStatus === 'doing') {
+        Choerodon.prompt('开始测试失败');
+      } else {
+        Choerodon.prompt('完成测试失败');
+      }
+    });
+  };
+
+  const confirmCompletePlan = (planItem, newStatus) => {
+    Modal.open({
+      key: confirmCompletePlanModalKey,
+      title: `确定完成计划 ${planItem.item.data.name}？`,
+      children: (
+        <div>
+          <p>当前计划的完成情况如下：</p>
+          <p>{`执行总数：${statusRes.total}`}</p>
+          {
+            statusRes.statusVOList.map(item => (
+              <p>{`${item.statusName}：${item.count}`}</p>
+            ))
+          }
+          <p>{`确定要完成计划 ${planItem.item.data.name} 吗？`}</p>
+        </div>
+      ),
+      okText: '确定',
+      onOk: onUpdatePlanStatus.bind(this, planItem, newStatus),
+      cancelText: '取消',
+      style: { width: '5.6rem' },
+      className: 'c7ntest-testPlan-completePlan-confirm-modal',
+    });
+  };
 
   const handleUpdatePlanStatus = (newStatus) => {
     const { getItem } = testPlanStore.treeRef.current || {};
     const planItem = getItem(Number(testPlanStore.getCurrentPlanId)) || {};
     if (planItem.item && planItem.item.id) {
-      updatePlanStatus({
-        planId: planItem.item.id,
-        objectVersionNumber: planItem.item.data.objectVersionNumber,
-        statusCode: newStatus,
-      }).then(() => {
-        if (newStatus === 'doing') {
-          Choerodon.prompt('开始测试成功');
-          testPlanStore.setTestPlanStatus('doing');
-          testPlanStore.loadAllData();
-        } else {
-          Choerodon.prompt('完成测试成功');
-          testPlanStore.setTestPlanStatus('done');
-          testPlanStore.loadAllData();
-        }
-      }).catch(() => {
-        if (newStatus === 'doing') {
-          Choerodon.prompt('开始测试失败');
-        } else {
-          Choerodon.prompt('完成测试失败');
-        }
-      });
+      if (newStatus === 'doing') {
+        onUpdatePlanStatus(planItem, newStatus);
+      } else {
+        confirmCompletePlan(planItem, newStatus);
+      }
     }
   };
 

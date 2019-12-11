@@ -95,8 +95,8 @@ class IssueDescription extends Component {
 
   render() {
     return (
-      <div className="c7ntest-read-delta" style={{ width: '100%', wordBreak: 'break-all' }}>
-        <div dangerouslySetInnerHTML={{ __html: `${this.escape(this.props.data)}` }} />
+      <div className="c7ntest-read-delta" style={{ width: '100%', wordBreak: 'break-all', ...this.props.style }}>
+        <div style={{ fontWeight: 500 }} dangerouslySetInnerHTML={{ __html: `${this.escape(this.props.data)}` }} />
         {
           this.state.open ? (
             <Lightbox

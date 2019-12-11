@@ -9,6 +9,7 @@ import {
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
+import { getProjectId } from '@/common/utils';
 import { openClonePlan } from '../TestPlanModal';
 import openDragPlanFolder from '../DragPlanFolder';
 import openImportIssue from '../ImportIssue';
@@ -50,6 +51,7 @@ class TestPlanTree extends Component {
       cycleId: folderId,
       cycleName: newName,
       objectVersionNumber,
+      projectId: getProjectId(),
     };
     const result = await handleRequestFailed(editFolder(data));
     return {

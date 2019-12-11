@@ -124,7 +124,7 @@ function Detail({
       delta = delta2Html(description);
       return (
         <ContentWrap>
-          <IssueDescription data={delta} />
+          <IssueDescription style={{ paddingRight: 20 }} data={delta} />
         </ContentWrap>
       );
     }
@@ -164,7 +164,7 @@ function Detail({
                 display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 5, 
               }}
             >
-              <UserHead user={createUser} />
+              <UserHead user={createUser} color="#000000" />
             </PropertyWrap>
             {/* 创建时间 */}
             <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_createDate" />}>
@@ -178,7 +178,7 @@ function Detail({
                     display: 'flex', alignItems: 'center', flexWrap: 'wrap', marginLeft: 6, 
                   }}
                 >
-                  <UserHead user={lastUpdateUser} />
+                  <UserHead user={lastUpdateUser} color="#000000" />
                 </PropertyWrap>
                 <PropertyWrap valueStyle={{ marginLeft: 6 }} label={<FormattedMessage id="issue_edit_updateDate" />}>
                   <Timeago date={lastUpdateDate} />

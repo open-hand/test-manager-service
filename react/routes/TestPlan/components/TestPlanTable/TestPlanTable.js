@@ -23,7 +23,7 @@ const propTypes = {
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
   onAssignToChange: PropTypes.func.isRequired,
-  onSerchAssign: PropTypes.func.isRequired,
+  onSearchAssign: PropTypes.func.isRequired,
   onOpenUpdateRemind: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
@@ -34,7 +34,7 @@ const TestPlanTable = observer(({
   onQuickPass,
   onQuickFail,
   onAssignToChange,
-  onSerchAssign,
+  onSearchAssign,
   onOpenUpdateRemind,
 }) => {
   const { 
@@ -244,7 +244,7 @@ const TestPlanTable = observer(({
             placeholder="执行人"
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
-            onChange={onSerchAssign}
+            onChange={onSearchAssign}
             value={testPlanStore.filter.assignUser}
           />
         </div>

@@ -18,7 +18,7 @@ function makeTree(rootIds, treeFolder) {
   });
 }
 class TestPlanTreeStore {
-  @observable testPlanStatus = 'todo';
+  @observable testPlanStatus = 'doing';
 
   @action setTestPlanStatus = (testPlanStatus) => {
     this.testPlanStatus = testPlanStatus;
