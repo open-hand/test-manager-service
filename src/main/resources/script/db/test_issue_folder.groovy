@@ -53,7 +53,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(id: '2019-12-11-test-issue-folder-add-rank', author: 'lizhaozhong@gmail.com') {
         addColumn(tableName: 'test_issue_folder') {
-            column(name: 'rank', type: 'VARCHAR(255)', remarks: 'rank', afterColumn: 'parent_id')
+            column(name: 'rank', type: 'VARCHAR(255)', remarks: 'rank')
         }
     }
 }
