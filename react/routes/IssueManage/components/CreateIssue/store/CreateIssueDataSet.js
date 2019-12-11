@@ -1,4 +1,5 @@
 import { stores } from '@choerodon/boot';
+import { message } from 'choerodon-ui/pro';
 import { getProjectId, beforeTextUpload } from '../../../../../common/utils';
 
 const { AppState } = stores;
@@ -55,7 +56,11 @@ function CreateIssueDataSet(intlPrefix, intl) {
       },
 
     ],
-
+    feedback: {
+      submitSuccess: (resp) => {
+        message.success('创建成功');
+      },
+    },
     transport: {
       submit: ({ data, dataSet }) => {
         const newData = {
