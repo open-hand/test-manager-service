@@ -7,13 +7,18 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.IIssueAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
+import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -53,6 +58,14 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @Autowired
     private IIssueAttachmentService iIssueAttachmentService;
 
+    @Autowired
+    private TestCaseService testCaseService;
+
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    private TestCaseAssembler testCaseAssembler;
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -118,6 +131,11 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
                 attachment.setUrl(attachmentUrl + attachment.getUrl());
             });
         }
+        testCaseService.updateVersionNum(issueId);
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,false,true);
+        }
         return issueAttachmentDTOList;
     }
 
@@ -134,6 +152,12 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + url);
         } catch (Exception e) {
             LOGGER.error("error.attachment.delete", e);
+        }
+
+        testCaseService.updateVersionNum(issueAttachmentDTO.getCaseId());
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueAttachmentDTO.getCaseId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,false,true);
         }
         return result;
     }

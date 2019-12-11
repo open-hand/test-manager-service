@@ -95,4 +95,14 @@
         (#{defect.type},#{defect.defectLinkId},#{defect.issueId},#{defect.projectId},#{defect.createdBy},#{defect.lastUpdatedBy})
         </foreach>
     </insert>
+
+    <delete id="batchDeleteByLinkIdsAndType">
+        delete from test_cycle_case_defect_rel where
+        defect_type = #{type}
+        and
+        defect_link_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </delete>
 </mapper>

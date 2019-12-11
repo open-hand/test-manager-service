@@ -289,7 +289,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
-        testCaseStepService.removeStepByIssueId(caseId);
+        testCaseStepService.removeStepByIssueId(projectId,caseId);
         // 删除问题链接
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setLinkCaseId(caseId);
@@ -378,7 +378,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
             map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
-            map.setVersionNum(testCaseDTO.getVersionNum() + 1);
             map.setFolderId(folderId);
             DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, map, 1, "error.update.case");
         }

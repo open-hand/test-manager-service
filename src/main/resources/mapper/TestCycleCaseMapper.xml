@@ -867,7 +867,7 @@ ORDER BY
             tp.project_id = #{projectId}
             AND tcc.case_id = #{caseId}
             AND tp.init_status = 'success'
-            AND tp.status_code != 'done'
+            AND tp.status_code = 'todo'
             AND tp.is_auto_sync = 1
     </select>
 </mapper>

@@ -13,7 +13,7 @@ public interface TestCaseStepService {
 
     List<TestCaseStepVO> query(TestCaseStepVO testCaseStepVO);
 
-    void removeStep(TestCaseStepVO testCaseStepVO);
+    void removeStep(Long projectId,TestCaseStepVO testCaseStepVO);
 
     TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum);
 
@@ -23,7 +23,7 @@ public interface TestCaseStepService {
 
     TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO);
 
-    void removeStepByIssueId(Long caseId);
+    void removeStepByIssueId(Long projectId,Long caseId);
 
     List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds);
 }
