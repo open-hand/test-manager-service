@@ -98,7 +98,8 @@ class IssueTree extends Component {
           renderTreeNode={this.renderTreeNode}
           treeNodeProps={{
             enableAddFolder: item => !item.hasCase,
-          }}        
+          }}
+          getDeleteTitle={item => `确认删除“${item.data.name}”文件夹？删除后文件夹下的所有用例也将被删除`}        
         />
       </div>
     );

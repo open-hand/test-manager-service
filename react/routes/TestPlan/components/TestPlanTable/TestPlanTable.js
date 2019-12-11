@@ -69,7 +69,7 @@ const TestPlanTable = observer(({
             <span 
               style={
                 { 
-                  display: testPlanStatus === 'todo' && record.hasChange ? 'inline-block' : 'none', 
+                  display: testPlanStatus !== 'done' && record.hasChange ? 'inline-block' : 'none', 
                   width: 6, 
                   height: 6, 
                   borderRadius: '50%', 

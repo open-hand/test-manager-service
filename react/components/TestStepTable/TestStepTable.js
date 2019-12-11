@@ -191,7 +191,7 @@ function TestStepTable(props) {
             saveRef={saveCreateRef}
             originData={testStep}
             formKey="testStep"
-            style={{ padding: '5px 0' }}
+            style={{ marginLeft: '-5px' }}
             onSubmit={(value) => {
               handleEditStep({
                 ...record,
@@ -226,7 +226,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            style={{ padding: '5px 0' }}
+            style={{ marginLeft: '-5px' }}
             originData={testData}
             formKey="testData"
             onSubmit={(value) => {
@@ -263,7 +263,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            style={{ padding: '5px 0' }}
+            style={{ marginLeft: '-5px' }}
             originData={expectedResult}
             formKey="expectedResult"
             onSubmit={(value) => {

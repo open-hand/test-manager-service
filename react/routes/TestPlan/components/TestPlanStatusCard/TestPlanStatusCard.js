@@ -23,7 +23,7 @@ export default observer(() => {
             <Tooltip title={`${item.statusName}：${item.count || 0}`}>
               <div
                 style={{
-                  flexShrink: 0, paddingRight: '0.3rem', overflow: 'hidden', cursor: 'pointer', 
+                  flexShrink: 0, marginRight: '0.3rem', overflow: 'hidden', cursor: 'pointer', 
                 }}
                 role="none"
                 onClick={handleQueryExecutesByStatus.bind(this, item)}
