@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
@@ -40,6 +40,7 @@ function TestStepTable(props) {
   const {
     onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
+  const firstInputRef = useRef();
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
       return;
@@ -83,6 +84,7 @@ function TestStepTable(props) {
     };
     setData([...data, testCaseStepDTO]);
   };
+
   const onCancelCreateStep = (index) => {
     data.splice(index, 1);
     setData([...data]);
@@ -100,6 +102,8 @@ function TestStepTable(props) {
           delete newStepResult.stepIsCreating;
           data[index] = newStepResult;
           setData([...data]);
+          // 创建成功后自动展开下一个新步骤
+          handleAddCreating();
         }
       } catch (error) {
         // 
@@ -151,8 +155,13 @@ function TestStepTable(props) {
       okType: 'danger',
     });
   };
-
-
+  /**
+   * 自动聚焦新创建步骤第一框框
+   * @param {*} ref 
+   */
+  const saveCreateRef = (ref) => {
+    ref.enterEditing();
+  };
   function render() {
     const {
       disabled,
@@ -178,6 +187,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
+            saveRef={saveCreateRef}
             originData={testStep}
             formKey="testStep"
             style={{ padding: '5px 0' }}
