@@ -10,6 +10,7 @@ import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
 } from '../../../../components';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
+import User from '../../../../components/User';
 import './TestPlanTable.less';
 import TableDropMenu from '../../../../common/TableDropMenu';
 import Store from '../../stores';
@@ -135,7 +136,7 @@ const TestPlanTable = observer(({
         <div
           className="c7ntest-text-dot"
         >
-          {assignedUser && assignedUser.realName}
+          <User user={assignedUser} />
         </div>
       );
     },
@@ -235,6 +236,7 @@ const TestPlanTable = observer(({
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
             onChange={onAssignToChange}
+            value={testPlanStore.assignToUserId}
           />
           <SelectFocusLoad
             allowClear

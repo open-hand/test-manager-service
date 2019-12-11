@@ -201,9 +201,11 @@ function TestPlanHome() {
   };
 
   const handleAssignToChange = (value) => {
+    testPlanStore.setAssignToUserId(value);
     if (value && checkIdMap.size) {
       testPlanStore.executesAssignTo(value).then(() => {
         checkIdMap.clear();
+        testPlanStore.setAssignToUserId(undefined);
       });
     }
   };

@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { observer } from 'mobx-react-lite';
-import { Card } from 'choerodon-ui';
+import { Card, Tooltip } from 'choerodon-ui';
 import User from '../../../../components/User';
+import SmartToolTip from '../../../../components/SmartTooltip';
 import './TestPlanDetailCard.less';
 import Store from '../../stores';
 
@@ -14,7 +15,11 @@ export default observer(() => {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.16rem' }}>
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">起止时间</span>
-            <span className="c7ntest-testPlan-detailCard-content-item-value">{`${(planInfo.startDate && planInfo.startDate.split(' ')[0]) || ''}～${(planInfo.endDate && planInfo.endDate.split(' ')[0]) || ''}`}</span>
+            <span className="c7ntest-testPlan-detailCard-content-item-value">
+              <Tooltip title={`${planInfo.startDate || ''} ~ ${planInfo.endDate || ''}`}>
+                {`${(planInfo.startDate && planInfo.startDate.split(' ')[0]) || ''}～${(planInfo.endDate && planInfo.endDate.split(' ')[0]) || ''}`}
+              </Tooltip>
+            </span>
           </div>
           <div className="c7ntest-testPlan-detailCard-content-item">
             <span className="c7ntest-testPlan-detailCard-content-item-field">负责人</span>
@@ -25,7 +30,7 @@ export default observer(() => {
         </div>
         <div className="c7ntest-testPlan-detailCard-content-item">
           <span className="c7ntest-testPlan-detailCard-content-item-field">描述</span>
-          <span className="c7ntest-testPlan-detailCard-content-item-value">{planInfo.description}</span>
+          <SmartToolTip title={planInfo.description} width="3.5rem" />
         </div>
       </div>
     </Card>
