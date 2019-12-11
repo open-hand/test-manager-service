@@ -138,11 +138,11 @@ export function openCreatePlan({
 export async function openEditPlan({ planId, onEdit }) {
   const planDetail = await getPlan(planId);
   Modal.open({
-    title: '编辑计划',
+    title: '修改计划',
     key,
     drawer: true,
     style: {
-      width: 1090,
+      width: 780,
     },
     children: <ObserverTestPlanModal
       mode="edit"
