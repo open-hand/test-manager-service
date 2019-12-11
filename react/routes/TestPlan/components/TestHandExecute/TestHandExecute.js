@@ -279,9 +279,8 @@ function TestHandExecute(props) {
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
         >
-          <Button funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
+          <Button icon="find_in_page" funcType="flat" type="primary" onClick={handleToggleExecuteDetailSide}>
             {/* <Icon type={visible ? 'format_indent_decrease' : 'format_indent_increase'} /> */}
-            <Icon type="find_in_page" />
             {visible ? '隐藏详情' : '查看详情'}
           </Button>
 
