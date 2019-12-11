@@ -9,8 +9,7 @@ import { observer } from 'mobx-react-lite';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '@/components';
 import EditTestStepTable from './EditTestStepTable';
-import { updateSidebarDetail } from '@/api/ExecuteDetailApi';
-import { text2Delta, returnBeforeTextUpload } from '@/common/utils';
+import { text2Delta } from '@/common/utils';
 import './EditExecuteIssue.less';
 
 function EditExecuteIssue(props) {

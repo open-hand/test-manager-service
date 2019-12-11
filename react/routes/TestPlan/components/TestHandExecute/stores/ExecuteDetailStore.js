@@ -6,7 +6,6 @@ import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import { geDetailsData } from '@/api/ExecuteDetailApi';
 import { getStatusList } from '@/api/TestStatusApi';
-import { getIssueInfos } from '../../../../../api/ExecuteDetailApi';
 
 class ExecuteDetailStore {
   @observable id = null;
@@ -29,6 +28,7 @@ class ExecuteDetailStore {
   @computed get getDetailParams() {
     return this.detailParams;
   }
+
 
   @action setDetailParams(data) {
     this.detailParams = {

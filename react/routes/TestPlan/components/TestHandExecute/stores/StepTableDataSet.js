@@ -1,6 +1,6 @@
 import { Choerodon } from '@choerodon/boot';
-import { editCycleStep, addDefects, removeDefect } from '@/api/ExecuteDetailApi';
-import { deleteAttachment, deleteFile } from '@/api/FileApi';
+import { editCycleStep, removeDefect } from '@/api/ExecuteDetailApi';
+import { deleteFile } from '@/api/FileApi';
 
 function updateRecordData(data, dataSet, record, name, oldValue) {
   // eslint-disable-next-line no-param-reassign
@@ -79,11 +79,6 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
       update: ({
         dataSet, record, name, value, oldValue,
       }) => {
-        // eslint-disable-next-line no-console
-        console.log('update', {
-          dataSet, record, name, value, oldValue,
-        });
-
         const data = record.toData();
         const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
         switch (name) {

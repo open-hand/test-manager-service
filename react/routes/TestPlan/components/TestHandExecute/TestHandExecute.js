@@ -45,7 +45,6 @@ function TestHandExecute(props) {
     ExecuteDetailStore.setDetailParams(queryString.parse(context.location.search));
     ExecuteDetailStore.getInfo(executeId);
     ExecuteDetailStore.setId(executeId);
-    // ExecuteDetailStore.loadDetailData(id);  
   }, [ExecuteDetailStore, context, context.match.params]);
 
 
@@ -57,6 +56,7 @@ function TestHandExecute(props) {
     const { plan_id: planId, cycle_id: cycleId } = ExecuteDetailStore.getDetailParams;
     if (toExecuteId) {
       history.replace(executeDetailLink(toExecuteId, cycleId, planId));
+      // ExecuteDetailStore.getInfo(toExecuteId);
     }
   };
 
@@ -107,6 +107,7 @@ function TestHandExecute(props) {
 
   /**
    * 批量删除已上传文件（修改用例 保存）
+   * 
    * @param {*} files 
    */
   async function deleteFiles(files = []) {
@@ -257,7 +258,6 @@ function TestHandExecute(props) {
     const textArr = [...text];
     return textArr.length > 15 ? textArr.slice(0, 15).join('') + ellipsis : text;
   };
-
   function render() {
     // disabled 用于禁止action列
     const { disabled } = props;
@@ -271,7 +271,7 @@ function TestHandExecute(props) {
     const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
     const {
-      summary, nextExecuteId, previousExecuteId, planStatus,
+      summary, nextExecuteId, previousExecuteId, planStatus = 'done',
     } = detailData;
     return (
       <Page className="c7n-test-execute-detail">

@@ -55,7 +55,7 @@ function EditExecuteCaseDataSet(executeId, intlPrefix, intl) {
             name: file.attachmentName, // 文件名 
             status: 'done', // 状态有：uploading done error removed
             ...file,
-            url: file.url.substring(1),
+            url: file.url.substr(0, 1) === '/' ? file.url.substring(1) : file.url,
           }));
           return {
             ...newData,
