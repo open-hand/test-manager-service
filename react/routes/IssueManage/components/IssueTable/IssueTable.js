@@ -27,12 +27,12 @@ export default observer((props) => {
     setFilteredColumns(selectedKeys);
   };
 
-  const shouldColumnShow = (column) => {
+  const shouldColumnShow = useAvoidClosure((column) => {
     if (column.title === '' || !column.dataIndex) {
       return true;
     }
     return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
-  };
+  });
 
   const renderThead = (columns) => {
     const Columns = columns.filter(column => shouldColumnShow(column));
@@ -77,7 +77,7 @@ export default observer((props) => {
   });
 
 
-  const renderTbody = (data, columns) => {
+  const renderTbody = (data, columns) => {   
     const {
       disabled, onRow,
     } = props;
