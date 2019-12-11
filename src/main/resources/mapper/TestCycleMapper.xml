@@ -415,4 +415,13 @@
             #{cycleId}
         </foreach>
     </delete>
+
+    <update id="fixRank">
+        <foreach collection="list" item="cycle" index="index" open="" close="" separator=";">
+            update test_cycle set rank=#{cycle.rank}
+            <where>
+                cycle_id=#{cycle.cycleId}
+            </where>
+        </foreach>
+    </update>
 </mapper>

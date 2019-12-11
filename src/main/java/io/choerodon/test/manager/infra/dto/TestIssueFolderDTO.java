@@ -26,7 +26,15 @@ public class TestIssueFolderDTO extends BaseDTO {
 
     private Long parentId;
 
+    private String rank;
 
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
 
     public TestIssueFolderDTO(Long projectId) {
         this.projectId = projectId;

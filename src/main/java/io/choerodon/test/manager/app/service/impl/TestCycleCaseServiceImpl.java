@@ -616,6 +616,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
         List<TestCycleCaseStepVO> newTestCycleCaseStepVOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepVO>>() {
         }.getType());
+        doRank(newTestCycleCaseStepVOS);
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteId(testCycleCaseUpdateVO.getExecuteId());
         List<TestCycleCaseStepDTO> oldTestCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
@@ -1249,5 +1250,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         testCycleCaseInfoVO.setPreviousExecuteId(previousExecuteId);
         testCycleCaseInfoVO.setNextExecuteId(nextExecuteId);
+    }
+    private void doRank(List<TestCycleCaseStepVO> newTestCycleCaseStepVOS){
+        String preRank = null;
+        for (TestCycleCaseStepVO testCycleCaseStepVO:newTestCycleCaseStepVOS) {
+            testCycleCaseStepVO.setRank(RankUtil.Operation.INSERT.getRank(preRank,null));
+            preRank = testCycleCaseStepVO.getRank();
+        }
     }
 }

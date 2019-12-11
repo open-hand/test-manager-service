@@ -68,4 +68,6 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
     void batchInsert(@Param("list") List<TestCycleDTO> list);
 
     void batchDelete( @Param("list") List<Long> needDeleteCycleIds);
+
+    void fixRank(@Param("list") List<TestCycleDTO> list);
 }
