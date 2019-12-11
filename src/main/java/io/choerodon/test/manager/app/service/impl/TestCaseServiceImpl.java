@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -49,7 +50,7 @@ import io.choerodon.test.manager.infra.util.TypeUtil;
  * Created by 842767365@qq.com on 6/11/18.
  */
 
-@Component
+@Service
 @Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);

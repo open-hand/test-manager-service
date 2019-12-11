@@ -25,31 +25,21 @@ import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.omg.CORBA.COMM_FAILURE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
-import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     private final static double AVG_NUM = 500.00;
 
@@ -77,7 +67,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     private static final Long defStatus = 4L;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);

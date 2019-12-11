@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +32,8 @@ import org.springframework.util.ObjectUtils;
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     public static final String TYPE_CYCLE = "cycle";
@@ -124,7 +126,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return new TestTreeIssueFolderVO(rootFolderId, treeFolderVOS);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderVO create(Long projectId, TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);

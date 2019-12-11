@@ -45,6 +45,7 @@ import java.util.*;
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class ExcelImportServiceImpl implements ExcelImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExcelImportServiceImpl.class);

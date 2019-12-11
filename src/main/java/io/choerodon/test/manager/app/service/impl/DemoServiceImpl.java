@@ -20,12 +20,14 @@ import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-02-15.
  * Email: ettwz@hotmail.com
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class DemoServiceImpl implements DemoService {
 
     private static final String DATE_FORMATTER = "yyyy-MM-dd";

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -40,7 +41,8 @@ import io.choerodon.test.manager.infra.util.MultipartExcel;
 /**
  * Created by zongw.lee@gmail.com on 15/10/2018
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class ExcelServiceImpl implements ExcelService {
 
     private static final String EXPORT_ERROR = "error.issue.export";
@@ -98,7 +100,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportFailCaseByTransaction(Long projectId, Long fileHistoryId, Long lUserId) {
         String userId = String.valueOf(lUserId);
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
@@ -167,7 +168,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
                                                        HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
@@ -223,7 +223,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, projectId,
@@ -282,7 +281,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
@@ -334,7 +332,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");

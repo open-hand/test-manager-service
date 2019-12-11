@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -39,13 +39,13 @@ import io.choerodon.test.manager.infra.enums.TestCycleType;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.TestDateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleServiceImpl implements TestCycleService {
 
     private static final String NODE_CHILDREN = "children";
@@ -107,7 +107,6 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param testCycleVO
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         testCycleVO.setType("folder");
@@ -115,7 +114,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         return cycleDTO;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO insertWithoutSyncFolder(Long projectId, TestCycleVO testCycleVO) {
         TestCycleVO cycleE = baseInsert(projectId, testCycleVO);
@@ -132,7 +130,6 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param cycleId
      * @param folderId
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean synchroFolder(Long cycleId, Long folderId, Long projectId) {
         //获取folder下所有issue
@@ -219,7 +216,6 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean synchroFolderInCycle(Long cycleId, Long projectId) {
         //查询cycle下所有关联folder
@@ -232,7 +228,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean synchroFolderInVersion(Long versionId, Long projectId) {
         TestCycleDTO cycleE = new TestCycleDTO();
@@ -244,7 +239,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long cycleId, Long projectId) {
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(Arrays.asList(cycleId));
@@ -253,7 +247,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         cycleMapper.deleteByPrimaryKey(cycleId);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO update(Long projectId, TestCycleVO testCycleVO) {
 
@@ -681,7 +674,6 @@ public class TestCycleServiceImpl implements TestCycleService {
      * @param projectId projectId
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO cloneCycle(Long cycleId, Long versionId, String cycleName, Long projectId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
@@ -700,7 +692,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         return modelMapper.map(baseCloneCycle(protoTestCycleDTO, newTestCycleE, projectId), TestCycleVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleVO cloneFolder(Long cycleId, TestCycleVO testCycleVO, Long projectId) {
         TestCycleDTO testCycleDTO = new TestCycleDTO();

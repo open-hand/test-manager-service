@@ -32,6 +32,7 @@ import org.springframework.util.CollectionUtils;
  * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
+@Transactional(rollbackFor = Exception.class)
 public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     private static final String ERROR_STEP_ID_NOT_NULL = "error.case.step.insert.stepId.should.be.null";
@@ -60,7 +61,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     @Autowired
     private TestCaseAssembler testCaseAssembler;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void removeStep(Long projectId,TestCaseStepVO testCaseStepVO) {
         Assert.notNull(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class), "error.case.step.remove.param.not.null");
@@ -86,7 +86,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         }.getType());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum) {
         Assert.notNull(testCaseStepVO, "error.case.change.step.param.not.null");
@@ -127,7 +126,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
      * @param issueId        要被插入数据的issueid
      * @param projectId
      */
-    @Transactional
     @Override
     public List<TestCaseStepVO> batchClone(TestCaseStepVO testCaseStepVO, Long issueId, Long projectId) {
         List<TestCaseStepDTO> steps = testCaseStepMapper.select(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));

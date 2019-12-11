@@ -9,11 +9,14 @@ import org.springframework.stereotype.Component;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by zongw.lee@gmail.com on 08/11/2018
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
 
     @Autowired

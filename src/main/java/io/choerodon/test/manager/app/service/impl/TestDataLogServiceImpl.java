@@ -17,12 +17,15 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author zhaotianxin
  * @since 2019/11/18
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestDataLogServiceImpl implements TestDataLogService {
     @Autowired
     private TestDataLogMapper testDataLogMapper;

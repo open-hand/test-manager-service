@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -66,7 +67,7 @@ import org.springframework.util.ObjectUtils;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
 @Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
@@ -151,7 +152,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private VerifyUpdateUtil verifyUpdateUtil;
 
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
         TestCycleCaseVO dto = new TestCycleCaseVO();
@@ -159,7 +159,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         delete(modelMapper.map(dto, TestCycleCaseDTO.class));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchDelete(TestCycleCaseVO testCycleCaseVO, Long projectId) {
         List<TestCycleCaseDTO> list = testCycleCaseMapper.select(modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class));
@@ -437,7 +436,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseVO create(TestCycleCaseVO testCycleCaseVO, Long projectId) {
         if (ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())) {
@@ -447,7 +445,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return runTestCycleCase(testCycleCaseVO, projectId);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public List<TestCycleCaseVO> batchCreateForAutoTest(List<TestCycleCaseVO> list, Long projectId) {
         if (list == null || list.isEmpty()) {
@@ -472,14 +469,12 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseVO changeOneCase(TestCycleCaseVO testCycleCaseVO, Long projectId) {
         TestCycleCaseVO dto = modelMapper.map(changeStep(projectId, testCycleCaseVO), TestCycleCaseVO.class);
         return dto;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void batchChangeCase(Long projectId, List<TestCycleCaseVO> cycleCaseDTOS) {
         for (TestCycleCaseVO cycleCaseDTO : cycleCaseDTOS) {
@@ -630,7 +625,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateCaseAndStep(Long projectId, TestCycleCaseUpdateVO testCycleCaseUpdateVO, Boolean isAsync) {
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = testCycleCaseUpdateVO.getTestCycleCaseStepUpdateVOS();
         List<TestCycleCaseStepVO> newTestCycleCaseStepVOS = modelMapper.map(testCycleCaseStepVOList, new TypeToken<List<TestCycleCaseStepVO>>() {

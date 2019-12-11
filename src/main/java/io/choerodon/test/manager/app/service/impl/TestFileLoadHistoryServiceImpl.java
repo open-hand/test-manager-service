@@ -17,6 +17,8 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.agile.api.vo.ProductVersionDTO;
@@ -33,7 +35,8 @@ import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryService {
 
     @Autowired

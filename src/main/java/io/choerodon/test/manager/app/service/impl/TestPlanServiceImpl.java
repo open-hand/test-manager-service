@@ -73,7 +73,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void delete(Long projectId, Long planId) {
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId));
         List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());

@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -22,7 +23,8 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 /**
  * Created by 842767365@qq.com on 6/25/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestStatusServiceImpl implements TestStatusService {
 
     @Autowired
@@ -38,7 +40,6 @@ public class TestStatusServiceImpl implements TestStatusService {
         }.getType());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestStatusVO insert(TestStatusVO testStatusVO) {
         if (testStatusVO == null || testStatusVO.getStatusId() != null) {
@@ -63,7 +64,6 @@ public class TestStatusServiceImpl implements TestStatusService {
         testStatusMapper.delete(testStatusDTO);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestStatusVO update(TestStatusVO testStatusVO) {
         TestStatusDTO testStatusDTO = modelMapper.map(testStatusVO, TestStatusDTO.class);
