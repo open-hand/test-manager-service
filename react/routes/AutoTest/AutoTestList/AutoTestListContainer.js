@@ -20,6 +20,7 @@ class AutoTestListContainer extends Component {
   }
 
   componentWillUnmount() {
+    store.clear();
     clearTimeout(this.timer);
   }
 
