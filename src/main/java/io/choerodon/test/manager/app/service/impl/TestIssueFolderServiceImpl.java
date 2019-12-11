@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
@@ -16,6 +17,8 @@ import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
+
+import javafx.beans.binding.ObjectExpression;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -122,8 +125,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             }
             list.add(folderVO);
         });
-        List<TestTreeFolderVO> treeFolderVOS = list.stream().sorted(Comparator.comparing(TestTreeFolderVO::getId)).collect(Collectors.toList());
-        return new TestTreeIssueFolderVO(rootFolderId, treeFolderVOS);
+        return new TestTreeIssueFolderVO(rootFolderId, list);
     }
 
     @Override
@@ -215,18 +217,26 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void moveFolder(Long projectId, Long targetForderId, List<Long> folderIds) {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
+    public void moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(issueFolderVO.getFolderId());
         if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
-        folderIds.forEach(folderId -> {
-            TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
-            testIssueFolderDTO.setParentId(targetForderId);
+        if(!ObjectUtils.isEmpty(targetForderId)){
+                TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
+                testIssueFolderDTO.setParentId(targetForderId);
+                if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
+                    throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
+                }
+        }
+        if(!ObjectUtils.isEmpty(issueFolderVO.getLastRank())){
+            TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
+            testIssueFolderDTO.setRank(RankUtil.Operation.UPDATE.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
             if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
                 throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
             }
-        });
+        }
+
     }
 
     private void validateType(TestIssueFolderVO testIssueFolderVO) {
