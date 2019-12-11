@@ -1,5 +1,5 @@
 import React, {
-  Component, useState, useEffect, useReducer, useCallback,
+  Component, useState, useEffect, useReducer, useCallback, useRef,
 } from 'react';
 import { Select, Button } from 'choerodon-ui';
 import _ from 'lodash';
@@ -13,6 +13,7 @@ import './DefectSelect.less';
 const { Option } = Select;
 function DefectSelect(props) {
   const { defects } = props;
+  const selectRef = useRef();
   const [defectIds, setDefectIds] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
   const [originDefects, setOriginDefects] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
   const [issue, dispatch] = useReducer((state, action) => {
@@ -138,6 +139,7 @@ function DefectSelect(props) {
         autoFocus
         filter
         mode="multiple"
+        ref={selectRef}
         dropdownMatchSelectWidth={false}
         filterOption={false}
         showArrow={false}
@@ -153,6 +155,9 @@ function DefectSelect(props) {
               ExecuteDetailStore.setCreateBugShow(true);
               ExecuteDetailStore.setDefectType('CASE_STEP');
               ExecuteDetailStore.setCreateDectTypeId(executeStepId);
+              if (selectRef.current) {
+                selectRef.current.rcSelect.setOpenState(false, false);
+              }
             }}
           >
             <FormattedMessage id="issue_create_bug" />
