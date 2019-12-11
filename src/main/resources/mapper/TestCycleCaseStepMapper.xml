@@ -45,7 +45,7 @@
         test.object_version_number,
         test.test_step,
         test.test_data,
-        test.expected_result,
+        test.expect_result,
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
@@ -64,10 +64,10 @@
         cycle.description,
         cycle.step_status,
         cycle.object_version_number,
-        step.test_step,
-        step.test_data,
-        step.expected_result,
-        step.rank
+        cycle.test_step,
+        cycle.test_data,
+        cycle.expect_result,
+        cycle.rank
         FROM
         ( select * from test_cycle_case_step
         <where>
@@ -202,6 +202,7 @@
         tccs.test_step,
         tccs.test_data,
         tccs.expect_result,
+        tccs.rank,
         tccs.step_id,
         ts.status_color,
         ts.status_name ,
@@ -215,7 +216,7 @@
         LEFT JOIN test_status ts ON ts.status_id = tccs.step_status
         WHERE
             tccs.execute_id = #{executeId}  ORDER BY
-        tccs.step_id asc
+        tccs.rank asc
     </select>
 
     <delete id="batchDeleteTestCycleCaseSteps">
@@ -277,5 +278,15 @@
         <foreach collection="ids" item="executId" open="(" close=")" separator=",">
             #{executId}
         </foreach>
+    </select>
+    <select id="selectByexecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        SELECT
+            tccs.*
+        FROM
+            test_cycle_case_step tccs
+        WHERE
+            tccs.execute_id = #{executeId}
+        ORDER BY
+            rank
     </select>
 </mapper>

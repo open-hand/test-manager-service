@@ -81,12 +81,12 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     Long validateCycleCaseInCycle(TestCycleCaseDTO testCycleCase);
 
     /**
-     * 获取cycle下最后一个case的rank
+     * 获取plan下最后一个case的rank
      *
-     * @param cycleId
+     * @param planId
      * @return
      */
-    String getLastedRank(@Param("cycleId") Long cycleId);
+    String getLastedRank(@Param("planId") Long planId);
 
     String getLastedRank_oracle(@Param("cycleId") Long cycleId);
 
@@ -116,6 +116,8 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     void fixSource();
 
+    void fixRank(@Param("testCycleCaseDTOS") List<TestCycleCaseDTO> testCycleCaseDTOS);
+
     List<TestCycleCaseDTO> listByCycleIds(@Param("cycleIds") List<Long> cycleId);
 
     void batchInsert(@Param("list") List<TestCycleCaseDTO> testCycleCaseDTOS);
@@ -131,4 +133,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds);
 
     List<Long> listByPlanId(@Param("planId") Long planId);
+
+    List<TestCycleCaseDTO> selectByPlanId();
 }

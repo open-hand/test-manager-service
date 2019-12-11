@@ -604,15 +604,18 @@
 
 
     <select id="getLastedRank" resultType="java.lang.String">
-SELECT
-	rank
-FROM
-	test_cycle_case
-WHERE
-	cycle_id = #{cycleId}
-ORDER BY
-	rank DESC
-	LIMIT 1
+        SELECT
+            tcc.*
+        FROM
+            test_cycle_case tcc
+        LEFT JOIN test_cycle tc
+        on tc.cycle_id=tcc.cycle_id
+        WHERE
+            tc.plan_id = #{planId}
+        ORDER BY
+            tcc.rank DESC
+            LIMIT 1
+
     </select>
 
     <select id="getLastedRank_oracle" resultType="java.lang.String">
@@ -746,7 +749,15 @@ ORDER BY
         SET source =
         if(execution_status=1,'none','manual')
     </update>
-
+    <update id="fixRank">
+        <foreach collection="testCycleCaseDTOS" item="cycleCase" index="index" open="" close="" separator=";">
+            UPDATE test_cycle_case
+            <set>
+                rank =#{cycleCase.rank}
+            </set>
+            where execute_id= #{cycleCase.executeId}
+        </foreach>
+    </update>
     <select id="listByCycleIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
           select * from test_cycle_case
           where
@@ -833,6 +844,14 @@ ORDER BY
         left join test_cycle tc  on tc.cycle_id = tcc.cycle_id
         left join test_plan tp on tp.plan_id = tc.plan_id
         where tp.plan_id = #{planId}
+    </select>
+
+    <select id="selectByPlanId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+       SELECT
+	tcc.execute_id,tc.plan_id
+    FROM
+        test_cycle_case tcc
+    LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
     </select>
 </mapper>
 

@@ -32,6 +32,9 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "用例ID")
     private Long caseId;
 
+    @ApiModelProperty(value = "用例文件夹")
+    private Long caseFolderId;
+
     @ApiModelProperty(value = "用例case名称")
     private String summary;
 
@@ -83,6 +86,14 @@ public class TestCycleCaseInfoVO {
 
     public String getCaseNum() {
         return caseNum;
+    }
+
+    public Long getCaseFolderId() {
+        return caseFolderId;
+    }
+
+    public void setCaseFolderId(Long caseFolderId) {
+        this.caseFolderId = caseFolderId;
     }
 
     public void setCaseNum(String caseNum) {

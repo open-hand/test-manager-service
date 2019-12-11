@@ -83,4 +83,8 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'version_step_num', type: 'BIGINT UNSIGNED', remarks: '步骤版本号',defaultValue: "1")
         }
     }
+
+    changeSet(id: '2019-12-11-test-cycle_drop_uk_cycle_id_rank', author: 'lizhaozhong') {
+        dropIndex(tableName: 'test_cycle_case', indexName: 'uk_cycle_id_rank')
+    }
 }

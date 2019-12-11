@@ -14,11 +14,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import io.choerodon.agile.api.vo.DataLogFixVO;
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.agile.api.vo.ProjectInfoFixVO;
 import io.choerodon.agile.api.vo.TestVersionFixVO;
+import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
@@ -121,6 +123,8 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixStatus();
         //14.cycleCaseRank
         fixCycleCaseStepRank();
+        //15 fix CycleCaseRank
+        fixCycleCaseRank();
         logger.info("===================>Data Migrate Succeed!!!<====================");
     }
 
@@ -308,6 +312,27 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
     private void fixCycleCaseStepRank(){
         testCycleCaseStepMapper.fixCycleCaseStepRank();
+    }
+
+    private void fixCycleCaseRank() {
+        List<TestCycleCaseDTO> testCycleCaseDTOList = testCycleCaseMapper.selectByPlanId();
+        Map<Long, List<TestCycleCaseDTO>> longListMap = testCycleCaseDTOList.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getPlanId));
+        for (Map.Entry<Long,List<TestCycleCaseDTO>> map:longListMap.entrySet()
+             ) {
+            String preRank = null;
+            List<TestCycleCaseDTO> testcycles = map.getValue();
+            if(!CollectionUtils.isEmpty(testcycles)){
+                for (TestCycleCaseDTO testCycleCaseDTO:map.getValue()
+                     ) {
+                    testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+                    preRank = testCycleCaseDTO.getRank();
+                }
+                //更新
+                testCycleCaseMapper.fixRank(testcycles);
+            }
+        }
+
+
     }
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();

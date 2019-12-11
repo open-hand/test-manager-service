@@ -45,6 +45,8 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Transient
     private String folderName;
 
+    @Transient
+    private Long planId;
 
     private Long versionNum;
 
@@ -307,5 +309,13 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     public void setTestCaseLinkDTOS(List<TestCaseLinkDTO> testCaseLinkDTOS) {
         this.testCaseLinks = testCaseLinkDTOS;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
     }
 }
