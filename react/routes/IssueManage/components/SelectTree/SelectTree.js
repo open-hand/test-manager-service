@@ -1,7 +1,11 @@
 
 import React, {
-  useState, useMemo, useRef,
+  useState, useMemo, useRef, useEffect, useReducer,
 } from 'react';
+import {
+  Tree as OldTree,
+} from 'choerodon-ui';
+import { observer } from 'mobx-react-lite';
 import {
   Select, Icon, Tree, TextField,
 } from 'choerodon-ui/pro';
@@ -12,6 +16,7 @@ import './SelectTree.less';
 import { Divider } from 'choerodon-ui';
 import treeDataSet from './treeDataSet';
 
+const { TreeNode } = OldTree;
 /**
  * 下拉选择树
  * @param {*} name 字段名
@@ -30,16 +35,52 @@ function SelectTree(props) {
     name, renderSelect, defaultValue, parentDataSet, data, onChange, isForbidRoot = true, ...restProps
   } = props;
   const selectRef = useRef();
-  const [searchValue, setSearchValue] = useState('');// 搜索框内值  
+  // const [searchValue, setSearchValue] = useState('');// 搜索框内值  
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const dataSet = useMemo(() => treeDataSet(parentDataSet, name, defaultValue, onChange, isForbidRoot, selectRef), []);
-
-  
+  const [treeState, dispatch] = useReducer((state, action) => {
+    const { expandedKeys = [], searchValue } = action;
+    switch (action.type) {
+      case 'init':
+        return {
+          expandedKeys: [],
+          searchValue: '',
+          autoExpandParent: false,
+        };
+      case 'expand':
+        return {
+          expandedKeys,
+          searchValue,
+          autoExpandParent: false,
+        };
+      case 'search':
+        if (expandedKeys.length === 0) {
+          return {
+            ...state,
+            searchValue,
+          };
+        }
+        return {
+          expandedKeys,
+          searchValue,
+          autoExpandParent: false,
+        };
+      default:
+        return ({
+          ...state,
+        });
+    }
+  }, {
+    expandedKeys: [],
+    searchValue: '',
+    autoExpandParent: false,
+  });
   /**
   * 渲染树节点
   * @param {*} record  
   */
-  const renderNode = ({ record }) => {
+  const renderNode = (record) => {
+    const { searchValue } = treeState;
     const fileName = record.get('name');
     const index = fileName.toLowerCase().indexOf(String(searchValue).toLowerCase());
     const beforeFileName = fileName.substr(0, index);
@@ -68,12 +109,16 @@ function SelectTree(props) {
    * 搜索此节点父节点并展开
    * @param {*} record 
    */
-  function searchParent(record) {
+  function searchParent(record, keys = []) {
     // 防止文件id与父id相同 出现死循环
-    if (record.get('parentId') !== 0 && record.get('folderId') !== record.get('parentId')) {
-      record.parent.set('expanded', true);
-      searchParent(record.parent);
+    if (record.get('parentId') !== 0 && record.get('parentId') !== record.get('folderId')) {
+      const temp = dataSet.find(item => record.get('parentId') === item.get('folderId'));
+      if (temp) {
+        keys.push(temp.id.toString());
+        searchParent(temp, keys);
+      }
     }
+    return keys;
   }
 
   /**
@@ -81,6 +126,8 @@ function SelectTree(props) {
    * @param {*} value 
    */
   function handleFilterNode(value) {
+    const expandedKeys = [];
+    dispatch({ type: 'init' });
     dataSet.forEach((record) => {
       record.set('expanded', false);
     });
@@ -88,12 +135,14 @@ function SelectTree(props) {
       dataSet.forEach((record) => {
         if (record.get('name').toLowerCase().indexOf(value.toLowerCase()) !== -1) {
           try {
-            searchParent(record);
+            // expandedKeys.push([...]);
+            searchParent(record, expandedKeys);
           } catch (error) {
             Choerodon.prompt('数据错误');
           }
         }
       });
+      dispatch({ type: 'search', expandedKeys, searchValue: value });
     }
   }
 
@@ -103,11 +152,75 @@ function SelectTree(props) {
    * @param {*} value 
    */
   function handleInput(value) {
-    setSearchValue(value);
+    // setSearchValue(value);
     handleFilterNode(value);
   }
 
-
+  /**
+   * 得到树节点 
+   * @param {*} parentId 
+   */
+  function getChildrenTreeNode(parentId) {
+    const children = dataSet.filter(record => record.get('parentId') === parentId)
+      .map((record) => {
+        let tempArr = [];
+        if (record.get('children').length > 0) {
+          tempArr = getChildrenTreeNode(record.get('folderId'));
+          return (
+            <TreeNode selectable={!isForbidRoot} title={renderNode(record)} key={record.id}>
+              {tempArr}
+            </TreeNode>
+          );
+        } else {
+          return <TreeNode title={renderNode(record)} key={record.id} />;
+        }
+      });
+    return children;
+  }
+  const handleSelectNode = (selectedKeys, { selected }) => {
+    const record = dataSet.findRecordById(Number(selectedKeys[0]));
+    if (selected) {
+      dataSet.select(record);
+      // 待选数据
+      selectRef.current.collapse();
+      if (parentDataSet) {
+        selectRef.current.choose(record);
+        // parentDataSet.current.set(name, selectData);
+      }
+      if (onChange) {
+        onChange(record.toData());
+      }
+    } else {
+      dataSet.unSelect(record);
+      if (parentDataSet) {
+        selectRef.current.unChoose();
+        // parentDataSet.current.set(name, undefined);
+      }
+      if (onChange) {
+        onChange({ folderId: undefined });
+      }
+    }
+  };
+  /**
+   * 渲染树节点
+   */
+  function renderTreeNode() {
+    const treeArr = dataSet.map((record) => {
+      const parentId = record.get('parentId');
+      if (!parentId) {
+        let treeNodes = null;
+        treeNodes = getChildrenTreeNode(record.get('folderId'));
+        return (
+          <TreeNode selectable={!isForbidRoot} title={renderNode(record)} key={record.id}>
+            {treeNodes}
+          </TreeNode>
+        );
+      }
+      return -1;
+    }).filter(i => i !== -1);
+    // return <div>11</div>;
+    return treeArr;
+  }
   /**
   * 渲染树
   * @param {*} content 
@@ -121,24 +234,36 @@ function SelectTree(props) {
       <div className="test-select-tree-search">
         <TextField
           placeholder="输入文字以进行过滤 "
-          onInput={e => _.debounce(handleInput, 300).call(this, e.target.value)}
+          onInput={e => _.debounce(handleInput, 450).call(this, e.target.value)}
           id="onTextField"
           autoFocus
           prefix={<Icon type="search" />}
           readOnly={false}
-          onChange={handleFilterNode}
+          onChange={_.debounce(handleFilterNode, 300)}
           // onEnterDown={handleEnd}
           clearButton
-          onClear={() => setSearchValue('')}
+          onClear={() => dispatch({ type: 'init' })}
         />
       </div>
       <Divider />
-      <Tree
-        dataSet={dataSet}
-        renderer={renderNode}
-        className="test-select-tree-body"
 
-      />
+      {dataSet.totalCount > 0 ? (
+        <OldTree
+          expandedKeys={treeState.expandedKeys}
+          autoExpandParent={treeState.autoExpandParent}
+          onExpand={(expandedKeys, { expanded, node }) => {
+            const { eventKey } = node.props;
+            dispatch({ type: 'expand', expandedKeys });
+            const record = dataSet.findRecordById(Number(eventKey));
+            record.set('expanded', expanded);
+          }}
+          onSelect={handleSelectNode}
+          className="test-select-tree-body"
+        >
+          {renderTreeNode()}
+
+        </OldTree>
+      ) : ''}
     </div>
   );
 
@@ -172,4 +297,4 @@ function SelectTree(props) {
 }
 SelectTree.propTypes = propTypes;
 
-export default SelectTree;
+export default observer(SelectTree);

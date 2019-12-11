@@ -9,8 +9,8 @@ import { getProjectId } from '../../../../common/utils';
 function forbidRootsSelect({ dataSet }) {
   dataSet.forEach((record) => {
     // eslint-disable-next-line no-param-reassign
-    record.selectable = !record.children;
-    // record.selectable = record.get('parentId') !== 0;
+    record.selectable = record.get('children').length === 0;
+    // record.selectable = !record.children;
   });
 }
 /**
@@ -51,11 +51,11 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
   paging: false,
   autoQuery: true,
   selection: 'single',
-  parentField: 'parentId', // 父节点字段名
-  expandField: 'expanded', // 是否打开节点字段名
-  idField: 'folderId',
+  // parentField: 'parentId', // 父节点字段名
+  // expandField: 'expanded', // 是否打开节点字段名
+  // idField: 'folderId',
   fields: [
-    { name: 'name', type: 'string' },
+    { name: 'fileName', type: 'string' },
     { name: 'folderId', type: 'number' },
     { name: 'expanded', type: 'boolean' },
     { name: 'parentId', type: 'number' },
@@ -70,13 +70,16 @@ const treeDataSet = (parentDataSet, name, defaultValue, setData = false, isForbi
         const resObj = JSON.parse(res);
         const newArr = resObj.treeFolder.map(item => ({
           expanded: item.expanded,
+          children: item.children,
           ...item.issueFolderVO,
+          fileName: item.issueFolderVO.name,
         }));
-        // console.log('read', newArr);
+        // console.log('read', newArr); 
         return newArr;
       },
     }),
   },
+  // 暂时废弃events
   events: {
     // 选中事件
     select: ({ record, dataSet }) => {
