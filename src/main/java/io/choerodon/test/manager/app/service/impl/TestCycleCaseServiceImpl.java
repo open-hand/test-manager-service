@@ -1223,9 +1223,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 preRank = testCycleCaseDTO.getRank();
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
-        });
-        Map<Long, List<TestCycleCaseDTO>> listMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
-        return doRank(listMap);
+        }
+        return testCycleCaseDTOS;
     }
 
     private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, TestCycleDTO testCycleDTO, Long defaultStatusId) {
@@ -1247,8 +1246,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setSource("none");
                 testCycleCaseDTOS.add(testCycleCaseDTO);
         });
-        Map<Long, List<TestCycleCaseDTO>> listMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId));
-        return doRank(listMap);
+        return testCycleCaseDTOS;
     }
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
         if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
