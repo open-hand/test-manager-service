@@ -104,8 +104,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         testCycleCaseStepDTO.setExecuteId(cycleCaseId);
         List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryWithTestCaseStep(testCycleCaseStepDTO, null, null);
         if (testCycleCaseStepDTOS != null && !testCycleCaseStepDTOS.isEmpty()) {
-//            List<TestCycleCaseStepVO> testCycleCaseStepVOS = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
-//            }.getType());
             List<TestCycleCaseStepVO> testCycleCaseStepVOS = new ArrayList<>();
             testCycleCaseStepDTOS.forEach(testCycleCaseStep -> {
                 TestCycleCaseStepVO testCycleCaseStepVO = modelMapper.map(testCycleCaseStep, TestCycleCaseStepVO.class);

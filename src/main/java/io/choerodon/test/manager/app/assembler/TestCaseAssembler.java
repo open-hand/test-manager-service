@@ -199,6 +199,7 @@ public class TestCaseAssembler {
         // 查询用例信息
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
         testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
         return testCycleCaseInfoVO;
     }
 
@@ -208,9 +209,7 @@ public class TestCaseAssembler {
         }
         TestCycleCaseUpdateVO testCycleCaseUpdateVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseUpdateVO.class);
         //查询步骤信息
-        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-        testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.select(testCycleCaseStepDTO);
+        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.selectByexecuteId(testCycleCaseDTO.getExecuteId());
         List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepUpdateVO>>() {
         }.getType());
         testCycleCaseUpdateVO.setTestCycleCaseStepUpdateVOS(testCycleCaseStepVOList);
