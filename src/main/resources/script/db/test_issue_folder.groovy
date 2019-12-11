@@ -50,4 +50,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "parent_id")
         }
     }
+
+    changeSet(id: '2019-12-11-test-issue-folder-add-rank', author: 'lizhaozhong@gmail.com') {
+        addColumn(tableName: 'test_issue_folder') {
+            column(name: 'rank', type: 'VARCHAR(255)', remarks: 'rank')
+        }
+    }
 }
