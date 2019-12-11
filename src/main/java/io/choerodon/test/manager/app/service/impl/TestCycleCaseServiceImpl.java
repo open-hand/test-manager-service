@@ -47,22 +47,6 @@ import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.xmlbeans.impl.xb.ltgfmt.TestCase;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -151,6 +135,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
+    @Autowired
+    private TestCycleCaseHistoryService testCycleCaseHistoryService;
 
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
@@ -621,6 +607,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if (!StringUtils.isEmpty(testCycleCaseVO.getLastRank()) || !StringUtils.isEmpty(testCycleCaseVO.getNextRank())) {
             testCycleCaseDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseVO.getLastRank(), testCycleCaseVO.getNextRank()));
         }
+
         baseUpdate(testCycleCaseDTO);
     }
 

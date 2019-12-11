@@ -20,7 +20,7 @@ public interface TestCycleCaseAttachmentRelService {
 
     void delete(Long attachId);
 
-    void delete(Long linkedId, String Type);
+    void delete(Long linkedId, String type);
 
     /**
      * 上传多个附件

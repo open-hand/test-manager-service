@@ -108,15 +108,15 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_COMMENT);
-        if (StringUtils.isEmpty(afterCycleCase.getComment())) {
+        if (StringUtils.isEmpty(afterCycleCase.getDescription())) {
             historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
         } else {
-            historyDTO.setNewValue(afterCycleCase.getComment());
+            historyDTO.setNewValue(afterCycleCase.getDescription());
         }
-        if (StringUtils.isEmpty(beforeCycleCase.getComment())) {
+        if (StringUtils.isEmpty(beforeCycleCase.getDescription())) {
             historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         } else {
-            historyDTO.setOldValue(beforeCycleCase.getComment());
+            historyDTO.setOldValue(beforeCycleCase.getDescription());
         }
         insert(historyDTO);
     }

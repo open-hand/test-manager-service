@@ -855,6 +855,15 @@ ORDER BY
         test_cycle_case tcc
     LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
     </select>
+    <select id="selectByExecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+        SELECT
+            tcc.execute_id,tcc.assigned_to,tcc.description,ts.status_name as executionStatusName,tcc.execution_status as executionStatus
+        FROM
+            test_cycle_case tcc
+        LEFT JOIN test_status ts on ts.status_id=tcc.execution_status
+        LEFT JOIN  test_cycle_case_attach_rel tccar on tccar.attachment_link_id=tcc.execute_id
+        where tcc.execute_id=#{executeId}
+    </select>
 
     <select id="listAsyncCycleCase" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
         SELECT
