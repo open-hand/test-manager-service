@@ -59,7 +59,7 @@ public class TestCaseStepController {
     @DeleteMapping
     public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCaseStepVO testCaseStepVO) {
-        testCaseStepService.removeStep(testCaseStepVO);
+        testCaseStepService.removeStep(projectId,testCaseStepVO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

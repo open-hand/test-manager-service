@@ -126,6 +126,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         }
         List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS= modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType());
+
         return testCycleCaseAttachmentRelVOS;
     }
 
@@ -174,7 +175,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         testCycleCaseDTO.setLastUpdatedBy(userDetails.getUserId());
         testCycleCaseDTO.setCreatedBy(userDetails.getUserId());
-        testCycleCaseAttachmentRelMapper.batchDeleteByExecutIds(Arrays.asList(testCycleCaseDTO.getExecuteId()));
+        testCycleCaseAttachmentRelMapper.batchDeleteByLinkIdsAndType(Arrays.asList(testCycleCaseDTO.getExecuteId()),TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
         List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(testCaseDTO.getCaseId()));
         Map<Long, List<TestCaseAttachmentDTO>> attachMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
         batchInsert(Arrays.asList(testCycleCaseDTO),attachMap);

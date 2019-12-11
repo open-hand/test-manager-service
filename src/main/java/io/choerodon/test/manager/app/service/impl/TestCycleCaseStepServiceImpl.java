@@ -1,9 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -21,8 +19,8 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.modelmapper.ModelMapper;
@@ -71,12 +69,19 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private TestCaseStepMapper testCaseStepMapper;
 
+    @Autowired
+    private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
+
+    @Autowired
+    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+
     private static final Long defStatus = 4L;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseStepVO.getLastRank(),testCycleCaseStepVO.getNextRank()));
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleCaseStepVO.getLastRank(), testCycleCaseStepVO.getNextRank()));
         baseUpdate(testCycleCaseStepDTO);
     }
 
@@ -140,10 +145,63 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         testCycleCaseDTO.setCreatedBy(userDetails.getUserId());
         TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
         testCycleCaseStepDTO.setExecuteId(testCycleCaseDTO.getExecuteId());
-        testCycleCaseStepMapper.delete(testCycleCaseStepDTO);
         List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(Arrays.asList(testCaseDTO.getCaseId()));
-        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
-        batchInsert(Arrays.asList(testCycleCaseDTO), caseStepMap);
+        Map<Long, TestCaseStepDTO> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.toMap(TestCaseStepDTO::getStepId, Function.identity()));
+        List<Long> caseStepIds = testCaseStepDTOS.stream().map(TestCaseStepDTO::getStepId).collect(Collectors.toList());
+        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(Arrays.asList(testCycleCaseDTO.getExecuteId()));
+        List<Long> cycleCaseStepIds = list.stream().map(TestCycleCaseStepDTO::getStepId).collect(Collectors.toList());
+        Map<Long, List<Long>> cycleStepIdsMap = list.stream().collect(Collectors.groupingBy(TestCycleCaseStepDTO::getStepId, Collectors.mapping(TestCycleCaseStepDTO::getExecuteStepId, Collectors.toList())));
+
+        // 获取哪些是需要删除的，那些是要增加,那些是要去对比的
+        List<Long> needAdd = new ArrayList<>();
+        List<Long> needDelete = new ArrayList<>();
+        needAdd.addAll(caseStepIds);
+        needDelete.addAll(cycleCaseStepIds);
+        // 需要新增的
+        needAdd.removeAll(cycleCaseStepIds);
+        // 需要删除的
+        needDelete.removeAll(caseStepIds);
+        // 需要比较
+        caseStepIds.retainAll(cycleCaseStepIds);
+
+        // 去新增
+        List<TestCaseStepDTO> testCaseStepS = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(needAdd)) {
+            needAdd.forEach(v -> {
+                testCaseStepS.add(caseStepMap.get(v));
+            });
+            Map<Long, List<TestCaseStepDTO>> caseStepMapToAdd = testCaseStepS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+            batchInsert(Arrays.asList(testCycleCaseDTO), caseStepMapToAdd);
+        }
+        // 直接删除的测试执行步骤
+        List<Long> needDeleteExecutedStepIds = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(needDelete)) {
+            needDelete.forEach(v -> {
+                needDeleteExecutedStepIds.addAll(cycleStepIdsMap.get(v));
+
+            });
+            testCycleCaseStepMapper.batchDeleteTestCycleCaseSteps(needDeleteExecutedStepIds);
+            testCycleCaseAttachmentRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
+            testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
+        }
+
+
+        // 直接比较需要对比更新
+        if (!CollectionUtils.isEmpty(caseStepIds)) {
+            list.stream().filter(v -> caseStepIds.contains(v.getStepId())).forEach(cycleCaseStep -> {
+                TestCaseStepDTO testCaseStepDTO = caseStepMap.get(cycleCaseStep.getStepId());
+                String caseStepInfo = String.format("%s,%s,%s,%s", testCaseStepDTO.getExpectedResult(), testCaseStepDTO.getTestData(), testCaseStepDTO.getTestStep(), testCaseStepDTO.getRank());
+                String cycleCaseStepInfo = String.format("%s,%s,%s,%s", cycleCaseStep.getExpectedResult(), cycleCaseStep.getTestData(), cycleCaseStep.getTestStep(), cycleCaseStep.getRank());
+                if (!Objects.equals(caseStepIds, cycleCaseStepInfo)) {
+                    cycleCaseStep.setTestStep(testCaseStepDTO.getTestStep());
+                    cycleCaseStep.setTestData(testCaseStepDTO.getTestData());
+                    cycleCaseStep.setRank(testCaseStepDTO.getRank());
+                    cycleCaseStep.setExpectedResult(testCaseStepDTO.getExpectedResult());
+                    cycleCaseStep.setLastUpdatedBy(userDetails.getUserId());
+                    baseUpdate(cycleCaseStep);
+                }
+            });
+        }
     }
 
     @Override
@@ -151,7 +209,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(olderExecuteId);
-        if(CollectionUtils.isEmpty(list)){
+        if (CollectionUtils.isEmpty(list)) {
             return;
         }
         list.forEach(v -> {
@@ -182,6 +240,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             testCaseStepDTOS.forEach(testCaseStepDTO -> {
                 TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO(v.getExecuteId(), testCaseStepDTO.getStepId()
                         , v.getCreatedBy(), v.getLastUpdatedBy(), testCaseStepDTO.getTestStep(), testCaseStepDTO.getTestData(), testCaseStepDTO.getExpectedResult());
+                testCycleCaseStepDTO.setRank(v.getRank());
                 list.add(testCycleCaseStepDTO);
             });
         });
@@ -205,7 +264,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
         testCycleCaseStepDTO.setStepStatus(defStatus);
-        testCycleCaseStepDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseStepMapper.getLastedRank(testCycleCaseStepVO.getExecuteId()),null));
+        testCycleCaseStepDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseStepMapper.getLastedRank(testCycleCaseStepVO.getExecuteId()), null));
         if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }

@@ -24,4 +24,14 @@
             #{executId}
         </foreach>
     </select>
+
+    <delete id="batchDeleteByLinkIdsAndType">
+        delete from test_cycle_case_attach_rel where
+        attachment_type = #{type}
+        and
+        attachment_link_id in
+        <foreach collection="list" item="linkId" open="(" close=")" separator=",">
+            #{linkKId}
+        </foreach>
+    </delete>
 </mapper>

@@ -99,6 +99,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCaseAssembler testCaseAssembler;
 
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -286,7 +289,7 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Transactional(rollbackFor = Exception.class)
     public void deleteCase(Long projectId, Long caseId) {
         // 删除测试用例步骤
-        testCaseStepService.removeStepByIssueId(caseId);
+        testCaseStepService.removeStepByIssueId(projectId,caseId);
         // 删除问题链接
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         testCaseLinkDTO.setLinkCaseId(caseId);
@@ -348,12 +351,15 @@ public class TestCaseServiceImpl implements TestCaseService {
         map.setVersionNum(testCaseDTO.getVersionNum() + 1);
         baseUpdate(map);
 
-
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+           testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,true,false,false);
+        }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         TestCaseRepVO testCaseRepVO1 = testCaseAssembler.dtoToRepVo(testCaseDTO1,folderMap);
-
+        
         return testCaseRepVO1;
     }
 
@@ -372,7 +378,6 @@ public class TestCaseServiceImpl implements TestCaseService {
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
             map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
-            map.setVersionNum(testCaseDTO.getVersionNum() + 1);
             map.setFolderId(folderId);
             DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::updateByPrimaryKeySelective, map, 1, "error.update.case");
         }
