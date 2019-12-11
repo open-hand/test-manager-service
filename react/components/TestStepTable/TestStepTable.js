@@ -159,8 +159,10 @@ function TestStepTable(props) {
    * 自动聚焦新创建步骤第一框框
    * @param {*} ref 
    */
-  const saveCreateRef = (ref) => {
-    ref.enterEditing();
+  const saveCreateRef = (record, ref) => {
+    if (record.stepIsCreating) {
+      ref.enterEditing();
+    }
   };
   function render() {
     const {
