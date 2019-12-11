@@ -88,6 +88,12 @@ class TestPlanStore extends TestPlanTreeStore {
       return this.filter;
     }
     
+    @observable assignToUserId;
+
+    @action setAssignToUserId = (assignToUserId) => {
+      this.assignToUserId = assignToUserId;
+    }
+
     @observable comparedInfo = {};
 
     @action setComparedInfo = (comparedInfo) => {

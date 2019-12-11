@@ -173,7 +173,6 @@ function TestStepTable(props) {
       dataIndex: 'stepId',
       key: 'stepId',
       flex: 0.2,
-      width: 10,
       render(stepId, record, index) {
         return index + 1;
       },
@@ -210,7 +209,7 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="测试步骤" />
+              <TextArea className="hidden-label" maxLength={500} autosize placeholder="测试步骤" />
             </Edit>
           </TextEditToggle>
         );
@@ -324,7 +323,7 @@ function TestStepTable(props) {
         );
       },
     }];
-
+    
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable
