@@ -1232,7 +1232,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return new ArrayList<>();
         }
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
-        testCaseDTOS.forEach(v -> {
+        String preRank = null;
+        for (TestCaseDTO v:testCaseDTOS) {
                 TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
                 testCycleCaseDTO.setCycleId(testCycleDTO.getCycleId());
                 testCycleCaseDTO.setCaseId(v.getCaseId());
@@ -1243,9 +1244,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setCreatedBy(testCycleDTO.getCreatedBy());
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
+                 testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+                 preRank = testCycleCaseDTO.getRank();
                 testCycleCaseDTO.setSource("none");
                 testCycleCaseDTOS.add(testCycleCaseDTO);
-        });
+        }
         return testCycleCaseDTOS;
     }
     private void bathcInsert(List<TestCycleCaseDTO> testCycleCaseDTOS) {
