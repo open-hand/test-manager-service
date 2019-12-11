@@ -989,7 +989,6 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     private TestCycleDTO updateSelf(TestCycleDTO testCycleE) {
         Assert.notNull(testCycleE, "error.cycle.update.not.be.null");
-        validateCycle(testCycleE);
         if (cycleMapper.updateByPrimaryKeySelective(testCycleE) != 1) {
             throw new CommonException("error.testCycle.update");
         }

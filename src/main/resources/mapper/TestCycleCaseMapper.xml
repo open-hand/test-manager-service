@@ -836,8 +836,8 @@ ORDER BY
         left join test_cycle tc on tc.cycle_id = tcc.cycle_id
         left join test_cycle_case_attach_rel tccar on tccar.attachment_link_id = tcc.execute_id
         where tcc.execute_id in
-        <foreach collection="list" item="caseId" open="(" close=")" separator=",">
-            #{caseId}
+        <foreach collection="list" item="executeId" open="(" close=")" separator=",">
+            #{executeId}
         </foreach>     ORDER BY tcc.case_id
     </select>
 
