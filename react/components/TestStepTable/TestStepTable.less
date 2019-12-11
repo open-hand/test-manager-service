@@ -1,4 +1,10 @@
 .c7ntest-TestStepTable {
+  .c7n-input-focused {
+    .hidden-label + .c7n-input-label-wrapper {
+      transition: none;
+      display: none;
+    }
+  }
   tbody {
     tr {
       // align-items: flex-start !important;
