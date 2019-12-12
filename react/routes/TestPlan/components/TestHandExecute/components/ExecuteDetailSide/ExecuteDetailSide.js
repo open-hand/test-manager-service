@@ -211,7 +211,9 @@ function ExecuteDetailSide(props) {
                     }}
                     >
                       <span>相关用例:</span>
-                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
+                      {caseId ? <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
+                        : '用例已被删除'
+                      }
                     </div>
                   </div>
                   <Button funcType="flat" icon="last_page" onClick={onClose}>
