@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
@@ -65,12 +66,13 @@ public class TestCycleCaseHistoryRecordAspect {
     private TestCycleCaseMapper testCycleCaseMapper;
 
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.update(..)) && args(testCycleCaseVO)")
-    public void afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO) {
+    public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO) throws Throwable {
         //执行历史
         TestCycleCaseDTO before = testCycleCaseMapper.selectByExecuteId(testCycleCaseVO.getExecuteId());
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         System.out.println(testCycleCaseVO.getExecutionStatus());
         System.out.println(before.getExecutionStatus());
+        Object o = pjp.proceed();
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())&& testCycleCaseVO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
             testCycleCaseHistoryService.createStatusHistory(testCycleCaseVO, beforeCeaseDTO);
         }
@@ -80,6 +82,7 @@ public class TestCycleCaseHistoryRecordAspect {
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getDescription())&&!StringUtils.equals(testCycleCaseVO.getDescription(), before.getDescription())) {
             testCycleCaseHistoryService.createCommentHistory(testCycleCaseVO, beforeCeaseDTO);
         }
+        return o;
     }
 
 
@@ -100,15 +103,17 @@ public class TestCycleCaseHistoryRecordAspect {
         TestCycleCaseAttachmentRelDTO attachmentRelE = new TestCycleCaseAttachmentRelDTO();
         attachmentRelE.setId(linkedId);
         List<TestCycleCaseAttachmentRelDTO> lists = testCycleCaseAttachmentRelMapper.select(attachmentRelE);
-        DBValidateUtil.executeAndvalidateUpdateNum(lists::size, 1, "error.attach.notFound");
-        attachmentRelE = lists.get(0);
-        TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-        historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());
-        historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        historyDTO.setOldValue(attachmentRelE.getAttachmentName());
-        historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
         Object o = pjp.proceed();
-        testCycleCaseHistoryService.insert(historyDTO);
+        if(!CollectionUtils.isEmpty(lists)){
+            DBValidateUtil.executeAndvalidateUpdateNum(lists::size, 1, "error.attach.notFound");
+            attachmentRelE = lists.get(0);
+            TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
+            historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());
+            historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
+            historyDTO.setOldValue(attachmentRelE.getAttachmentName());
+            historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
+            testCycleCaseHistoryService.insert(historyDTO);
+        }
         return o;
     }
 
