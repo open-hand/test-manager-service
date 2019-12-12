@@ -35,12 +35,4 @@ public class TestDataFixController {
         dataMigrationService.fixData();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    @Permission(type = ResourceType.SITE, roles = {InitRoleCode.SITE_ADMINISTRATOR, InitRoleCode.SITE_DEVELOPER})
-    @ApiOperation("初始化数据")
-    @PostMapping("/init")
-    public ResponseEntity init(@RequestBody DemoPayload demoPayload) {
-        demoService.demoInit(demoPayload);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
 }
