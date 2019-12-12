@@ -70,8 +70,6 @@ public class TestCycleCaseHistoryRecordAspect {
         //执行历史
         TestCycleCaseDTO before = testCycleCaseMapper.selectByExecuteId(testCycleCaseVO.getExecuteId());
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
-        System.out.println(testCycleCaseVO.getExecutionStatus());
-        System.out.println(before.getExecutionStatus());
         Object o = pjp.proceed();
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())&& testCycleCaseVO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
             testCycleCaseHistoryService.createStatusHistory(testCycleCaseVO, beforeCeaseDTO);
@@ -88,14 +86,12 @@ public class TestCycleCaseHistoryRecordAspect {
 
     @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
     public void recordAttachUpload(JoinPoint jp) {
-
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
         historyDTO.setExecuteId((Long) jp.getArgs()[3]);
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         historyDTO.setNewValue(jp.getArgs()[1].toString());
         testCycleCaseHistoryService.insert(historyDTO);
-
     }
 
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.delete(..))&& args(linkedId,type)")
