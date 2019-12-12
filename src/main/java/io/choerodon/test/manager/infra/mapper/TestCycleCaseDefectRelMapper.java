@@ -26,7 +26,7 @@ public interface TestCycleCaseDefectRelMapper extends Mapper<TestCycleCaseDefect
 
     List<TestCycleCaseDTO> queryByBug(@Param("projectId") Long projectId, @Param("bugId") Long bugId);
 
-    void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
+    void batchDeleteByExecutIds(@Param("list") List<Long> executeIds,@Param("type") String type);
 
     List<TestCycleCaseDefectRelDTO> listByExecuteIds(@Param("list") List<Long> olderExecuteId);
 
