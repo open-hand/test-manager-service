@@ -2,6 +2,8 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 import java.util.Map;
+
+import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.api.vo.TestPlanTreeVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
@@ -73,4 +75,8 @@ public interface TestPlanServcie {
      * @param testPlanVO
      */
     void SetPlanInitStatusFail(TestPlanVO testPlanVO);
+
+    List<TestPlanVO> projectPlan(Long projectId);
+
+    List<FormStatusVO> planStatus(Long projectId,Long planId);
 }

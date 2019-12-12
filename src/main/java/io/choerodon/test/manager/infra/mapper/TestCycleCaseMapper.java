@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Param;
 import io.choerodon.agile.api.vo.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
+import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;
 
@@ -141,4 +142,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
 
     List<TestCycleCaseDTO> listAsyncCycleCase(@Param("projectId")Long projectId,@Param("caseId")Long caseId);
+
+    List<FormStatusVO> selectPlanStatus(@Param("planId") Long planId);
 }
