@@ -69,7 +69,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public void delete(Long attachId) {
+    public void deleteAttachmentRel(Long attachId) {
         baseDelete(String.format("%s/%s/",attachmentUrl,BACKETNAME), attachId);
     }
 
@@ -102,16 +102,16 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String description, String attachmentType) {
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String fileName, String attachmentType) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
-                String fileName = multipartFile.getOriginalFilename();
+                String name = multipartFile.getOriginalFilename();
                 ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
                 if (response == null || response.getStatusCode() != HttpStatus.OK) {
                     throw new CommonException("error.attachment.upload");
                 }
-                dealIssue(executeId, attachmentType,description, fileName, dealUrl(response.getBody()));
+                dealIssue(executeId, attachmentType,null, name, dealUrl(response.getBody()));
             }
         }
 

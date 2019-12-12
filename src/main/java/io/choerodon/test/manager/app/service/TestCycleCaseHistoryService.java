@@ -15,7 +15,7 @@ public interface TestCycleCaseHistoryService {
 
     void createAssignedHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase);
 
-    void createStatusHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase);
+    void createStatusHistory(Long executeId, String oldValue,String newValue);
 
-    void createCommentHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase);
+    void createCommentHistory(Long executeId, String oldValue,String newValue);
 }

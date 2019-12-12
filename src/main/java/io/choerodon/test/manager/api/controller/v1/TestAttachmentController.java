@@ -46,7 +46,7 @@ public class TestAttachmentController {
     @DeleteMapping("/{attachId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "attachId") Long attachId,
                                            @PathVariable(name = "project_id") Long projectId) {
-        testCycleCaseAttachmentRelService.delete(attachId);
+        testCycleCaseAttachmentRelService.deleteAttachmentRel(attachId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

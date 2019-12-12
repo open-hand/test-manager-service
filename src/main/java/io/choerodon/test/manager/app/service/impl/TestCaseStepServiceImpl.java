@@ -64,12 +64,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     @Override
     public void removeStep(Long projectId,TestCaseStepVO testCaseStepVO) {
         Assert.notNull(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class), "error.case.step.remove.param.not.null");
-        Optional.ofNullable(testCaseStepMapper.query(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class))).ifPresent(m ->
-                m.forEach(v -> {
-                    deleteCycleCaseStep(v);
-                    attachmentRelService.delete(v.getStepId(), TestAttachmentCode.ATTACHMENT_CASE_STEP);
-                })
-        );
         testCaseStepMapper.delete(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));
         testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
@@ -143,18 +137,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
             testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
         }
         return testCaseStepVOS;
-    }
-
-    private void deleteCycleCaseStep(TestCaseStepDTO testCaseStepDTO) {
-        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-        testCycleCaseStepDTO.setStepId(testCaseStepDTO.getStepId());
-        Optional.ofNullable(testCycleCaseStepMapper.select(testCycleCaseStepDTO)).ifPresent(
-                m -> m.forEach(v -> {
-                    attachmentRelService.delete(v.getExecuteStepId(), TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
-                    deleteLinkedDefect(v.getExecuteStepId());
-                })
-        );
-        testCycleCaseStepMapper.delete(testCycleCaseStepDTO);
     }
 
     private void deleteLinkedDefect(Long stepId) {
