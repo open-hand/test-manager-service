@@ -22,7 +22,7 @@ public interface TestIssueFolderService {
 
     void copyFolder(Long projectId, Long targetFolderId, Long[] folderIds);
 
-    void moveFolder(Long projectId, Long targetFolderId,List<Long> folderIds);
+    void moveFolder(Long projectId, Long targetFolderId,TestIssueFolderVO issueFolderVO);
 
     List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId);
 

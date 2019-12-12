@@ -29,7 +29,12 @@ public class TestIssueFolderVO {
     private Long objectVersionNumber;
 
     private String initStatus;
+
     private String rank;
+
+    private String lastRank;
+
+    private String nextRank;
 
     public TestIssueFolderVO() {
     }
@@ -136,6 +141,22 @@ public class TestIssueFolderVO {
     public String getInitStatus() {
 
         return initStatus;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
     }
 
     public void setInitStatus(String initStatus) {

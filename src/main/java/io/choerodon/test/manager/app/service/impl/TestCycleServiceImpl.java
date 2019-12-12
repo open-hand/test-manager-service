@@ -822,6 +822,13 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
+    public void baseUpdate(TestCycleDTO testCycleDTO) {
+        if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
+            throw new CommonException("error.update.cycle");
+        }
+    }
+
+    @Override
     public void moveCycle(Long projectId, Long targetCycleId, Long cycleId, String lastRank, String nextRank) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(targetCycleId);
@@ -830,11 +837,15 @@ public class TestCycleServiceImpl implements TestCycleService {
             throw new CommonException("error.issueFolder.has.case");
         }
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
-        testCycleDTO.setParentCycleId(targetCycleId);
-        testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
-        if (cycleMapper.updateByPrimaryKeySelective(testCycleDTO) != 1) {
-            throw new CommonException("error.update.cycle");
+        if(!ObjectUtils.isEmpty(targetCycleId)){
+            testCycleDTO.setParentCycleId(targetCycleId);
+            baseUpdate(testCycleDTO);
         }
+        if(!ObjectUtils.isEmpty(lastRank)){
+            testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+            baseUpdate(testCycleDTO);
+        }
+
     }
 
     @Override

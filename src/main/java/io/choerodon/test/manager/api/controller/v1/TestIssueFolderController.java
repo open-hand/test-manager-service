@@ -80,8 +80,8 @@ public class TestIssueFolderController {
     @PutMapping("/move")
     public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
                                      @RequestParam(name = "targetFolderId") Long targetFolderId,
-                                     @RequestBody List<Long> folderIds) {
-        testIssueFolderService.moveFolder(projectId,targetFolderId, folderIds);
+                                     @RequestBody TestIssueFolderVO issueFolderVO) {
+        testIssueFolderService.moveFolder(projectId,targetFolderId, issueFolderVO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

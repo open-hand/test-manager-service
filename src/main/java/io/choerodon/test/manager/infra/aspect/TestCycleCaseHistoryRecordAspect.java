@@ -71,7 +71,7 @@ public class TestCycleCaseHistoryRecordAspect {
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         System.out.println(testCycleCaseVO.getExecutionStatus());
         System.out.println(before.getExecutionStatus());
-        if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus().longValue())&& testCycleCaseVO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
+        if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())&& testCycleCaseVO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
             testCycleCaseHistoryService.createStatusHistory(testCycleCaseVO, beforeCeaseDTO);
         }
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getAssignedTo())&&!testCycleCaseVO.getAssignedTo().equals(before.getAssignedTo())) {
