@@ -36,7 +36,7 @@ public interface TestCycleCaseAttachmentRelService {
 
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap);
 
-    void batchDeleteByExecutIds(List<Long> executeIds);
+    void batchDeleteByExecutIds(List<Long> linkId,String type);
 
     List<TestCycleCaseAttachmentRelVO> listByExecuteId(Long executeId);
 

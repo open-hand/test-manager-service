@@ -819,13 +819,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return;
         }
         // 删除步骤
+        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(executeIds);
+        if(CollectionUtils.isEmpty(list)){
+            List<Long> stepIds = list.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+            testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(stepIds,TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
+            testCycleCaseAttachmentRelService.batchDeleteByExecutIds(stepIds,TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
+        }
         testCycleCaseStepMapper.batchDeleteByExecutIds(executeIds);
         // 删除附件信息
-        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds);
+        testCycleCaseAttachmentRelService.batchDeleteByExecutIds(executeIds,TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
         // 删除测试执行
         testCycleCaseMapper.batchDeleteByExecutIds(executeIds);
-
-        testCycleCaseDefectRelMapper.batchDeleteByExecutIds(executeIds);
+        // 删除执行关联的缺陷
+        testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(executeIds,TestAttachmentCode.ATTACHMENT_CYCLE_CASE);
         // 删除日志
         testCycleCaseHistory.batchDeleteByExecutIds(executeIds);
     }
@@ -1138,7 +1144,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return new ArrayList<>();
     }
 
-    private TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO) {
+    @Override
+    public TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO) {
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error.insert.cycle.case.is.null");
         }

@@ -157,8 +157,8 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public void batchDeleteByExecutIds(List<Long> executeIds) {
-        testCycleCaseAttachmentRelMapper.batchDeleteByExecutIds(executeIds);
+    public void batchDeleteByExecutIds(List<Long> linkId,String type) {
+        testCycleCaseAttachmentRelMapper.batchDeleteByLinkIdsAndType(linkId,type);
     }
 
     @Override

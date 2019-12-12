@@ -67,14 +67,16 @@
                 AND
                 <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
                     (tci.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                    or
+                    (tci.case_num LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
                 </foreach>
             </if>
             <if test="searchDTO.searchArgs != null">
                 <if test='searchDTO.searchArgs.summary != null'>
-                    AND tci.summary = #{searchDTO.searchArgs.summary}
+                    AND (tci.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
                 </if>
                 <if test="searchDTO.searchArgs.caseNum != null">
-                    AND tci.case_num = #{searchDTO.searchArgs.caseNum}
+                    AND (tci.case_num LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
                 </if>
             </if>
         </if>
@@ -214,4 +216,17 @@
         </foreach>
     ORDER BY tc.case_id
     </select>
+
+    <update id="updateAuditFields">
+        update test_case
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where
+        project_id = #{projectId}
+        and
+        case_id IN
+        <foreach item="item" index="index" collection="caseIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

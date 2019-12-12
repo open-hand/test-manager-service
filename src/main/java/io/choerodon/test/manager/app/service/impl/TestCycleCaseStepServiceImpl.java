@@ -172,8 +172,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             testCycleCaseAttachmentRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
             testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
         }
-
-
         // 直接比较需要对比更新
         if (!CollectionUtils.isEmpty(caseStepIds)) {
             list.stream().filter(v -> caseStepIds.contains(v.getStepId())).forEach(cycleCaseStep -> {
