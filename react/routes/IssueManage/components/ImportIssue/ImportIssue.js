@@ -79,7 +79,7 @@ function ImportIssue(props) {
   const [importRecord, setImportRecord] = useState({});
   const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
-  const { modal } = props;
+  const { modal, defaultFolderValue } = props;
   const loadImportHistory = () => getImportHistory().then((data) => {
     setLastRecord(data);
   });
@@ -320,6 +320,7 @@ function ImportIssue(props) {
             name="folder"
             parentDataSet={dataSet}
             onChange={setFolder}
+            defaultValue={defaultFolderValue.id}
           />
         </Form>
         <input

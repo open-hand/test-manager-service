@@ -2,7 +2,7 @@ import React, {
   useEffect, useContext, useState,
 } from 'react';
 import {
-  Icon, Card, Spin,
+  Icon, Card, Spin, Tooltip,
 } from 'choerodon-ui';
 import {
   Page, Header, Content, Breadcrumb,
@@ -225,6 +225,7 @@ function TestHandExecute(props) {
   };
   const handleOpenEdit = () => {
     const { editExecuteCaseDataSet, executeId } = context;
+    const detailData = ExecuteDetailStore.getDetailData;
     const editModal = Modal.open({
       key: 'editExecuteIssue',
       title: '修改用例',
@@ -244,7 +245,15 @@ function TestHandExecute(props) {
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
+          {detailData.caseId ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
+            : (
+              <Tooltip title="相关用例已删除">
+                <div>
+                  <Button funcType="raised" color="primary">保存并同步到用例库</Button>
+                </div>
+              </Tooltip>
+            )          
+          }
           {cancelBtn}
         </div>
       ),
