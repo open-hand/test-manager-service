@@ -118,7 +118,7 @@ export default class IssueManage extends Component {
       // title:<FormattedMessage id='issue_create_name'  />,
       title: '导入用例',
       drawer: true,
-      destroyOnClose: false,
+      // destroyOnClose: true,
       style: {
         width: 380,
       },
