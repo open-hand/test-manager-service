@@ -123,7 +123,7 @@ export default class IssueManage extends Component {
         width: 380,
       },
       children: (
-        <ImportSide />
+        <ImportSide defaultFolderValue={IssueTreeStore.getCurrentFolder} />
       ),
       footer: () => '',
       className: 'c7ntest-Issue-import-modal',
