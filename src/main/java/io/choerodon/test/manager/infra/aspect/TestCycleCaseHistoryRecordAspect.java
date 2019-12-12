@@ -80,10 +80,8 @@ public class TestCycleCaseHistoryRecordAspect {
     //修改步骤
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseStepService.update(..))&& args(testCycleCaseStepVO)")
     public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseStepVO testCycleCaseStepVO) throws Throwable {
-        //执行历史
         TestCycleCaseStepDTO beforeCycleCaseStep = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepVO.getExecuteStepId());
         TestStatusDTO testStatusDTO = testStatusMapper.selectByPrimaryKey(beforeCycleCaseStep.getStepStatus());
-        Object[] args = pjp.getArgs();
         Object o = pjp.proceed();
         if (!ObjectUtils.isEmpty(testCycleCaseStepVO.getStepStatus())&& testCycleCaseStepVO.getStepStatus().longValue() != beforeCycleCaseStep.getStepStatus().longValue()) {
             testCycleCaseHistoryService.createStatusHistory(beforeCycleCaseStep.getExecuteId(),testStatusDTO.getStatusName(),testCycleCaseStepVO.getStatusName());
@@ -96,11 +94,13 @@ public class TestCycleCaseHistoryRecordAspect {
 
     @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.uploadMultipartFile(..))")
     public void recordAttachUpload(JoinPoint jp) {
+        Object[] args = jp.getArgs();
+        TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVOS= (TestCycleCaseAttachmentRelVO) args[1];
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        historyDTO.setExecuteId((Long) jp.getArgs()[1]);
+        historyDTO.setExecuteId(testCycleCaseAttachmentRelVOS.getAttachmentLinkId());
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
-        historyDTO.setNewValue(jp.getArgs()[2].toString());
+        historyDTO.setNewValue(testCycleCaseAttachmentRelVOS.getAttachmentName());
         testCycleCaseHistoryService.insert(historyDTO);
     }
 

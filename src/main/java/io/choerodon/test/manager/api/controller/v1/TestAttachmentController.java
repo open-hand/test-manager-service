@@ -30,12 +30,9 @@ public class TestAttachmentController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加附件")
     @PostMapping
-    public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(@RequestParam("executeId") Long executeId,
-                                                                         @RequestParam("description") String description,
-                                                                         @RequestParam("attachmentType") String type,
-                                                                         @PathVariable(name = "project_id") Long projectId,
-                                                                         HttpServletRequest request) {
-        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request, executeId, description, type))
+    public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
+                                                                         @RequestBody TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO) {
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request,testCycleCaseAttachmentRelVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.upload.file"));
 
