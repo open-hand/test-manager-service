@@ -135,6 +135,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         testIssueFolderVO.setProjectId(projectId);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
+        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(testIssueFolderMapper.projectLastRank(projectId),null));
         if (testIssueFolderMapper.insert(testIssueFolderDTO) != 1) {
             throw new CommonException("error.issueFolder.insert");
         }
@@ -218,15 +219,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             throw new CommonException("error.issueFolder.has.case");
         }
         if(!ObjectUtils.isEmpty(targetForderId)){
-                TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
-                testIssueFolderDTO.setParentId(targetForderId);
-                if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
-                    throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
-                }
-        }
-        if(!ObjectUtils.isEmpty(issueFolderVO.getLastRank())){
             TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
-            testIssueFolderDTO.setRank(RankUtil.Operation.UPDATE.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
+            testIssueFolderDTO.setParentId(targetForderId);
+            if(ObjectUtils.isEmpty(issueFolderVO.getLastRank())&&ObjectUtils.isEmpty(issueFolderVO.getNextRank())){
+                testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
+            }else {
+                testIssueFolderDTO.setRank(RankUtil.Operation.UPDATE.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
+            }
             if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
                 throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
             }
@@ -310,5 +309,4 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         return folders;
     }
-
 }
