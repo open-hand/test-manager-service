@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 import { Menu, Icon } from 'choerodon-ui';
 import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
@@ -241,7 +242,7 @@ class TestPlanTree extends Component {
         <Loading loading={treeLoading} />
         <Tree
           ref={this.treeRef}
-          data={treeData}
+          data={toJS(treeData)}
           onCreate={this.handleCreateFolder}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
