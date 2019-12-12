@@ -143,7 +143,7 @@ class DragTable extends Component {
             {Columns.map((column) => {
               let renderedItem = null;
               const {
-                dataIndex, key, flex, render, width, className,
+                dataIndex, key, flex, render, width, className, style,
               } = column;
               if (render) {
                 renderedItem = render(data[index][dataIndex], data[index], index, {}, {});
@@ -154,7 +154,7 @@ class DragTable extends Component {
                 <td
                   className={className}
                   style={{
-                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'flex-start', 
+                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', ...style,
                   }}
                 >
                   {renderedItem}
@@ -176,7 +176,7 @@ class DragTable extends Component {
                 {Columns.map((column) => {
                   let renderedItem = null;
                   const {
-                    dataIndex, key, flex, render, width, className,
+                    dataIndex, key, flex, render, width, className, style,
                   } = column;
                   if (render) {
                     renderedItem = render(data[index][dataIndex], data[index], index, provided, snapshot);
@@ -189,7 +189,7 @@ class DragTable extends Component {
                     <td
                       className={className}
                       style={{
-                        flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', 
+                        flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', ...style,
                       }}
                     >
                       {renderedItem}

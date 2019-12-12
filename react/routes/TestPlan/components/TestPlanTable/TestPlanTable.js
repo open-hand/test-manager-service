@@ -48,7 +48,7 @@ const TestPlanTable = observer(({
 
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
     <span style={{ display: 'flex', alignItems: 'center' }}>
-      <Tooltip title={text}><span style={{ maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary">{text}</span></Tooltip>
+      <Tooltip title={text}><span style={{ cursor: 'pointer', maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
       <Tooltip title="此用例需更新">
         <span 
           style={
@@ -146,7 +146,9 @@ const TestPlanTable = observer(({
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     flex: 1,
-    align: 'left',
+    style: {
+      overflow: 'hidden',
+    },   
     render(lastUpdateDate) {
       return (
         <div
