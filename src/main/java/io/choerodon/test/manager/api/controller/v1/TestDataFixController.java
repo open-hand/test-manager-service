@@ -25,9 +25,6 @@ public class TestDataFixController {
     @Autowired
     private DataMigrationService dataMigrationService;
 
-    @Autowired
-    private DemoService demoService;
-
     @Permission(type = ResourceType.SITE, roles = {InitRoleCode.SITE_ADMINISTRATOR, InitRoleCode.SITE_DEVELOPER})
     @ApiOperation("迁移数据")
     @GetMapping
