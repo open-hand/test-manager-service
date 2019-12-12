@@ -3,6 +3,19 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.vo.ProductVersionDTO;
 import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.exception.CommonException;
@@ -17,20 +30,6 @@ import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-
-import javafx.beans.binding.ObjectExpression;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
