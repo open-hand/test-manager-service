@@ -3,6 +3,16 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+
 import io.choerodon.agile.api.vo.UserDO;
 import io.choerodon.asgard.saga.annotation.Saga;
 import io.choerodon.asgard.saga.producer.StartSagaBuilder;
@@ -15,15 +25,10 @@ import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import io.choerodon.test.manager.infra.enums.TestPlanStatus;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
+import io.choerodon.test.manager.infra.mapper.TestStatusMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * @author: 25499
@@ -57,7 +62,14 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TestStatusMapper testStatusMapper;
+
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
     @Override
+
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         if (TestPlanStatus.DOING.getStatus().equals(testPlan.getInitStatus())) {
@@ -279,6 +291,33 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
         testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
         baseUpdate(testPlanDTO);
+    }
+
+    @Override
+    public List<FormStatusVO> planStatus(Long projectId, Long planId) {
+        // 查询项目下自定义和默认状态
+        TestStatusDTO testStatusDTO = new TestStatusDTO();
+        testStatusDTO.setProjectId(projectId);
+        testStatusDTO.setStatusType("CYCLE_CASE");
+        List<FormStatusVO> formStatusVOS = testCycleCaseMapper.selectPlanStatus(planId);
+        List<Long> collect = formStatusVOS.stream().map(FormStatusVO::getStatusId).collect(Collectors.toList());
+        List<TestStatusDTO> testStatusDTOList = testStatusMapper.queryAllUnderProject(testStatusDTO)
+                .stream().filter(e->!collect.contains(e.getStatusId())).collect(Collectors.toList());
+        List<FormStatusVO> formStatusVOList = modelMapper.map(testStatusDTOList, new TypeToken<List<FormStatusVO>>() {
+        }.getType());
+        formStatusVOList.stream().forEach(e->e.setCounts(0L));
+        formStatusVOS.addAll(formStatusVOList);
+        return formStatusVOS;
+    }
+
+    @Override
+    public List<TestPlanVO> projectPlan(Long projectId) {
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        testPlanDTO.setProjectId(projectId);
+        List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
+        List<TestPlanVO> testPlanVOS = modelMapper.map(testPlanDTOS, new TypeToken<List<TestPlanVO>>() {
+        }.getType());
+        return testPlanVOS;
     }
 
     @Override

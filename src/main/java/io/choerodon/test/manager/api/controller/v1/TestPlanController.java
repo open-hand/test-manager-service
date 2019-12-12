@@ -1,8 +1,11 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import java.util.List;
+
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
+import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestPlanServcie;
@@ -88,5 +91,21 @@ public class TestPlanController {
                                      @PathVariable(name = "plan_id") Long planId){
 
         return new ResponseEntity<>(testPlanServcie.clone(projectId,planId),HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询项目下所有计划")
+    @GetMapping("/project_plan")
+    public ResponseEntity<List<TestPlanVO>> allPlan(@PathVariable(name = "project_id") Long projectId){
+
+        return new ResponseEntity<>(testPlanServcie.projectPlan(projectId),HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询项目下状态总数")
+    @GetMapping("/form_status/{plan_id}")
+    public ResponseEntity<List<FormStatusVO>> formStatus(@PathVariable(name = "project_id") Long projectId,
+                                                         @PathVariable(name = "plan_id") Long planId){
+        return new ResponseEntity<>(testPlanServcie.planStatus(projectId,planId),HttpStatus.OK);
     }
 }

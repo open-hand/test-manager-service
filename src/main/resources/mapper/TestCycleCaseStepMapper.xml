@@ -163,7 +163,7 @@
     </select>
 
     <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
-        select step.step_status,step.execute_id,step.execute_step_id,case1.issue_id,cycle.cycle_name,case_step.test_step,case1.cycle_id
+        select step.step_status,step.execute_id,step.execute_step_id,case1.case_id,cycle.cycle_name,case_step.test_step,case1.cycle_id
         from test_cycle_case_step step
         left join test_cycle_case case1 on case1.execute_id=step.execute_id
         left join test_cycle cycle on case1.cycle_id=cycle.cycle_id
