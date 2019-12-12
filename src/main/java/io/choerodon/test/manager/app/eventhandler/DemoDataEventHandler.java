@@ -20,15 +20,14 @@ public class DemoDataEventHandler {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    DemoService demoService;
+    private DemoService demoService;
 
     @SagaTask(code = "register-test-init-demo-data",
             description = "创建test的demo数据",
             sagaCode = "register-org",
             seq = 180)
     public OrganizationRegisterEventPayload initTestDemoData(String message) throws IOException {
-        DemoPayload demoPayloadE = objectMapper.readValue(message, DemoPayload.class);
-
-        return demoService.demoInit(demoPayloadE);
+        DemoPayload demoPayload = objectMapper.readValue(message, DemoPayload.class);
+        return demoService.demoInit(demoPayload);
     }
 }
