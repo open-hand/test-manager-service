@@ -102,21 +102,22 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String fileName, String attachmentType) {
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
-                String name = multipartFile.getOriginalFilename();
+                String fileName = multipartFile.getOriginalFilename();
                 ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
                 if (response == null || response.getStatusCode() != HttpStatus.OK) {
                     throw new CommonException("error.attachment.upload");
                 }
-                dealIssue(executeId, attachmentType,null, name, dealUrl(response.getBody()));
+                dealIssue(testCycleCaseAttachmentRelVO.getAttachmentLinkId(), testCycleCaseAttachmentRelVO.getAttachmentType(),
+                        testCycleCaseAttachmentRelVO.getComment(), fileName, dealUrl(response.getBody()));
             }
         }
 
         TestCycleCaseAttachmentRelDTO issueAttachmentDTO = new TestCycleCaseAttachmentRelDTO();
-        issueAttachmentDTO.setAttachmentLinkId(executeId);
+        issueAttachmentDTO.setAttachmentLinkId(testCycleCaseAttachmentRelVO.getAttachmentLinkId());
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(issueAttachmentDTO);
         if (testCycleCaseAttachmentRelDTOS != null && !testCycleCaseAttachmentRelDTOS.isEmpty()) {
             testCycleCaseAttachmentRelDTOS.forEach(attachment -> {

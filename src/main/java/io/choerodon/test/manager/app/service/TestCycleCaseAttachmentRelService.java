@@ -26,11 +26,10 @@ public interface TestCycleCaseAttachmentRelService {
      * 上传多个附件
      *
      * @param request          request
-     * @param fileName fileName
-     * @param attachmentType   attachmentType
+     * @param
      * @return TestCycleCaseAttachmentRelVO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String fileName, String attachmentType);
+    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO);
 
     void dealIssue(Long executeId, String type, String description,String fileName, String url);
 
