@@ -8,6 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { DragTable } from '..';
 import { TextEditToggle } from '..';
+import useClickOnce from '@/hooks/useClickOnce';
 import './TestStepTable.less';
 
 const { confirm } = Modal;
@@ -123,18 +124,24 @@ function TestStepTable(props) {
       setData([...data]);
     }
   };
-  const onCloneStep = async (stepId, index) => {
+  const onCloneStep = useClickOnce(reset => async (stepId, index) => {
     const originData = data[index];
     const lastRank = originData.rank;
     const nextRank = data[index + 1] ? data[index + 1].rank : null;
-    const newStep = await onClone({
-      lastRank,
-      nextRank,
-      stepId,
-    }, originData);
-    data.splice(index, 0, newStep);
-    setData([...data]);
-  };
+    try {
+      const newStep = await onClone({
+        lastRank,
+        nextRank,
+        stepId,
+      }, originData);
+      data.splice(index + 1, 0, newStep);
+      setData([...data]);
+      reset();
+    } catch (error) {
+      //    
+      reset();
+    }
+  });
 
   const handleDeleteStep = (index, stepId) => {
     confirm({
@@ -159,7 +166,9 @@ function TestStepTable(props) {
    */
   const saveCreateRef = (record, ref) => {
     if (record.stepIsCreating) {
-      ref.enterEditing();
+      setTimeout(() => {
+        ref.enterEditing();
+      });
     }
   };
   function render() {
@@ -186,7 +195,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            saveRef={saveCreateRef}
+            saveRef={saveCreateRef.bind(this, record)}
             originData={testStep}
             formKey="testStep"
             style={{ marginLeft: '-5px' }}
@@ -331,7 +340,7 @@ function TestStepTable(props) {
         );
       },
     }];
-    
+
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable

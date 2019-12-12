@@ -304,7 +304,7 @@ function ImportIssue(props) {
           </Button>
         )}
       >
-        您必须使用模版文件，录入用例信息
+        您必须使用模板文件，录入用例信息
       </ImportIssueForm>
       <Divider />
       <ImportIssueForm

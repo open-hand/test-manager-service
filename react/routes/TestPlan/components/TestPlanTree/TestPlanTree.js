@@ -1,11 +1,12 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 import { Menu, Icon } from 'choerodon-ui';
 import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  editPlan, deletePlan, addFolder, editFolder, deleteFolder,
+  editPlan, deletePlan, addFolder, editFolder, moveFolder, deleteFolder,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -87,11 +88,21 @@ class TestPlanTree extends Component {
     const { parentId } = destination;
     const isPlan = testPlanStore.isPlan(parentId);
     const [, folderId] = testPlanStore.getId(parentId);
+    const { treeData } = this.treeRef.current;
+    const { index } = destination;
+    const parent = treeData.items[destination.parentId];
+    const lastId = parent.children[index - 1];
+    const nextId = parent.children[index];
     const data = {
-      cycleId: folderId,
-      parentCycleId: isPlan ? 0 : folderId,
-    };
-    const result = await handleRequestFailed(editFolder(data));
+      folderId,
+      lastRank: lastId ? treeData.items[lastId].data.rank : null,
+      nextRank: nextId ? treeData.items[nextId].data.rank : null,
+    };    
+    // const data = {
+    //   cycleId: folderId,
+    //   parentCycleId: isPlan ? 0 : folderId,
+    // };
+    const result = await handleRequestFailed(moveFolder(data));
     return {
       data: {
         ...sourceItem.data,
@@ -241,7 +252,7 @@ class TestPlanTree extends Component {
         <Loading loading={treeLoading} />
         <Tree
           ref={this.treeRef}
-          data={treeData}
+          data={toJS(treeData)}
           onCreate={this.handleCreateFolder}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}

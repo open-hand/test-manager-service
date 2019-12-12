@@ -12,13 +12,9 @@ const { confirm } = Modal;
 export function renderIssueNum(caseNum) {
   return (
     <Tooltip mouseEnterDelay={0.5} title={<FormattedMessage id="issue_issueNum" values={{ num: caseNum }} />}>
-      {/* <a style={styles.caseNum}>
-        {caseNum}
-      </a> */}
       <span style={{ color: 'rgba(0, 0, 0, 0.65)' }} className="c7n-table-issueTreeTtile-table-span">
         {caseNum}
       </span>
-
     </Tooltip>
   );
 }

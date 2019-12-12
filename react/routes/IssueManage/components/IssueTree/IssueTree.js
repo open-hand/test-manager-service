@@ -61,7 +61,17 @@ class IssueTree extends Component {
   }
 
   handleDrag = async (sourceItem, destination) => {
-    await handleRequestFailed(moveFolders([sourceItem.id], destination.parentId));    
+    const { treeData } = this.treeRef.current;
+    const { index } = destination;
+    const parent = treeData.items[destination.parentId];
+    const lastId = parent.children[index - 1];
+    const nextId = parent.children[index];
+    const data = {
+      folderId: sourceItem.id,
+      lastRank: lastId ? treeData.items[lastId].data.rank : null,
+      nextRank: nextId ? treeData.items[nextId].data.rank : null,
+    };    
+    await handleRequestFailed(moveFolders(data, destination.parentId));    
     return {
       data: {
         ...sourceItem.data,
