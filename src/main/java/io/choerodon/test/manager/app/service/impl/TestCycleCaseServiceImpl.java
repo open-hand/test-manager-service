@@ -1138,7 +1138,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return new ArrayList<>();
     }
 
-    private TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO) {
+    @Override
+    public TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO) {
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error.insert.cycle.case.is.null");
         }

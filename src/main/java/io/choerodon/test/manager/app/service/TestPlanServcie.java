@@ -79,4 +79,6 @@ public interface TestPlanServcie {
     List<TestPlanVO> projectPlan(Long projectId);
 
     List<FormStatusVO> planStatus(Long projectId,Long planId);
+
+    TestPlanDTO baseCreate(TestPlanDTO testPlanDTO);
 }

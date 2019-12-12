@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +19,10 @@ import org.springframework.stereotype.Service;
 
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-02-15.
@@ -70,9 +72,6 @@ public class DemoServiceImpl implements DemoService {
     private TestCaseStepMapper testCaseStepMapper;
 
     @Autowired
-    private TestIssueFolderRelMapper testIssueFolderRelMapper;
-
-    @Autowired
     private TestCycleMapper testCycleMapper;
 
     @Autowired
@@ -99,6 +98,15 @@ public class DemoServiceImpl implements DemoService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private TestCaseMapper testCaseMapper;
+
+    @Autowired
+    private TestPlanServcie testPlanServcie;
+
+    @Autowired
+    private TestCaseService testCaseService;
+
     @Override
     public OrganizationRegisterEventPayload demoInit(DemoPayload demoPayload) {
 
@@ -109,8 +117,7 @@ public class DemoServiceImpl implements DemoService {
         DemoPayload.Project project = demoPayload.getProject();
         DemoPayload.TestData testData = demoPayload.getTestData();
 
-        List<Long> testIssueIds = testData.getTestIssueIds();
-        long versionId = testData.getVersionId();
+        long versionId = 0L;
         long projectId = project.getId();
         long userId = user.getId();
         long organizationId = organization.getId();
@@ -122,13 +129,23 @@ public class DemoServiceImpl implements DemoService {
         Date dateSix = testData.getDateSix();
 
         List<Long> issueFolderIds = initIssueFolders(versionId, projectId, userId, dateOne);
-        initIssueSteps(testIssueIds, projectId, userId, dateOne);
-        initIssueFolderRels(issueFolderIds, testIssueIds, projectId, versionId, userId, dateOne);
-        List<Long> cycleIds = initCycles(projectId, versionId, dateOne, dateThree, dateFour, dateSix, userId);
-        Map<Long, List<Long>> phaseIdsMap = initCycleFolders(projectId, cycleIds, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
-        Long statusWIPId = initTestStatus(projectId, userId, dateOne);
-        Long[] defectExecution = updateExecutionStatus(phaseIdsMap, testIssueIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
-        initExecutionDefect(defectExecution, projectId, organizationId, userId, dateThree);
+        List<Long> caseIds = initCase(issueFolderIds, projectId, userId, dateOne);
+        initIssueSteps(caseIds, projectId, userId, dateOne);
+
+        List<Long> status = initTestStatus(projectId, userId, dateOne);
+        // 创建计划
+        Long planId = initPlan(project, userId, dateTwo);
+        // 初始化循环文件夹
+        List<Long> phaseIdsMap = initCycleFolders(planId, projectId, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
+        // 初始化执行
+        List<TestCycleCaseDTO> cycleCase = initCycleCase(projectId, phaseIdsMap, userId, dateOne, caseIds,status.get(0));
+        // 初始化执行步骤
+        initCycleCaseStep(cycleCase,userId, dateOne,caseIds,projectId,status.get(1));
+
+
+
+//        Long[] defectExecution = updateExecutionStatus(phaseIdsMap, caseIds, statusWIPId, projectId, organizationId, userId, dateTwo, dateThree);
+//        initExecutionDefect(defectExecution, projectId, organizationId, userId, dateThree);
 
         OrganizationRegisterEventPayload organizationRegisterEventPayload = new OrganizationRegisterEventPayload();
 
@@ -167,113 +184,160 @@ public class DemoServiceImpl implements DemoService {
         return organizationRegisterEventPayload;
     }
 
+    private void initCycleCaseStep(List<TestCycleCaseDTO> cycleCase, long userId, Date dateOne, List<Long> caseIds,Long project,Long status) {
+        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
+        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+        List<TestCycleCaseStepDTO> stepDTOS = new ArrayList<>();
+        cycleCase.forEach(v -> {
+            List<TestCaseStepDTO> testCaseStep = caseStepMap.get(v.getCaseId());
+            if(CollectionUtils.isEmpty(testCaseStep)){
+                return;
+            }
+            testCaseStep.forEach(testCaseStepDTO -> {
+                TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
+                modelMapper.map(testCaseStepDTO,testCycleCaseStepDTO);
+                testCycleCaseStepDTO.setExecuteId(v.getExecuteId());
+                testCycleCaseStepDTO.setStepStatus(status);
+                stepDTOS.add(testCycleCaseStepDTO);
+            });
+        });
+        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(stepDTOS);
+        List<Long> cycleCaseIds = cycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+        List<Long> stepIds = stepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
+        testCycleCaseStepMapper.updateAuditFields(cycleCaseIds.toArray(new Long[cycleCaseIds.size()]),userId,dateOne);
+    }
+
+    private List<TestCycleCaseDTO> initCycleCase(long projectId, List<Long> phaseIdsMap, long userId, Date dateOne, List<Long> caseIds,Long statusWIPId) {
+        List<TestCycleCaseDTO> cycleCase = new ArrayList<>();
+        cycleCase.add(insertCycleCase("用户登录",RANK_1, statusWIPId,projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(0)));
+        cycleCase.add(insertCycleCase("登录错误操作",RANK_2,statusWIPId, projectId, phaseIdsMap.get(1), userId, dateOne, caseIds.get(1)));
+        cycleCase.add(insertCycleCase("通过商品详情快速下单",RANK_3, statusWIPId,projectId, phaseIdsMap.get(0), userId, dateOne, caseIds.get(2)));
+        cycleCase.add(insertCycleCase("用户维护配送信息", RANK_4,statusWIPId,projectId, phaseIdsMap.get(2), userId, dateOne, caseIds.get(3)));
+        return cycleCase;
+    }
+
+    private TestCycleCaseDTO insertCycleCase(String summary,String rank,Long statusWIPId, long projectId, Long cycleId, long userId, Date dateOne, Long caseId) {
+        TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
+        testCycleCaseDTO.setCycleId(cycleId);
+        testCycleCaseDTO.setProjectId(projectId);
+        testCycleCaseDTO.setCaseId(caseId);
+        testCycleCaseDTO.setSummary(summary);
+        testCycleCaseDTO.setVersionNum(1L);
+        testCycleCaseDTO.setCreatedBy(userId);
+        testCycleCaseDTO.setLastUpdatedBy(userId);
+        testCycleCaseDTO.setCreationDate(dateOne);
+        testCycleCaseDTO.setLastUpdateDate(dateOne);
+        testCycleCaseDTO.setRank(rank);
+        testCycleCaseDTO.setExecutionStatus(statusWIPId);
+        return testCycleCaseService.baseInsert(testCycleCaseDTO);
+    }
+
+    private Long initPlan(DemoPayload.Project project, long userId, Date dateTwo) {
+
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        testPlanDTO.setName("V1.0全流程测试");
+        testPlanDTO.setDescription("1.0版本功能全流程测试；\n" +
+                "测试周期：1周；\n" +
+                "自动同步用例库");
+        testPlanDTO.setStartDate(dateTwo);
+        testPlanDTO.setEndDate(dateTwo);
+        testPlanDTO.setInitStatus("success");
+        testPlanDTO.setStatusCode("todo");
+        testPlanDTO.setAutoSync(false);
+        testPlanDTO.setProjectId(project.getId());
+        return testPlanServcie.baseCreate(testPlanDTO).getPlanId();
+
+    }
+
+
+    private List<Long> initCase(List<Long> issueFolderIds, Long projectId, Long userId, Date date) {
+        List<Long> list = new ArrayList<>();
+        list.add(insertIssueCase(issueFolderIds.get(0),RANK_1, projectId, userId, date, "用户登录"));
+        list.add(insertIssueCase(issueFolderIds.get(0),RANK_2, projectId, userId, date, "登录错误操作"));
+        list.add(insertIssueCase(issueFolderIds.get(4), RANK_3,projectId, userId, date, "通过商品详情快速下单"));
+        list.add(insertIssueCase(issueFolderIds.get(3), RANK_4,projectId, userId, date, "用户维护配送信息"));
+        testCaseMapper.updateAuditFields(list.toArray(new Long[list.size()]), userId, date);
+        return list;
+    }
+
+    private Long insertIssueCase(Long folderId, String rank,Long projectId, Long userId, Date date, String summary) {
+        TestCaseVO testCaseVO = new TestCaseVO();
+        testCaseVO.setProjectId(projectId);
+        testCaseVO.setFolderId(folderId);
+        testCaseVO.setSummary(summary);
+        testCaseVO.setRank(rank);
+        return testCaseService.createTestCase(projectId,testCaseVO).getCaseId();
+    }
+
     private List<Long> initIssueFolders(Long versionId, Long projectId, Long userId, Date date) {
         List<Long> issueFolderIds = new ArrayList<>();
-
-        issueFolderIds.add(insertIssueFolder(versionId, projectId, "账户登录"));
-        issueFolderIds.add(insertIssueFolder(versionId, projectId, "商品列表"));
-        issueFolderIds.add(insertIssueFolder(versionId, projectId, "商品详情查看"));
-        issueFolderIds.add(insertIssueFolder(versionId, projectId, STRING_1));
-        issueFolderIds.add(insertIssueFolder(versionId, projectId, "提交订单"));
-
+        long parentId = insertIssueFolder(versionId, projectId, "1.0版本", 0L);
+        issueFolderIds.add(insertIssueFolder(versionId, projectId, "账户登录", parentId));
+        issueFolderIds.add(insertIssueFolder(versionId, projectId, "商品列表", parentId));
+        issueFolderIds.add(insertIssueFolder(versionId, projectId, "商品详情查看", parentId));
+        issueFolderIds.add(insertIssueFolder(versionId, projectId, STRING_1, parentId));
+        issueFolderIds.add(insertIssueFolder(versionId, projectId, "提交订单", parentId));
         testIssueFolderMapper.updateAuditFields(issueFolderIds.toArray(new Long[issueFolderIds.size()]), userId, date);
-
         return issueFolderIds;
     }
 
-    private long insertIssueFolder(Long versionId, Long projectId, String folderName) {
+    private long insertIssueFolder(Long versionId, Long projectId, String folderName, Long parentId) {
         TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-
+        testIssueFolderVO.setParentId(parentId);
         testIssueFolderVO.setName(folderName);
         testIssueFolderVO.setProjectId(projectId);
         testIssueFolderVO.setVersionId(versionId);
         testIssueFolderVO.setType("cycle");
-
-        return testIssueFolderService.create(projectId,testIssueFolderVO).getFolderId();
+        return testIssueFolderService.create(projectId, testIssueFolderVO).getFolderId();
     }
 
     private void initIssueSteps(List<Long> testIssueIds, Long projectId, Long userId, Date date) {
 
+        insertIssueSteps(RANK_1, testIssueIds.get(0), "打开登录页", "", "登录页正常打开", projectId);
+        insertIssueSteps(RANK_2, testIssueIds.get(0), "输入正确的用户名", "XXX", "用户名正常输入", projectId);
+        insertIssueSteps(RANK_3, testIssueIds.get(0), "输入正确的用户密码", "XXX", "用户密码正常输入，且加密显示", projectId);
+        insertIssueSteps(RANK_4, testIssueIds.get(0), "点击登录按钮", "", "登陆成功", projectId);
+
         insertIssueSteps(RANK_1, testIssueIds.get(1), "打开登录页", "", "登录页正常打开", projectId);
-        insertIssueSteps(RANK_2, testIssueIds.get(1), "输入正确的用户名", "XXX", "用户名正常输入", projectId);
-        insertIssueSteps(RANK_3, testIssueIds.get(1), "输入正确的用户密码", "XXX", "用户密码正常输入，且加密显示", projectId);
-        insertIssueSteps(RANK_4, testIssueIds.get(1), "点击登录按钮", "", "登陆成功", projectId);
+        insertIssueSteps(RANK_2, testIssueIds.get(1), "输入不存在的用户名", "ZZZ", "提示用户不存在", projectId);
+        insertIssueSteps(RANK_3, testIssueIds.get(1), "输入正确的用户名", "XXX", "用户名正常输入，且加密显示", projectId);
+        insertIssueSteps(RANK_6, testIssueIds.get(1), "不输入密码直接登录", "", "登录失败，提示密码为必输字段", projectId);
+        insertIssueSteps(RANK_4, testIssueIds.get(1), "输入错误的用户密码", "ZZZ", "用户密码正常输入，且加密显示", projectId);
+        insertIssueSteps(RANK_5, testIssueIds.get(1), "点击登录按钮", "", "登录失败，提示密码错误", projectId);
 
-        insertIssueSteps(RANK_1, testIssueIds.get(2), "打开登录页", "", "登录页正常打开", projectId);
-        insertIssueSteps(RANK_2, testIssueIds.get(2), "输入不存在的用户名", "ZZZ", "提示用户不存在", projectId);
-        insertIssueSteps(RANK_3, testIssueIds.get(2), "输入正确的用户名", "XXX", "用户名正常输入，且加密显示", projectId);
-        insertIssueSteps(RANK_6, testIssueIds.get(2), "不输入密码直接登录", "", "登录失败，提示密码为必输字段", projectId);
-        insertIssueSteps(RANK_4, testIssueIds.get(2), "输入错误的用户密码", "ZZZ", "用户密码正常输入，且加密显示", projectId);
-        insertIssueSteps(RANK_5, testIssueIds.get(2), "点击登录按钮", "", "登录失败，提示密码错误", projectId);
+        insertIssueSteps(RANK_1, testIssueIds.get(2), "用户登录", "正确的用户名、密码", "登陆成功", projectId);
+        insertIssueSteps(RANK_2, testIssueIds.get(2), "点击配送信息界面", "", "页面成功转跳", projectId);
+        insertIssueSteps(RANK_3, testIssueIds.get(2), "点击加号进入新增地址页面", "", "新增地址页面转跳成功", projectId);
+        insertIssueSteps(RANK_4, testIssueIds.get(2), "输入配送地址", "VVVVV", "配送地址成功输入", projectId);
+        insertIssueSteps(RANK_5, testIssueIds.get(2), "输入收件人", "XXX", "收件人成功输入", projectId);
+        insertIssueSteps(RANK_7, testIssueIds.get(2), "输入电话号码", "1111111", "用户电话成功输入", projectId);
+        insertIssueSteps(RANK_8, testIssueIds.get(2), "点击保存按钮", "", "保存成功", projectId);
 
-        insertIssueSteps(RANK_1, testIssueIds.get(3), "用户登录", "正确的用户名、密码", "登陆成功", projectId);
-        insertIssueSteps(RANK_2, testIssueIds.get(3), "点击配送信息界面", "", "页面成功转跳", projectId);
-        insertIssueSteps(RANK_3, testIssueIds.get(3), "点击加号进入新增地址页面", "", "新增地址页面转跳成功", projectId);
-        insertIssueSteps(RANK_4, testIssueIds.get(3), "输入配送地址", "VVVVV", "配送地址成功输入", projectId);
-        insertIssueSteps(RANK_5, testIssueIds.get(3), "输入收件人", "XXX", "收件人成功输入", projectId);
-        insertIssueSteps(RANK_7, testIssueIds.get(3), "输入电话号码", "1111111", "用户电话成功输入", projectId);
-        insertIssueSteps(RANK_8, testIssueIds.get(3), "点击保存按钮", "", "保存成功", projectId);
+        insertIssueSteps(RANK_1, testIssueIds.get(3), "进入商品详情页面", "商品：A", "成功展示商品详情", projectId);
+        insertIssueSteps(RANK_2, testIssueIds.get(3), "选择颜色、尺码", "颜色：红，尺码：XL", "成功选择商品选项", projectId);
+        insertIssueSteps(RANK_3, testIssueIds.get(3), "点击直接购买按钮", "", "快速下单页面正常转跳", projectId);
+        insertIssueSteps(RANK_4, testIssueIds.get(3), "选择配送信息", "配送地址：VVVVV", "成功选择用户配送信息", projectId);
+        insertIssueSteps(RANK_5, testIssueIds.get(3), "点击立即下单按钮", "", "下单成功", projectId);
+        insertIssueSteps(RANK_7, testIssueIds.get(3), "页面转跳", "", "转跳到我的订单页面", projectId);
 
-        insertIssueSteps(RANK_1, testIssueIds.get(4), "进入商品详情页面", "商品：A", "成功展示商品详情", projectId);
-        insertIssueSteps(RANK_2, testIssueIds.get(4), "选择颜色、尺码", "颜色：红，尺码：XL", "成功选择商品选项", projectId);
-        insertIssueSteps(RANK_3, testIssueIds.get(4), "点击直接购买按钮", "", "快速下单页面正常转跳", projectId);
-        insertIssueSteps(RANK_4, testIssueIds.get(4), "选择配送信息", "配送地址：VVVVV", "成功选择用户配送信息", projectId);
-        insertIssueSteps(RANK_5, testIssueIds.get(4), "点击立即下单按钮", "", "下单成功", projectId);
-        insertIssueSteps(RANK_7, testIssueIds.get(4), "页面转跳", "", "转跳到我的订单页面", projectId);
-
-        List<Long> testIssueIdsNew = new ArrayList<>(testIssueIds);
-        testIssueIdsNew.remove(0);
-
-        testCaseStepMapper.updateAuditFields(testIssueIdsNew.toArray(new Long[testIssueIdsNew.size()]), userId, date);
+        testCaseStepMapper.updateAuditFields(testIssueIds.toArray(new Long[testIssueIds.size()]), userId, date);
     }
 
     private void insertIssueSteps(String rank, Long issueId, String testStep, String testData, String expectedResult, Long projectId) {
         TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-
         testCaseStepVO.setRank(rank);
         testCaseStepVO.setIssueId(issueId);
         testCaseStepVO.setTestStep(testStep);
         testCaseStepVO.setTestData(testData);
         testCaseStepVO.setExpectedResult(expectedResult);
 
-        testCaseStepService.changeStep(testCaseStepVO, projectId,false);
+        testCaseStepService.changeStep(testCaseStepVO, projectId, false);
     }
 
-    private void initIssueFolderRels(List<Long> issueFolderIds, List<Long> testIssueIds, Long projectId, Long versionId, Long userId, Date date) {
-        insertIssueFolderRel(issueFolderIds.get(0), versionId, projectId, testIssueIds.get(1));
-        insertIssueFolderRel(issueFolderIds.get(0), versionId, projectId, testIssueIds.get(2));
-        insertIssueFolderRel(issueFolderIds.get(3), versionId, projectId, testIssueIds.get(3));
-        insertIssueFolderRel(issueFolderIds.get(4), versionId, projectId, testIssueIds.get(4));
 
-        testIssueFolderRelMapper.updateAuditFields(projectId, userId, date);
-    }
-
-    private void insertIssueFolderRel(Long folderId, Long versionId, Long projectId, Long issueId) {
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
-
-        testIssueFolderRelVO.setFolderId(folderId);
-        testIssueFolderRelVO.setVersionId(versionId);
-        testIssueFolderRelVO.setProjectId(projectId);
-        testIssueFolderRelVO.setIssueId(issueId);
-
-        TestIssueFolderRelDTO testIssueFolderRelDTO = modelMapper.map(testIssueFolderRelVO, TestIssueFolderRelDTO.class);
-        testIssueFolderRelMapper.insert(testIssueFolderRelDTO);
-    }
-
-    private List<Long> initCycles(Long projectId, Long versionId, Date dateOne, Date dateThree, Date dateFour, Date dateSix, Long userId) {
-        List<Long> cycleIds = new ArrayList<>();
-
-        cycleIds.add(insertCycle(projectId, "开发阶段测试", versionId, "开发环境", dateOne, dateThree));
-        cycleIds.add(insertCycle(projectId, "回归测试-UAT", versionId, "UAT环境", dateFour, dateSix));
-
-        testCycleMapper.updateAuditFields(cycleIds.toArray(new Long[cycleIds.size()]), userId, dateOne);
-
-        return cycleIds;
-    }
 
     private Long insertCycle(Long projectId, String cycleName, Long versionId, String environment, Date fromDate, Date toDate) {
         TestCycleVO testCycleVO = new TestCycleVO();
-
         testCycleVO.setCycleName(cycleName);
         testCycleVO.setVersionId(versionId);
         testCycleVO.setEnvironment(environment);
@@ -281,31 +345,17 @@ public class DemoServiceImpl implements DemoService {
         testCycleVO.setToDate(toDate);
         testCycleVO.setType("cycle");
         testCycleVO.setProjectId(projectId);
-
         return testCycleService.insert(projectId, testCycleVO).getCycleId();
     }
 
-    private Map<Long, List<Long>> initCycleFolders(Long projectId, List<Long> cycleIds, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
+    private List<Long> initCycleFolders(Long planId, Long projectId, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
         List<Long> cycleFolderIdsOne = new ArrayList<>();
-        List<Long> cycleFolderIdsTwo = new ArrayList<>();
-
-        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4)));
-        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0)));
-        cycleFolderIdsOne.add(insertCycleFolder(projectId, cycleIds.get(0), STRING_1, versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3)));
-
-        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), "账户登录", versionId, changeDateTimeStart(dateFour), changeDateTimeEnd(dateFive), issueFolderIds.get(0)));
-        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), STRING_1, versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateFive), issueFolderIds.get(3)));
-        cycleFolderIdsTwo.add(insertCycleFolder(projectId, cycleIds.get(1), "提交订单", versionId, changeDateTimeStart(dateFive), changeDateTimeEnd(dateSix), issueFolderIds.get(4)));
-
+        Long parentId = insertCycleFolder(projectId,RANK_1, 0L, "1.0版本", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), null, planId);
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, RANK_2,parentId, "提交订单", versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateThree), issueFolderIds.get(4), planId));
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, RANK_3,parentId, "账户登录", versionId, changeDateTimeStart(dateOne), changeDateTimeEnd(dateTwo), issueFolderIds.get(0), planId));
+        cycleFolderIdsOne.add(insertCycleFolder(projectId, RANK_4,parentId, STRING_1, versionId, changeDateTimeStart(dateTwo), changeDateTimeEnd(dateTwo), issueFolderIds.get(3), planId));
         testCycleMapper.updateAuditFields(cycleFolderIdsOne.toArray(new Long[cycleFolderIdsOne.size()]), userId, dateOne);
-        testCycleMapper.updateAuditFields(cycleFolderIdsTwo.toArray(new Long[cycleFolderIdsTwo.size()]), userId, dateFour);
-
-        Map<Long, List<Long>> phaseIdsMap = new HashMap<>();
-
-        phaseIdsMap.put(0L, cycleFolderIdsOne);
-        phaseIdsMap.put(1L, cycleFolderIdsTwo);
-
-        return phaseIdsMap;
+        return cycleFolderIdsOne;
     }
 
     private Date changeDateTimeStart(Date date) {
@@ -328,9 +378,8 @@ public class DemoServiceImpl implements DemoService {
         return newDate;
     }
 
-    private Long insertCycleFolder(Long projectId, Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId) {
-        TestCycleVO testCycleVO = new TestCycleVO();
-
+    private Long insertCycleFolder(Long projectId, String rank,Long parentCycleId, String cycleName, Long versionId, Date fromDate, Date toDate, Long folderId, Long planId) {
+        TestCycleDTO testCycleVO = new TestCycleDTO();
         testCycleVO.setParentCycleId(parentCycleId);
         testCycleVO.setCycleName(cycleName);
         testCycleVO.setVersionId(versionId);
@@ -339,24 +388,34 @@ public class DemoServiceImpl implements DemoService {
         testCycleVO.setType("folder");
         testCycleVO.setFolderId(folderId);
         testCycleVO.setProjectId(projectId);
-
-        return testCycleService.insert(projectId, testCycleVO).getCycleId();
+        testCycleVO.setPlanId(planId);
+        testCycleVO.setRank(rank);
+        testCycleMapper.insert(testCycleVO);
+        return testCycleVO.getCycleId();
     }
 
-    private long initTestStatus(Long projectId, Long userId, Date date) {
+    private List<Long> initTestStatus(Long projectId, Long userId, Date date) {
         TestStatusVO testStatusVO = new TestStatusVO();
-
         testStatusVO.setStatusName("WIP");
         testStatusVO.setDescription("Work In Process");
         testStatusVO.setStatusColor("rgba(248,231,28,1)");
         testStatusVO.setStatusType("CYCLE_CASE");
         testStatusVO.setProjectId(projectId);
 
+        TestStatusVO testStatusVO1 = new TestStatusVO();
+        testStatusVO1.setStatusName("未执行");
+        testStatusVO1.setDescription("步骤未执行");
+        testStatusVO1.setStatusColor("rgba(0,0,0,0.18)");
+        testStatusVO1.setStatusType("CASE_STEP");
+        testStatusVO1.setProjectId(projectId);
+        Long stepStatus = testStatusService.insert(testStatusVO1).getStatusId();
         Long statusID = testStatusService.insert(testStatusVO).getStatusId();
-
         testStatusMapper.updateAuditFields(statusID, userId, date);
-
-        return statusID;
+        testStatusMapper.updateAuditFields(stepStatus, userId, date);
+        List<Long> status = new ArrayList<>();
+        status.add(statusID);
+        status.add(stepStatus);
+        return status;
     }
 
     private Long[] updateExecutionStatus(Map<Long, List<Long>> phaseIdsMap, List<Long> testIssueIds, Long statusWIPId, Long projectId, Long organizationId, Long userId, Date dateTwo, Date dateThree) {
@@ -366,7 +425,7 @@ public class DemoServiceImpl implements DemoService {
         List<Long> executionIdsTwo = new ArrayList<>();
         List<Long> executionIdsThree = new ArrayList<>();
 
-        Pageable pageable = PageRequest.of(1, 30,new Sort(Sort.Direction.ASC, "cycle_id"));
+        Pageable pageable = PageRequest.of(1, 30, new Sort(Sort.Direction.ASC, "cycle_id"));
 
         List<Long> phaseIdsOne = phaseIdsMap.get(0L);
         List<Long> phaseIdsTwo = phaseIdsMap.get(1L);

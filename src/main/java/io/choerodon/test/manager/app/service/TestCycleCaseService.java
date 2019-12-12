@@ -160,4 +160,7 @@ public interface TestCycleCaseService {
      * @param cycIds
      */
     void cloneCycleCase(Map<Long, Long> cycleMapping, List<Long> cycIds);
+
+
+    TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO);
 }

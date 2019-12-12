@@ -214,4 +214,14 @@
         </foreach>
     ORDER BY tc.case_id
     </select>
+
+    <update id="updateAuditFields">
+        update test_case
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where case_id IN
+        <foreach item="item" index="index" collection="caseIds"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

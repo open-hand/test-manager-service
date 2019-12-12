@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.infra.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,4 +38,6 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
 
     @MapKey("caseId")
     Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds,@Param("executedIds") List<Long> executedId);
+
+    void updateAuditFields(@Param("caseIds") Long[] caseIds, Long userId, Date date);
 }

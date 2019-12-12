@@ -264,6 +264,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanDTO.setCreationDate(null);
         testPlanDTO.setLastUpdatedBy(null);
         testPlanDTO.setObjectVersionNumber(null);
+        testPlanDTO.setName(String.format("%s-副本",testPlanDTO.getName()));
         testPlanDTO.setInitStatus(TestPlanInitStatus.CREATING);
         baseCreate(testPlanDTO);
         Map<String, Long> map = new HashMap<>();
@@ -394,6 +395,14 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanVO.setCaseSelected(caseSelectMap);
         return testPlanVO;
     }
+    @Override
+    public  TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
+        if (ObjectUtils.isEmpty(testPlanDTO)) {
+            throw new CommonException("error.test.plan.is.not.null");
+        }
+        DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective, testPlanDTO, 1, "error.insert.test.plan");
+        return testPlanDTO;
+    }
 
     private void baseDelete(Long planId) {
         if (testPlanMapper.deleteByPrimaryKey(planId) != 1) {
@@ -401,13 +410,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
     }
 
-    private TestPlanDTO baseCreate(TestPlanDTO testPlanDTO) {
-        if (ObjectUtils.isEmpty(testPlanDTO)) {
-            throw new CommonException("error.test.plan.is.not.null");
-        }
-        DBValidateUtil.executeAndvalidateUpdateNum(testPlanMapper::insertSelective, testPlanDTO, 1, "error.insert.test.plan");
-        return testPlanDTO;
-    }
+
 
     private void buildTree(List<Long> root, Long cycleId, Map<Long, TestCycleDTO> allFolderMap, Map<Long, TestTreeFolderVO> map, Map<Long, List<TestCycleDTO>> parentMap, Long planId, Map<Long, List<TestCycleCaseDTO>> testCycleCaseMap) {
         TestCycleDTO testCycleDTO = allFolderMap.get(cycleId);
