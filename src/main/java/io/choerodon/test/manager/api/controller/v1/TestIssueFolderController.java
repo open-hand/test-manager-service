@@ -66,22 +66,13 @@ public class TestIssueFolderController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("复制文件夹")
-    @PutMapping("/copy")
-    public ResponseEntity copyFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestParam(name = "targetFolderId") Long targetFolderId,
-                                     @RequestBody Long[] folderIds) {
-        testIssueFolderService.copyFolder(projectId, targetFolderId, folderIds);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
-    public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
                                      @RequestParam(name = "targetFolderId") Long targetFolderId,
                                      @RequestBody TestIssueFolderVO issueFolderVO) {
-        testIssueFolderService.moveFolder(projectId,targetFolderId, issueFolderVO);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId,targetFolderId,issueFolderVO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
     }
 }

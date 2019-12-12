@@ -20,9 +20,7 @@ public interface TestIssueFolderService {
 
     Long getDefaultFolderId(Long projectId, Long versionId);
 
-    void copyFolder(Long projectId, Long targetFolderId, Long[] folderIds);
-
-    void moveFolder(Long projectId, Long targetFolderId,TestIssueFolderVO issueFolderVO);
+    String moveFolder(Long projectId, Long targetFolderId,TestIssueFolderVO issueFolderVO);
 
     List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId);
 
