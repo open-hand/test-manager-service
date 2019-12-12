@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.google.common.collect.Lists;
@@ -30,7 +31,7 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
  * Created by 842767365@qq.com on 7/13/18.
  */
 
-@Component
+@Service
 public class ReporterFormServiceImpl implements ReporterFormService {
 
     @Autowired

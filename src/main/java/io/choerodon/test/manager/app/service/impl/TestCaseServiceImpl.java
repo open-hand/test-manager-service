@@ -8,15 +8,12 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -53,7 +50,6 @@ import io.choerodon.test.manager.infra.util.TypeUtil;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestCaseServiceImpl implements TestCaseService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseServiceImpl.class);
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
@@ -245,7 +241,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    @Transactional
     public TestCaseRepVO createTestCase(Long projectId, TestCaseVO testCaseVO) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
@@ -341,7 +336,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    @Transactional
     @DataLog(type = DataLogConstants.CASE_UPDATE)
     public TestCaseRepVO updateCase(Long projectId, TestCaseRepVO testCaseRepVO, String[] fieldList) {
         if (ObjectUtils.isEmpty(testCaseRepVO) || ObjectUtils.isEmpty(testCaseRepVO.getCaseId())) {
@@ -366,7 +360,6 @@ public class TestCaseServiceImpl implements TestCaseService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     @DataLog(type = DataLogConstants.BATCH_MOVE, single = false)
     public void batchMove(Long projectId, Long folderId, List<TestCaseRepVO> testCaseRepVOS) {
         if (ObjectUtils.isEmpty(testCaseRepVOS)) {

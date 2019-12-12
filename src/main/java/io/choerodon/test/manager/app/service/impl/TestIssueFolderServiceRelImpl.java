@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
-@Component
+@Service
 public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService {
 
     @Autowired

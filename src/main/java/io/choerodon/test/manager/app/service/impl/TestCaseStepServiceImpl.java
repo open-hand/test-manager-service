@@ -106,7 +106,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCaseStepVO clone(TestCaseStepVO testCaseStepVO, Long projectId) {
         List<TestCaseStepDTO> steps = testCaseStepMapper.query(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));

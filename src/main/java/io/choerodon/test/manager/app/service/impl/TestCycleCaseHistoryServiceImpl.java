@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.PageInfo;
 
@@ -28,7 +29,8 @@ import io.choerodon.test.manager.infra.util.PageUtil;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryService {
 
     @Autowired
@@ -40,7 +42,6 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseHistoryVO insert(TestCycleCaseHistoryVO testCycleCaseHistoryVO) {
         TestCycleCaseHistoryDTO testCycleCaseHistoryDTO = modelMapper.map(testCycleCaseHistoryVO, TestCycleCaseHistoryDTO.class);
@@ -64,7 +65,6 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
 
 
     @Override
-    @Transactional
     public void createAssignedHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
@@ -90,7 +90,6 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    @Transactional
     public void createStatusHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
@@ -103,7 +102,6 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    @Transactional
     public void createCommentHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setExecuteId(beforeCycleCase.getExecuteId());

@@ -10,11 +10,12 @@ import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
 import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
 import io.choerodon.test.manager.infra.feign.ScheduleFeignClient;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by zongw.lee@gmail.com on 23/11/2018
  */
-@Component
+@Service
 public class ScheduleServiceImpl implements ScheduleService {
 
     @Autowired

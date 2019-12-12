@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -40,8 +38,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
 
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
-
-    private Logger logger = LoggerFactory.getLogger(TestIssueFolderServiceImpl.class);
 
     @Autowired
     private TestCaseService testCaseService;

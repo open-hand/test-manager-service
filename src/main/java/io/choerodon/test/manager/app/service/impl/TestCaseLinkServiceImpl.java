@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -25,7 +26,9 @@ import io.choerodon.test.manager.infra.mapper.TestCaseLinkMapper;
  * @since 2019/11/18
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCaseLinkServiceImpl implements TestCaseLinkService {
+
     @Autowired
     private TestCaseLinkMapper testCaseLinkMapper;
 

@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -34,7 +35,8 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRelService {
 
     @Autowired
@@ -51,8 +53,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseDefectRelVO insert(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long projectId, Long organizationId) {
         TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = modelMapper

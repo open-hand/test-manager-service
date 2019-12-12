@@ -40,6 +40,7 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
  * Created by 842767365@qq.com on 6/11/18.
  */
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttachmentRelService {
 
     @Autowired
@@ -67,19 +68,16 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         this.fileFeignClient = fileFeignClient;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long attachId) {
         baseDelete(String.format("%s/%s/",attachmentUrl,BACKETNAME), attachId);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
         return modelMapper.map(baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete(Long linkedId, String type) {
         Assert.notNull(linkedId, "error.delete.linkedId.not.null");
@@ -91,6 +89,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 m.forEach(v -> baseDelete(TestAttachmentCode.ATTACHMENT_BUCKET, v.getId()))
         );
     }
+
     @Override
     public void dealIssue(Long executeId, String type, String description,String fileName, String url) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
@@ -101,7 +100,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelDTO.setUrl(String.format("/%s/%s/%s",attachmentUrl,BACKETNAME,url));
         testCycleCaseAttachmentRelMapper.insertSelective(testCycleCaseAttachmentRelDTO);
     }
-    @Transactional(rollbackFor = Exception.class)
+
     @Override
     public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request, Long executeId,String description, String attachmentType) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");

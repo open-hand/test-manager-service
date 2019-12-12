@@ -24,7 +24,7 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 public class TestIssueFolderController {
 
     @Autowired
-    TestIssueFolderService testIssueFolderService;
+    private TestIssueFolderService testIssueFolderService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询文件夹，返回树结构")
