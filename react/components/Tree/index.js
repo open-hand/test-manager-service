@@ -133,6 +133,7 @@ function PureTree({
     addFirstLevelItem,
     updateTree,
     getItem,
+    treeData: tree,
     trigger: {
       delete: handleDelete,
     },

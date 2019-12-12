@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react-lite';
+import { Choerodon } from '@choerodon/boot';
 import {
   cloneStep, updateStep, deleteStep, createIssueStep,
 } from '@/api/IssueManageApi';
+import { handleRequestFailed } from '@/common/utils';
 import TestStepTable from '@/components/TestStepTable';
 import EditIssueContext from '../stores';
 
@@ -24,12 +26,15 @@ function EditTestStepTable() {
       }),
     );
   };
-  const onCloneStep = newData => store.loadWithLoading(
-    cloneStep({
-      caseId,
-      ...newData,
-    }),
-  );
+  const onCloneStep = async (newData) => {    
+    const result = await handleRequestFailed(store.loadWithLoading(
+      cloneStep({
+        caseId,
+        ...newData,
+      }),
+    ));
+    return result;   
+  };
   const onDeleteStep = async (newData) => {
     await deleteStep({
       issueId: caseId,

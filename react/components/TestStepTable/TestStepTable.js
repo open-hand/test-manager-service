@@ -129,13 +129,17 @@ function TestStepTable(props) {
     const originData = data[index];
     const lastRank = originData.rank;
     const nextRank = data[index + 1] ? data[index + 1].rank : null;
-    const newStep = await onClone({
-      lastRank,
-      nextRank,
-      stepId,
-    }, originData);
-    data.splice(index, 0, newStep);
-    setData([...data]);
+    try {
+      const newStep = await onClone({
+        lastRank,
+        nextRank,
+        stepId,
+      }, originData);
+      data.splice(index + 1, 0, newStep);
+      setData([...data]);
+    } catch (error) {
+      // 
+    }
   };
 
   const handleDeleteStep = (index, stepId) => {
@@ -161,7 +165,9 @@ function TestStepTable(props) {
    */
   const saveCreateRef = (record, ref) => {
     if (record.stepIsCreating) {
-      ref.enterEditing();
+      setTimeout(() => {
+        ref.enterEditing();
+      });
     }
   };
   function render() {
@@ -188,7 +194,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            saveRef={saveCreateRef}
+            saveRef={saveCreateRef.bind(this, record)}
             originData={testStep}
             formKey="testStep"
             style={{ marginLeft: '-5px' }}
@@ -211,7 +217,7 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autosize placeholder="测试步骤" />
+              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="测试步骤" />
             </Edit>
           </TextEditToggle>
         );
@@ -325,7 +331,7 @@ function TestStepTable(props) {
         );
       },
     }];
-    
+
     return (
       <div className="c7ntest-TestStepTable">
         <DragTable
