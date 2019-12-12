@@ -839,13 +839,13 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
         if(!ObjectUtils.isEmpty(targetCycleId)){
             testCycleDTO.setParentCycleId(targetCycleId);
+            if (ObjectUtils.isEmpty(lastRank) && ObjectUtils.isEmpty(nextRank)) {
+                testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+            }else {
+                testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+            }
             baseUpdate(testCycleDTO);
         }
-        if(!ObjectUtils.isEmpty(lastRank)){
-            testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
-            baseUpdate(testCycleDTO);
-        }
-
     }
 
     @Override

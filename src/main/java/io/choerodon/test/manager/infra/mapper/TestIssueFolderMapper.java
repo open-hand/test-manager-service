@@ -27,4 +27,6 @@ public interface TestIssueFolderMapper extends Mapper<TestIssueFolderDTO> {
     List<TestIssueFolderDTO> listFolderByFolderIds(@Param("folderIds") List<Long> folderIds);
 
     void fixRank(@Param("testIssueFolderDTOS") List<TestIssueFolderDTO> testIssueFolderDTOS);
+
+    String projectLastRank(@Param("projectId") Long projectId);
 }
