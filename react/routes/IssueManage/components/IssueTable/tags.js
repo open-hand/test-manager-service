@@ -15,7 +15,7 @@ export function renderIssueNum(caseNum) {
       {/* <a style={styles.caseNum}>
         {caseNum}
       </a> */}
-      <span className="c7n-table-issueTreeTtile-table-span">
+      <span style={{ color: 'rgba(0, 0, 0, 0.65)' }} className="c7n-table-issueTreeTtile-table-span">
         {caseNum}
       </span>
 
@@ -33,14 +33,14 @@ export function renderAction(record, history, reLoadTable) {
   const handleDeleteIssue = () => {
     confirm({
       width: 560,
-      title: `删除测试用例${caseNum}`,
-      content: '这个测试用例将会被彻底删除。包括所有步骤和相关执行',
+      title: '确认删除',
+      content: `确认删除测试用例${caseNum}？`,
       onOk: () => deleteIssue(caseId)
         .then((res) => {
           reLoadTable();
           Choerodon.prompt('删除成功');
         }),
-      okText: '删除',
+      okText: '确认',
       okType: 'danger',
     });
   };

@@ -1,11 +1,11 @@
 import React, { useContext, useCallback } from 'react';
 import { Choerodon } from '@choerodon/boot';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
 import { Button, Modal } from 'choerodon-ui/pro';
 import { openEditPlan } from '../TestPlanModal';
 import { updatePlanStatus } from '@/api/TestPlanApi';
+import ConfirmCompleteModalChildren from './components/ConfirmCompleteModalChildren';
 import Store from '../../stores';
 import './TestPlanHeader.less';
 
@@ -42,18 +42,9 @@ function TestPlanHeader() {
   const confirmCompletePlan = (planItem, newStatus) => {
     Modal.open({
       key: confirmCompletePlanModalKey,
-      title: `确定完成计划 ${planItem.item.data.name}？`,
+      title: '完成计划确认',
       children: (
-        <div>
-          <p>当前计划的完成情况如下：</p>
-          <p>{`执行总数：${statusRes.total}`}</p>
-          {
-            statusRes.statusVOList.map(item => (
-              <p>{`${item.statusName}：${item.count}`}</p>
-            ))
-          }
-          <p>{`确定要完成计划 ${planItem.item.data.name} 吗？`}</p>
-        </div>
+        <ConfirmCompleteModalChildren planName={planItem.item.data.name} statusRes={statusRes} />
       ),
       okText: '确定',
       onOk: onUpdatePlanStatus.bind(this, planItem, newStatus),

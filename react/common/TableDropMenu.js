@@ -59,7 +59,7 @@ const TableDropMenu = (props) => {
       {isHasMenu && menu
         ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Dropdown overlay={menu} trigger="click">
+            <Dropdown overlay={menu} trigger={['click']}>
               <Icon shape="circle" type="more_vert" />
             </Dropdown>
           </div>

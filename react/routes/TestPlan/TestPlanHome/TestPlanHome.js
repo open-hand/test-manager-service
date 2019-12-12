@@ -91,8 +91,7 @@ function TestPlanHome() {
     });
   };
 
-  const handleOpenUpdateRemind = (record, e) => {
-    e.stopPropagation();
+  const handleOpenUpdateRemind = (record) => {
     updateModal = Modal.open({
       key: updateRemindModal,
       drawer: true,
@@ -176,17 +175,22 @@ function TestPlanHome() {
   const handleQuickPassOrFail = (execute, isPass = true, e) => {
     e.stopPropagation();
     let executionStatus;
+    let executionStatusName;
     if (isPass) {
-      const { statusId } = statusList.find(status => status.statusName === '通过') || {};
+      const { statusId, statusName } = statusList.find(status => status.statusName === '通过') || {};
       executionStatus = statusId;
+      executionStatusName = statusName;
     } else {
-      const { statusId } = statusList.find(status => status.statusName === '失败') || {};
+      const { statusId, statusName } = statusList.find(status => status.statusName === '失败') || {};
       executionStatus = statusId;
+      executionStatusName = statusName;
     }
     const data = {
       executionStatus,
+      executionStatusName,
       executeId: execute.executeId,
       objectVersionNumber: execute.objectVersionNumber,
+
     };
     updateExecute(data).then(() => {
       testPlanStore.loadExecutes();

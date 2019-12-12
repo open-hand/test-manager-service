@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
@@ -94,7 +94,6 @@ function TestStepTable(props) {
   const onCreateStep = async (newStep, index) => {
     const { expectedResult, testStep } = newStep;
     // eslint-disable-next-line no-param-reassign
-
     if (expectedResult && testStep) {
       try {
         const newStepResult = await onCreate(newStep, index);
@@ -108,7 +107,6 @@ function TestStepTable(props) {
       } catch (error) {
         // 
       }
-
       // 清除当前创建的值
     } else {
       Choerodon.prompt('测试步骤和预期结果均为必输项');
@@ -193,10 +191,14 @@ function TestStepTable(props) {
             formKey="testStep"
             style={{ marginLeft: '-5px' }}
             onSubmit={(value) => {
-              handleEditStep({
-                ...record,
-                testStep: value,
-              }, index);
+              if (value) {
+                handleEditStep({
+                  ...record,
+                  testStep: value,
+                }, index);
+              } else {
+                Choerodon.prompt('测试步骤为必输项');
+              }
             }}
           >
             <Text>
@@ -211,7 +213,7 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autosize placeholder="测试步骤" />
+              <TextArea className="hidden-label" maxLength={500} autosize autoFocus placeholder="测试步骤" />
             </Edit>
           </TextEditToggle>
         );
@@ -267,10 +269,14 @@ function TestStepTable(props) {
             originData={expectedResult}
             formKey="expectedResult"
             onSubmit={(value) => {
-              handleEditStep({
-                ...record,
-                expectedResult: value,
-              }, index);
+              if (value) {
+                handleEditStep({
+                  ...record,
+                  expectedResult: value,
+                }, index);
+              } else {
+                Choerodon.prompt('测试结果为必输项');
+              }
             }}
           >
             <Text>

@@ -54,12 +54,22 @@
 }
 .c7ntest-dragtable table tbody tr td {
     overflow: unset;
-    .c7ntest-testPlan-table-summary{
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: inline-block;
-      white-space: nowrap;
+    .table-drop-menu-base {
+      & a:hover {
+        text-decoration: unset;
+      }
+      .c7ntest-testPlan-table-summary{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        white-space: nowrap;
+        &:hover {
+          color: @primary-color;
+          text-decoration: underline;
+        }
+      }
     }
+    
 }
 }
 .c7ntest-testPlan-assignToDropDown {

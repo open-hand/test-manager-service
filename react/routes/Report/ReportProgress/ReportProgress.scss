@@ -1,4 +1,7 @@
 .c7ntest-report-progress {
+  .page-content {
+    position: relative;
+  }
   .c7ntest-switch {
     display: flex;
 
@@ -18,13 +21,11 @@
   }
 
   .c7ntest-chartAndTable {
-    display: flex;
-    position: relative;
-
     .c7ntest-tableContainer {
       position: absolute;
       right: 95px;
       top: 35px;
+      bottom: 50px;
       background: #fff;
       box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
       padding: 24px;

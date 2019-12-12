@@ -140,3 +140,7 @@ export function comfirmUpdate(data) {
 export function ignoreUpdate(executed) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/${executed}/ignore/update`, {});
 }
+
+export function getPlanList() {
+  return request.get(`/test/v1/projects/${getProjectId()}/plan/project_plan`);
+}

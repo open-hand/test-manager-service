@@ -38,9 +38,9 @@ function UpdateContent(props) {
               fileList && fileList.length > 0 && (
                 fileList.map(item => (
                   <SingleFileUpload
-                    key={item.uid}
+                    key={tag === 'new' ? item.attachmentId : item.id}
                     url={item.url}
-                    fileName={item.fileName}
+                    fileName={tag === 'new' ? item.fileName : item.attachmentName}
                   />
                 ))
               )

@@ -50,14 +50,22 @@ const TestPlanTable = observer(({
       if (key === 'delete') {
         onDeleteExecute(record);
       }
+      if (key === 'lookUpdate') {
+        onOpenUpdateRemind(record);
+      }
     };
     const menu = (
       <Menu onClick={handleItemClick}>
         <Menu.Item key="delete">
-          <Tooltip placement="top" title={<FormattedMessage id="delete" />}>
-            <span style={{ cursor: 'pointer' }} role="none"><FormattedMessage id="delete" /></span>
-          </Tooltip>
+          <span style={{ cursor: 'pointer' }} role="none"><FormattedMessage id="delete" /></span>
         </Menu.Item>
+        {
+          testPlanStatus !== 'done' && record.hasChange && (
+          <Menu.Item key="lookUpdate">
+            <span style={{ cursor: 'pointer' }} role="none">查看更新</span>
+          </Menu.Item>
+          )
+        }
       </Menu>
     );
     return testPlanStatus !== 'done' ? (
@@ -66,22 +74,30 @@ const TestPlanTable = observer(({
         text={(
           <span style={{ display: 'flex', alignItems: 'center' }}>
             <Tooltip title={text}><span style={{ maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary">{text}</span></Tooltip>
-            <span 
-              style={
-                { 
-                  display: testPlanStatus !== 'done' && record.hasChange ? 'inline-block' : 'none', 
-                  width: 6, 
-                  height: 6, 
-                  borderRadius: '50%', 
-                  background: '#ffb100',
-                  marginLeft: 3,
-                }
-              }
-            />
+            <Tooltip title="此用例需更新">
+              <span 
+                style={
+                    { 
+                      display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none', 
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 46, 
+                      height: 20, 
+                      background: '#fff',
+                      marginLeft: 3,
+                      fontSize: 12,
+                      color: '#00BF96',
+                      border: '1px solid #00BF96',
+                    }
+                  }
+              >
+                未更新
+              </span>
+            </Tooltip>
           </span>
         )}
         isHasMenu={record.projectId !== 0}
-        onClickEdit={(record.hasChange && testPlanStatus === 'todo') ? onOpenUpdateRemind.bind(this, record) : onTableSummaryClick.bind(this, record)}
+        onClickEdit={onTableSummaryClick.bind(this, record)}
       />
     ) : (
       <Tooltip title={text}>
@@ -212,15 +228,15 @@ const TestPlanTable = observer(({
     });
   }
 
-  if (testPlanStatus !== 'todo') {
-    columns.splice(testPlanStatus === 'doing' ? 3 : 2, 0, {
-      title: <FormattedMessage id="cycle_testSource" />,
-      dataIndex: 'source',
-      key: 'source',
-      flex: 1,
-      render: (text, record) => renderSource(text),
-    });
-  }
+  // if (testPlanStatus !== 'todo') {
+  //   columns.splice(testPlanStatus === 'doing' ? 3 : 2, 0, {
+  //     title: <FormattedMessage id="cycle_testSource" />,
+  //     dataIndex: 'source',
+  //     key: 'source',
+  //     flex: 1,
+  //     render: (text, record) => renderSource(text),
+  //   });
+  // }
 
   return (
     <Card
