@@ -187,50 +187,24 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
     }
 
-    /**
-     * @param projectId
-     * @param targetForderId 要复制到的目标folder
-     * @param folderIds      要被复制的源folder
-     * @return 被复制成功的目标folder
-     */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void copyFolder(Long projectId, Long targetForderId, Long[] folderIds) {
-
-        TestIssueFolderVO tergetInssueFolderVO = modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(targetForderId), TestIssueFolderVO.class);
-        for (Long folderId : folderIds) {
-            //通过folder查找
-            TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-            testIssueFolderVO.setFolderId(folderId);
-            TestIssueFolderVO resTestIssueFolderVO = modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(folderId), TestIssueFolderVO.class);
-            //创建文件夹
-            resTestIssueFolderVO.setFolderId(null);
-            resTestIssueFolderVO.setVersionId(targetForderId);
-            resTestIssueFolderVO.setParentId(tergetInssueFolderVO.getFolderId());
-            TestIssueFolderVO returnTestIssueFolderVO = create(projectId, resTestIssueFolderVO);
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(issueFolderVO.getFolderId());
+    public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
+        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
         if (!CollectionUtils.isEmpty(testCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
-        if(!ObjectUtils.isEmpty(targetForderId)){
-            TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
-            testIssueFolderDTO.setParentId(targetForderId);
-            if(ObjectUtils.isEmpty(issueFolderVO.getLastRank())&&ObjectUtils.isEmpty(issueFolderVO.getNextRank())){
-                testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
-            }else {
-                testIssueFolderDTO.setRank(RankUtil.Operation.UPDATE.getRank(issueFolderVO.getLastRank(),issueFolderVO.getNextRank()));
-            }
-            if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
-                throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
-            }
+        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(issueFolderVO.getFolderId());
+        testIssueFolderDTO.setParentId(targetForderId);
+        if (ObjectUtils.isEmpty(issueFolderVO.getLastRank()) && ObjectUtils.isEmpty(issueFolderVO.getNextRank())) {
+            testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(issueFolderVO.getLastRank(), issueFolderVO.getNextRank()));
+        } else {
+            testIssueFolderDTO.setRank(RankUtil.Operation.UPDATE.getRank(issueFolderVO.getLastRank(), issueFolderVO.getNextRank()));
         }
-
+        if (testIssueFolderMapper.updateByPrimaryKeySelective(testIssueFolderDTO) != 1) {
+            throw new IssueFolderException(IssueFolderException.ERROR_UPDATE, testIssueFolderDTO.toString());
+        }
+        return testIssueFolderDTO.getRank();
     }
 
     private void validateType(TestIssueFolderVO testIssueFolderVO) {

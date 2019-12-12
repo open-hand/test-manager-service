@@ -202,8 +202,10 @@ public class TestCaseAssembler {
         }.getType()));
         // 查询用例信息
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-        testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
-        testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+        if(!ObjectUtils.isEmpty(testCaseDTO)){
+            testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+            testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+        }
         return testCycleCaseInfoVO;
     }
 

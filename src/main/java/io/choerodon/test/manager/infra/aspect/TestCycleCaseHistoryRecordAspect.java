@@ -14,18 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseHistoryType;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
+import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
@@ -48,7 +41,7 @@ public class TestCycleCaseHistoryRecordAspect {
     private TestCycleCaseService testCycleCaseService;
 
     @Autowired
-    private TestStatusService testStatusService;
+    private TestStatusMapper testStatusMapper;
 
     @Autowired
     TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
@@ -57,7 +50,7 @@ public class TestCycleCaseHistoryRecordAspect {
     TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
+    private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -65,39 +58,56 @@ public class TestCycleCaseHistoryRecordAspect {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
+    //修改用例
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.update(..)) && args(testCycleCaseVO)")
     public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO) throws Throwable {
         //执行历史
         TestCycleCaseDTO before = testCycleCaseMapper.selectByExecuteId(testCycleCaseVO.getExecuteId());
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         Object o = pjp.proceed();
-        if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())&& testCycleCaseVO.getExecutionStatus().longValue() != before.getExecutionStatus().longValue()) {
-            testCycleCaseHistoryService.createStatusHistory(testCycleCaseVO, beforeCeaseDTO);
+        if (!ObjectUtils.isEmpty(testCycleCaseVO.getExecutionStatus())&& testCycleCaseVO.getExecutionStatus().longValue() != beforeCeaseDTO.getExecutionStatus().longValue()) {
+            testCycleCaseHistoryService.createStatusHistory(beforeCeaseDTO.getExecuteId(),beforeCeaseDTO.getExecutionStatusName(),testCycleCaseVO.getExecutionStatusName());
         }
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getAssignedTo())&&!testCycleCaseVO.getAssignedTo().equals(before.getAssignedTo())) {
             testCycleCaseHistoryService.createAssignedHistory(testCycleCaseVO, beforeCeaseDTO);
         }
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getDescription())&&!StringUtils.equals(testCycleCaseVO.getDescription(), before.getDescription())) {
-            testCycleCaseHistoryService.createCommentHistory(testCycleCaseVO, beforeCeaseDTO);
+            testCycleCaseHistoryService.createCommentHistory(beforeCeaseDTO.getExecuteId(),beforeCeaseDTO.getDescription(),testCycleCaseVO.getDescription());
         }
         return o;
     }
 
+    //修改步骤
+    @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseStepService.update(..))&& args(testCycleCaseStepVO)")
+    public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseStepVO testCycleCaseStepVO) throws Throwable {
+        //执行历史
+        TestCycleCaseStepDTO beforeCycleCaseStep = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepVO.getExecuteStepId());
+        TestStatusDTO testStatusDTO = testStatusMapper.selectByPrimaryKey(beforeCycleCaseStep.getStepStatus());
+        Object[] args = pjp.getArgs();
+        Object o = pjp.proceed();
+        if (!ObjectUtils.isEmpty(testCycleCaseStepVO.getStepStatus())&& testCycleCaseStepVO.getStepStatus().longValue() != beforeCycleCaseStep.getStepStatus().longValue()) {
+            testCycleCaseHistoryService.createStatusHistory(beforeCycleCaseStep.getExecuteId(),testStatusDTO.getStatusName(),testCycleCaseStepVO.getStatusName());
+        }
+        if (!ObjectUtils.isEmpty(testCycleCaseStepVO.getDescription())&&!StringUtils.equals(testCycleCaseStepVO.getDescription(), beforeCycleCaseStep.getDescription())) {
+            testCycleCaseHistoryService.createCommentHistory(beforeCycleCaseStep.getExecuteId(),beforeCycleCaseStep.getDescription(), testCycleCaseStepVO.getDescription());
+        }
+        return o;
+    }
 
-    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
+    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.uploadMultipartFile(..))")
     public void recordAttachUpload(JoinPoint jp) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        historyDTO.setExecuteId((Long) jp.getArgs()[3]);
+        historyDTO.setExecuteId((Long) jp.getArgs()[1]);
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
-        historyDTO.setNewValue(jp.getArgs()[1].toString());
+        historyDTO.setNewValue(jp.getArgs()[2].toString());
         testCycleCaseHistoryService.insert(historyDTO);
     }
 
-    @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.delete(..))&& args(linkedId,type)")
-    public Object recordAttachDelete(ProceedingJoinPoint pjp,Long linkedId, String type) throws Throwable {
+    @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.deleteAttachmentRel(..))&& args(attachId)")
+    public Object recordAttachDelete(ProceedingJoinPoint pjp,Long attachId) throws Throwable {
         TestCycleCaseAttachmentRelDTO attachmentRelE = new TestCycleCaseAttachmentRelDTO();
-        attachmentRelE.setId(linkedId);
+        attachmentRelE.setId(attachId);
         List<TestCycleCaseAttachmentRelDTO> lists = testCycleCaseAttachmentRelMapper.select(attachmentRelE);
         Object o = pjp.proceed();
         if(!CollectionUtils.isEmpty(lists)){

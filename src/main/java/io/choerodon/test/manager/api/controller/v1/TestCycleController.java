@@ -249,13 +249,14 @@ public class TestCycleController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹")
     @PutMapping("/move/{cycle_id}")
-    public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
                                      @PathVariable(name = "cycle_id") Long cycleId,
                                      @RequestParam(name = "target_cycle_id") Long targetCycleId,
                                      @RequestParam(name = "lastRank") String lastRank,
                                      @RequestParam(name = "nextRank") String nextRank) {
-        testCycleService.moveCycle(projectId,targetCycleId, cycleId,lastRank,nextRank);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return Optional.ofNullable(testCycleService.moveCycle(projectId,targetCycleId, cycleId,lastRank,nextRank))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
 
 }

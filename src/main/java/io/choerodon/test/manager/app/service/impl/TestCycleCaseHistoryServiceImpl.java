@@ -90,31 +90,29 @@ public class TestCycleCaseHistoryServiceImpl implements TestCycleCaseHistoryServ
     }
 
     @Override
-    public void createStatusHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
+    public void createStatusHistory(Long executeId, String oldValue,String newValue) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-        historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
-        String newColor = afterCycleCase.getExecutionStatusName();
-        String oldColor = beforeCycleCase.getExecutionStatusName();
+        historyDTO.setExecuteId(executeId);
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_STATUS);
-        historyDTO.setNewValue(newColor);
-        historyDTO.setOldValue(oldColor);
+        historyDTO.setNewValue(newValue);
+        historyDTO.setOldValue(oldValue);
         insert(historyDTO);
     }
 
     @Override
-    public void createCommentHistory(TestCycleCaseVO afterCycleCase, TestCycleCaseVO beforeCycleCase) {
+    public void createCommentHistory(Long executeId, String oldValue,String newValue) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-        historyDTO.setExecuteId(beforeCycleCase.getExecuteId());
+        historyDTO.setExecuteId(executeId);
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_COMMENT);
-        if (StringUtils.isEmpty(afterCycleCase.getDescription())) {
+        if (StringUtils.isEmpty(newValue)) {
             historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
         } else {
-            historyDTO.setNewValue(afterCycleCase.getDescription());
+            historyDTO.setNewValue(newValue);
         }
-        if (StringUtils.isEmpty(beforeCycleCase.getDescription())) {
+        if (StringUtils.isEmpty(oldValue)) {
             historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         } else {
-            historyDTO.setOldValue(beforeCycleCase.getDescription());
+            historyDTO.setOldValue(oldValue);
         }
         insert(historyDTO);
     }

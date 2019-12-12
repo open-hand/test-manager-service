@@ -92,7 +92,7 @@ public interface TestCycleService {
 
     TestTreeIssueFolderVO queryTreeByPlanId(Long planId);
 
-    void moveCycle(Long projectId, Long targetCycleId,Long cycleId,String lastRank,String nextRank);
+    String moveCycle(Long projectId, Long targetCycleId,Long cycleId,String lastRank,String nextRank);
 
     void baseUpdate(TestCycleDTO testCycleDTO);
 }
