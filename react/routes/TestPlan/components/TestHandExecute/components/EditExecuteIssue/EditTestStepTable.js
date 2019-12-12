@@ -15,7 +15,7 @@ function EditTestStepTable(props) {
   });
   useEffect(() => {
     if (current) {
-      current.set(name, testStepData);
+      current.set(name, testStepData.filter(step => !step.stepIsCreating));
     }
   }, [current, name, testStepData]);
   useEffect(() => {

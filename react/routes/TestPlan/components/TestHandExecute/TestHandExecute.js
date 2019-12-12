@@ -227,7 +227,7 @@ function TestHandExecute(props) {
     const { editExecuteCaseDataSet, executeId } = context;
     const editModal = Modal.open({
       key: 'editExecuteIssue',
-      title: '修改执行',
+      title: '修改用例',
       drawer: true,
       style: {
         width: 740,
