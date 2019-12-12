@@ -258,7 +258,7 @@ public class DemoServiceImpl implements DemoService {
         list.add(insertIssueCase(issueFolderIds.get(0),RANK_2, projectId, userId, date, "登录错误操作"));
         list.add(insertIssueCase(issueFolderIds.get(4), RANK_3,projectId, userId, date, "通过商品详情快速下单"));
         list.add(insertIssueCase(issueFolderIds.get(3), RANK_4,projectId, userId, date, "用户维护配送信息"));
-        testCaseMapper.updateAuditFields(list.toArray(new Long[list.size()]), userId, date);
+        testCaseMapper.updateAuditFields(projectId,list.toArray(new Long[list.size()]), userId, date);
         return list;
     }
 

@@ -39,5 +39,5 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     @MapKey("caseId")
     Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds,@Param("executedIds") List<Long> executedId);
 
-    void updateAuditFields(@Param("caseIds") Long[] caseIds, Long userId, Date date);
+    void updateAuditFields(@Param("projectId") Long projectId,@Param("caseIds") Long[] caseIds,@Param("userId") Long userId,@Param("date") Date date);
 }
