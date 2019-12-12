@@ -31,7 +31,7 @@
         and
         attachment_link_id in
         <foreach collection="list" item="linkId" open="(" close=")" separator=",">
-            #{linkKId}
+            #{linkId}
         </foreach>
     </delete>
 </mapper>
