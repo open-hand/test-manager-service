@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import {
   Tooltip, Menu, Card, Button, Icon, 
 } from 'choerodon-ui';
+import { Action } from '@choerodon/boot';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
@@ -45,66 +46,50 @@ const TestPlanTable = observer(({
     tableLoading, statusList, executePagination, testList, checkIdMap, testPlanStatus,
   } = testPlanStore;
 
-  const renderMenu = (text, record) => {
-    const handleItemClick = ({ key }) => {
-      if (key === 'delete') {
-        onDeleteExecute(record);
-      }
-      if (key === 'lookUpdate') {
-        onOpenUpdateRemind(record);
-      }
-    };
-    const menu = (
-      <Menu onClick={handleItemClick}>
-        <Menu.Item key="delete">
-          <span style={{ cursor: 'pointer' }} role="none"><FormattedMessage id="delete" /></span>
-        </Menu.Item>
-        {
-          testPlanStatus !== 'done' && record.hasChange && (
-          <Menu.Item key="lookUpdate">
-            <span style={{ cursor: 'pointer' }} role="none">查看更新</span>
-          </Menu.Item>
-          )
-        }
-      </Menu>
-    );
-    return testPlanStatus !== 'done' ? (
-      <TableDropMenu
-        menu={menu}
-        text={(
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title={text}><span style={{ maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary">{text}</span></Tooltip>
-            <Tooltip title="此用例需更新">
-              <span 
-                style={
-                    { 
-                      display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none', 
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 46, 
-                      height: 20, 
-                      background: '#fff',
-                      marginLeft: 3,
-                      fontSize: 12,
-                      color: '#00BF96',
-                      border: '1px solid #00BF96',
-                    }
-                  }
-              >
-                未更新
-              </span>
-            </Tooltip>
-          </span>
-        )}
-        isHasMenu={record.projectId !== 0}
-        onClickEdit={onTableSummaryClick.bind(this, record)}
-      />
-    ) : (
-      <Tooltip title={text}>
-        <span className="c7ntest-testPlan-table-summary" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+  const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
+    <span style={{ display: 'flex', alignItems: 'center' }}>
+      <Tooltip title={text}><span style={{ maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary">{text}</span></Tooltip>
+      <Tooltip title="此用例需更新">
+        <span 
+          style={
+            { 
+              display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none', 
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 46, 
+              height: 20, 
+              background: '#fff',
+              marginLeft: 3,
+              fontSize: 12,
+              color: '#00BF96',
+              border: '1px solid #00BF96',
+            }
+          }
+        >
+          未更新
+        </span>
       </Tooltip>
-    );
+    </span>
+  ) : (
+    <Tooltip title={text}>
+      <span className="c7ntest-testPlan-table-summary" style={{ cursor: 'pointer', maxWidth: '2rem' }} role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span>
+    </Tooltip>
+  ));
+
+  const renderMoreAction = (record) => {
+    const action = [{
+      text: '删除',
+      action: () => onDeleteExecute(record),
+    }];
+    if (testPlanStatus !== 'done' && record.hasChange) {
+      action.push({
+        text: '查看更新',
+        action: () => onOpenUpdateRemind(record),
+      });
+    }
+    return testPlanStatus !== 'done' && <Action className="action-icon" data={action} />;
   };
+
 
   const renderSource = (source) => {
     if (!source || source === 'none') {
@@ -161,10 +146,12 @@ const TestPlanTable = observer(({
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     flex: 1,
+    align: 'left',
     render(lastUpdateDate) {
       return (
         <div
           className="c7ntest-text-dot"
+          style={{ color: 'rgba(0, 0, 0, 0.65)' }}
         >
           {lastUpdateDate}
         </div>
@@ -204,6 +191,13 @@ const TestPlanTable = observer(({
           dataSource={testList}
         />
       ),
+    });
+    columns.splice(2, 0, {
+      title: '',
+      dataIndex: 'more',
+      key: 'more',
+      width: 55,
+      render: (text, record) => renderMoreAction(record),
     });
   }
 
@@ -247,7 +241,7 @@ const TestPlanTable = observer(({
           <SelectFocusLoad
             allowClear
             disabled={!checkIdMap.size}
-            style={{ width: 216 }}
+            style={{ width: 216, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
             placeholder="批量指派"
             getPopupContainer={trigger => trigger.parentNode}
             type="user"

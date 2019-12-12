@@ -154,7 +154,7 @@ class DragTable extends Component {
                 <td
                   className={className}
                   style={{
-                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', 
+                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'flex-start', 
                   }}
                 >
                   {renderedItem}
