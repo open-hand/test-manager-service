@@ -11,7 +11,6 @@ export { default as WYSIWYGEditor } from './WYSIWYGEditor';
 export { default as DragTable } from './DragTable';
 export { default as YamlEditor } from './YamlEditor';
 export { default as SelectVersion } from './SelectVersion';
-export { default as SelectFolder } from './SelectFolder';
 export { default as Upload } from './Upload';
 export { default as SmartTooltip } from './SmartTooltip';
 export { default as Injecter } from './Injecter';

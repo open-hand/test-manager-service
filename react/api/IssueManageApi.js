@@ -5,11 +5,8 @@
  * @Last Modified time: 2018-11-01 15:25:27
  * @Feature:
  */
-import { stores } from '@choerodon/boot';
+
 import { getProjectId, request } from '../common/utils';
-
-const { AppState } = stores;
-
 /**
  *创建issue
  *
@@ -25,50 +22,6 @@ export function createIssue(issueObj) {
   return request.post(`/test/v1/projects/${getProjectId()}/case/create`, issue);
 }
 /**
- *创建评论
- *
- * @export
- * @param {*} commitObj
- * @returns
- */
-export function createCommit(commitObj) {
-  return request.post(`/agile/v1/projects/${getProjectId()}/issue_comment`, commitObj);
-}
-/**
- *更新评论
- *
- * @export
- * @param {*} commitObj
- * @returns
- */
-export function updateCommit(commitObj) {
-  return request.post(`/agile/v1/projects/${getProjectId()}/issue_comment/update`, commitObj);
-}
-/**
- *删除评论
- *
- * @export
- * @param {*} commitId
- * @returns
- */
-export function deleteCommit(commitId) {
-  return request.delete(`/agile/v1/projects/${getProjectId()}/issue_comment/${commitId}`);
-}
-/**
- *获取用例状态列表
- *
- * @export
- * @param {*} statusId
- * @param {*} issueId
- * @param {*} typeId
- * @returns
- */
-export function loadStatus(statusId, issueId, typeId) {
-  return request.get(
-    `/agile/v1/projects/${getProjectId()}/schemes/query_transforms?current_status_id=${statusId}&issue_id=${issueId}&issue_type_id=${typeId}&apply_type=test`,
-  );
-}
-/**
  *获取单个用例详细信息
  *
  * @export
@@ -77,18 +30,6 @@ export function loadStatus(statusId, issueId, typeId) {
  */
 export function loadIssue(issueId) {
   return request.get(`/test/v1/projects/${getProjectId()}/case/${issueId}/info`);
-}
-/**
- *更新用例状态
- *
- * @export
- * @param {*} transformId
- * @param {*} issueId
- * @param {*} objVerNum
- * @returns
- */
-export function updateStatus(transformId, issueId, objVerNum) {
-  return request.put(`/agile/v1/projects/${getProjectId()}/issues/update_status?transformId=${transformId}&issueId=${issueId}&objectVersionNumber=${objVerNum}&applyType=test`);
 }
 /**
  *更新用例信息
@@ -300,80 +241,7 @@ export function copyFolders(data, versionId) {
   const folderIds = data.map(item => item.folderId);
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/copy?versionId=${versionId}`, folderIds);
 }
-/**
- *获取版本内的所有文件夹
- *
- * @export
- * @param {*} versionId
- * @returns
- */
-export function getFoldersByVersion(versionId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/issueFolder/query/all${versionId ? `?versionId=${versionId}` : ''}`);
-}
-/**
- *版本上的同步
- *
- * @export
- * @param {*} versionId
- * @returns
- */
-export function syncFoldersInVersion(versionId) {
-  // cycleId || versionId
 
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/synchro/folder/all/in/version/${versionId}`);
-}
-/**
- *循环上的同步
- *
- * @export
- * @param {*} cycleId
- * @returns
- */
-export function syncFoldersInCycle(cycleId) {
-  // cycleId || versionId
-
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/synchro/folder/all/in/cycle/${cycleId}`);
-}
-/**
- *文件夹同步
- *
- * @export
- * @param {*} folderId
- * @param {*} cycleId
- * @returns
- */
-export function syncFolder(folderId, cycleId) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/synchro/folder/${folderId}/in/${cycleId}`);
-}
-/**
- *所有用例导出
- *
- * @export
- * @returns
- */
-export function exportIssues() {
-  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel`);
-}
-/**
- *版本下的用例导出
- *
- * @export
- * @param {*} versionId
- * @returns
- */
-export function exportIssuesFromVersion(versionId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/version?versionId=${versionId}`);
-}
-/**
- *文件夹下的用例导出
- *
- * @export
- * @param {*} folderId
- * @returns
- */
-export function exportIssuesFromFolder(folderId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/case/download/excel/folder?folderId=${folderId}&userId=${AppState.userInfo.id}`);
-}
 /**
  *下载导入模板
  *
@@ -469,14 +337,4 @@ export function uploadFile(caseId, data) {
  */
 export function deleteFile(id) {
   return request.delete(`/test/v1/projects/${getProjectId()}/attachment/${id}`);
-}
-
-/**
- *获取当前项目的标签
- *
- * @export
- * @returns
- */
-export function getLabels() {
-  return request.get(`/test/v1/projects/${getProjectId()}/labels`);
 }

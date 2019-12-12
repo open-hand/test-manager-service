@@ -1,6 +1,10 @@
 import { useRef, useCallback } from 'react';
 /**
- *
+ *  防止多次点击
+ * useClickOnce((reset)=>()=>{
+ * ...
+ *  reset();
+ * })
  *
  * @export
  * @param {*} fn (reset)=>()=>
