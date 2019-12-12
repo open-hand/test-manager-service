@@ -135,9 +135,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
-    @Autowired
-    private TestCycleCaseHistoryService testCycleCaseHistoryService;
-
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
         TestCycleCaseVO dto = new TestCycleCaseVO();
