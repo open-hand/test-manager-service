@@ -3,7 +3,7 @@ import { Select } from 'choerodon-ui';
 import { injectIntl } from 'react-intl';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { SelectFocusLoad, SelectVersion } from '../../../../../../components';
+import { SelectFocusLoad } from '../../../../../../components';
 import { getAllEnvs } from '../../../../../../api/AutoTestApi';
 import './SelectVariable.less';
 
