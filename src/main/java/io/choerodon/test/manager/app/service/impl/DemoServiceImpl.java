@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageInfo;
 import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestStatusType;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -132,15 +133,16 @@ public class DemoServiceImpl implements DemoService {
         List<Long> caseIds = initCase(issueFolderIds, projectId, userId, dateOne);
         initIssueSteps(caseIds, projectId, userId, dateOne);
 
-        List<Long> status = initTestStatus(projectId, userId, dateOne);
+        Long status = initTestStatus(projectId, userId, dateOne);
         // 创建计划
         Long planId = initPlan(project, userId, dateTwo);
         // 初始化循环文件夹
         List<Long> phaseIdsMap = initCycleFolders(planId, projectId, versionId, dateOne, dateTwo, dateThree, dateFour, dateFive, dateSix, issueFolderIds, userId);
         // 初始化执行
-        List<TestCycleCaseDTO> cycleCase = initCycleCase(projectId, phaseIdsMap, userId, dateOne, caseIds,status.get(0));
+        List<TestCycleCaseDTO> cycleCase = initCycleCase(projectId, phaseIdsMap, userId, dateOne, caseIds,status);
         // 初始化执行步骤
-        initCycleCaseStep(cycleCase,userId, dateOne,caseIds,projectId,status.get(1));
+        Long defaultStatus = testStatusMapper.getDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP);
+        initCycleCaseStep(cycleCase,userId, dateOne,caseIds,projectId,defaultStatus);
 
 
 
@@ -394,7 +396,7 @@ public class DemoServiceImpl implements DemoService {
         return testCycleVO.getCycleId();
     }
 
-    private List<Long> initTestStatus(Long projectId, Long userId, Date date) {
+    private Long initTestStatus(Long projectId, Long userId, Date date) {
         TestStatusVO testStatusVO = new TestStatusVO();
         testStatusVO.setStatusName("WIP");
         testStatusVO.setDescription("Work In Process");
@@ -402,20 +404,9 @@ public class DemoServiceImpl implements DemoService {
         testStatusVO.setStatusType("CYCLE_CASE");
         testStatusVO.setProjectId(projectId);
 
-        TestStatusVO testStatusVO1 = new TestStatusVO();
-        testStatusVO1.setStatusName("未执行");
-        testStatusVO1.setDescription("步骤未执行");
-        testStatusVO1.setStatusColor("rgba(0,0,0,0.18)");
-        testStatusVO1.setStatusType("CASE_STEP");
-        testStatusVO1.setProjectId(projectId);
-        Long stepStatus = testStatusService.insert(testStatusVO1).getStatusId();
         Long statusID = testStatusService.insert(testStatusVO).getStatusId();
         testStatusMapper.updateAuditFields(statusID, userId, date);
-        testStatusMapper.updateAuditFields(stepStatus, userId, date);
-        List<Long> status = new ArrayList<>();
-        status.add(statusID);
-        status.add(stepStatus);
-        return status;
+        return statusID;
     }
 
     private Long[] updateExecutionStatus(Map<Long, List<Long>> phaseIdsMap, List<Long> testIssueIds, Long statusWIPId, Long projectId, Long organizationId, Long userId, Date dateTwo, Date dateThree) {
