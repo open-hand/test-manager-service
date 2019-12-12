@@ -159,7 +159,7 @@ function ExecuteDetailSide(props) {
     } = props;
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, summary, caseId, caseNum,
+      executor, description, executorDate, summary, caseId, caseFolderId, caseNum,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -211,9 +211,8 @@ function ExecuteDetailSide(props) {
                     }}
                     >
                       <span>相关用例:</span>
-                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'test', caseNum)}>{caseNum}</Link>
+                      <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
                     </div>
-
                   </div>
                   <Button funcType="flat" icon="last_page" onClick={onClose}>
                     <span>隐藏详情</span>

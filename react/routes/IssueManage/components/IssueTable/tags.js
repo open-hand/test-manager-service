@@ -15,7 +15,7 @@ export function renderIssueNum(caseNum) {
       {/* <a style={styles.caseNum}>
         {caseNum}
       </a> */}
-      <span className="c7n-table-issueTreeTtile-table-span">
+      <span className="c7n-table-issueTreeTtile-table-span" style={{ color: 'rgba(0,0,0,0.65)' }}>
         {caseNum}
       </span>
 

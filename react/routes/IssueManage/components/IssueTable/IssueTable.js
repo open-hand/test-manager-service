@@ -286,7 +286,7 @@ export default observer((props) => {
       title: '创建时间',
       dataIndex: 'creationDate',
       key: 'creationDate',
-      render: creationDate => <Tooltip title={creationDate}><span>{creationDate}</span></Tooltip>,
+      render: creationDate => <Tooltip title={creationDate}><span style={{ color: 'rgba(0,0,0,0.65)' }}>{creationDate}</span></Tooltip>,
     },
     {
       title: '更新人',
@@ -299,7 +299,7 @@ export default observer((props) => {
       title: '更新时间',
       dataIndex: 'lastUpdateDate',
       key: 'lastUpdateDate',
-      render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span>{lastUpdateDate}</span></Tooltip>,
+      render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0,0,0,0.65)' }}>{lastUpdateDate}</span></Tooltip>,
     },
   ]);
 

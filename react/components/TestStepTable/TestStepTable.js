@@ -8,6 +8,7 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { DragTable } from '..';
 import { TextEditToggle } from '..';
+import useClickOnce from '@/hooks/useClickOnce';
 import './TestStepTable.less';
 
 const { confirm } = Modal;
@@ -125,7 +126,7 @@ function TestStepTable(props) {
       setData([...data]);
     }
   };
-  const onCloneStep = async (stepId, index) => {
+  const onCloneStep = useClickOnce(reset => async (stepId, index) => {
     const originData = data[index];
     const lastRank = originData.rank;
     const nextRank = data[index + 1] ? data[index + 1].rank : null;
@@ -137,10 +138,12 @@ function TestStepTable(props) {
       }, originData);
       data.splice(index + 1, 0, newStep);
       setData([...data]);
+      reset();
     } catch (error) {
-      // 
+      //    
+      reset();
     }
-  };
+  });
 
   const handleDeleteStep = (index, stepId) => {
     confirm({
