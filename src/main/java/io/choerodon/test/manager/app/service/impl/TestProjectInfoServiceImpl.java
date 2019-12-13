@@ -2,8 +2,11 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
+import io.choerodon.agile.api.vo.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.validator.ProjectInfoValidator;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,12 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
 
+    @Autowired
+    private ProjectInfoValidator projectInfoValidator;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public void batchCreate(List<TestProjectInfoDTO> testProjectInfoDTOList) {
         testProjectInfoMapper.batchInsert(testProjectInfoDTOList);
@@ -39,5 +48,15 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
         if (result != 1) {
             throw new CommonException("error.projectInfo.initializationProjectInfo");
         }
+    }
+
+    @Override
+    public ProjectInfoVO updateProjectInfo(Long projectId, ProjectInfoVO projectInfoVO) {
+        projectInfoValidator.verifyUpdateData(projectInfoVO);
+        TestProjectInfoDTO testProjectInfoDTO = modelMapper.map(projectInfoVO, TestProjectInfoDTO.class);
+        if (testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfoDTO) != 1) {
+            throw new CommonException("error.projectInfo.update");
+        }
+        return projectInfoVO;
     }
 }

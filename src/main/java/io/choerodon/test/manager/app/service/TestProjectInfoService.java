@@ -2,6 +2,7 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
+import io.choerodon.agile.api.vo.ProjectInfoVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
 
@@ -15,4 +16,6 @@ public interface TestProjectInfoService {
     void batchCreate(List<TestProjectInfoDTO> testProjectInfoDTOList);
 
     void initializationProjectInfo(ProjectEvent projectEvent);
+
+    ProjectInfoVO updateProjectInfo(Long projectId, ProjectInfoVO projectInfoVO);
 }
