@@ -32,7 +32,7 @@
   "devDependencies": {
     "@choerodon/agile": "^0.20.0",
     "@choerodon/boot": "0.19.2",
-    "@choerodon/master": "0.20.0",
+    "@choerodon/master": "^0.20.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "eslint-plugin-react-hooks": "^2.3.0",
     "gulp": "^3.9.1",
