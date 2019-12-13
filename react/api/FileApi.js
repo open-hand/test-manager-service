@@ -86,7 +86,7 @@ export function uploadFileStep(data, config) {
   };
 
   return request.post(
-    `/zuul/test/v1/projects/${getProjectId()}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}&executeId=${executeId}&description=${description}`,
+    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}&executeId=${executeId}&description=${description}`,
     data,
     axiosConfig,
   );
