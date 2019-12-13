@@ -100,10 +100,14 @@ public class TestCycleCaseHistoryRecordAspect {
 
     @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
     public void recordAttachUpload(JoinPoint jp) {
-
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        historyDTO.setExecuteId((Long) jp.getArgs()[3]);
+        if("CYCLE_STEP".equals(String.valueOf(jp.getArgs()[4]))){
+            TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey((Long) jp.getArgs()[3]);
+            historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
+        }else {
+            historyDTO.setExecuteId((Long) jp.getArgs()[3]);
+        }
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         historyDTO.setNewValue(jp.getArgs()[1].toString());
         testCycleCaseHistoryService.insert(historyDTO);
@@ -119,7 +123,12 @@ public class TestCycleCaseHistoryRecordAspect {
             DBValidateUtil.executeAndvalidateUpdateNum(lists::size, 1, "error.attach.notFound");
             attachmentRelE = lists.get(0);
             TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-            historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());
+            if("CYCLE_STEP".equals(attachmentRelE.getAttachmentType())){
+                TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(attachmentRelE.getAttachmentLinkId());
+                historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
+            }else {
+                historyDTO.setExecuteId(attachmentRelE.getAttachmentLinkId());
+            }
             historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
             historyDTO.setOldValue(attachmentRelE.getAttachmentName());
             historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
@@ -132,13 +141,17 @@ public class TestCycleCaseHistoryRecordAspect {
     public void recordDefectAdd(JoinPoint jp) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = (TestCycleCaseDefectRelVO) jp.getArgs()[0];
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
+        if("CYCLE_STEP".equals(testCycleCaseDefectRelVO.getDefectType())){
+            TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
+            historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
+        }else {
+            historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
+        }
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
-        historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelVO.getIssueId(), (Long) jp.getArgs()[2]).getBody().getIssueNum();
         historyDTO.setNewValue(defectName);
         testCycleCaseHistoryService.insert(historyDTO);
-
     }
 
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService.delete(..))&& args(testCycleCaseDefectRelVO,projectId,organizationId)")
@@ -148,7 +161,12 @@ public class TestCycleCaseHistoryRecordAspect {
         testCycleCaseDefectRelE = testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelE).get(0);
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
-        historyDTO.setExecuteId(testCycleCaseDefectRelE.getDefectLinkId());
+        if("CYCLE_STEP".equals(testCycleCaseDefectRelVO.getDefectType())){
+            TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
+            historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
+        }else {
+            historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
+        }
         String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId(), organizationId).getBody().getIssueNum();
         historyDTO.setOldValue(defectName);
         historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
