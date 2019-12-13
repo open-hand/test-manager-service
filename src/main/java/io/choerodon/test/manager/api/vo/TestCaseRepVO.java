@@ -56,6 +56,12 @@ public class TestCaseRepVO {
 
     private Boolean hasDisable;
 
+    private String rank;
+
+    private String lastRank;
+
+    private String nextRank;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -174,5 +180,29 @@ public class TestCaseRepVO {
 
     public void setHasDisable(Boolean hasDisable) {
         this.hasDisable = hasDisable;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
     }
 }

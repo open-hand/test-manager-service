@@ -179,6 +179,7 @@
             <result column="test_step" property="testStep"/>
             <result column="test_data" property="testData"/>
             <result column="expected_result" property="expectedResult"/>
+            <result column="rank" property="rank"/>
         </collection>
         <collection property="caseAttach" ofType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
             <id column="attachment_id" property="attachmentId"/>
@@ -196,6 +197,7 @@
         cs.step_id as step_id,
         cs.test_step as test_step,
         cs.test_data as test_data,
+        cs.rank as rank,
         cs.expected_result as expected_result,
         tca.file_name,
         tca.url

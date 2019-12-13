@@ -135,7 +135,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
 
         // 获取planIds,查询出所有底层文件夹Id
-        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
+        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
         Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         // 获取项目下所有的文件夹

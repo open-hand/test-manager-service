@@ -812,6 +812,7 @@ ORDER BY
             <result column="test_step" property="testStep"/>
             <result column="test_data" property="testData"/>
             <result column="expected_result" property="expectedResult"/>
+            <result column="rank" property="rank"/>
         </collection>
         <collection property="caseAttach" ofType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
             <id column="attachment_id" property="attachmentId"/>
@@ -829,6 +830,7 @@ ORDER BY
         tccs.step_id as step_id,
         tccs.test_step as test_step,
         tccs.test_data as test_data,
+        tccs.rank as rank,
         tccs.expect_result as expected_result,
         tccar.attachment_name as file_name,
         tccar.url

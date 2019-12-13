@@ -102,7 +102,6 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
 
     @Override
     public TestIssuesUploadHistoryVO queryLatestImportIssueHistory(Long projectId) {
-        TestFileLoadHistoryDTO testFileLoadHistoryE = new TestFileLoadHistoryDTO();
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
 
         testFileLoadHistoryDTO.setProjectId(projectId);
@@ -113,10 +112,10 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
             return null;
         }
 
-        TestIssuesUploadHistoryVO testIssuesUploadHistoryVO = modelMapper.map(testFileLoadHistoryE, TestIssuesUploadHistoryVO.class);
+        TestIssuesUploadHistoryVO testIssuesUploadHistoryVO = modelMapper.map(testFileLoadHistoryDTO, TestIssuesUploadHistoryVO.class);
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setFolderId(testFileLoadHistoryE.getLinkedId());
+        testIssueFolderDTO.setFolderId(testFileLoadHistoryDTO.getLinkedId());
         testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testFileLoadHistoryDTO.getLinkedId());
 
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
