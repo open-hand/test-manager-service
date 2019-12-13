@@ -193,7 +193,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     private TestCaseStepDTO changeOneStep(TestCaseStepProDTO testCaseStepProDTO) {
         if (!StringUtils.isEmpty(testCaseStepProDTO.getLastRank()) || !StringUtils.isEmpty(testCaseStepProDTO.getNextRank())) {
-            testCaseStepProDTO.setLastRank(RankUtil.Operation.UPDATE.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
+            testCaseStepProDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         }
         TestCaseStepDTO testCaseStepDTO = modelMapper.map(testCaseStepProDTO, TestCaseStepDTO.class);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::updateByPrimaryKeySelective, testCaseStepDTO, 1, "error.testStepCase.update");

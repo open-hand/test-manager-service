@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.agile.infra.common.utils.RankUtil;
+import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -369,6 +371,9 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.folder.not.exist");
         }
         for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
+            if (!StringUtils.isEmpty(testCaseRepVO.getLastRank()) || !StringUtils.isEmpty(testCaseRepVO.getNextRank())) {
+                testCaseRepVO.setRank(RankUtil.Operation.UPDATE.getRank(testCaseRepVO.getLastRank(), testCaseRepVO.getNextRank()));
+            }
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
             map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
