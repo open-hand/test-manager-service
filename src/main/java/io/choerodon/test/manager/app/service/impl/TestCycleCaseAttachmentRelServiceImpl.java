@@ -102,30 +102,19 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO) {
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList = new ArrayList<>();
-        if (files != null && !files.isEmpty()) {
-            for (MultipartFile multipartFile : files) {
-                String fileName = multipartFile.getOriginalFilename();
-                TestCycleCaseAttachmentRelVO cycleCaseAttachmentRelVO = upload(BACKETNAME, fileName, multipartFile, testCycleCaseAttachmentRelVO.getAttachmentLinkId(),
-                        testCycleCaseAttachmentRelVO.getAttachmentType(), testCycleCaseAttachmentRelVO.getComment());
-                cycleCaseAttachmentRelVOList.add(cycleCaseAttachmentRelVO);
-            }
+        if (files == null && files.isEmpty()) {
+            throw new CommonException("error.files.null");
+        }
+        for (MultipartFile multipartFile : files) {
+            String fileName = multipartFile.getOriginalFilename();
+            TestCycleCaseAttachmentRelVO cycleCaseAttachmentRelVO = upload(BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
+            cycleCaseAttachmentRelVOList.add(cycleCaseAttachmentRelVO);
         }
 
-        TestCycleCaseAttachmentRelDTO issueAttachmentDTO = new TestCycleCaseAttachmentRelDTO();
-        issueAttachmentDTO.setAttachmentLinkId(testCycleCaseAttachmentRelVO.getAttachmentLinkId());
-        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(issueAttachmentDTO);
-        if (testCycleCaseAttachmentRelDTOS != null && !testCycleCaseAttachmentRelDTOS.isEmpty()) {
-            testCycleCaseAttachmentRelDTOS.forEach(attachment -> {
-                attachment.setUrl(attachment.getUrl());
-            });
-        }
-        List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS= modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
-        }.getType());
-
-        return testCycleCaseAttachmentRelVOS;
+        return cycleCaseAttachmentRelVOList;
     }
 
     @Override

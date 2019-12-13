@@ -29,7 +29,7 @@ public interface TestCycleCaseAttachmentRelService {
      * @param
      * @return TestCycleCaseAttachmentRelVO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO);
+    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment);
 
     void dealIssue(Long executeId, String type, String description,String fileName, String url);
 
