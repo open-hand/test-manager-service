@@ -38,8 +38,8 @@ public class DemoDataEventHandler {
             description = "demo消费创建项目事件初始化项目数据",
             sagaCode = REGISTER_ORG,
             seq = 105)
-    public DemoPayload demoInitProject(String message) {
-        DemoPayload organizationRegisterPayload = JSONObject.parseObject(message, DemoPayload.class);
+    public OrganizationRegisterEventPayload demoInitProject(String message) {
+        OrganizationRegisterEventPayload organizationRegisterPayload = JSONObject.parseObject(message, OrganizationRegisterEventPayload.class);
         //初始化项目层数据
         ProjectEvent projectEvent = new ProjectEvent();
         projectEvent.setProjectId(organizationRegisterPayload.getProject().getId());
