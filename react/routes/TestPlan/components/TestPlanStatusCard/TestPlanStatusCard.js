@@ -20,15 +20,15 @@ export default observer(() => {
       <div className="c7ntest-testPlan-statusCard-content">
         {
           statusRes && statusRes.statusVOList && statusRes.statusVOList.length > 0 && statusRes.statusVOList.map(item => (
-            <Tooltip title={`${item.statusName}：${item.count || 0}`}>
+            <Tooltip title={`${item.statusName}：${(item.count && statusRes.total) ? `${Math.round(item.count * 100 / statusRes.total * 100) / 100}%` : 0}`}>
               <div
                 style={{
-                  flexShrink: 0, marginRight: '0.3rem', overflow: 'hidden', cursor: 'pointer', 
+                  flexShrink: 0, overflow: 'hidden', cursor: 'pointer', 
                 }}
                 role="none"
                 onClick={handleQueryExecutesByStatus.bind(this, item)}
               >
-                <Progress percent={(item.count && statusRes.total) ? Math.round(item.count * 100 / statusRes.total * 100) / 100 : 0} title={item.statusName} strokeColor={item.statusColor} />
+                <Progress percent={(item.count && statusRes.total) ? Math.round(item.count * 100 / statusRes.total * 100) / 100 : 0} tip={item.count} title={item.statusName} strokeColor={item.statusColor} />
               </div>
             </Tooltip>
           ))
