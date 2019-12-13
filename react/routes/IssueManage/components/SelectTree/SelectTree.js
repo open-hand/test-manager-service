@@ -167,7 +167,7 @@ function SelectTree(props) {
         if (record.get('children').length > 0) {
           tempArr = getChildrenTreeNode(record.get('folderId'));
           return (
-            <TreeNode selectable={!isForbidRoot} title={renderNode(record)} key={record.id}>
+            <TreeNode selectable={isForbidRoot ? record.get('children').length === 0 : true} title={renderNode(record)} key={record.id}>
               {tempArr}
             </TreeNode>
           );
@@ -211,7 +211,7 @@ function SelectTree(props) {
         let treeNodes = null;
         treeNodes = getChildrenTreeNode(record.get('folderId'));
         return (
-          <TreeNode selectable={!isForbidRoot} title={renderNode(record)} key={record.id}>
+          <TreeNode selectable={isForbidRoot ? record.get('children').length === 0 : true} title={renderNode(record)} key={record.id}>
             {treeNodes}
           </TreeNode>
         );

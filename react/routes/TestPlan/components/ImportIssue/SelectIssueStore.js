@@ -66,13 +66,13 @@ class IssueTreeStore {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
         const {
-          issueFolderVO, expanded, children, ...other
+          issueFolderVO, expanded, children, caseCount, ...other
         } = folder;
         const result = {
           children: children || [],
           data: issueFolderVO,
           isExpanded: expanded,
-          selected: folder.id === selectedId,         
+          selected: folder.id === selectedId,          
           ...other,
         };
         this.treeMap.set(folder.id, {
@@ -81,6 +81,7 @@ class IssueTreeStore {
           data: issueFolderVO,
           checked: false,
           isIndeterminate: false,
+          caseCount: caseCount || 0,     
         });       
         return result;
       }),
@@ -255,7 +256,7 @@ class IssueTreeStore {
       if (item.selected) {
         total += item.selected.length;
       } else {
-        total += item.caseNum || 0;
+        total += item.caseCount || 0;
         if (item.unSelected) {
           total -= item.unSelected.length;
         }
