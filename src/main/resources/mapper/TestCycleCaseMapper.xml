@@ -703,6 +703,7 @@ ORDER BY
         <include refid="sqlParam"/>
         order by tcc.rank
     </select>
+
     <update id="fixCycleCase">
         UPDATE test_cycle_case tcc
         SET tcc.summary = (

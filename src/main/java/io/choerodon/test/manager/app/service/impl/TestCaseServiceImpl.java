@@ -551,8 +551,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         TestCaseDTO testCaseDTO = ConvertUtils.convertObject(issueCreateDTO, TestCaseDTO.class);
         Long caseNum = testProjectInfo.getCaseMaxNum() + 1;
         testCaseDTO.setCaseNum(caseNum.toString());
+        testCaseDTO.setVersionNum(1L);
         // 插入测试用例
         testCaseMapper.insert(testCaseDTO);
+
+        //修改projectInfo maxCaseNum
+        testProjectInfo.setCaseMaxNum(caseNum);
+        testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfo);
         // 更新记录关联表
         List<TestCaseLinkDTO> testCaseLinkDTOList = issueCreateDTO.getTestCaseLinkDTOList();
         if (testCaseLinkDTOList != null && !testCaseLinkDTOList.isEmpty()) {
