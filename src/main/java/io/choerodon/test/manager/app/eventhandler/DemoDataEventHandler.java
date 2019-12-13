@@ -21,7 +21,7 @@ import io.choerodon.test.manager.app.service.DemoService;
 @Component
 public class DemoDataEventHandler {
 
-    private static final String REGISTER_TEST_INIT_PROJECT = "register-agile-init-project";
+    private static final String REGISTER_TEST_INIT_PROJECT = "register-test-init-project";
     private static final String REGISTER_ORG = "register-org";
 
     @Autowired
