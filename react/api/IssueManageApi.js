@@ -150,8 +150,8 @@ export function editFolder(data) {
  * @param {*} data
  * @returns
  */
-export function moveFolders(folderIds, targetFolderId) {
-  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move?targetFolderId=${targetFolderId}`, folderIds);
+export function moveFolder(data, targetFolderId) {
+  return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move?targetFolderId=${targetFolderId}`, data);
 }
 /**
  *删除文件夹

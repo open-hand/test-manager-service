@@ -5,7 +5,7 @@ import './IssueTree.scss';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 import IssueStore from '../../stores/IssueStore';
 import {
-  addFolder, editFolder, deleteFolder, moveFolders,
+  addFolder, editFolder, deleteFolder, moveFolder,
 } from '@/api/IssueManageApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -71,10 +71,11 @@ class IssueTree extends Component {
       lastRank: lastId ? treeData.items[lastId].data.rank : null,
       nextRank: nextId ? treeData.items[nextId].data.rank : null,
     };    
-    await handleRequestFailed(moveFolders(data, destination.parentId));    
+    const rank = await handleRequestFailed(moveFolder(data, destination.parentId));    
     return {
       data: {
         ...sourceItem.data,
+        rank,
         parentId: destination.parentId,
         objectVersionNumber: sourceItem.data.objectVersionNumber + 1,
       },
