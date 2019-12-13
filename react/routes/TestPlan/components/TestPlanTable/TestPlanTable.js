@@ -82,7 +82,7 @@ const TestPlanTable = observer(({
       action: () => onDeleteExecute(record),
     }];
     if (testPlanStatus !== 'done' && record.hasChange) {
-      action.push({
+      action.unshift({
         text: '查看更新',
         action: () => onOpenUpdateRemind(record),
       });
@@ -145,7 +145,7 @@ const TestPlanTable = observer(({
     title: <FormattedMessage id="cycle_updatedDate" />,
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
-    flex: 1,
+    flex: 1.5,
     style: {
       overflow: 'hidden',
     },   
@@ -166,6 +166,7 @@ const TestPlanTable = observer(({
     filters: statusList && statusList.map(status => ({ text: status.statusName, value: status.statusId.toString() })),
     filteredValue: getStatusFilteredValue(),
     flex: 1,
+    width: 100,
     render(executionStatus) {
       const statusColor = _.find(statusList, { statusId: executionStatus })
         ? _.find(statusList, { statusId: executionStatus }).statusColor : '';

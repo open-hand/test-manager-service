@@ -1,11 +1,9 @@
 .c7ntest-progress {
-  width: 0.4rem;
-  height: 0.4rem;
-  display: inline-block;
-  position: relative;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   &-circle {
-    transform: matrix(-1, 0, 0, 1, 0, 0);
+    position: relative;
   }
 
   &-tip {
@@ -27,5 +25,9 @@
     word-break: keep-all;
     font-size: 0.13rem;
     color: #000000;
+    margin-top: 8px;
+    max-width: 52px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 }
