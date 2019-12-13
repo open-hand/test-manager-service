@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.api.vo.DemoPayload;
-import io.choerodon.test.manager.api.vo.OrganizationRegisterEventPayload;
+import io.choerodon.test.manager.api.vo.event.OrganizationRegisterEventPayload;
 import io.choerodon.test.manager.app.service.DemoService;
 
 /**

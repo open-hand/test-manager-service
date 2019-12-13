@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.event.OrganizationRegisterEventPayload;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import org.modelmapper.ModelMapper;
