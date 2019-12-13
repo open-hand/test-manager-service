@@ -924,6 +924,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testTreeFolderVO.setId(cycle.getCycleId());
         testTreeFolderVO.setExpanded(false);
         TestIssueFolderVO issueFolderVO = new TestIssueFolderVO(cycle.getCycleId(), cycle.getCycleName(), null, cycle.getProjectId(), null, cycle.getObjectVersionNumber());
+        issueFolderVO.setRank(cycle.getRank());
         testTreeFolderVO.setIssueFolderVO(issueFolderVO);
         testTreeFolderVO.setChildren(parentMap.get(cycle.getCycleId()));
         if (cycle.getParentCycleId() == 0) {
