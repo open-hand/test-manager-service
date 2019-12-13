@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
-  observable, action, computed, toJS,
+  observable, action, computed, toJS, set,
 } from 'mobx';
 import { find, pull } from 'lodash';
 import { getIssueTree } from '@/api/IssueManageApi';
@@ -170,10 +170,15 @@ class IssueTreeStore {
 
   @action setItemCheck(item, checked) {
     item.checked = checked;
-    delete item.selected;
-    delete item.unSelected;
+    set(item, {
+      selected: undefined,
+    });
+    set(item, {
+      unSelected: undefined,
+    });
   }
 
+  @action
   // 选中单个case的处理
   addFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);
@@ -184,12 +189,15 @@ class IssueTreeStore {
     } else {
       // 以选中为主
       if (!item.selected) {
-        item.selected = [];
+        set(item, {
+          selected: [],
+        });      
       }
       item.selected.push(caseId);
     }
   }
 
+  @action
   // 取消单个选中
   removeFolderSelectedCase(folderId, caseId) {
     const item = this.treeMap.get(folderId);

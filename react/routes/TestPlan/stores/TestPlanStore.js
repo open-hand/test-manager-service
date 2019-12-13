@@ -225,4 +225,4 @@ class TestPlanStore extends TestPlanTreeStore {
     }
 }
 
-export default TestPlanStore;
+export default new TestPlanStore();

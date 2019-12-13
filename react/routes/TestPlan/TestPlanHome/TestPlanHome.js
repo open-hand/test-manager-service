@@ -37,9 +37,9 @@ const { confirm } = Modal;
 const updateRemindModal = Modal.key();
 let updateModal;
 
-function TestPlanHome() {
+function TestPlanHome({ history }) {
   const {
-    prefixCls, createAutoTestStore, testPlanStore, history,
+    prefixCls, createAutoTestStore, testPlanStore, 
   } = useContext(Store);
   const {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
