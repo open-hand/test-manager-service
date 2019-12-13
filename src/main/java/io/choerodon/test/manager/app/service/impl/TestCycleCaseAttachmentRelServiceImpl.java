@@ -110,11 +110,15 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         }
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
-            TestCycleCaseAttachmentRelVO cycleCaseAttachmentRelVO = upload(BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
-            cycleCaseAttachmentRelVOList.add(cycleCaseAttachmentRelVO);
+            upload(BACKETNAME, fileName, multipartFile, attachmentLinkId, attachmentType, comment);
         }
-
-        return cycleCaseAttachmentRelVOList;
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(attachmentLinkId);
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
+        List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
+        }.getType());
+        return testCycleCaseAttachmentRelVOS;
     }
 
     @Override
