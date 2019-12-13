@@ -142,7 +142,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     @Async
     public void delete(Long projectId, Long folderId) {
@@ -162,7 +161,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         });
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO) {
         validateType(testIssueFolderVO);
@@ -173,7 +171,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public Long getDefaultFolderId(Long projectId, Long versionId) {
         TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, "temp", null);
@@ -187,7 +184,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
         List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByFolderId(targetForderId);
