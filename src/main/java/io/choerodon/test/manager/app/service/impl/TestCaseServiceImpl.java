@@ -371,9 +371,10 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.query.folder.not.exist");
         }
         for (TestCaseRepVO testCaseRepVO : testCaseRepVOS) {
-            if (!StringUtils.isEmpty(testCaseRepVO.getLastRank()) || !StringUtils.isEmpty(testCaseRepVO.getNextRank())) {
-                testCaseRepVO.setRank(RankUtil.Operation.UPDATE.getRank(testCaseRepVO.getLastRank(), testCaseRepVO.getNextRank()));
-            }
+            // 待定 以后可能增加 rank 排序
+//            if (!StringUtils.isEmpty(testCaseRepVO.getLastRank()) || !StringUtils.isEmpty(testCaseRepVO.getNextRank())) {
+//                testCaseRepVO.setRank(RankUtil.Operation.UPDATE.getRank(testCaseRepVO.getLastRank(), testCaseRepVO.getNextRank()));
+//            }
             TestCaseDTO testCaseDTO = baseQuery(testCaseRepVO.getCaseId());
             TestCaseDTO map = modelMapper.map(testCaseRepVO, TestCaseDTO.class);
             map.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
