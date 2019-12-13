@@ -164,7 +164,6 @@ function StepTable(props) {
         config={{
           attachmentLinkId: record.get('executeStepId'),
           attachmentType: 'CYCLE_STEP',
-          executeId: record.get('executeStepId'),
         }}
       />
     );
