@@ -2,21 +2,16 @@ package io.choerodon.test.manager.app.eventhandler;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.api.vo.CaseSelectVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
 import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
-import io.choerodon.test.manager.infra.enums.TestPlanStatus;
 import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -27,8 +22,6 @@ import org.springframework.stereotype.Component;
 import io.choerodon.asgard.saga.annotation.SagaTask;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.api.vo.event.InstancePayload;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.

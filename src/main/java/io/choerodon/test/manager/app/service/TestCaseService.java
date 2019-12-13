@@ -163,8 +163,6 @@ public interface TestCaseService {
 
     TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
 
-    void batchDeleteIssues(Long projectId, Long[] issueIds);
-
     /**
      * 查询文件夹下所有用例（不分页）
      * @param projectId

@@ -566,11 +566,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public void batchDeleteIssues(Long projectId, Long[] issueIds) {
-
-    }
-
-    @Override
     public List<Long> listAllCaseByFolderId(Long projectId, Long folderId) {
         // 查询文件夹下所有的目录
         Set<Long> folderIds = new HashSet<>();
