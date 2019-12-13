@@ -105,7 +105,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList = new ArrayList<>();
-        if (files == null && files.isEmpty()) {
+        if (CollectionUtils.isEmpty(files)) {
             throw new CommonException("error.files.null");
         }
         for (MultipartFile multipartFile : files) {

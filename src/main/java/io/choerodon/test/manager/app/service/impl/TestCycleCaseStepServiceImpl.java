@@ -15,14 +15,18 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
+import io.choerodon.test.manager.app.service.TestStatusService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+
+import com.netflix.discovery.converters.Auto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +69,8 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
-    private static final Long defStatus = 4L;
+    @Autowired
+    private TestStatusService testStatusService;
 
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -217,6 +222,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         if (CollectionUtils.isEmpty(testCycleCaseDTOList)) {
             return;
         }
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE_STEP);
         List<TestCycleCaseStepDTO> list = new ArrayList<>();
         testCycleCaseDTOList.forEach(v -> {
             List<TestCaseStepDTO> testCaseStepDTOS = caseStepMap.get(v.getCaseId());
@@ -227,6 +233,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                 TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO(v.getExecuteId(), testCaseStepDTO.getStepId()
                         , v.getCreatedBy(), v.getLastUpdatedBy(), testCaseStepDTO.getTestStep(), testCaseStepDTO.getTestData(), testCaseStepDTO.getExpectedResult());
                 testCycleCaseStepDTO.setRank(v.getRank());
+                testCycleCaseStepDTO.setStepStatus(defaultStatusId);
                 list.add(testCycleCaseStepDTO);
             });
         });
@@ -249,7 +256,8 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void create(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
-        testCycleCaseStepDTO.setStepStatus(defStatus);
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE_STEP);
+        testCycleCaseStepDTO.setStepStatus(defaultStatusId);
         if (testCycleCaseStepMapper.insert(testCycleCaseStepDTO) != 1) {
             throw new CommonException("error.insert.cycle.step");
         }

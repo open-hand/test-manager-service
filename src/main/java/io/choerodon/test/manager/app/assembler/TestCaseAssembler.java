@@ -70,6 +70,7 @@ public class TestCaseAssembler {
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
+    private static final String TYPE = "CYCLE_CASE";
     private ModelMapper modelMapper = new ModelMapper();
 
     @PostConstruct
@@ -197,6 +198,7 @@ public class TestCaseAssembler {
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
+        testCycleCaseAttachmentRelDTO.setAttachmentType(TYPE);
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
