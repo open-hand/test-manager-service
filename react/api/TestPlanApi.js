@@ -36,7 +36,7 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function moveFolder(folderId, targetFolderId, lastRank, nextRank) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move/${folderId}?target_cycle_id=${targetFolderId}&lastRank=${lastRank}&nextRank=${nextRank}`);
+  return request.put(encodeURI(`/test/v1/projects/${getProjectId()}/cycle/move/${folderId}?target_cycle_id=${targetFolderId}&lastRank=${lastRank || ''}&nextRank=${nextRank || ''}`));
 }
 export function deleteFolder(folderId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/delete/${folderId}`);

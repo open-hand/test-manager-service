@@ -25,6 +25,7 @@ function EditTestStepTable(props) {
   }, [current]);
   return (
     <TestStepTable
+      dragKey="executeStepId"
       disabled={false}
       data={testStepData}
       setData={setTestStepData}
