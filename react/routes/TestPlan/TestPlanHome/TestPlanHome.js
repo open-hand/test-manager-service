@@ -13,7 +13,6 @@ import {
   Icon, Tabs, Spin,
 } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
-import { editExecuteDetail } from '../../../api/cycleApi';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, 
 } from '../../../api/TestPlanApi';
@@ -121,7 +120,7 @@ function TestPlanHome({ history }) {
   const onDragEnd = (sourceIndex, targetIndex) => {
     const { lastRank, nextRank } = getDragRank(sourceIndex, targetIndex, testList);
     const source = testList[sourceIndex];
-    editExecuteDetail({
+    updateExecute({
       executeId: source.executeId,
       objectVersionNumber: source.objectVersionNumber,
       lastRank,
