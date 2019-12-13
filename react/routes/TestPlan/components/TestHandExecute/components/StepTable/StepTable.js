@@ -64,9 +64,8 @@ const DefectSelectText = ({
 
 function StepTable(props) {
   const {
-    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false,
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet,
   } = props;
-  const [statusList, setStatusList] = useState([]);
   const [lock, setLock] = useState('right');
   /**
    * 对当前页刷新
@@ -83,7 +82,7 @@ function StepTable(props) {
     setLock('right');
   };
   const onQuickPassOrFail = (code, record) => {
-    const status = _.find(statusList, { projectId: 0, statusName: code });
+    const status = _.find(testStatusDataSet.toData(), { projectId: 0, statusName: code });
     if (status) {
       record.set('stepStatus', status.statusId);
     } else {
@@ -244,19 +243,14 @@ function StepTable(props) {
     }
   }
   function renderStatus({ value }) {
-    // const { lookup: statusList } = record.getField('stepStatus').fetchLookup(res=>);
-    const status = statusList.length === 0 ? {} : statusList.find(item => item.statusId === Number(value));
+    const status = testStatusDataSet.toData().length === 0 ? {} : testStatusDataSet.toData().find(item => item.statusId === Number(value));
     const { statusName = '', statusColor = false } = status || {};
 
     return <StatusTags name={statusName} color={statusColor} style={{ lineHeight: '.16rem' }} />;
-    // return value;
   }
   function renderIndex({ record }) {
     return record.index + 1;
   }
-  useEffect(() => {
-    dataSet.getField('stepStatus').fetchLookup().then(res => setStatusList(res));
-  }, [dataSet, setStatusList]);
 
   return (
     <Table dataSet={dataSet} queryBar="none" className="c7n-test-execute-detail-step-table" rowHeight="auto">

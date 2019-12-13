@@ -15,7 +15,7 @@ function updateRecordData(data, dataSet, record, name, oldValue) {
     Choerodon.prompt('网络错误');
   });
 }
-function StepTableDataSet(projectId, orgId, intl, caseId) {
+function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet) {
   const testStep = intl.formatMessage({ id: 'execute_testStep' });
   const testData = intl.formatMessage({ id: 'execute_testData' });
   const expectedResult = intl.formatMessage({ id: 'execute_expectedOutcome' });
@@ -49,13 +49,16 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
         name: 'stepStatus',
         type: 'number',
         label: stepStatus,
-        lookupAxiosConfig: () => ({
-          url: `/test/v1/projects/${projectId}/status/query?project=${projectId}`,
-          method: 'post',
-          data: {
-            statusType: 'CASE_STEP',
-          },
-        }),
+        textField: 'statusName', 
+        valueField: 'statusId', 
+        options: testStatusDataSet, 
+        // lookupAxiosConfig: () => ({
+        //   url: `/test/v1/projects/${projectId}/status/query?project=${projectId}`,
+        //   method: 'post',
+        //   data: {
+        //     statusType: 'CASE_STEP',
+        //   },
+        // }),
       },
       {
         name: 'stepAttachment', type: 'object', label: stepAttachment,
@@ -95,6 +98,8 @@ function StepTableDataSet(projectId, orgId, intl, caseId) {
               break;
             }
             data.stepStatus = value;
+            const statusItem = testStatusDataSet.find(record => Number(record.get('statusId')) === Number(value)) || {};
+            data.statusName = statusItem.get('statusName');
             updateRecordData(data, dataSet, record, name, oldValue);
             break;
           case 'description':
