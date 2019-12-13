@@ -30,7 +30,7 @@ export default observer(() => {
         </div>
         <div className="c7ntest-testPlan-detailCard-content-item">
           <span className="c7ntest-testPlan-detailCard-content-item-field">描述</span>
-          <SmartToolTip title={planInfo.description} width="3.5rem" />
+          <SmartToolTip title={planInfo.description || '无'} width="3.5rem" />
         </div>
       </div>
     </Card>
