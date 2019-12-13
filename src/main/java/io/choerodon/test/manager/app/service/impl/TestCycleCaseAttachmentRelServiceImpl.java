@@ -70,7 +70,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Override
     public void deleteAttachmentRel(Long attachId) {
-        baseDelete(String.format("%s/%s/",attachmentUrl,BACKETNAME), attachId);
+        baseDelete(BACKETNAME, attachId);
     }
 
     @Override
@@ -97,22 +97,20 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelDTO.setComment(description);
         testCycleCaseAttachmentRelDTO.setAttachmentType(type);
         testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
-        testCycleCaseAttachmentRelDTO.setUrl(String.format("/%s/%s/%s",attachmentUrl,BACKETNAME,url));
+        testCycleCaseAttachmentRelDTO.setUrl(String.format("%s/%s/%s",attachmentUrl,BACKETNAME,url));
         testCycleCaseAttachmentRelMapper.insertSelective(testCycleCaseAttachmentRelDTO);
     }
 
     @Override
     public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+        List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList = new ArrayList<>();
         if (files != null && !files.isEmpty()) {
             for (MultipartFile multipartFile : files) {
                 String fileName = multipartFile.getOriginalFilename();
-                ResponseEntity<String> response = fileFeignClient.uploadFile(BACKETNAME, fileName, multipartFile);
-                if (response == null || response.getStatusCode() != HttpStatus.OK) {
-                    throw new CommonException("error.attachment.upload");
-                }
-                dealIssue(testCycleCaseAttachmentRelVO.getAttachmentLinkId(), testCycleCaseAttachmentRelVO.getAttachmentType(),
-                        testCycleCaseAttachmentRelVO.getComment(), fileName, dealUrl(response.getBody()));
+                TestCycleCaseAttachmentRelVO cycleCaseAttachmentRelVO = upload(BACKETNAME, fileName, multipartFile, testCycleCaseAttachmentRelVO.getAttachmentLinkId(),
+                        testCycleCaseAttachmentRelVO.getAttachmentType(), testCycleCaseAttachmentRelVO.getComment());
+                cycleCaseAttachmentRelVOList.add(cycleCaseAttachmentRelVO);
             }
         }
 
@@ -121,7 +119,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(issueAttachmentDTO);
         if (testCycleCaseAttachmentRelDTOS != null && !testCycleCaseAttachmentRelDTOS.isEmpty()) {
             testCycleCaseAttachmentRelDTOS.forEach(attachment -> {
-                attachment.setUrl(attachmentUrl + attachment.getUrl());
+                attachment.setUrl(attachment.getUrl());
             });
         }
         List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS= modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
@@ -198,21 +196,26 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     private void baseDelete(String bucketName, Long attachId) {
-        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setId(attachId);
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = testCycleCaseAttachmentRelMapper.selectByPrimaryKey(attachId);
+        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
+        String url1 = testCycleCaseAttachmentRelDTO.getUrl();
+        String[] split = url1.split(attachmentUrl);
+        testCaseAttachmentDTO.setUrl(split[1]);
+        List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
 
-//        String url;
-//        try {
-//            url = URLDecoder.decode(testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO).get(0).getUrl(), "UTF-8");
-//        } catch (IOException i) {
-//            throw new CommonException(i);
-//        }
-//
-//        ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
-//        if (response == null || response.getStatusCode() != HttpStatus.OK) {
-//            throw new CommonException("error.attachment.upload");
-//        }
-        testCycleCaseAttachmentRelMapper.delete(testCycleCaseAttachmentRelDTO);
+        if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
+            String url;
+            try {
+                url = URLDecoder.decode(testCycleCaseAttachmentRelDTO.getUrl(), "UTF-8");
+            } catch (IOException i) {
+                throw new CommonException(i);
+            }
+            ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
+            if (response == null || response.getStatusCode() != HttpStatus.OK) {
+                throw new CommonException("error.attachment.upload");
+            }
+        }
+        testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);
     }
 
     private TestCycleCaseAttachmentRelDTO baseUpload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {

@@ -14,8 +14,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.app.service.*;
+import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
+import io.choerodon.test.manager.app.service.TestCycleCaseService;
+import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseHistoryType;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -92,15 +98,14 @@ public class TestCycleCaseHistoryRecordAspect {
         return o;
     }
 
-    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.uploadMultipartFile(..))")
+    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
     public void recordAttachUpload(JoinPoint jp) {
-        Object[] args = jp.getArgs();
-        TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVOS= (TestCycleCaseAttachmentRelVO) args[1];
+
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        historyDTO.setExecuteId(testCycleCaseAttachmentRelVOS.getAttachmentLinkId());
+        historyDTO.setExecuteId((Long) jp.getArgs()[3]);
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
-        historyDTO.setNewValue(testCycleCaseAttachmentRelVOS.getAttachmentName());
+        historyDTO.setNewValue(jp.getArgs()[1].toString());
         testCycleCaseHistoryService.insert(historyDTO);
     }
 

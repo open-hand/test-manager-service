@@ -28,4 +28,6 @@ public interface TestCycleCaseDefectRelService {
     List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
 
     void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
+
+    void deleteCaseRel(Long projectId,Long defectId);
 }

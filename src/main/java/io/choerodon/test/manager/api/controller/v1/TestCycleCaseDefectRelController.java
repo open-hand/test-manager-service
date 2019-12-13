@@ -103,4 +103,13 @@ public class TestCycleCaseDefectRelController {
                 .orElseThrow(() -> new CommonException("error.testCaseStep.get"));
 
     }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("删除缺陷后解除对应关系")
+    @DeleteMapping("/delete_relation/{defectId}")
+    public ResponseEntity deleteCaseRel(@PathVariable(name = "project_id") Long projectId,
+                                           @PathVariable(name = "defectId") Long defectId) {
+        testCycleCaseDefectRelService.deleteCaseRel(projectId,defectId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
