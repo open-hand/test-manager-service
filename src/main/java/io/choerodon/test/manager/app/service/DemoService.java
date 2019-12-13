@@ -8,5 +8,7 @@ import io.choerodon.test.manager.api.vo.OrganizationRegisterEventPayload;
  * Email: ettwz@hotmail.com
  */
 public interface DemoService {
+
     OrganizationRegisterEventPayload demoInit(DemoPayload demoPayload);
+
 }

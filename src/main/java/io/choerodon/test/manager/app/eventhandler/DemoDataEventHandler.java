@@ -27,6 +27,9 @@ public class DemoDataEventHandler {
     @Autowired
     private TestProjectInfoService testProjectInfoService;
 
+    @Autowired
+    private DemoService demoService;
+
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -45,9 +48,6 @@ public class DemoDataEventHandler {
         testProjectInfoService.initializationProjectInfo(projectEvent);
         return organizationRegisterPayload;
     }
-
-    @Autowired
-    private DemoService demoService;
 
     @SagaTask(code = "register-test-init-demo-data",
             description = "创建test的demo数据",
