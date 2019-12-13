@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   Modal,
 } from 'choerodon-ui/pro';
 import { observer } from 'mobx-react-lite';
 import { handleRequestFailed } from '@/common/utils';
-import { getPlanTreeById, editFolder } from '@/api/TestPlanApi';
+import { getPlanTreeById, moveFolder } from '@/api/TestPlanApi';
 import Tree from '@/components/Tree';
 import './index.scss';
 
@@ -15,27 +15,31 @@ const propTypes = {
 };
 
 function DragPlanFolder({
-  treeData, 
+  data, 
 }) {
+  const treeRef = useRef();
   const handleDrag = useCallback(async (sourceItem, destination) => { 
-    const { objectVersionNumber, name } = sourceItem.data;
-    const data = {
-      cycleName: name,
-      cycleId: sourceItem.id,
-      parentCycleId: Number(destination.parentId),
-      objectVersionNumber,
-    };
-    const result = await handleRequestFailed(editFolder(data));
+    const folderId = sourceItem.id;
+    const { parentId } = destination; 
+    const { treeData } = treeRef.current;
+    const { index } = destination;
+    const parent = treeData.items[destination.parentId];
+    const lastId = parent.children[index - 1];
+    const nextId = parent.children[index];    
+    const lastRank = lastId ? treeData.items[lastId].data.rank : null;
+    const nextRank = nextId ? treeData.items[nextId].data.rank : null;   
+    const rank = await handleRequestFailed(moveFolder(folderId, parentId, lastRank, nextRank));
     return {
       data: {
-        ...sourceItem.data,      
-        objectVersionNumber: result.objectVersionNumber,
+        ...sourceItem.data,
+        rank,
       },
     };
   }, []);
   return (
     <Tree
-      data={treeData}
+      ref={treeRef}
+      data={data}
       selected={{}}
       setSelected={() => { }}
       treeNodeProps={{
@@ -50,7 +54,7 @@ const ObserverDragPlanFolder = observer(DragPlanFolder);
 export default async function openDragPlanFolder({ planId, handleOk }) {
   const planTree = await getPlanTreeById(planId);
   const { rootIds, treeFolder } = planTree;
-  const treeData = {
+  const data = {
     rootIds,
     treeFolder: treeFolder.map((folder) => {
       const {
@@ -74,7 +78,7 @@ export default async function openDragPlanFolder({ planId, handleOk }) {
       width: 340,
       padding: 0,
     },
-    children: <ObserverDragPlanFolder treeData={treeData} />,
+    children: <ObserverDragPlanFolder data={data} />,
     okText: '关闭',
     footer: okBtn => okBtn,
     onOk: handleOk,

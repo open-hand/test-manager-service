@@ -2,6 +2,7 @@ import React, {
   useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef,
 } from 'react';
 import PropTypes from 'prop-types';
+import { Choerodon } from '@choerodon/boot';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -171,6 +172,7 @@ function PureTree({
       const newItem = await afterDrag(sourceItem, destination);
       setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {
+      // Choerodon.prompt(error.message, 'error');
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };

@@ -119,7 +119,7 @@ function TreeNode(props) {
         {afterStr}
       </span>
     ) : name;
-    return <SmartTooltip title={name}>{result}</SmartTooltip>;
+    return <SmartTooltip title={result} />;
   };
   const renderContent = () => (
     <div

@@ -83,34 +83,6 @@ class TestPlanTree extends Component {
     testPlanStore.removeRootItem(item.id);
   }
 
-  handleDrag = async (sourceItem, destination) => {
-    const { context: { testPlanStore } } = this.props;
-    const { parentId } = destination;
-    const isPlan = testPlanStore.isPlan(parentId);
-    const [, folderId] = testPlanStore.getId(parentId);
-    const { treeData } = this.treeRef.current;
-    const { index } = destination;
-    const parent = treeData.items[destination.parentId];
-    const lastId = parent.children[index - 1];
-    const nextId = parent.children[index];
-    const data = {
-      folderId,
-      lastRank: lastId ? treeData.items[lastId].data.rank : null,
-      nextRank: nextId ? treeData.items[nextId].data.rank : null,
-    };    
-    // const data = {
-    //   cycleId: folderId,
-    //   parentCycleId: isPlan ? 0 : folderId,
-    // };
-    const result = await handleRequestFailed(moveFolder(data));
-    return {
-      data: {
-        ...sourceItem.data,
-        objectVersionNumber: result.objectVersionNumber,
-      },
-    };
-  }
-
   handleCreateFolder = async (value, parentId, item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(parentId);
@@ -260,7 +232,6 @@ class TestPlanTree extends Component {
             const isPlan = item.topLevel;
             return isPlan ? '确认删除计划' : '确认删除文件夹';
           }}
-          afterDrag={this.handleDrag}
           selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}
           renderTreeNode={this.renderTreeNode}
