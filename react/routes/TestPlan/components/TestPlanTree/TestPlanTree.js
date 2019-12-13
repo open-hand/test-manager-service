@@ -230,7 +230,7 @@ class TestPlanTree extends Component {
           onDelete={this.handleDelete}
           getDeleteTitle={(item) => {
             const isPlan = item.topLevel;
-            return isPlan ? '确认删除计划' : '确认删除文件夹';
+            return isPlan ? '确认删除计划? |删除后计划下的所有执行也将被删除' : '确认删除文件夹? |删除后文件夹下的所有执行也将被删除';
           }}
           selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}

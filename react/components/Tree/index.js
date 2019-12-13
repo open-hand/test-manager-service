@@ -114,7 +114,8 @@ function PureTree({
   const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
   const handleDelete = useCallback((item) => {   
     Modal.confirm({
-      title: getDeleteTitle ? callFunction(getDeleteTitle, item) : '确认删除文件夹',
+      title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除文件夹',
+      children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
     }).then(async (button) => {
       if (button === 'ok') {
         try {
