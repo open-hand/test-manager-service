@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import _ from 'lodash';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -116,38 +116,38 @@ export default observer((props) => {
     return rows;
   };
 
-  const enterCopy = (e) => {
+  const enterCopy = useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-      if (instance.current.firstElementChild) {
+      if (instance.current && instance.current.firstElementChild) {
         instance.current.replaceChild(templateCopy, instance.current.firstElementChild);
       } else {
         instance.current.appendChild(templateCopy);
       }
     }
-  };
+  }, []);
 
-  const leaveCopy = (e) => {
+  const leaveCopy = useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_move').cloneNode(true);
     templateMove.style.display = 'block';
 
-    if (instance.current.firstElementChild) {
+    if (instance.current && instance.current.firstElementChild) {
       instance.current.replaceChild(templateMove, instance.current.firstElementChild);
     } else {
       instance.current.appendChild(templateMove);
     }
-  };
+  }, []);
 
-  const onDragEnd = () => {
+  const onDragEnd = useAvoidClosure(() => {
     IssueStore.setTableDraging(false);
     document.removeEventListener('keydown', enterCopy);
     document.removeEventListener('keyup', leaveCopy);
-  };
+  });
 
   const onDragStart = useAvoidClosure((monitor) => {
     const draggingTableItems = IssueStore.getDraggingTableItems;
