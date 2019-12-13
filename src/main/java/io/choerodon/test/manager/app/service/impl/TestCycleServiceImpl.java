@@ -833,7 +833,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(targetCycleId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.select(testCycleCaseDTO);
-        if (CollectionUtils.isEmpty(testCycleCaseDTOS)) {
+        if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
