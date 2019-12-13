@@ -350,7 +350,7 @@ function TestStepTable(props) {
           dataSource={data}
           columns={columns}
           onDragEnd={onDragEnd}
-          dragKey="stepId"
+          dragKey={props.dragKey || 'stepId'}
           customDragHandle
           scroll={{ x: true }}
         />
