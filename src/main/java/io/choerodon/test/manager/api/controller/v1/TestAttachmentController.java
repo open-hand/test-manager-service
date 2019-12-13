@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,10 @@ public class TestAttachmentController {
     @ApiOperation("增加附件")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
-                                                                         @RequestBody TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO) {
-        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request,testCycleCaseAttachmentRelVO))
+                                                                         @Param("attachmentType") String attachmentType,
+                                                                         @Param("attachmentLinkId")Long attachmentLinkId,
+                                                                         @Param("comment") String comment) {
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request,attachmentType,attachmentLinkId,comment))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.upload.file"));
 

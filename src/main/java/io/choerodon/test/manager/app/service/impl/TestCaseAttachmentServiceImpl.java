@@ -14,10 +14,12 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
+import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,9 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     @Autowired
     private TestCaseAssembler testCaseAssembler;
+    @Autowired
+    private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -146,14 +151,20 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             throw new CommonException("error.attachment.get");
         }
         Boolean result = iIssueAttachmentService.deleteBase(issueAttachmentDTO.getAttachmentId());
-        String url = null;
-        try {
-            url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-            fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + url);
-        } catch (Exception e) {
-            LOGGER.error("error.attachment.delete", e);
-        }
 
+        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
+        testCycleCaseAttachmentRelDTO.setUrl(attachmentUrl+issueAttachmentDTO.getUrl());
+        List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
+
+        if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelDTOS)){
+            String url = null;
+            try {
+                url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
+                fileFeignClient.deleteFile(BACKETNAME, attachmentUrl + url);
+            } catch (Exception e) {
+                LOGGER.error("error.attachment.delete", e);
+            }
+        }
         testCaseService.updateVersionNum(issueAttachmentDTO.getCaseId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueAttachmentDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){

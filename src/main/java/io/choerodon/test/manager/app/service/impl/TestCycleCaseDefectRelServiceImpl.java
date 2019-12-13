@@ -158,6 +158,17 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     }
 
     @Override
+    public void deleteCaseRel(Long project,Long defectId) {
+        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
+        testCycleCaseDefectRelDTO.setIssueId(defectId);
+        testCycleCaseDefectRelDTO.setProjectId(project);
+        List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTOS = testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelDTO);
+        if(!CollectionUtils.isEmpty(testCycleCaseDefectRelDTOS)){
+            testCycleCaseDefectRelMapper.delete(testCycleCaseDefectRelDTO);
+        }
+    }
+
+    @Override
     public void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         List<TestCycleCaseDefectRelDTO> list = testCycleCaseDefectRelMapper.listByExecuteIds(olderExecuteId);
