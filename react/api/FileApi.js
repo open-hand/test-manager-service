@@ -57,14 +57,14 @@ export function uploadFileAgile(data, config) {
  * @returns
  */
 export function uploadFile(data, config) {
-  const { executeId, description = '', attachmentType } = config;
+  const { attachmentLinkId,attachmentType } = config;
 
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
 
   return request.post(
-    `test/v1/projects/${getProjectId()}/test/case/attachment?executeId=${executeId}&description=${description}&attachmentType=${attachmentType}`,
+    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
     data,
     axiosConfig,
   );
@@ -86,7 +86,7 @@ export function uploadFileStep(data, config) {
   };
 
   return request.post(
-    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}&executeId=${executeId}&description=${description}`,
+    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
     data,
     axiosConfig,
   );

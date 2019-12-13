@@ -166,7 +166,7 @@ function TestHandExecute(props) {
           });
 
           const config = {
-            description: '', executeId: res.executeId, attachmentType: 'CYCLE_CASE',
+            attachmentLinkId: res.executeId, attachmentType: 'CYCLE_CASE',
           };
           if (formDataAdd.has('file')) {
             await uploadFile(formDataAdd, config);
