@@ -2,7 +2,10 @@ package io.choerodon.test.manager.app.eventhandler;
 
 import java.io.IOException;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.app.service.TestProjectInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +20,31 @@ import io.choerodon.test.manager.app.service.DemoService;
  */
 @Component
 public class DemoDataEventHandler {
+
+    private static final String REGISTER_TEST_INIT_PROJECT = "register-agile-init-project";
+    private static final String REGISTER_ORG = "register-org";
+
+    @Autowired
+    private TestProjectInfoService testProjectInfoService;
+
+
     private ObjectMapper objectMapper = new ObjectMapper();
+
+
+    @SagaTask(code = REGISTER_TEST_INIT_PROJECT,
+            description = "demo消费创建项目事件初始化项目数据",
+            sagaCode = REGISTER_ORG,
+            seq = 105)
+    public DemoPayload demoInitProject(String message) {
+        DemoPayload organizationRegisterPayload = JSONObject.parseObject(message, DemoPayload.class);
+        //初始化项目层数据
+        ProjectEvent projectEvent = new ProjectEvent();
+        projectEvent.setProjectId(organizationRegisterPayload.getProject().getId());
+        projectEvent.setProjectCode(organizationRegisterPayload.getProject().getCode());
+        //初始化项目层数据
+        testProjectInfoService.initializationProjectInfo(projectEvent);
+        return organizationRegisterPayload;
+    }
 
     @Autowired
     private DemoService demoService;
