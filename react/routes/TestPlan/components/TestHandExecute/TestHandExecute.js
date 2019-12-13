@@ -82,9 +82,12 @@ function TestHandExecute(props) {
     const detailData = { ...ExecuteDetailStore.getDetailData };
     const { statusList } = ExecuteDetailStore;
     if (_.find(statusList, { projectId: 0, statusName: text })) {
-      detailData.executionStatus = _.find(statusList, { projectId: 0, statusName: text }).statusId;
+      const statusItem = _.find(statusList, { projectId: 0, statusName: text }) || {};
+      detailData.executionStatus = statusItem.statusId;
+      detailData.executionStatusName = statusItem.statusName;
       updateDetail(detailData).then(() => {
         ExecuteDetailStore.getInfo();
+        executeHistoryDataSet.query();
       }).catch((error) => {
         Choerodon.prompt(`${error || '网络错误'}`);
       });
