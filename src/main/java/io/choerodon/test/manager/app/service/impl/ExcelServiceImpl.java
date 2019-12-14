@@ -20,13 +20,13 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
@@ -40,7 +40,8 @@ import io.choerodon.test.manager.infra.util.MultipartExcel;
 /**
  * Created by zongw.lee@gmail.com on 15/10/2018
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class ExcelServiceImpl implements ExcelService {
 
     private static final String EXPORT_ERROR = "error.issue.export";
@@ -86,6 +87,9 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private  TestIssueFolderService testIssueFolderService;
+
     /**
      * 失败导出重试
      *
@@ -95,7 +99,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportFailCaseByTransaction(Long projectId, Long fileHistoryId, Long lUserId) {
         String userId = String.valueOf(lUserId);
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
@@ -164,7 +167,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request,
                                                        HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
@@ -220,7 +222,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, projectId,
@@ -248,7 +249,6 @@ public class ExcelServiceImpl implements ExcelService {
         Map<Long, List<TestIssueFolderRelVO>> allRelMaps = new HashMap<>();
         //分别导出版本到各个sheet页中
         for (Long versionId : versionsId) {
-            testIssueFolderDTO.setVersionId(versionId);
             Map<Long, List<TestIssueFolderRelVO>> everyRelMaps = populateFolder(testIssueFolderDTO, userId,
                     5 + (versionOffset * (i++)), versionOffset, testFileLoadHistoryWithRateVO, organizationId);
             allRelMaps.putAll(everyRelMaps);
@@ -280,7 +280,6 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
@@ -295,7 +294,6 @@ public class ExcelServiceImpl implements ExcelService {
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
-        testIssueFolderDTO.setVersionId(versionId);
 
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
@@ -333,27 +331,28 @@ public class ExcelServiceImpl implements ExcelService {
      */
     @Override
     @Async
-    @Transactional(rollbackFor = Exception.class)
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
-
+        //插入导出历史
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, folderId,
                 TestFileLoadHistoryEnums.Source.FOLDER, TestFileLoadHistoryEnums.Action.DOWNLOAD_ISSUE);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
+        //根据文件夹id查出当前文件夹名称
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
         testIssueFolderDTO.setFolderId(folderId);
         testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(folderId);
         String folderName = testIssueFolderDTO.getName();
         testFileLoadHistoryWithRateVO.setName(folderName);
-
+        // 创建excel表格
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         ExcelExportService service = new <TestIssueFolderVO, TestIssueFolderRelVO>TestCaseExcelExportServiceImpl();
 
+        //表格头部生成当前项目名称所属文件夹目录
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
@@ -364,6 +363,7 @@ public class ExcelServiceImpl implements ExcelService {
         for (List<TestIssueFolderRelVO> list : everyRelMaps.values()) {
             sum += list.size();
         }
+        //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(everyRelMaps, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
 
         workbook.setSheetHidden(0, true);
@@ -371,6 +371,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
+        // 将workbook上载到对象存储服务中
         downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
     }
 
@@ -412,7 +413,6 @@ public class ExcelServiceImpl implements ExcelService {
                 modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         for (Long versionId : versionsId) {
             Object needMap = ((HashMap<Long, List<TestIssueFolderRelVO>>) map).clone();
-            testIssueFolderDTO.setVersionId(versionId);
             service.exportWorkBookWithOneSheet((Map<Long, List>) needMap, projectName,
                     modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         }
@@ -454,6 +454,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
+            //返回上载结果
             ResponseEntity<String> res = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, fileName, file);
 
             //判断是否返回是url
@@ -517,7 +518,14 @@ public class ExcelServiceImpl implements ExcelService {
      * @return 适用于装载excel的Map
      */
     private Map<Long, List<TestIssueFolderRelVO>> populateFolder(TestIssueFolderDTO testIssueFolderDTO, Long userId, double startRate, double offset, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long organizationId) {
-        List<TestIssueFolderDTO> folders = Optional.ofNullable(testIssueFolderMapper.select(testIssueFolderDTO)).orElseGet(ArrayList::new);
+        // TODO：重构，取消项目和版本之后，假如选择的是父文件夹，那么要生成多个子文件夹
+        List<TestIssueFolderDTO> folders;
+        if (testIssueFolderDTO == null){
+            throw  new CommonException("error.issue.folder.is.null");
+        }
+        folders = testIssueFolderService.queryChildFolder(testIssueFolderDTO.getFolderId());
+
+        //List<TestIssueFolderDTO> folders = Optional.ofNullable(testIssueFolderMapper.select(testIssueFolderDTO)).orElseGet(ArrayList::new);
 
         //后面一个循环中使用了 两次进度增加 所以/2
         double folderOffset = offset / (folders.size() * 2);
@@ -559,9 +567,6 @@ public class ExcelServiceImpl implements ExcelService {
                 folderRelDTOS.add(needRel);
             }
 
-            if (testIssueFolderDTO.getVersionId() == null && testIssueFolderDTO.getFolderId() != null) {
-                testIssueFolderDTO.setVersionId(folder.getVersionId());
-            }
             folderRelMap.put(folder.getFolderId(), folderRelDTOS);
         }
         testFileLoadHistoryWithRateVO.setRate(startRate + offset);
@@ -613,7 +618,7 @@ public class ExcelServiceImpl implements ExcelService {
         optionDTOS.add(new ExcelReadMeOptionVO("文件夹", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例概要", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例编号", false));
-        optionDTOS.add(new ExcelReadMeOptionVO("优先级", true));
+        //optionDTOS.add(new ExcelReadMeOptionVO("优先级", true));
         optionDTOS.add(new ExcelReadMeOptionVO("用例描述", false));
         optionDTOS.add(new ExcelReadMeOptionVO("被指定人", false));
         optionDTOS.add(new ExcelReadMeOptionVO("状态", false));

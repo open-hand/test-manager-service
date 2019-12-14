@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
+import java.util.Map;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
@@ -25,4 +26,8 @@ public interface TestCycleCaseDefectRelService {
     Boolean updateIssuesProjectId(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long organizationId);
 
     List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
+
+    void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
+
+    void deleteCaseRel(Long projectId,Long defectId);
 }

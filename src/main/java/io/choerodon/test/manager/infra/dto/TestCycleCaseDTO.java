@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
@@ -17,7 +17,7 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     private Long cycleId;
 
-    private Long issueId;
+    private Long caseId;
 
     private String rank;
 
@@ -27,8 +27,11 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     private Long projectId;
 
-    @Column(name = "description")
-    private String comment;
+    private String summary;
+
+    private String description;
+
+    private String source;
 
     @Transient
     private String executionStatusName;
@@ -43,15 +46,15 @@ public class TestCycleCaseDTO extends BaseDTO {
     private String folderName;
 
     @Transient
-    private Long versionId;
+    private Long planId;
+
+    private Long versionNum;
 
     @Transient
     private Long lastExecuteId;
 
     @Transient
     private Long nextExecuteId;
-
-    private Long objectVersionNumber;
 
     private Long createdBy;
 
@@ -93,6 +96,9 @@ public class TestCycleCaseDTO extends BaseDTO {
     @Transient
     List<TestCycleCaseStepDTO> cycleCaseStep;
 
+    @Transient
+    List<TestCaseLinkDTO> testCaseLinks;
+
     public Long getProjectId() {
         return projectId;
     }
@@ -121,14 +127,6 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.cycleId = cycleId;
     }
 
-    public Long getIssueId() {
-        return issueId;
-    }
-
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
-    }
-
     public String getExecutionStatusName() {
         return executionStatusName;
     }
@@ -153,16 +151,12 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.assignedTo = assignedTo;
     }
 
-    public String getComment() {
-        return comment;
-    }
-
     public String getDescription() {
-        return comment;
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRank() {
@@ -221,12 +215,12 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.cycleCaseStep = cycleCaseStep;
     }
 
-    public Long getVersionId() {
-        return versionId;
+    public Long getVersionNum() {
+        return versionNum;
     }
 
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
+    public void setVersionNum(Long versionNum) {
+        this.versionNum = versionNum;
     }
 
     public Long getLastExecuteId() {
@@ -265,21 +259,51 @@ public class TestCycleCaseDTO extends BaseDTO {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    @Override
-    public Long getObjectVersionNumber() {
-        return objectVersionNumber;
-    }
-
-    @Override
-    public void setObjectVersionNumber(Long objectVersionNumber) {
-        this.objectVersionNumber = objectVersionNumber;
-    }
-
     public void setStatusColor(String statusColor) {
         this.statusColor = statusColor;
     }
 
     public String getStatusColor() {
         return statusColor;
+    }
+
+    public Long getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public List<TestCaseLinkDTO> getTestCaseLinkDTOS() {
+        return testCaseLinks;
+    }
+
+    public void setTestCaseLinkDTOS(List<TestCaseLinkDTO> testCaseLinkDTOS) {
+        this.testCaseLinks = testCaseLinkDTOS;
+    }
+
+    public Long getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(Long planId) {
+        this.planId = planId;
     }
 }

@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.ComponentIssueRelVO;
-import io.choerodon.agile.api.vo.LabelIssueRelVO;
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.ComponentIssueRelVO;
+import io.choerodon.test.manager.api.vo.agile.LabelIssueRelVO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
@@ -115,7 +115,7 @@ public class CycleCaseExcelExportServiceImpl extends AbstarctExcelExportServiceI
         Optional.ofNullable(cycleCaseStep.getTestData()).ifPresent(v -> ExcelUtil.createCell(row, 11, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCaseStep.getExpectedResult()).ifPresent(v -> ExcelUtil.createCell(row, 12, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(cycleCaseStep.getStatusName()).ifPresent(v -> ExcelUtil.createCell(row, 13, ExcelUtil.CellType.TEXT, v));
-        Optional.ofNullable(cycleCaseStep.getComment()).ifPresent(v -> ExcelUtil.createCell(row, 14, ExcelUtil.CellType.TEXT, v));
+        Optional.ofNullable(cycleCaseStep.getDescription()).ifPresent(v -> ExcelUtil.createCell(row, 14, ExcelUtil.CellType.TEXT, v));
         Optional.ofNullable(getDefectsCell(defects, CASE_STEP)).ifPresent(v -> ExcelUtil.createCell(row, 15, ExcelUtil.CellType.TEXT, v));
 
     }

@@ -2,26 +2,33 @@ package io.choerodon.test.manager.api.controller.v1;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
+import io.choerodon.test.manager.api.vo.TestCaseRepVO;
+import io.choerodon.test.manager.api.vo.TestCaseVO;
+import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
-import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.base.domain.Sort;
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import org.springframework.data.domain.Sort;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.mybatis.annotation.SortDefault;
+import io.choerodon.core.annotation.Permission;
+import org.springframework.data.web.SortDefault;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 
@@ -41,7 +48,13 @@ public class TestCaseController {
     @Autowired
     ExcelService excelService;
 
+    @Autowired
+    private TestCaseService testCaseService;
+
     private ExcelServiceHandler excelServiceHandler;
+
+    @Autowired
+    private VerifyUpdateUtil verifyUpdateUtil;
 
     @Autowired
     public TestCaseController(ExcelServiceHandler excelServiceHandler) {
@@ -60,10 +73,10 @@ public class TestCaseController {
                                                                SearchDTO searchDTO,
                                                        @ApiIgnore
                                                        @ApiParam(value = "分页信息", required = true)
-                                                       @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
+                                                       @SortDefault(value = "issueId", direction = Sort.Direction.DESC) Pageable pageable,
                                                        @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest, organizationId))
+        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageable, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
@@ -97,14 +110,15 @@ public class TestCaseController {
     @ApiOperation("生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect")
     public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO,
-                                                    @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
+                                                    @SortDefault(value = "issueId", direction = Sort.Direction.DESC) Pageable pageable,
                                                     @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest, organizationId))
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageable, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
+    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个项目的excel")
     @GetMapping("/download/excel")
@@ -116,6 +130,7 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个版本的excel")
     @GetMapping("/download/excel/version")
@@ -128,11 +143,12 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Todo：只导出选择文件夹下的所有用例
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
-                                           @RequestParam(name = "folderId") Long folderId,
+                                           @RequestParam(name = "folder_id") Long folderId,
                                            HttpServletRequest request,
                                            HttpServletResponse response,
                                            @RequestParam Long organizationId) {
@@ -168,16 +184,84 @@ public class TestCaseController {
         excelImportService.downloadImportTemp(request, response, organizationId, projectId);
     }
 
+    // Todo: 重构，导入用例不需要指定版本号
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
-                                       @RequestParam Long versionId,
                                        @RequestParam("file") MultipartFile excelFile,
-                                       @RequestParam Long organizationId) {
-        excelImportService.importIssueByExcel(organizationId, projectId, versionId,
+                                       @RequestParam("folder_id") Long folderId) {
+        excelImportService.importIssueByExcel(projectId, folderId,
                 DetailsHelper.getUserDetails().getUserId(),
                 ExcelUtil.getWorkbookFromMultipartFile(ExcelUtil.Mode.XSSF, excelFile));
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("创建测试用例")
+    @PostMapping("/create")
+    public ResponseEntity<TestCaseRepVO> createTestCase(@PathVariable("project_id") Long projectId,
+                                                     @RequestBody TestCaseVO testCaseVO) {
+        return new ResponseEntity<>(testCaseService.createTestCase(projectId, testCaseVO), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询用例详情")
+    @GetMapping("/{case_id}/info")
+    public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
+                                                        @PathVariable(name = "case_id", required = true) Long caseId) {
+        return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId, caseId), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("删除测试用例")
+    @DeleteMapping("/{case_id}/delete")
+    public ResponseEntity deleteCase(@PathVariable("project_id") Long projectId,
+                                     @PathVariable(name = "case_id", required = true) Long caseId) {
+        testCaseService.deleteCase(projectId, caseId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
+    @PostMapping("/list_by_folder_id")
+    public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
+                                                                      @RequestParam(name = "folder_id") Long folderId,
+                                                                      @SortDefault Pageable pageable,
+                                                                      @RequestParam(name = "plan_id",required = false) Long planId,
+                                                                      @RequestBody(required = false) SearchDTO searchDTO) {
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageable, searchDTO,planId), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("修改测试用例")
+    @PutMapping("/update")
+    public ResponseEntity<TestCaseRepVO> updateCase(@PathVariable("project_id") Long projectId,
+                                                    @RequestBody JSONObject caseUpdate) {
+        TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
+        List<String> fieldList = verifyUpdateUtil.verifyUpdateData(caseUpdate, testCaseRepVO);
+        return new ResponseEntity<>(testCaseService.updateCase(projectId, testCaseRepVO, fieldList.toArray(new String[fieldList.size()])), HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量移动测试用例")
+    @PostMapping("/batch_move")
+    public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
+                                        @RequestParam(name = "folder_id") Long folderId,
+                                         @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
+
+        testCaseService.batchMove(projectId, folderId,testCaseRepVOS);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("批量复制测试用例")
+    @PostMapping("/batch_clone")
+    public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,
+                                        @RequestParam(name = "folder_id") Long folderId,
+                                        @RequestBody List<TestCaseRepVO> testCaseRepVOS) {
+
+        testCaseService.batchCopy(projectId, folderId,testCaseRepVOS);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -6,10 +6,14 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO;
+import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
+import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import org.springframework.http.ResponseEntity;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
 import io.choerodon.test.manager.api.vo.BatchCloneCycleVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
@@ -28,7 +32,7 @@ public interface TestCycleService {
 
     boolean synchroFolderInVersion(Long versionId, Long projectId);
 
-    void delete(TestCycleVO testCycleVO, Long projectId);
+    void delete(Long cycleId, Long projectId);
 
     TestCycleVO update(Long projectId, TestCycleVO testCycleVO);
 
@@ -65,4 +69,28 @@ public interface TestCycleService {
     void checkRank(TestCycleVO testCycleVO);
 
     Boolean checkName(Long projectId, String type, String cycleName, Long versionId, Long parentCycleId);
+
+    /**
+     * 创建计划时批量创建循环
+     *
+     * @param testPlanDTO
+     * @param testIssueFolderDTOS
+     */
+    List<TestCycleDTO> batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
+
+    List<TestCycleDTO> listByPlanIds(List<Long> planIds);
+
+    void batchDelete(List<Long> needDeleteCycleIds);
+
+    TestIssueFolderVO cycleToIssueFolderVO(TestCycleDTO testCycleDTO);
+
+    void syncByCaseFolder(Long folderId, Long cycleId);
+
+    void cloneCycleByPlanId(Long copyPlanId, Long newPlanId);
+
+    TestTreeIssueFolderVO queryTreeByPlanId(Long planId);
+
+    String moveCycle(Long projectId, Long targetCycleId,Long cycleId,String lastRank,String nextRank);
+
+    void baseUpdate(TestCycleDTO testCycleDTO);
 }

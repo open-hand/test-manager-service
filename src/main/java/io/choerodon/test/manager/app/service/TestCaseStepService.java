@@ -13,13 +13,17 @@ public interface TestCaseStepService {
 
     List<TestCaseStepVO> query(TestCaseStepVO testCaseStepVO);
 
-    void removeStep(TestCaseStepVO testCaseStepVO);
+    void removeStep(Long projectId,TestCaseStepVO testCaseStepVO);
 
-    TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId);
+    TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum);
 
     TestCaseStepVO clone(TestCaseStepVO testCaseStepVO, Long projectId);
 
     List<TestCaseStepVO> batchClone(TestCaseStepVO testCaseStepVO, Long issueId, Long projectId);
 
     TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO);
+
+    void removeStepByIssueId(Long projectId,Long caseId);
+
+    List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds);
 }

@@ -5,11 +5,12 @@ import org.springframework.stereotype.Component;
 
 import io.choerodon.test.manager.app.service.NotifyService;
 import io.choerodon.test.manager.infra.feign.NotifyFeignClient;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by zongw.lee@gmail.com on 01/11/2018
  */
-@Component
+@Service
 public class NotifyServiceImpl implements NotifyService {
 
     @Autowired

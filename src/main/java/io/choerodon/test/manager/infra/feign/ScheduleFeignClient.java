@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.infra.feign;
 
 
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.test.manager.infra.feign.callback.ScheduleFeignClientFallback;
 
 import io.swagger.annotations.ApiOperation;

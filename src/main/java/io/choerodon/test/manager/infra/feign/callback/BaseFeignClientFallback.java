@@ -3,12 +3,12 @@ package io.choerodon.test.manager.infra.feign.callback;
 import java.util.List;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.ProjectDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 

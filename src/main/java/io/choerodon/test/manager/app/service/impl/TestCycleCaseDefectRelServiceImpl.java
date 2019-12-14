@@ -4,15 +4,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import com.google.common.collect.Lists;
 
@@ -30,7 +33,8 @@ import io.choerodon.test.manager.infra.util.DBValidateUtil;
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-@Component
+@Service
+@Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRelService {
 
     @Autowired
@@ -47,8 +51,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCycleCaseDefectRelVO insert(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long projectId, Long organizationId) {
         TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = modelMapper
@@ -139,7 +141,7 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
         List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
         if (res != null && !res.isEmpty()) {
-            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getIssueId).collect(Collectors.toList());
+            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
             Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
             List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
             res.forEach(testCycleCaseDTO -> {
@@ -151,5 +153,31 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         } else {
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public void deleteCaseRel(Long project,Long defectId) {
+        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
+        testCycleCaseDefectRelDTO.setIssueId(defectId);
+        testCycleCaseDefectRelDTO.setProjectId(project);
+        List<TestCycleCaseDefectRelDTO> testCycleCaseDefectRelDTOS = testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelDTO);
+        if(!CollectionUtils.isEmpty(testCycleCaseDefectRelDTOS)){
+            testCycleCaseDefectRelMapper.delete(testCycleCaseDefectRelDTO);
+        }
+    }
+
+    @Override
+    public void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        List<TestCycleCaseDefectRelDTO> list = testCycleCaseDefectRelMapper.listByExecuteIds(olderExecuteId);
+        if(CollectionUtils.isEmpty(list)){
+            return;
+        }
+        list.forEach(v -> {
+            v.setDefectLinkId(caseIdMap.get(v.getDefectLinkId()));
+            v.setCreatedBy(userDetails.getUserId());
+            v.setLastUpdatedBy(userDetails.getUserId());
+        });
+        testCycleCaseDefectRelMapper.batchInsert(list);
     }
 }

@@ -23,5 +23,23 @@ public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
 
     int batchInsertTestCycleCaseSteps(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
 
+    int batchUpdateTestCycleCaseSteps(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
+
     void updateAuditFields(@Param("executeIds") Long[] executeId, @Param("userId") Long userId, @Param("date") Date date);
+
+    List<TestCycleCaseStepDTO> querListByexecuteId(@Param("executeId") Long executeId);
+
+    void batchDeleteTestCycleCaseSteps(@Param("executeStepIds") List<Long> executeStepIds);
+
+    String getLastedRank(@Param("executeId") Long executeId);
+
+    void fixCycleCaseStep();
+
+    void fixCycleCaseStepRank();
+
+    void batchDeleteByExecutIds(@Param("list") List<Long> executeIds);
+
+    List<TestCycleCaseStepDTO>  listByexecuteIds(@Param("ids") List<Long> olderExecuteId);
+
+    List<TestCycleCaseStepDTO> selectByexecuteId(@Param("executeId") Long executeId);
 }

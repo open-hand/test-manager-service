@@ -1,3 +1,4 @@
+
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
@@ -9,12 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.base.annotation.Permission;
+import io.choerodon.core.annotation.Permission;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -47,7 +48,7 @@ public class TestCaseStepController {
                                                         @RequestBody TestCaseStepVO testCaseStepVO) {
 
 
-        return Optional.ofNullable(testCaseStepService.changeStep(testCaseStepVO, projectId))
+        return Optional.ofNullable(testCaseStepService.changeStep(testCaseStepVO, projectId,true))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testCycleCase.update"));
     }
@@ -58,7 +59,7 @@ public class TestCaseStepController {
     @DeleteMapping
     public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCaseStepVO testCaseStepVO) {
-        testCaseStepService.removeStep(testCaseStepVO);
+        testCaseStepService.removeStep(projectId,testCaseStepVO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

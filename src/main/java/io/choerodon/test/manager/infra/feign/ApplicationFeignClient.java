@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.infra.feign;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.devops.api.vo.AppServiceDeployVO;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
-import io.choerodon.devops.api.vo.ApplicationRepDTO;
-import io.choerodon.devops.api.vo.InstanceValueVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.infra.feign.callback.ApplicationFeignClientFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

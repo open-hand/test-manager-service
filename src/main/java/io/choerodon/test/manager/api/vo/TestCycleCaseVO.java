@@ -6,11 +6,10 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 
 /**
@@ -89,6 +88,8 @@ public class TestCycleCaseVO {
 
     @ApiModelProperty(value = "后一位执行ID")
     private Long nextExecuteId;
+
+    private String description;
 
     @ApiModelProperty(value = "执行附件")
     private List<TestCycleCaseAttachmentRelVO> caseAttachment;
@@ -375,4 +376,13 @@ public class TestCycleCaseVO {
     public void setCycleCaseStep(List<TestCycleCaseStepVO> cycleCaseStep) {
         this.cycleCaseStep = cycleCaseStep;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

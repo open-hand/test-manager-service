@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.infra.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import io.choerodon.mybatis.entity.BaseDTO;
 
@@ -26,6 +23,27 @@ public class TestIssueFolderDTO extends BaseDTO {
     private String type;
 
     private Long objectVersionNumber;
+
+    private Long parentId;
+
+    private String rank;
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public TestIssueFolderDTO(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public TestIssueFolderDTO() {
+    }
+
+
 
     @Override
     public Long getObjectVersionNumber() {
@@ -77,6 +95,14 @@ public class TestIssueFolderDTO extends BaseDTO {
         this.type = type;
     }
 
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
     @Override
     public String toString() {
         return "TestIssueFolderDTO{"
@@ -84,6 +110,7 @@ public class TestIssueFolderDTO extends BaseDTO {
                 + ", name='" + name + '\''
                 + ", versionId=" + versionId
                 + ", projectId=" + projectId
+                + ", parentId=" + parentId
                 + ", type='" + type + '\'' + '}';
     }
 }

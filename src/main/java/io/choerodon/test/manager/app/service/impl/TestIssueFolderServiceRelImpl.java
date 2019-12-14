@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -18,7 +18,7 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
-@Component
+@Service
 public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService {
 
     @Autowired
@@ -94,7 +94,7 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
     }
 
     @Override
-    public PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, PageRequest pageRequest, Long organizationId) {
+    public PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, Pageable pageable, Long organizationId) {
         SearchDTO searchDTO = Optional.ofNullable(testFolderRelQueryVO.getSearchDTO()).orElseGet(SearchDTO::new);
         //查询出所属的issue
         List<TestIssueFolderRelVO> resultRelDTOS = new ArrayList<>();
@@ -130,8 +130,8 @@ public class TestIssueFolderServiceRelImpl implements TestIssueFolderRelService 
         }
 
         //进行分页
-        int pageNum = pageRequest.getPage() - 1;
-        int pageSize = pageRequest.getSize();
+        int pageNum = pageable.getPageNumber()- 1;
+        int pageSize = pageable.getPageSize();
         int highPage = (pageNum + 1) * pageSize;
         int lowPage = pageNum * pageSize;
         //创建一个Long数组，将对应分页的issuesId传给它

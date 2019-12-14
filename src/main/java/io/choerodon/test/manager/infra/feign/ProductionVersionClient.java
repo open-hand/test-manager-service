@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.infra.feign;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.ProductionVersionClientFallback;
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO;
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,6 @@ public interface ProductionVersionClient {
 
     @GetMapping(value = "/v1/projects/{project_id}/product_version/versions")
     ResponseEntity<List<ProductVersionDTO>> listByProjectId(@PathVariable(name = "project_id") Long projectId);
-
 //    @GetMapping(value = "/v1/projects/{project_id}/product_version/ids")
 //    ResponseEntity<List<Long>> listAllVersionId(@PathVariable(name = "project_id") Long projectId);
 }

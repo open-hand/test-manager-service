@@ -58,4 +58,33 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "project_id")
         }
     }
+    changeSet(author: 'zhaotianxin', id: '2019-11-27-rename-colume-version-num') {
+        addColumn(tableName: 'test_cycle_case') {
+                column(name: 'version_num', type: 'BIGINT UNSIGNED', remarks: 'version num')
+        }
+    }
+    changeSet(author: 'lizhaozhong', id: '2019-11-27-add-colume-summary') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'summary', type: 'VARCHAR(255)', remarks: '摘要')
+        }
+    }
+
+    changeSet(author: 'lizhaozhong', id: '2019-11-28-rename-colume-issueId') {
+        renameColumn(columnDataType:'BIGINT UNSIGNED',newColumnName:'case_id',oldColumnName:'issue_id',tableName:"test_cycle_case")
+    }
+
+    changeSet(author: 'lizhaozhong', id: '2019-11-29-add-colume-source') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'source', type: 'VARCHAR(255)', remarks: '来源')
+        }
+    }
+    changeSet(author: 'lizhaozhong@hang-china.com', id: '2019-12-04-add_sequence_version_step_num') {
+        addColumn(tableName: 'test_cycle_case') {
+            column(name: 'version_step_num', type: 'BIGINT UNSIGNED', remarks: '步骤版本号',defaultValue: "1")
+        }
+    }
+
+    changeSet(id: '2019-12-11-test-cycle_drop_uk_cycle_id_rank', author: 'lizhaozhong') {
+        dropIndex(tableName: 'test_cycle_case', indexName: 'uk_cycle_id_rank')
+    }
 }

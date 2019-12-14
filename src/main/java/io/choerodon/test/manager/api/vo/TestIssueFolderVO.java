@@ -10,6 +10,9 @@ public class TestIssueFolderVO {
     @ApiModelProperty(value = "文件夹ID")
     private Long folderId;
 
+    @ApiModelProperty(value = "父级文件夹ID,无父级目录id传0")
+    private Long parentId;
+
     @ApiModelProperty(value = "文件夹名")
     private String name;
 
@@ -24,6 +27,14 @@ public class TestIssueFolderVO {
 
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
+
+    private String initStatus;
+
+    private String rank;
+
+    private String lastRank;
+
+    private String nextRank;
 
     public TestIssueFolderVO() {
     }
@@ -94,6 +105,61 @@ public class TestIssueFolderVO {
     }
 
     public void setType(String type) {
+
         this.type = type;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
+
+    @Override
+    public String toString() {
+        return "TestIssueFolderVO{" +
+                "folderId=" + folderId +
+                ", parentId=" + parentId +
+                ", name='" + name + '\'' +
+                ", versionId=" + versionId +
+                ", projectId=" + projectId +
+                ", type='" + type + '\'' +
+                ", objectVersionNumber=" + objectVersionNumber +
+                '}';
+    }
+
+    public String getInitStatus() {
+
+        return initStatus;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
+    }
+
+    public void setInitStatus(String initStatus) {
+        this.initStatus = initStatus;
     }
 }

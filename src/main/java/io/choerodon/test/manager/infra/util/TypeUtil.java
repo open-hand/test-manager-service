@@ -13,4 +13,11 @@ public class TypeUtil {
             result[i++] = l;
         return result;
     }
+
+    public static Long objToLong(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        return Long.valueOf(String.valueOf(obj));
+    }
 }

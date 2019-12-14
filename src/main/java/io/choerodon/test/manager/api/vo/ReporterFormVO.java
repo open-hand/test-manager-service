@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 
 /**
  * Created by 842767365@qq.com on 7/13/18.

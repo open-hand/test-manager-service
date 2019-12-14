@@ -1,11 +1,9 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.PageInfo
-import io.choerodon.agile.api.vo.IssueLinkDTO
-import io.choerodon.agile.api.vo.SearchDTO
-import io.choerodon.base.domain.PageRequest
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO
+import io.choerodon.test.manager.api.vo.agile.SearchDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
-import io.choerodon.test.manager.api.vo.DefectReporterFormVO
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.ReporterFormVO
 import io.choerodon.test.manager.app.service.ReporterFormService
@@ -18,6 +16,7 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import spock.lang.Shared
 import spock.lang.Specification
 

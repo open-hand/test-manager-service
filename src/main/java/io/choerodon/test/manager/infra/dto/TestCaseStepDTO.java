@@ -136,4 +136,16 @@ public class TestCaseStepDTO extends BaseDTO {
     public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
+
+    public TestCaseStepDTO(Long stepId,String rank, Long issueId, String testStep, String testData, String expectedResult) {
+        this.stepId = stepId;
+        this.rank = rank;
+        this.issueId = issueId;
+        this.testStep = testStep;
+        this.testData = testData;
+        this.expectedResult = expectedResult;
+    }
+
+    public TestCaseStepDTO() {
+    }
 }

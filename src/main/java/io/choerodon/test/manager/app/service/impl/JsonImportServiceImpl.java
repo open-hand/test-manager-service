@@ -5,16 +5,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import feign.FeignException;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.ProjectDTO;
-import io.choerodon.agile.api.vo.VersionIssueRelVO;
-import io.choerodon.agile.infra.common.enums.IssueTypeCode;
-import io.choerodon.agile.infra.common.utils.AgileUtil;
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.api.vo.agile.VersionIssueRelVO;
+import io.choerodon.test.manager.infra.enums.IssueTypeCode;
+import io.choerodon.test.manager.infra.util.AgileUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
-import io.choerodon.devops.api.vo.ApplicationRepDTO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.testng.TestNgCase;
@@ -55,7 +55,6 @@ import org.springframework.util.Assert;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
@@ -342,7 +341,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         for (int i = 0; i < allTestCycleCases.size(); i++) {
             Long issueId = issueFolderRels.get(i).getIssueId();
             allTestCycleCases.get(i).setIssueId(issueId);
-            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setIssueId(issueId));
+            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setCaseId(issueId));
             List<TestCaseStepDTO> testCaseStepEs = queryAllStepsUnderIssue(issueId);
             if (allTestCycleCases.get(i).getCycleCaseStep().size() != testCaseStepEs.size()) {
                 logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
@@ -411,23 +410,23 @@ public class JsonImportServiceImpl implements JsonImportService {
         automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
         List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
 
-        // 创建测试循环
-        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
-        //遍历suite
-        for (TestNgSuite suite : result.getSuites()) {
-            String folderName = folderBaseName + "-" + suite.getName();
-            // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
-            TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
-            // 创建阶段（应用名+镜像名+suite名+第几次）
-            TestCycleVO testStage = getStage(projectId,
-                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
-            cycleIds.add(testStage.getCycleId());
-            //处理Case
-            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
-
-        }
-        // 若有多个suite，拼接成listStr
-        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
+//        // 创建测试循环
+//        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
+//        //遍历suite
+//        for (TestNgSuite suite : result.getSuites()) {
+//            String folderName = folderBaseName + "-" + suite.getName();
+//            // 创建文件夹（应用名+镜像名+suite名，同个镜像的suite共用一个文件夹）
+//            TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
+//            // 创建阶段（应用名+镜像名+suite名+第几次）
+//            TestCycleVO testStage = getStage(projectId,
+//                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+//            cycleIds.add(testStage.getCycleId());
+//            //处理Case
+//            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
+//
+//        }
+//        // 若有多个suite，拼接成listStr
+//        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
 
         // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
@@ -545,7 +544,6 @@ public class JsonImportServiceImpl implements JsonImportService {
         TestIssueFolderProDTO targetFolderE;
         TestIssueFolderDTO folderE = new TestIssueFolderDTO();
         folderE.setProjectId(projectId);
-        folderE.setVersionId(versionId);
         folderE.setName(folderName);
         TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
         if (select == null) {
@@ -613,7 +611,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             if (testCycleE.getType().equals(TestCycleType.CYCLE)) {
                 rank = cycleMapper.getCycleLastedRank(testCycleE.getVersionId());
             } else {
-                rank = cycleMapper.getFolderLastedRank(testCycleE.getParentCycleId());
+                rank = cycleMapper.getPlanLastedRank(testCycleE.getParentCycleId());
             }
             testCycleE.setRank(RankUtil.Operation.INSERT.getRank(rank, null));
             cycleMapper.insert(testCycleE);
@@ -676,7 +674,7 @@ public class JsonImportServiceImpl implements JsonImportService {
                     testCycleCaseSteps.add(cycleCaseStepE);
                     if (issueDTO != null) {
                         testCaseStepE.setIssueId(issueDTO.getIssueId());
-                        cycleCaseStepE.setIssueId(issueDTO.getIssueId());
+                        cycleCaseStepE.setCaseId(issueDTO.getIssueId());
                     }
                 }
             }
@@ -795,7 +793,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         if (!"通过".equals(targetStatusE.getStatusName())) {
             JSONObject err = element.getJSONObject("err");
             if (err != null) {
-                testCycleCaseStepE.setComment(err.getString("message"));
+                testCycleCaseStepE.setDescription(err.getString("message"));
             }
         }
 
@@ -862,7 +860,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
             testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
             testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
-            testCycleCaseStepE.setComment(testNgCase.getExceptionMessage());
+            testCycleCaseStepE.setDescription(testNgCase.getExceptionMessage());
             //查询状态
             TestStatusDTO stepStatusE = new TestStatusDTO();
             stepStatusE.setProjectId(0L);
@@ -873,7 +871,7 @@ public class JsonImportServiceImpl implements JsonImportService {
             testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
             if (issueDTO != null) {
                 testCaseStepE.setIssueId(issueDTO.getIssueId());
-                testCycleCaseStepE.setIssueId(issueDTO.getIssueId());
+                testCycleCaseStepE.setCaseId(issueDTO.getIssueId());
             }
             testCaseSteps.add(testCaseStepE);
             testCycleCaseSteps.add(testCycleCaseStepE);

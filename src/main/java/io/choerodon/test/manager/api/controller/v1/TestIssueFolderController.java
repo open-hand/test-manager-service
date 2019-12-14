@@ -9,12 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.core.annotation.Permission;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.base.annotation.Permission;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
 import io.choerodon.test.manager.app.service.TestIssueFolderService;
 
 /**
@@ -25,27 +24,17 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 public class TestIssueFolderController {
 
     @Autowired
-    TestIssueFolderService testIssueFolderService;
+    private TestIssueFolderService testIssueFolderService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
     public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
-        return Optional.ofNullable(testIssueFolderService.getTestIssueFolder(projectId))
+        return Optional.ofNullable(testIssueFolderService.queryTreeFolder(projectId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询version或所有的下文件夹，返回纯数据")
-    @GetMapping("/query/all")
-    public ResponseEntity<List<TestIssueFolderWithVersionNameVO>> queryByParameter(@PathVariable(name = "project_id") Long projectId,
-                                                                                   @RequestParam(name = "versionId", required = false) Long versionId) {
-        return Optional.ofNullable(testIssueFolderService.queryByParameterWithVersionName(projectId, versionId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testIssueFolder.query"));
-
-    }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除文件夹")
@@ -57,12 +46,11 @@ public class TestIssueFolderController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("插入文件夹")
+    @ApiOperation("创建文件夹")
     @PostMapping
-    public ResponseEntity<TestIssueFolderVO> insert(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestIssueFolderVO testIssueFolderVO) {
-        testIssueFolderVO.setProjectId(projectId);
-        return Optional.ofNullable(testIssueFolderService.insert(testIssueFolderVO))
+        return Optional.ofNullable(testIssueFolderService.create(projectId,testIssueFolderVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
@@ -78,21 +66,13 @@ public class TestIssueFolderController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("复制文件夹")
-    @PutMapping("/copy")
-    public ResponseEntity copyFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestParam(name = "versionId") Long versionId,
-                                     @RequestBody Long[] folderIds) {
-        testIssueFolderService.copyFolder(projectId, versionId, folderIds);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
-    public ResponseEntity moveFolder(@PathVariable(name = "project_id") Long projectId,
-                                     @RequestBody List<TestIssueFolderVO> testIssueFolderVOS) {
-        testIssueFolderService.moveFolder(projectId, testIssueFolderVOS);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @RequestParam(name = "targetFolderId") Long targetFolderId,
+                                     @RequestBody TestIssueFolderVO issueFolderVO) {
+        return Optional.ofNullable(testIssueFolderService.moveFolder(projectId,targetFolderId,issueFolderVO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testIssueFolder.move"));
     }
 }

@@ -3,8 +3,7 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
-import io.choerodon.devops.api.vo.ApplicationVersionRepDTO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 
 public interface DevopsService {
 

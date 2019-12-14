@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,9 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
-import io.choerodon.base.annotation.Permission;
-import io.choerodon.base.enums.ResourceType;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO;
+import io.choerodon.core.annotation.Permission;
+import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.BatchCloneCycleVO;
@@ -33,7 +34,7 @@ public class TestCycleController {
     TestCycleService testCycleService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("增加测试循环")
+    @ApiOperation("增加计划文件夹")
     @PostMapping
     public ResponseEntity<TestCycleVO> insert(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCycleVO testCycleVO) {
@@ -43,18 +44,17 @@ public class TestCycleController {
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("删除测试循环")
+    @ApiOperation("删除计划文件夹")
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
                                  @PathVariable(name = "cycleId") Long cycleId) {
-        TestCycleVO cycleDTO = new TestCycleVO();
-        cycleDTO.setCycleId(cycleId);
-        testCycleService.delete(cycleDTO, projectId);
+
+        testCycleService.delete(cycleId, projectId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("修改测试循环")
+    @ApiOperation("修改计划文件夹")
     @PutMapping
     public ResponseEntity<TestCycleVO> update(@PathVariable(name = "project_id") Long projectId,
                                               @RequestBody TestCycleVO testCycleVO) {
@@ -237,6 +237,26 @@ public class TestCycleController {
         return Optional.ofNullable(testCycleService.checkName(projectId, type, cycleName, versionId,parentCycleId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.cycleName.check"));
+    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询树")
+    @GetMapping(value = "/tree")
+    public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
+                                                           @RequestParam("plan_id") Long planId){
+        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId),HttpStatus.OK);
+    }
+
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("移动文件夹")
+    @PutMapping("/move/{cycle_id}")
+    public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
+                                     @PathVariable(name = "cycle_id") Long cycleId,
+                                     @RequestParam(name = "target_cycle_id") Long targetCycleId,
+                                     @RequestParam(name = "lastRank") String lastRank,
+                                     @RequestParam(name = "nextRank") String nextRank) {
+        return Optional.ofNullable(testCycleService.moveCycle(projectId,targetCycleId, cycleId,lastRank,nextRank))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
 
 }

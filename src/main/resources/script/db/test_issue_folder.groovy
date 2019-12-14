@@ -35,4 +35,25 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             createSequence(sequenceName: 'test_issue_folder_s', startValue: "1")
         }
     }
+
+    changeSet(author: 'lizhaozhong@hang-china.com', id: '2019-11-06-add-column_parent_id') {
+        addColumn(tableName: 'test_issue_folder') {
+            column(name: 'parent_id', type: 'BIGINT UNSIGNED', remarks: '父级文件的id', afterColumn: 'folder_id')
+        }
+    }
+    changeSet(id: '2019-11-15-test_issue_folder-drop-index', author: 'lizhaozhong@hang-china.com') {
+        dropIndex(tableName: 'test_issue_folder', indexName: 'uk_version_id_project_id')
+    }
+
+    changeSet(id: '2019-11-29-test-issue-folder-add-index', author: 'fuqianghuang01@gmail.com') {
+        createIndex(tableName: "test_issue_folder", indexName: "idx_parent_id") {
+            column(name: "parent_id")
+        }
+    }
+
+    changeSet(id: '2019-12-11-test-issue-folder-add-rank', author: 'lizhaozhong@gmail.com') {
+        addColumn(tableName: 'test_issue_folder') {
+            column(name: 'rank', type: 'VARCHAR(255)', remarks: 'rank')
+        }
+    }
 }

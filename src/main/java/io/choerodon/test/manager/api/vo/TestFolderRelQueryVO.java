@@ -2,7 +2,7 @@ package io.choerodon.test.manager.api.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 
 public class TestFolderRelQueryVO {
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestAttachmentMapper">
+    <insert id="insertTestCaseAttachment" parameterType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+        <if test="testCaseAttachmentDTO != null">
+            insert into test_case_attachment (attachment_id, case_id, url, file_name,
+                                              project_id, object_version_number,
+                                              created_by, creation_date,
+                                              last_updated_by, last_update_date)
+            values (#{attachmentId}, #{caseId}, #{url}, #{file_name}, #{projectId},
+                    #{objectVersionNumber}, #{createdBy}, #{creationDate}, #{lastUpdatedBy}, #{lastUpdateDate};
+        </if>
+    </insert>
+
+    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO">
+        select * from test_case_attachment
+        where
+        case_id in
+        <foreach collection="caseIds" item="caseId" open="(" close=")" separator=",">
+            #{caseId}
+        </foreach>
+    </select>
+
+
+    <delete id="deleteByCaseId">
+        delete from test_case_attachment
+        where case_id = #{caseId}
+    </delete>
+
+    <insert id="batchInsert">
+    insert into test_case_attachment(case_id, url, file_name,
+    project_id,
+    created_by,
+    last_updated_by)
+    values
+     <foreach collection="list" item="attach" separator=",">
+        ( #{attach.caseId}, #{attach.url}, #{attach.fileName}, #{attach.projectId},
+        #{attach.createdBy},  #{attach.lastUpdatedBy})
+    </foreach>
+    </insert>
+</mapper>

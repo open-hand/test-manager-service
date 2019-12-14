@@ -41,4 +41,12 @@
             #{item}
         </foreach>
     </update>
+
+    <delete id="batchDeleteByExecutIds">
+        delete from test_cycle_case_history where
+        execute_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </delete>
 </mapper>

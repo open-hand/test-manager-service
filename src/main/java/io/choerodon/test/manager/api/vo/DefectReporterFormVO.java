@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
-import io.choerodon.agile.api.vo.IssueListTestVO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueListTestVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 
 /**
@@ -59,7 +59,7 @@ public class DefectReporterFormVO {
         }
 
         for (TestCycleCaseStepVO stepE : testCycleCaseStepES) {
-            stepE.setIssueInfosVO(infos.get(stepE.getIssueId()));
+            stepE.setIssueInfosVO(infos.get(stepE.getCaseId()));
         }
     }
 
@@ -79,7 +79,7 @@ public class DefectReporterFormVO {
 
         for (TestCycleCaseStepVO stepE : testCycleCaseStepES) {
             for (IssueLinkDTO link : issueLinkDTOS) {
-                if (stepE.getIssueId().equals(link.getIssueId())) {
+                if (stepE.getCaseId().equals(link.getIssueId())) {
                     stepE.addIssueLinkDTOS(link);
                 }
             }

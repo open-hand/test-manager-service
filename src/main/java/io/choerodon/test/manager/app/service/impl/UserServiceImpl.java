@@ -5,15 +5,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
-import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
@@ -38,8 +39,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<PageInfo<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
-        return baseFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
+    public ResponseEntity<PageInfo<UserDTO>> list(Pageable pageable, Long projectId, String param, Long userId) {
+        return baseFeignClient.list(projectId, pageable.getPageNumber(), pageable.getPageSize());
     }
 
     public void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto) {
@@ -76,5 +77,24 @@ public class UserServiceImpl implements UserService {
                 v.setCreateUser(user.get(v.getCreatedBy()));
             }
         });
+    }
+
+    @Override
+    public Map<Long, UserMessageDTO> queryUsersMap(List<Long> assigneeIdList) {
+        if (assigneeIdList == null) {
+            return new HashMap<>();
+        }
+        Map<Long, UserMessageDTO> userMessageMap = new HashMap<>(assigneeIdList.size());
+        if (!assigneeIdList.isEmpty()) {
+            Long[] assigneeIds = new Long[assigneeIdList.size()];
+            assigneeIdList.toArray(assigneeIds);
+            List<UserDO> userDTOS = baseFeignClient.listUsersByIds(assigneeIds, false).getBody();
+            userDTOS.forEach(userDO -> {
+                String ldapName = userDO.getRealName() + "（" + userDO.getLoginName() + "）";
+                String noLdapName = userDO.getRealName() + "（" + userDO.getEmail() + "）";
+                userMessageMap.put(userDO.getId(), new UserMessageDTO(userDO.getLdap() ? ldapName : noLdapName, userDO.getLoginName(), userDO.getRealName(), userDO.getImageUrl(), userDO.getEmail(), userDO.getLdap()));
+            });
+        }
+        return userMessageMap;
     }
 }

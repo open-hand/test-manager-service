@@ -1,8 +1,17 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
+import java.util.Map;
+
+import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import org.springframework.data.domain.Pageable;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestStatusVO;
+import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -15,7 +24,7 @@ public interface TestCycleCaseStepService {
      * @param testCycleCaseStepVO
      * @return
      */
-    List<TestCycleCaseStepVO> update(List<TestCycleCaseStepVO> testCycleCaseStepVO);
+    void update(TestCycleCaseStepVO testCycleCaseStepVO);
 
     /**
      * 查询循环测试步骤
@@ -26,4 +35,54 @@ public interface TestCycleCaseStepService {
      * @return TestCycleCaseStepVO
      */
     List<TestCycleCaseStepVO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
+
+    /**
+     * 查询用例下的步骤
+     *
+     * @param CycleCaseId
+     * @param projectId
+     * @return
+     */
+    PageInfo<TestCycleCaseStepVO> queryCaseStep(Long CycleCaseId, Long projectId, Pageable pageable);
+
+
+    void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);
+
+    void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO);
+
+    void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
+
+    void delete(Long executeStepId);
+
+    void create(TestCycleCaseStepVO testCycleCaseStepVO);
+
+    /**
+     * 将测试用例步骤 转为执行步骤
+     *
+     * @param testCycleCaseDTOList
+     * @param caseStepMap
+     */
+    void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOList, Map<Long, List<TestCaseStepDTO>> caseStepMap);
+
+    /**
+     * 批量删除
+     *
+     * @param executeStepIds
+     */
+    void batchDelete(List<Long> executeStepIds);
+
+    /**
+     * 批量创建
+     */
+    void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
+
+    /**
+     * 用例库测试步骤更新到测试执行
+     *
+     * @param testCycleCaseDTO
+     * @param testCaseDTO
+     */
+    void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO);
+
+    void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
 }

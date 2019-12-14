@@ -42,4 +42,18 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: "execute_id")
         }
     }
+
+    changeSet(id: '2019-11-27-add-column', author: 'zhaotianxin') {
+        addColumn(tableName:'test_cycle_case_step'){
+            column(name:'test_step',type:'varchar(300)',remarks: '测试步骤')
+            column(name:'test_data',type:'varchar(300)',remarks: '测试数据')
+            column(name:'expect_result',type:'varchar(300)',remarks: '预期结果')
+        }
+    }
+
+    changeSet(id: '2019-12-6-add-column-rank', author:'lizhaozhong') {
+        addColumn(tableName:'test_cycle_case_step'){
+            column(name:'rank',type:'varchar(255)',remarks: 'rank')
+        }
+    }
 }

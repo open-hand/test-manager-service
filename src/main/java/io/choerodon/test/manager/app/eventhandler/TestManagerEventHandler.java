@@ -1,30 +1,27 @@
 package io.choerodon.test.manager.app.eventhandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
+import io.choerodon.test.manager.api.vo.TestPlanVO;
+import io.choerodon.test.manager.api.vo.event.ProjectEvent;
+import io.choerodon.test.manager.infra.constant.SagaTaskCodeConstants;
+import io.choerodon.test.manager.infra.constant.SagaTopicCodeConstants;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
+import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.choerodon.asgard.saga.annotation.SagaTask;
-import io.choerodon.test.manager.api.vo.TestCaseStepVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderRelVO;
 import io.choerodon.test.manager.app.service.*;
-import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
-import io.choerodon.test.manager.domain.test.manager.event.InstancePayload;
-import io.choerodon.test.manager.domain.test.manager.event.IssuePayload;
-import io.choerodon.test.manager.domain.test.manager.event.VersionEvent;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.infra.enums.TestIssueFolderType;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
+import io.choerodon.test.manager.api.vo.event.InstancePayload;
 
 /**
  * Created by WangZhe@choerodon.io on 2018/6/25.
@@ -33,17 +30,21 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
 @Component
 public class TestManagerEventHandler {
 
-    @Autowired
-    private TestIssueFolderRelService testIssueFolderRelService;
+    public static final String TASK_PROJECT_CREATE = "test-create-project";
 
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
+    public static final String PROJECT_CREATE = "iam-create-project";
 
-    @Autowired
-    private TestCaseStepService testCaseStepService;
-
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
+//    @Autowired
+//    private TestIssueFolderRelService testIssueFolderRelService;
+//
+//    @Autowired
+//    private TestCycleCaseService testCycleCaseService;
+//
+//    @Autowired
+//    private TestCaseStepService testCaseStepService;
+//
+//    @Autowired
+//    private TestIssueFolderService testIssueFolderService;
 
     @Autowired
     private TestAppInstanceService testAppInstanceService;
@@ -52,87 +53,111 @@ public class TestManagerEventHandler {
     private TestAutomationHistoryService testAutomationHistoryService;
 
     @Autowired
-    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
+    private TestProjectInfoService testProjectInfoService;
+
+    @Autowired
+    private TestPlanServcie testPlanServcie;
+
+    @Autowired
+    private TestPlanMapper testPlanMapper;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+//    @Autowired
+//    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestManagerEventHandler.class);
 
-    private void loggerInfo(Object o) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.info("data: {}", o);
-        }
-    }
+//    private void loggerInfo(Object o) {
+//        if (LOGGER.isDebugEnabled()) {
+//            LOGGER.info("data: {}", o);
+//        }
+//    }
 
-    /**
-     * 创建临时循环事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-create-version",
-            description = "创建临时循环事件",
-            sagaCode = "agile-create-version",
-            //enabledDbRecord = true,
-            seq = 1)
-    public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
-        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
-        loggerInfo(versionEvent);
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-        testIssueFolderVO.setType(TestIssueFolderType.TYPE_TEMP);
-        testIssueFolderVO.setProjectId(versionEvent.getProjectId());
-        testIssueFolderVO.setVersionId(versionEvent.getVersionId());
-        testIssueFolderVO.setName("临时");
-        testIssueFolderService.insert(testIssueFolderVO);
-        return versionEvent;
-    }
+//    /**
+//     * 创建临时循环事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-create-version",
+//            description = "创建临时循环事件",
+//            sagaCode = "agile-create-version",
+//            //enabledDbRecord = true,
+//            seq = 1)
+//    public VersionEvent handleProjectVersionCreateEvent(String message) throws IOException {
+//        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+//        loggerInfo(versionEvent);
+//        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+//        testIssueFolderVO.setType(TestIssueFolderType.TYPE_TEMP);
+//        testIssueFolderVO.setProjectId(versionEvent.getProjectId());
+//        testIssueFolderVO.setVersionId(versionEvent.getVersionId());
+//        testIssueFolderVO.setName("临时");
+//        testIssueFolderService.create(versionEvent.getProjectId(),testIssueFolderVO);
+//        return versionEvent;
+//    }
+//
+//    /**
+//     * 版本删除事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-delete-version",
+//            description = "删除version事件，删除相关测试数据",
+//            sagaCode = "agile-delete-version",
+//            //enabledDbRecord = true,
+//            seq = 1)
+//    public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
+//        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
+//        loggerInfo(versionEvent);
+//        List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(), versionEvent.getVersionId());
+//        testIssueFolderVOS.forEach(v -> testIssueFolderService.delete(versionEvent.getProjectId(), v.getFolderId()));
+//        return versionEvent;
+//    }
+//
+//    /**
+//     * 问题删除事件
+//     *
+//     * @param message
+//     */
+//    @SagaTask(code = "test-delete-issue",
+//            description = "删除issue事件，删除相关测试数据",
+//            sagaCode = "agile-delete-issue",
+//            // enabledDbRecord = true,
+//            seq = 1)
+//    public IssuePayload handleProjectIssueDeleteEvent(String message) throws IOException {
+//        IssuePayload issuePayload = objectMapper.readValue(message, IssuePayload.class);
+//        TestCycleCaseDefectRelDTO defectRelE = new TestCycleCaseDefectRelDTO();
+//        defectRelE.setIssueId(issuePayload.getIssueId());
+//        testCycleCaseDefectRelMapper.delete(defectRelE);
+//        TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
+//        testCycleCaseVO.setIssueId(issuePayload.getIssueId());
+//        testCycleCaseService.batchDelete(testCycleCaseVO, issuePayload.getProjectId());
+//
+//        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
+//        testIssueFolderRelVO.setIssueId(issuePayload.getIssueId());
+//
+//        List<Long> issuesId = Lists.newArrayList(issuePayload.getIssueId());
+//        testIssueFolderRelService.delete(issuePayload.getProjectId(), issuesId);
+//
+//        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
+//        testCaseStepVO.setIssueId(issuePayload.getIssueId());
+//        testCaseStepService.removeStep(testCaseStepVO);
+//        return issuePayload;
+//    }
 
-    /**
-     * 版本删除事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-delete-version",
-            description = "删除version事件，删除相关测试数据",
-            sagaCode = "agile-delete-version",
-            //enabledDbRecord = true,
-            seq = 1)
-    public VersionEvent handleProjectVersionDeleteEvent(String message) throws IOException {
-        VersionEvent versionEvent = objectMapper.readValue(message, VersionEvent.class);
-        loggerInfo(versionEvent);
-        List<TestIssueFolderVO> testIssueFolderVOS = testIssueFolderService.queryByParameter(versionEvent.getProjectId(), versionEvent.getVersionId());
-        testIssueFolderVOS.forEach(v -> testIssueFolderService.delete(versionEvent.getProjectId(), v.getFolderId()));
-        return versionEvent;
-    }
 
-    /**
-     * 问题删除事件
-     *
-     * @param message
-     */
-    @SagaTask(code = "test-delete-issue",
-            description = "删除issue事件，删除相关测试数据",
-            sagaCode = "agile-delete-issue",
-            // enabledDbRecord = true,
-            seq = 1)
-    public IssuePayload handleProjectIssueDeleteEvent(String message) throws IOException {
-        IssuePayload issuePayload = objectMapper.readValue(message, IssuePayload.class);
-        TestCycleCaseDefectRelDTO defectRelE = new TestCycleCaseDefectRelDTO();
-        defectRelE.setIssueId(issuePayload.getIssueId());
-        testCycleCaseDefectRelMapper.delete(defectRelE);
-        TestCycleCaseVO testCycleCaseVO = new TestCycleCaseVO();
-        testCycleCaseVO.setIssueId(issuePayload.getIssueId());
-        testCycleCaseService.batchDelete(testCycleCaseVO, issuePayload.getProjectId());
-
-        TestIssueFolderRelVO testIssueFolderRelVO = new TestIssueFolderRelVO();
-        testIssueFolderRelVO.setIssueId(issuePayload.getIssueId());
-
-        List<Long> issuesId = Lists.newArrayList(issuePayload.getIssueId());
-        testIssueFolderRelService.delete(issuePayload.getProjectId(), issuesId);
-
-        TestCaseStepVO testCaseStepVO = new TestCaseStepVO();
-        testCaseStepVO.setIssueId(issuePayload.getIssueId());
-        testCaseStepService.removeStep(testCaseStepVO);
-        return issuePayload;
+    @SagaTask(code = TASK_PROJECT_CREATE,
+            description = "test消费创建项目事件初始化项目数据",
+            sagaCode = PROJECT_CREATE,
+            seq = 2)
+    public String handleProjectInitByConsumeSagaTask(String message) {
+        ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
+        LOGGER.info("接受创建项目消息{}", message);
+        testProjectInfoService.initializationProjectInfo(projectEvent);
+        return message;
     }
 
     @SagaTask(code = "test-start-instance", description = "更新Appinstance状态", sagaCode = "test-pod-update-saga", seq = 1)
@@ -165,4 +190,36 @@ public class TestManagerEventHandler {
             testAutomationHistoryService.shutdownInstance(instanceId, u.getStatus());
         });
     }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
+    public void createPlan(String message) throws IOException {
+        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+        try {
+            testPlanServcie.sagaCreatePlan(testPlanVO);
+        } catch (Exception e) {
+            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
+            throw e;
+        }
+
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
+    public void clonePlan(String message) throws IOException {
+        Map<String, Integer> map = null ;
+        try {
+            map = (Map<String, Integer>) objectMapper.readValue(message, Map.class);
+            testPlanServcie.sagaClonePlan(map);
+        } catch (Exception e) {
+            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()),TestPlanVO.class));
+            throw e;
+        }
+    }
+
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
+    public void changeStatusFail(String message) throws IOException {
+        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+        testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
+        testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
+    }
+
 }

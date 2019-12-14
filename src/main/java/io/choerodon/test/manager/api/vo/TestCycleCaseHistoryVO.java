@@ -4,7 +4,7 @@ import java.util.Date;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

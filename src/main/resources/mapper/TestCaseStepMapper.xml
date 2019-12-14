@@ -62,11 +62,11 @@ ORDER BY
 
     <insert id="batchInsertTestCaseSteps" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="stepId">
         INSERT INTO test_case_step(rank, issue_id, test_step, test_data, expected_result, object_version_number,
-        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        created_by, last_updated_by) VALUES
         <foreach collection="list" item="testCaseStep" separator=",">
             (#{testCaseStep.rank}, #{testCaseStep.issueId}, #{testCaseStep.testStep}, #{testCaseStep.testData},
-            #{testCaseStep.expectedResult}, 1, #{testCaseStep.createdBy}, #{testCaseStep.creationDate},
-            #{testCaseStep.lastUpdatedBy}, #{testCaseStep.lastUpdateDate})
+            #{testCaseStep.expectedResult}, 1, #{testCaseStep.createdBy},
+            #{testCaseStep.lastUpdatedBy})
         </foreach>
     </insert>
 
@@ -79,4 +79,19 @@ ORDER BY
             #{item}
         </foreach>
     </update>
+
+    <select id="listByCaseIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
+        select * from test_case_step
+        where
+        issue_id IN
+        <foreach item="caseId" index="index" collection="caseIds"
+                 open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </select>
+
+    <delete id="deleteByCaseId">
+        delete from test_case_step
+        where issue_id = #{caseId}
+    </delete>
 </mapper>

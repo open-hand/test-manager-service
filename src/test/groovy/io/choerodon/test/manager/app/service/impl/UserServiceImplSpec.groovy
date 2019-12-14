@@ -1,16 +1,15 @@
 package io.choerodon.test.manager.app.service.impl
 
-
-import io.choerodon.agile.api.vo.UserDO
-import io.choerodon.agile.api.vo.UserDTO
 import com.github.pagehelper.PageInfo
-import io.choerodon.base.domain.PageRequest
+import io.choerodon.test.manager.api.vo.agile.UserDO
+import io.choerodon.test.manager.api.vo.agile.UserDTO
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO
-import io.choerodon.test.manager.infra.util.LongUtils
 import io.choerodon.test.manager.infra.feign.BaseFeignClient
+import io.choerodon.test.manager.infra.util.LongUtils
 import org.assertj.core.util.Lists
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
@@ -39,7 +38,7 @@ class UserServiceImplSpec extends Specification {
 
     def "List"() {
         given:
-        PageRequest pr = new PageRequest(1,1)
+        PageRequest pr = new PageRequest(1, 1)
         UserDTO user = new UserDTO(id: 1L)
 
         PageInfo<UserDTO> page1 = new PageInfo<>(Lists.newArrayList(user))

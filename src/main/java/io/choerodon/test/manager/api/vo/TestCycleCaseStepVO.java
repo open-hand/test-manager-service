@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -23,13 +23,10 @@ public class TestCycleCaseStepVO {
     private Long stepId;
 
     @ApiModelProperty(value = "描述")
-    private String comment;
+    private String description;
 
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
-
-    @ApiModelProperty(value = "循环ID")
-    private Long cycleId;
 
     @ApiModelProperty(value = "步骤状态ID")
     private Long stepStatus;
@@ -50,7 +47,7 @@ public class TestCycleCaseStepVO {
     private List<TestCycleCaseAttachmentRelVO> stepAttachment;
 
     @ApiModelProperty(value = "用例issueID")
-    private Long issueId;
+    private Long caseId;
 
     @ApiModelProperty(value = "缺陷DTOList")
     private List<TestCycleCaseDefectRelVO> defects;
@@ -61,8 +58,14 @@ public class TestCycleCaseStepVO {
     @ApiModelProperty(value = "状态名")
     private String statusName;
 
-    @ApiModelProperty(value = "循环名称")
-    private String cycleName;
+    @ApiModelProperty(value = "rank")
+    private String rank;
+
+    @ApiModelProperty(value = "上一位排序值")
+    private String lastRank;
+
+    @ApiModelProperty(value = "后一位排序值")
+    private String nextRank;
 
     public IssueInfosVO getIssueInfosVO() {
         return issueInfosVO;
@@ -70,14 +73,6 @@ public class TestCycleCaseStepVO {
 
     public void setIssueInfosVO(IssueInfosVO issueInfosVO) {
         this.issueInfosVO = issueInfosVO;
-    }
-
-    public Long getCycleId() {
-        return cycleId;
-    }
-
-    public void setCycleId(Long cycleId) {
-        this.cycleId = cycleId;
     }
 
     public String getTestStep() {
@@ -143,12 +138,12 @@ public class TestCycleCaseStepVO {
         this.stepId = stepId;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getObjectVersionNumber() {
@@ -176,12 +171,12 @@ public class TestCycleCaseStepVO {
         return defects;
     }
 
-    public Long getIssueId() {
-        return issueId;
+    public Long getCaseId() {
+        return caseId;
     }
 
-    public void setIssueId(Long issueId) {
-        this.issueId = issueId;
+    public void setCaseId(Long caseId) {
+        this.caseId = caseId;
     }
 
     public Long getStepStatus() {
@@ -200,11 +195,27 @@ public class TestCycleCaseStepVO {
         this.statusName = statusName;
     }
 
-    public String getCycleName() {
-        return cycleName;
+    public String getRank() {
+        return rank;
     }
 
-    public void setCycleName(String cycleName) {
-        this.cycleName = cycleName;
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public String getLastRank() {
+        return lastRank;
+    }
+
+    public void setLastRank(String lastRank) {
+        this.lastRank = lastRank;
+    }
+
+    public String getNextRank() {
+        return nextRank;
+    }
+
+    public void setNextRank(String nextRank) {
+        this.nextRank = nextRank;
     }
 }

@@ -48,7 +48,6 @@
         <id column="created_by" property="createdBy"/>
         <id column="rank" property="rank"/>
     </resultMap>
-
     <select id="queryOneCycleBar" resultMap="queryAboutBarResultMap">
         SELECT
             cycle1.cycle_id,
@@ -256,14 +255,13 @@
             LIMIT 1
     </select>
 
-    <select id="getFolderLastedRank" resultType="java.lang.String">
+    <select id="getPlanLastedRank" resultType="java.lang.String">
         SELECT
             rank
         FROM
             test_cycle
         WHERE
-            parent_cycle_id = #{cycleId}
-            AND type = 'folder'
+           plan_id=#{planId}
         ORDER BY
             rank DESC
             LIMIT 1
@@ -321,6 +319,109 @@
         <foreach item="item" index="index" collection="cycleIds"
                  open="(" separator="," close=")">
             #{item}
+        </foreach>
+    </update>
+
+    <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+      select * from test_cycle
+      <where>
+          <if  test="type != null and type != ''">
+           and   type = #{type}
+          </if>
+          <if test="planIds.size > 0">
+            and
+            plan_id in
+            <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
+                  #{planId}
+            </foreach>
+          </if>
+      </where>
+    </select>
+
+    <!--<delete id="deleteByType">-->
+        <!--DELETE-->
+        <!--FROM-->
+            <!--test_cycle-->
+        <!--WHERE-->
+            <!--type = 'cycle'-->
+    <!--</delete>-->
+
+    <select id="selectRepeat" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+        SELECT
+            project_id,
+            version_id,
+            folder_id
+        FROM
+            test_cycle
+        WHERE type = 'folder' AND folder_id is not null AND folder_id != 0
+        GROUP BY
+            project_id,
+            version_id,
+            folder_id
+        HAVING
+            count(*) > 1
+    </select>
+
+    <delete id="deleteRepeat"  >
+        DELETE
+        FROM
+            test_cycle
+        WHERE
+            project_id = #{projectId}
+            AND folder_id = #{folderId}
+            AND version_id = #{versionId}
+            AND cycle_id NOT IN (
+                SELECT
+                    c.cycle_id
+                FROM
+                    (
+                        SELECT
+                            max(tc2.cycle_id) AS cycle_id
+                        FROM
+                            test_cycle tc2
+                        WHERE
+                            tc2.project_id = #{projectId}
+                            AND tc2.folder_id = #{folderId}
+                            AND tc2.version_id = #{versionId}
+                    ) c
+        )
+    </delete>
+
+    <update id="fixPlanId">
+        UPDATE test_cycle
+        SET plan_id = #{planId}
+        WHERE
+            version_id = #{versionId}
+    </update>
+
+    <select id="selectVersionId" resultType="Long">
+        SELECT DISTINCT version_id FROM `test_cycle`
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="cycleId">
+        insert into test_cycle(cycle_name,plan_id,project_id,rank,folder_id,last_updated_by,created_by,type,from_date,to_date,version_id,parent_cycle_id)
+        values
+        <foreach collection="list" item="testCycle"  separator=",">
+            (#{testCycle.cycleName},#{testCycle.planId},#{testCycle.projectId},#{testCycle.rank},#{testCycle.folderId},#{testCycle.lastUpdatedBy}
+            ,#{testCycle.createdBy},#{testCycle.type},#{testCycle.fromDate},#{testCycle.toDate},#{testCycle.versionId},#{testCycle.parentCycleId})
+        </foreach>
+    </insert>
+
+    <delete id="batchDelete">
+        delete from test_cycle
+        where
+        cycle_id in
+        <foreach collection="list" item="cycleId" open="(" close=")" separator=",">
+            #{cycleId}
+        </foreach>
+    </delete>
+
+    <update id="fixRank">
+        <foreach collection="list" item="cycle" index="index" open="" close="" separator=";">
+            update test_cycle set rank=#{cycle.rank}
+            <where>
+                cycle_id=#{cycle.cycleId}
+            </where>
         </foreach>
     </update>
 </mapper>

@@ -6,7 +6,7 @@
         <id column="execute_step_id" property="executeStepId"/>
         <id column="execute_id" property="executeId"/>
         <id column="step_id" property="stepId"/>
-        <id column="description" property="comment"/>
+        <id column="description" property="description"/>
         <id column="object_version_number" property="objectVersionNumber"/>
         <id column="parent_step_id" property="parentStepId"/>
         <id column="test_step" property="testStep"/>
@@ -14,8 +14,10 @@
         <id column="step_status" property="stepStatus"/>
         <id column="cycle_name" property="cycleName"/>
         <id column="cycle_id" property="cycleId"/>
-        <id column="issue_id" property="issueId"/>
-        <id column="expected_result" property="expectedResult"/>
+        <id column="case_id" property="caseId"/>
+        <id column="expect_result" property="expectedResult"/>
+        <id column="status_name" property="statusName"/>
+        <id column="status_color" property="statusColor"/>
 
         <collection property="stepAttachment"
                     ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
@@ -43,7 +45,7 @@
         test.object_version_number,
         test.test_step,
         test.test_data,
-        test.expected_result,
+        test.expect_result,
         defect.defect_type,
         defect.id defece_id,
         defect.defect_link_id,
@@ -62,10 +64,10 @@
         cycle.description,
         cycle.step_status,
         cycle.object_version_number,
-        step.test_step,
-        step.test_data,
-        step.expected_result,
-        step.rank
+        cycle.test_step,
+        cycle.test_data,
+        cycle.expect_result,
+        cycle.rank
         FROM
         ( select * from test_cycle_case_step
         <where>
@@ -161,7 +163,7 @@
     </select>
 
     <select id="queryCycleCaseForReporter" resultMap="BaseResultMap">
-        select step.step_status,step.execute_id,step.execute_step_id,case1.issue_id,cycle.cycle_name,case_step.test_step,case1.cycle_id
+        select step.step_status,step.execute_id,step.execute_step_id,case1.case_id,cycle.cycle_name,case_step.test_step,case1.cycle_id
         from test_cycle_case_step step
         left join test_cycle_case case1 on case1.execute_id=step.execute_id
         left join test_cycle cycle on case1.cycle_id=cycle.cycle_id
@@ -175,10 +177,11 @@
 
     <insert id="batchInsertTestCycleCaseSteps" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="executeStepId">
         INSERT INTO test_cycle_case_step(execute_id, step_id, description, step_status, object_version_number,
-        created_by, creation_date, last_updated_by, last_update_date) VALUES
+        created_by,  last_updated_by, test_step,test_data,expect_result,rank) VALUES
         <foreach collection="list" item="cycleCaseStep" separator=",">
             (#{cycleCaseStep.executeId}, #{cycleCaseStep.stepId}, #{cycleCaseStep.description}, #{cycleCaseStep.stepStatus},
-            1, #{cycleCaseStep.createdBy}, #{cycleCaseStep.creationDate}, #{cycleCaseStep.lastUpdatedBy}, #{cycleCaseStep.lastUpdateDate})
+            1, #{cycleCaseStep.createdBy},  #{cycleCaseStep.lastUpdatedBy}
+            , #{cycleCaseStep.testStep},#{cycleCaseStep.testData},#{cycleCaseStep.expectedResult},#{cycleCaseStep.rank})
         </foreach>
     </insert>
 
@@ -191,4 +194,99 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="querListByexecuteId" resultMap="BaseResultMap">
+        SELECT
+        tccs.execute_step_id,
+        tccs.execute_id,
+        tccs.test_step,
+        tccs.test_data,
+        tccs.expect_result,
+        tccs.rank,
+        tccs.step_id,
+        ts.status_color,
+        ts.status_name ,
+        tccar.attachment_name,
+        tccar.url,
+        tccdr.defect_type
+        FROM
+            `test_cycle_case_step` tccs
+        LEFT JOIN test_cycle_case_attach_rel tccar ON tccar.attachment_link_id = tccs.execute_id
+        LEFT JOIN test_cycle_case_defect_rel tccdr ON tccdr.defect_link_id = tccs.execute_id
+        LEFT JOIN test_status ts ON ts.status_id = tccs.step_status
+        WHERE
+            tccs.execute_id = #{executeId}  ORDER BY
+        tccs.rank asc
+    </select>
+
+    <delete id="batchDeleteTestCycleCaseSteps">
+        DELETE
+        FROM
+            test_cycle_case_step
+        WHERE
+	    execute_step_id IN
+	    <foreach collection="executeStepIds" index="index" item="executeStepId"
+                 open="(" separator="," close=")">
+            #{executeStepId}
+        </foreach>
+    </delete>
+
+    <select id="getLastedRank" resultType="java.lang.String">
+        SELECT
+            rank
+        FROM
+            test_cycle_case_step
+        WHERE
+            execute_id = #{executeId}
+        ORDER BY
+            rank DESC
+            LIMIT 1
+    </select>
+    <update id="fixCycleCaseStep">
+        UPDATE test_cycle_case_step tccs SET tccs.test_step = (
+            SELECT
+                tcs.test_step FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id),
+         tccs.test_data = (
+            SELECT tcs.test_data FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id),
+         tccs.expect_result = (
+            SELECT tcs.expected_result FROM test_case_step tcs WHERE tccs.step_id = tcs.step_id)
+    </update>
+    <update id="fixCycleCaseStepRank">
+        UPDATE test_cycle_case_step tccs
+        SET rank = (
+            SELECT
+                rank
+            FROM
+                `test_case_step` tcs
+            WHERE
+                tccs.step_id = tcs.step_id
+        )
+    </update>
+
+    <delete id="batchDeleteByExecutIds">
+        delete from test_cycle_case_step where
+        execute_id in
+        <foreach collection="list" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </delete>
+
+    <select id="listByexecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        select  * from test_cycle_case_step
+        where
+        execute_id in
+        <foreach collection="ids" item="executId" open="(" close=")" separator=",">
+            #{executId}
+        </foreach>
+    </select>
+    <select id="selectByexecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        SELECT
+            tccs.*
+        FROM
+            test_cycle_case_step tccs
+        WHERE
+            tccs.execute_id = #{executeId}
+        ORDER BY
+            rank
+    </select>
 </mapper>

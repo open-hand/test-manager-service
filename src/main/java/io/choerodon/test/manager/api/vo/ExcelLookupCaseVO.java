@@ -2,7 +2,10 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.List;
 
-import io.choerodon.agile.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.IssueStatusDTO;
+import io.choerodon.test.manager.api.vo.agile.LookupValueDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 18/10/2018

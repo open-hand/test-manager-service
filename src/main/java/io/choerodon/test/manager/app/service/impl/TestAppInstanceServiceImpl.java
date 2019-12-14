@@ -4,19 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
-import io.choerodon.base.domain.PageRequest;
-import io.choerodon.base.domain.Sort;
+import io.choerodon.test.manager.infra.util.TypeUtil;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.devops.api.vo.AppServiceDeployVO;
-import io.choerodon.devops.api.vo.ErrorLineVO;
-import io.choerodon.devops.api.vo.InstanceValueVO;
-import io.choerodon.devops.infra.common.utils.TypeUtil;
+import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
+import io.choerodon.test.manager.api.vo.devops.ErrorLineVO;
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.app.service.ScheduleService;
@@ -320,9 +321,9 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     private List<TestEnvCommandDTO> queryEnvCommand(TestEnvCommandDTO envCommand) {
-        PageRequest pageRequest = new PageRequest(1, 99999999, Sort.Direction.DESC, "creation_date");
-        PageInfo<TestEnvCommandDTO> pageInfo = PageHelper.startPage(pageRequest.getPage(),
-                pageRequest.getSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
+        Pageable pageable = PageRequest.of(1, 99999999, Sort.Direction.DESC, "creation_date");
+        PageInfo<TestEnvCommandDTO> pageInfo = PageHelper.startPage(pageable.getPageNumber(),
+                pageable.getPageSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
 
         return pageInfo.getList();
     }

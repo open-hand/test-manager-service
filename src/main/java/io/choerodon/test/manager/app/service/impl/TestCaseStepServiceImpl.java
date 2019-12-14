@@ -2,8 +2,11 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
+import io.choerodon.test.manager.app.service.TestCaseService;
+import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.mapper.*;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -12,26 +15,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseStepProDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
-import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
-import io.choerodon.test.manager.infra.mapper.TestCaseStepMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseDefectRelMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
 @Component
+@Transactional(rollbackFor = Exception.class)
 public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     private static final String ERROR_STEP_ID_NOT_NULL = "error.case.step.insert.stepId.should.be.null";
@@ -51,18 +48,24 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void removeStep(TestCaseStepVO testCaseStepVO) {
-        Assert.notNull(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class), "error.case.step.remove.param.not.null");
-        Optional.ofNullable(testCaseStepMapper.query(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class))).ifPresent(m ->
-                m.forEach(v -> {
-                    deleteCycleCaseStep(v);
-                    attachmentRelService.delete(v.getStepId(), TestAttachmentCode.ATTACHMENT_CASE_STEP);
-                })
-        );
+    @Autowired
+    private TestCaseService testCaseService;
 
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
+
+    @Autowired
+    private TestCaseAssembler testCaseAssembler;
+
+    @Override
+    public void removeStep(Long projectId,TestCaseStepVO testCaseStepVO) {
+        Assert.notNull(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class), "error.case.step.remove.param.not.null");
         testCaseStepMapper.delete(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));
+        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+        }
     }
 
 
@@ -73,9 +76,8 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         }.getType());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId) {
+    public TestCaseStepVO changeStep(TestCaseStepVO testCaseStepVO, Long projectId,Boolean changeVersionNum) {
         Assert.notNull(testCaseStepVO, "error.case.change.step.param.not.null");
         TestCaseStepProDTO testCaseStepProDTO = modelMapper.map(testCaseStepVO, TestCaseStepProDTO.class);
         TestCaseStepDTO testCaseStepDTO;
@@ -84,10 +86,16 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         } else {
             testCaseStepDTO = changeOneStep(testCaseStepProDTO);
         }
+        if (changeVersionNum) {
+           testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
+           List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
+           if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+                testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+           }
+        }
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public TestCaseStepVO clone(TestCaseStepVO testCaseStepVO, Long projectId) {
         List<TestCaseStepDTO> steps = testCaseStepMapper.query(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));
@@ -99,7 +107,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseStepProDTO.setObjectVersionNumber(null);
         testCaseStepProDTO.setLastRank(testCaseStepVO.getLastRank());
         testCaseStepProDTO.setNextRank(testCaseStepVO.getNextRank());
-        return changeStep(modelMapper.map(testCaseStepProDTO, TestCaseStepVO.class), projectId);
+        return changeStep(modelMapper.map(testCaseStepProDTO, TestCaseStepVO.class), projectId,true);
     }
 
     /**
@@ -107,7 +115,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
      * @param issueId        要被插入数据的issueid
      * @param projectId
      */
-    @Transactional
     @Override
     public List<TestCaseStepVO> batchClone(TestCaseStepVO testCaseStepVO, Long issueId, Long projectId) {
         List<TestCaseStepDTO> steps = testCaseStepMapper.select(modelMapper.map(testCaseStepVO, TestCaseStepDTO.class));
@@ -116,22 +123,16 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
             v.setStepId(null);
             v.setIssueId(issueId);
             v.setObjectVersionNumber(null);
-            TestCaseStepVO resCaseStepDTO = changeStep(modelMapper.map(v, TestCaseStepVO.class), projectId);
+            TestCaseStepVO resCaseStepDTO = changeStep(modelMapper.map(v, TestCaseStepVO.class), projectId,false);
             testCaseStepVOS.add(resCaseStepDTO);
         });
-        return testCaseStepVOS;
-    }
 
-    private void deleteCycleCaseStep(TestCaseStepDTO testCaseStepDTO) {
-        TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO();
-        testCycleCaseStepDTO.setStepId(testCaseStepDTO.getStepId());
-        Optional.ofNullable(testCycleCaseStepMapper.select(testCycleCaseStepDTO)).ifPresent(
-                m -> m.forEach(v -> {
-                    attachmentRelService.delete(v.getExecuteStepId(), TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
-                    deleteLinkedDefect(v.getExecuteStepId());
-                })
-        );
-        testCycleCaseStepMapper.delete(testCycleCaseStepDTO);
+        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+        }
+        return testCaseStepVOS;
     }
 
     private void deleteLinkedDefect(Long stepId) {
@@ -149,9 +150,27 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         if (testCaseStepProDTO.getLastRank() == null) {
             testCaseStepProDTO.setLastRank(getLastedStepRank(testCaseStepProDTO.getIssueId()));
         }
-
         testCaseStepProDTO.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         return baseInsert(testCaseStepProDTO);
+    }
+
+    @Override
+    public void removeStepByIssueId(Long projectId,Long caseId) {
+        // 查询是否含有步骤，又步骤再删除
+        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
+        testCaseStepDTO.setIssueId(caseId);
+        List<TestCaseStepDTO> list = testCaseStepMapper.query(testCaseStepDTO);
+        if(CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        list.forEach(v -> {
+            removeStep(projectId,modelMapper.map(v,TestCaseStepVO.class));
+        });
+    }
+
+    @Override
+    public List<TestCaseStepDTO> listByCaseIds(List<Long> caseIds) {
+        return testCaseStepMapper.listByCaseIds(caseIds);
     }
 
     private String getLastedStepRank(Long issueId) {
@@ -170,10 +189,10 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     private TestCaseStepDTO changeOneStep(TestCaseStepProDTO testCaseStepProDTO) {
         if (!StringUtils.isEmpty(testCaseStepProDTO.getLastRank()) || !StringUtils.isEmpty(testCaseStepProDTO.getNextRank())) {
-            testCaseStepProDTO.setLastRank(RankUtil.Operation.UPDATE.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
+            testCaseStepProDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCaseStepProDTO.getLastRank(), testCaseStepProDTO.getNextRank()));
         }
         TestCaseStepDTO testCaseStepDTO = modelMapper.map(testCaseStepProDTO, TestCaseStepDTO.class);
-        DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::updateByPrimaryKey, testCaseStepDTO, 1, "error.testStepCase.update");
+        DBValidateUtil.executeAndvalidateUpdateNum(testCaseStepMapper::updateByPrimaryKeySelective, testCaseStepDTO, 1, "error.testStepCase.update");
         return testCaseStepMapper.query(testCaseStepDTO).get(0);
     }
 

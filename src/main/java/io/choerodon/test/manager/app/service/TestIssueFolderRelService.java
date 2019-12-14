@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.base.domain.PageRequest;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.IssueComponentDetailFolderRelVO;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.test.manager.api.vo.TestFolderRelQueryVO;
@@ -18,7 +18,7 @@ public interface TestIssueFolderRelService {
 
     TestIssueFolderRelDTO baseInsert(TestIssueFolderRelDTO insert);
 
-    PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, PageRequest pageRequest, Long organizationId);
+    PageInfo<IssueComponentDetailFolderRelVO> query(Long projectId, Long folderId, TestFolderRelQueryVO testFolderRelQueryVO, Pageable pageable, Long organizationId);
 
     PageInfo<IssueComponentDetailFolderRelVO> queryIssuesById(Long projectId, Long versionId, Long folderId, Long[] issueIds, Long organizationId);
 

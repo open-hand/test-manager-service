@@ -43,11 +43,31 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
 
     String getCycleLastedRank(@Param("versionId") Long versionId);
 
-    String getFolderLastedRank(@Param("cycleId") Long cycleId);
+    String getPlanLastedRank(@Param("planId") Long planId);
 
     Long getCycleCountInVersion(@Param("versionId") Long versionId);
 
     Long getFolderCountInCycle(@Param("cycleId") Long cycleId);
 
     List<TestCycleDTO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
+
+//    void deleteByType();
+
+    List<TestCycleDTO> selectRepeat();
+
+    void deleteRepeat(@Param("projectId") Long projectId, @Param("versionId") Long versionId, @Param("folderId") Long folderId);
+
+    List<TestCycleDTO> listByPlanIds(@Param("type") String type,@Param("planIds") List<Long> planIds);
+
+    List<Long> selectVersionId();
+
+    void deleteRepeat(@Param("versionId") Long versionId, @Param("folderId") Long folderId);
+
+    void fixPlanId(@Param("versionId") Long versionId, @Param("planId") Long planId);
+
+    void batchInsert(@Param("list") List<TestCycleDTO> list);
+
+    void batchDelete( @Param("list") List<Long> needDeleteCycleIds);
+
+    void fixRank(@Param("list") List<TestCycleDTO> list);
 }

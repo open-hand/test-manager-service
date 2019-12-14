@@ -2,7 +2,7 @@ package io.choerodon.test.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Target.HardCodedTarget
-import io.choerodon.agile.api.vo.IssueInfoDTO
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor
@@ -15,7 +15,6 @@ import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallbac
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil
 import org.mockito.Matchers
 import org.mockito.Mock
-import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
@@ -66,12 +65,6 @@ class IntegrationTestConfiguration {
 
     final ObjectMapper objectMapper = new ObjectMapper()
 
-
-    @Bean
-    @Primary
-    RedissonClient redissonClient() {
-        detachedMockFactory.Mock(RedissonClient)
-    }
 
     @Bean
     @Primary

@@ -2,9 +2,12 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
+import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.TestIssuesUploadHistoryVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
 import io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO;
+import org.springframework.data.domain.Pageable;
 
 public interface TestFileLoadHistoryService {
 
@@ -15,4 +18,8 @@ public interface TestFileLoadHistoryService {
     List<TestFileLoadHistoryVO> queryCycles(Long projectId);
 
     TestFileLoadHistoryDTO queryLatestHistory(TestFileLoadHistoryDTO testFileLoadHistoryDTO);
+
+    PageInfo<TestFileLoadHistoryDTO> basePageFileHistoryByOptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable);
+
+    PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable);
 }
