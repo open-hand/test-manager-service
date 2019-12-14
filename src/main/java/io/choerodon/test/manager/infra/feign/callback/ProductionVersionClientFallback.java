@@ -7,8 +7,8 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProductVersionPageDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 

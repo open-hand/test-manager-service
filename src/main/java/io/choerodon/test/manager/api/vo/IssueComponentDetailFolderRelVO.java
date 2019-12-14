@@ -3,7 +3,7 @@ package io.choerodon.test.manager.api.vo;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
-import io.choerodon.agile.api.vo.IssueComponentDetailVO;
+import io.choerodon.test.manager.api.vo.agile.IssueComponentDetailVO;
 
 /**
  * Created by zongw.lee@gmail.com on 09/05/2018

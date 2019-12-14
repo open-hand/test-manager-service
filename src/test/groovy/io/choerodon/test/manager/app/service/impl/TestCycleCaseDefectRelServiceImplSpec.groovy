@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.app.service.impl
 
-import io.choerodon.agile.api.vo.StatusVO
+import io.choerodon.test.manager.api.vo.agile.StatusVO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO

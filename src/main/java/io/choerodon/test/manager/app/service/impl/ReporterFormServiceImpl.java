@@ -8,14 +8,13 @@ import com.github.pagehelper.PageInfo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import com.google.common.collect.Lists;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.ReporterFormService;

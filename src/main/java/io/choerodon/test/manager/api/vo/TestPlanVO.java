@@ -1,12 +1,8 @@
 package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
-import io.choerodon.test.manager.infra.dto.UserMessageDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

@@ -9,9 +9,8 @@ import io.choerodon.test.manager.api.vo.CaseCompareVO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
-import io.choerodon.test.manager.api.vo.ExecutionStatusVO;
 import io.choerodon.test.manager.api.vo.FormStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestStatusDTO;

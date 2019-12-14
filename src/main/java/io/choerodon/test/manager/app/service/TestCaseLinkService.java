@@ -1,10 +1,9 @@
 package io.choerodon.test.manager.app.service;
 
 import java.util.List;
-import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.infra.dto.TestCaseLinkDTO;
-import io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO;
 
 /**
  * @author zhaotianxin

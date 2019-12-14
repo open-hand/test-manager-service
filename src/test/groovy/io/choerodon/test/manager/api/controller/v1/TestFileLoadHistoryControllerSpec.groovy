@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import io.choerodon.agile.api.vo.ProductVersionDTO
-import io.choerodon.agile.api.vo.ProjectDTO
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.TestIssuesUploadHistoryVO
 import io.choerodon.test.manager.app.service.TestCaseService

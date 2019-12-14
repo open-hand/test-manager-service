@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.vo.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
 import org.springframework.data.domain.Sort;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;

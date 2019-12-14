@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
-import io.choerodon.agile.api.vo.IssueInfoDTO;
+
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;

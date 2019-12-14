@@ -8,7 +8,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.mybatis.entity.BaseDTO;
 
 public class TestAutomationHistoryVO extends BaseDTO {

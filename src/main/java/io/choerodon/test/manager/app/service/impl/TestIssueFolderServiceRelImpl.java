@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
@@ -18,7 +18,6 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;

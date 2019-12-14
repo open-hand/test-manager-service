@@ -20,14 +20,13 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.IssueInfoDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.IssueLinkVO;
 import io.choerodon.test.manager.app.service.TestCaseLinkService;

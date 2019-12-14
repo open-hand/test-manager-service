@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.

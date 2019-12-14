@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.app.service.impl
 
 
-import io.choerodon.agile.api.vo.IssueDTO
-import io.choerodon.agile.api.vo.IssueTypeVO
-import io.choerodon.agile.api.vo.PriorityVO
+import io.choerodon.test.manager.api.vo.agile.IssueDTO
+import io.choerodon.test.manager.api.vo.agile.IssueTypeVO
+import io.choerodon.test.manager.api.vo.agile.PriorityVO
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.*

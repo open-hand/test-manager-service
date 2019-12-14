@@ -7,8 +7,8 @@ import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.springframework.http.ResponseEntity;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.UserDO;
-import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;

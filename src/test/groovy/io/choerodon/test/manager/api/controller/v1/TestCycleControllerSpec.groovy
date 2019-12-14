@@ -2,9 +2,9 @@ package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
-import io.choerodon.agile.api.vo.ProductVersionDTO
-import io.choerodon.agile.api.vo.ProductVersionPageDTO
-import io.choerodon.agile.api.vo.UserDO
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO
+import io.choerodon.test.manager.api.vo.agile.UserDO
 import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.BatchCloneCycleVO

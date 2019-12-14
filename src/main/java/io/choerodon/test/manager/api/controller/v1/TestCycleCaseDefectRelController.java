@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;

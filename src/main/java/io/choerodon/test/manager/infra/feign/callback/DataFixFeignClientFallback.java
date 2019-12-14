@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.DataLogFixVO;
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProjectInfoFixVO;
-import io.choerodon.agile.api.vo.TestVersionFixVO;
+import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
+import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;

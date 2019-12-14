@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;

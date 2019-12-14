@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.DefectReporterFormVO;
 import io.choerodon.test.manager.api.vo.ReporterFormVO;

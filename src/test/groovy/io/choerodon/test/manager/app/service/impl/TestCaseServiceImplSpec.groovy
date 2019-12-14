@@ -3,6 +3,12 @@ package io.choerodon.test.manager.app.service.impl
 import com.github.pagehelper.Page
 import com.github.pagehelper.PageInfo
 import io.choerodon.agile.api.vo.*
+import io.choerodon.test.manager.api.vo.agile.IssueComponentDetailVO
+import io.choerodon.test.manager.api.vo.agile.IssueListTestVO
+import io.choerodon.test.manager.api.vo.agile.IssueListTestWithSprintVersionDTO
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO
+import io.choerodon.test.manager.api.vo.agile.SearchDTO
+import io.choerodon.test.manager.api.vo.agile.StatusVO
 import io.choerodon.test.manager.infra.feign.BaseFeignClient
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient

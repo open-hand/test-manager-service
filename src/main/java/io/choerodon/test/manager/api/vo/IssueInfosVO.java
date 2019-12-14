@@ -3,9 +3,8 @@ package io.choerodon.test.manager.api.vo;
 import java.util.Date;
 import java.util.List;
 
+import io.choerodon.test.manager.api.vo.agile.*;
 import io.swagger.annotations.ApiModelProperty;
-
-import io.choerodon.agile.api.vo.*;
 
 /**
  * Created by 842767365@qq.com on 7/17/18.

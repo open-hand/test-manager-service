@@ -5,16 +5,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import feign.FeignException;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
-import io.choerodon.agile.api.vo.IssueDTO;
-import io.choerodon.agile.api.vo.ProjectDTO;
-import io.choerodon.agile.api.vo.VersionIssueRelVO;
-import io.choerodon.agile.infra.common.enums.IssueTypeCode;
-import io.choerodon.agile.infra.common.utils.AgileUtil;
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.api.vo.agile.VersionIssueRelVO;
+import io.choerodon.test.manager.infra.enums.IssueTypeCode;
+import io.choerodon.test.manager.infra.util.AgileUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
-import io.choerodon.devops.api.vo.ApplicationRepDTO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.testng.TestNgCase;
@@ -55,7 +55,6 @@ import org.springframework.util.Assert;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {

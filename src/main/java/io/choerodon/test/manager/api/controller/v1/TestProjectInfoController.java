@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import io.choerodon.agile.api.vo.ProjectInfoVO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;

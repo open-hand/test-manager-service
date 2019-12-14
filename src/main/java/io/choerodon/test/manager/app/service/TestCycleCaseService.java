@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;

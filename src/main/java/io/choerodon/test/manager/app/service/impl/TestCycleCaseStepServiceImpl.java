@@ -7,7 +7,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.core.exception.CommonException;
 
-import io.choerodon.agile.infra.common.utils.RankUtil;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
@@ -26,7 +25,6 @@ import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
-import com.netflix.discovery.converters.Auto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;

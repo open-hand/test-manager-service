@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.ScheduleFeignClient;
 import org.springframework.http.ResponseEntity;

@@ -3,17 +3,14 @@ package io.choerodon.test.manager.infra.feign;
 import java.util.List;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.api.vo.agile.*;
 import io.swagger.annotations.ApiParam;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.vo.IssueListTestWithSprintVersionDTO;
 import io.choerodon.test.manager.infra.feign.callback.TestCaseFeignClientFallback;
-import io.choerodon.agile.api.vo.*;
 
 /**
  * Created by 842767365@qq.com on 6/13/18.

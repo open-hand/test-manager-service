@@ -3,7 +3,7 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.TestIssuesUploadHistoryVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
 import io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO;

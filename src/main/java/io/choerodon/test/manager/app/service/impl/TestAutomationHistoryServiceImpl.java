@@ -3,7 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.data.domain.Pageable;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.TestAppInstanceVO;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;

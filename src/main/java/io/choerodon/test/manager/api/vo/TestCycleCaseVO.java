@@ -6,11 +6,10 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
-import io.choerodon.agile.api.vo.SearchDTO;
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.core.convertor.ConvertHelper;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 
 /**

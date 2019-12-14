@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service;
 
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.IssueCreateDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.IssueComponentDetailFolderRelVO;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;

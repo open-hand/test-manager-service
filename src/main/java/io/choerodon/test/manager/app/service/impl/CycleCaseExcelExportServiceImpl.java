@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.ComponentIssueRelVO;
-import io.choerodon.agile.api.vo.LabelIssueRelVO;
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.ComponentIssueRelVO;
+import io.choerodon.test.manager.api.vo.agile.LabelIssueRelVO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;

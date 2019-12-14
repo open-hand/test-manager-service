@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import io.choerodon.agile.api.vo.DataLogFixVO;
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProjectInfoFixVO;
-import io.choerodon.agile.api.vo.TestVersionFixVO;
+import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
+import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;

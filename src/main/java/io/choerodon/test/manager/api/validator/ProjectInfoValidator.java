@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.api.validator;
 
-import io.choerodon.agile.api.vo.ProjectInfoVO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
 import org.springframework.stereotype.Component;
 

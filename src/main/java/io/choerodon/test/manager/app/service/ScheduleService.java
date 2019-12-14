@@ -2,9 +2,9 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 
 /**
  * Created by zongw.lee@gmail.com on 23/11/2018

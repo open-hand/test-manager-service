@@ -2,18 +2,17 @@ package io.choerodon.test.manager.app.service;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.agile.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.*;
 import org.springframework.data.domain.Pageable;
-import io.choerodon.devops.api.vo.AppServiceDeployVO;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
-import io.choerodon.devops.api.vo.ApplicationRepDTO;
-import io.choerodon.devops.api.vo.InstanceValueVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO;
 import io.choerodon.test.manager.api.vo.IssueInfosVO;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

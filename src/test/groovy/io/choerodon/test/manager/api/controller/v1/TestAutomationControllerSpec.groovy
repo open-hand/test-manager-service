@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import feign.Target
-import io.choerodon.devops.api.vo.ApplicationRepDTO
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.JsonImportService
 import io.choerodon.test.manager.app.service.TestCaseService

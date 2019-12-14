@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import com.github.pagehelper.PageInfo
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.app.service.DevopsService
 import io.choerodon.test.manager.app.service.FileService

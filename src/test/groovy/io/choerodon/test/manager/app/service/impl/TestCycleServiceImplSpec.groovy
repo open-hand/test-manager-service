@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service.impl
 
 
-import io.choerodon.agile.api.vo.ProductVersionPageDTO
-import io.choerodon.agile.api.vo.UserDO
+import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO
+import io.choerodon.test.manager.api.vo.agile.UserDO
 import com.github.pagehelper.PageInfo
 import io.choerodon.core.exception.CommonException
 import io.choerodon.test.manager.IntegrationTestConfiguration

@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.api.vo;
 
 
-import io.choerodon.agile.api.vo.IssueTypeVO;
-import io.choerodon.agile.api.vo.PriorityVO;
-import io.choerodon.agile.api.vo.StatusVO;
-import io.choerodon.agile.infra.common.utils.StringUtil;
+import io.choerodon.test.manager.api.vo.agile.IssueTypeVO;
+import io.choerodon.test.manager.api.vo.agile.PriorityVO;
+import io.choerodon.test.manager.api.vo.agile.StatusVO;
+import io.choerodon.test.manager.infra.util.StringUtil;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

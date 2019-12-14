@@ -2,7 +2,7 @@ package io.choerodon.test.manager
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Target.HardCodedTarget
-import io.choerodon.agile.api.vo.IssueInfoDTO
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO
 import io.choerodon.core.oauth.CustomUserDetails
 import io.choerodon.liquibase.LiquibaseConfig
 import io.choerodon.liquibase.LiquibaseExecutor

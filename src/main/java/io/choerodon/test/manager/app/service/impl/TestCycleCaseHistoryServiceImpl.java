@@ -8,12 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.github.pagehelper.PageInfo;
 
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;

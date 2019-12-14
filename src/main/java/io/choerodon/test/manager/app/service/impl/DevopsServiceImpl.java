@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO;
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.integration.redis.util.RedisLockRegistry;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 

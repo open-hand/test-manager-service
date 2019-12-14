@@ -1,9 +1,9 @@
 package io.choerodon.test.manager.api.controller.v1
 
 import com.alibaba.fastjson.JSONObject
-import io.choerodon.agile.api.vo.IssueCreateDTO
-import io.choerodon.agile.api.vo.IssueDTO
-import io.choerodon.agile.api.vo.SearchDTO
+import io.choerodon.test.manager.api.vo.agile.IssueCreateDTO
+import io.choerodon.test.manager.api.vo.agile.IssueDTO
+import io.choerodon.test.manager.api.vo.agile.SearchDTO
 import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO

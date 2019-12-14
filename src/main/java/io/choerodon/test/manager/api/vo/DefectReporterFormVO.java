@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import io.choerodon.agile.api.vo.IssueLinkDTO;
-import io.choerodon.agile.api.vo.IssueListTestVO;
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueListTestVO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
 
 /**

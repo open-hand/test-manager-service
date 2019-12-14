@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import io.choerodon.agile.api.vo.StatusVO;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
@@ -16,7 +16,6 @@ import io.choerodon.test.manager.infra.mapper.TestDataLogMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

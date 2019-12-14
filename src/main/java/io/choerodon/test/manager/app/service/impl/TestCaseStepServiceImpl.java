@@ -2,10 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import ch.qos.logback.core.pattern.ConverterUtil;
-import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.dto.*;
@@ -18,12 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.springframework.util.CollectionUtils;

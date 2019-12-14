@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.PageInfo
-import io.choerodon.agile.api.vo.UserDO
-import io.choerodon.agile.api.vo.UserDTO
+import io.choerodon.test.manager.api.vo.agile.UserDO
+import io.choerodon.test.manager.api.vo.agile.UserDTO
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO

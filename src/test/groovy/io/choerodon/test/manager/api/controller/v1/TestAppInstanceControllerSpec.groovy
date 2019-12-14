@@ -1,12 +1,12 @@
 package io.choerodon.test.manager.api.controller.v1
 
-import io.choerodon.asgard.api.dto.QuartzTask
-import io.choerodon.asgard.api.dto.ScheduleMethodDTO
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO
-import io.choerodon.devops.api.vo.AppServiceVersionRespVO
-import io.choerodon.devops.api.vo.ApplicationRepDTO
-import io.choerodon.devops.api.vo.InstanceValueVO
-import io.choerodon.devops.api.vo.ReplaceResult
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask
+import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO
+import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO
+import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO
+import io.choerodon.test.manager.api.vo.devops.InstanceValueVO
+import io.choerodon.test.manager.api.vo.devops.ReplaceResult
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO
 import io.choerodon.test.manager.app.service.ScheduleService

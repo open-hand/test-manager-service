@@ -2,7 +2,7 @@ package io.choerodon.test.manager.app.service.impl;
 
 import java.util.List;
 
-import io.choerodon.agile.api.vo.ProjectInfoVO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.validator.ProjectInfoValidator;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;

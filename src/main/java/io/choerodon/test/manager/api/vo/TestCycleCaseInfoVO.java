@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import io.choerodon.agile.api.vo.IssueInfoDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 
 /**

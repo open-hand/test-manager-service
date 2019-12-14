@@ -3,11 +3,10 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import io.choerodon.asgard.api.dto.QuartzTask;
-import io.choerodon.asgard.api.dto.ScheduleMethodDTO;
-import io.choerodon.asgard.api.dto.ScheduleTaskDTO;
+import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleMethodDTO;
+import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.test.manager.app.service.ScheduleService;
 import io.choerodon.test.manager.infra.feign.ScheduleFeignClient;
 import org.springframework.stereotype.Service;

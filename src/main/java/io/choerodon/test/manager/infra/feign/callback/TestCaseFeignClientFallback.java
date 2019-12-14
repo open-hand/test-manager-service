@@ -3,10 +3,10 @@ package io.choerodon.test.manager.infra.feign.callback;
 import java.util.List;
 
 import com.github.pagehelper.PageInfo;
+import io.choerodon.test.manager.api.vo.agile.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import io.choerodon.agile.api.vo.*;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 

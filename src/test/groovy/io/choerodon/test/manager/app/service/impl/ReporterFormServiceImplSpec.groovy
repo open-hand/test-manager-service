@@ -1,8 +1,8 @@
 package io.choerodon.test.manager.app.service.impl
 
 import com.github.pagehelper.PageInfo
-import io.choerodon.agile.api.vo.IssueLinkDTO
-import io.choerodon.agile.api.vo.SearchDTO
+import io.choerodon.test.manager.api.vo.agile.IssueLinkDTO
+import io.choerodon.test.manager.api.vo.agile.SearchDTO
 import io.choerodon.test.manager.IntegrationTestConfiguration
 import io.choerodon.test.manager.api.vo.IssueInfosVO
 import io.choerodon.test.manager.api.vo.ReporterFormVO

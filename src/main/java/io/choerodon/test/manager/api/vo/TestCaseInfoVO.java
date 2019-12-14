@@ -2,8 +2,7 @@ package io.choerodon.test.manager.api.vo;
 
 import java.util.Date;
 import java.util.List;
-import io.choerodon.agile.api.vo.IssueInfoDTO;
-import io.choerodon.agile.api.vo.UserDTO;
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;

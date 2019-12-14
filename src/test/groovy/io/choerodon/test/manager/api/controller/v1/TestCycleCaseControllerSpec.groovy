@@ -1,10 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1
 
 
-import io.choerodon.agile.api.vo.ProductVersionDTO
-import io.choerodon.agile.api.vo.ProjectDTO
-import io.choerodon.agile.api.vo.SearchDTO
-import io.choerodon.agile.api.vo.UserDO
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO
+import io.choerodon.test.manager.api.vo.agile.SearchDTO
+import io.choerodon.test.manager.api.vo.agile.UserDO
 import io.choerodon.core.convertor.ConvertHelper
 import com.github.pagehelper.PageInfo
 import io.choerodon.test.manager.IntegrationTestConfiguration

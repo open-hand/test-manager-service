@@ -4,14 +4,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import io.choerodon.agile.api.vo.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.api.vo.CaseCompareVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Pageable;
 
 /**
  * @author zhaotianxin

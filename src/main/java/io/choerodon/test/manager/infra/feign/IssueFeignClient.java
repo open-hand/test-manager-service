@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.agile.api.vo.IssueTypeVO;
-import io.choerodon.agile.api.vo.PriorityVO;
+import io.choerodon.test.manager.api.vo.agile.IssueTypeVO;
+import io.choerodon.test.manager.api.vo.agile.PriorityVO;
 import io.choerodon.test.manager.infra.feign.callback.IssueFeignClientFallback;
 
 @Component

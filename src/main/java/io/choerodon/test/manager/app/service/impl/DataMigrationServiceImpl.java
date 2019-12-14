@@ -14,13 +14,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
-import io.choerodon.agile.api.vo.DataLogFixVO;
-import io.choerodon.agile.api.vo.ProductVersionDTO;
-import io.choerodon.agile.api.vo.ProjectInfoFixVO;
-import io.choerodon.agile.api.vo.TestVersionFixVO;
-import io.choerodon.agile.infra.common.utils.RankUtil;
+import io.choerodon.test.manager.api.vo.agile.DataLogFixVO;
+import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
+import io.choerodon.test.manager.api.vo.agile.ProjectInfoFixVO;
+import io.choerodon.test.manager.api.vo.agile.TestVersionFixVO;
+import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.test.manager.api.vo.IssueLinkFixVO;
 import io.choerodon.test.manager.api.vo.TestCaseMigrateDTO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;

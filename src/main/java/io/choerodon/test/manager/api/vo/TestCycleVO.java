@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
-import io.choerodon.agile.api.vo.UserDO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
