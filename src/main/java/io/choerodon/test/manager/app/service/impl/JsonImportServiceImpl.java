@@ -201,6 +201,7 @@ public class JsonImportServiceImpl implements JsonImportService {
     @Transactional(rollbackFor = Throwable.class)
     public Long importMochaReport(String releaseName, String json) {
         Assert.hasText(json, "error.issue.import.json.blank");
+        logger.info("==================\n" + json + "\n===================");
 
         // 查询versionId和projectId
         Map<String, Long> releaseNameFragments = parseReleaseName(releaseName);
