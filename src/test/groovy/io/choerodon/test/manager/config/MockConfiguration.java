@@ -1,7 +1,5 @@
 package groovy.io.choerodon.test.manager.config;
 
-import io.choerodon.agile.api.vo.IssueInfoDTO;
-import io.choerodon.agile.api.vo.PriorityVO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
@@ -42,17 +40,17 @@ public class MockConfiguration {
         return iamFeignClient;
     }
     */
-    @Bean
-    @Primary
-    IssueFeignClient issueFeignClient(){
-        IssueFeignClient issueFeignClient = Mockito.mock(IssueFeignClientFallback.class);
-        PriorityVO priorityVO = new PriorityVO();
-        priorityVO.setColour("red");
-        priorityVO.setId((long) 12);
-        priorityVO.setName("testImportTemp");
-        Mockito.when(issueFeignClient.queryByOrganizationIdList(ArgumentMatchers.anyLong())).thenReturn(new ResponseEntity<>(Arrays.asList(priorityVO),HttpStatus.OK));
-        return issueFeignClient;
-    }
+//    @Bean
+//    @Primary
+//    IssueFeignClient issueFeignClient(){
+//        IssueFeignClient issueFeignClient = Mockito.mock(IssueFeignClientFallback.class);
+//        PriorityVO priorityVO = new PriorityVO();
+//        priorityVO.setColour("red");
+//        priorityVO.setId((long) 12);
+//        priorityVO.setName("testImportTemp");
+//        Mockito.when(issueFeignClient.queryByOrganizationIdList(ArgumentMatchers.anyLong())).thenReturn(new ResponseEntity<>(Arrays.asList(priorityVO),HttpStatus.OK));
+//        return issueFeignClient;
+//    }
     @Bean
     @Primary
     FileFeignClient fileFeignClient() {
