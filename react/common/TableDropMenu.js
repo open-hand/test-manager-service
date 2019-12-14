@@ -35,7 +35,12 @@ const TableDropMenu = (props) => {
     return onClickEdit ? textA : text;
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer' }} className={className || 'table-drop-menu-base'}>
+    <div
+      style={{
+        display: 'flex', justifyContent: 'space-between', lineHeight: '24px', cursor: 'pointer', width: '100%', 
+      }}
+      className={className || 'table-drop-menu-base'}
+    >
       <span style={{ display: 'flex' }}>
         {permission
           ? (
@@ -54,7 +59,7 @@ const TableDropMenu = (props) => {
       {isHasMenu && menu
         ? (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Dropdown overlay={menu} trigger="click">
+            <Dropdown overlay={menu} trigger={['click']}>
               <Icon shape="circle" type="more_vert" />
             </Dropdown>
           </div>

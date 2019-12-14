@@ -1,11 +1,14 @@
-@newlinebackcolor:#cdffd8;
-@newtextbackcolor:#ecfdf0;
+@newlinebackcolor:rgba(0,191,165,0.10);
+@newtextbordercolor:#00BFA5;
+@newtextbgcolor:rgba(0,191,165,0.10);
 @lasttextcolor:white;
-@lasttextbackcolor:#5e92f2;
+@lasttextbordercolor:#4D90FE;
+@lasttextbgcolor:rgba(77,144,254,0.10);
+@errortextbordercolor: #E23B3B;
+@errortextbgcolor: rgba(226,59,59,0.10);;
 @modifylinecolor:rgba(255, 204, 0, 0.25);
 @modifytextcolor:#1b69b6;
 @clearcolor:#f5f5f5;
-@deployAppmodify:#fdda80;
 @deployApptitlecolor:#000;
 @inconerrorcolor:#f44336;
 @meserrorcolor:rgba(0, 0, 0, 0.65);
@@ -15,7 +18,7 @@
 }
 
 .newLine-text {
-  background-color: @newtextbackcolor;
+  background-color: @newlinebackcolor;
 }
 
 .lastModifyLine-line {
@@ -24,16 +27,16 @@
 
 .lastModifyLine-text {
   color: @lasttextcolor !important;
-  background-color: @lasttextbackcolor;
+  background-color: @lasttextbordercolor;
 }
 
-.modifyLine-line {
-  background-color: @modifylinecolor;
-}
+// .modifyLine-line {
+//   background-color: @modifylinecolor;
+// }
 
-.modifyLine-text {
-  background-color: @modifytextcolor;
-}
+// .modifyLine-text {
+//   background-color: @modifytextcolor;
+// }
 
 .clearLineHeight-line {
   //position: absolute;
@@ -67,31 +70,34 @@
     margin-right: 0.1rem;
   }
 
+  .deployApp-config-cilcle {
+    display: inline-block;
+    width: 0.1rem;
+    height: 0.1rem;
+    border-radius: 50%;
+    margin-right: 0.05rem;
+  }
+
   .deployApp-config-lastModify {
-    background-color: @lasttextbackcolor;
+    border: 1px solid @lasttextbordercolor;
+    background: @lasttextbgcolor;
   }
 
   .deployApp-config-new {
-    background-color: @newtextbackcolor;
-  }
-
-  .deployApp-config-modify {
-    background: @deployAppmodify;
+    border: 1px solid @newtextbordercolor;
+    background: @newtextbgcolor;
   }
 
   .deployApp-config-error {
-    padding-left: 0.19rem;
-    padding-right: 0.1rem;
-    height: 0.16rem;
-    background-image: url('./error.png');
-    background-repeat: no-repeat;
-    background-position: 0.02rem center;
+    border: 1px solid @errortextbordercolor;
+    background: @errortextbgcolor;
   }
 
   .deployApp-config-title {
     font-size: 0.13rem;
     color: @deployApptitlecolor;
-    padding-right: 0.86rem;
+    color: rgba(0, 0, 0, 0.98);
+    padding-right: 0.2rem;
   }
 }
 

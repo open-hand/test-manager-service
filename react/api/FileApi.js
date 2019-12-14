@@ -49,7 +49,7 @@ export function uploadFileAgile(data, config) {
 // 测试管理接口
 
 /**
- *文件上传
+ *文件上传(执行用例)
  *
  * @export
  * @param {*} data
@@ -57,20 +57,52 @@ export function uploadFileAgile(data, config) {
  * @returns
  */
 export function uploadFile(data, config) {
-  const { bucketName, attachmentLinkId, attachmentType } = config;
+  const { attachmentLinkId,attachmentType } = config;
 
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
 
   return request.post(
-    `/zuul/test/v1/projects/${getProjectId()}/test/case/attachment?bucket_name=${'test'}&attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
+    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
+    data,
+    axiosConfig,
+  );
+}
+
+/**
+ *文件上传(测试步骤)
+ *
+ * @export
+ * @param {*} data
+ * @param {*} config
+ * @returns
+ */
+export function uploadFileStep(data, config) {
+  const { bucketName, executeId, attachmentLinkId, attachmentType, description = '' } = config;
+
+  const axiosConfig = {
+    headers: { 'content-type': 'multipart/form-data' },
+  };
+
+  return request.post(
+    `test/v1/projects/${getProjectId()}/test/case/attachment?attachmentLinkId=${attachmentLinkId}&attachmentType=${attachmentType}`,
     data,
     axiosConfig,
   );
 }
 /**
- *删除附件
+ *删除附件(执行用例删除附件)
+ *
+ * @export
+ * @param {*} id
+ * @returns
+ */
+export function deleteFile(id) {
+  return request.delete(`test/v1/projects/${getProjectId()}/test/case/attachment/${id}`);
+}
+/**
+ *删除附件(测试步骤附件)
  *
  * @export
  * @param {*} id
@@ -83,5 +115,5 @@ export function importIssue(data, versionId) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase?versionId=${versionId}`, data, axiosConfig);
+  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase?folder_id=${versionId}`, data, axiosConfig);
 }

@@ -26,6 +26,19 @@ class AutoListStore {
   @observable filter = {};
 
   @action
+  clear = () => {
+    this.appList = [];
+    this.historyList = [];
+    this.envList = [];
+    this.pagination = {
+      current: 1,
+      total: 0,
+      pageSize: 10,
+    };
+    this.currentApp = null;
+  }
+
+  @action
   Loading = () => {
     this.loading = true;
   }

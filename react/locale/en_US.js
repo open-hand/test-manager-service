@@ -176,6 +176,13 @@ const enUS = {
   testPlan_createStageIn: 'add test stage in cycle “{cycleName}”',
   testPlan_EditStage_title: 'EditStage',
   testPlan_EditStage: 'edit stage “{cycleName}”',
+
+  testPlan_createPlan: 'create Plan',
+  testPlan_editPlan: 'edit Paln',
+  testPlan_manualTest: 'start Manual test',
+  testPlan_completePlan: 'complete Plan',
+  testPlan_autoTest: 'automatic test',
+
   // 测试执行
   cycle_title: 'Test Execute',
   cycle_name: 'Test cycle',
@@ -194,6 +201,8 @@ const enUS = {
   cycle_totalExecuted: 'Total Executed',
   cycle_comment: 'Description',
   cycle_executeBy: 'Execute by',
+  cycle_testSource: 'test source',
+  cycle_updatedDate: 'Update Time',
   cycle_executeTime: 'Execute time',
   cycle_assignedTo: 'Assigned to',
   // 循环树
@@ -286,9 +295,11 @@ const enUS = {
   issue_edit_timeFollow: 'Time tracking',
   issue_edit_registrationWork: 'Registration work',
   issue_edit_person: 'Personnel',
+  issue_edit_creator: 'creator',
   issue_edit_reporter: 'Reporter',
   issue_edit_assignToMe: 'Assign to me',
   issue_edit_manager: 'Manager',
+  issue_edit_updater: 'updater',
   issue_edit_date: 'Date',
   issue_edit_createDate: 'Create at',
   issue_edit_updateDate: 'Update at',

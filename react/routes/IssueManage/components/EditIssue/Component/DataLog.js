@@ -2,45 +2,20 @@
 import React, { Component } from 'react';
 import { Icon, Popconfirm, Popover } from 'choerodon-ui';
 import _ from 'lodash';
-import UserHead from '../../UserHead';
+import UserHead from '@/components/UserHead';
 import DatetimeAgo from '../../../../../components/DateTimeAgo';
 import './DataLog.scss';
 
 const PROP = {
-  Sprint: '冲刺',
-  status: '状态',
-  'Story Points': '故事点',
-  timeestimate: '剩余时间',
   summary: '问题概要',
-  'Epic Name': '史诗名',
-  priority: '优先级',
-  // Component: '模块',
   labels: '标签',
-  'Epic Link': '史诗',
-  assignee: '经办人',
-  reporter: '报告人',
-  Pi: 'PI',
+  IssueNum: '测试用例',
 };
 const PROP_SIMPLE = {
-  Component: '模块',
-  'Fix Version': '版本',
-  'Epic Child': '史诗关联任务',
-  issue_epic: '史诗',
-  story: '故事',
-  bug: '缺陷',
-  task: '任务',
-  sub_task: '子任务',
-  feature: '特性',
   issue_test: '测试用例',
   issue_auto_test: '自动化测试用例',
   description: '描述',
   Attachment: '附件',
-  timespent: '花费时间',
-  WorklogId: '工作日志',
-  issuetype: '类型',
-  Rank: '排序',
-  resolution: '解决状态',
-  Comment: '评论',
 };
 
 class DataLog extends Component {
@@ -56,7 +31,7 @@ class DataLog extends Component {
     } = datalog;
     if ((!oldValue && oldValue !== 0) && (newValue || newValue === 0)) {
       // null -> xxx
-      if (['labels', 'Component', 'Fix Version', 'Epic Child', 'WorklogId', 'Epic Child', 'issue_epic', 'story', 'bug', 'task', 'sub_task', 'issue_auto_test', 'issue_test', 'feature'].includes(field)) {
+      if (['labels', 'IssueNum'].includes(field)) {
         return '添加';
       }
       if (['Attachment'].includes(field)) {
@@ -65,39 +40,22 @@ class DataLog extends Component {
       return '更新';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['Epic Link', 'issuetype', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
+      if (['summary', ].includes(field)) {
         return '将';
       }
-      if (['description', 'WorklogId', 'Comment', 'timespent'].includes(field)) {
+      if (['description',].includes(field)) {
         return '更新';
       }
       // 自定义字段
       if (field && field.isCusLog) {
         return '将';
       }
-      if (field === 'status') {
-        if (categoryCode === 'doing') {
-          return '开始处理';
-        }
-        if (categoryCode === 'done') {
-          return '完成任务';
-        }
-        if (categoryCode === 'todo') {
-          return '置为待办';
-        }
-      }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
-      if (['Epic Link', 'Sprint', 'Pi', 'assignee', 'reporter', 'labels', 'Component', 'Fix Version', 'Epic Child', 'resolution'].includes(field)) {
+      if (['labels'].includes(field)) {
         return '移除';
       }
-      if (['Story Points', 'timeestimate'].includes(field)) {
-        return '将';
-      }
-      if (['timespent'].includes(field)) {
-        return '更新';
-      }
-      if (['Attachment', 'WorklogId', 'Comment'].includes(field)) {
+      if (['Attachment'].includes(field)) {
         if (oldString && !newString) {
           return '删除';
         }
@@ -115,29 +73,10 @@ class DataLog extends Component {
         }
         return '更新';
       }
-      if (field === 'priority') {
+      if (field === 'summary') {
         return '将';
       }
-      if (field === 'Rank') {
-        return '更新';
-      }
-      if (field === 'issuetype') {
-        return '将';
-      }
-      if (field === 'resolution') {
-        if (oldString && !newString) {
-          return '移除';
-        } else if (!oldString && newString) {
-          return '更新';
-        }
-      }
-      if (field === 'summary' || field === 'Epic Name') {
-        return '将';
-      }
-      if (field === 'Story Points') {
-        return '将';
-      }
-      if (field === 'labels') {
+      if (field === 'labels' || field === 'labels') {
         if (!oldString && newString) {
           return '创建';
         }
@@ -177,35 +116,15 @@ class DataLog extends Component {
       if (field && field.isCusLog) {
         return '由';
       }
-      if (['Epic Link', 'issuetype', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
+      if (['summary', ].includes(field)) {
         return '由';
       } else {
         return '';
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
-      // yyy -> null
-      if (['Story Points', 'timeestimate'].includes(field)) {
-        return '由';
-      } else {
         return '';
-      }
     } else {
-      if (field === 'priority') {
-        return '由';
-      }
-      if (field === 'Rank') {
-        return '';
-      }
-      if (field === 'issuetype') {
-        return '由';
-      }
-      if (field === 'resolution') {
-        return '';
-      }
-      if (field === 'summary' || field === 'Epic Name') {
-        return '由';
-      }
-      if (field === 'Story Points') {
+      if (field === 'summary') {
         return '由';
       }
       if (field === 'labels') {
@@ -229,13 +148,10 @@ class DataLog extends Component {
       return '';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['Epic Link', 'issuetype', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
+      if (['summary', ].includes(field)) {
         return ` 【${oldString}】 `;
       }
-      if (['description', 'WorklogId', 'Rank', 'Comment'].includes(field)) {
-        return '';
-      }
-      if (field === 'status') {
+      if (['description'].includes(field)) {
         return '';
       }
       // 自定义字段
@@ -244,36 +160,14 @@ class DataLog extends Component {
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
-      if (['Story Points', 'timeestimate'].includes(field)) {
-        return ` 【${oldString}】 `;
-      } else if (['timespent', 'Comment'].includes(field)) {
-        return '';
-      } else if (field === 'Attachment') {
+      if (field === 'Attachment') {
         const attachnewArr = oldString.split('_');
         return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
       } else {
         return ` 【${oldString}】 `;
       }
     } else {
-      if (field === 'priority') {
-        return ` 【${oldString}】 `;
-      }
-      if (field === 'Rank') {
-        return '';
-      }
-      if (field === 'issuetype') {
-        return ` 【${oldString}】 `;
-      }
-      if (field === 'resolution') {
-        return '';
-      }
-      if (field === 'summary' || field === 'Epic Name') {
-        return ` 【${oldString}】 `;
-      }
-      if (field === 'Story Points') {
-        if (!oldString) {
-          return ' 【未预估】 ';
-        }
+      if (field === 'summary') {
         return ` 【${oldString}】 `;
       }
       if (field === 'labels') {
@@ -296,10 +190,6 @@ class DataLog extends Component {
       field, oldString, oldValue, newString, newValue,
     } = datalog;
     if ((!oldValue && oldValue !== 0) && (newValue || newValue === 0)) {
-      // null -> xxx
-      if (['Epic Link', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter'].includes(field)) {
-        return '为';
-      }
       // 自定义字段
       if (field && field.isCusLog) {
         return '为';
@@ -307,7 +197,7 @@ class DataLog extends Component {
       return '';
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['Epic Link', 'issuetype', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter'].includes(field)) {
+      if (['summary', ].includes(field)) {
         return '改变为';
       }
       // 自定义字段
@@ -316,22 +206,9 @@ class DataLog extends Component {
       }
       return '';
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
-      // yyy -> null
-      if (['Story Points', 'timeestimate'].includes(field)) {
-        return '改变为';
-      }
       return '';
     } else {
-      if (field === 'priority') {
-        return '改变为';
-      }
-      if (field === 'issuetype') {
-        return '改变为';
-      }
-      if (field === 'summary' || field === 'Epic Name') {
-        return '改变为';
-      }
-      if (field === 'Story Points') {
+      if (field === 'summary') {
         return '改变为';
       }
       // 自定义字段
@@ -347,27 +224,17 @@ class DataLog extends Component {
     const {
       field, oldString, oldValue, newString, newValue,
     } = datalog;
-    const { typeCode } = this.props;
-    const TYPEARR = {
-      bug: '缺陷',
-      story: '故事',
-      task: '任务',
-      sub_task: '子任务',
-    };
     if ((!oldValue && oldValue !== 0) && (newValue || newValue === 0)) {
       // null -> xxx
-      if (['Epic Link', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'assignee', 'reporter'].includes(field)) {
+      if (['summary'].includes(field)) {
         return ` 【${newString}】 `;
       }
-      if (['description', 'WorklogId', 'Rank', 'Comment', 'timespent'].includes(field)) {
+      if (['description'].includes(field)) {
         return '';
       }
-      if (['labels', 'Component', 'Fix Version', 'Epic Child'].includes(field)) {
+      if (['labels'].includes(field)) {
         return ` 【${newString}】 `;
       }
-      // if (field === 'Sprint') {
-      //   return ` 【${TYPEARR[typeCode]}】 `;
-      // }
       if (field === 'Attachment') {
         const attachnewArr = newString.split('_');
         return ` 【${decodeURI(attachnewArr.slice(2, attachnewArr.length).join('_'))}】 `;
@@ -378,10 +245,10 @@ class DataLog extends Component {
       }
     } else if ((oldValue || oldValue === 0) && (newValue || newValue === 0)) {
       // xxx -> yyy
-      if (['Epic Link', 'issuetype', 'Sprint', 'Pi', 'Story Points', 'timeestimate', 'summary', 'Epic Name', 'priority', 'assignee', 'reporter', 'labels', 'Component', 'Fix Version', 'Epic Child'].includes(field)) {
+      if (['summary', 'labels'].includes(field)) {
         return ` 【${newString}】 `;
       }
-      if (['description', 'Attachment', 'WorklogId', 'Rank', 'Comment', 'timespent'].includes(field)) {
+      if (['description', 'Attachment'].includes(field)) {
         return '';
       }
       if (field === 'status') {
@@ -393,28 +260,9 @@ class DataLog extends Component {
       }
     } else if ((oldValue || oldValue === 0) && (!newValue && newValue !== 0)) {
       // yyy -> null
-      if (['Story Points', 'timeestimate'].includes(field)) {
-        return ' 【未预估】 ';
-      } else {
         return '';
-      }
     } else {
-      if (field === 'priority') {
-        return ` 【${newString}】 `;
-      }
-      if (field === 'Rank' || field === 'resolution') {
-        return '';
-      }
-      if (field === 'issuetype') {
-        return ` 【${newString}】 `;
-      }
-      if (field === 'summary' || field === 'Epic Name') {
-        return ` 【${newString}】 `;
-      }
-      if (field === 'Story Points') {
-        if (!newString) {
-          return ' 【未预估】 ';
-        }
+      if (field === 'summary') {
         return ` 【${newString}】 `;
       }
       if (field === 'labels') {
@@ -506,8 +354,6 @@ class DataLog extends Component {
       </Popover>
     }
     return content;
-
-
   }
   render() {
     const {
@@ -517,10 +363,10 @@ class DataLog extends Component {
       <div>
         {
           i > 4 && !expand ? null : (
-            <div className="c7n-datalog" key={datalog.logId}>
+            <div className="c7ntest-datalog" key={datalog.logId}>
               <div className="line-justify">
                 {/* 头像 */}
-                <div className="c7n-title-log" style={{ flexShrink: 0 }}>
+                <div className="c7ntest-title-log" style={{ flexShrink: 0 }}>
                   <div
                     style={{
                       width: 40,

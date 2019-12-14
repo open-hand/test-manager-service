@@ -1,15 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Choerodon } from '@choerodon/boot';
 import {
-  Page, Header, Content, Breadcrumb, stores,
+  Page, Header, Content, Breadcrumb,
 } from '@choerodon/boot';
 import moment from 'moment';
 import {
-  Icon, Button, Table, Select, Menu, Dropdown, Switch, Steps,
+  Icon, Button, Table, Select, Menu, Dropdown, 
 } from 'choerodon-ui';
-import { Modal } from 'choerodon-ui/pro';
-
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
@@ -20,14 +17,12 @@ import {
   PODSTATUS, TESTRESULT, PodStatus, TestResult,
 } from './AutoTestTags';
 import { ContainerLog } from './components';
-import { getProjectName, humanizeDuration, TestExecuteLink } from '../../../common/utils';
+import { humanizeDuration } from '../../../common/utils';
 import CreateAutoTest from '../CreateAutoTest';
 import './AutoTestList.less';
-import { SelectVariable, ModifyConfig, ConfirmInfo } from '../CreateAutoTest/components';
-import CreateAutoTestStore from '../stores/CreateAutoTestStore';
 
 const { Option } = Select;
-const { SubMenu, Item: MenuItem } = Menu;
+const { Item: MenuItem } = Menu;
 const AutoTestList = ({
   loading,
   appList,
@@ -53,22 +48,7 @@ const AutoTestList = ({
       </MenuItem>
       <MenuItem key="retry">
         重新执行
-      </MenuItem>
-      {record.moreCycle ? (
-        <SubMenu title="测试循环">
-          {
-            record.cycleDTOS.map(cycle => (
-              <MenuItem>
-                <Link to={TestExecuteLink(cycle.cycleId)}>{cycle.cycleName}</Link>
-              </MenuItem>
-            ))
-          }
-        </SubMenu>
-      ) : (
-        <MenuItem key="cycle" disabled={!record.cycleIds}>
-          {record.cycleIds ? <Link to={TestExecuteLink(record.cycleIds)}>测试循环</Link> : '测试循环'}
-        </MenuItem>
-      )}
+      </MenuItem>      
       <MenuItem key="report" disabled={!record.resultId}>
         测试报告
       </MenuItem>
@@ -166,28 +146,10 @@ const AutoTestList = ({
     filters: TESTRESULT,
     render: testStatus => TestResult(testStatus),
   }];
-
-  const ModalContent = ({ modal }) => (
-    <div>
-      <SelectVariable />
-    </div>
-  );
-
-  const key1 = Modal.key();
-  function openModal() {
-    Modal.open({
-      key: key1,
-      title: 'Basic',
-      drawer: true,
-      children: <ModalContent />,
-      okProps: { children: '保存' },
-    });
-  }
-
   return (
     <Page className="c7ntest-AutoTestList">
       <Header title={<FormattedMessage id="autotestlist_title" />}>
-        <Button onClick={toCreateAutoTest/* openModal */}>
+        <Button onClick={toCreateAutoTest}>
           <Icon type="playlist_add icon" />
           <span>添加测试</span>
         </Button>

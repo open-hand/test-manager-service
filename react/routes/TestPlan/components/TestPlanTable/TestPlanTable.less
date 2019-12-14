@@ -1,0 +1,74 @@
+@base: black;
+@baseblue: #3F51B5;
+.c7ntest-testPlan-testPlanTableCard {
+  margin-top: 11px !important;
+  background: #FFFFFF;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.20), 0 0 0 0 rgba(0,0,0,0.12), 0 0 0 0 rgba(0,0,0,0.12);
+  .c7n-card-head {
+    border: none;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    height: 0.6rem;
+    .c7n-card-head-wrapper {
+      display: flex;
+      align-items: center;
+      height: 0.6rem;
+      .c7n-card-head-title {
+        font-size: 0.16rem;
+        font-weight: 500;
+        color: #000000;
+      }
+      .c7n-card-extra {
+        text-align: left;
+        .c7ntest-testPlan-assignToSelect {
+          .c7n-select-selection__rendered {
+            display: flex;
+          }
+        }
+      }
+    }
+    
+}
+.c7n-card-body {
+  padding: 0.2rem;
+  padding-top: 0;
+  .c7n-table {
+    &-TestPlanTable-table {
+      &-p {
+        color: @base;
+      }
+  
+      &-p:hover {
+        color: @baseblue;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+    &-TestPlanTable-table {
+      &-span {
+        color: fade(@base, 65%);
+      }
+      
+    }
+  }
+}
+.c7ntest-dragtable table tbody tr td {
+    overflow: unset;
+    .c7ntest-testPlan-table-summary{
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      white-space: nowrap;
+      &:hover {
+        color: @primary-color;
+        text-decoration: underline;
+      }
+    }
+}
+}
+.c7ntest-testPlan-assignToDropDown {
+  .c7n-select-dropdown-menu-item {
+    display: flex;
+  }
+}
+

@@ -1,0 +1,43 @@
+.test-select-tree {
+  &-wrap {
+    // background-color: aqua;
+  }
+
+  &-search {
+    margin: .15rem;
+    color: #3F51B5;
+
+    span:first-child {
+      display: block;
+    }
+  }
+
+  &-body {
+    overflow-y: scroll;
+    max-height: 3rem;
+    .c7n-tree-node-selected{
+      background-color: #dadee8;
+      width: calc(~"100% - 22px");
+    }
+   
+    
+   
+  }
+
+  .c7n-divider-horizontal {
+    margin: 0;
+  }
+
+  &-node {
+    font-family: PingFangSC-Regular;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.65);
+
+    &-primary {
+      color: #3F51B5;
+      margin-bottom: .03rem;
+      margin-right: .051rem;
+    }
+  }
+
+}

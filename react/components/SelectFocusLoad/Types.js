@@ -3,7 +3,7 @@ import { Select } from 'choerodon-ui';
 import { find } from 'lodash';
 import User from '../User';
 import { getUsers, getUser } from '../../api/IamApi';
-import { getFoldersByVersion } from '../../api/IssueManageApi';
+import { getFoldersByVersion, getLabels } from '../../api/IssueManageApi';
 import { getProjectVersion } from '../../api/agileApi';
 import { getApps, getAppVersions } from '../../api/AutoTestApi';
 
@@ -82,7 +82,21 @@ export default {
       sort: { field: 'id', order: 'desc' },
     },
     // { version: filter }),
-      { }),
+    { }),
     render: appVersion => <Option value={appVersion.id} key={appVersion.id}>{appVersion.version}</Option>,
+  },
+  label: {
+    props: {
+      getPopupContainer: triggerNode => triggerNode.parentNode,
+      filter: false,
+      filterOption: false,
+      loadWhenMount: true,
+    },
+    request: getLabels,
+    render: label => (
+      <Option key={label.labelName} value={label.labelName}>
+        {label.labelName}
+      </Option>
+    ),
   },
 };

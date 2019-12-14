@@ -218,7 +218,63 @@ export function handleFileUpload(propFileList, func, config) {
       func(temp);
     });
 }
+/**
+ * 获取 blob
+ * @param  {String} url 目标文件地址
+ * @return {Promise} 
+ */
+function getBlob(url) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
 
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve(xhr.response);
+      }
+    };
+
+    xhr.send();
+  });
+}
+
+/**
+* 保存
+* @param  {Blob} blob     
+* @param  {String} filename 想要保存的文件名称
+*/
+function saveAs(blob, filename) {
+  if (window.navigator.msSaveOrOpenBlob) {
+    navigator.msSaveBlob(blob, filename);
+  } else {
+    const link = document.createElement('a');
+    const body = document.querySelector('body');
+
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+
+    // fix Firefox
+    link.style.display = 'none';
+    body.appendChild(link);
+
+    link.click();
+    body.removeChild(link);
+
+    window.URL.revokeObjectURL(link.href);
+  }
+}
+
+/**
+* 重命名下载文件 
+* @param  {String} url 目标文件地址
+* @param  {String} filename 想要保存的文件名称
+*/
+export function renameDownload(url, filename) {
+  getBlob(url).then((blob) => {
+    saveAs(blob, filename);
+  });
+}
 export function formatDate(str) {
   const MONTH = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
   if (!str) {
@@ -260,13 +316,13 @@ export function commonLink(link) {
 
   return encodeURI(`/testManager${link}?type=${type}&id=${projectId}&organizationId=${organizationId}&orgId=${organizationId}&name=${name}`);
 }
-export function issueLink(issueId, typeCode, issueName = null) {
+export function issueLink(issueId, typeCode, issueName, folderId) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
   if (typeCode === 'issue_test' || typeCode === 'issue_auto_test') {
-    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
+    return encodeURI(`/testManager/IssueManage?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}&folderId=${folderId}`);
   } else if (issueName) {
     return encodeURI(`/agile/work-list/issue?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&paramIssueId=${issueId}&paramName=${issueName}`);
   } else {
@@ -303,12 +359,12 @@ export function TestPlanLink(cycleId) {
 
   return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
-export function executeDetailLink(executeId, cycleId) {
+export function executeDetailLink(executeId, cycleId, planId) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/TestExecute/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`&cycleId=${cycleId || 0}`}`);
+  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&cycle_id=${cycleId}&plan_id=${planId}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);
@@ -468,13 +524,13 @@ export function validateFile(rule, fileList, callback) {
     fileList.forEach((file) => {
       if (file.size > 1024 * 1024 * 30) {
         callback('文件不能超过30M');
-      } else if (file.name && encodeURI(file.name).length > 210) {    
+      } else if (file.name && encodeURI(file.name).length > 210) {
         callback('文件名过长');
       }
     });
-    callback(); 
+    callback();
   } else {
-    callback(); 
+    callback();
   }
 }
 export function normFile(e) {
@@ -482,4 +538,14 @@ export function normFile(e) {
     return e;
   }
   return e && e.fileList;
+}
+export function handleRequestFailed(promise) {
+  return promise.then((res) => {
+    if (res.failed) {
+      Choerodon.prompt(res.message, 'error');
+      throw new Error(res.message);
+    } else {
+      return res;
+    }
+  });
 }

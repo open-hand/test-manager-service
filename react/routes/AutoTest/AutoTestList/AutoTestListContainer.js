@@ -20,6 +20,7 @@ class AutoTestListContainer extends Component {
   }
 
   componentWillUnmount() {
+    store.clear();
     clearTimeout(this.timer);
   }
 
@@ -55,6 +56,7 @@ class AutoTestListContainer extends Component {
         store.setAppList(data.list);
         store.setSelectLoading(false);
       } else {
+        this.loadTestHistoryByApp();
         store.setEnvList(envs);
         store.setAppList(data.list);
         store.setSelectLoading(false);

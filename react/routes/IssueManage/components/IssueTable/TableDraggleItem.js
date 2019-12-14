@@ -1,35 +1,34 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
+import { observer } from 'mobx-react-lite';
 import { Draggable } from 'react-beautiful-dnd';
 import IssueStore from '../../stores/IssueStore';
 
-@observer
-class TableDraggleItem extends Component {
-  render() {
-    const draggingTableItems = IssueStore.getDraggingTableItems;
-    const {
-      issue, index, handleClickIssue, clickIssue,
-    } = this.props;
-    const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.issueId === issue.issueId });
-    return (
-      <Draggable key={issue.issueId} draggableId={issue.issueId} index={index} isDragDisabled={issue.typeCode === 'issue_auto_test'}>
-        {(provided, snapshotinner) => (
-          <tr
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            style={{
-              background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { issueId: issue.issueId }) && 'rgb(235, 242, 249)',
-              position: 'relative',
-              ...provided.draggableProps.style,
-            }}
-            onClick={(e) => { handleClickIssue(issue, index, e); }}
-            className={classes}
-          >
-            {snapshotinner.isDragging
+export default observer((props) => {
+  const draggingTableItems = IssueStore.getDraggingTableItems;
+  const {
+    issue, index, handleClickIssue,
+  } = props;
+  const { clickIssue } = IssueStore;
+  const classes = classNames('c7ntest-border', 'c7ntest-table-item', { selected: clickIssue.caseId === issue.caseId });
+  return (
+    <Draggable key={issue.caseId} draggableId={issue.caseId} index={index}>
+      {(provided, snapshotinner) => (
+        <tr
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          style={{
+            background: !snapshotinner.isDragging && issue.typeCode !== 'issue_auto_test' && _.find(draggingTableItems, { caseId: issue.caseId }) && 'rgb(235, 242, 249)',
+            position: 'relative',
+            ...provided.draggableProps.style,
+          }}
+          onClick={(e) => { handleClickIssue(issue, index, e); }}
+          className={classes}
+        >
+          {snapshotinner.isDragging
               && (
                 <div style={{
                   position: 'absolute',
@@ -47,35 +46,28 @@ class TableDraggleItem extends Component {
                 </div>
               )
             }
-            {snapshotinner.isDragging
+          {snapshotinner.isDragging
               && (
                 <div className="IssueTable-drag-prompt">
                   <div>
-                    {'复制或移动测试用例'}
+                    复制或移动测试用例
                   </div>
                   <div> 按下ctrl/command复制</div>
                   <div
-                    ref={(instance) => { this.props.saveRef(instance); }}
+                    ref={props.instanceRef}
                   >
                     <div>
-                      {'当前状态：'}
+                      当前状态：
                       <span style={{ fontWeight: 500 }}>移动</span>
                     </div>
                   </div>
                 </div>
               )
             }
-            {this.props.children}
-          </tr>
-        )
+          {props.children}
+        </tr>
+      )
         }
-      </Draggable>
-    );
-  }
-}
-
-TableDraggleItem.propTypes = {
-
-};
-
-export default TableDraggleItem;
+    </Draggable>
+  );
+});

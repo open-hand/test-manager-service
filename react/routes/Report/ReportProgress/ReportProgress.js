@@ -7,14 +7,11 @@ import {
 } from 'choerodon-ui';
 import { FormattedMessage } from 'react-intl';
 import ReactEcharts from 'echarts-for-react';
-import _ from 'lodash';
-import { getProjectVersion } from '../../../api/agileApi';
-import loadProgressByVersion from '../../../api/DashBoardApi';
-import { getCyclesByVersionId } from '../../../api/cycleApi';
+import { getPlanList, getStatusByFolder } from '../../../api/TestPlanApi';
 import ReporterSwitcher from '../components';
 import { getProjectName } from '../../../common/utils';
-import EmptyCase from '../../../assets/emptyCase.svg';
-
+import EmptyPng from '../../../assets/empty.png';
+import Empty from '../../../components/Empty';
 import './ReportProgress.scss';
 
 const { AppState } = stores;
@@ -24,11 +21,9 @@ class ReportProgress extends Component {
     super(props);
     this.state = {
       loading: true,
-      currentVersion: null,
-      currentCycle: null,
-      versionList: [],
-      cycleList: [],
-      versionProgress: [],
+      currentPlanId: undefined,
+      planList: [],
+      versionProgress: {},
     };
   }
 
@@ -39,40 +34,35 @@ class ReportProgress extends Component {
   loadData = () => {
     this.setState({
       loading: true,
-      currentVersion: null,
-      currentCycle: null,
+      currentPlanId: undefined,
     });
-    getProjectVersion().then((res) => {
+    getPlanList().then((res) => {
       this.setState({
         loading: false,
       });
       if (res && res.length > 0) {
-        const latestVersionId = Math.max.apply(null, res.map(item => item.versionId));
-        // console.log(latestVersionId);
-        if (latestVersionId !== -Infinity) {
-          this.loadProgressByVersion(latestVersionId);
-          this.loadCyclesByVersionId(latestVersionId);
+        const latestPlanId = Math.max.apply(null, res.map(item => item.planId));
+        if (latestPlanId !== -Infinity) {
+          this.loadProgressByPlan(latestPlanId, latestPlanId);
         }
         this.setState({
-          versionList: res.reverse(),
+          planList: res.reverse(),
         });
       }
     }).catch((e) => {
-      /* console.log(e); */
       this.setState({
         loading: false,
       });
     });
   }
 
-  loadProgressByVersion = (versionId, cycleId) => {
-    // console.log('load', versionId);
+  loadProgressByPlan = (planId, folderId) => {
     this.setState({
       loading: true,
     });
-    loadProgressByVersion(versionId, cycleId).then((res) => {
+    getStatusByFolder({ planId, folderId }).then((res) => {
       this.setState({
-        currentVersion: versionId,
+        currentPlanId: planId,
         versionProgress: res,
         loading: false,
       });
@@ -84,28 +74,8 @@ class ReportProgress extends Component {
     });
   }
 
-  loadCyclesByVersionId = (versionId) => {
-    getCyclesByVersionId(versionId).then((res) => {
-      this.setState({
-        cycleList: res,
-      });
-    });
-  }
-
-  handleVersionChange = (value) => {
-    this.loadProgressByVersion(value);
-    this.setState({
-      currentCycle: null,
-    });
-    this.loadCyclesByVersionId(value);
-  }
-
-  handleCycleChange = (value) => {
-    const { currentVersion } = this.state;
-    this.setState({
-      currentCycle: value,
-    });
-    this.loadProgressByVersion(currentVersion, value);
+  handlePlanChange = (value) => {
+    this.loadProgressByPlan(value, value);
   }
 
   getOption() {
@@ -114,7 +84,6 @@ class ReportProgress extends Component {
         trigger: 'item',
         formatter: '{b}: {c}',
       },
-      //   hoverable: true,
       series: [
         {
           name: '执行进度',
@@ -136,21 +105,13 @@ class ReportProgress extends Component {
               },
             },
           },
-          data: this.state.versionProgress.map(item => ({
-            name: item.name,
-            value: item.counts,
+          data: this.state.versionProgress.statusVOList.map(item => ({
+            name: item.statusName,
+            value: item.count,
             itemStyle: {
-              color: item.color,
+              color: item.statusColor,
             },
           })),
-          // [
-          //   {
-          //     name: '未执行',
-          //     value: 6,
-          //     itemStyle: {                
-          //       color: 'rgba(0, 0, 0, 0.18)',              
-          //     },  
-          //   }]
         },
       ],
     };
@@ -160,7 +121,7 @@ class ReportProgress extends Component {
 
   renderContent = () => {
     const {
-      loading, currentVersion, currentCycle, versionProgress,
+      loading, versionProgress, planList,
     } = this.state;
     if (loading) {
       return (
@@ -169,7 +130,7 @@ class ReportProgress extends Component {
         </div>
       );
     }
-    if (versionProgress && versionProgress.length > 0) {
+    if (versionProgress.total > 0) {
       return (
         <div className="c7ntest-chartAndTable">
           <ReactEcharts
@@ -178,34 +139,38 @@ class ReportProgress extends Component {
           />
           <div className="c7ntest-tableContainer">
             <p className="c7ntest-table-title"><FormattedMessage id="report_progress_table_title" /></p>
-            <table>
-              <tr>
-                <td style={{ width: '158px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_statusTd" /></td>
-                <td style={{ width: '62px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_countTd" /></td>
-              </tr>
-              {
-                versionProgress.map((item, index) => (
+            <div style={{ overflowY: 'scroll', maxHeight: 300 }}>
+              <table>
+                <tr>
+                  <td style={{ width: '158px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_statusTd" /></td>
+                  <td style={{ width: '62px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_countTd" /></td>
+                </tr>
+                {
+                versionProgress.statusVOList.map((item, index) => (
                   <tr>
                     <td style={{ display: 'flex', paddingBottom: 8 }}>
-                      <div className="c7ntest-table-icon" style={{ background: item.color }} />
-                      <Tooltip title={item.name}>
-                        <div className="c7ntest-table-name">{item.name}</div>
+                      <div className="c7ntest-table-icon" style={{ background: item.statusColor }} />
+                      <Tooltip title={item.statusName}>
+                        <div className="c7ntest-table-name">{item.statusName}</div>
                       </Tooltip>
                     </td>
-                    <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.counts}</td>
+                    <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.count}</td>
                   </tr>
                 ))
               }
-            </table>
+              </table>
+            </div>
           </div>
         </div>
       );
     } else {
       return (
-        <div className="c7ntest-emptyCase">
-          <img src={EmptyCase} title="没有测试用例" alt="没有测试用例" />
-          <div className="c7ntest-emptyCase-detail">{`${currentVersion ? '当前版本' : ''}${currentCycle ? '的当前循环' : ''}${currentVersion ? '下' : ''}没有测试用例`}</div>
-        </div>
+        <Empty
+          loading={loading}
+          pic={EmptyPng}
+          title={`${planList && planList.length > 0 ? '暂无测试用例' : '暂无计划'}`} 
+          description={`${planList && planList.length > 0 ? '当前计划下暂无测试用例' : '当前项目下无计划'}`}
+        />
       );
     }
   }
@@ -214,7 +179,7 @@ class ReportProgress extends Component {
     const urlParams = AppState.currentMenuType;
     const { organizationId } = AppState.currentMenuType;
     const {
-      loading, versionList, currentVersion, cycleList, currentCycle, versionProgress,
+      planList, currentPlanId,
     } = this.state;
     return (
       <Page className="c7ntest-report-progress">
@@ -237,29 +202,13 @@ class ReportProgress extends Component {
               <Select
                 className="c7ntest-version-filter-item"
                 getPopupContainer={triggerNode => triggerNode.parentNode}
-                value={currentVersion}
-                label={<FormattedMessage id="report_progress_versionLabel" />}
-                onChange={this.handleVersionChange}
+                value={currentPlanId}
+                label="计划"
+                onChange={this.handlePlanChange}
               >
                 {
-                  versionList.map(item => (
-                    <Option value={item.versionId} key={item.versionId}>{item.name}</Option>
-                  ))
-                }
-              </Select>
-            </div>
-            <div className="c7ntest-switchCycle">
-              <Select
-                className="c7ntest-cycle-filter-item"
-                getPopupContainer={triggerNode => triggerNode.parentNode}
-                value={currentCycle}
-                allowClear={!!currentCycle}
-                label={<FormattedMessage id="report_progress_cycleLabel" />}
-                onChange={this.handleCycleChange}
-              >
-                {
-                  cycleList.map(item => (
-                    <Option value={item.cycleId} key={item.cycleName}>{item.cycleName}</Option>
+                  planList.map(item => (
+                    <Option value={item.planId} key={item.planId}>{item.name}</Option>
                   ))
                 }
               </Select>

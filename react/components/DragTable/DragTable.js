@@ -1,8 +1,8 @@
 // 可拖动table
 import React, { Component } from 'react';
 import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
-import onClickOutside from 'react-onclickoutside';
 import { Table } from 'choerodon-ui';
+import CustomCheckBox from '../CustomCheckBox';
 import './DragTable.less';
 
 const reorder = (list, startIndex, endIndex) => {
@@ -27,16 +27,6 @@ class DragTable extends Component {
       this.setState({ data: nextProps.dataSource });
     }
   }
-
-  handleClickOutside = (e) => {
-    const { createIssueStep, hasStepIsCreating } = this.props;
-    // 编辑框失焦后才更新值
-    setTimeout(() => {
-      if (createIssueStep && hasStepIsCreating) {
-        createIssueStep();
-      }
-    }, 0);
-  };
 
   handleColumnFilterChange = ({ selectedKeys }) => {
     this.setState({
@@ -65,6 +55,7 @@ class DragTable extends Component {
         fromIndex,
         toIndex,
       );
+      // console.log('onDragEnd01', result);
       this.setState({ data });
       const { onDragEnd } = this.props;
       if (onDragEnd) {
@@ -125,12 +116,15 @@ class DragTable extends Component {
   }
 
   renderThead = () => {
-    const { columns } = this.props;
+    const {
+      columns, checkedMap, dataSource, checkField, 
+    } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
-      <th style={{ flex: column.flex || 1, width: column.width }}>
-        {column.title}
-        {' '}
+      <th style={{ flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
+        {column.key !== 'checkbox' ? column.title : (
+          <CustomCheckBox value="all" checkedMap={checkedMap} dataSource={dataSource} field={checkField} />
+        )}
       </th>
     ));
     return (<tr>{ths}</tr>);
@@ -142,14 +136,14 @@ class DragTable extends Component {
     } = this.props;
     const judgeProps = props => (customDragHandle ? {} : props);
     const Columns = columns.filter(column => this.shouldColumnShow(column));
-    const rows = data.map((item, index) => (
+    const rows = data && data.length > 0 && data.map((item, index) => (
       disabled
         ? (
           <tr onClick={this.handleRow.bind(this, item)}>
             {Columns.map((column) => {
               let renderedItem = null;
               const {
-                dataIndex, key, flex, render, width, className,
+                dataIndex, key, flex, render, width, className, style,
               } = column;
               if (render) {
                 renderedItem = render(data[index][dataIndex], data[index], index, {}, {});
@@ -157,7 +151,12 @@ class DragTable extends Component {
                 renderedItem = data[index][dataIndex];
               }
               return (
-                <td className={className} style={{ flex: flex || 1, width }}>
+                <td
+                  className={className}
+                  style={{
+                    flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', ...style,
+                  }}
+                >
                   {renderedItem}
                 </td>
               );
@@ -172,19 +171,27 @@ class DragTable extends Component {
                 {...provided.draggableProps}
                 {...judgeProps(provided.dragHandleProps)}
                 onClick={this.handleRow.bind(this, item)}
+                style={{ cursor: 'move', ...provided.draggableProps.style }}
               >
                 {Columns.map((column) => {
                   let renderedItem = null;
                   const {
-                    dataIndex, key, flex, render, width, className,
+                    dataIndex, key, flex, render, width, className, style,
                   } = column;
                   if (render) {
                     renderedItem = render(data[index][dataIndex], data[index], index, provided, snapshot);
                   } else {
                     renderedItem = data[index][dataIndex];
                   }
+
+
                   return (
-                    <td className={className} style={{ flex: flex || 1, width }}>
+                    <td
+                      className={className}
+                      style={{
+                        flex: width ? 'unset' : (flex || 1), width, display: 'flex', alignItems: 'center', ...style,
+                      }}
+                    >
                       {renderedItem}
                     </td>
                   );
@@ -214,4 +221,4 @@ class DragTable extends Component {
   }
 }
 
-export default onClickOutside(DragTable);
+export default DragTable;

@@ -1,11 +1,29 @@
+import Axios from 'axios';
+import queryString from 'query-string';
 import { getProjectId, request } from '../common/utils';
 
-export function getCycle(id, cycleId) {
-  return request.get(`/test/v1/projects/${getProjectId()}/cycle/case/query/one/${id}?cycleId=${cycleId || 0}`);
+/**
+ * 更新执行用例详情（用于状态更改）
+ * @param {*} data 
+ */
+export function updateDetail(data) {
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
+}
+/**
+ * 更新执行用例详情（用于弹窗修改内容）
+ * @param {*} data 
+ */
+export function updateSidebarDetail(data) {
+  const { isAsync = false } = data;
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/case_step?isAsync=${isAsync}`, data);
 }
 
-export function editCycle(cycle) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/update`, cycle);
+/**
+ * 获取问题链接信息
+ * @param {*} data 
+ */
+export function getIssueInfos(caseId) {
+  return request.get(`test/v1/projects/${getProjectId()}/case_link/list_issue_info?case_id=${caseId}`);
 }
 /**
  *增加缺陷
@@ -35,10 +53,11 @@ export function editCycleSide(data) {
   return request.post(`/zuul/test/v1/projects/${getProjectId()}/cycle/case/step/updateWithAttach`, data, axiosConfig);
 }
 export function editCycleStep(data) {
-  return request.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
+  // /v1/projects/28/cycle/case/case_step/25 /v1/projects/28/cycle/case/step
+  return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
-export function getCycleDetails(cycleCaseId) {
-  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/step/query/${cycleCaseId}`);
+export function geDetailsData(cycleCaseId, param) {
+  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`, { searchArgs: {}, contents: [] });
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;

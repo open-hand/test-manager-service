@@ -38,7 +38,7 @@ class CreateAutoTest extends Component {
             <Button
               type="primary"
               funcType="raised"
-              disabled={!app.id || !appVersion.id || !version.versionId || !env.id}
+              disabled={!app.id || !appVersion.id || !env.id}
               onClick={CreateAutoTestStore.nextStep}
             >
               {formatMessage({ id: 'next' })}

@@ -1,78 +1,150 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Icon } from 'choerodon-ui';
-import { Draggable, Droppable, DragDropContext } from 'react-beautiful-dnd';
+import React, { Fragment, useCallback } from 'react';
+import styled from 'styled-components';
+import classNames from 'classnames';
+import {
+  Icon, Button, TextField,
+} from 'choerodon-ui/pro';
+import { Menu, Dropdown } from 'choerodon-ui';
+import { observer } from 'mobx-react-lite';
+import SmartTooltip from '@/components/SmartTooltip';
 
-class TreeNode extends Component {
-  state = {
-    expand: false,
+function callFunction(prop, ...args) {
+  if (typeof prop === 'function') {
+    return prop(...args);
   }
-
-  handleExpand = () => {
-    const { expand } = this.state;
-    if (!this.props.children) {
-      return;
-    }
-    this.setState({
-      expand: !expand,
-    });
-  }
-
-  renderChildren = () => {
-    const { expand } = this.state;
-    const {
-      children, title, icon, data, 
-    } = this.props;
-    return (
-      children && children.length > 0 ? (
-        <div>
-          <div role="none" className="tree-item" onClick={this.handleExpand}>
-            <Icon type="baseline-arrow_right" className={expand ? 'toggler toggled' : 'toggler'} />
-            <div style={{ marginRight: 5 }}>
-              {icon}
-            </div>
-            {title}
-          </div>
-          <div className={expand ? 'collapsible-wrapper' : 'collapsible-wrapper collapsed'}>
-            {children ? (
-              <ul className="collapsible" ref={(node) => { this.node = node; }}>
-                {children}
-              </ul>
-            ) : null}
-          </div>
-        </div>
-      ) : (
-        <Droppable droppableId={data.key}>
-          {(provided, snapshot) => (
-            <div
-              className="tree-item"
-              ref={provided.innerRef}
-              style={{ background: snapshot.isDraggingOver && 'green' }}
-            >
-              <div style={{ marginRight: 5 }}>
-                {icon}
-              </div>
-              {title}
-              {provided.placeholder}
-            </div>
-          )
-            }
-        </Droppable>
-      )
-    );
-  };
-
-  render() {
-    return (
-      <li>
-        {this.renderChildren()}
-      </li>
-    );
-  }
+  return prop;
 }
+const defaultProps = {
+  enableAddFolder: false,
+  enableAction: true,
+};
+const PreTextIcon = styled.span`
+  display: inline-block;
+  visibility: hidden;
+  width: 22px;
+  justify-content: center;
+  cursor: pointer;
+`;
 
-TreeNode.propTypes = {
+const prefix = 'c7ntest-tree';
 
+const getAction = (item, menuItems, enableAddFolder, onMenuClick) => {
+  const menu = (
+    <Menu onClick={(target) => { onMenuClick(item, target); }}>
+      {menuItems ? callFunction(menuItems, item) : [
+        <Menu.Item key="rename">
+          重命名
+        </Menu.Item>,
+        <Menu.Item key="delete">
+          删除
+        </Menu.Item>]}
+    </Menu>
+  );
+  return (
+    <div key={item.id} role="none" onClick={(e) => { e.stopPropagation(); }} className={`${prefix}-tree-item-action`}>
+      {(callFunction(enableAddFolder, item)) && <Icon type="create_new_folder" style={{ marginRight: 6 }} onClick={() => { onMenuClick(item, { key: 'add' }); }} />}
+      <Dropdown overlay={menu} trigger={['click']} getPopupContainer={trigger => trigger.parentNode}>
+        <Button funcType="flat" icon="more_vert" size="small" />
+      </Dropdown>
+    </div>
+  );
 };
 
-export default TreeNode;
+
+function TreeNode(props) {
+  const {
+    provided, onSelect, path, item, onExpand, onCollapse, onMenuClick, onCreate, search, onEdit, enableAction, menuItems, enableAddFolder, getFolderIcon,
+  } = props;
+  const getIcon = useCallback(() => {
+    const expandIcon = (
+      <Icon
+        type="baseline-arrow_right"
+        className={classNames(`${prefix}-icon`, { [`${prefix}-icon-expanded`]: item.isExpanded })}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (item.isExpanded) {
+            onCollapse(item.id);
+          } else {
+            onExpand(item.id);
+          }
+        }}
+      />
+    );
+    const defaultIcon = (
+      <Icon
+        type={item.isExpanded ? 'folder_open2' : 'folder_open'}
+        className={`${prefix}-icon-folder ${prefix}-icon-primary`}
+      />
+    );
+    const folderIcon = getFolderIcon ? callFunction(getFolderIcon, item, defaultIcon) : defaultIcon;
+    if (item.children && item.children.length > 0) {
+      return (
+        <Fragment>
+          {expandIcon}
+          {folderIcon}
+        </Fragment>
+      );
+    }
+    return (
+      <Fragment>
+        <PreTextIcon>&bull;</PreTextIcon>
+        {folderIcon}
+      </Fragment>
+    );
+  }, [getFolderIcon, item, onCollapse, onExpand]);
+  const onSave = (e) => {
+    if (item.id === 'new') {
+      onCreate(e.target.value, path, item);
+    } else {
+      onEdit(e.target.value, item);
+    }
+  };
+  const renderEditing = () => (
+    <div
+      role="none"
+      className={`${prefix}-tree-item`}
+    >
+      <TextField placeholder="请输入文件夹名称" style={{ width: '100%' }} maxLength={20} defaultValue={item.data.name} onBlur={onSave} autoFocus />
+    </div>
+  );
+  const renderTitle = () => {
+    const { name } = item.data;
+    const index = name.indexOf(search);
+    const beforeStr = name.substr(0, index);
+    const afterStr = name.substr(index + search.length);
+    const result = index > -1 ? (
+      <span>
+        {beforeStr}
+        <span style={{ color: '#f50' }}>{search}</span>
+        {afterStr}
+      </span>
+    ) : name;
+    return <SmartTooltip title={result} />;
+  };
+  const renderContent = () => (
+    <div
+      className={`${prefix}-tree-item-wrapper`}
+    >
+      <div
+        role="none"
+        className={classNames(`${prefix}-tree-item`, { [`${prefix}-tree-item-selected`]: item.selected })}
+        onClick={() => { onSelect(item); }}
+      >
+        <span className={`${prefix}-tree-item-prefix`}>{getIcon(item, onExpand, onCollapse)}</span>
+        <span className={`${prefix}-tree-item-title`}>{renderTitle()}</span>
+        {(callFunction(enableAction, item)) && getAction({ ...item, path }, menuItems, enableAddFolder, onMenuClick)}
+      </div>
+    </div>
+  );
+  return (    
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+    >
+      {item.isEditing ? renderEditing() : renderContent()}
+    </div>
+  );
+}
+TreeNode.defaultProps = defaultProps;
+export default observer(TreeNode);

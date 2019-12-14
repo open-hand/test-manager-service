@@ -14,7 +14,8 @@
     margin-top: 3px;
     top: 100%;
     right: 100px;
-    background: white;
+    background: black;
+    color: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
     padding: 10px;
   }
@@ -37,21 +38,16 @@
   .c7ntest-table-item.selected {
     background: #eee;
   }
-
-  .c7n-dropdown-trigger {
-    bottom: 30px;
-  }
-
   .c7n-select-selection__rendered {
     margin-bottom: -4px !important;
   }
 
   .c7ntest-issuetable {
+    user-select: none;
     .c7n-table-filter-bar {
       padding-right: 90px;
       padding-top: 4px;
       padding-bottom: 3px;
-      border-top: none;
       height: 0.4rem;
     }
 
@@ -71,7 +67,7 @@
       .icon-view_column {
         font-size: 14px;
       }
-    }
+    }    
 
     table {
       table-layout: fixed;
@@ -106,7 +102,7 @@
           // border-top: 1px solid #e8e8e8;
           // box-shadow: 0 1px 0 0 #e8e8e8, 0 1px 0 0 #e8e8e8 inset;
           border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-
+          outline: none;
           .c7ntest-table-item {
             width: 100%;
             min-height: 33px;
@@ -119,11 +115,15 @@
             // width: 50px;
             // flex: 1;
             // line-height: 20px;
-            padding-left: 20px;
+            padding-left: 18px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             display: inline-block; //fix ie11
+            .c7n-table-issueTreeTtile-table-p:hover{
+              color: #3F51B5;
+              text-decoration: underline;
+            }
           }
         }
       }

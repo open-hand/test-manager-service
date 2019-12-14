@@ -1,106 +1,91 @@
 
-import React, { Component, useRef } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import _ from 'lodash';
-import { observer } from 'mobx-react';
-import { Spin, Table, Pagination } from 'choerodon-ui';
+import { toJS } from 'mobx';
+import { observer } from 'mobx-react-lite';
+import {
+  Spin, Table, Pagination, Tooltip,
+} from 'choerodon-ui';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { FormattedMessage } from 'react-intl';
-import EmptyBlock from '../EmptyBlock';
 import CreateIssueTiny from '../CreateIssueTiny';
 import IssueStore from '../../stores/IssueStore';
 import TableDraggleItem from './TableDraggleItem';
+import IssueTreeStore from '../../stores/IssueTreeStore';
 import {
-  renderType, renderIssueNum, renderSummary, renderPriority, renderVersions, renderFolder,
-  renderComponents, renderLabels, renderAssigned, renderStatus, renderReporter,
+  renderIssueNum, renderSummary, renderAction,
 } from './tags';
+import UserHead from '@/components/UserHead';
 import './IssueTable.less';
-import pic from '../../../../assets/testCaseEmpty.svg';
+import useAvoidClosure from '@/hooks/useAvoidClosure';
 
-const versionStatus = [
-  {
-    name: '规划中',
-    code: 'version_planning',
-  }, {
-    name: '已归档',
-    code: 'archived',
-  }, {
-    name: '已发布',
-    code: 'released',
-  },
-];
+export default observer((props) => {
+  const [firstIndex, setFirstIndex] = useState(null);
+  const [filteredColumns, setFilteredColumns] = useState([]);
+  const instance = useRef();
 
-@observer
-class IssueTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstIndex: null,
-      filteredColumns: ['issueNum', 'issueTypeVO', 'summary', 'versionIssueRelVOList', 'folderName', 'reporter', 'priorityId'],
-    };
-    this.inDivRef = React.createRef();
-  }
+  const handleColumnFilterChange = ({ selectedKeys }) => {
+    setFilteredColumns(selectedKeys);
+  };
 
-  handleColumnFilterChange = ({ selectedKeys }) => {
-    this.setState({
-      filteredColumns: selectedKeys,
-    });
-  }
-
-  getComponents = columns => ({
-    table: () => {
-      const table = (
-        <table>
-          <thead>
-            {this.renderThead(columns)}
-          </thead>
-          <Droppable droppableId="dropTable" isDropDisabled>
-            {(provided, snapshot) => (
-              <tbody
-                ref={provided.innerRef}
-              >
-                {this.renderTbody(IssueStore.getIssues, columns)}
-                {/* {provided.placeholder} */}
-              </tbody>
-            )}
-          </Droppable>
-        </table>
-      );
-      return (
-        <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-          {table}
-        </DragDropContext>
-      );
-    },
-  })
-
-  shouldColumnShow = (column) => {
+  const shouldColumnShow = useAvoidClosure((column) => {
     if (column.title === '' || !column.dataIndex) {
       return true;
     }
-    const { filteredColumns } = this.state;
     return filteredColumns.length === 0 ? true : filteredColumns.includes(column.dataIndex);
-  }
+  });
 
-  renderThead = (columns) => {
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
+  const renderThead = (columns) => {
+    const Columns = columns.filter(column => shouldColumnShow(column));
     const ths = Columns.map(column => (
-      <th style={{ flex: column.flex || 1 }}>
+      // <th style={{ flex: column.flex || 1 }} >
+      <th key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
         {column.title}
         {' '}
       </th>
     ));
     return (<tr>{ths}</tr>);
-  }
+  };
 
-  renderTbody(data, columns) {
+  const handleClickIssue = useAvoidClosure((issue, index, e) => {
+    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+      if (e.shiftKey) {
+        if (firstIndex !== null) {
+          const start = Math.min(firstIndex, index);
+          const end = Math.max(firstIndex, index);
+          //
+          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1); 
+          IssueStore.setDraggingTableItems(draggingTableItems);
+        }
+      } else {
+        // 是否已经选择
+        const old = IssueStore.getDraggingTableItems;
+        const hasSelected = _.findIndex(old, { caseId: issue.caseId });
+
+        // 已选择就去除
+        if (hasSelected >= 0) {
+          old.splice(hasSelected, 1);
+        } else {
+          old.push(issue);
+        }
+        IssueStore.setDraggingTableItems(old);
+      }
+    } else {
+      IssueStore.setDraggingTableItems([]);
+      // onRow(issue).onClick();
+    }
+    setFirstIndex(index);
+  });
+
+
+  const renderTbody = (data, columns) => {   
     const {
-      disabled, onRow, clickIssue,
-    } = this.props;
-    const Columns = columns.filter(column => this.shouldColumnShow(column));
+      disabled, onRow,
+    } = props;
+    const Columns = columns.filter(column => shouldColumnShow(column));
     const tds = index => Columns.map((column) => {
       let renderedItem = null;
       const {
-        dataIndex, key, flex, render,
+        dataIndex, render,
       } = column;
       if (render) {
         renderedItem = render(data[index][dataIndex], data[index], index);
@@ -108,7 +93,8 @@ class IssueTable extends Component {
         renderedItem = data[index][dataIndex];
       }
       return (
-        <td style={{ flex: flex || 1 }}>
+        // <td style={{ flex: flex || 1 }} >
+        <td key={column.key} style={{ width: column.width, flex: column.width ? 'unset' : (column.flex || 1) }}>
           {renderedItem}
         </td>
       );
@@ -120,7 +106,7 @@ class IssueTable extends Component {
         return (
           // 由于drag结束后要经过一段时间，由于有动画，所以大约33-400ms后才执行onDragEnd,
           // 所以在这期间如果获取用例的接口速度很快，重新渲染table中的项，会无法执行onDragEnd,故加此key
-          <TableDraggleItem key={`${issue.issueId}-${issue.objectVersionNumber}`} clickIssue={clickIssue} handleClickIssue={this.handleClickIssue.bind(this)} issue={issue} index={index} saveRef={(instance) => { this.instance = instance; }} onRow={onRow}>
+          <TableDraggleItem key={`${issue.caseId}-${issue.objectVersionNumber}`} handleClickIssue={handleClickIssue.bind(this)} issue={issue} index={index} instanceRef={instance} onRow={onRow}>
             {tds(index)}
           </TableDraggleItem>
         );
@@ -128,332 +114,237 @@ class IssueTable extends Component {
     });
 
     return rows;
-  }
+  };
 
-  renderNarrowIssue(issue) {
-    const {
-      issueId,
-      issueTypeVO, issueNum, summary, assigneeId, assigneeName, assigneeImageUrl, reporterId,
-      reporterName, reporterImageUrl, statusVO, priorityVO,
-      folderName, epicColor, componentIssueRelVOList, labelIssueRelVOList,
-      versionIssueRelVOList, creationDate, lastUpdateDate,
-    } = issue;
-    return (
-      <div style={{ padding: '12px 16px', cursor: 'pointer', width: '100%' }}>
-        <div style={{
-          display: 'flex', marginBottom: '5px', width: '100%', flex: 1,
-        }}
-        >
-          {renderType(issueTypeVO)}
-          {renderIssueNum(issueNum)}
-          <div className="c7ntest-flex-space" />
-          {renderVersions(versionIssueRelVOList)}
-          {renderFolder(folderName)}
-          {renderReporter(reporterId, reporterName, reporterImageUrl, true)}
-          {renderPriority(priorityVO)}
-        </div>
-        <div style={{ display: 'flex' }}>
-          {renderSummary(summary)}
-        </div>
-      </div>
-    );
-  }
-
-  onDragEnd = (result) => {
-    IssueStore.setTableDraging(false);
-    document.removeEventListener('keydown', this.enterCopy);
-    document.removeEventListener('keyup', this.leaveCopy);
-  }
-
-  onDragStart = (monitor) => {
-    const draggingTableItems = IssueStore.getDraggingTableItems;
-    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { issueId: monitor.draggableId }) < 0) {
-      const { index } = monitor.source;
-      this.setState({
-        firstIndex: index,
-      });
-      IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
-    }
-    IssueStore.setTableDraging(true);
-    document.addEventListener('keydown', this.enterCopy);
-    document.addEventListener('keyup', this.leaveCopy);
-  }
-
-  enterCopy = (e) => {
+  const enterCopy = useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     if (e.keyCode === 17 || e.keyCode === 93 || e.keyCode === 91 || e.keyCode === 224) {
       const templateCopy = document.getElementById('template_copy').cloneNode(true);
       templateCopy.style.display = 'block';
-
-      if (this.instance.firstElementChild) {
-        this.instance.replaceChild(templateCopy, this.instance.firstElementChild);
+      if (instance.current && instance.current.firstElementChild) {
+        instance.current.replaceChild(templateCopy, instance.current.firstElementChild);
       } else {
-        this.instance.appendChild(templateCopy);
+        instance.current.appendChild(templateCopy);
       }
     }
-  }
+  }, []);
 
-  leaveCopy = (e) => {
+  const leaveCopy = useCallback((e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
     const templateMove = document.getElementById('template_move').cloneNode(true);
     templateMove.style.display = 'block';
 
-    if (this.instance.firstElementChild) {
-      this.instance.replaceChild(templateMove, this.instance.firstElementChild);
+    if (instance.current && instance.current.firstElementChild) {
+      instance.current.replaceChild(templateMove, instance.current.firstElementChild);
     } else {
-      this.instance.appendChild(templateMove);
+      instance.current.appendChild(templateMove);
     }
-  }
+  }, []);
 
-  handleClickIssue(issue, index, e) {
-    const { onRow } = this.props;
-    const { firstIndex } = this.state;
-    // console.log(e.shiftKey, e.ctrlKey, issue, index, firstIndex);
-    if (e.shiftKey || e.ctrlKey || e.metaKey) {
-      if (e.shiftKey) {
-        if (firstIndex !== null) {
-          const start = Math.min(firstIndex, index);
-          const end = Math.max(firstIndex, index);
-          //
-          const draggingTableItems = IssueStore.getIssues.slice(start, end + 1);
-          // console.log(draggingTableItems);
-          IssueStore.setDraggingTableItems(draggingTableItems);
-        }
-      } else {
-        // 是否已经选择
-        const old = IssueStore.getDraggingTableItems;
-        const hasSelected = _.findIndex(old, { issueId: issue.issueId });
+  const onDragEnd = useAvoidClosure(() => {
+    IssueStore.setTableDraging(false);
+    document.removeEventListener('keydown', enterCopy);
+    document.removeEventListener('keyup', leaveCopy);
+  });
 
-        // 已选择就去除
-        if (hasSelected >= 0) {
-          old.splice(hasSelected, 1);
-        } else {
-          old.push(issue);
-        }
-        // console.log(hasSelected, old);
-        IssueStore.setDraggingTableItems(old);
+  const onDragStart = useAvoidClosure((monitor) => {
+    const draggingTableItems = IssueStore.getDraggingTableItems;
+    if (draggingTableItems.length < 1 || _.findIndex(draggingTableItems, { caseId: monitor.draggableId }) < 0) {
+      const { index } = monitor.source;
+      setFirstIndex(index);
+      IssueStore.setDraggingTableItems([IssueStore.getIssues[index]]);
+    }
+    IssueStore.setTableDraging(true);
+    IssueStore.setClickIssue({});
+    document.addEventListener('keydown', enterCopy);
+    document.addEventListener('keyup', leaveCopy);
+  });
+
+  const getComponents = useAvoidClosure(columns => ({
+    table: () => {
+      const table = (
+        <table>
+          <thead>
+            {renderThead(columns)}
+          </thead>
+          <Droppable droppableId="dropTable" isDropDisabled>
+            {provided => (
+              <tbody
+                ref={provided.innerRef}
+              >
+                {renderTbody(IssueStore.getIssues, columns)}
+                {/* {provided.placeholder} */}
+              </tbody>
+            )}
+          </Droppable>
+        </table>
+      );
+      return (
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+          {table}
+        </DragDropContext>
+      );
+    },
+  }));
+
+  const transformFilters = (filters) => {
+    const transformedFilters = Object.entries(filters).filter(item => item[1].length > 0);
+    const res = {}; 
+    transformedFilters.forEach((item) => {
+      if (item[0] === 'summary') {
+        // eslint-disable-next-line prefer-destructuring
+        res.summary = item[1][0];
+      } else if (item[0] === 'caseNum') {
+        // eslint-disable-next-line prefer-destructuring
+        res.caseNum = item[1][0];
       }
-    } else {
-      IssueStore.setDraggingTableItems([]);
-      // onRow(issue).onClick();
-    }
-    this.setState({
-      firstIndex: index,
     });
-  }
+    return res;
+  };
 
-
-  renderTable = columns => (
-    <div className="c7ntest-issuetable">
-      <Table
-        // filterBar={false}
-        columns={columns}
-        dataSource={IssueStore.getIssues}
-        components={this.getComponents(columns)}
-        onChange={this.handleFilterChange}
-        onColumnFilterChange={this.handleColumnFilterChange}
-        pagination={false}
-        filters={IssueStore.barFilters || []}
-        filterBarPlaceholder={<FormattedMessage id="issue_filterTestIssue" />}
-        empty={!IssueStore.loading && (
-          <EmptyBlock
-            style={{ marginTop: 40 }}
-            border
-            pic={pic}
-            title={<FormattedMessage id="issue_noIssueTitle" />}
-            des={<FormattedMessage id="issue_noIssueDescription" />}
-          />
-        )}
-      />
-    </div>
-  )
-
-  handleFilterChange = (pagination, filters, sorter, barFilters) => {
+  const handleFilterChange = (pagination, filters, sorter, barFilters) => {
     // 条件变化返回第一页
     IssueStore.setPagination({
       current: 1,
       pageSize: IssueStore.pagination.pageSize,
       total: IssueStore.pagination.total,
     });
-    IssueStore.setFilteredInfo(filters);
+    IssueStore.setFilter({ searchArgs: transformFilters(filters) });
     IssueStore.setBarFilters(barFilters);
     // window.console.log(pagination, filters, sorter, barFilters[0]);
     if (barFilters === undefined || barFilters.length === 0) {
       IssueStore.setBarFilters(undefined);
     }
-
-    const {
-      statusId, priorityId, issueNum, summary,
-      labelIssueRelVOList, versionIssueRelVOList, componentIssueRelVOList,
-    } = filters;
-    const search = {
-      advancedSearchArgs: {
-        statusId: statusId || [],
-        priorityId: priorityId || [],
-      },
-      otherArgs: {
-        componentIds: componentIssueRelVOList || [],
-        label: labelIssueRelVOList || [],
-        issueNum: issueNum && issueNum.length ? issueNum[0] : '',
-        summary: summary && summary.length ? summary[0] : '',
-        versionStatusCode: versionIssueRelVOList && versionIssueRelVOList.length ? versionIssueRelVOList[0] : '',
-      },
-    };
-    IssueStore.setFilter(search);
     const { current, pageSize } = IssueStore.pagination;
     IssueStore.loadIssues(current - 1, pageSize);
-  }
+  };
 
-  handlePaginationChange(page, pageSize) {
+  const renderTable = columns => (
+    <div className="c7ntest-issuetable">
+      <Table
+        // filterBar={false}
+        rowKey="caseId"
+        columns={columns}
+        dataSource={IssueStore.getIssues}
+        components={getComponents(columns)}
+        onChange={handleFilterChange}
+        onColumnFilterChange={handleColumnFilterChange}
+        pagination={false}
+        filters={IssueStore.getBarFilters || []}
+        filterBarPlaceholder="过滤表"        
+      />
+    </div>
+  );
+  
+
+  const handlePaginationChange = (page, pageSize) => {
     IssueStore.loadIssues(page, pageSize);
-  }
+  };
 
-  handlePaginationShowSizeChange(current, size) {
+  const handlePaginationShowSizeChange = (current, size) => {
     IssueStore.loadIssues(current, size);
-  }
+  };
 
-  manageVisible = columns => columns.map(column => (this.shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }))
+  const manageVisible = columns => columns.map(column => (shouldColumnShow(column) ? { ...column, hidden: false } : { ...column, hidden: true }));
+
+  const reLoadTable = () => {
+    IssueStore.loadIssues();
+  };
 
 
-  render() {
-    const { onClick } = this.props;
-    const prioritys = IssueStore.getPrioritys;
-    const labels = IssueStore.getLabels;
-    const components = IssueStore.getComponents;
-    const issueStatusList = IssueStore.getIssueStatus;
-    const columns = this.manageVisible([
-      {
-        title: '用例名称',
-        dataIndex: 'summary',
-        key: 'summary',
-        filters: [],
-        width: 400,
-        render: (summary, record) => renderSummary(summary, record, onClick),
-      },
-      {
-        title: '编号',
-        dataIndex: 'issueNum',
-        key: 'issueNum',
-        filters: [],
-        render: (issueNum, record) => renderIssueNum(issueNum),
-      },
-      {
-        title: '类型',
-        dataIndex: 'issueTypeVO',
-        key: 'issueTypeVO',
-        render: (issueTypeVO, record) => renderType(issueTypeVO, true),
-      },
+  const { onClick, history } = props;
+  const columns = manageVisible([
+    {
+      title: '用例名称',
+      dataIndex: 'summary',
+      key: 'summary',
+      filters: [],
+      render: (summary, record) => renderSummary(summary, record, onClick, history),
+    },
+    {
+      key: 'action',
+      render: (text, record) => renderAction(record, history, reLoadTable),
+      width: '0.6rem',
+    },
+    {
+      title: '用例编号',
+      dataIndex: 'caseNum',
+      key: 'caseNum',
+      filters: [],
+      render: caseNum => renderIssueNum(caseNum),
+    },
+    {
+      title: '创建人',
+      dataIndex: 'createUser',
+      key: 'createUser',
+      render: createUser => createUser && <UserHead user={createUser} />,
+      width: '1rem',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'creationDate',
+      key: 'creationDate',
+      render: creationDate => <Tooltip title={creationDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{creationDate}</span></Tooltip>,
+    },
+    {
+      title: '更新人',
+      dataIndex: 'lastUpdateUser',
+      key: 'lastUpdateUser',
+      render: lastUpdateUser => lastUpdateUser && <UserHead user={lastUpdateUser} />,     
+      width: '1rem',
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'lastUpdateDate',
+      key: 'lastUpdateDate',
+      render: lastUpdateDate => <Tooltip title={lastUpdateDate}><span style={{ color: 'rgba(0, 0, 0, 0.65)' }}>{lastUpdateDate}</span></Tooltip>,
+    },
+  ]);
 
-      {
-        title: '版本',
-        dataIndex: 'versionIssueRelVOList',
-        key: 'versionIssueRelVOList',
-        filters: versionStatus.map(status => ({ text: status.name, value: status.code })),
-        render: (versionIssueRelVOList, record) => renderVersions(versionIssueRelVOList),
-      },
-      {
-        title: '文件夹',
-        dataIndex: 'folderName',
-        key: 'folderName',
-        render: (folderName, record) => renderFolder(folderName),
-      },
-      {
-        title: '报告人',
-        dataIndex: 'reporter',
-        key: 'reporter',
-        render: (assign, record) => {
-          const {
-            reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl,
-          } = record;
-          return renderReporter(reporterId, reporterName, reporterLoginName, reporterRealName, reporterImageUrl);
-        },
-      },
-      {
-        title: '优先级',
-        dataIndex: 'priorityId',
-        key: 'priorityId',
-        filters: prioritys.map(priority => ({ text: priority.name, value: priority.id.toString() })),
-        filterMultiple: true,
-        render: (priorityId, record) => renderPriority(record.priorityVO),
-      },
-      {
-        title: '经办人',
-        dataIndex: 'assign',
-        key: 'assign',
-        render: (assign, record) => {
-          const {
-            assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl,
-          } = record;
-          return renderAssigned(assigneeId, assigneeName, assigneeLoginName, assigneeRealName, assigneeImageUrl);
-        },
-      },
-      {
-        title: '状态',
-        dataIndex: 'statusId',
-        key: 'statusId',
-        filters: issueStatusList.map(status => ({ text: status.name, value: status.id.toString() })),
-        filterMultiple: true,
-        render: (statusVO, record) => renderStatus(record.statusVO),
-      },
-      {
-        title: '模块',
-        dataIndex: 'componentIssueRelVOList',
-        key: 'componentIssueRelVOList',
-        filters: components.map(component => ({ text: component.name, value: component.componentId.toString() })),
-        filterMultiple: true,
-        render: (componentIssueRelVOList, record) => renderComponents(componentIssueRelVOList),
-      },
-      {
-        title: '标签',
-        dataIndex: 'labelIssueRelVOList',
-        key: 'labelIssueRelVOList',
-        filters: labels.map(label => ({ text: label.labelName, value: label.labelId.toString() })),
-        filterMultiple: true,
-        render: (labelIssueRelVOList, record) => renderLabels(labelIssueRelVOList),
-      },
-    ]);
-    return (
-      <div className="c7ntest-issueArea">
-        <div id="template_copy" style={{ display: 'none' }}>
+  const { currentFolder } = IssueTreeStore;
+
+  return (
+    <div className="c7ntest-issueArea">
+      <div id="template_copy" style={{ display: 'none' }}>
           当前状态：
-          <span style={{ fontWeight: 500 }}>复制</span>
-        </div>
-        <div id="template_move" style={{ display: 'none' }}>
+        <span style={{ fontWeight: 500 }}>复制</span>
+      </div>
+      <div id="template_move" style={{ display: 'none' }}>
           当前状态：
-          <span style={{ fontWeight: 500 }}>移动</span>
-        </div>
-        <section
-          style={{
-            boxSizing: 'border-box',
-            width: '100%',
-          }}
+        <span style={{ fontWeight: 500 }}>移动</span>
+      </div>
+      <section
+        style={{
+          boxSizing: 'border-box',
+          width: '100%',
+        }}
+      >
+        <Spin spinning={IssueStore.loading}>
+          {renderTable(columns)}
+        </Spin>
+
+        <div
+          className="c7ntest-backlog-sprintIssue"
+          role="button"
         >
-          <Spin spinning={IssueStore.loading}>
-            {this.renderTable(columns)}
-          </Spin>
-
           <div
-            className="c7ntest-backlog-sprintIssue"
-            role="button"
+            style={{
+              userSelect: 'none',
+              background: 'white',
+              padding: '16px 0 12px 0',
+              fontSize: 13,
+              display: 'flex',
+              alignItems: 'center',
+            }}
           >
-            <div
-              style={{
-                userSelect: 'none',
-                background: 'white',
-                padding: '12px 0 12px 12px',
-                fontSize: 13,
-                display: 'flex',
-                alignItems: 'center',
-                borderBottom: '1px solid #e8e8e8',
-              }}
-            >
-              {/* table底部创建用例 */}
-              <CreateIssueTiny />
-            </div>
+            {
+              currentFolder && currentFolder.children && currentFolder.children.length === 0 ? <CreateIssueTiny key={currentFolder.id} /> : null
+            }
           </div>
-          {
+        </div>
+        {
             IssueStore.issues.length !== 0 ? (
               <div style={{
                 display: 'flex', justifyContent: 'flex-end', marginBottom: 16,
@@ -466,21 +357,13 @@ class IssueTable extends Component {
                   pageSize={IssueStore.pagination.pageSize}
                   showSizeChanger
                   total={IssueStore.pagination.total}
-                  onChange={this.handlePaginationChange.bind(this)}
-                  onShowSizeChange={this.handlePaginationShowSizeChange.bind(this)}
+                  onChange={handlePaginationChange.bind(this)}
+                  onShowSizeChange={handlePaginationShowSizeChange.bind(this)}
                 />
               </div>
             ) : null
           }
-        </section>
-      </div>
-
-    );
-  }
-}
-
-IssueTable.propTypes = {
-
-};
-
-export default IssueTable;
+      </section>
+    </div>
+  );
+});

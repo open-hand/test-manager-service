@@ -495,7 +495,7 @@ class ConfirmInfo extends Component {
                 {appVersion && appVersion.version}
               </div>
             </div>
-            <div>
+            {/* <div>
               <div className="deployApp-title">
                 <span className="deployApp-title-text">
                   目标版本：
@@ -504,7 +504,7 @@ class ConfirmInfo extends Component {
               <div className="deployApp-text">
                 {version && version.versionName}
               </div>
-            </div>
+            </div> */}
             <div>
               <div className="deployApp-title">
                 {/* <Icon type="description" /> */}

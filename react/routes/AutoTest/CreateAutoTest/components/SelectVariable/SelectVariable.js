@@ -3,7 +3,7 @@ import { Select } from 'choerodon-ui';
 import { injectIntl } from 'react-intl';
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { SelectFocusLoad, SelectVersion } from '../../../../../components';
+import { SelectFocusLoad } from '../../../../../components';
 import CreateAutoTestStore from '../../../stores/CreateAutoTestStore';
 import { getAllEnvs } from '../../../../../api/AutoTestApi';
 import './SelectVariable.less';
@@ -77,13 +77,13 @@ class SelectVariable extends Component {
           saveList={(list) => { CreateAutoTestStore.setAppVersionList(list); }}
         />
         {/* 选择目标版本 */}
-        <section className="deployApp-section">
+        {/* <section className="deployApp-section">
           <SelectVersion
             value={version.versionId}
             style={{ width: 512 }}
             onChange={this.handleVersionSelect}
           />
-        </section>
+        </section> */}
         {/* 选择环境 */}
         <section className="deployApp-section">
           <Select
