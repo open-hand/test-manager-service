@@ -124,63 +124,63 @@ public class JsonImportServiceImpl implements JsonImportService {
     @Autowired
     private ModelMapper modelMapper;
 
-    private void createStepsAndBackfillStepIds(List<TestCycleCaseProDTO> cycleCases, Long createdBy, Long lastUpdatedBy) {
-        List<TestCaseStepDTO> allSteps = new ArrayList<>();
-        for (TestCycleCaseProDTO cycleCase : cycleCases) {
-            for (TestCaseStepDTO testCaseStepE : cycleCase.getTestCaseSteps()) {
-                testCaseStepE.setCreatedBy(createdBy);
-                testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
-                allSteps.add(testCaseStepE);
-            }
-        }
+//    private void createStepsAndBackfillStepIds(List<TestCycleCaseProDTO> cycleCases, Long createdBy, Long lastUpdatedBy) {
+//        List<TestCaseStepDTO> allSteps = new ArrayList<>();
+//        for (TestCycleCaseProDTO cycleCase : cycleCases) {
+//            for (TestCaseStepDTO testCaseStepE : cycleCase.getTestCaseSteps()) {
+//                testCaseStepE.setCreatedBy(createdBy);
+//                testCaseStepE.setLastUpdatedBy(lastUpdatedBy);
+//                allSteps.add(testCaseStepE);
+//            }
+//        }
+//
+//        if (!allSteps.isEmpty()) {
+//            List<TestCaseStepDTO> createdSteps = createSteps(allSteps);
+//            for (int i = 0; i < allSteps.size(); i++) {
+//                allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
+//            }
+//
+//            for (TestCycleCaseProDTO cycleCase : cycleCases) {
+//                for (int i = 0; i < cycleCase.getCycleCaseStep().size(); i++) {
+//                    cycleCase.getCycleCaseStep().get(i).setStepId(cycleCase.getTestCaseSteps().get(i).getStepId());
+//                }
+//            }
+//        }
+//    }
 
-        if (!allSteps.isEmpty()) {
-            List<TestCaseStepDTO> createdSteps = createSteps(allSteps);
-            for (int i = 0; i < allSteps.size(); i++) {
-                allSteps.get(i).setStepId(createdSteps.get(i).getStepId());
-            }
+//    List<TestCaseStepDTO> createSteps(List<TestCaseStepDTO> testCaseSteps) {
+//        TestCaseStepDTO currentStep = testCaseSteps.get(0);
+//        currentStep.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepMapper.getLastedRank(currentStep.getIssueId()), null));
+//        TestCaseStepDTO prevStep = currentStep;
+//
+//        for (int i = 1; i < testCaseSteps.size(); i++) {
+//            currentStep = testCaseSteps.get(i);
+//            currentStep.setRank(RankUtil.Operation.INSERT.getRank(prevStep.getRank(), null));
+//            prevStep = currentStep;
+//        }
+//
+//        if (testCaseSteps == null || testCaseSteps.isEmpty()) {
+//            throw new CommonException("error.case.step.list.empty");
+//        }
+//
+//        Date now = new Date();
+//        for (TestCaseStepDTO testCaseStep : testCaseSteps) {
+//            if (testCaseStep == null || testCaseStep.getStepId() != null) {
+//                throw new CommonException(ERROR_STEP_ID_NOT_NULL);
+//            }
+//            testCaseStep.setLastUpdateDate(now);
+//            testCaseStep.setCreationDate(now);
+//        }
+//        testCaseStepMapper.batchInsertTestCaseSteps(testCaseSteps);
+//        return testCaseSteps;
+//    }
 
-            for (TestCycleCaseProDTO cycleCase : cycleCases) {
-                for (int i = 0; i < cycleCase.getCycleCaseStep().size(); i++) {
-                    cycleCase.getCycleCaseStep().get(i).setStepId(cycleCase.getTestCaseSteps().get(i).getStepId());
-                }
-            }
-        }
-    }
-
-    List<TestCaseStepDTO> createSteps(List<TestCaseStepDTO> testCaseSteps) {
-        TestCaseStepDTO currentStep = testCaseSteps.get(0);
-        currentStep.setRank(RankUtil.Operation.INSERT.getRank(testCaseStepMapper.getLastedRank(currentStep.getIssueId()), null));
-        TestCaseStepDTO prevStep = currentStep;
-
-        for (int i = 1; i < testCaseSteps.size(); i++) {
-            currentStep = testCaseSteps.get(i);
-            currentStep.setRank(RankUtil.Operation.INSERT.getRank(prevStep.getRank(), null));
-            prevStep = currentStep;
-        }
-
-        if (testCaseSteps == null || testCaseSteps.isEmpty()) {
-            throw new CommonException("error.case.step.list.empty");
-        }
-
-        Date now = new Date();
-        for (TestCaseStepDTO testCaseStep : testCaseSteps) {
-            if (testCaseStep == null || testCaseStep.getStepId() != null) {
-                throw new CommonException(ERROR_STEP_ID_NOT_NULL);
-            }
-            testCaseStep.setLastUpdateDate(now);
-            testCaseStep.setCreationDate(now);
-        }
-        testCaseStepMapper.batchInsertTestCaseSteps(testCaseSteps);
-        return testCaseSteps;
-    }
-
-    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
-        List<TestCycleCaseProDTO> createdTestCycleCases = this.createCycleCases(testCycleCases, projectId);
-        for (int i = 0; i < testCycleCases.size(); i++) {
-            testCycleCases.get(i).setExecuteId(createdTestCycleCases.get(i).getExecuteId());
-        }
-    }
+//    private void createCycleCasesAndBackfillExecuteIds(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
+//        List<TestCycleCaseProDTO> createdTestCycleCases = this.createCycleCases(testCycleCases, projectId);
+//        for (int i = 0; i < testCycleCases.size(); i++) {
+//            testCycleCases.get(i).setExecuteId(createdTestCycleCases.get(i).getExecuteId());
+//        }
+//    }
 
     private List<TestCycleCaseProDTO> createCycleCases(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
         TestCycleCaseProDTO currentCycleCase = testCycleCases.get(0);
@@ -212,147 +212,145 @@ public class JsonImportServiceImpl implements JsonImportService {
             logger.error(APP_INSTANCE_NOT_EXIST);
             throw new CommonException(APP_INSTANCE_NOT_EXIST);
         }
-        Long versionId = instance.getProjectVersionId();
-        Long projectId = instance.getProjectId();
+//        Long versionId = instance.getProjectVersionId();
+//        Long projectId = instance.getProjectId();
         Long createdBy = instance.getCreatedBy();
         Long lastUpdatedBy = instance.getLastUpdatedBy();
 
-        // 查询组织Id, appName和appVersionName
-        String appName = getAppName(projectId, releaseNameFragments.get("appId"));
-        String appVersionName = getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
-        Long organizationId = getOrganizationId(projectId);
-        String folderName = appName + "-" + appVersionName;
+//        // 查询组织Id, appName和appVersionName
+//        String appName = getAppName(projectId, releaseNameFragments.get("appId"));
+//        String appVersionName = getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
+//        Long organizationId = getOrganizationId(projectId);
+//        String folderName = appName + "-" + appVersionName;
 
         // 保存完整json到数据库
-        TestAutomationResultDTO testAutomationResultE = new TestAutomationResultDTO();
-        testAutomationResultE.setResult(json);
-        testAutomationResultE.setCreatedBy(createdBy);
-        testAutomationResultE.setLastUpdatedBy(lastUpdatedBy);
+        TestAutomationResultDTO testAutomationResultDTO = new TestAutomationResultDTO();
+        testAutomationResultDTO.setResult(json);
+        testAutomationResultDTO.setCreatedBy(createdBy);
+        testAutomationResultDTO.setLastUpdatedBy(lastUpdatedBy);
         Date now = new Date();
-        testAutomationResultE.setCreationDate(now);
-        testAutomationResultE.setLastUpdateDate(now);
+        testAutomationResultDTO.setCreationDate(now);
+        testAutomationResultDTO.setLastUpdateDate(now);
 
-        Long resultId = Long.valueOf(testAutomationResultMapper.insertOneResult(testAutomationResultE));
+        Long resultId = Long.valueOf(testAutomationResultMapper.insertOneResult(testAutomationResultDTO));
 
-        // 创建文件夹
-        TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
+//        // 创建文件夹
+//        TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
 
-        // 创建循环
-        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
-
-        // 创建阶段
-        TestCycleVO testStage = getStage(projectId,
-                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
+//        // 创建循环
+//        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
+//
+//        // 创建阶段
+//        TestCycleVO testStage = getStage(projectId,
+//                versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 
         // 找到要解析的片段，准备数据容器
         JSONArray issues = JSON.parseObject(json).getJSONObject("suites").getJSONArray("suites");
-        TestAutomationHistoryDTO automationHistoryE = new TestAutomationHistoryDTO();
-        automationHistoryE.setInstanceId(releaseNameFragments.get(INSTANCE_ID));
-        automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.COMPLETE);
-        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        automationHistoryE.setCycleIds(String.valueOf(testStage.getCycleId()));
+        TestAutomationHistoryDTO automationHistoryDTO = new TestAutomationHistoryDTO();
+        automationHistoryDTO.setInstanceId(releaseNameFragments.get(INSTANCE_ID));
+        automationHistoryDTO.setTestStatus(TestAutomationHistoryEnums.Status.COMPLETE);
+        automationHistoryDTO.setLastUpdatedBy(lastUpdatedBy);
+//        automationHistoryDTO.setCycleIds(String.valueOf(testStage.getCycleId()));
 
         // 如果测试用例数量为 0
         if (issues.isEmpty()) {
-            automationHistoryE.setResultId(resultId);
-            updateAutomationHistoryStatus(automationHistoryE);
+            automationHistoryDTO.setResultId(resultId);
+            updateAutomationHistoryStatus(automationHistoryDTO);
             return resultId;
         }
         List<TestCycleCaseProDTO> allTestCycleCases = new ArrayList<>();
         // 开始解析
         for (Object element : issues) {
             if (element instanceof JSONObject) {
-                TestCycleCaseProDTO testCycleCaseE = processIssueJson(
-                        organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
-                        (JSONObject) element, targetFolderE.getNewFolder());
+                TestCycleCaseProDTO testCycleCaseE = processIssueJson((JSONObject) element);
                 allTestCycleCases.add(testCycleCaseE);
             }
         }
 
-        if (!targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
-            relatedToExistIssues(allTestCycleCases, targetFolderE);
-        }
+//        if (!targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
+//            relatedToExistIssues(allTestCycleCases, targetFolderE);
+//        }
 
         // 将数据容器中的数据保存到数据库，并更新automation history状态
-        for (TestCycleCaseProDTO testCycleCaseE : allTestCycleCases) {
-            testCycleCaseE.setCreatedBy(createdBy);
-            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
-            testCycleCaseE.setAssignedTo(createdBy);
-            if (!testCycleCaseE.isPassed()) {
-                automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
+        for (TestCycleCaseProDTO testCycleCaseDTO : allTestCycleCases) {
+//            testCycleCaseE.setCreatedBy(createdBy);
+//            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+//            testCycleCaseE.setAssignedTo(createdBy);
+            if (!testCycleCaseDTO.isPassed()) {
+                automationHistoryDTO.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
             }
         }
-        if (!allTestCycleCases.isEmpty()) {
-            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
-        }
-        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
-            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
-        }
+//        if (!allTestCycleCases.isEmpty()) {
+//            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+//        }
+//        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
+//            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+//        }
 
-        if (!allTestCycleCases.isEmpty()) {
-            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
-        }
+//        if (!allTestCycleCases.isEmpty()) {
+//            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryDTO, createdBy, lastUpdatedBy);
+//        }
 
-        automationHistoryE.setResultId(resultId);
-        updateAutomationHistoryStatus(automationHistoryE);
+        automationHistoryDTO.setResultId(resultId);
+        updateAutomationHistoryStatus(automationHistoryDTO);
 
         return resultId;
     }
 
-    private void backfillAndCreateCycleCaseStep(List<TestCycleCaseProDTO> allTestCycleCases, TestAutomationHistoryDTO automationHistoryE,
-                                                Long createdBy, Long lastUpdatedBy) {
-        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
-        List<TestCycleCaseStepDTO> currentTestCycleCaseSteps;
-        TestCycleCaseStepDTO currentCycleCaseStepE;
-        int i;
-        for (TestCycleCaseProDTO testCycleCaseE : allTestCycleCases) {
-            currentTestCycleCaseSteps = testCycleCaseE.getCycleCaseStep();
-            for (i = 0; i < currentTestCycleCaseSteps.size(); i++) {
-                currentCycleCaseStepE = currentTestCycleCaseSteps.get(i);
-                if (!currentCycleCaseStepE.isPassed()) {
-                    automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
-                }
-                currentCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
-                currentCycleCaseStepE.setCreatedBy(createdBy);
-                currentCycleCaseStepE.setLastUpdatedBy(lastUpdatedBy);
-                testCycleCaseSteps.add(currentCycleCaseStepE);
-            }
-        }
+//    private void backfillAndCreateCycleCaseStep(List<TestCycleCaseProDTO> allTestCycleCases, TestAutomationHistoryDTO automationHistoryE,
+//                                                Long createdBy, Long lastUpdatedBy) {
+//        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
+//        List<TestCycleCaseStepDTO> currentTestCycleCaseSteps;
+//        TestCycleCaseStepDTO currentCycleCaseStepE;
+//        int i;
+//        for (TestCycleCaseProDTO testCycleCaseE : allTestCycleCases) {
+//            currentTestCycleCaseSteps = testCycleCaseE.getCycleCaseStep();
+//            for (i = 0; i < currentTestCycleCaseSteps.size(); i++) {
+//                currentCycleCaseStepE = currentTestCycleCaseSteps.get(i);
+//                if (!currentCycleCaseStepE.isPassed()) {
+//                    automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
+//                }
+//                currentCycleCaseStepE.setExecuteId(testCycleCaseE.getExecuteId());
+//                currentCycleCaseStepE.setCreatedBy(createdBy);
+//                currentCycleCaseStepE.setLastUpdatedBy(lastUpdatedBy);
+//                testCycleCaseSteps.add(currentCycleCaseStepE);
+//            }
+//        }
+//
+//        if (testCycleCaseSteps.isEmpty()) {
+//            throw new CommonException("error.cycle.case.step.list.empty");
+//        }
+//        Date now = new Date();
+//        for (TestCycleCaseStepDTO testCycleCaseStep : testCycleCaseSteps) {
+//            if (testCycleCaseStep == null || testCycleCaseStep.getExecuteStepId() != null) {
+//                throw new CommonException("error.cycle.case.step.insert.executeStepId.should.be.null");
+//            }
+//            testCycleCaseStep.setCreationDate(now);
+//            testCycleCaseStep.setLastUpdateDate(now);
+//        }
+//
+//        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = modelMapper.map(testCycleCaseSteps, new TypeToken<List<TestCycleCaseStepDTO>>() {
+//        }.getType());
+//        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(testCycleCaseStepDTOS);
+//    }
 
-        if (testCycleCaseSteps.isEmpty()) {
-            throw new CommonException("error.cycle.case.step.list.empty");
-        }
-        Date now = new Date();
-        for (TestCycleCaseStepDTO testCycleCaseStep : testCycleCaseSteps) {
-            if (testCycleCaseStep == null || testCycleCaseStep.getExecuteStepId() != null) {
-                throw new CommonException("error.cycle.case.step.insert.executeStepId.should.be.null");
-            }
-            testCycleCaseStep.setCreationDate(now);
-            testCycleCaseStep.setLastUpdateDate(now);
-        }
-
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = modelMapper.map(testCycleCaseSteps, new TypeToken<List<TestCycleCaseStepDTO>>() {
-        }.getType());
-        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(testCycleCaseStepDTOS);
-    }
-
-    private void relatedToExistIssues(List<TestCycleCaseProDTO> allTestCycleCases, TestIssueFolderProDTO targetFolderE) {
-        List<TestIssueFolderRelDTO> issueFolderRels = queryAllUnderFolder(targetFolderE);
-        issueFolderRels.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-        for (int i = 0; i < allTestCycleCases.size(); i++) {
-            Long issueId = issueFolderRels.get(i).getIssueId();
-            allTestCycleCases.get(i).setIssueId(issueId);
-            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setCaseId(issueId));
-            List<TestCaseStepDTO> testCaseStepEs = queryAllStepsUnderIssue(issueId);
-            if (allTestCycleCases.get(i).getCycleCaseStep().size() != testCaseStepEs.size()) {
-                logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
-                throw new CommonException("报告内容和 " + targetFolderE.getName() + " 只读文件夹中的内容不一致");
-            }
-            for (int j = 0; j < testCaseStepEs.size(); j++) {
-                allTestCycleCases.get(i).getCycleCaseStep().get(j).setStepId(testCaseStepEs.get(j).getStepId());
-            }
-        }
-    }
+//    private void relatedToExistIssues(List<TestCycleCaseProDTO> allTestCycleCases, TestIssueFolderProDTO targetFolderE) {
+//        List<TestIssueFolderRelDTO> issueFolderRels = queryAllUnderFolder(targetFolderE);
+//        issueFolderRels.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
+//        for (int i = 0; i < allTestCycleCases.size(); i++) {
+//            Long issueId = issueFolderRels.get(i).getIssueId();
+//            allTestCycleCases.get(i).setIssueId(issueId);
+//            allTestCycleCases.get(i).getCycleCaseStep().forEach(cycleCaseStepE -> cycleCaseStepE.setCaseId(issueId));
+//            List<TestCaseStepDTO> testCaseStepEs = queryAllStepsUnderIssue(issueId);
+//            if (allTestCycleCases.get(i).getCycleCaseStep().size() != testCaseStepEs.size()) {
+//                logger.error("报告内容和 {} 只读文件夹中的内容不一致", targetFolderE.getName());
+//                throw new CommonException("报告内容和 " + targetFolderE.getName() + " 只读文件夹中的内容不一致");
+//            }
+//            for (int j = 0; j < testCaseStepEs.size(); j++) {
+//                allTestCycleCases.get(i).getCycleCaseStep().get(j).setStepId(testCaseStepEs.get(j).getStepId());
+//            }
+//        }
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -382,16 +380,16 @@ public class JsonImportServiceImpl implements JsonImportService {
             logger.error(APP_INSTANCE_NOT_EXIST);
             throw new CommonException(APP_INSTANCE_NOT_EXIST);
         }
-        Long versionId = instance.getProjectVersionId();
-        Long projectId = instance.getProjectId();
+//        Long versionId = instance.getProjectVersionId();
+//        Long projectId = instance.getProjectId();
         Long createdBy = instance.getCreatedBy();
         Long lastUpdatedBy = instance.getLastUpdatedBy();
 
-        // 查询组织Id, appName和appVersionName
-        String appName = getAppName(projectId, releaseNameFragments.get("appId"));
-        String appVersionName = getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
-        Long organizationId = getOrganizationId(projectId);
-        String folderBaseName = appName + "-" + appVersionName;
+//        // 查询组织Id, appName和appVersionName
+//        String appName = getAppName(projectId, releaseNameFragments.get("appId"));
+//        String appVersionName = getAppVersionName(projectId, releaseNameFragments.get("appVersionId"));
+//        Long organizationId = getOrganizationId(projectId);
+//        String folderBaseName = appName + "-" + appVersionName;
 
         // 保存完整json到数据库
         TestAutomationResultDTO testAutomationResultDTO = new TestAutomationResultDTO();
@@ -405,11 +403,11 @@ public class JsonImportServiceImpl implements JsonImportService {
                 testAutomationResultMapper::insertOneResult, testAutomationResultDTO, 1, "error.testAutomationResult.insert");
         Long resultId = testAutomationResultDTO.getId();
 
-        TestAutomationHistoryDTO automationHistoryE = new TestAutomationHistoryDTO();
-        automationHistoryE.setInstanceId(instanceId);
-        automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.COMPLETE);
-        automationHistoryE.setLastUpdatedBy(lastUpdatedBy);
-        List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
+        TestAutomationHistoryDTO automationHistoryDTO = new TestAutomationHistoryDTO();
+        automationHistoryDTO.setInstanceId(instanceId);
+        automationHistoryDTO.setTestStatus(TestAutomationHistoryEnums.Status.COMPLETE);
+        automationHistoryDTO.setLastUpdatedBy(lastUpdatedBy);
+//        List<Long> cycleIds = new ArrayList<>(result.getSuites().size());
 
 //        // 创建测试循环
 //        TestCycleDTO testCycleE = getCycle(projectId, versionId, "自动化测试");
@@ -423,65 +421,65 @@ public class JsonImportServiceImpl implements JsonImportService {
 //                    versionId, folderName, testCycleE.getCycleId(), targetFolderE.getFolderId(), createdBy, lastUpdatedBy);
 //            cycleIds.add(testStage.getCycleId());
 //            //处理Case
-//            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryE);
+//            handleTestNgCase(organizationId, instance, suite, targetFolderE, testStage, automationHistoryDTO);
 //
 //        }
 //        // 若有多个suite，拼接成listStr
-//        automationHistoryE.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
+//        automationHistoryDTO.setCycleIds(cycleIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
 
         // 若存在失败的用例，则更新状态为部分成功
         if (!result.getFailed().equals(0L)) {
-            automationHistoryE.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
+            automationHistoryDTO.setTestStatus(TestAutomationHistoryEnums.Status.PARTIALEXECUTION);
         }
 
-        automationHistoryE.setResultId(resultId);
-        updateAutomationHistoryStatus(automationHistoryE);
+        automationHistoryDTO.setResultId(resultId);
+        updateAutomationHistoryStatus(automationHistoryDTO);
         logger.info("更新TestAutomationHistory状态成功");
 
         return resultId;
     }
 
-    private void handleTestNgCase(Long organizationId, TestAppInstanceDTO instance, TestNgSuite suite, TestIssueFolderProDTO targetFolderE, TestCycleVO testStage, TestAutomationHistoryDTO automationHistoryE) {
-        Long versionId = instance.getProjectVersionId();
-        Long projectId = instance.getProjectId();
-        Long createdBy = instance.getCreatedBy();
-        Long lastUpdatedBy = instance.getLastUpdatedBy();
-
-        List<TestCycleCaseProDTO> allTestCycleCases = new ArrayList<>();
-        // 创建测试用例
-        List<TestNgTest> tests = suite.getTests();
-        for (TestNgTest test : tests) {
-            TestCycleCaseProDTO testCycleCaseE = handleIssueByTestNg(organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
-                    test, targetFolderE.getNewFolder());
-            allTestCycleCases.add(testCycleCaseE);
-        }
-
-        //关联cycleCase到issue
-        if (!targetFolderE.getNewFolder()) {
-            relatedToExistIssues(allTestCycleCases, targetFolderE);
-        }
-        //更新case基本信息
-        for (TestCycleCaseProDTO testCycleCaseE : allTestCycleCases) {
-            testCycleCaseE.setCreatedBy(createdBy);
-            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
-            testCycleCaseE.setAssignedTo(createdBy);
-        }
-        //创建case，并回填executeId
-        if (!allTestCycleCases.isEmpty()) {
-            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
-            logger.info("创建TestCase和TestCycleCase成功");
-        }
-        //若是第一次创建文件夹，则要创建caseStep
-        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
-            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
-            logger.info("创建TestCaseSteps成功");
-        }
-        //创建cycleCaseStep
-        if (!allTestCycleCases.isEmpty()) {
-            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
-            logger.info("创建TestCycleCaseSteps成功");
-        }
-    }
+//    private void handleTestNgCase(Long organizationId, TestAppInstanceDTO instance, TestNgSuite suite, TestIssueFolderProDTO targetFolderE, TestCycleVO testStage, TestAutomationHistoryDTO automationHistoryE) {
+//        Long versionId = instance.getProjectVersionId();
+//        Long projectId = instance.getProjectId();
+//        Long createdBy = instance.getCreatedBy();
+//        Long lastUpdatedBy = instance.getLastUpdatedBy();
+//
+//        List<TestCycleCaseProDTO> allTestCycleCases = new ArrayList<>();
+//        // 创建测试用例
+//        List<TestNgTest> tests = suite.getTests();
+//        for (TestNgTest test : tests) {
+//            TestCycleCaseProDTO testCycleCaseE = handleIssueByTestNg(organizationId, projectId, versionId, targetFolderE.getFolderId(), testStage.getCycleId(), createdBy,
+//                    test, targetFolderE.getNewFolder());
+//            allTestCycleCases.add(testCycleCaseE);
+//        }
+//
+//        //关联cycleCase到issue
+//        if (!targetFolderE.getNewFolder()) {
+//            relatedToExistIssues(allTestCycleCases, targetFolderE);
+//        }
+//        //更新case基本信息
+//        for (TestCycleCaseProDTO testCycleCaseE : allTestCycleCases) {
+//            testCycleCaseE.setCreatedBy(createdBy);
+//            testCycleCaseE.setLastUpdatedBy(lastUpdatedBy);
+//            testCycleCaseE.setAssignedTo(createdBy);
+//        }
+//        //创建case，并回填executeId
+//        if (!allTestCycleCases.isEmpty()) {
+//            createCycleCasesAndBackfillExecuteIds(allTestCycleCases, projectId);
+//            logger.info("创建TestCase和TestCycleCase成功");
+//        }
+//        //若是第一次创建文件夹，则要创建caseStep
+//        if (targetFolderE.getNewFolder() && !allTestCycleCases.isEmpty()) {
+//            createStepsAndBackfillStepIds(allTestCycleCases, createdBy, lastUpdatedBy);
+//            logger.info("创建TestCaseSteps成功");
+//        }
+//        //创建cycleCaseStep
+//        if (!allTestCycleCases.isEmpty()) {
+//            backfillAndCreateCycleCaseStep(allTestCycleCases, automationHistoryE, createdBy, lastUpdatedBy);
+//            logger.info("创建TestCycleCaseSteps成功");
+//        }
+//    }
 
     private Map<String, Long> parseReleaseName(String releaseName) {
         if (!releaseName.startsWith("att-")) {
@@ -511,117 +509,117 @@ public class JsonImportServiceImpl implements JsonImportService {
         }
     }
 
-    private String getAppVersionName(Long projectId, Long appVersionId) {
-        try {
-            Long[] appVersionIds = new Long[1];
-            appVersionIds[0] = appVersionId;
-            ResponseEntity<List<AppServiceVersionRespVO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
-            AppServiceVersionRespVO response = responses.getBody().get(0);
-            if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
-                throw new CommonException(ERROR_GET_APP_VERSION_NAME);
-            }
-            logger.info("get app version name {} by app version id {} project id {}", response.getVersion(), appVersionId, projectId);
-            return response.getVersion();
-        } catch (FeignException e) {
-            throw new CommonException(ERROR_GET_APP_VERSION_NAME, e);
-        }
-    }
+//    private String getAppVersionName(Long projectId, Long appVersionId) {
+//        try {
+//            Long[] appVersionIds = new Long[1];
+//            appVersionIds[0] = appVersionId;
+//            ResponseEntity<List<AppServiceVersionRespVO>> responses = applicationFeignClient.getAppversion(projectId, appVersionIds);
+//            AppServiceVersionRespVO response = responses.getBody().get(0);
+//            if (!responses.getStatusCode().is2xxSuccessful() || response.getVersion() == null) {
+//                throw new CommonException(ERROR_GET_APP_VERSION_NAME);
+//            }
+//            logger.info("get app version name {} by app version id {} project id {}", response.getVersion(), appVersionId, projectId);
+//            return response.getVersion();
+//        } catch (FeignException e) {
+//            throw new CommonException(ERROR_GET_APP_VERSION_NAME, e);
+//        }
+//    }
 
-    private Long getOrganizationId(Long projectId) {
-        try {
-            ResponseEntity<ProjectDTO> response = baseFeignClient.queryProject(projectId);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("get organization id {} by project id {}", response.getBody().getOrganizationId(), projectId);
-                return response.getBody().getOrganizationId();
-            } else {
-                throw new CommonException(ERROR_GET_ORGANIZATION_ID);
-            }
-        } catch (FeignException e) {
-            throw new CommonException(ERROR_GET_ORGANIZATION_ID, e);
-        }
-    }
+//    private Long getOrganizationId(Long projectId) {
+//        try {
+//            ResponseEntity<ProjectDTO> response = baseFeignClient.queryProject(projectId);
+//            if (response.getStatusCode().is2xxSuccessful()) {
+//                logger.info("get organization id {} by project id {}", response.getBody().getOrganizationId(), projectId);
+//                return response.getBody().getOrganizationId();
+//            } else {
+//                throw new CommonException(ERROR_GET_ORGANIZATION_ID);
+//            }
+//        } catch (FeignException e) {
+//            throw new CommonException(ERROR_GET_ORGANIZATION_ID, e);
+//        }
+//    }
 
-    private TestIssueFolderProDTO getFolder(Long projectId, Long versionId, String folderName) {
-        TestIssueFolderProDTO targetFolderE;
-        TestIssueFolderDTO folderE = new TestIssueFolderDTO();
-        folderE.setProjectId(projectId);
-        folderE.setName(folderName);
-        TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
-        if (select == null) {
-            folderE.setType(TestIssueFolderType.TYPE_CYCLE);
-            logger.info("{} 文件夹不存在，创建", folderName);
-            testIssueFolderMapper.insert(folderE);
-            targetFolderE = modelMapper.map(folderE, TestIssueFolderProDTO.class);
-            targetFolderE.setNewFolder(true);
-        } else {
-            targetFolderE = modelMapper.map(select, TestIssueFolderProDTO.class);
-            targetFolderE.setNewFolder(false);
-            logger.info("{} 文件夹已存在", folderName);
-        }
-        return targetFolderE;
-    }
+//    private TestIssueFolderProDTO getFolder(Long projectId, Long versionId, String folderName) {
+//        TestIssueFolderProDTO targetFolderE;
+//        TestIssueFolderDTO folderE = new TestIssueFolderDTO();
+//        folderE.setProjectId(projectId);
+//        folderE.setName(folderName);
+//        TestIssueFolderDTO select = testIssueFolderMapper.selectOne(folderE);
+//        if (select == null) {
+//            folderE.setType(TestIssueFolderType.TYPE_CYCLE);
+//            logger.info("{} 文件夹不存在，创建", folderName);
+//            testIssueFolderMapper.insert(folderE);
+//            targetFolderE = modelMapper.map(folderE, TestIssueFolderProDTO.class);
+//            targetFolderE.setNewFolder(true);
+//        } else {
+//            targetFolderE = modelMapper.map(select, TestIssueFolderProDTO.class);
+//            targetFolderE.setNewFolder(false);
+//            logger.info("{} 文件夹已存在", folderName);
+//        }
+//        return targetFolderE;
+//    }
 
-    @Transactional
-    public TestCycleVO getStage(Long projectId, Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
-        TestCycleDTO testCycleE = new TestCycleDTO();
-        testCycleE.setVersionId(versionId);
-        testCycleE.setFolderId(folderId);
-        testCycleE.setParentCycleId(parentCycleId);
-        testCycleE.setType(TestCycleType.FOLDER);
-        testCycleE.setProjectId(projectId);
+//    @Transactional
+//    public TestCycleVO getStage(Long projectId, Long versionId, String stageName, Long parentCycleId, Long folderId, Long createdBy, Long lastUpdatedBy) {
+//        TestCycleDTO testCycleE = new TestCycleDTO();
+//        testCycleE.setVersionId(versionId);
+//        testCycleE.setFolderId(folderId);
+//        testCycleE.setParentCycleId(parentCycleId);
+//        testCycleE.setType(TestCycleType.FOLDER);
+//        testCycleE.setProjectId(projectId);
+//
+//        int lastTestStageNumber = 0;
+//        List<TestCycleDTO> childCycleEs = cycleMapper.select(testCycleE);
+//        for (TestCycleDTO cycleE : childCycleEs) {
+//            String suffix = cycleE.getCycleName().substring(cycleE.getCycleName().lastIndexOf('-') + 1);
+//            String prefix = cycleE.getCycleName().substring(0, cycleE.getCycleName().lastIndexOf('-'));
+//            Matcher matcher = AUTO_TEST_STAGE_SUFFIX_PATTERN.matcher(suffix);
+//            if (Objects.equals(stageName, prefix) && matcher.matches()) {
+//                int stageNumber = Integer.parseInt(matcher.group(1));
+//                if (stageNumber > lastTestStageNumber) {
+//                    lastTestStageNumber = stageNumber;
+//                }
+//            }
+//        }
+//
+//        testCycleE.setCycleName(stageName + "-第" + ++lastTestStageNumber + "次测试");
+//        logger.info("创建阶段 {}", testCycleE.getCycleName());
+//        testCycleE.setType(TestCycleType.FOLDER);
+//        testCycleE.setFromDate(new Date());
+//        testCycleE.setToDate(testCycleE.getFromDate());
+//        testCycleE.setCreatedBy(createdBy);
+//        testCycleE.setLastUpdatedBy(lastUpdatedBy);
+//        return testCycleService.insertWithoutSyncFolder(projectId, modelMapper.map(testCycleE, TestCycleVO.class));
+//    }
 
-        int lastTestStageNumber = 0;
-        List<TestCycleDTO> childCycleEs = cycleMapper.select(testCycleE);
-        for (TestCycleDTO cycleE : childCycleEs) {
-            String suffix = cycleE.getCycleName().substring(cycleE.getCycleName().lastIndexOf('-') + 1);
-            String prefix = cycleE.getCycleName().substring(0, cycleE.getCycleName().lastIndexOf('-'));
-            Matcher matcher = AUTO_TEST_STAGE_SUFFIX_PATTERN.matcher(suffix);
-            if (Objects.equals(stageName, prefix) && matcher.matches()) {
-                int stageNumber = Integer.parseInt(matcher.group(1));
-                if (stageNumber > lastTestStageNumber) {
-                    lastTestStageNumber = stageNumber;
-                }
-            }
-        }
-
-        testCycleE.setCycleName(stageName + "-第" + ++lastTestStageNumber + "次测试");
-        logger.info("创建阶段 {}", testCycleE.getCycleName());
-        testCycleE.setType(TestCycleType.FOLDER);
-        testCycleE.setFromDate(new Date());
-        testCycleE.setToDate(testCycleE.getFromDate());
-        testCycleE.setCreatedBy(createdBy);
-        testCycleE.setLastUpdatedBy(lastUpdatedBy);
-        return testCycleService.insertWithoutSyncFolder(projectId, modelMapper.map(testCycleE, TestCycleVO.class));
-    }
-
-    @Transactional
-    public TestCycleDTO getCycle(Long projectId, Long versionId, String folderName) {
-        TestCycleDTO testCycleE = new TestCycleDTO();
-        testCycleE.setVersionId(versionId);
-        testCycleE.setCycleName(folderName);
-        testCycleE.setType(TestCycleType.CYCLE);
-        testCycleE.setProjectId(projectId);
-        TestCycleDTO targetCycle = cycleMapper.selectOne(testCycleE);
-        if (targetCycle == null) {
-            logger.info("{} 循环不存在，创建", folderName);
-            testCycleE.setType(TestCycleType.CYCLE);
-            testCycleE.setFromDate(new Date());
-            testCycleE.setToDate(testCycleE.getFromDate());
-            testCycleService.checkRank(modelMapper.map(testCycleE, TestCycleVO.class));
-            String rank;
-            if (testCycleE.getType().equals(TestCycleType.CYCLE)) {
-                rank = cycleMapper.getCycleLastedRank(testCycleE.getVersionId());
-            } else {
-                rank = cycleMapper.getPlanLastedRank(testCycleE.getParentCycleId());
-            }
-            testCycleE.setRank(RankUtil.Operation.INSERT.getRank(rank, null));
-            cycleMapper.insert(testCycleE);
-            return testCycleE;
-        }
-
-        logger.info("{} 循环已存在", folderName);
-        return targetCycle;
-    }
+//    @Transactional
+//    public TestCycleDTO getCycle(Long projectId, Long versionId, String folderName) {
+//        TestCycleDTO testCycleE = new TestCycleDTO();
+//        testCycleE.setVersionId(versionId);
+//        testCycleE.setCycleName(folderName);
+//        testCycleE.setType(TestCycleType.CYCLE);
+//        testCycleE.setProjectId(projectId);
+//        TestCycleDTO targetCycle = cycleMapper.selectOne(testCycleE);
+//        if (targetCycle == null) {
+//            logger.info("{} 循环不存在，创建", folderName);
+//            testCycleE.setType(TestCycleType.CYCLE);
+//            testCycleE.setFromDate(new Date());
+//            testCycleE.setToDate(testCycleE.getFromDate());
+//            testCycleService.checkRank(modelMapper.map(testCycleE, TestCycleVO.class));
+//            String rank;
+//            if (testCycleE.getType().equals(TestCycleType.CYCLE)) {
+//                rank = cycleMapper.getCycleLastedRank(testCycleE.getVersionId());
+//            } else {
+//                rank = cycleMapper.getPlanLastedRank(testCycleE.getParentCycleId());
+//            }
+//            testCycleE.setRank(RankUtil.Operation.INSERT.getRank(rank, null));
+//            cycleMapper.insert(testCycleE);
+//            return testCycleE;
+//        }
+//
+//        logger.info("{} 循环已存在", folderName);
+//        return targetCycle;
+//    }
 
     @Transactional
     public void updateAutomationHistoryStatus(TestAutomationHistoryDTO automationHistoryE) {
@@ -632,90 +630,90 @@ public class JsonImportServiceImpl implements JsonImportService {
                 automationHistoryE, 1, "error.update.testStatus.by.instanceId");
     }
 
-    private TestCycleCaseProDTO processIssueJson(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, JSONObject issue, boolean newFolder) {
-        String summary = issue.getString("title");
-        if (StringUtils.isBlank(summary)) {
-            logger.error("用例 title 不能为空");
-            summary = "null";
-        }
+    private TestCycleCaseProDTO processIssueJson(JSONObject issue) {
+//        String summary = issue.getString("title");
+//        if (StringUtils.isBlank(summary)) {
+//            logger.error("用例 title 不能为空");
+//            summary = "null";
+//        }
 
-        TestCycleCaseProDTO testCycleCaseE = new TestCycleCaseProDTO();
+        TestCycleCaseProDTO testCycleCaseDTO = new TestCycleCaseProDTO();
 
-        IssueDTO issueDTO = null;
-        if (newFolder) {
-            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
-            if (issueDTO == null) {
-                logger.error("issue 创建失败");
-                throw new IssueCreateException();
-            }
-            testCycleCaseE.setIssueId(issueDTO.getIssueId());
-        }
+//        IssueDTO issueDTO = null;
+//        if (newFolder) {
+//            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
+//            if (issueDTO == null) {
+//                logger.error("issue 创建失败");
+//                throw new IssueCreateException();
+//            }
+//            testCycleCaseE.setIssueId(issueDTO.getIssueId());
+//        }
 
-        testCycleCaseE.setCycleId(cycleId);
-        testCycleCaseE.setVersionId(versionId);
+//        testCycleCaseE.setCycleId(cycleId);
+//        testCycleCaseE.setVersionId(versionId);
         String[] failures = getExecutionInfo(issue, "failures");
         String[] passes = getExecutionInfo(issue, "passes");
         String[] pending = getExecutionInfo(issue, "pending");
         String[] skipped = getExecutionInfo(issue, "skipped");
-        TestStatusDTO statusE = getExecutionStatus(failures, passes, pending, skipped);
-        testCycleCaseE.setExecutionStatus(statusE.getStatusId());
-        testCycleCaseE.setExecutionStatusName(statusE.getStatusName());
+        TestStatusDTO statusDTO = getExecutionStatus(failures, passes, pending, skipped);
+        testCycleCaseDTO.setExecutionStatus(statusDTO.getStatusId());
+        testCycleCaseDTO.setExecutionStatusName(statusDTO.getStatusName());
 
-        JSONArray testCaseStepsArray = issue.getJSONArray("tests");
-        List<TestCaseStepDTO> testCaseSteps = new ArrayList<>();
-        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
-        TestCaseStepDTO testCaseStepE;
-        TestCycleCaseStepDTO cycleCaseStepE;
-        for (Object element : testCaseStepsArray) {
-            if (element instanceof JSONObject) {
-                testCaseStepE = parseTestCaseStepJson((JSONObject) element);
-                if (testCaseStepE != null) {
-                    testCaseSteps.add(testCaseStepE);
-                    cycleCaseStepE = parseTestCycleCaseStepJson(testCaseStepE, (JSONObject) element);
-                    testCycleCaseSteps.add(cycleCaseStepE);
-                    if (issueDTO != null) {
-                        testCaseStepE.setIssueId(issueDTO.getIssueId());
-                        cycleCaseStepE.setCaseId(issueDTO.getIssueId());
-                    }
-                }
-            }
-        }
+//        JSONArray testCaseStepsArray = issue.getJSONArray("tests");
+//        List<TestCaseStepDTO> testCaseSteps = new ArrayList<>();
+//        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
+//        TestCaseStepDTO testCaseStepE;
+//        TestCycleCaseStepDTO cycleCaseStepE;
+//        for (Object element : testCaseStepsArray) {
+//            if (element instanceof JSONObject) {
+//                testCaseStepE = parseTestCaseStepJson((JSONObject) element);
+//                if (testCaseStepE != null) {
+//                    testCaseSteps.add(testCaseStepE);
+//                    cycleCaseStepE = parseTestCycleCaseStepJson(testCaseStepE, (JSONObject) element);
+//                    testCycleCaseSteps.add(cycleCaseStepE);
+//                    if (issueDTO != null) {
+//                        testCaseStepE.setIssueId(issueDTO.getIssueId());
+//                        cycleCaseStepE.setCaseId(issueDTO.getIssueId());
+//                    }
+//                }
+//            }
+//        }
 
-        testCycleCaseE.setTestCaseSteps(testCaseSteps);
-        testCycleCaseE.setCycleCaseStep(testCycleCaseSteps);
-        return testCycleCaseE;
+//        testCycleCaseE.setTestCaseSteps(testCaseSteps);
+//        testCycleCaseE.setCycleCaseStep(testCycleCaseSteps);
+        return testCycleCaseDTO;
     }
 
-    private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, Long createdBy, String summary) {
-        IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
-        issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_AUTO_TEST);
-        issueCreateDTO.setProjectId(projectId);
-        issueCreateDTO.setSummary(summary);
-        issueCreateDTO.setAssigneeId(createdBy);
-        issueCreateDTO.setReporterId(createdBy);
-
-        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_AUTO_TEST, issueFeignClient));
-        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId, issueFeignClient);
-        issueCreateDTO.setPriorityCode("priority-" + priorityId);
-        issueCreateDTO.setPriorityId(priorityId);
-
-        VersionIssueRelVO versionIssueRelVO = new VersionIssueRelVO();
-        versionIssueRelVO.setVersionId(versionId);
-        versionIssueRelVO.setRelationType("fix");
-        issueCreateDTO.setVersionIssueRelVOList(Lists.newArrayList(versionIssueRelVO));
-
-        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, "test");
-        if (issueDTO != null) {
-            TestIssueFolderRelDTO issueFolderRelE = new TestIssueFolderRelDTO();
-            issueFolderRelE.setProjectId(projectId);
-            issueFolderRelE.setVersionId(versionId);
-            issueFolderRelE.setFolderId(folderId);
-            issueFolderRelE.setIssueId(issueDTO.getIssueId());
-            issueFolderRelMapper.insert(issueFolderRelE);
-        }
-
-        return issueDTO;
-    }
+//    private IssueDTO createIssue(Long organizationId, Long projectId, Long versionId, Long folderId, Long createdBy, String summary) {
+//        IssueCreateDTO issueCreateDTO = new IssueCreateDTO();
+//        issueCreateDTO.setTypeCode(IssueTypeCode.ISSUE_AUTO_TEST);
+//        issueCreateDTO.setProjectId(projectId);
+//        issueCreateDTO.setSummary(summary);
+//        issueCreateDTO.setAssigneeId(createdBy);
+//        issueCreateDTO.setReporterId(createdBy);
+//
+//        issueCreateDTO.setIssueTypeId(AgileUtil.queryIssueTypeId(projectId, organizationId, IssueTypeCode.ISSUE_AUTO_TEST, issueFeignClient));
+//        Long priorityId = AgileUtil.queryDefaultPriorityId(projectId, organizationId, issueFeignClient);
+//        issueCreateDTO.setPriorityCode("priority-" + priorityId);
+//        issueCreateDTO.setPriorityId(priorityId);
+//
+//        VersionIssueRelVO versionIssueRelVO = new VersionIssueRelVO();
+//        versionIssueRelVO.setVersionId(versionId);
+//        versionIssueRelVO.setRelationType("fix");
+//        issueCreateDTO.setVersionIssueRelVOList(Lists.newArrayList(versionIssueRelVO));
+//
+//        IssueDTO issueDTO = testCaseService.createTest(issueCreateDTO, projectId, "test");
+//        if (issueDTO != null) {
+//            TestIssueFolderRelDTO issueFolderRelE = new TestIssueFolderRelDTO();
+//            issueFolderRelE.setProjectId(projectId);
+//            issueFolderRelE.setVersionId(versionId);
+//            issueFolderRelE.setFolderId(folderId);
+//            issueFolderRelE.setIssueId(issueDTO.getIssueId());
+//            issueFolderRelMapper.insert(issueFolderRelE);
+//        }
+//
+//        return issueDTO;
+//    }
 
     private String[] getExecutionInfo(JSONObject issue, String key) {
         JSONArray jsonArray = issue.getJSONArray(key);
@@ -743,143 +741,143 @@ public class JsonImportServiceImpl implements JsonImportService {
         return testStatusMapper.selectOne(testStatusE);
     }
 
-    private TestCaseStepDTO parseTestCaseStepJson(JSONObject testCaseStep) {
-        String testStep = testCaseStep.getString("title");
-        String code = testCaseStep.getString("code");
-        String testData = getTestData(code);
-        String expectedResult = getExpectedResult(code);
-        if (StringUtils.isBlank(testStep) && StringUtils.isBlank(testData) && StringUtils.isBlank(expectedResult)) {
-            return null;
-        }
+//    private TestCaseStepDTO parseTestCaseStepJson(JSONObject testCaseStep) {
+//        String testStep = testCaseStep.getString("title");
+//        String code = testCaseStep.getString("code");
+//        String testData = getTestData(code);
+//        String expectedResult = getExpectedResult(code);
+//        if (StringUtils.isBlank(testStep) && StringUtils.isBlank(testData) && StringUtils.isBlank(expectedResult)) {
+//            return null;
+//        }
+//
+//        TestCaseStepDTO caseStepE = new TestCaseStepDTO();
+//        caseStepE.setTestStep(testStep);
+//        caseStepE.setTestData(testData);
+//        caseStepE.setExpectedResult(expectedResult);
+//
+//        return caseStepE;
+//    }
 
-        TestCaseStepDTO caseStepE = new TestCaseStepDTO();
-        caseStepE.setTestStep(testStep);
-        caseStepE.setTestData(testData);
-        caseStepE.setExpectedResult(expectedResult);
+//    private String getTestData(String code) {
+//        Matcher matcher = DATA_PATTERN.matcher(code);
+//        return matcher.find() ? matcher.group(1) : null;
+//    }
 
-        return caseStepE;
-    }
+//    private String getExpectedResult(String code) {
+//        Matcher matcher = EXPECT_PATTERN.matcher(code);
+//        return matcher.find() ? matcher.group(1) : null;
+//    }
 
-    private String getTestData(String code) {
-        Matcher matcher = DATA_PATTERN.matcher(code);
-        return matcher.find() ? matcher.group(1) : null;
-    }
+//    private TestCycleCaseStepDTO parseTestCycleCaseStepJson(TestCaseStepDTO testCaseStepE, JSONObject element) {
+//        TestCycleCaseStepDTO testCycleCaseStepE = new TestCycleCaseStepDTO();
+//        testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
+//        testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
+//        testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
+//
+//        TestStatusDTO statusE = new TestStatusDTO();
+//        statusE.setProjectId(0L);
+//        statusE.setStatusType(TestStatusType.STATUS_TYPE_CASE_STEP);
+//        if (element.getBooleanValue("fail") || element.getBooleanValue("pending")) {
+//            statusE.setStatusName("失败");
+//        } else if (element.getBooleanValue("skipped")) {
+//            statusE.setStatusName("未执行");
+//        } else {
+//            statusE.setStatusName("通过");
+//        }
+//
+//        TestStatusDTO targetStatusE = testStatusMapper.selectOne(statusE);
+//        testCycleCaseStepE.setStepStatus(targetStatusE.getStatusId());
+//        testCycleCaseStepE.setStatusName(targetStatusE.getStatusName());
+//
+//        if (!"通过".equals(targetStatusE.getStatusName())) {
+//            JSONObject err = element.getJSONObject("err");
+//            if (err != null) {
+//                testCycleCaseStepE.setDescription(err.getString("message"));
+//            }
+//        }
+//
+//        return testCycleCaseStepE;
+//    }
 
-    private String getExpectedResult(String code) {
-        Matcher matcher = EXPECT_PATTERN.matcher(code);
-        return matcher.find() ? matcher.group(1) : null;
-    }
+//    private List<TestIssueFolderRelDTO> queryAllUnderFolder(TestIssueFolderProDTO issueFolderE) {
+//        TestIssueFolderProDTO issueFolderRelE = new TestIssueFolderProDTO();
+//        issueFolderRelE.setFolderId(issueFolderE.getFolderId());
+//
+//        TestIssueFolderRelDTO issueFolderRelDO = modelMapper.map(issueFolderRelE, TestIssueFolderRelDTO.class);
+//        return issueFolderRelMapper.select(issueFolderRelDO);
+//    }
 
-    private TestCycleCaseStepDTO parseTestCycleCaseStepJson(TestCaseStepDTO testCaseStepE, JSONObject element) {
-        TestCycleCaseStepDTO testCycleCaseStepE = new TestCycleCaseStepDTO();
-        testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
-        testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
-        testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
+//    private List<TestCaseStepDTO> queryAllStepsUnderIssue(Long issueId) {
+//        TestCaseStepDTO caseStepE = new TestCaseStepDTO();
+//        caseStepE.setIssueId(issueId);
+//        return caseStepMapper.query(caseStepE);
+//    }
 
-        TestStatusDTO statusE = new TestStatusDTO();
-        statusE.setProjectId(0L);
-        statusE.setStatusType(TestStatusType.STATUS_TYPE_CASE_STEP);
-        if (element.getBooleanValue("fail") || element.getBooleanValue("pending")) {
-            statusE.setStatusName("失败");
-        } else if (element.getBooleanValue("skipped")) {
-            statusE.setStatusName("未执行");
-        } else {
-            statusE.setStatusName("通过");
-        }
-
-        TestStatusDTO targetStatusE = testStatusMapper.selectOne(statusE);
-        testCycleCaseStepE.setStepStatus(targetStatusE.getStatusId());
-        testCycleCaseStepE.setStatusName(targetStatusE.getStatusName());
-
-        if (!"通过".equals(targetStatusE.getStatusName())) {
-            JSONObject err = element.getJSONObject("err");
-            if (err != null) {
-                testCycleCaseStepE.setDescription(err.getString("message"));
-            }
-        }
-
-        return testCycleCaseStepE;
-    }
-
-    private List<TestIssueFolderRelDTO> queryAllUnderFolder(TestIssueFolderProDTO issueFolderE) {
-        TestIssueFolderProDTO issueFolderRelE = new TestIssueFolderProDTO();
-        issueFolderRelE.setFolderId(issueFolderE.getFolderId());
-
-        TestIssueFolderRelDTO issueFolderRelDO = modelMapper.map(issueFolderRelE, TestIssueFolderRelDTO.class);
-        return issueFolderRelMapper.select(issueFolderRelDO);
-    }
-
-    private List<TestCaseStepDTO> queryAllStepsUnderIssue(Long issueId) {
-        TestCaseStepDTO caseStepE = new TestCaseStepDTO();
-        caseStepE.setIssueId(issueId);
-        return caseStepMapper.query(caseStepE);
-    }
-
-    private TestCycleCaseProDTO handleIssueByTestNg(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, TestNgTest test, boolean newFolder) {
-        String summary = test.getName();
-        if (StringUtils.isBlank(summary)) {
-            logger.error("用例 title 不能为空");
-            summary = "null";
-        }
-
-        TestCycleCaseProDTO testCycleCaseE = new TestCycleCaseProDTO();
-
-        IssueDTO issueDTO = null;
-        if (newFolder) {
-            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
-            if (issueDTO == null) {
-                logger.error("issue 创建失败");
-                throw new IssueCreateException();
-            }
-            testCycleCaseE.setIssueId(issueDTO.getIssueId());
-        }
-
-        testCycleCaseE.setCycleId(cycleId);
-        testCycleCaseE.setVersionId(versionId);
-        //查询状态
-        TestStatusDTO caseStatusE = new TestStatusDTO();
-        caseStatusE.setProjectId(0L);
-        caseStatusE.setStatusType(TestStatusType.STATUS_TYPE_CASE);
-        caseStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
-        TestStatusDTO caseStatus = testStatusMapper.selectOne(caseStatusE);
-        testCycleCaseE.setExecutionStatus(caseStatus.getStatusId());
-        testCycleCaseE.setExecutionStatusName(caseStatus.getStatusName());
-
-        List<TestNgCase> cases = test.getCases();
-        List<TestCaseStepDTO> testCaseSteps = new ArrayList<>();
-        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
-        TestCaseStepDTO testCaseStepE;
-        TestCycleCaseStepDTO testCycleCaseStepE;
-        for (TestNgCase testNgCase : cases) {
-            //获取TestCaseStep
-            testCaseStepE = new TestCaseStepDTO();
-            testCaseStepE.setTestStep(testNgCase.getDescription() != null ? testNgCase.getDescription() : testNgCase.getName());
-            testCaseStepE.setTestData(testNgCase.getInputData());
-            testCaseStepE.setExpectedResult(testNgCase.getExpectData());
-            //获取TestCycleCaseStep
-            testCycleCaseStepE = new TestCycleCaseStepDTO();
-            testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
-            testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
-            testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
-            testCycleCaseStepE.setDescription(testNgCase.getExceptionMessage());
-            //查询状态
-            TestStatusDTO stepStatusE = new TestStatusDTO();
-            stepStatusE.setProjectId(0L);
-            stepStatusE.setStatusType(TestStatusType.STATUS_TYPE_CASE_STEP);
-            stepStatusE.setStatusName(testNgCase.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
-            TestStatusDTO stepStatus = testStatusMapper.selectOne(stepStatusE);
-            testCycleCaseStepE.setStepStatus(stepStatus.getStatusId());
-            testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
-            if (issueDTO != null) {
-                testCaseStepE.setIssueId(issueDTO.getIssueId());
-                testCycleCaseStepE.setCaseId(issueDTO.getIssueId());
-            }
-            testCaseSteps.add(testCaseStepE);
-            testCycleCaseSteps.add(testCycleCaseStepE);
-        }
-
-        testCycleCaseE.setTestCaseSteps(testCaseSteps);
-        testCycleCaseE.setCycleCaseStep(testCycleCaseSteps);
-        return testCycleCaseE;
-    }
+//    private TestCycleCaseProDTO handleIssueByTestNg(Long organizationId, Long projectId, Long versionId, Long folderId, Long cycleId, Long createdBy, TestNgTest test, boolean newFolder) {
+//        String summary = test.getName();
+//        if (StringUtils.isBlank(summary)) {
+//            logger.error("用例 title 不能为空");
+//            summary = "null";
+//        }
+//
+//        TestCycleCaseProDTO testCycleCaseE = new TestCycleCaseProDTO();
+//
+//        IssueDTO issueDTO = null;
+//        if (newFolder) {
+//            issueDTO = createIssue(organizationId, projectId, versionId, folderId, createdBy, summary);
+//            if (issueDTO == null) {
+//                logger.error("issue 创建失败");
+//                throw new IssueCreateException();
+//            }
+//            testCycleCaseE.setIssueId(issueDTO.getIssueId());
+//        }
+//
+//        testCycleCaseE.setCycleId(cycleId);
+//        testCycleCaseE.setVersionId(versionId);
+//        //查询状态
+//        TestStatusDTO caseStatusE = new TestStatusDTO();
+//        caseStatusE.setProjectId(0L);
+//        caseStatusE.setStatusType(TestStatusType.STATUS_TYPE_CASE);
+//        caseStatusE.setStatusName(test.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+//        TestStatusDTO caseStatus = testStatusMapper.selectOne(caseStatusE);
+//        testCycleCaseE.setExecutionStatus(caseStatus.getStatusId());
+//        testCycleCaseE.setExecutionStatusName(caseStatus.getStatusName());
+//
+//        List<TestNgCase> cases = test.getCases();
+//        List<TestCaseStepDTO> testCaseSteps = new ArrayList<>();
+//        List<TestCycleCaseStepDTO> testCycleCaseSteps = new ArrayList<>();
+//        TestCaseStepDTO testCaseStepE;
+//        TestCycleCaseStepDTO testCycleCaseStepE;
+//        for (TestNgCase testNgCase : cases) {
+//            //获取TestCaseStep
+//            testCaseStepE = new TestCaseStepDTO();
+//            testCaseStepE.setTestStep(testNgCase.getDescription() != null ? testNgCase.getDescription() : testNgCase.getName());
+//            testCaseStepE.setTestData(testNgCase.getInputData());
+//            testCaseStepE.setExpectedResult(testNgCase.getExpectData());
+//            //获取TestCycleCaseStep
+//            testCycleCaseStepE = new TestCycleCaseStepDTO();
+//            testCycleCaseStepE.setTestStep(testCaseStepE.getTestStep());
+//            testCycleCaseStepE.setTestData(testCaseStepE.getTestData());
+//            testCycleCaseStepE.setExpectedResult(testCaseStepE.getExpectedResult());
+//            testCycleCaseStepE.setDescription(testNgCase.getExceptionMessage());
+//            //查询状态
+//            TestStatusDTO stepStatusE = new TestStatusDTO();
+//            stepStatusE.setProjectId(0L);
+//            stepStatusE.setStatusType(TestStatusType.STATUS_TYPE_CASE_STEP);
+//            stepStatusE.setStatusName(testNgCase.getStatus().equals(TestNgUtil.TEST_PASSED) ? "通过" : "失败");
+//            TestStatusDTO stepStatus = testStatusMapper.selectOne(stepStatusE);
+//            testCycleCaseStepE.setStepStatus(stepStatus.getStatusId());
+//            testCycleCaseStepE.setStatusName(stepStatus.getStatusName());
+//            if (issueDTO != null) {
+//                testCaseStepE.setIssueId(issueDTO.getIssueId());
+//                testCycleCaseStepE.setCaseId(issueDTO.getIssueId());
+//            }
+//            testCaseSteps.add(testCaseStepE);
+//            testCycleCaseSteps.add(testCycleCaseStepE);
+//        }
+//
+//        testCycleCaseE.setTestCaseSteps(testCaseSteps);
+//        testCycleCaseE.setCycleCaseStep(testCycleCaseSteps);
+//        return testCycleCaseE;
+//    }
 }
