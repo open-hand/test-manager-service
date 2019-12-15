@@ -13,7 +13,6 @@ databaseChangeLog(logicalFilePath: "script/db/test_project_info.groovy") {
                 constraints(nullable: false)
             }
             column(name: 'project_code', type: 'VARCHAR(255)', remarks: '项目编码')
-
             column(name: 'case_max_num', type: 'BIGINT UNSIGNED', remarks: 'case max num')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")

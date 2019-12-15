@@ -16,20 +16,14 @@ databaseChangeLog(logicalFilePath: "script/db/test_data_log.groovy") {
             column(name: 'end_date', type: 'DATETIME', remarks: 'end data')
             column(name: 'status_code', type: 'VARCHAR(255)', remarks: 'status code')
             column(name: 'project_id', type: 'BIGINT UNSIGNED', remarks: 'project id')
+            column(name: "is_auto_sync", type: "tinyint", remarks: '自动同步')
+            column(name: "init_status", type: "VARCHAR(255)", remarks: '初始化状态')
 
             column(name: "object_version_number", type: "BIGINT UNSIGNED", defaultValue: "1")
             column(name: "created_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "creation_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
             column(name: "last_updated_by", type: "BIGINT UNSIGNED", defaultValue: "0")
             column(name: "last_update_date", type: "DATETIME", defaultValueComputed: "CURRENT_TIMESTAMP")
-
-        }
-    }
-
-    changeSet(id: '2019-11-28-add-column-test-plan-init-status', author: 'zhaotianxin') {
-        addColumn(tableName: 'test_plan') {
-            column(name: "is_auto_sync", type: "tinyint", remarks: '自动同步')
-            column(name: "init_status", type: "VARCHAR(255)", remarks: '初始化状态')
         }
     }
 

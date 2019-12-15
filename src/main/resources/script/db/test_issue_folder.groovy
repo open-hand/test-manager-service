@@ -41,6 +41,7 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name: 'parent_id', type: 'BIGINT UNSIGNED', remarks: '父级文件的id', afterColumn: 'folder_id')
         }
     }
+
     changeSet(id: '2019-11-15-test_issue_folder-drop-index', author: 'lizhaozhong@hang-china.com') {
         dropIndex(tableName: 'test_issue_folder', indexName: 'uk_version_id_project_id')
     }
