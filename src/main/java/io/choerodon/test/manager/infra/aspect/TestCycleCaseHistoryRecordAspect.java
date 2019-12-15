@@ -20,8 +20,6 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseHistoryType;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -39,12 +37,6 @@ public class TestCycleCaseHistoryRecordAspect {
 
     @Autowired
     private TestCaseService testCaseService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
 
     @Autowired
     private TestStatusMapper testStatusMapper;

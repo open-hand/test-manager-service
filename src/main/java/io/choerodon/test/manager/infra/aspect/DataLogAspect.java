@@ -43,7 +43,6 @@ public class DataLogAspect {
     private static final String DESCRIPTION = "description";
     private static final String FIELD_DESCRIPTION_NULL = "[{\"insert\":\"\n\"}]";
     private static final String FIELD_FOLDER = "Folder Link";
-    private static final String FIELD_LABELS = "labels";
     private static final String FIELD_ATTACHMENT = "Attachment";
 
     @Autowired

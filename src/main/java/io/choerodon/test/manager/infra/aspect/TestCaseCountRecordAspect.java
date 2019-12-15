@@ -30,7 +30,6 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseHistoryDTO;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseHistoryMapper;
-import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import io.choerodon.test.manager.infra.util.PageUtil;
 import io.choerodon.test.manager.infra.util.RedisTemplateUtil;
 import org.springframework.data.domain.Sort;
@@ -47,9 +46,6 @@ public class TestCaseCountRecordAspect {
 
     @Autowired
     private TestCycleCaseService testCycleCaseService;
-
-    @Autowired
-    TestCycleCaseMapper testCycleCaseMapper;
 
     @Autowired
     TestCycleCaseHistoryMapper testCycleCaseHistoryMapper;
