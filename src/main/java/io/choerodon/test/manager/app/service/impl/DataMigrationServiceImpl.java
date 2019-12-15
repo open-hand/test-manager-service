@@ -93,7 +93,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Async
     @Override
     public void fixData() {
-        logger.info("=====Data Migrate Start=====");
+        logger.info("==============================>Data Migrate Start<=================================");
         //1.文件夹
         migrateFolder();
         //2.用例
@@ -126,7 +126,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixCaseFolderRank();
         //17 fixCycleCaseFolderRank
         fixCycleCaseFolderRank();
-        logger.info("===================>Data Migrate Succeed!!!<====================");
+        logger.info("=============================>Data Migrate Succeed!!!<==============================");
     }
 
     private void migrateFolder() {
@@ -160,7 +160,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
             }
-            logger.info("=====Insert Test Case By  ProjectId:{}=====", projectId);
+            logger.info("=====Insert Test Case By  ProjectId:{} =====", projectId);
         }
         logger.info("=====Test Case Data Migrate Succeed=====");
 
@@ -170,12 +170,11 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
 
     private void migrateAttachment() {
-
         List<TestCaseAttachmentDTO> attachmentDTOS = dataFixFeignClient.migrateAttachment().getBody();
         if (!CollectionUtils.isEmpty(attachmentDTOS)) {
             for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
                 if (testCaseAttachmentDTO != null) {
-                    logger.info("=====Insert Test Case Attachment{}=====", testCaseAttachmentDTO.getCaseId());
+                    logger.info("=====Insert Test Case Attachment caseId:{} =====", testCaseAttachmentDTO.getCaseId());
                     testCaseAttachmentDTO.setUrl("/agile-service/"+testCaseAttachmentDTO.getUrl());
                     testAttachmentMapper.insert(testCaseAttachmentDTO);
                 }
@@ -192,7 +191,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
                 testCaseLinkService.batchInsert(testCaseLinkDTOS);
             }
-            logger.info("===========link=============>project:{}link copy successed", projectId);
+            logger.info("===========link=============>project:{} link copy successed", projectId);
         });
         logger.info("===========link=============> copy successed");
     }
@@ -207,7 +206,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     }
 
     private void migreateDataLog() {
-
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
         projectIdList.forEach(projectId -> {
             List<DataLogFixVO> dataLogFixVOS = dataFixFeignClient.migrateDataLog(projectId).getBody();
@@ -272,14 +270,15 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         logger.info("===========cycle step=============> fix repeat successed");
     }
 
-
     private void fixCycle(Long versionId,Long planId){
         testCycleMapper.fixPlanId(versionId, planId);
-        logger.info("===========cycle cycle=============> fix cycle successed");
+        logger.info("===========fix cycle planId:{} =============> fix cycle successed" + planId);
     }
+
     private  void fixCycleSource(){
         testCycleCaseMapper.fixSource();
     }
+
     private  void fixStatus(){
         TestStatusDTO caseStatus = new TestStatusDTO();
         TestStatusDTO caseStatus1 = new TestStatusDTO();
@@ -371,7 +370,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         testCaseLinkDTO.setLinkCaseId(issueLinkFixVOList.getLinkedIssueId());
         return testCaseLinkDTO;
     }
-
 
     private TestProjectInfoDTO projectInfVoToDto(ProjectInfoFixVO projectInfoFixVO) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
