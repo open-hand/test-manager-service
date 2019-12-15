@@ -16,9 +16,17 @@ public class FixDataTask {
     @Autowired
     private DataMigrationService dataMigrationService;
 
-    @JobTask(maxRetryCount = 3, code = "syncAgileToTestManager", description = "升级到0.20.0,同步敏捷数据到测试管理服务")
-    @TimedTask(name = "syncAgileToTestManager", description = "升级到0.20.0,同步敏捷数据到测试管理服务", oneExecution = true, repeatCount = 0, repeatInterval = 1, repeatIntervalUnit = QuartzDefinition.SimpleRepeatIntervalUnit.HOURS, params = {})
-    public void syncWikiToNewKnowledgeBase(Map<String, Object> map) {
+    @JobTask(maxRetryCount = 3,
+            code = "syncAgileToTestManager",
+            description = "升级到0.20.0,同步敏捷数据到测试管理服务")
+    @TimedTask(name = "syncAgileToTestManager",
+            description = "升级到0.20.0,同步敏捷数据到测试管理服务",
+            oneExecution = true,
+            repeatCount = 0,
+            repeatInterval = 1,
+            repeatIntervalUnit = QuartzDefinition.SimpleRepeatIntervalUnit.HOURS,
+            params = {})
+    public void syncAgileToTestManager(Map<String, Object> map) {
         dataMigrationService.fixData();
     }
 }
