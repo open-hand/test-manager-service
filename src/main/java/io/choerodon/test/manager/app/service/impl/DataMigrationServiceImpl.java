@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +26,6 @@ import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.DataFixFeignClient;
 import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 
 @Service
@@ -40,22 +38,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     TestCaseService testCaseService;
 
     @Autowired
-    TestCaseFeignClient testCaseFeignClient;
-
-    @Autowired
     TestCaseMapper testCaseMapper;
 
     @Autowired
     TestAttachmentMapper testAttachmentMapper;
 
     @Autowired
-    TestIssueFolderRelMapper testIssueFolderRelMapper;
-
-    @Autowired
     private TestCaseLinkService testCaseLinkService;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Autowired
     private ProductionVersionClient productionVersionClient;
