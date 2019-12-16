@@ -173,10 +173,10 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     }
 
     @Override
-    public void cloneAttach(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+    public void cloneAttach(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds) {
 
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleCaseAttachmentRelDTO> list = testCycleCaseAttachmentRelMapper.listByExecuteIds(olderExecuteId);
+        List<TestCycleCaseAttachmentRelDTO> list = testCycleCaseAttachmentRelMapper.listByExecuteIds(olderExecuteIds);
         if(CollectionUtils.isEmpty(list)){
             return;
         }

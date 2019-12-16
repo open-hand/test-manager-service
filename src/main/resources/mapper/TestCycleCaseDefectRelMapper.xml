@@ -81,11 +81,14 @@
         </foreach>
     </delete>
 
-    <select id="listByExecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
+    <select id="listByExecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO">
      select  * from test_cycle_case_defect_rel
-      where  defect_link_id in
-        <foreach collection="list" item="executId" open="(" close=")" separator=",">
-            #{executId}
+      where
+        defect_type = #{type}
+         and
+        defect_link_id in
+        <foreach collection="list" item="linkId" open="(" close=")" separator=",">
+            #{linkId}
         </foreach>
     </select>
 
