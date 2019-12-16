@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -130,7 +132,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 newFolderVO.setName(folderName == null ? "test" : folderName);
                 newFolderVO.setParentId(0L);
                 newFolderVO.setProjectId(projectFolderId);
-                newFolderVO.setType("cycle");
+                newFolderVO.setType("folder");
                 newFolderVO.setVersionId(0L);
                 TestIssueFolderVO testIssueFolderVO = testIssueFolderService.create(projectFolderId, newFolderVO);
 
@@ -160,14 +162,17 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateAttachment() {
         List<TestCaseAttachmentDTO> attachmentDTOS = dataFixFeignClient.migrateAttachment().getBody();
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         if (!CollectionUtils.isEmpty(attachmentDTOS)) {
             for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
                 if (testCaseAttachmentDTO != null) {
                     logger.info("=====Insert Test Case Attachment caseId:{} =====", testCaseAttachmentDTO.getCaseId());
                     testCaseAttachmentDTO.setUrl("/agile-service/"+testCaseAttachmentDTO.getUrl());
-                    testAttachmentMapper.insert(testCaseAttachmentDTO);
+                    testCaseAttachmentDTO.setCreatedBy(userDetails.getUserId());
+                    testCaseAttachmentDTO.setLastUpdatedBy(userDetails.getUserId());
                 }
             }
+            testAttachmentMapper.batchInsert(attachmentDTOS);
         }
         logger.info("===========attachment=============> copy successed");
     }

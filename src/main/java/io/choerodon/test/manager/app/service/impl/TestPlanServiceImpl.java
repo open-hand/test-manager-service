@@ -261,6 +261,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         testPlanDTO.setObjectVersionNumber(null);
         testPlanDTO.setName(String.format("%s-副本",testPlanDTO.getName()));
         testPlanDTO.setInitStatus(TestPlanInitStatus.CREATING);
+        testPlanDTO.setStatusCode(TestPlanStatus.DOING.getStatus());
         baseCreate(testPlanDTO);
         Map<String, Long> map = new HashMap<>();
         map.put("older", planId);
