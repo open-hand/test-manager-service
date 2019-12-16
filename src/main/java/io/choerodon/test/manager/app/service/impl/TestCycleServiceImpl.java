@@ -828,19 +828,19 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public String moveCycle(Long projectId, Long targetCycleId, Long cycleId, String lastRank, String nextRank) {
+    public String moveCycle(Long projectId, Long targetCycleId,TestCycleVO testCycleVO) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(targetCycleId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.select(testCycleCaseDTO);
         if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
             throw new CommonException("error.issueFolder.has.case");
         }
-        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getCycleId());
         testCycleDTO.setParentCycleId(targetCycleId);
-        if (ObjectUtils.isEmpty(lastRank) && ObjectUtils.isEmpty(nextRank)) {
-            testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(lastRank, nextRank));
+        if (ObjectUtils.isEmpty(testCycleVO.getLastRank()) && ObjectUtils.isEmpty(testCycleVO.getNextRank())) {
+            testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
         } else {
-            testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(lastRank, nextRank));
+            testCycleDTO.setRank(RankUtil.Operation.UPDATE.getRank(testCycleVO.getLastRank(), testCycleVO.getNextRank()));
         }
         baseUpdate(testCycleDTO);
         return testCycleDTO.getRank();
