@@ -18,6 +18,7 @@ import java.util.Map;
  */
 @Component
 public class ApplicationFeignClientFallback implements ApplicationFeignClient {
+
     @Override
     public ResponseEntity<String> getVersionValue(Long projectId, Long versionId) {
         throw new CommonException("error.ApplicationFeignClient.getVersionValue");

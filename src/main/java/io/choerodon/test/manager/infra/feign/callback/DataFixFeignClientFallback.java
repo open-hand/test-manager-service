@@ -22,7 +22,9 @@ import io.choerodon.test.manager.infra.feign.DataFixFeignClient;
  */
 @Component
 public class DataFixFeignClientFallback implements DataFixFeignClient {
+
     private static final String QUERY_ERROR = "error.baseFeign.query";
+
     @Override
     public ResponseEntity<List<DataLogFixVO>> migrateDataLog(Long projectId) {
         throw new CommonException(QUERY_ERROR);

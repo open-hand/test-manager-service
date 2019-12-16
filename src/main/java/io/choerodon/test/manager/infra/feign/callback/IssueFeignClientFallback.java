@@ -13,6 +13,7 @@ import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 
 @Component
 public class IssueFeignClientFallback implements IssueFeignClient {
+
     @Override
     public ResponseEntity<List<IssueTypeVO>> queryIssueType(Long projectId, String applyType, Long organizationId) {
         throw new CommonException("error.issueFeignClient.queryIssueType");

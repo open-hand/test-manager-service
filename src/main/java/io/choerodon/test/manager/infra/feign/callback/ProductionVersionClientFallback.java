@@ -17,6 +17,7 @@ import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
  */
 @Component
 public class ProductionVersionClientFallback implements ProductionVersionClient {
+
     private static final String QUERY_ERROR = "error.production.version.query";
 
     @Override
@@ -29,8 +30,5 @@ public class ProductionVersionClientFallback implements ProductionVersionClient 
         throw new CommonException(QUERY_ERROR);
 
     }
-//    @Override
-//    public ResponseEntity<List<Long>> listAllVersionId(Long projectId) {
-//        throw new CommonException(QUERY_ERROR);
-//    }
+
 }
