@@ -36,7 +36,12 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/cycle`, data);
 }
 export function moveFolder(folderId, targetFolderId, lastRank, nextRank) {
-  return request.put(encodeURI(`/test/v1/projects/${getProjectId()}/cycle/move/${folderId}?target_cycle_id=${targetFolderId}&lastRank=${lastRank || ''}&nextRank=${nextRank || ''}`));
+  return request.put(`/test/v1/projects/${getProjectId()}/cycle/move?target_cycle_id=${targetFolderId}`,
+    {
+      cycleId: folderId,
+      lastRank,
+      nextRank,
+    });
 }
 export function deleteFolder(folderId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/cycle/delete/${folderId}`);
@@ -47,8 +52,8 @@ export function importIssueToFolder(planId, folderId, data) {
 /**
  *  根据文件夹id和计划id获取执行
  */
-export function getExecutesByFolder({ 
-  planId, folderId, search, orderField, orderType, current, pageSize, 
+export function getExecutesByFolder({
+  planId, folderId, search, orderField, orderType, current, pageSize,
 }) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?cycle_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, search, {
     params: {
