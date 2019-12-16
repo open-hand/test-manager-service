@@ -57,19 +57,11 @@ public interface TestCaseService {
 
     IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
 
-    List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds);
-
     List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
 
     ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds);
 
     ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds);
-
-    List<IssueInfoDTO> listByIssueIds(Long projectId, List<Long> issueIds);
-
-    PageInfo<ComponentForListDTO> listByProjectId(Long projectId);
-
-    List<IssueLabelDTO> listIssueLabel(Long projectId);
 
     LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode);
 

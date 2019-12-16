@@ -56,7 +56,7 @@ public class TestCycleCaseHistoryRecordAspect {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
-    private static final String TYPE = "CASE_STEP";
+    private static final String ATT_TYPE = "CYCLE_STEP";
     //修改用例
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.update(..)) && args(testCycleCaseVO)")
     public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO) throws Throwable {
@@ -95,7 +95,7 @@ public class TestCycleCaseHistoryRecordAspect {
     public void recordAttachUpload(JoinPoint jp) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        if(TYPE.equals(String.valueOf(jp.getArgs()[4]))){
+        if(ATT_TYPE.equals(String.valueOf(jp.getArgs()[4]))){
             TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey((Long) jp.getArgs()[3]);
             historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         }else {
@@ -116,7 +116,7 @@ public class TestCycleCaseHistoryRecordAspect {
             DBValidateUtil.executeAndvalidateUpdateNum(lists::size, 1, "error.attach.notFound");
             attachmentRelE = lists.get(0);
             TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-            if(TYPE.equals(attachmentRelE.getAttachmentType())){
+            if(ATT_TYPE.equals(attachmentRelE.getAttachmentType())){
                 TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(attachmentRelE.getAttachmentLinkId());
                 historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
             }else {
@@ -134,13 +134,10 @@ public class TestCycleCaseHistoryRecordAspect {
     public void recordDefectAdd(JoinPoint jp) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = (TestCycleCaseDefectRelVO) jp.getArgs()[0];
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-        if(TYPE.equals(testCycleCaseDefectRelVO.getDefectType())){
-            TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
-            historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
-        }else {
-            historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
-        }
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
+        historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
+        TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
+        historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         historyDTO.setOldValue(TestCycleCaseHistoryType.FIELD_NULL);
         String defectName = testCaseService.queryIssue((Long) jp.getArgs()[1], testCycleCaseDefectRelVO.getIssueId(), (Long) jp.getArgs()[2]).getBody().getIssueNum();
         historyDTO.setNewValue(defectName);
@@ -154,12 +151,8 @@ public class TestCycleCaseHistoryRecordAspect {
         testCycleCaseDefectRelE = testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelE).get(0);
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
-        if(TYPE.equals(testCycleCaseDefectRelVO.getDefectType())){
-            TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
-            historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
-        }else {
-            historyDTO.setExecuteId(testCycleCaseDefectRelVO.getDefectLinkId());
-        }
+        TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelE.getDefectLinkId());
+        historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         String defectName = testCaseService.queryIssue(projectId, testCycleCaseDefectRelE.getIssueId(), organizationId).getBody().getIssueNum();
         historyDTO.setOldValue(defectName);
         historyDTO.setNewValue(TestCycleCaseHistoryType.FIELD_NULL);
