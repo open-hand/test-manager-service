@@ -56,6 +56,7 @@ public class TestCycleCaseHistoryRecordAspect {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
+    private static final String TYPE = "CASE_STEP";
     //修改用例
     @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseService.update(..)) && args(testCycleCaseVO)")
     public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseVO testCycleCaseVO) throws Throwable {
@@ -94,7 +95,7 @@ public class TestCycleCaseHistoryRecordAspect {
     public void recordAttachUpload(JoinPoint jp) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
-        if("CYCLE_STEP".equals(String.valueOf(jp.getArgs()[4]))){
+        if(TYPE.equals(String.valueOf(jp.getArgs()[4]))){
             TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey((Long) jp.getArgs()[3]);
             historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         }else {
@@ -115,7 +116,7 @@ public class TestCycleCaseHistoryRecordAspect {
             DBValidateUtil.executeAndvalidateUpdateNum(lists::size, 1, "error.attach.notFound");
             attachmentRelE = lists.get(0);
             TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-            if("CYCLE_STEP".equals(attachmentRelE.getAttachmentType())){
+            if(TYPE.equals(attachmentRelE.getAttachmentType())){
                 TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(attachmentRelE.getAttachmentLinkId());
                 historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
             }else {
@@ -133,7 +134,7 @@ public class TestCycleCaseHistoryRecordAspect {
     public void recordDefectAdd(JoinPoint jp) {
         TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = (TestCycleCaseDefectRelVO) jp.getArgs()[0];
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
-        if("CYCLE_STEP".equals(testCycleCaseDefectRelVO.getDefectType())){
+        if(TYPE.equals(testCycleCaseDefectRelVO.getDefectType())){
             TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
             historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         }else {
@@ -153,7 +154,7 @@ public class TestCycleCaseHistoryRecordAspect {
         testCycleCaseDefectRelE = testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelE).get(0);
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_DEFECT);
-        if("CYCLE_STEP".equals(testCycleCaseDefectRelVO.getDefectType())){
+        if(TYPE.equals(testCycleCaseDefectRelVO.getDefectType())){
             TestCycleCaseStepDTO testCycleCaseStepDTO = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseDefectRelVO.getDefectLinkId());
             historyDTO.setExecuteId(testCycleCaseStepDTO.getExecuteId());
         }else {
