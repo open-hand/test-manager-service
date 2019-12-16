@@ -63,7 +63,7 @@
 
     <sql id="sqlParam">
         <if test="searchDTO != null">
-            <if test="searchDTO.contents != null and searchDTO.contents.size > 0">
+            <if test="searchDTO.contents != null and searchDTO.contents.size > 0 ">
                 AND
                 <foreach collection="searchDTO.contents" item="content" open="(" separator=" OR " close=")">
                     (tci.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
@@ -73,10 +73,10 @@
             </if>
             <if test="searchDTO.searchArgs != null">
                 <if test='searchDTO.searchArgs.summary != null'>
-                    AND (tci.summary LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                    AND (tci.summary LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.summary, jdbcType=VARCHAR}),'%'))
                 </if>
                 <if test="searchDTO.searchArgs.caseNum != null">
-                    AND (tci.case_num LIKE CONCAT(CONCAT('%', #{content, jdbcType=VARCHAR}),'%'))
+                    AND (tci.case_num LIKE CONCAT(CONCAT('%', #{searchDTO.searchArgs.caseNum, jdbcType=VARCHAR}),'%'))
                 </if>
             </if>
         </if>
@@ -153,7 +153,7 @@
        <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
            #{caseId}
        </foreach>
-       order by last_update_date DESC
+       order by case_id DESC
    </select>
 
     <select id="listByProject" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">

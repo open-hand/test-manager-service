@@ -336,6 +336,7 @@
             </foreach>
           </if>
       </where>
+      order by rank
     </select>
 
     <update id="fixPlanId">
