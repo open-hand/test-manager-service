@@ -52,6 +52,7 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
 
     @Override
     public ProjectInfoVO updateProjectInfo(Long projectId, ProjectInfoVO projectInfoVO) {
+        projectInfoVO.setProjectId(projectId);
         projectInfoValidator.verifyUpdateData(projectInfoVO);
         TestProjectInfoDTO testProjectInfoDTO = modelMapper.map(projectInfoVO, TestProjectInfoDTO.class);
         if (testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfoDTO) != 1) {
