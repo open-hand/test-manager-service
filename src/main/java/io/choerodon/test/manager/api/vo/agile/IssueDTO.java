@@ -53,8 +53,6 @@ public class IssueDTO {
 
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
-    private List<IssueCommentDTO> issueCommentDTOList;
-
     private List<IssueAttachmentDTO> issueAttachmentDTOList;
 
     private List<IssueSubListDTO> subIssueDTOList;
@@ -235,14 +233,6 @@ public class IssueDTO {
 
     public void setComponentIssueRelVOList(List<ComponentIssueRelVO> componentIssueRelVOList) {
         this.componentIssueRelVOList = componentIssueRelVOList;
-    }
-
-    public List<IssueCommentDTO> getIssueCommentDTOList() {
-        return issueCommentDTOList;
-    }
-
-    public void setIssueCommentDTOList(List<IssueCommentDTO> issueCommentDTOList) {
-        this.issueCommentDTOList = issueCommentDTOList;
     }
 
     public List<IssueAttachmentDTO> getIssueAttachmentDTOList() {
