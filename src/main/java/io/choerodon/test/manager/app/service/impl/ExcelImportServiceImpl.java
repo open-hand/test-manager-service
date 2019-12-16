@@ -17,7 +17,6 @@ import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
-import io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper;
 import io.choerodon.test.manager.infra.util.ExcelTitleUtil;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 import io.choerodon.test.manager.infra.util.MultipartExcel;
@@ -103,20 +102,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
 
-    @Autowired
-    private TestIssueFolderRelMapper testIssueFolderRelMapper;
-
-    @Autowired
-    private IssueFeignClient issueFeignClient;
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
 
     @Autowired
     private ModelMapper modelMapper;
-
-    @Autowired
-    private TestCaseLinkService testCaseLinkService;
 
 
     @Override

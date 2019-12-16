@@ -1,41 +1,41 @@
-<!--<?xml version="1.0" encoding="UTF-8" ?>-->
-<!--<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >-->
-<!--<mapper namespace="io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper">-->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="io.choerodon.test.manager.infra.mapper.TestIssueFolderRelMapper">
 
-<!--    <resultMap type="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO" id="BaseResultMap">-->
-<!--        <id column="id" property="id"/>-->
-<!--        <id column="folder_id" property="folderId"/>-->
-<!--        <id column="version_id" property="versionId"/>-->
-<!--        <id column="project_id" property="projectId"/>-->
-<!--        <id column="issueId" property="issueId"/>-->
-<!--    </resultMap>-->
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO" id="BaseResultMap">
+        <id column="id" property="id"/>
+        <id column="folder_id" property="folderId"/>
+        <id column="version_id" property="versionId"/>
+        <id column="project_id" property="projectId"/>
+        <id column="issueId" property="issueId"/>
+    </resultMap>
 
-<!--    <update id="updateFolderByIssue" parameterType="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO">-->
-<!--        UPDATE-->
-<!--        test_issue_folder_rel-->
-<!--        SET-->
-<!--        folder_id = #{folderId},-->
-<!--        version_id = #{versionId},-->
-<!--        project_id = #{projectId},-->
-<!--        object_version_number = object_version_number + 1-->
-<!--        WHERE-->
-<!--        issue_id = #{issueId}-->
-<!--        AND-->
-<!--        object_version_number = #{objectVersionNumber}-->
-<!--    </update>-->
+    <update id="updateFolderByIssue" parameterType="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO">
+        UPDATE
+        test_issue_folder_rel
+        SET
+        folder_id = #{folderId},
+        version_id = #{versionId},
+        project_id = #{projectId},
+        object_version_number = object_version_number + 1
+        WHERE
+        issue_id = #{issueId}
+        AND
+        object_version_number = #{objectVersionNumber}
+    </update>
 
-<!--    <update id="updateVersionByFolderWithNoLock" parameterType="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO">-->
-<!--        UPDATE-->
-<!--        test_issue_folder_rel-->
-<!--        SET-->
-<!--        version_id = #{versionId}-->
-<!--        WHERE-->
-<!--        folder_id = #{folderId}-->
-<!--    </update>-->
+    <update id="updateVersionByFolderWithNoLock" parameterType="io.choerodon.test.manager.infra.dto.TestIssueFolderRelDTO">
+        UPDATE
+        test_issue_folder_rel
+        SET
+        version_id = #{versionId}
+        WHERE
+        folder_id = #{folderId}
+    </update>
 
-<!--    <update id="updateAuditFields">-->
-<!--        update test_issue_folder_rel-->
-<!--        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}-->
-<!--        where project_id = #{projectId}-->
-<!--    </update>-->
-<!--</mapper>-->
+    <update id="updateAuditFields">
+        update test_issue_folder_rel
+        set created_by = #{userId}, creation_date = #{date}, last_updated_by = #{userId}, last_update_date = #{date}
+        where project_id = #{projectId}
+    </update>
+</mapper>
