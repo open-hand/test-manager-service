@@ -757,7 +757,7 @@ ORDER BY
             <set>
                 rank =#{cycleCase.rank}
             </set>
-            where execute_id= #{1.executeId}
+            where execute_id= #{cycleCase.executeId}
         </foreach>
     </update>
 
