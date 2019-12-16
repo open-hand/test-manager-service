@@ -91,7 +91,7 @@ public class TestCycleCaseHistoryRecordAspect {
         return o;
     }
 
-    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
+    @After("execution(* io.choerodon.test.manager.app.service.impl.TestCycleCaseAttachmentRelUploadServiceImpl.baseUpload(..))")
     public void recordAttachUpload(JoinPoint jp) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);
