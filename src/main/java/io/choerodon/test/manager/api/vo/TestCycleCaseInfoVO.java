@@ -76,9 +76,6 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "测试用例关联的附件信息")
     private List<TestCycleCaseAttachmentRelVO> attachment;
 
-    @ApiModelProperty(value = "用例关联的问题链接")
-    private List<IssueInfoDTO> issuesInfos;
-
     public Long getExecuteId() {
         return executeId;
     }
@@ -235,15 +232,6 @@ public class TestCycleCaseInfoVO {
     public String getPlanStatus() {
         return planStatus;
     }
-
-    public List<IssueInfoDTO> getIssuesInfos() {
-        return issuesInfos;
-    }
-
-    public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
-        this.issuesInfos = issuesInfos;
-    }
-
     public void setPlanStatus(String planStatus) {
         this.planStatus = planStatus;
     }

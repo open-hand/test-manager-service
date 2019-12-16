@@ -1,19 +1,10 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import io.choerodon.core.oauth.CustomUserDetails;
-import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.dto.*;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
-import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
+import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,14 +16,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.app.service.FileService;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelUploadService;
+import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
@@ -57,6 +57,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     private static final String BACKETNAME = "test";
 
+    @Autowired
+    private TestCycleCaseAttachmentRelUploadService testCycleCaseAttachmentRelUploadService;
+
 
     private final FileFeignClient fileFeignClient;
 
@@ -75,7 +78,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Override
     public TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-        return modelMapper.map(baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelVO.class);
+        return modelMapper.map(testCycleCaseAttachmentRelUploadService.baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelVO.class);
     }
 
     @Override
@@ -90,21 +93,10 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         );
     }
 
-    @Override
-    public void dealIssue(Long executeId, String type, String description,String fileName, String url) {
-        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(executeId);
-        testCycleCaseAttachmentRelDTO.setComment(description);
-        testCycleCaseAttachmentRelDTO.setAttachmentType(type);
-        testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
-        testCycleCaseAttachmentRelDTO.setUrl(String.format("%s/%s/%s",attachmentUrl,BACKETNAME,url));
-        testCycleCaseAttachmentRelMapper.insertSelective(testCycleCaseAttachmentRelDTO);
-    }
 
     @Override
     public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
-        List<TestCycleCaseAttachmentRelVO> cycleCaseAttachmentRelVOList = new ArrayList<>();
         if (CollectionUtils.isEmpty(files)) {
             throw new CommonException("error.files.null");
         }
@@ -225,25 +217,10 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         }
 
         testCycleCaseAttachmentRelDTO.setUrl(response.getBody());
+        testCycleCaseAttachmentRelDTO.setUrl("response.getBody()");
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert, testCycleCaseAttachmentRelDTO, 1, "error.attachment.insert");
 
         return testCycleCaseAttachmentRelDTO;
-    }
-    private String dealUrl(String url) {
-        String dealUrl = null;
-        try {
-            URL netUrl = new URL(url);
-            dealUrl = netUrl.getFile().substring(BACKETNAME.length() + 2);
-        } catch (MalformedURLException e) {
-            throw new CommonException(e.getMessage());
-        }
-        return dealUrl;
-    }
-    private void baseInsert(TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO){
-       if(ObjectUtils.isEmpty(testCycleCaseAttachmentRelDTO)){
-           throw  new CommonException("error.cycle.attachment.rel.is.null");
-       }
-       DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insertSelective,testCycleCaseAttachmentRelDTO,1,"error.insert.cycle.attachment.rel");
     }
 }
