@@ -32,6 +32,7 @@ import org.springframework.util.ObjectUtils;
  */
 @Component
 public class TestCaseAssembler {
+
     private static final String BACKETNAME = "agile-service";
 
     @Autowired
@@ -45,9 +46,6 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCaseMapper testCaseMapper;
-
-    @Autowired
-    private TestDataLogMapper testDataLogMapper;
 
     @Autowired
     private TestCaseLinkService testCaseLinkService;

@@ -24,8 +24,6 @@ public interface TestPlanServcie {
      */
     TestPlanDTO create(Long projectId,TestPlanVO testPlanVO);
 
-    void batchInsert(List<TestPlanDTO> testPlanDTOS);
-
     TestPlanVO update(Long projectId, TestPlanVO testPlanVO);
 
     /**

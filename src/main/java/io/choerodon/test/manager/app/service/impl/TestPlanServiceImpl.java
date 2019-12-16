@@ -120,11 +120,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public void batchInsert(List<TestPlanDTO> testPlanDTOS) {
-
-    }
-
-    @Override
     public TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode) {
         TestPlanDTO testPlanDTO = new TestPlanDTO();
         testPlanDTO.setProjectId(projectId);
