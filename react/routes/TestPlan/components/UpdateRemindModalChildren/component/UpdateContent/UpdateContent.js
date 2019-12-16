@@ -1,5 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { Tooltip } from 'choerodon-ui';
 import SingleFileUpload from '../../../../../../components/SingleFileUpload';
 import TestStepTable from '../TestStepTable';
 import {
@@ -33,15 +34,19 @@ function UpdateContent(props) {
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>附件</div>
-          <div className={`${prefix}-item-value`}>
+          <div className={`${prefix}-item-value`} style={{ display: 'flex', flexWrap: 'wrap' }}>
             {
               fileList && fileList.length > 0 && (
                 fileList.map(item => (
-                  <SingleFileUpload
-                    key={tag === 'new' ? item.attachmentId : item.id}
-                    url={item.url}
-                    fileName={tag === 'new' ? item.fileName : item.attachmentName}
-                  />
+                  <Tooltip title={tag === 'new' ? item.fileName : item.attachmentName}>
+                    <div style={{ width: 150 }}>
+                      <SingleFileUpload
+                        key={tag === 'new' ? item.attachmentId : item.id}
+                        url={item.url}
+                        fileName={tag === 'new' ? item.fileName : item.attachmentName}
+                      />
+                    </div>
+                  </Tooltip> 
                 ))
               )
             }

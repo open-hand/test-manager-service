@@ -50,7 +50,7 @@ class SmartTooltip extends Component {
     } = this.props;
     const { overflow } = this.state;
     // eslint-disable-next-line react/jsx-props-no-spreading
-    const dom = <div {...this.props} style={{ ...defaultStyle, ...style, width }} title={null} ref={this.saveRef('container')}>{title}</div>;
+    const dom = <div {...this.props} style={{ ...defaultStyle, ...style, width }} title={null} ref={this.saveRef('container')} />;
     return overflow
       ? (
         <Tooltip placement={placement} title={title}>

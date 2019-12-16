@@ -78,7 +78,7 @@ function TestPlanModal({
   return (
     <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
       <Form dataSet={dataSet} style={{ width: 512 }}>
-        <TextField name="name" required maxLength={30} />
+        <TextField name="name" required maxLength={44} />
         <TextArea
           name="description"
         />
