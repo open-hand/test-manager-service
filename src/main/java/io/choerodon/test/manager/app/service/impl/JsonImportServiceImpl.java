@@ -214,8 +214,10 @@ public class JsonImportServiceImpl implements JsonImportService {
         Date now = new Date();
         testAutomationResultDTO.setCreationDate(now);
         testAutomationResultDTO.setLastUpdateDate(now);
-
-        Long resultId = Long.valueOf(testAutomationResultMapper.insertOneResult(testAutomationResultDTO));
+        if (testAutomationResultMapper.insertOneResult(testAutomationResultDTO) != 1) {
+            throw new CommonException("error.TestAutomationResult.insert");
+        }
+        Long resultId = Long.valueOf(testAutomationResultDTO.getId());
 
 //        // 创建文件夹
 //        TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
