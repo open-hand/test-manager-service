@@ -128,9 +128,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (CollectionUtils.isEmpty(testPlanDTOS)) {
             return new TestTreeIssueFolderVO();
         }
-
         // 获取planIds,查询出所有底层文件夹Id
-        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).sorted(Comparator.reverseOrder()).collect(Collectors.toList());
+        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
         Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         // 获取项目下所有的文件夹
@@ -147,7 +146,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestTreeFolderVO> planTreeList = new ArrayList<>();
         List<Long> root = new ArrayList<>();
         List<TestTreeFolderVO> testTreeFolderVOS = new ArrayList<>();
-        testPlanDTOS.forEach(v -> {
+        testPlanDTOS.stream().sorted(Comparator.comparing(TestPlanDTO::getPlanId).reversed()).forEach(v -> {
             // 用于接收TestTreeFolderVO,便于判断和构建树
             Map<Long, TestTreeFolderVO> map = new HashMap<>();
             // 将计划Id设置为root
