@@ -99,6 +99,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
@@ -294,6 +297,13 @@ public class TestCaseServiceImpl implements TestCaseService {
         attachmentDTOS.forEach(v -> testCaseAttachmentService.delete(projectId, v.getAttachmentId()));
         // 删除测试用例
         testCaseMapper.deleteByPrimaryKey(caseId);
+
+        // 删除测试计划中选择自动同步的计划中的有关联的执行
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId, caseId);
+        if(CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+            testCycleCaseService.batchDeleteByExecuteIds(executeIds);
+        }
     }
 
     @Override
