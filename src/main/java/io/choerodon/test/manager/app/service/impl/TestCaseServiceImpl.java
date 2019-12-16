@@ -195,16 +195,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public PageInfo<ComponentForListDTO> listByProjectId(Long projectId) {
-        return testCaseFeignClient.listByProjectId(projectId, new SearchDTO()).getBody();
-    }
-
-    @Override
-    public List<IssueLabelDTO> listIssueLabel(Long projectId) {
-        return testCaseFeignClient.listIssueLabel(projectId).getBody();
-    }
-
-    @Override
     public LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode) {
         return testCaseFeignClient.queryLookupValueByCode(typeCode).getBody();
     }
@@ -476,13 +466,6 @@ public class TestCaseServiceImpl implements TestCaseService {
         Assert.notNull(projectId, "error.TestCaseService.createTest.param.projectId.not.be.null");
         return testCaseFeignClient.createIssue(projectId, applyType, issueCreateDTO).getBody();
     }
-
-    @Override
-    public List<IssueSearchDTO> batchIssueToVersion(Long projectId, Long versionId, List<Long> issueIds) {
-        Assert.notNull(projectId, "error.TestCaseService.batchIssueToVersion.param.projectId.not.be.null");
-        return testCaseFeignClient.batchIssueToVersion(projectId, versionId, issueIds).getBody();
-    }
-
 
     @Override
     public List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {

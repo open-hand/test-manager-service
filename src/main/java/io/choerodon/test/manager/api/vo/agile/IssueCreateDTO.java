@@ -41,8 +41,6 @@ public class IssueCreateDTO {
 
     private List<ComponentIssueRelVO> componentIssueRelVOList;
 
-    private List<IssueLinkCreateDTO> issueLinkCreateDTOList;
-
     private List<TestCaseLinkDTO> testCaseLinkDTOList;
 
     private BigDecimal remainingTime;
@@ -51,20 +49,12 @@ public class IssueCreateDTO {
 
     private String epicName;
 
-    public List<IssueLinkCreateDTO> getIssueLinkCreateDTOList() {
-        return issueLinkCreateDTOList;
-    }
-
     public List<TestCaseLinkDTO> getTestCaseLinkDTOList() {
         return testCaseLinkDTOList;
     }
 
     public void setTestCaseLinkDTOList(List<TestCaseLinkDTO> testCaseLinkDTOList) {
         this.testCaseLinkDTOList = testCaseLinkDTOList;
-    }
-
-    public void setIssueLinkCreateDTOList(List<IssueLinkCreateDTO> issueLinkCreateDTOList) {
-        this.issueLinkCreateDTOList = issueLinkCreateDTOList;
     }
 
     public String getSummary() {

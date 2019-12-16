@@ -40,8 +40,6 @@ public class RoleDTO {
     private Integer userCount;
     private List<PermissionDTO> permissions;
     private List<RolePermissionDTO> rolePermissions;
-    private List<LabelDTO> labels;
-
     private List<UserDTO> users;
 
     @JsonIgnore
@@ -184,15 +182,6 @@ public class RoleDTO {
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
     }
-
-    public List<LabelDTO> getLabels() {
-        return labels;
-    }
-
-    public void setLabels(List<LabelDTO> labels) {
-        this.labels = labels;
-    }
-
 
     public void updateCheck() {
         checkName();

@@ -192,20 +192,22 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = testCycleCaseAttachmentRelMapper.selectByPrimaryKey(attachId);
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         String url1 = testCycleCaseAttachmentRelDTO.getUrl();
-        String[] split = url1.split(attachmentUrl);
-        testCaseAttachmentDTO.setUrl(split[1]);
-        List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
+        String[] split = url1.split("/"+attachmentUrl);
+        if(split.length==2){
+            testCaseAttachmentDTO.setUrl(split[1]);
+            List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = testAttachmentMapper.select(testCaseAttachmentDTO);
 
-        if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
-            String url;
-            try {
-                url = URLDecoder.decode(testCycleCaseAttachmentRelDTO.getUrl(), "UTF-8");
-            } catch (IOException i) {
-                throw new CommonException(i);
-            }
-            ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
-            if (response == null || response.getStatusCode() != HttpStatus.OK) {
-                throw new CommonException("error.attachment.upload");
+            if(CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
+                String url;
+                try {
+                    url = URLDecoder.decode(testCycleCaseAttachmentRelDTO.getUrl(), "UTF-8");
+                } catch (IOException i) {
+                    throw new CommonException(i);
+                }
+                ResponseEntity<String> response = fileService.deleteFile(bucketName, url);
+                if (response == null || response.getStatusCode() != HttpStatus.OK) {
+                    throw new CommonException("error.attachment.upload");
+                }
             }
         }
         testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);
