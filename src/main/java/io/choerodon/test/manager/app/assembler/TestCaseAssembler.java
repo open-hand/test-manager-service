@@ -182,7 +182,7 @@ public class TestCaseAssembler {
     }
 
     public TestCycleCaseInfoVO cycleCaseExtraInfo(TestCycleCaseInfoVO testCycleCaseInfoVO) {
-        if(!testCycleCaseInfoVO.getAssignedTo().equals(0)){
+        if(testCycleCaseInfoVO.getAssignedTo() != null && !Objects.equals(testCycleCaseInfoVO.getAssignedTo(), 0L)){
             BaseDTO baseDTO = new BaseDTO();
             baseDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
             Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
