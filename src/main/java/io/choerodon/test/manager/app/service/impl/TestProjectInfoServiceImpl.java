@@ -30,9 +30,6 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
     @Autowired
     private ProjectInfoValidator projectInfoValidator;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @Override
     public void batchCreate(List<TestProjectInfoDTO> testProjectInfoDTOList) {
         testProjectInfoMapper.batchInsert(testProjectInfoDTOList);
@@ -54,9 +51,8 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
     public ProjectInfoVO updateProjectInfo(Long projectId, ProjectInfoVO projectInfoVO) {
         projectInfoVO.setProjectId(projectId);
         projectInfoValidator.verifyUpdateData(projectInfoVO);
-        TestProjectInfoDTO testProjectInfoDTO = modelMapper.map(projectInfoVO, TestProjectInfoDTO.class);
-        if (testProjectInfoMapper.updateByPrimaryKeySelective(testProjectInfoDTO) != 1) {
-            throw new CommonException("error.projectInfo.update");
+        if (testProjectInfoMapper.updateProjectCode(projectInfoVO.getProjectId(), projectInfoVO.getProjectCode()) != 1) {
+            throw new CommonException("error.projectInfoCode.update");
         }
         return projectInfoVO;
     }

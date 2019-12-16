@@ -12,5 +12,8 @@ import io.choerodon.test.manager.infra.dto.TestProjectInfoDTO;
  * @since 2019/11/14
  */
 public interface TestProjectInfoMapper extends Mapper<TestProjectInfoDTO> {
+
     void batchInsert(@Param("testProjectInfoDTOList") List<TestProjectInfoDTO> testProjectInfoDTOList);
+
+    int updateProjectCode(@Param("projectId") Long projectId, @Param("projectCode") String projectCode);
 }

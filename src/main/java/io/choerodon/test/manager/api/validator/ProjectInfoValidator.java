@@ -21,9 +21,6 @@ public class ProjectInfoValidator {
         if (projectInfoVO.getProjectCode() == null) {
             throw new CommonException("error.projectCode.isNull");
         }
-        if (projectInfoVO.getObjectVersionNumber() == null) {
-            throw new CommonException("error.objectVersionNumber.isNull");
-        }
     }
 
 }
