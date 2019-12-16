@@ -230,7 +230,7 @@ function Detail({
         </section>
         <Divider />
         {/** 问题链接 */}
-        <section id="link_task">
+        <section id="link_task" style={{ marginBottom: 20 }}>
           <TitleWrap title="问题链接">
             <div style={{ marginLeft: '14px' }}>
               <Tooltip title="问题链接" getPopupContainer={triggerNode => triggerNode.parentNode}>

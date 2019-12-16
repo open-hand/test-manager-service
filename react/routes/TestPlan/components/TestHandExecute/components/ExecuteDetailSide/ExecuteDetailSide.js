@@ -35,6 +35,7 @@ const Section = ({
   action,
   children,
   style,
+  isLastOne,
 }) => (
   <section id={id}>
     <div className="c7ntest-side-item-header">
@@ -49,7 +50,11 @@ const Section = ({
     <div className="c7ntest-side-item-content" style={style}>
       {children}
     </div>
-    <div className="c7ntest-side-item-header-line" />
+    {
+      !isLastOne && (
+        <div className="c7ntest-side-item-header-line" />
+      )
+    }
 
   </section>
 );
@@ -298,6 +303,7 @@ function ExecuteDetailSide(props) {
                   id="attachment"
                   icon="attach_file"
                   title="问题链接"
+                  isLastOne
                 >
                   <LinkIssues
                     linkIssues={issueInfosVO}
