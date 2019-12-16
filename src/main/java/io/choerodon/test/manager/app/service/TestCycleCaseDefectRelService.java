@@ -27,7 +27,7 @@ public interface TestCycleCaseDefectRelService {
 
     List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
 
-    void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId);
+    void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds,String type);
 
     void deleteCaseRel(Long projectId,Long defectId);
 }

@@ -194,20 +194,29 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+    public void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds) {
 
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(olderExecuteId);
+        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds);
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
+        List<Long> stepIds = new ArrayList<>();
         list.forEach(v -> {
             v.setExecuteId(caseIdMap.get(v.getExecuteId()));
             v.setExecuteStepId(null);
             v.setCreatedBy(userDetails.getUserId());
             v.setLastUpdatedBy(userDetails.getUserId());
+            v.setCaseId(v.getExecuteStepId());
+            stepIds.add(v.getExecuteStepId());
         });
         testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
+        Map<Long,Long> valueMapping = new HashMap<>();
+        list.forEach(v -> {
+            valueMapping.put(v.getCaseId(),v.getExecuteStepId());
+        });
+        // 克隆步骤的缺陷
+        testCycleCaseDefectRelService.cloneDefect(valueMapping,stepIds,"CASE_STEP");
     }
 
     @Override

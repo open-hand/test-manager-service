@@ -167,9 +167,9 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     }
 
     @Override
-    public void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteId) {
+    public void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds,String type) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleCaseDefectRelDTO> list = testCycleCaseDefectRelMapper.listByExecuteIds(olderExecuteId);
+        List<TestCycleCaseDefectRelDTO> list = testCycleCaseDefectRelMapper.listByExecuteIds(olderExecuteIds,type);
         if(CollectionUtils.isEmpty(list)){
             return;
         }

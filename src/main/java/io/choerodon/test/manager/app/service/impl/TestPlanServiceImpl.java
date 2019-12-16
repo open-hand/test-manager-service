@@ -342,53 +342,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             return new TestPlanVO();
         }
         TestPlanVO testPlanVO = modelMapper.map(testPlanDTO, TestPlanVO.class);
-        // 查询cycle的信息
-        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId));
-        if (CollectionUtils.isEmpty(testCycleDTOS)) {
-            return testPlanVO;
-        }
-        // 查询cycle_case 的信息
-        List<Long> cycleIds = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
-        Map<Long, List<Long>> cycleCaseMap = testCycleCaseDTOS.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getCycleId, Collectors.mapping(TestCycleCaseDTO::getCaseId, Collectors.toList())));
-
-        List<TestCaseDTO> testCaseDTOS = testCaseService.listCaseByProjectId(projectId);
-        Map<Long, List<Long>> caseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
-        // 如果用例数与选中的计划执行数相同,是全部用例类型
-        if (testCaseDTOS.size() == testCycleCaseDTOS.size()) {
-            testPlanVO.setCustom(false);
-            return testPlanVO;
-        }
-        testPlanVO.setCustom(true);
-        // 筛选自选的数据
-        Map<Long, CaseSelectVO> caseSelectMap = new HashMap<>();
-        testCycleDTOS.forEach(v -> {
-            CaseSelectVO caseSelectVO = new CaseSelectVO();
-            List<Long> folderAllCaseIds = caseMap.get(v.getFolderId());
-            if (CollectionUtils.isEmpty(folderAllCaseIds)) {
-                caseSelectMap.put(v.getFolderId(), caseSelectVO);
-                return;
-            }
-            List<Long> selectCase = cycleCaseMap.get(v.getCycleId());
-            // 文件夹中选中的用例包含文件夹下所有的用例,没有自选过
-            if (selectCase.contains(folderAllCaseIds)) {
-                caseSelectVO.setCustom(false);
-                caseSelectMap.put(v.getFolderId(), caseSelectVO);
-            } else {
-                caseSelectVO.setCustom(true);
-                // 如果所有用例数的一半还大于选中的用例数,则直接赋值给selected属性，相反就求差集，返回未选中的
-                if (folderAllCaseIds.size() / 2 > selectCase.size() && !CollectionUtils.isEmpty(selectCase)) {
-                    caseSelectVO.setSelected(selectCase);
-                } else {
-                    folderAllCaseIds.removeAll(selectCase);
-                    if (!CollectionUtils.isEmpty(folderAllCaseIds)) {
-                        caseSelectVO.setUnSelected(folderAllCaseIds);
-                    }
-                }
-                caseSelectMap.put(v.getFolderId(), caseSelectVO);
-            }
-        });
-        testPlanVO.setCaseSelected(caseSelectMap);
         return testPlanVO;
     }
     @Override

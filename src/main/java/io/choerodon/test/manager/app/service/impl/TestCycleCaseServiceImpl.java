@@ -996,9 +996,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             return;
         }
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<Long> olderExecuteId = new ArrayList<>();
+        List<Long> olderExecuteIds = new ArrayList<>();
         testCycleCaseDTOS.forEach(v -> {
-            olderExecuteId.add(v.getExecuteId());
+            olderExecuteIds.add(v.getExecuteId());
             v.setLastExecuteId(v.getExecuteId());
             v.setCycleId(cycleMapping.get(v.getCycleId()));
             v.setCreatedBy(userDetails.getUserId());
@@ -1016,12 +1016,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             caseIdMap.put(v.getLastExecuteId(), v.getExecuteId());
         });
         // 复制步骤
-        testCycleCaseStepService.cloneStep(caseIdMap, olderExecuteId);
+        testCycleCaseStepService.cloneStep(caseIdMap, olderExecuteIds);
         // 复制附件
-        testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteId);
+        testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteIds);
 
-        // 复制缺陷
-        testCycleCaseDefectRelService.cloneDefect(caseIdMap, olderExecuteId);
     }
 
     private void checkImport(Long cycleId) {

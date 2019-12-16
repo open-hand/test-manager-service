@@ -132,7 +132,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 newFolderVO.setName(folderName == null ? "test" : folderName);
                 newFolderVO.setParentId(0L);
                 newFolderVO.setProjectId(projectFolderId);
-                newFolderVO.setType("folder");
+                newFolderVO.setType("cycle");
                 newFolderVO.setVersionId(0L);
                 TestIssueFolderVO testIssueFolderVO = testIssueFolderService.create(projectFolderId, newFolderVO);
 
