@@ -1,10 +1,7 @@
 package io.choerodon.test.manager.app.assembler;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
@@ -92,7 +89,7 @@ public class TestCaseAssembler {
     public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO){
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
         Long assignedTo = testCycleCaseDTO.getAssignedTo();
-        if(!assignedTo.equals(0)){
+        if(assignedTo != null && !Objects.equals(assignedTo, 0L)){
             BaseDTO baseDTO = new BaseDTO();
             baseDTO.setCreatedBy(assignedTo);
             Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
