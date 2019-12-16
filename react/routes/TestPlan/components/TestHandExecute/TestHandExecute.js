@@ -278,7 +278,6 @@ function TestHandExecute(props) {
     const { loading } = ExecuteDetailStore;
     const detailData = ExecuteDetailStore.getDetailData;
     const visible = ExecuteDetailStore.ExecuteDetailSideVisible;
-    const fileList = [];
     const statusList = ExecuteDetailStore.getStatusList;
     const createBugShow = ExecuteDetailStore.getCreateBugShow;
     const defectType = ExecuteDetailStore.getDefectType;
@@ -388,7 +387,7 @@ function TestHandExecute(props) {
                 <ExecuteDetailSide
                   disabled={disabled}
                   detailData={detailData}
-                  fileList={fileList}
+                  fileList={detailData.attachment}
                   status={{ statusColor, statusName }}
                   onClose={handleToggleExecuteDetailSide}
                 />

@@ -282,14 +282,8 @@ function ExecuteDetailSide(props) {
                   id="attachment"
                   icon="attach_file"
                   title="附件"
-                >
-                  {/* <Upload
-                    fileList={fileList}
-                    className="upload-button"
-                  /> */}
-                  <UploadButtonExcuteDetail
-                    // onRemove={handleRemove}
-                    // updateNow={onChangeFileList}
+                >  
+                  <UploadButtonExcuteDetail             
                     fileList={fileList}
                   />
                 </Section>
