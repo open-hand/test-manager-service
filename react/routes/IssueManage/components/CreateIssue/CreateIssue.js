@@ -73,7 +73,7 @@ function CreateIssue(props) {
 
   return (
     <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
-      <TextField name="summary" />
+      <TextField name="summary" maxLength={44} />
       <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-create-issue-line" />

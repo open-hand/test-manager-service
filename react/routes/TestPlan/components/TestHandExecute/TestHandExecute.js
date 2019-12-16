@@ -339,8 +339,7 @@ function TestHandExecute(props) {
               <div
                 style={{
                   flex: 1,
-                  overflowX: 'hidden',
-                  overflowY: 'auto',
+                  overflow: 'hidden',
                 }}
               >
                 <div className="c7n-test-execute-detail-header">

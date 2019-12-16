@@ -24,7 +24,7 @@ const UserHead = memo(({
 }) => {
   const iconSize = size || 18;
   const {
-    id, loginName, realName, avatar, imageUrl, email, ldap, name,
+    id, loginName, realName, avatar, imageUrl, email, ldap, name, maxWidth,
   } = user || {};
   const img = avatar || imageUrl;
   const renderTooltip = () => {
@@ -41,7 +41,7 @@ const UserHead = memo(({
       style={{
         ...style,
         display: (id || loginName) ? 'inline-flex' : 'none',
-        maxWidth: 108,
+        maxWidth: maxWidth || 108,
       }}
     >
       {

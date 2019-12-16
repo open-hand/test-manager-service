@@ -66,6 +66,7 @@ function LinkList(props) {
             loginName: assigneeName,
             realName: assigneeName,
             avatar: imageUrl,
+            maxWidth: 128,
           }}
         />
         <div style={{ marginRight: '15px', overflow: 'hidden' }}>
