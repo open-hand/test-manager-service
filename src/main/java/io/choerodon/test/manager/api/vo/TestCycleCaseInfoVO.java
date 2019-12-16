@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 
 /**
@@ -74,6 +75,9 @@ public class TestCycleCaseInfoVO {
 
     @ApiModelProperty(value = "测试用例关联的附件信息")
     private List<TestCycleCaseAttachmentRelVO> attachment;
+
+    @ApiModelProperty(value = "用例关联的问题链接")
+    private List<IssueInfoDTO> issuesInfos;
 
     public Long getExecuteId() {
         return executeId;
@@ -230,6 +234,14 @@ public class TestCycleCaseInfoVO {
 
     public String getPlanStatus() {
         return planStatus;
+    }
+
+    public List<IssueInfoDTO> getIssuesInfos() {
+        return issuesInfos;
+    }
+
+    public void setIssuesInfos(List<IssueInfoDTO> issuesInfos) {
+        this.issuesInfos = issuesInfos;
     }
 
     public void setPlanStatus(String planStatus) {
