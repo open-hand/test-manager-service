@@ -2,12 +2,15 @@ package io.choerodon.test.manager.infra.aspect;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -91,7 +94,7 @@ public class TestCycleCaseHistoryRecordAspect {
         return o;
     }
 
-    @After("execution(* io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService.upload(..))")
+    @After("execution(* io.choerodon.test.manager.app.service.impl.TestCycleCaseAttachmentRelUploadServiceImpl.baseUpload(..))")
     public void recordAttachUpload(JoinPoint jp) {
         TestCycleCaseHistoryVO historyDTO = new TestCycleCaseHistoryVO();
         historyDTO.setField(TestCycleCaseHistoryType.FIELD_ATTACHMENT);

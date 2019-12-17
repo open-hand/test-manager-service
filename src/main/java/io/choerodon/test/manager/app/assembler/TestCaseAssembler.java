@@ -145,7 +145,7 @@ public class TestCaseAssembler {
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
             attachment.forEach(v -> {
-                v.setUrl(attachmentUrl + "/" + BACKETNAME + "/" + v.getUrl());
+                v.setUrl(attachmentUrl + v.getUrl());
             });
             testCaseInfoVO.setAttachment(attachment);
         }
@@ -193,11 +193,13 @@ public class TestCaseAssembler {
         }
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
+            testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
         testCycleCaseAttachmentRelDTO.setAttachmentType(TYPE);
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
+        // 用例的问题链接
+//        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseInfoVO.getProjectId(), testCycleCaseInfoVO.getCaseId()));
         // 查询用例信息
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
         if(!ObjectUtils.isEmpty(testCaseDTO)){

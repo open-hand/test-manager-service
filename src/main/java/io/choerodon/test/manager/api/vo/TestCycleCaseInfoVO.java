@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
 
+import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 
 /**
@@ -234,7 +235,6 @@ public class TestCycleCaseInfoVO {
     public String getPlanStatus() {
         return planStatus;
     }
-
     public void setPlanStatus(String planStatus) {
         this.planStatus = planStatus;
     }

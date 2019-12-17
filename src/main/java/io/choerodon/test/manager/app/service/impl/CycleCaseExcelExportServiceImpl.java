@@ -9,17 +9,15 @@ import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.api.vo.agile.ComponentIssueRelVO;
 import io.choerodon.test.manager.api.vo.agile.LabelIssueRelVO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 
 /**
@@ -71,6 +69,7 @@ public class CycleCaseExcelExportServiceImpl extends AbstarctExcelExportServiceI
         }
         return column;
     }
+
 
 
     public int populateCycleCase(Sheet sheet, int columnNum, TestCycleCaseVO cycleCase, CellStyle rowStyles) {

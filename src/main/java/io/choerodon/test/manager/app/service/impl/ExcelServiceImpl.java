@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,6 +65,9 @@ public class ExcelServiceImpl implements ExcelService {
     private TestCaseService testCaseService;
 
     @Autowired
+    private TestCaseMapper testCaseMapper;
+
+    @Autowired
     private FileService fileService;
 
     @Autowired
@@ -90,6 +94,8 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     private  TestIssueFolderService testIssueFolderService;
 
+    @Autowired
+    private UserService userService;
     /**
      * 失败导出重试
      *
@@ -357,14 +363,17 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
-        Map<Long, List<TestIssueFolderRelVO>> everyRelMaps = populateFolder(testIssueFolderDTO, userId, 5, 90, testFileLoadHistoryWithRateVO, organizationId);
+        List<ExcelCaseVO> excelCaseVOS = handelCase(projectId,folderId);
+        int sum = excelCaseVOS.size();
+        Map<Long, List<ExcelCaseVO>> map = new HashMap<>();
+        map.put(1L, excelCaseVOS);
+        testFileLoadHistoryWithRateVO.setRate(15.0);
+        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
-        int sum = 0;
-        for (List<TestIssueFolderRelVO> list : everyRelMaps.values()) {
-            sum += list.size();
-        }
         //表格生成相关的文件内容
-        service.exportWorkBookWithOneSheet(everyRelMaps, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
+        service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
+        testFileLoadHistoryWithRateVO.setRate(80.0);
+        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
@@ -572,6 +581,28 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(startRate + offset);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         return folderRelMap;
+    }
+
+    private List<ExcelCaseVO> handelCase(Long projectId,Long folderId){
+        List<Long> userIds = new ArrayList<>();
+        List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
+        if(CollectionUtils.isEmpty(caseIdList)){
+            throw new CommonException("error.folder.no.case");
+        }
+        List<ExcelCaseVO> excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
+        excelCaseVOS.forEach(v->{
+            userIds.add(v.getCreatedBy());
+            userIds.add(v.getLastUpdatedBy());
+        });
+        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
+        excelCaseVOS.forEach(e->{
+            e.setCaseNum(e.getProjectCode()+e.getCaseId());
+            if(!ObjectUtils.isEmpty(e.getLastUpdatedBy())){
+                e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
+            }
+
+        });
+        return excelCaseVOS;
     }
 
     /**
