@@ -28,7 +28,7 @@ import org.springframework.util.ObjectUtils;
  * @author zhaotianxin
  * @since 2019/11/22
  */
-@Service
+@Component
 public class TestCaseAssembler {
 
     private static final String BACKETNAME = "agile-service";
