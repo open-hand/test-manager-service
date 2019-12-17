@@ -336,7 +336,7 @@ public class ExcelServiceImpl implements ExcelService {
      * @param organizationId
      */
     @Override
-//    @Async
+    @Async
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
