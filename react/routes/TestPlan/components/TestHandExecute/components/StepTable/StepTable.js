@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import {
   Icon, Tooltip,
 } from 'choerodon-ui';
-import { Button } from 'choerodon-ui/pro';
+import { Button, Select } from 'choerodon-ui/pro';
 import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Table } from 'choerodon-ui/pro';
@@ -257,8 +257,8 @@ function StepTable(props) {
       <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
       <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
       <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
-      <Column name="stepStatus" align="left" width={70} renderer={renderStatus} />
-      <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} className="c7n-test-execute-detail-step-table-file" headerClassName="c7n-test-execute-detail-step-table-file-head" footerClassName="c7n-test-execute-detail-step-table-file-foot" />
+      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={<Select optionRenderer={renderStatus} />} />
+      <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
       <Column name="description" editor={!readOnly} align="left" tooltip="overflow" renderer={renderText} />
       <Column name="defects" renderer={renderDefects} width={230} />
       <Column name="action" width={100} lock={lock} renderer={renderAction} hidden={getActionHidden()} />

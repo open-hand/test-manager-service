@@ -23,7 +23,6 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet) {
   const stepAttachment = intl.formatMessage({ id: 'attachment' });
   const defects = intl.formatMessage({ id: 'bug' });
   const description = intl.formatMessage({ id: 'execute_comment' });
-
   return {
     autoQuery: true,
     selection: false,
@@ -49,9 +48,13 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet) {
         name: 'stepStatus',
         type: 'number',
         label: stepStatus,
-        textField: 'statusName', 
-        valueField: 'statusId', 
-        options: testStatusDataSet, 
+        textField: 'statusName',
+        valueField: 'statusId',
+        options: testStatusDataSet,
+        required: true,
+        defaultValidationMessages: {
+          valueMissing: '请选择{label}',
+        },
         // lookupAxiosConfig: () => ({
         //   url: `/test/v1/projects/${projectId}/status/query?project=${projectId}`,
         //   method: 'post',
@@ -85,28 +88,28 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet) {
         const data = record.toData();
         const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
         switch (name) {
-          case 'defects':
+          case 'defects': {
             if (value.length < oldValue.length) {
               removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).catch((error) => {
                 record.set(name, oldValue);
                 Choerodon.prompt(`${error || '网络异常'}`);
               });
             }
-            break;
-          case 'stepStatus':
+            break; }
+          case 'stepStatus': {
             if (oldValue === value) {
               break;
             }
             data.stepStatus = value;
-            const statusItem = testStatusDataSet.find(record => Number(record.get('statusId')) === Number(value)) || {};
+            const statusItem = testStatusDataSet.find(item => Number(item.get('statusId')) === Number(value));
             data.statusName = statusItem.get('statusName');
             updateRecordData(data, dataSet, record, name, oldValue);
-            break;
-          case 'description':
+            break; }
+          case 'description': {
             data.description = value;
             updateRecordData(data, dataSet, record, name, oldValue);
-            break;
-          case 'stepAttachment':
+            break; }
+          case 'stepAttachment': { 
             if (value.length < oldValue.length) {
               deleteFile(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
               }).catch((error) => {
@@ -114,9 +117,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet) {
                 record.set(name, oldValue);
                 Choerodon.prompt(`删除失败 ${error}`);
               });
-            }
+            } 
 
-            break;
+            break; }
           default:
             break;
         }
