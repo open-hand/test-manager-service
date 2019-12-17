@@ -31,7 +31,10 @@
 
   &-table {
     flex: 1;
-
+    .c7n-pro-table-wrapper {
+      overflow-y: auto;
+      height: 100%;
+    }
     &-title {
       font-size: 20px;
       margin-bottom: 16px;
