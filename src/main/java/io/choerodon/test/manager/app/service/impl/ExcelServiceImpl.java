@@ -364,6 +364,14 @@ public class ExcelServiceImpl implements ExcelService {
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
         List<ExcelCaseVO> excelCaseVOS = handelCase(projectId,folderId);
+        if(CollectionUtils.isEmpty(excelCaseVOS)){
+            testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
+            testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.CANCEL.getTypeValue());
+            TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
+            testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            throw new CommonException("error.folder.no.has.case");
+        }
         int sum = excelCaseVOS.size();
         Map<Long, List<ExcelCaseVO>> map = new HashMap<>();
         map.put(1L, excelCaseVOS);
@@ -584,20 +592,16 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private List<ExcelCaseVO> handelCase(Long projectId,Long folderId){
-        List<Long> userIds = new ArrayList<>();
         List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
         if(CollectionUtils.isEmpty(caseIdList)){
-            throw new CommonException("error.folder.no.case");
+            return null;
         }
         List<ExcelCaseVO> excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
-        excelCaseVOS.forEach(v->{
-            userIds.add(v.getCreatedBy());
-            userIds.add(v.getLastUpdatedBy());
-        });
-        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
+        List<Long> userIdList = excelCaseVOS.stream().map(ExcelCaseVO::getLastUpdatedBy).collect(Collectors.toList());
+        Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIdList);
         excelCaseVOS.forEach(e->{
             e.setCaseNum(e.getProjectCode()+e.getCaseId());
-            if(!ObjectUtils.isEmpty(e.getLastUpdatedBy())){
+            if(!ObjectUtils.isEmpty(e.getLastUpdatedBy())&&!e.getLastUpdatedBy().equals(0L) ){
                 e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
             }
 
