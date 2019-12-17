@@ -17,7 +17,7 @@ function DefectSelect(props) {
   const [defectIds, setDefectIds] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
   const [originDefects, setOriginDefects] = useState(defects ? defects.map(defect => defect.issueId.toString()) : []);
   const [issue, dispatch] = useReducer((state, action) => {
-    const { issueData } = action;
+    const { issueData, searchValue } = action;
     switch (action.type) {
       case 'loading':
         return {
@@ -26,9 +26,18 @@ function DefectSelect(props) {
         };
       case 'loaded':
         return {
+          ...state,
           canLoadMore: issueData.hasNextPage,
           issueList: [...state.issueList, ...issueData.list],
           selectLoading: false,
+          page: issueData.pageNum,
+        };
+      case 'filterLoaded':
+        return {
+          canLoadMore: issueData.hasNextPage,
+          issueList: [...issueData.list],
+          selectLoading: false,
+          searchValue,
           page: issueData.pageNum,
         };
       default:
@@ -37,16 +46,19 @@ function DefectSelect(props) {
   }, {
     canLoadMore: false,
     issueList: [],
+    searchValue: '',
     selectLoading: false,
     page: 1,
   });
-  const { page, canLoadMore, selectLoading } = issue;
+  const {
+    searchValue, page, canLoadMore, selectLoading,
+  } = issue;
   const initIssuesForDefects = useCallback(() => {
     dispatch({ type: 'loading' });
-    getIssuesForDefects('', { page }).then((issueData) => {
+    getIssuesForDefects().then((issueData) => {
       dispatch({ type: 'loaded', issueData });
     });
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     initIssuesForDefects();
@@ -98,13 +110,13 @@ function DefectSelect(props) {
 
   const loadMore = () => {
     dispatch({ type: 'loading' });
-    getIssuesForDefects('', { page: page + 1 }).then((issueData) => {
+    getIssuesForDefects(searchValue, { page: page + 1 }).then((issueData) => {
       dispatch({ type: 'loaded', issueData });
     });
   };
 
   // eslint-disable-next-line consistent-return
-  const renderLoadMore = () => (
+  const renderLoadMore = (
     <Option key="SelectFocusLoad-loadMore" className="SelectFocusLoad-loadMore" disabled>
       {
         canLoadMore ? <Button type="primary" style={{ textAlign: 'left', width: '100%', background: 'transparent' }} onClick={loadMore}>更多</Button>
@@ -115,9 +127,10 @@ function DefectSelect(props) {
   const loadFilterData = (value) => {
     dispatch({ type: 'loading' });
     getIssuesForDefects(value).then((issueData) => {
-      dispatch({ type: 'loaded', issueData });
+      dispatch({ type: 'filterLoaded', issueData, searchValue: value });
     });
   };
+
   const DebounceLoadFilterData = _.debounce(loadFilterData, 400);
   function render() {
     const {
@@ -171,7 +184,7 @@ function DefectSelect(props) {
         {...otherProps}
       >
         {defectsOptions}
-        {renderLoadMore()}
+        {renderLoadMore}
       </Select>
     );
   }
