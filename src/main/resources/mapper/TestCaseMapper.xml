@@ -172,7 +172,6 @@
             <id column="case_id" property="caseId"/>
             <result  column="summary" property="summary"/>
             <result  column="description" property="description"/>
-            <result  column="folderName" property="folderName"/>
         </association>
         <collection  property="caseStep" ofType="io.choerodon.test.manager.infra.dto.TestCaseStepDTO">
             <id column="step_id" property="stepId"/>
@@ -193,7 +192,6 @@
         tc.case_id as case_id,
         tc.summary as summary,
         tc.description as description,
-        tif.`name` as folderName,
         cs.step_id as step_id,
         cs.test_step as test_step,
         cs.test_data as test_data,
@@ -204,7 +202,6 @@
         FROM
         test_case tc
         left join test_case_step cs on cs.issue_id = tc.case_id
-        left join test_issue_folder tif on tif.folder_id = tc.folder_id
         left join test_case_attachment  tca on tca.case_id =  tc.case_id
         left join test_cycle_case tcase on tcase.case_id = tc.case_id
      where tc.case_id in

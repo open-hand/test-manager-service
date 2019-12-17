@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.core.oauth.DetailsHelper;
@@ -149,7 +150,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
                 .stream()
                 .map(TestIssueFolderDTO::getFolderId)
                 .collect(Collectors.toList());
-        if (folderIds == null) {
+        if (CollectionUtils.isEmpty(folderIds)) {
             throw new CommonException("query.file.load.history.error");
         }
 
