@@ -1,6 +1,5 @@
 package io.choerodon.test.manager.infra.task;
 
-import io.choerodon.asgard.saga.dto.StartInstanceDTO;
 import io.choerodon.asgard.schedule.QuartzDefinition;
 import io.choerodon.asgard.schedule.annotation.JobTask;
 import io.choerodon.asgard.schedule.annotation.TimedTask;
