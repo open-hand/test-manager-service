@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import feign.FeignException;
 import io.choerodon.test.manager.api.vo.agile.*;
+
 import org.springframework.data.domain.PageRequest;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.ExcelReadMeOptionVO;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExcelImportServiceImpl.class);
     private static final String IMPORT_NOTIFY_CODE = "test-issue-import";
+    private static final String IMPORT_ERROR = "test-issue-import-error";
     private static final String HIDDEN_PRIORITY = "hidden_priority";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_COMPONENT = "hidden_component";
@@ -59,10 +62,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
         README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联的issue", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[6] = new ExcelReadMeOptionVO("预期结果", false);
+//        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联的issue", false);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[5] = new ExcelReadMeOptionVO("预期结果", false);
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
             EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepDTO();
@@ -134,6 +137,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
+        if(ObjectUtils.isEmpty(testCasesSheet)){
+            notifyService.postWebSocket(IMPORT_ERROR, userId.toString(), "错误的模板");
+            throw new CommonException("error.template.file ");
+        }
         //测试用例页为空，则更新文件导入历史之后直接返回
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
