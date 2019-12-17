@@ -34,16 +34,10 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
     private static final String ERROR_STEP_ID_NOT_NULL = "error.case.step.insert.stepId.should.be.null";
 
     @Autowired
-    private TestCycleCaseAttachmentRelService attachmentRelService;
-
-    @Autowired
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     @Autowired
     private TestCaseStepMapper testCaseStepMapper;
-
-    @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
     @Autowired
     private ModelMapper modelMapper;

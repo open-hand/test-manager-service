@@ -20,6 +20,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -27,7 +28,7 @@ import org.springframework.util.ObjectUtils;
  * @author zhaotianxin
  * @since 2019/11/22
  */
-@Component
+@Service
 public class TestCaseAssembler {
 
     private static final String BACKETNAME = "agile-service";

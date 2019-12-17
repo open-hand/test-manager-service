@@ -39,7 +39,7 @@ public class TestFileLoadHistoryController {
             @RequestBody(required = false) SearchDTO searchDTO) {
         return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,searchDTO,pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.filehistory.query"));
+                .orElseThrow(() -> new CommonException("error.file.history.query"));
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

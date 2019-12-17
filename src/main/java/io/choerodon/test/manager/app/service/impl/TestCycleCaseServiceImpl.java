@@ -111,9 +111,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Autowired
-    private TestIssueFolderMapper testIssueFolderMapper;
-
-    @Autowired
     private TestCycleCaseHistoryMapper testCycleCaseHistory;
 
     @Autowired
@@ -122,11 +119,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private TestCaseMapper testCaseMapper;
 
-    @Autowired
-    private TestCycleService testCycleService;
-
-    @Autowired
-    private TestIssueFolderService testIssueFolderService;
 
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
