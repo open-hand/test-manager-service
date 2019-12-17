@@ -516,11 +516,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         //Todo：重构
         TestCaseDTO testCaseDTO = testCaseService.importTestCase(issueCreateDTO, projectId, "test");
-//                return null;
-//            }
-//        } else {
-//            markAsError(row, "导入测试任务异常");
-//        }
         return testCaseDTO;
     }
 

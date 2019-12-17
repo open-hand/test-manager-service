@@ -576,8 +576,8 @@ public class TestCaseServiceImpl implements TestCaseService {
         Map<Long, List<TestIssueFolderDTO>> folderMap = testIssueFolderMapper.select(testIssueFolder).stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
         queryAllFolderIds(folderId, folderIds, folderMap);
         // 查询文件夹下的的用例
-        List<Long> caseIdList = testCaseMapper.listCaseIds(projectId, folderIds, null);
-        return caseIdList;
+        List<Long> caseIds = testCaseMapper.listCaseIds(projectId, folderIds, null);
+        return caseIds;
     }
 
     @Override

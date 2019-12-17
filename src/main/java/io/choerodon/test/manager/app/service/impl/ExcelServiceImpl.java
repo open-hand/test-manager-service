@@ -367,8 +367,13 @@ public class ExcelServiceImpl implements ExcelService {
         int sum = excelCaseVOS.size();
         Map<Long, List<ExcelCaseVO>> map = new HashMap<>();
         map.put(1L, excelCaseVOS);
+        testFileLoadHistoryWithRateVO.setRate(15.0);
+        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+
         //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
+        testFileLoadHistoryWithRateVO.setRate(80.0);
+        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
         workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
@@ -553,13 +558,13 @@ public class ExcelServiceImpl implements ExcelService {
 
             List<Long> issueIds = folderRels.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
             testFileLoadHistoryWithRateVO.setRate(startRate + folderOffset * (++i));
-//            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
             Map<Long, IssueInfosVO> issueInfosMap = batchGetIssueInfo(issueIds, testIssueFolderDTO, userId, startRate + (folderOffset * i),
                     folderOffset, testFileLoadHistoryWithRateVO, organizationId);
 
             testFileLoadHistoryWithRateVO.setRate(startRate + (folderOffset * (++i)));
-//            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
             for (TestIssueFolderRelDTO folderRel : folderRels) {
                 TestIssueFolderRelVO needRel = modelMapper.map(folderRel, TestIssueFolderRelVO.class);
@@ -574,15 +579,13 @@ public class ExcelServiceImpl implements ExcelService {
             folderRelMap.put(folder.getFolderId(), folderRelDTOS);
         }
         testFileLoadHistoryWithRateVO.setRate(startRate + offset);
-//        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         return folderRelMap;
     }
 
     private List<ExcelCaseVO> handelCase(Long projectId,Long folderId){
         List<Long> userIds = new ArrayList<>();
-        List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderService.queryChildFolder(folderId);
-        Set<Long> folderIds = testIssueFolderDTOList.stream().map(TestIssueFolderDTO::getFolderId).collect(Collectors.toSet());
-        List<Long> caseIdList = testCaseMapper.listCaseIds(projectId, folderIds, null);
+        List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
         if(CollectionUtils.isEmpty(caseIdList)){
             throw new CommonException("error.folder.no.case");
         }
