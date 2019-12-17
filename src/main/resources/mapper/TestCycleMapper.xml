@@ -338,55 +338,6 @@
       </where>
     </select>
 
-    <!--<delete id="deleteByType">-->
-        <!--DELETE-->
-        <!--FROM-->
-            <!--test_cycle-->
-        <!--WHERE-->
-            <!--type = 'cycle'-->
-    <!--</delete>-->
-
-    <select id="selectRepeat" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
-        SELECT
-            project_id,
-            version_id,
-            folder_id
-        FROM
-            test_cycle
-        WHERE type = 'folder' AND folder_id is not null AND folder_id != 0
-        GROUP BY
-            project_id,
-            version_id,
-            folder_id
-        HAVING
-            count(*) > 1
-    </select>
-
-    <delete id="deleteRepeat"  >
-        DELETE
-        FROM
-            test_cycle
-        WHERE
-            project_id = #{projectId}
-            AND folder_id = #{folderId}
-            AND version_id = #{versionId}
-            AND cycle_id NOT IN (
-                SELECT
-                    c.cycle_id
-                FROM
-                    (
-                        SELECT
-                            max(tc2.cycle_id) AS cycle_id
-                        FROM
-                            test_cycle tc2
-                        WHERE
-                            tc2.project_id = #{projectId}
-                            AND tc2.folder_id = #{folderId}
-                            AND tc2.version_id = #{versionId}
-                    ) c
-        )
-    </delete>
-
     <update id="fixPlanId">
         UPDATE test_cycle
         SET plan_id = #{planId}

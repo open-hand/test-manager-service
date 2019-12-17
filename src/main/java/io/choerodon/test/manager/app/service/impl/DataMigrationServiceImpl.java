@@ -99,23 +99,21 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         migreateDataLog();
         //7.版本
         migreateVersion();
-//        deleteStage();
-//        deleteRepeat();
-        //10.cycle()
+        //8.cycle()
         fixCycleCase();
-        //11.step
+        //9.step
         fixCycleCaseStep();
-        //12.source
+        //10.source
         fixCycleSource();
-        //13 isnertStatus
+        //11 isnertStatus
         fixStatus();
-        //14.cycleCaseRank
+        //12.cycleCaseRank
         fixCycleCaseStepRank();
-       // 15 fix CycleCaseRank
+       // 13 fix CycleCaseRank
         fixCycleCaseRank();
-        //16 fixCaseFolderRank
+        //14 fixCaseFolderRank
         fixCaseFolderRank();
-        //17 fixCycleCaseFolderRank
+        //15 fixCycleCaseFolderRank
         fixCycleCaseFolderRank();
         logger.info("=============================>Data Migrate Succeed!!!<==============================");
     }
@@ -239,19 +237,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         });
 
         logger.info("===========version=============> copy successed");
-    }
-
-//    private void deleteStage(){
-//        testCycleMapper.deleteByType();
-//        logger.info("===========cycle=============> delete successed");
-//    }
-
-    private void deleteRepeat(){
-        List<TestCycleDTO> testCycleDTOS = testCycleMapper.selectRepeat();
-        testCycleDTOS.forEach(testCycleDTO->{
-                testCycleMapper.deleteRepeat(testCycleDTO.getProjectId(), testCycleDTO.getVersionId(),testCycleDTO.getFolderId());
-        });
-        logger.info("===========cycle=============> delete repeat successed");
     }
 
     private void fixCycleCase(){
