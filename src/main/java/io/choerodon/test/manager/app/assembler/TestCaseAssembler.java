@@ -144,7 +144,7 @@ public class TestCaseAssembler {
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
             attachment.forEach(v -> {
-                v.setUrl(attachmentUrl + "/" + BACKETNAME + "/" + v.getUrl());
+                v.setUrl(attachmentUrl + v.getUrl());
             });
             testCaseInfoVO.setAttachment(attachment);
         }
