@@ -27,7 +27,7 @@
     <select id="selectProjectIdList" resultType="Long">
        select DISTINCT project_id
        from test_issue_folder
-       ORDER BY project_id ;
+       ORDER BY project_id
     </select>
 
     <select id="selectListByProjectId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
