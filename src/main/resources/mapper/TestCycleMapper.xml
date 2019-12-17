@@ -347,7 +347,8 @@
     </update>
 
     <select id="selectVersionId" resultType="Long">
-        SELECT DISTINCT version_id FROM `test_cycle`
+        SELECT DISTINCT version_id
+        FROM `test_cycle`
     </select>
 
     <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="cycleId">
@@ -370,10 +371,9 @@
 
     <update id="fixRank">
         <foreach collection="list" item="cycle" index="index" open="" close="" separator=";">
-            update test_cycle set rank=#{cycle.rank}
-            <where>
-                cycle_id=#{cycle.cycleId}
-            </where>
+            update test_cycle
+            set rank = #{cycle.rank}
+            where cycle_id = #{cycle.cycleId}
         </foreach>
     </update>
 </mapper>

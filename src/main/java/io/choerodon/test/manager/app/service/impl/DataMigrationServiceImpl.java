@@ -3,6 +3,7 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import io.choerodon.core.oauth.CustomUserDetails;
@@ -10,6 +11,7 @@ import io.choerodon.core.oauth.DetailsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -84,7 +86,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Async
     @Override
     public void fixData() {
-        logger.info("==============================>Data Migrate Start<=================================");
+        logger.info("==============================>>>>>>>> Data Migrate Start <<<<<<<<=================================");
         //1.文件夹
         migrateFolder();
         //2.用例
@@ -115,19 +117,19 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         fixCaseFolderRank();
         //15 fixCycleCaseFolderRank
         fixCycleCaseFolderRank();
-        logger.info("=============================>Data Migrate Succeed!!!<==============================");
+        logger.info("==========================>>>>>>>> Data Migrate Succeed!!! FINISHED!!! <<<<<<<<============================");
     }
 
     private void migrateFolder() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectFolderId -> {
+        for (Long projectFolderId : projectIdList) {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
             Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e -> e.getName() != null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
             List<Long> versionIds = testIssueFolderMapper.selectVersionIdList(projectFolderId);
             versionIds.forEach(versionId -> {
                 String folderName = versionNameMap.get(versionId);
                 TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
-                newFolderVO.setName(folderName == null ? "test" : folderName);
+                newFolderVO.setName(folderName == null || Objects.equals(folderName, "") ? "test" : folderName);
                 newFolderVO.setParentId(0L);
                 newFolderVO.setProjectId(projectFolderId);
                 newFolderVO.setType("cycle");
@@ -138,7 +140,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
             });
             logger.info("============issueFolder=================>project:{} copy successed", projectFolderId);
-        });
+        }
         logger.info("============issueFolder=================> copy successed");
     }
 
@@ -149,13 +151,13 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
                 testCaseMapper.batchInsertTestCase(testCaseMigrateDTO);
             }
-            logger.info("=====Insert Test Case By  ProjectId:{} =====", projectId);
+            logger.info("=========>>>>>>>>Insert Test Case By  ProjectId:{} <<<<<<<<=============", projectId);
         }
-        logger.info("=====Test Case Data Migrate Succeed=====");
+        logger.info("===========>>>>>>>>Test Case Data Migrate Succeed<<<<<<<<==========");
 
         //更新文件夹相关联的folderid
         testCaseMapper.updateTestCaseFolder();
-        logger.info("======Update Test Case Related Folder Succeed=====");
+        logger.info("===========>>>>>>>>Update Test Case Related Folder Succeed<<<<<<<<============");
     }
 
     private void migrateAttachment() {
@@ -164,7 +166,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         if (!CollectionUtils.isEmpty(attachmentDTOS)) {
             for (TestCaseAttachmentDTO testCaseAttachmentDTO : attachmentDTOS) {
                 if (testCaseAttachmentDTO != null) {
-                    logger.info("=====Insert Test Case Attachment caseId:{} =====", testCaseAttachmentDTO.getCaseId());
+                    logger.info("==========>>>>>>>>SET Test Case Attachment caseId:{} <<<<<<<<=======", testCaseAttachmentDTO.getCaseId());
                     testCaseAttachmentDTO.setUrl("/agile-service/"+testCaseAttachmentDTO.getUrl());
                     testCaseAttachmentDTO.setCreatedBy(userDetails.getUserId());
                     testCaseAttachmentDTO.setLastUpdatedBy(userDetails.getUserId());
@@ -177,14 +179,14 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateLink() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectId -> {
+        for (Long projectId : projectIdList) {
             List<IssueLinkFixVO> issueLinkFixVOList = dataFixFeignClient.listIssueLinkByIssueIds(projectId).getBody();
             if (!CollectionUtils.isEmpty(issueLinkFixVOList)) {
                 List<TestCaseLinkDTO> testCaseLinkDTOS = issueLinkFixVOList.stream().map(this::linkFixVOToDTO).collect(Collectors.toList());
                 testCaseLinkService.batchInsert(testCaseLinkDTOS);
             }
             logger.info("===========link=============>project:{} link copy successed", projectId);
-        });
+        }
         logger.info("===========link=============> copy successed");
     }
 
@@ -199,16 +201,15 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migreateDataLog() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
-        projectIdList.forEach(projectId -> {
+        for (Long projectId : projectIdList) {
             List<DataLogFixVO> dataLogFixVOS = dataFixFeignClient.migrateDataLog(projectId).getBody();
             if (!CollectionUtils.isEmpty(dataLogFixVOS)) {
                 List<TestDataLogDTO> testDataLogDTOS = dataLogFixVOS.stream().map(this::dataLogVoToDto).collect(Collectors.toList());
                 testDataLogService.batchInsert(testDataLogDTOS);
             }
-            logger.info("===========data_log=============>project:{} copy successed",projectId);
-        });
-
-        logger.info("===========data_log=============> copy successed");
+            logger.info("=========== data_log =============>project:{} copy successed", projectId);
+        }
+        logger.info("=============>>>>>>>> datalog copy successed <<<<<<<<===============");
     }
 
     private void migreateVersion(){
@@ -216,7 +217,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         List<Long> versionIds = testCycleMapper.selectVersionId();
         List<TestVersionFixVO> collect = testVersionFixVOS.stream().filter(e -> versionIds.contains(e.getVersionId())).collect(Collectors.toList());
         List<TestPlanDTO> testPlanDTOS = collect.stream().map(this::planVOToDto).collect(Collectors.toList());
-        testPlanDTOS.forEach(t->{
+        for (TestPlanDTO t : testPlanDTOS) {
             switch (t.getStatusCode()) {
                 case "version_planning":
                     t.setStatusCode("todo");
@@ -233,83 +234,81 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             t.setAutoSync(false);
             t.setInitStatus("done");
             testPlanMapper.insert(t);
-            fixCycle(t.getVersionId(),t.getPlanId());
-        });
+            fixCycle(t.getVersionId(), t.getPlanId());
+        }
 
         logger.info("===========version=============> copy successed");
     }
 
     private void fixCycleCase(){
         testCycleCaseMapper.fixCycleCase();
-        logger.info("===========cycle=============> fix repeat successed");
+        logger.info("===============>>>>>>> cycle case fix success!!! <<<<<<<<==============");
     }
 
     private void fixCycleCaseStep(){
         testCycleCaseStepMapper.fixCycleCaseStep();
-        logger.info("===========cycle step=============> fix repeat successed");
-    }
-
-    private void fixCycle(Long versionId,Long planId){
-        testCycleMapper.fixPlanId(versionId, planId);
-        logger.info("===========fix cycle planId:{} =============> fix cycle successed" + planId);
+        logger.info("=============>>>>>>> cycle case step fix suceess!!! <<<<<<<<===============");
     }
 
     private  void fixCycleSource(){
         testCycleCaseMapper.fixSource();
+        logger.info("=============>>>>>>> cycle source fix suceess!!! <<<<<<<<===============");
     }
 
     private  void fixStatus(){
         TestStatusDTO caseStatus = new TestStatusDTO();
-        TestStatusDTO caseStatus1 = new TestStatusDTO();
-        TestStatusDTO stepStatus = new TestStatusDTO();
-        TestStatusDTO stepStatus1 = new TestStatusDTO();
         caseStatus.setStatusType("CYCLE_CASE");
         caseStatus.setProjectId(0L);
         caseStatus.setStatusName("重测");
         caseStatus.setStatusColor("rgba(255,177,0,100)");
 
+        TestStatusDTO caseStatus1 = new TestStatusDTO();
         caseStatus1.setStatusType("CYCLE_CASE");
         caseStatus1.setProjectId(0L);
         caseStatus1.setStatusName("无需测试");
         caseStatus1.setStatusColor("rgba(77,144,254,100)");
 
+        TestStatusDTO stepStatus = new TestStatusDTO();
         stepStatus.setStatusType("CASE_STEP");
         stepStatus.setProjectId(0L);
         stepStatus.setStatusName("重测");
         stepStatus.setStatusColor("rgba(255,177,0,100)");
 
+        TestStatusDTO stepStatus1 = new TestStatusDTO();
         stepStatus1.setStatusType("CASE_STEP");
         stepStatus1.setProjectId(0L);
         stepStatus1.setStatusName("无需测试");
         stepStatus1.setStatusColor("rgba(77,144,254,100)");
+
         List<TestStatusDTO> statusDTOS = new ArrayList<>();
         statusDTOS.add(caseStatus);
         statusDTOS.add(caseStatus1);
         statusDTOS.add(stepStatus);
         statusDTOS.add(stepStatus1);
         statusDTOS.stream().forEach(e->testStatusMapper.insert(e));
+        logger.info("=============>>>>>>> status fix suceess!!! <<<<<<<<===============");
     }
     private void fixCycleCaseStepRank(){
         testCycleCaseStepMapper.fixCycleCaseStepRank();
+        logger.info("=============>>>>>>> cycle case step fix suceess!!! <<<<<<<<===============");
     }
 
     private void fixCycleCaseRank() {
         List<TestCycleCaseDTO> testCycleCaseDTOList = testCycleCaseMapper.selectByPlanId();
         Map<Long, List<TestCycleCaseDTO>> longListMap = testCycleCaseDTOList.stream().collect(Collectors.groupingBy(TestCycleCaseDTO::getPlanId));
-        for (Map.Entry<Long,List<TestCycleCaseDTO>> map:longListMap.entrySet()
-             ) {
+        for (Map.Entry<Long,List<TestCycleCaseDTO>> map : longListMap.entrySet()) {
             String preRank = null;
-            List<TestCycleCaseDTO> testcycles = map.getValue();
-            if(!CollectionUtils.isEmpty(testcycles)){
-                for (TestCycleCaseDTO testCycleCaseDTO:map.getValue()
-                     ) {
+            List<TestCycleCaseDTO> testCycleCaseDTOS = map.getValue();
+            if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+                for (TestCycleCaseDTO testCycleCaseDTO : map.getValue()) {
                     testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
                     preRank = testCycleCaseDTO.getRank();
                 }
                 //更新
-                testCycleCaseMapper.fixRank(testcycles);
+                testCycleCaseMapper.fixRank(testCycleCaseDTOS);
             }
         }
+        logger.info("=============>>>>>>> cycle case rank fix suceess!!! <<<<<<<<===============");
     }
 
     private void fixCaseFolderRank() {
@@ -325,7 +324,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 testIssueFolderMapper.fixRank(map.getValue());
             }
         }
-
+        logger.info("=============>>>>>>> folder rank fix suceess!!! <<<<<<<<===============");
     }
 
     private void fixCycleCaseFolderRank() {
@@ -341,8 +340,14 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                 testCycleMapper.fixRank(map.getValue());
             }
         }
-
+        logger.info("=============>>>>>>> plan folder fix suceess!!! <<<<<<<<===============");
     }
+
+    private void fixCycle(Long versionId,Long planId){
+        testCycleMapper.fixPlanId(versionId, planId);
+        logger.info("===========fix cycle planId:{} =============> fix cycle successed", planId);
+    }
+
     private TestCaseLinkDTO linkFixVOToDTO(IssueLinkFixVO issueLinkFixVOList) {
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
         BeanUtils.copyProperties(issueLinkFixVOList, testCaseLinkDTO);

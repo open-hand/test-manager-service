@@ -745,6 +745,7 @@ ORDER BY
             </if>
         </if>
     </sql>
+
     <update id="fixSource">
         UPDATE test_cycle_case
         SET source =
@@ -755,9 +756,9 @@ ORDER BY
         <foreach collection="testCycleCaseDTOS" item="cycleCase" index="index" open="" close="" separator=";">
             UPDATE test_cycle_case
             <set>
-                rank =#{cycleCase.rank}
+                rank = #{cycleCase.rank}
             </set>
-            where execute_id= #{cycleCase.executeId}
+            where execute_id = #{cycleCase.executeId}
         </foreach>
     </update>
 
@@ -850,10 +851,11 @@ ORDER BY
 
     <select id="selectByPlanId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
        SELECT
-	tcc.execute_id,tc.plan_id
-    FROM
-        test_cycle_case tcc
-    LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
+        tcc.execute_id,
+        tc.plan_id
+       FROM
+            test_cycle_case tcc
+       LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
     </select>
     <select id="selectByExecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
         SELECT
