@@ -755,6 +755,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
+        if(!ObjectUtils.isEmpty(testCycleCaseInfoVO.getCaseId())){
+            Boolean hasExist = true;
+            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
+            if(ObjectUtils.isEmpty(testCaseDTO)){
+                hasExist = false;
+            }
+            testCycleCaseInfoVO.setCaseHasExist(hasExist);
+        }
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
         testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
@@ -859,8 +867,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             if (caseCompareRepVO.getChangeCase()) {
                 testCycleCase.setSummary(testCaseDTO.getSummary());
                 testCycleCase.setDescription(testCaseDTO.getDescription());
-                // 更新执行的文件夹名
-                testCycleService.syncByCaseFolder(testCaseDTO.getFolderId(), testCycleCaseDTO.getCycleId());
                 testCycleCase.setVersionNum(testCaseDTO.getVersionNum());
             }
             if (caseCompareRepVO.getChangeAttach()) {
@@ -884,10 +890,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
                 List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
                 testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
-                //同步执行的文件夹名到用例
-                TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCaseDTO.getFolderId());
-                testIssueFolderDTO.setName(cycleMapper.selectByPrimaryKey(testCycleCaseDTO.getCycleId()).getCycleName());
-                testIssueFolderService.update(modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
                 baseUpdate(testCycleCaseDTO);
             }
@@ -1049,9 +1051,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     private TestCycleCaseVO dtoToVo(TestCycleCaseDTO testCycleCaseDTO, TestCycleDTO testCycleDTO) {
         TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
-        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testCycleDTO.getFolderId());
         List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.querListByexecuteId(testCycleCaseDTO.getExecuteId());
-        testCycleCaseVO.setFolderName(testIssueFolderDTO.getName());
         if (!CollectionUtils.isEmpty(cycleCaseStepDTOS)) {
             List<TestCycleCaseStepVO> cycleCaseStepVOS = modelMapper.map(cycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepVO>>() {
             }.getType());

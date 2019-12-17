@@ -236,7 +236,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         Map<Long,TestIssueFolderDTO> map = new HashMap<>();
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
-        List<TestIssueFolderDTO> collect = map.values().stream().sorted(Comparator.comparing(v -> v.getParentId())).collect(Collectors.toList());
+        List<TestIssueFolderDTO> collect = map.values().stream().collect(Collectors.toList());
         return collect;
     }
 

@@ -21,5 +21,5 @@ public interface TestFileLoadHistoryService {
 
     PageInfo<TestFileLoadHistoryDTO> basePageFileHistoryByOptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable);
 
-    PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable);
+    PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, SearchDTO searchDTO, Pageable pageable);
 }

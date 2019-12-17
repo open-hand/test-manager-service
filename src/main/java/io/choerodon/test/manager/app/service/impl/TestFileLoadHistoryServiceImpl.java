@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import io.choerodon.core.oauth.DetailsHelper;
@@ -107,7 +108,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
 
         testFileLoadHistoryDTO.setProjectId(projectId);
         testFileLoadHistoryDTO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
-        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.UPLOAD_ISSUE.getTypeValue());
+        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.UPLOAD_CASE.getTypeValue());
         testFileLoadHistoryDTO = queryLatestHistory(testFileLoadHistoryDTO);
         if (testFileLoadHistoryDTO == null) {
             return null;
@@ -149,7 +150,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
                 .stream()
                 .map(TestIssueFolderDTO::getFolderId)
                 .collect(Collectors.toList());
-        if (folderIds == null) {
+        if (CollectionUtils.isEmpty(folderIds)) {
             throw new CommonException("query.file.load.history.error");
         }
 
@@ -158,7 +159,12 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     }
 
     @Override
-    public PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable) {
-        return ConvertUtils.convertPage(basePageFileHistoryByOptions(projectId, folderId, searchDTO, pageable), TestFileLoadHistoryVO.class);
+    public PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, SearchDTO searchDTO, Pageable pageable) {
+        return ConvertUtils.convertPage(listExportHistory(projectId,TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE.getTypeValue(),searchDTO,pageable), TestFileLoadHistoryVO.class);
+    }
+
+    private PageInfo<TestFileLoadHistoryDTO> listExportHistory(Long projectId, Long actionType,SearchDTO searchDTO, Pageable pageable) {
+           return  PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize())
+                   .doSelectPageInfo(() -> testFileLoadHistoryMapper.listExportHistory(projectId,actionType, searchDTO.getAdvancedSearchArgs()));
     }
 }

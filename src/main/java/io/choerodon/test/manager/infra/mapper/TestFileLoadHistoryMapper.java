@@ -19,5 +19,8 @@ public interface TestFileLoadHistoryMapper extends Mapper<TestFileLoadHistoryDTO
     int cancelFileUpload(@Param("id") Long id);
 
     List<TestFileLoadHistoryDTO> queryLatestHistoryByOptions(@Param("folderIds") List<Long> folderId,
-                                                          @Param("advancedSearchArgs") Map<String, Object> advancedSearchArgs);
+                                                             @Param("advancedSearchArgs") Map<String, Object> advancedSearchArgs);
+    List<TestFileLoadHistoryDTO> listExportHistory(@Param("projectId") Long project,
+                                                   @Param("actionType") Long actionType,
+                                                   @Param("advancedSearchArgs") Map<String, Object> advancedSearchArgs);
 }

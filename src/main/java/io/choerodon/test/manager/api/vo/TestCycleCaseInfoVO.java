@@ -62,6 +62,9 @@ public class TestCycleCaseInfoVO {
     @ApiModelProperty(value = "乐观锁版本号")
     private Long objectVersionNumber;
 
+    @ApiModelProperty(value = "原用例是否存在")
+    private Boolean caseHasExist;
+
 
     @ApiModelProperty(value = "执行日期")
     private Date executorDate;
@@ -234,5 +237,13 @@ public class TestCycleCaseInfoVO {
 
     public void setPlanStatus(String planStatus) {
         this.planStatus = planStatus;
+    }
+
+    public Boolean getCaseHasExist() {
+        return caseHasExist;
+    }
+
+    public void setCaseHasExist(Boolean caseHasExist) {
+        this.caseHasExist = caseHasExist;
     }
 }

@@ -77,7 +77,7 @@ public class TestCaseLinkServiceImpl implements TestCaseLinkService {
     public void copyByCaseId(Long projectId, Long caseId, Long oldCaseId) {
         // 查询原关联的问题链接信息
         TestCaseLinkDTO testCaseLinkDTO = new TestCaseLinkDTO();
-        testCaseLinkDTO.setLinkCaseId(caseId);
+        testCaseLinkDTO.setLinkCaseId(oldCaseId);
         testCaseLinkDTO.setProjectId(projectId);
         List<TestCaseLinkDTO> list = testCaseLinkMapper.select(testCaseLinkDTO);
         if (CollectionUtils.isEmpty(list)) {

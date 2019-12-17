@@ -757,7 +757,18 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             return new ArrayList<>();
         }
-        Map<Long, List<TestIssueFolderDTO>> parentMap = testIssueFolderDTOS.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> parentMap = new TreeMap<>();
+        testIssueFolderDTOS.forEach(v -> {
+            List<TestIssueFolderDTO> testIssueFolder = parentMap.get(v.getParentId());
+            if (ObjectUtils.isEmpty(testIssueFolder)) {
+                parentMap.put(v.getParentId(), Arrays.asList(v));
+            } else {
+                List<TestIssueFolderDTO> testIssueFolderDTOList = new ArrayList<>();
+                testIssueFolderDTOList.addAll(testIssueFolder);
+                testIssueFolderDTOList.add(v);
+                parentMap.put(v.getParentId(), testIssueFolderDTOList);
+            }
+        });
         Map<Long, Long> cycleMap = new HashMap<>();
         List<TestCycleDTO> endCycle = new ArrayList<>();
         parentMap.keySet().forEach(key -> {
@@ -767,7 +778,9 @@ public class TestCycleServiceImpl implements TestCycleService {
                 TestCycleDTO testCycleDTO = new TestCycleDTO();
                 testCycleDTO.setFromDate(testPlanDTO.getStartDate());
                 if (v.getParentId() != 0) {
-                    testCycleDTO.setParentCycleId(cycleMap.get(v.getParentId()));
+                    if (!ObjectUtils.isEmpty(cycleMap.get(v.getParentId()))) {
+                        testCycleDTO.setParentCycleId(cycleMap.get(v.getParentId()));
+                    }
                 } else {
                     testCycleDTO.setParentCycleId(0L);
                 }
@@ -828,7 +841,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public String moveCycle(Long projectId, Long targetCycleId,TestCycleVO testCycleVO) {
+    public String moveCycle(Long projectId, Long targetCycleId, TestCycleVO testCycleVO) {
         TestCycleCaseDTO testCycleCaseDTO = new TestCycleCaseDTO();
         testCycleCaseDTO.setCycleId(targetCycleId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.select(testCycleCaseDTO);
