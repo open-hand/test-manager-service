@@ -29,9 +29,7 @@ import io.choerodon.test.manager.infra.exception.IssueFolderException;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
-/**
- * Created by zongw.lee@gmail.com on 08/30/2018
- */
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestIssueFolderServiceImpl implements TestIssueFolderService {
@@ -39,14 +37,20 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public static final String TYPE_CYCLE = "cycle";
     public static final String TYPE_TEMP = "temp";
 
-    @Autowired
     private TestCaseService testCaseService;
-    @Autowired
     private TestCaseMapper testCaseMapper;
-    @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
-    @Autowired
     private ModelMapper modelMapper;
+
+    public TestIssueFolderServiceImpl(TestCaseService testCaseService,
+                                      TestCaseMapper testCaseMapper,
+                                      TestIssueFolderMapper testIssueFolderMapper,
+                                      ModelMapper modelMapper) {
+        this.testCaseService = testCaseService;
+        this.testCaseMapper = testCaseMapper;
+        this.testIssueFolderMapper = testIssueFolderMapper;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {

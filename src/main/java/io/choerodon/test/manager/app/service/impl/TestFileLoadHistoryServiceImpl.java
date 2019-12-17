@@ -37,23 +37,26 @@ import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 @Transactional(rollbackFor = Exception.class)
 public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryService {
 
-    @Autowired
     private TestCaseService testCaseService;
-
-    @Autowired
     private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
-
-    @Autowired
     private TestIssueFolderMapper testIssueFolderMapper;
-
-    @Autowired
     private TestCycleMapper cycleMapper;
-
-    @Autowired
     private ModelMapper modelMapper;
-
-    @Autowired
     private TestIssueFolderService testIssueFolderService;
+
+    public TestFileLoadHistoryServiceImpl(TestCaseService testCaseService,
+                                          TestFileLoadHistoryMapper testFileLoadHistoryMapper,
+                                          TestIssueFolderMapper testIssueFolderMapper,
+                                          TestCycleMapper cycleMapper,
+                                          ModelMapper modelMapper,
+                                          TestIssueFolderService testIssueFolderService) {
+        this.testCaseService = testCaseService;
+        this.testFileLoadHistoryMapper = testFileLoadHistoryMapper;
+        this.testIssueFolderMapper = testIssueFolderMapper;
+        this.cycleMapper = cycleMapper;
+        this.modelMapper = modelMapper;
+        this.testIssueFolderService = testIssueFolderService;
+    }
 
     @Override
     public List<TestFileLoadHistoryVO> queryIssues(Long projectId) {
