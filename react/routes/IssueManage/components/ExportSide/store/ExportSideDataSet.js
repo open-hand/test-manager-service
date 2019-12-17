@@ -92,11 +92,10 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
   ],
   transport: {
     read: ({ params, data }) => ({
-      url: `/test/v1/projects/${getProjectId()}/test/fileload/history/issue`,
+      url: `/test/v1/projects/${getProjectId()}/test/fileload/history/case`,
       method: 'post',
       params: {
         ...params,
-        folder_id: folderId,
       },
       data: {
         advancedSearchArgs: {
