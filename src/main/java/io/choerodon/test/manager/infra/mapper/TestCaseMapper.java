@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import io.choerodon.test.manager.api.vo.ExcelCaseVO;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.mybatis.common.Mapper;
 import io.choerodon.test.manager.api.vo.CaseCompareVO;
@@ -32,6 +34,8 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<Long> queryFolderId(@Param("projectId") Long projectId);
 
     List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
+
+    List<ExcelCaseVO> excelCaseList(@Param("projectId") Long projectId , @Param("caseIds") List<Long> caseIds);
 
     List<TestCaseDTO> listByProject(@Param("projectId") Long projectId);
 

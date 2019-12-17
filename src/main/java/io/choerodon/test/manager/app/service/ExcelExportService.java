@@ -8,6 +8,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import io.choerodon.test.manager.api.vo.ExcelCaseVO;
+
 /**
  * Created by 842767365@qq.com on 8/9/18.
  */
@@ -23,5 +25,7 @@ public interface ExcelExportService<T, R> {
     int populateBody(Sheet sheet, int column, List<R> cycleCases, Queue<CellStyle> rowStyles);
 
     Workbook exportWorkBookWithOneSheet(Map<Long, List<R>> cycleCaseMap, String projectName, T cycle, Workbook workbook);
+
+
 
 }
