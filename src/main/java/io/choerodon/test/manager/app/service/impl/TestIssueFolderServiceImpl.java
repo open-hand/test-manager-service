@@ -248,6 +248,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         testIssueFolderVO.setParentId(0L);
         testIssueFolderVO.setVersionId(0L);
         testIssueFolderVO.setProjectId(projectEvent.getProjectId());
+        testIssueFolderVO.setType("cycle");
         create(projectEvent.getProjectId(),testIssueFolderVO);
     }
 
