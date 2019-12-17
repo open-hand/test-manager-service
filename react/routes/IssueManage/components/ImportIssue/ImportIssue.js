@@ -289,7 +289,8 @@ function ImportIssue(props) {
   }, []);
 
   const handleCloseModal = () => {
-    modal.close(false);
+    // 根据取消按钮可见状态 判断是否销毁modal
+    modal.close(!visibleCancelBtn);
   };
 
   return (
@@ -321,6 +322,7 @@ function ImportIssue(props) {
             parentDataSet={dataSet}
             onChange={setFolder}
             defaultValue={defaultFolderValue.id}
+            disabled={visibleCancelBtn} // 导入过程中禁止操作文件树
           />
         </Form>
         <input
