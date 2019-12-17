@@ -31,14 +31,13 @@ public class TestFileLoadHistoryController {
     private ExcelImportService excelImportService;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("查询issue上传历史")
-    @PostMapping("/issue")
+    @ApiOperation("查询用例导出历史")
+    @PostMapping("/case")
     public ResponseEntity<PageInfo<TestFileLoadHistoryVO>> queryIssues(
             @PathVariable(name = "project_id") Long projectId,
-            @RequestParam("folder_id")Long folderId,
-            Pageable pageable,
-            @RequestBody SearchDTO searchDTO) {
-        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,folderId,searchDTO,pageable))
+             Pageable pageable,
+            @RequestBody(required = false) SearchDTO searchDTO) {
+        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,searchDTO,pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.filehistory.query"));
     }

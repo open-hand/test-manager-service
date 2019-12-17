@@ -126,8 +126,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
             TestCaseStepVO resCaseStepDTO = changeStep(modelMapper.map(v, TestCaseStepVO.class), projectId,false);
             testCaseStepVOS.add(resCaseStepDTO);
         });
-
-        testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
+        testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
             testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);

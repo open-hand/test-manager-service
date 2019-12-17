@@ -104,4 +104,38 @@
         </if>
         order by tfh.last_update_date desc
     </select>
+
+    <select id="listExportHistory" resultType="io.choerodon.test.manager.infra.dto.TestFileLoadHistoryDTO">
+        SELECT tfh.id,
+        tfh.project_id,
+        tfh.action_type,
+        tfh.source_type,
+        tfh.object_version_number,
+        tfh.linked_id,
+        tfh.file_url,
+        tfh.file_stream,
+        tfh.status,
+        tfh.successful_count,
+        tfh.failed_count,
+        tfh.created_by,
+        tfh.creation_date,
+        tfh.last_update_date,
+        tif.name
+        FROM test_fileload_history tfh,
+        test_issue_folder tif
+        WHERE tfh.linked_id = tif.folder_id
+        and tfh.action_type = #{actionType}
+        and tfh.project_id = #{projectId}
+        <if test='advancedSearchArgs != null'>
+            <if test='advancedSearchArgs.name != null and advancedSearchArgs.name.length > 0'>
+                AND
+                tif.name LIKE CONCAT(CONCAT('%',#{advancedSearchArgs.name, jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="advancedSearchArgs.status != null">
+                AND
+                tfh.status = #{advancedSearchArgs.status}
+            </if>
+        </if>
+        order by tfh.last_update_date desc
+    </select>
 </mapper>

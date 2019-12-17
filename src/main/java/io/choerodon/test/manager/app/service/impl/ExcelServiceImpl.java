@@ -225,7 +225,7 @@ public class ExcelServiceImpl implements ExcelService {
     public void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
         ExcelUtil.setExcelHeader(request);
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, projectId,
-                TestFileLoadHistoryEnums.Source.PROJECT, TestFileLoadHistoryEnums.Action.DOWNLOAD_ISSUE);
+                TestFileLoadHistoryEnums.Source.PROJECT, TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE);
 
         TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
         testIssueFolderDTO.setProjectId(projectId);
@@ -285,7 +285,7 @@ public class ExcelServiceImpl implements ExcelService {
         Assert.notNull(versionId, "error.export.cycle.in.one.versionId.not.be.null");
 
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, versionId,
-                TestFileLoadHistoryEnums.Source.VERSION, TestFileLoadHistoryEnums.Action.DOWNLOAD_ISSUE);
+                TestFileLoadHistoryEnums.Source.VERSION, TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE);
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
         String versionName = testCaseService.getVersionInfo(projectId).get(versionId).getName();
@@ -336,7 +336,7 @@ public class ExcelServiceImpl implements ExcelService {
         Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
         //插入导出历史
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, folderId,
-                TestFileLoadHistoryEnums.Source.FOLDER, TestFileLoadHistoryEnums.Action.DOWNLOAD_ISSUE);
+                TestFileLoadHistoryEnums.Source.FOLDER, TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE);
 
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 

@@ -352,7 +352,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private TestFileLoadHistoryDTO initLoadHistory(Long projectId, Long folderId, Long userId) {
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
         testFileLoadHistoryDTO.setProjectId(projectId);
-        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.UPLOAD_ISSUE.getTypeValue());
+        testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.UPLOAD_CASE.getTypeValue());
         testFileLoadHistoryDTO.setSourceType(TestFileLoadHistoryEnums.Source.FOLDER.getTypeValue());
         testFileLoadHistoryDTO.setLinkedId(folderId);
         testFileLoadHistoryDTO.setStatus(TestFileLoadHistoryEnums.Status.SUSPENDING.getTypeValue());
