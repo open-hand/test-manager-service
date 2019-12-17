@@ -50,6 +50,9 @@ public class TestManagerEventHandler {
     private TestPlanMapper testPlanMapper;
 
     @Autowired
+    private TestIssueFolderService testIssueFolderService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -64,6 +67,7 @@ public class TestManagerEventHandler {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
         testProjectInfoService.initializationProjectInfo(projectEvent);
+        testIssueFolderService.initializationFolderInfo(projectEvent);
         return message;
     }
 
