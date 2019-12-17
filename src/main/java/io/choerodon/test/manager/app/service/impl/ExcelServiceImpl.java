@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -104,61 +105,18 @@ public class ExcelServiceImpl implements ExcelService {
      * @param lUserId
      */
     @Override
-    @Async
     public void exportFailCaseByTransaction(Long projectId, Long fileHistoryId, Long lUserId) {
-        String userId = String.valueOf(lUserId);
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
         testFileLoadHistoryDTO.setId(fileHistoryId);
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = modelMapper.map(testFileLoadHistoryMapper
                 .selectByPrimaryKey(testFileLoadHistoryDTO), TestFileLoadHistoryWithRateVO.class);
 
-        String projcetName = testCaseService.getProjectInfo(testFileLoadHistoryWithRateVO.getProjectId()).getName();
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        TestCycleDTO testCycleDTO = new TestCycleDTO();
-        Map<Long, ProductVersionDTO> versions = testCaseService.getVersionInfo(testFileLoadHistoryWithRateVO.getProjectId());
-        ProductVersionDTO version = null;
-
-        switch (String.valueOf(testFileLoadHistoryWithRateVO.getSourceType())) {
-            case "1":
-                testFileLoadHistoryWithRateVO.setName(projcetName);
-                break;
-            case "2":
-                version = versions.get(testFileLoadHistoryWithRateVO.getLinkedId());
-                testFileLoadHistoryWithRateVO.setName(Optional.ofNullable(version).map(ProductVersionDTO::getName).orElse("版本已被删除"));
-                break;
-            case "3":
-                testCycleDTO.setCycleId(testFileLoadHistoryWithRateVO.getLinkedId());
-                testFileLoadHistoryWithRateVO.setName(Optional.ofNullable(cycleMapper.selectOne(testCycleDTO)).map(TestCycleDTO::getCycleName).orElse("循环已被删除"));
-                break;
-            default:
-                testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testFileLoadHistoryWithRateVO.getLinkedId());
-                testFileLoadHistoryWithRateVO.setName(Optional.ofNullable(testIssueFolderDTO)
-                        .map(TestIssueFolderDTO::getName).orElse("文件夹已被删除"));
-                version = versions.get(Optional.ofNullable(testIssueFolderDTO).map(TestIssueFolderDTO::getFolderId).orElse(0L));
+        TestIssueFolderDTO testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testFileLoadHistoryWithRateVO.getLinkedId());
+        if(ObjectUtils.isEmpty(testIssueFolderDTO)){
+            throw new CommonException("error.folder.has.deleted");
         }
+        exportCaseFolderByTransaction(testFileLoadHistoryWithRateVO.getProjectId(),testFileLoadHistoryWithRateVO.getLinkedId(),null,null,lUserId,true,fileHistoryId);
 
-        String fileName = projcetName + "-" + Optional.ofNullable(version).map(ProductVersionDTO::getName)
-                + "-" + Optional.ofNullable(testIssueFolderDTO).map(TestIssueFolderDTO::getName) + "-"
-                + Optional.ofNullable(testCycleDTO.getCycleName()) + "-失败重传" + FILESUFFIX;
-
-        MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, testFileLoadHistoryWithRateVO.getFileStream().getBytes());
-
-        testFileLoadHistoryWithRateVO.setRate(99.9);
-        notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
-        ResponseEntity<String> res = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, fileName, file);
-
-        if (res.getStatusCode().is2xxSuccessful()) {
-            testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
-            testFileLoadHistoryWithRateVO.setFileStream(null);
-            testFileLoadHistoryWithRateVO.setSuccessfulCount(testFileLoadHistoryWithRateVO.getFailedCount());
-            testFileLoadHistoryWithRateVO.setFailedCount(null);
-            testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
-            testFileLoadHistoryWithRateVO.setFileUrl(res.getBody());
-            notifyService.postWebSocket(NOTIFYISSUECODE, userId, JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
-            testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-        }
     }
 
     /**
@@ -333,17 +291,24 @@ public class ExcelServiceImpl implements ExcelService {
      * @param request
      * @param response
      * @param userId
-     * @param organizationId
+     * @param
      */
     @Override
     @Async
-    public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId) {
-        ExcelUtil.setExcelHeader(request);
-        Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
-        //插入导出历史
-        TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, folderId,
+    public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId) {
+        TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = null;
+        if (retry) {
+            TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
+            testFileLoadHistoryDTO.setId(fileHistoryId);
+             testFileLoadHistoryWithRateVO = modelMapper.map(testFileLoadHistoryMapper
+                    .selectByPrimaryKey(testFileLoadHistoryDTO), TestFileLoadHistoryWithRateVO.class);
+        } else {
+            ExcelUtil.setExcelHeader(request);
+            Assert.notNull(projectId, "error.export.cycle.in.one.folderId.not.be.null");
+            //插入导出历史
+            testFileLoadHistoryWithRateVO = insertHistory(projectId, folderId,
                 TestFileLoadHistoryEnums.Source.FOLDER, TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE);
-
+        }
         String projectName = testCaseService.getProjectInfo(projectId).getName();
 
         //根据文件夹id查出当前文件夹名称
@@ -363,7 +328,7 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(5.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
-        List<ExcelCaseVO> excelCaseVOS = handelCase(projectId,folderId);
+        List<ExcelCaseVO> excelCaseVOS = handleCase(projectId,folderId);
         if(CollectionUtils.isEmpty(excelCaseVOS)){
             testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
             testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.CANCEL.getTypeValue());
@@ -495,7 +460,7 @@ public class ExcelServiceImpl implements ExcelService {
             try {
                 TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
                 testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-                testFileLoadHistoryWithRateVO.setFileStream(null);
+
                 notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
                 workbook.close();
             } catch (IOException e) {
@@ -591,7 +556,7 @@ public class ExcelServiceImpl implements ExcelService {
         return folderRelMap;
     }
 
-    private List<ExcelCaseVO> handelCase(Long projectId,Long folderId){
+    private List<ExcelCaseVO> handleCase(Long projectId,Long folderId){
         List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
         if(CollectionUtils.isEmpty(caseIdList)){
             return null;
@@ -599,13 +564,14 @@ public class ExcelServiceImpl implements ExcelService {
         List<ExcelCaseVO> excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
         List<Long> userIdList = excelCaseVOS.stream().map(ExcelCaseVO::getLastUpdatedBy).collect(Collectors.toList());
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIdList);
-        excelCaseVOS.forEach(e->{
-            e.setCaseNum(e.getProjectCode()+e.getCaseId());
-            if(!ObjectUtils.isEmpty(e.getLastUpdatedBy())&&!e.getLastUpdatedBy().equals(0L) ){
-                e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
-            }
-
-        });
+        if (!MapUtils.isEmpty(userMessageDTOMap)) {
+            excelCaseVOS.forEach(e -> {
+                e.setCaseNum(e.getProjectCode() + e.getCaseId());
+                if (!ObjectUtils.isEmpty(e.getLastUpdatedBy()) && !e.getLastUpdatedBy().equals(0L)) {
+                    e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
+                }
+            });
+        }
         return excelCaseVOS;
     }
 
