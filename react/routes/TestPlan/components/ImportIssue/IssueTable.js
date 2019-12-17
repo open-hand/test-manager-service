@@ -19,7 +19,7 @@ function IssueTable({
       read: {
         url: `/test/v1/projects/${getProjectId()}/case/list_by_folder_id?folder_id=${folderId}&plan_id=${planId}`,
         method: 'post',
-        transformRequest: (data) => {   
+        transformRequest: (data) => {
           const { params, summary, caseNum } = data;
           return JSON.stringify({
             contents: params ? [params] : [],
@@ -36,7 +36,7 @@ function IssueTable({
       load: ({ dataSet: ds }) => {
         autoSelect(ds, treeMap);
       },
-      select: ({ record }) => {    
+      select: ({ record }) => {
         // 禁用说明已经选上了，不处理  
         if (record.get('hasDisable')) {
           return;
@@ -48,7 +48,7 @@ function IssueTable({
           return;
         }
         const caseId = record.get('caseId');
-        const caseFolderId = record.get('folderId');    
+        const caseFolderId = record.get('folderId');
         // 选中树
         SelectIssueStore.handleCheckChange(true, caseFolderId);
         SelectIssueStore.addFolderSelectedCase(caseFolderId, caseId);
@@ -80,7 +80,7 @@ function IssueTable({
   // 让父组件访问dataSet
   saveDataSet(dataSet);
   return (
-    <Table dataSet={dataSet}>
+    <Table dataSet={dataSet} style={{ height: 384 }}>
       <Column name="summary" />
       <Column name="caseNum" />
       <Column name="folderName" />
