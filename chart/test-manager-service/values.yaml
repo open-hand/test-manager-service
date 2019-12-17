@@ -16,15 +16,20 @@ preJob:
     updatePolicy: add
     # 当 configType 值为 k8s 时配置注册中心地址
     registerHost: http://register-server:8000
+    # 当 configType 值为 db 时配置 manager-service 的数据库
+    datasource:
+      url: jdbc:mysql://localhost:3306/manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true&serverTimezone=Asia/Shanghai
+      username: username
+      password: password
   # 初始化数据库定义
   preInitDB:
     # 是否初始化本服务数据库
-    enable: true
+    enabled: true
     datasource:
       # 初始化数据库更新数据的时候忽略的表或列
       exclusion: ~
       # 本服务数据库相关信息
-      url: jdbc:mysql://localhost:3306/devops_service?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://localhost:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true&serverTimezone=Asia/Shanghai
       username: username
       password: password
 
@@ -33,7 +38,7 @@ replicaCount: 1
 
 ## 设置默认的 image、imageTag 和 imagePullPolicy。
 image:
-  repository: registry.cn-shanghai.aliyuncs.com/c7n/devops-service
+  repository: registry.cn-shanghai.aliyuncs.com/c7n/test-manager-service
   tag: ~
   pullPolicy: IfNotPresent
 
@@ -86,7 +91,7 @@ env:
     EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://register-server:8000/eureka/
 
     # 数据库连接地址
-    SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&useSSL=false&useInformationSchema=true&remarks=true&allowMultiQueries=true
+    SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/test_manager_service?useUnicode=true&characterEncoding=utf-8&useSSL=false&useInformationSchema=true&remarks=true&serverTimezone=Asia/Shanghai
     # 数据库用户名
     SPRING_DATASOURCE_USERNAME: username
     # 数据库密码
@@ -94,7 +99,7 @@ env:
 
     # 清理permission表中的旧接口和role_permission表中角色和权限层级不匹配的脏数据
     CHOERODON_CLEANPERMISSION: false
-    SERVICES_ATTACHMENT_URL: http://minio.example.choerodon.io
+    SERVICES_ATTACHMENT_URL: http://minio.example.com
 
     ## Skywalking 配置参数
     # SKYWALKING_OPTS: >-
@@ -161,7 +166,7 @@ service:
   annotations: {}
     # prometheus.io/scrape: 'true'
     # prometheus.io/path: '/actuator/prometheus'
-    # prometheus.io/port: '8061'
+    # prometheus.io/port: '8094'
 
 ## 指标收集
 metrics:
