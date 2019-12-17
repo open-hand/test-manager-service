@@ -51,9 +51,8 @@ function ExportSide(props) {
       }),
     },
   }), []);
-  const [folder, setFolder] = useState({ folderId: props.folderId });
 
-  const exportSideDataSet = useMemo(() => ExportSideDataSet(folder.folderId), [folder.folderId]);
+  const exportSideDataSet = useMemo(() => ExportSideDataSet(), []);
   useEffect(() => {
 
   }, []);
@@ -152,7 +151,7 @@ function ExportSide(props) {
       <div className="test-export-issue">
         <div className="test-export-issue-header">
           <Form dataSet={dataSet} className="test-export-issue-form">
-            <SelectTree defaultValue={folderId} name="folder" parentDataSet={dataSet} onChange={setFolder} placeholder="目录" isForbidRoot={false} />
+            <SelectTree defaultValue={folderId} name="folder" parentDataSet={dataSet} placeholder="目录" isForbidRoot={false} />
           </Form>
           <Button className="test-export-issue-btn" type="primary" icon="playlist_add" onClick={handleCreateExport}>新建导出</Button>
         </div>
