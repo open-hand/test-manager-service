@@ -464,12 +464,10 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         String summary = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_SUMMARY, row));
         String description = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.CASE_DESCRIPTION, row));
-        String priority = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.PRIORITY, row));
         String user = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.ASSIGNER, row));
-        String component = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.COMPONENT, row));
         String issueLink = ExcelUtil.getStringValue(excelTitleUtil.getCell(ExcelTitleName.LINK_ISSUE, row));
-        return StringUtils.isNotBlank(summary) || StringUtils.isNotBlank(description) || StringUtils.isNotBlank(priority)
-                || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(component) || StringUtils.isNotBlank(issueLink);
+        return StringUtils.isNotBlank(summary) || StringUtils.isNotBlank(description)
+                || StringUtils.isNotBlank(user) || StringUtils.isNotBlank(issueLink);
     }
 
     private TestCaseDTO processIssueHeaderRow(Row row, Long projectId, Long folderId, ExcelTitleUtil excelTitleUtil) {
@@ -518,6 +516,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         //Todo：重构
         TestCaseDTO testCaseDTO = testCaseService.importTestCase(issueCreateDTO, projectId, "test");
+//                return null;
+//            }
+//        } else {
+//            markAsError(row, "导入测试任务异常");
+//        }
         return testCaseDTO;
     }
 

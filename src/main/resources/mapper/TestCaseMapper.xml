@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="io.choerodon.test.manager.infra.mapper.TestCaseMapper">
+
+    <resultMap type="io.choerodon.test.manager.api.vo.ExcelCaseVO" id="BaseResultMap">
+        <id column="folderName" property="folderName"/>
+        <id column="project_code" property="projectCode"/>
+        <id column="case_id" property="caseId"/>
+        <id column="case_num" property="caseNum"/>
+        <id column="summary" property="summary"/>
+        <id column="description" property="description"/>
+        <id column="last_updated_by" property="lastUpdatedBy"/>
+        <id column="created_by" property="createdBy"/>
+
+        <collection property="caseSteps"
+                    ofType="io.choerodon.test.manager.api.vo.TestCaseStepVO">
+            <id column="test_step" property="testStep"/>
+            <id column="test_data" property="testData"/>
+            <id column="expected_result" property="expectedResult"/>
+        </collection>
+    </resultMap>
     <select id="listCaseByFolderIds" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
         SELECT
         tci.case_id,
@@ -156,6 +174,25 @@
        order by last_update_date DESC
    </select>
 
+    <select id="excelCaseList" resultMap="BaseResultMap">
+        SELECT
+        tpi.project_code,
+        tif.`name` folderName,
+        ts.*,tcs.*
+        FROM
+        test_case ts
+        LEFT JOIN test_issue_folder tif ON tif.folder_id = ts.folder_id
+        LEFT JOIN test_case_step tcs on tcs.issue_id =ts.case_id
+        LEFT JOIN test_project_info tpi on ts.project_id=tpi.project_id
+        <if test="caseIds!=null and caseIds.size>0">
+            WHERE
+            ts.case_id IN
+            <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
+                #{caseId}
+            </foreach>
+        </if>
+
+    </select>
     <select id="listByProject" resultType="io.choerodon.test.manager.infra.dto.TestCaseDTO">
           SELECT
 	            tc.*
