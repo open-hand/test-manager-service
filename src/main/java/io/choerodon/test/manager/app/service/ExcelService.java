@@ -12,7 +12,7 @@ public interface ExcelService {
 
     void exportCaseTemplate(Long projectId, HttpServletRequest request, HttpServletResponse response);
 
-    void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
+    void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId);
 
     void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
 

@@ -73,7 +73,7 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
      */
     @Override
     public void exportCaseByFolder(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        excelService.exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
+        excelService.exportCaseFolderByTransaction(projectId, folderId, request, response, DetailsHelper.getUserDetails().getUserId(),false,null);
     }
 
     /**
