@@ -87,15 +87,22 @@ public class TestCaseAssembler {
         return testCaseRepVO;
     }
 
-    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO) {
+    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO,Map<Long, UserMessageDTO> userMap) {
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
         Long assignedTo = testCycleCaseDTO.getAssignedTo();
         if (assignedTo != null && !Objects.equals(assignedTo, 0L)) {
-            BaseDTO baseDTO = new BaseDTO();
-            baseDTO.setCreatedBy(assignedTo);
-            Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
-            UserMessageDTO userMessageDTO = userMap.get(assignedTo);
-            testFolderCycleCaseVO.setAssignedUser(userMessageDTO);
+            UserMessageDTO userMessage = userMap.get(assignedTo);
+            if(ObjectUtils.isEmpty(userMessage)){
+                BaseDTO baseDTO = new BaseDTO();
+                baseDTO.setCreatedBy(assignedTo);
+                Map<Long, UserMessageDTO> userMap1 = getUserMap(baseDTO, null);
+                testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
+            }
+            testFolderCycleCaseVO.setAssignedUser(userMessage);
+        }
+        UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
+        if(ObjectUtils.isEmpty(updateUser)){
+            testFolderCycleCaseVO.setLastUpdateUser(updateUser);
         }
         return testFolderCycleCaseVO;
     }
