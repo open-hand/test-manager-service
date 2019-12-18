@@ -198,6 +198,9 @@ export default class IssueManage extends Component {
           'test-service.test-case.batchCloneCase',
           'test-service.test-case.batchMoveCase',
           'test-service.test-case.deleteCase',
+          'test-service.test-case-step.changeOneStep',
+          'test-service.test-case-step.clone',
+          'test-service.test-case-step.removeStep',
         ]}
       >
         <Header
