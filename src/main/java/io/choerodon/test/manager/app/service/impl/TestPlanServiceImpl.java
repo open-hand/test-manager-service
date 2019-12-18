@@ -398,7 +398,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (!CollectionUtils.isEmpty(testCycleCaseMap.get(testCycleDTO.getCycleId()))) {
             testTreeFolderVO.setHasCase(true);
         } else {
-            testTreeFolderVO.setHasCase(true);
+            testTreeFolderVO.setHasCase(false);
         }
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
@@ -429,6 +429,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             if (ObjectUtils.isEmpty(allFolderMap.get(testCycleDTO.getParentCycleId()))) {
                 return;
             }
+            parentTreeFolderVO.setChildren(Arrays.asList(testCycleDTO.getCycleId()));
             TestCycleDTO parentCycle = allFolderMap.get(testCycleDTO.getParentCycleId());
             bulidTestTreeFolderVO(parentTreeFolderVO, parentCycle, parentMap, testCycleCaseMap, map);
         } else {
