@@ -130,17 +130,17 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         // 默认是导入到导入文件夹，不存在则创建
 //        TestIssueFolderDTO testIssueFolderDTO = getFolder(projectId, versionId, "导入");
 //        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, testIssueFolderDTO.getFolderId(), userId);
-
-        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
-        TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
-        List<Long> issueIds = new ArrayList<>();
-
-        // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
         if(ObjectUtils.isEmpty(testCasesSheet)){
             notifyService.postWebSocket(IMPORT_ERROR, userId.toString(), "错误的模板");
             throw new CommonException("error.template.file ");
         }
+        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
+        TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
+        List<Long> issueIds = new ArrayList<>();
+
+        // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
+
         //测试用例页为空，则更新文件导入历史之后直接返回
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
