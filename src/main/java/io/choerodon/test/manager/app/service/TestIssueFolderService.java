@@ -5,6 +5,7 @@ import java.util.List;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
 import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
+import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 
 /**
@@ -49,4 +50,10 @@ public interface TestIssueFolderService {
     List<TestIssueFolderVO> queryListByProjectId(Long projectId);
 
     List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds);
+
+    /**
+     * 创建项目时,用例库初始化文件夹
+     * @param projectEvent
+     */
+    void initializationFolderInfo(ProjectEvent projectEvent);
 }

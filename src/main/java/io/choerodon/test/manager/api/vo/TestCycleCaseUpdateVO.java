@@ -21,6 +21,8 @@ public class TestCycleCaseUpdateVO {
 
     private List<TestCycleCaseStepUpdateVO> testCycleCaseStepUpdateVOS;
 
+    private Boolean caseHasExist;
+
     public Long getExecuteId() {
         return executeId;
     }
@@ -67,5 +69,13 @@ public class TestCycleCaseUpdateVO {
 
     public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
+    }
+
+    public Boolean getCaseHasExist() {
+        return caseHasExist;
+    }
+
+    public void setCaseHasExist(Boolean caseHasExist) {
+        this.caseHasExist = caseHasExist;
     }
 }

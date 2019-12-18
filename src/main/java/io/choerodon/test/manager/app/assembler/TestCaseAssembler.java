@@ -74,23 +74,23 @@ public class TestCaseAssembler {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO,Map<Long, TestIssueFolderDTO> folderMap) {
+    public TestCaseRepVO dtoToRepVo(TestCaseDTO testCaseDTO, Map<Long, TestIssueFolderDTO> folderMap) {
         Map<Long, UserMessageDTO> map = getUserMap(testCaseDTO, null);
         TestCaseRepVO testCaseRepVO = new TestCaseRepVO();
         modelMapper.map(testCaseDTO, testCaseRepVO);
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(testCaseDTO.getProjectId());
-        testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCaseRepVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
         testCaseRepVO.setCreateUser(map.get(testCaseDTO.getCreatedBy()));
         testCaseRepVO.setLastUpdateUser(map.get(testCaseDTO.getLastUpdatedBy()));
         testCaseRepVO.setFolderName(folderMap.get(testCaseDTO.getFolderId()).getName());
         return testCaseRepVO;
     }
 
-    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO){
+    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO) {
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
         Long assignedTo = testCycleCaseDTO.getAssignedTo();
-        if(assignedTo != null && !Objects.equals(assignedTo, 0L)){
+        if (assignedTo != null && !Objects.equals(assignedTo, 0L)) {
             BaseDTO baseDTO = new BaseDTO();
             baseDTO.setCreatedBy(assignedTo);
             Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
@@ -100,26 +100,25 @@ public class TestCaseAssembler {
         return testFolderCycleCaseVO;
     }
 
-    public List<TestCaseRepVO> listDtoToRepVo(Long projectId,List<TestCaseDTO> list,Long planId){
+    public List<TestCaseRepVO> listDtoToRepVo(Long projectId, List<TestCaseDTO> list, Long planId) {
         Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
         }.getType()));
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         List<Long> caseIds = null;
-        if(!ObjectUtils.isEmpty(planId)){
+        if (!ObjectUtils.isEmpty(planId)) {
             caseIds = testCycleCaseMapper.listByPlanId(planId);
         }
         List<Long> finalCaseIds = caseIds;
         List<TestCaseRepVO> collect = list.stream()
                 .map(v -> {
-                    TestCaseRepVO testCaseRepVO= dtoToRepVo(v,folderMap);
-                    if(!CollectionUtils.isEmpty(finalCaseIds)){
-                       if(finalCaseIds.contains(v.getCaseId())){
-                           testCaseRepVO.setHasDisable(true);
-                       }
-                       else {
-                           testCaseRepVO.setHasDisable(false);
-                       }
+                    TestCaseRepVO testCaseRepVO = dtoToRepVo(v, folderMap);
+                    if (!CollectionUtils.isEmpty(finalCaseIds)) {
+                        if (finalCaseIds.contains(v.getCaseId())) {
+                            testCaseRepVO.setHasDisable(true);
+                        } else {
+                            testCaseRepVO.setHasDisable(false);
+                        }
                     }
                     return testCaseRepVO;
                 }).collect(Collectors.toList());
@@ -127,10 +126,10 @@ public class TestCaseAssembler {
     }
 
 
-    public TestCaseInfoVO dtoToInfoVO(TestCaseDTO testCaseDTO){
+    public TestCaseInfoVO dtoToInfoVO(TestCaseDTO testCaseDTO) {
         TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO, TestCaseInfoVO.class);
         // 获取用户信息
-        Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(testCaseDTO,null);
+        Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(testCaseDTO, null);
         if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
             testCaseInfoVO.setCreateUser(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()));
         }
@@ -154,11 +153,11 @@ public class TestCaseAssembler {
         if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
             testCaseInfoVO.setFolder(testIssueFolderDTO.getName());
         }
-        testCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        testCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
         return testCaseInfoVO;
     }
 
-    private String getIssueNum(Long projectId,String caseNum){
+    private String getIssueNum(Long projectId, String caseNum) {
         TestProjectInfoDTO testProjectInfoDTO = new TestProjectInfoDTO();
         testProjectInfoDTO.setProjectId(projectId);
         TestProjectInfoDTO testProjectInfo = testProjectInfoMapper.selectOne(testProjectInfoDTO);
@@ -166,9 +165,9 @@ public class TestCaseAssembler {
         return issue;
     }
 
-    public Map<Long, UserMessageDTO> getUserMap(BaseDTO baseDTO,List<BaseDTO> list){
+    public Map<Long, UserMessageDTO> getUserMap(BaseDTO baseDTO, List<BaseDTO> list) {
         List<Long> userIds = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(baseDTO)){
+        if (!ObjectUtils.isEmpty(baseDTO)) {
             userIds.add(baseDTO.getCreatedBy());
             userIds.add(baseDTO.getLastUpdatedBy());
         }
@@ -179,11 +178,11 @@ public class TestCaseAssembler {
             });
         }
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIds);
-        return  userMessageDTOMap;
+        return userMessageDTOMap;
     }
 
     public TestCycleCaseInfoVO cycleCaseExtraInfo(TestCycleCaseInfoVO testCycleCaseInfoVO) {
-        if(testCycleCaseInfoVO.getAssignedTo() != null && !Objects.equals(testCycleCaseInfoVO.getAssignedTo(), 0L)){
+        if (testCycleCaseInfoVO.getAssignedTo() != null && !Objects.equals(testCycleCaseInfoVO.getAssignedTo(), 0L)) {
             BaseDTO baseDTO = new BaseDTO();
             baseDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
             Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
@@ -193,7 +192,7 @@ public class TestCaseAssembler {
         }
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-            testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
+        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseInfoVO.getExecuteId());
         testCycleCaseAttachmentRelDTO.setAttachmentType(TYPE);
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
@@ -202,15 +201,15 @@ public class TestCaseAssembler {
 //        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseInfoVO.getProjectId(), testCycleCaseInfoVO.getCaseId()));
         // 查询用例信息
         TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-        if(!ObjectUtils.isEmpty(testCaseDTO)){
-            testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(),testCaseDTO.getCaseNum()));
+        if (!ObjectUtils.isEmpty(testCaseDTO)) {
+            testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
             testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
         }
         return testCycleCaseInfoVO;
     }
 
     public TestCycleCaseUpdateVO dtoToUpdateVO(TestCycleCaseDTO testCycleCaseDTO) {
-        if(ObjectUtils.isEmpty(testCycleCaseDTO)){
+        if (ObjectUtils.isEmpty(testCycleCaseDTO)) {
             throw new CommonException("error.cycle.case.null");
         }
         TestCycleCaseUpdateVO testCycleCaseUpdateVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseUpdateVO.class);
@@ -225,10 +224,16 @@ public class TestCaseAssembler {
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseUpdateVO.setCycleCaseAttachmentRelVOList(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
+        Boolean hasExist = true;
+        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseDTO.getCaseId());
+        if (ObjectUtils.isEmpty(testCycleCaseDTO.getCaseId()) || ObjectUtils.isEmpty(testCaseDTO)) {
+            hasExist = false;
+        }
+        testCycleCaseUpdateVO.setCaseHasExist(hasExist);
         return testCycleCaseUpdateVO;
     }
 
-    public TestCaseStepDTO cycleStepToCaseStep(TestCycleCaseStepDTO testCycleCaseStepDTO, TestCaseDTO testCaseDTO, CustomUserDetails userDetails){
+    public TestCaseStepDTO cycleStepToCaseStep(TestCycleCaseStepDTO testCycleCaseStepDTO, TestCaseDTO testCaseDTO, CustomUserDetails userDetails) {
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
         // todo rank未写
         testCaseStepDTO.setTestStep(testCycleCaseStepDTO.getTestStep());
@@ -237,12 +242,12 @@ public class TestCaseAssembler {
         testCaseStepDTO.setIssueId(testCaseDTO.getCaseId());
         testCaseStepDTO.setLastUpdatedBy(userDetails.getUserId());
         testCaseStepDTO.setCreatedBy(userDetails.getUserId());
-        testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(),8));
+        testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(), 8));
         return testCaseStepDTO;
     }
 
     // 执行同步
-    public void AutoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS,Boolean changeCase,Boolean changeStep,Boolean changeAttach){
+    public void AutoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
         testCycleCaseDTOS.forEach(v -> {
             CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
             caseCompareVO.setCaseId(v.getCaseId());
@@ -251,7 +256,7 @@ public class TestCaseAssembler {
             caseCompareVO.setChangeStep(changeStep);
             caseCompareVO.setChangeCase(changeCase);
             caseCompareVO.setChangeAttach(changeAttach);
-            testCycleCaseService.updateCompare(v.getProjectId(),caseCompareVO);
+            testCycleCaseService.updateCompare(v.getProjectId(), caseCompareVO);
         });
 
     }

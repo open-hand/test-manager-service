@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -238,6 +239,17 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
         List<TestIssueFolderDTO> collect = map.values().stream().collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public void initializationFolderInfo(ProjectEvent projectEvent) {
+        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+        testIssueFolderVO.setName(projectEvent.getProjectName());
+        testIssueFolderVO.setParentId(0L);
+        testIssueFolderVO.setVersionId(0L);
+        testIssueFolderVO.setProjectId(projectEvent.getProjectId());
+        testIssueFolderVO.setType("cycle");
+        create(projectEvent.getProjectId(),testIssueFolderVO);
     }
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {
