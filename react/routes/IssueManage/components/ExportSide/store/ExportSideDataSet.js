@@ -37,6 +37,7 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
 })) => new DataSet({
   autoQuery: true,
   paging: true,
+  modifiedCheck: false,
   selection: false,
   fields: [
     {

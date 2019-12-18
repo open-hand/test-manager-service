@@ -39,7 +39,7 @@ const CardWrapper = ({ children, title, style }) => (
 function TestHandExecute(props) {
   const context = useContext(Store);
   const {
-    ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet, 
+    ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
   const [syncLoading, setSyncLoading] = useState(false);
   useEffect(() => {
@@ -224,6 +224,7 @@ function TestHandExecute(props) {
       if (editExecuteCaseDataSet.current.status === 'update') {
         ExecuteDetailStore.getInfo();
         stepTableDataSet.query();
+        executeHistoryDataSet.query();
       }
       editExecuteCaseDataSet.splice(0, 1);
     }
@@ -257,7 +258,7 @@ function TestHandExecute(props) {
                   <Button funcType="raised" color="primary">保存并同步到用例库</Button>
                 </div>
               </Tooltip>
-            )          
+            )
           }
           {cancelBtn}
         </div>
@@ -368,6 +369,7 @@ function TestHandExecute(props) {
                 >
                   <StepTable
                     dataSet={stepTableDataSet}
+                    updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
                     testStatusDataSet={testStatusDataSet}
                     readOnly={planStatus === 'done'} // 数据是否只读
                     operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改

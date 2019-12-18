@@ -64,7 +64,7 @@ const DefectSelectText = ({
 
 function StepTable(props) {
   const {
-    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet,
+    dataSet, ExecuteDetailStore, readOnly = false, operateStatus = false, testStatusDataSet, updateHistory,
   } = props;
   const [lock, setLock] = useState('right');
   /**
@@ -72,6 +72,7 @@ function StepTable(props) {
    */
   const onRefreshCurrent = () => {
     dataSet.query(dataSet.currentPage);
+    updateHistory();
   };
   /**
    * 更新表格的高度 防止lock列高度不变

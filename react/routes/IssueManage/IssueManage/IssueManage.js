@@ -170,7 +170,36 @@ export default class IssueManage extends Component {
     const noFolder = treeData.rootIds.length === 0;
     // const noFolder = true;
     return (
-      <Page className="c7ntest-Issue c7ntest-region">
+      <Page
+        className="c7ntest-Issue c7ntest-region"
+        service={[
+          'test-service.test-issue-folder.query',
+          'test-service.test-case.listCaseByFolderId',
+          'test-service.test-file-load-history.queryLatestLoadHistory',
+          'test-service.test-case.downloadImportTemplate',
+          'test-service.test-file-load-history.cancelUpLoad',
+          'test-service.test-case.importIssues',
+          'test-service.test-file-load-history.queryIssues',
+          'test-service.test-case.downLoadByFolder',
+          'test-service.test-case.downExcelFail',
+          'test-service.test-issue-folder.create',
+          'test-service.test-issue-folder.moveFolder',
+          'test-service.test-issue-folder.update',
+          'test-service.test-issue-folder.delete',
+          'test-service.test-case.createTestCase',
+          'test-service.test-attachment.uploadFile',
+          'agile-service.issue-attachment.uploadForAddress',
+          'test-service.test-case-link.queryLinkIssues',
+          'test-service.test-case.queryCaseInfo',
+          'test-service.test-case-step.query',
+          'test-service.test-case-data-log.queryByCaseId',
+          'test-service.test-case.updateCase',
+          'test-service.test-case-attachment.uploadAttachment',
+          'test-service.test-case.batchCloneCase',
+          'test-service.test-case.batchMoveCase',
+          'test-service.test-case.deleteCase',
+        ]}
+      >
         <Header
           title={<FormattedMessage id="issue_name" />}
         >

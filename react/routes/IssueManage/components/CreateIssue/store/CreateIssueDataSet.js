@@ -48,7 +48,6 @@ function CreateIssueDataSet(intlPrefix, intl) {
         valueField: 'labelId',
         multiple: ',',
         // options: linkOptions,
-        lookupUrl: `agile/v1/projects/${AppState.currentMenuType.id}/issue_labels`,
       },
       {
         name: 'caseStepVOS',
