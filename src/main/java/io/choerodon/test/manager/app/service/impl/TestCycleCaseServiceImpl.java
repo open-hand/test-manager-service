@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.choerodon.mybatis.entity.BaseDTO;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -674,7 +675,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         // 查询文件夹下的的用例
         PageInfo<TestCycleCaseDTO> caseDTOPageInfo = PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize()).doSelectPageInfo(() ->
                 testCycleCaseMapper.queryFolderCycleCase(planId, cycleIds, searchDTO));
-        List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(testCaseAssembler::setAssianUser).collect(Collectors.toList());
+        Map<Long, UserMessageDTO> userMap = testCaseAssembler.getUserMap(null, modelMapper.map(caseDTOPageInfo.getList(), new TypeToken<List<BaseDTO>>() {
+        }.getType()));
+        List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(v -> testCaseAssembler.setAssianUser(v,userMap)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(testFolderCycleCaseVOS)) {
             return new PageInfo<TestFolderCycleCaseVO>();
         }

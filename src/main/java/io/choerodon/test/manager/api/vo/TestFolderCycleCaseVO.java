@@ -57,6 +57,9 @@ public class TestFolderCycleCaseVO {
     @ApiModelProperty(value = "是否更新")
     private Boolean hasChange;
 
+    @ApiModelProperty(value = "更新人")
+    private UserMessageDTO lastUpdateUser;
+
     private Long versionNum;
 
     private Boolean changeCase;
@@ -216,5 +219,13 @@ public class TestFolderCycleCaseVO {
 
     public void setChangeAttach(Boolean changeAttach) {
         this.changeAttach = changeAttach;
+    }
+
+    public UserMessageDTO getLastUpdateUser() {
+        return lastUpdateUser;
+    }
+
+    public void setLastUpdateUser(UserMessageDTO lastUpdateUser) {
+        this.lastUpdateUser = lastUpdateUser;
     }
 }
