@@ -250,7 +250,7 @@ function TestHandExecute(props) {
       footer: (okBtn, cancelBtn) => (
         <div>
           {okBtn}
-          {detailData.caseId ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
+          {detailData.caseHasExist ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
             : (
               <Tooltip title="相关用例已删除">
                 <div>

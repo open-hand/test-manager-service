@@ -51,10 +51,10 @@ const Section = ({
       {children}
     </div>
     {
-      !isLastOne && (
-        <div className="c7ntest-side-item-header-line" />
-      )
-    }
+        !isLastOne && (
+          <div className="c7ntest-side-item-header-line" />
+        )
+      }
 
   </section>
 );
@@ -164,7 +164,7 @@ function ExecuteDetailSide(props) {
     } = props;
     const { statusColor, statusName } = status;
     const {
-      executor, description, executorDate, summary, caseId, caseFolderId, caseNum,
+      executor, description, executorDate, summary, caseId, caseFolderId, caseNum, caseHasExist,
     } = detailData;
     // 默认18个字启动省略
     const renderIssueSummary = (text) => {
@@ -216,7 +216,7 @@ function ExecuteDetailSide(props) {
                     }}
                     >
                       <span>相关用例:</span>
-                      {caseId ? <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
+                      {caseHasExist ? <Link className="primary c7ntest-text-dot" style={{ marginLeft: 5 }} to={issueLink(caseId, 'issue_test', caseNum, caseFolderId)}>{caseNum}</Link>
                         : '用例已被删除'
                       }
                     </div>
@@ -287,8 +287,8 @@ function ExecuteDetailSide(props) {
                   id="attachment"
                   icon="attach_file"
                   title="附件"
-                >  
-                  <UploadButtonExcuteDetail             
+                >
+                  <UploadButtonExcuteDetail
                     fileList={fileList}
                   />
                 </Section>
