@@ -128,7 +128,7 @@ const TestPlanTable = observer(({
     flex: 2,
     render: (text, record) => renderMenu(record.summary, record),
   }, {
-    title: <FormattedMessage id="cycle_executeBy" />,
+    title: '被指派人',
     dataIndex: 'assignedUser',
     key: 'assignedUser',
     flex: 1,
