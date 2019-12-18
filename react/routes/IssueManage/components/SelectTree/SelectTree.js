@@ -125,7 +125,7 @@ function SelectTree(props) {
    * 根据文件名找寻树节点并展开
    * @param {*} value 
    */
-  function handleFilterNode(value) {
+  function onFilterNode(value) {
     const expandedKeys = [];
     dispatch({ type: 'init' });
     dataSet.forEach((record) => {
@@ -146,15 +146,13 @@ function SelectTree(props) {
     }
   }
 
-
   /**
    * 输入回调
    * @param {*} value 
    */
-  function handleInput(value) {
-    // setSearchValue(value);
-    handleFilterNode(value);
-  }
+  const handleInput = _.debounce((value) => {
+    onFilterNode(value);
+  }, 450);
 
   /**
    * 得到树节点 
@@ -234,12 +232,16 @@ function SelectTree(props) {
       <div className="test-select-tree-search">
         <TextField
           placeholder="输入文字以进行过滤 "
-          onInput={e => _.debounce(handleInput, 450).call(this, e.target.value)}
+          onInput={(e) => {
+            handleInput(e.target.value);
+          }}
+          // onChange={_.debounce(handleInput, 300)}
+
           id="onTextField"
           autoFocus
           prefix={<Icon type="search" />}
           readOnly={false}
-          onChange={_.debounce(handleFilterNode, 300)}
+          // onChange={_.debounce(handleFilterNode, 300)}
           // onEnterDown={handleEnd}
           clearButton
           onClear={() => dispatch({ type: 'init' })}
