@@ -864,7 +864,7 @@ ORDER BY
             test_cycle_case tcc
         LEFT JOIN test_status ts on ts.status_id=tcc.execution_status
         LEFT JOIN  test_cycle_case_attach_rel tccar on tccar.attachment_link_id=tcc.execute_id
-        where tcc.execute_id=#{executeId}
+        where tcc.execute_id=#{executeId} GROUP BY execute_id
     </select>
 
     <select id="listAsyncCycleCase" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
