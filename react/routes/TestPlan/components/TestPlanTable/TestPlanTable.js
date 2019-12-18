@@ -1,19 +1,19 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Menu, Card, Button, Icon, 
+  Tooltip, Card, Button, Icon, 
 } from 'choerodon-ui';
 import { Action } from '@choerodon/boot';
 import _ from 'lodash';
 import {
-  SelectFocusLoad, StatusTags, DragTable, SmartTooltip,
+  SelectFocusLoad, StatusTags, DragTable, 
 } from '../../../../components';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
 import './TestPlanTable.less';
-import TableDropMenu from '../../../../common/TableDropMenu';
+
 import Store from '../../stores';
 
 const propTypes = {
@@ -279,4 +279,4 @@ const TestPlanTable = observer(({
   );
 });
 TestPlanTable.propTypes = propTypes;
-export default memo(TestPlanTable);
+export default TestPlanTable;

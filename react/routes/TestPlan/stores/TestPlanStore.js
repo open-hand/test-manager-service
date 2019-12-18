@@ -146,10 +146,10 @@ class TestPlanStore extends TestPlanTreeStore {
      */
     loadAllData = () => {
       this.setLoading(true);
-      return Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList, treeData]) => {
+      return Promise.all([getStatusList('CYCLE_CASE'), this.loadIssueTree()]).then(([statusList]) => {
         this.setLoading(false);
+        this.setStatusList(statusList);
         if (this.getCurrentPlanId) {
-          this.setStatusList(statusList);
           this.loadPlanDetail();
           this.loadExecutes();
           this.loadStatusRes();
