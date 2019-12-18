@@ -9,7 +9,7 @@ import io.choerodon.test.manager.api.vo.TestStatusVO;
  * Created by 842767365@qq.com on 6/25/18.
  */
 public interface TestStatusService {
-    List<TestStatusVO> query(TestStatusVO testStatusVO);
+    List<TestStatusVO> query(Long projectId,TestStatusVO testStatusVO);
 
     TestStatusVO insert(TestStatusVO testStatusVO);
 

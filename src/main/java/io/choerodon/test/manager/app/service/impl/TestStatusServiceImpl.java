@@ -34,7 +34,8 @@ public class TestStatusServiceImpl implements TestStatusService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<TestStatusVO> query(TestStatusVO testStatusVO) {
+    public List<TestStatusVO> query(Long projectId,TestStatusVO testStatusVO) {
+        testStatusVO.setProjectId(projectId);
         return modelMapper.map(testStatusMapper.queryAllUnderProject(modelMapper
                 .map(testStatusVO, TestStatusDTO.class)), new TypeToken<List<TestStatusVO>>() {
         }.getType());

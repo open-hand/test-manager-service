@@ -334,7 +334,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.CANCEL.getTypeValue());
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), "文件夹下无用例");
             throw new CommonException("error.folder.no.has.case");
         }
         int sum = excelCaseVOS.size();
