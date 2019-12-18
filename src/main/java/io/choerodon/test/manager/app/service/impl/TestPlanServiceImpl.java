@@ -398,7 +398,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (!CollectionUtils.isEmpty(testCycleCaseMap.get(testCycleDTO.getCycleId()))) {
             testTreeFolderVO.setHasCase(true);
         } else {
-            testTreeFolderVO.setHasCase(true);
+            testTreeFolderVO.setHasCase(false);
         }
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
