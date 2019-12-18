@@ -19,6 +19,11 @@ const options = {
   autofocus: true,
   theme: 'base16-dark',
 };
+function removeEndsChar(str, char) {
+  if (typeof str !== 'string') return '';
+
+  return str.endsWith(char) ? str.slice(0, -1) : str;
+}
 class ContainerLog extends Component {
   state = {
     visible: false,
@@ -85,8 +90,10 @@ class ContainerLog extends Component {
           editor.setValue(res);
         });
       } else {
-        try { // PRO_DEVOPS_HOST
-          const ws = new WebSocket(`POD_WEBSOCKET_URL/ws/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
+        try { 
+          // eslint-disable-next-line no-underscore-dangle
+          const wsUrl = removeEndsChar(window._env_.DEVOPS_HOST, '/');
+          const ws = new WebSocket(`${wsUrl}/devops/log?key=cluster:${envId}.log:${logId}&env=${'choerodon-test'}&podName=${podName}&containerName=${containerName}&logId=${logId}&token=${authToken}`);
           // console.log(ws);
           this.setState({ ws, following: true });
           if (!followingOK) {
@@ -145,7 +152,8 @@ class ContainerLog extends Component {
             }
           });
         } catch (e) {
-          // console.log(e);
+          // eslint-disable-next-line no-console
+          console.log(e);
           editor.setValue('连接失败');
         }
       }
