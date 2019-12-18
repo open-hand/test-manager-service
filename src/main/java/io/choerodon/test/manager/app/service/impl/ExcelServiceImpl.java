@@ -297,8 +297,6 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId) {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = null;
-        testFileLoadHistoryWithRateVO.setRate(1.0);
-        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         if (retry) {
             TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
             testFileLoadHistoryDTO.setId(fileHistoryId);
