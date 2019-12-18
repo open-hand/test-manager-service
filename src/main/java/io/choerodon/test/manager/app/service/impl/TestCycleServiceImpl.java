@@ -725,7 +725,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
-        testCycleVO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
         cycleMapper.insert(testCycleDTO);
 
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
@@ -983,7 +983,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private String getLastedRank(TestCycleVO testCycleVO) {
-        return cycleMapper.getPlanLastedRank(testCycleVO.getParentCycleId());
+        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId());
     }
 
     private void insertCaseToFolder(Long issueFolderId, Long cycleId) {
