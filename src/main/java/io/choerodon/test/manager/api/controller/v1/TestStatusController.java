@@ -30,7 +30,7 @@ public class TestStatusController {
     @PostMapping("/query")
     public ResponseEntity<List<TestStatusVO>> query(@PathVariable(name = "project_id") Long projectId,
                                                     @RequestBody TestStatusVO testStatusVO) {
-        return Optional.ofNullable(testStatusService.query(testStatusVO))
+        return Optional.ofNullable(testStatusService.query(projectId,testStatusVO))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testStatus.query"));
 
