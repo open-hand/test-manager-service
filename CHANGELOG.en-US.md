@@ -2,6 +2,18 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [0.20.0] - 2019-12-20
+
+### Add
+
+- Remove strong association between use case and version
+- By removing the hierarchical constraints of use case folders, users can create infinite use case folders, which enables users to more flexibly partition use cases.
+- Plan and execution are combined to facilitate testers to manage test plans more intuitively.
+- The new version of test plan supports automatic synchronization of use cases, which is convenient for users to quickly synchronize use cases to plan execution.
+- Test plan supports updating content from use case to test plan according to own needs.
+- Test plan adds a test overview to facilitate testers to quickly understand the test status of the plan
+- Remove association between automated tests and use cases
+
 
 ## [0.16.0] - 2019-04-19
 
