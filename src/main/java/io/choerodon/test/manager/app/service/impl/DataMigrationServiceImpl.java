@@ -235,7 +235,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
                     break;
             }
             t.setAutoSync(false);
-            t.setInitStatus("done");
+            t.setInitStatus(TestPlanInitStatus.SUCCESS);
             testPlanMapper.insert(t);
             fixCycle(t.getVersionId(), t.getPlanId());
         }
@@ -378,7 +378,6 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             testPlanDTO.setPlanId(testVersionFixVO.getVersionId());
             testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate():testVersionFixVO.getReleaseDate());
             testPlanDTO.setStartDate(testVersionFixVO.getStartDate()==null?testVersionFixVO.getReleaseDate():testVersionFixVO.getStartDate());
-            testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
             return testPlanDTO;
     }
 }
