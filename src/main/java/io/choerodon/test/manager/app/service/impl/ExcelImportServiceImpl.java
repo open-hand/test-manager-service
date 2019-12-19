@@ -133,12 +133,18 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
 
-        // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
-
+        if(ObjectUtils.isEmpty(testCasesSheet)){
+            logger.info("错误的模板文件");
+            // 更新创建历史记录
+            testFileLoadHistoryDTO.setMessage("错误的模板文件");
+            finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
+            return;
+        }
         //测试用例页为空，则更新文件导入历史之后直接返回
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
             // 更新创建历史记录
+            testFileLoadHistoryDTO.setMessage("空模板");
             finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
             return;
         }
@@ -368,9 +374,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private boolean isEmptyTemp(Sheet sheet) {
-        if(ObjectUtils.isEmpty(sheet)){
-            return true;
-        }
         Iterator<Row> iterator = sheet.rowIterator();
         if (!iterator.hasNext()) {
             return true;
@@ -538,7 +541,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = modelMapper
                 .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
         testFileLoadHistoryWithRateVO.setRate(rate);
-        notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
+            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), testFileLoadHistoryWithRateVO.getMessage());
+        }else {
+            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        }
 
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {
