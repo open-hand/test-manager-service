@@ -123,6 +123,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateFolder() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        logger.info("=======================>>>project number:{}===============>>>{}", projectIdList.size(), projectIdList);
         for (Long projectFolderId : projectIdList) {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
             Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e -> e.getName() != null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
@@ -147,6 +148,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateIssue() {
         List<Long> projectIds = testIssueFolderService.queryProjectIdList();
+        logger.info("=======================>>>project number:{}===============>>>{}", projectIds.size(), projectIds);
         for (Long projectId : projectIds) {
             List<TestCaseMigrateDTO> testCaseMigrateDTOS = dataFixFeignClient.migrateTestCase(projectId).getBody();
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
