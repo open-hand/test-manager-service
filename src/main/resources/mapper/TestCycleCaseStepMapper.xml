@@ -290,7 +290,10 @@
         tccs.execute_id,
         tccs.test_step,
         tccs.test_data,
+        tccs.step_id,
         tccs.rank,
+        tccs.description,
+        tccs.step_status,
         tccs.expect_result as expectedResult,
         tccs.object_version_number
         from test_cycle_case_step tccs
