@@ -57,6 +57,9 @@ public class TestCaseStepDTO extends BaseDTO {
     @Transient
     private List<TestCycleCaseAttachmentRelDTO> attachments;
 
+    @Transient
+    private Long cycleCaseStepId;
+
     public void setId(Long id) {
         stepId = id;
     }
@@ -147,5 +150,13 @@ public class TestCaseStepDTO extends BaseDTO {
     }
 
     public TestCaseStepDTO() {
+    }
+
+    public Long getCycleCaseStepId() {
+        return cycleCaseStepId;
+    }
+
+    public void setCycleCaseStepId(Long cycleCaseStepId) {
+        this.cycleCaseStepId = cycleCaseStepId;
     }
 }

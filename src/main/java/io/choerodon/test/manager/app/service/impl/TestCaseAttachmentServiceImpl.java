@@ -259,7 +259,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             List<String> olderFileNames = testCaseAttachmentDTOS.stream().map(TestCaseAttachmentDTO::getFileName).collect(Collectors.toList());
             List<String> addFileName = new ArrayList<>();
             List<TestCaseAttachmentDTO> needAdd = caseAttachDTOS.stream()
-                    .filter(v -> olderFileNames.contains(v.getFileName()))
+                    .filter(v -> !olderFileNames.contains(v.getFileName()))
                     .map(testCaseAttachmentDTO -> {
                         addFileName.add(testCaseAttachmentDTO.getFileName());
                         return testCaseAttachmentDTO;
