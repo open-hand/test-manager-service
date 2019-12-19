@@ -1314,7 +1314,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
         for (Map.Entry<Long, List<TestCycleDTO>> map : listMap.entrySet()
         ) {
-            String prevRank = RankUtil.Operation.INSERT.getRank(cycleMapper.getPlanLastedRank(map.getKey()), null);
+            String prevRank = null;
             if (!CollectionUtils.isEmpty(map.getValue())) {
                 for (TestCycleDTO testCycleDTO : map.getValue()) {
                     testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
