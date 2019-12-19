@@ -348,7 +348,13 @@ public class TestCaseServiceImpl implements TestCaseService {
 
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-           testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,true,false,false);
+           if(ObjectUtils.isEmpty(testCaseRepVO.getExecuteId())){
+               testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,true,false,false);
+           }
+           else {
+               List<TestCycleCaseDTO> collect = testCycleCaseDTOS.stream().filter(v -> !testCaseRepVO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
+               testCaseAssembler.AutoAsyncCase(collect,true,false,false);
+           }
         }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
@@ -518,8 +524,8 @@ public class TestCaseServiceImpl implements TestCaseService {
             testIssueFolderDTOS.forEach(v -> queryAllFolderIds(v.getFolderId(), folderIds, folderMap));
         }
     }
-
-    private TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO) {
+    @Override
+    public TestCaseDTO baseUpdate(TestCaseDTO testCaseDTO) {
         if (ObjectUtils.isEmpty(testCaseDTO) || ObjectUtils.isEmpty(testCaseDTO.getCaseId())) {
             throw new CommonException("error.case.is.not.null");
         }

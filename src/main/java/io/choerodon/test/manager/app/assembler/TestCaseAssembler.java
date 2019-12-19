@@ -97,11 +97,12 @@ public class TestCaseAssembler {
                 baseDTO.setCreatedBy(assignedTo);
                 Map<Long, UserMessageDTO> userMap1 = getUserMap(baseDTO, null);
                 testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
+                userMap.putAll(userMap1);
             }
             testFolderCycleCaseVO.setAssignedUser(userMessage);
         }
         UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
-        if(ObjectUtils.isEmpty(updateUser)){
+        if(!ObjectUtils.isEmpty(updateUser)){
             testFolderCycleCaseVO.setLastUpdateUser(updateUser);
         }
         return testFolderCycleCaseVO;

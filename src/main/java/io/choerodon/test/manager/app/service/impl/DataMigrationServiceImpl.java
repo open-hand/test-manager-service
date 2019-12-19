@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -122,11 +123,12 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateFolder() {
         List<Long> projectIdList = testIssueFolderService.queryProjectIdList();
+        logger.info("=======================>>>project number:{}===============>>>{}", projectIdList.size(), projectIdList);
         for (Long projectFolderId : projectIdList) {
             List<ProductVersionDTO> productVersionDTOList = productionVersionClient.listByProjectId(projectFolderId).getBody();
             Map<Long, String> versionNameMap = productVersionDTOList.stream().filter(e -> e.getName() != null).collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
             List<Long> versionIds = testIssueFolderMapper.selectVersionIdList(projectFolderId);
-            versionIds.forEach(versionId -> {
+            for (Long versionId : versionIds) {
                 String folderName = versionNameMap.get(versionId);
                 TestIssueFolderVO newFolderVO = new TestIssueFolderVO();
                 newFolderVO.setName(folderName == null || Objects.equals(folderName, "") ? "test" : folderName);
@@ -138,7 +140,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
                 testIssueFolderMapper.updateByVersionId(projectFolderId, versionId, testIssueFolderVO.getFolderId());
 
-            });
+            }
             logger.info("============issueFolder=================>project:{} copy successed", projectFolderId);
         }
         logger.info("============issueFolder=================> copy successed");
@@ -146,6 +148,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
 
     private void migrateIssue() {
         List<Long> projectIds = testIssueFolderService.queryProjectIdList();
+        logger.info("=======================>>>project number:{}===============>>>{}", projectIds.size(), projectIds);
         for (Long projectId : projectIds) {
             List<TestCaseMigrateDTO> testCaseMigrateDTOS = dataFixFeignClient.migrateTestCase(projectId).getBody();
             for (TestCaseMigrateDTO testCaseMigrateDTO : testCaseMigrateDTOS) {
@@ -375,6 +378,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
             testPlanDTO.setPlanId(testVersionFixVO.getVersionId());
             testPlanDTO.setEndDate(testVersionFixVO.getReleaseDate() == null ? testVersionFixVO.getExpectReleaseDate():testVersionFixVO.getReleaseDate());
             testPlanDTO.setStartDate(testVersionFixVO.getStartDate()==null?testVersionFixVO.getReleaseDate():testVersionFixVO.getStartDate());
+            testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
             return testPlanDTO;
     }
 }
