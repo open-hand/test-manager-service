@@ -236,7 +236,38 @@ function TestPlanHome({ history }) {
     description = '当前项目下无已完成的计划';
   }
   return (
-    <Page className={prefixCls}>
+    <Page
+      className={prefixCls}
+      service={[
+        'test-service.test-status.query',
+        'test-service.test-plan.queryTree',
+        'test-service.test-plan.queryInfo',
+        'test-service.test-plan.create',
+        'test-service.test-plan.query',
+        'test-service.test-plan.deletePlan',
+        'test-service.test-plan.clonePlan',
+        'test-service.test-plan.updateStatus',
+        'test-service.test-plan.allPlan',
+        'test-service.test-plan.formStatus',
+        'test-service.test-issue-folder.query',
+        'test-service.test-case.listCaseByFolderId',
+        'test-service.test-cycle-case.update',
+        'base-service.project-user.listProjectUsersByProjectIdAndRoleLable',
+        'base-service.project.list',
+        'test-service.test-cycle.insert',
+        'test-service.test-cycle.update',
+        'test-service.test-cycle.batchChangeAssignedInOneCycle',
+        'test-service.test-cycle.queryLatestLoadHistory',
+        'test-service.test-cycle-case.importCase',
+        'test-service.test-cycle.moveFolder',
+        'test-service.test-cycle-case.delete',
+        'test-service.test-cycle-case.listCaseByCycleId',
+        'test-service.test-cycle-case.ignoreUpdate',
+        'test-service.test-cycle-case.updateCompare',
+        'test-service.test-cycle-case.selectUpdateCompare',
+        'test-service.test-cycle-case.queryExecutionStatus',
+      ]}
+    >
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >

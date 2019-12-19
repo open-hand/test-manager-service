@@ -5,7 +5,7 @@ import {
 } from '@choerodon/boot';
 import moment from 'moment';
 import {
-  Icon, Button, Table, Select, Menu, Dropdown, 
+  Icon, Button, Table, Select, Menu, Dropdown,
 } from 'choerodon-ui';
 import TimeAgo from 'timeago-react';
 import { FormattedMessage } from 'react-intl';
@@ -48,7 +48,7 @@ const AutoTestList = ({
       </MenuItem>
       <MenuItem key="retry">
         重新执行
-      </MenuItem>      
+      </MenuItem>
       <MenuItem key="report" disabled={!record.resultId}>
         测试报告
       </MenuItem>
@@ -98,13 +98,13 @@ const AutoTestList = ({
     dataIndex: 'createUser',
     key: 'createUser',
     render: createUser => <User user={createUser} />,
-  }, 
+  },
   {
     title: '测试框架',
     dataIndex: 'framework',
     key: 'framework',
     filters: [],
-  }, 
+  },
   {
     title: '应用版本',
     dataIndex: 'version',
@@ -115,7 +115,7 @@ const AutoTestList = ({
       const { appVersionName } = testAppInstanceVO || {};
       return <span>{appVersionName}</span>;
     },
-  }, 
+  },
   {
     title: '时长',
     dataIndex: 'during',
@@ -127,7 +127,7 @@ const AutoTestList = ({
         ? humanizeDuration(diff)
         : null;
     },
-  }, 
+  },
   {
     title: '执行时间',
     dataIndex: 'creationDate',
@@ -138,7 +138,7 @@ const AutoTestList = ({
         locale={Choerodon.getMessage('zh_CN', 'en')}
       />
     ),
-  }, 
+  },
   {
     title: '测试结果',
     dataIndex: 'testStatus',
@@ -147,7 +147,17 @@ const AutoTestList = ({
     render: testStatus => TestResult(testStatus),
   }];
   return (
-    <Page className="c7ntest-AutoTestList">
+    <Page
+      className="c7ntest-AutoTestList"
+      service={[
+        'devops-service.app-service.pageByOptions',
+        'devops-service.devops-environment.listDevopsClusters',
+        'test-service.test-automation-history.queryWithInstance',
+        'test-service.test-app-instance.queryValues',
+        'test-service.test-app-instance.deploy',
+        'test-service.test-automation-history.queryLog',
+      ]}
+    >
       <Header title={<FormattedMessage id="autotestlist_title" />}>
         <Button onClick={toCreateAutoTest}>
           <Icon type="playlist_add icon" />

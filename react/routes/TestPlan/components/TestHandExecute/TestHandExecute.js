@@ -288,7 +288,34 @@ function TestHandExecute(props) {
       summary, nextExecuteId, previousExecuteId, planStatus = 'done',
     } = detailData;
     return (
-      <Page className="c7n-test-execute-detail">
+      <Page
+        className="c7n-test-execute-detail"
+        service={[
+          'test-service.test-status.query',
+          'test-service.test-cycle-case-history.query',
+          'test-service.test-cycle-case.queryCaseInfo',
+          'test-service.test-cycle-case-step.querySubStep',
+          'agile-service.issue-attachment.uploadForAddress',
+          'test-service.test-cycle-case.updateCaseAndStep',
+          'test-service.test-attachment.uploadFile',
+          'test-service.test-attachment.removeAttachment',
+          'test-service.test-cycle-case.queryCaseAndStep',
+          'test-service.test-cycle-case-step.update',
+          'test-service.test-cycle-case-defect-rel.removeAttachment',
+          'test-service.test-cycle-case.update',
+          'test-service.test-cycle-case-defect-rel.insert',
+          'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
+          'test-service.test-cycle-case-defect-rel.createIssueAndLinkDefect',
+          'base-service.project.list',
+          'agile-service.issue.listEpicSelectData',
+          'agile-service.sprint.queryNameByOptions',
+          'agile-service.issue.queryIssueByOptionForAgile',
+          'agile-service.issue-link-type.listIssueLinkType',
+          'agile-service.field-value.queryPageFieldViewList',
+          'agile-service.scheme.queryByOrganizationIdList',
+          'agile-service.issue-attachment.uploadAttachment',
+        ]}
+      >
         <Header
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}

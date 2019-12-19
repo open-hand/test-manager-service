@@ -102,7 +102,7 @@ export function deleteFile(id) {
   return request.delete(`test/v1/projects/${getProjectId()}/test/case/attachment/${id}`);
 }
 /**
- *删除附件(测试步骤附件)
+ *删除附件(测试步骤附件 废弃)
  *
  * @export
  * @param {*} id

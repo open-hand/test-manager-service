@@ -7,7 +7,7 @@ import { getProjectId, request } from '../common/utils';
  * @param {*} data 
  */
 export function updateDetail(data) {
-  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_case?isAsync=false`, data);
+  return request.put(`test/v1/projects/${getProjectId()}/cycle/case/cycle_case`, data);
 }
 /**
  * 更新执行用例详情（用于弹窗修改内容）
