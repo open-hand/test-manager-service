@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Card, Button, Icon, 
+  Tooltip, Card, Button, Icon,
 } from 'choerodon-ui';
 import { Action } from '@choerodon/boot';
 import _ from 'lodash';
 import {
-  SelectFocusLoad, StatusTags, DragTable, 
+  SelectFocusLoad, StatusTags, DragTable,
 } from '../../../../components';
 import CustomCheckBox from '../../../../components/CustomCheckBox';
 import User from '../../../../components/User';
@@ -38,7 +38,7 @@ const TestPlanTable = observer(({
   onSearchAssign,
   onOpenUpdateRemind,
 }) => {
-  const { 
+  const {
     testPlanStore,
   } = useContext(Store);
 
@@ -50,14 +50,14 @@ const TestPlanTable = observer(({
     <span style={{ display: 'flex', alignItems: 'center' }}>
       <Tooltip title={text}><span style={{ cursor: 'pointer', maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
       <Tooltip title="此用例需更新">
-        <span 
+        <span
           style={
-            { 
-              display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none', 
+            {
+              display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 46, 
-              height: 20, 
+              width: 46,
+              height: 20,
               background: '#fff',
               marginLeft: 3,
               fontSize: 12,
@@ -105,7 +105,7 @@ const TestPlanTable = observer(({
           ) : (
             <span style={{ display: 'flex', alignItems: 'center' }}>
               <Icon style={{ color: '#4D90FE', fontSize: 20 }} type="test-case" />
-              手动测试
+                手动测试
             </span>
           )}
         </div>
@@ -142,13 +142,27 @@ const TestPlanTable = observer(({
       );
     },
   }, {
+    title: '执行人',
+    dataIndex: 'lastUpdateUser',
+    key: 'lastUpdateUser',
+    flex: 1,
+    render(lastUpdateUser) {
+      return (
+        <div
+          className="c7ntest-text-dot"
+        >
+          <User user={lastUpdateUser} />
+        </div>
+      );
+    },
+  }, {
     title: <FormattedMessage id="cycle_updatedDate" />,
     dataIndex: 'lastUpdateDate',
     key: 'lastUpdateDate',
     flex: 1.5,
     style: {
       overflow: 'hidden',
-    },   
+    },
     render(lastUpdateDate) {
       return (
         <div
