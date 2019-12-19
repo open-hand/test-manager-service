@@ -128,13 +128,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Override
     public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook) {
         // 默认是导入到导入文件夹，不存在则创建
-//        TestIssueFolderDTO testIssueFolderDTO = getFolder(projectId, versionId, "导入");
-//        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, testIssueFolderDTO.getFolderId(), userId);
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
-        if(ObjectUtils.isEmpty(testCasesSheet)){
-            notifyService.postWebSocket(IMPORT_ERROR, userId.toString(), "错误的模板");
-            throw new CommonException("error.template.file ");
-        }
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
@@ -145,7 +139,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
             // 更新创建历史记录
-            finishImport(testFileLoadHistoryDTO, userId, status);
+            finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
             return;
         }
 
@@ -374,6 +368,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     }
 
     private boolean isEmptyTemp(Sheet sheet) {
+        if(ObjectUtils.isEmpty(sheet)){
+            return true;
+        }
         Iterator<Row> iterator = sheet.rowIterator();
         if (!iterator.hasNext()) {
             return true;
