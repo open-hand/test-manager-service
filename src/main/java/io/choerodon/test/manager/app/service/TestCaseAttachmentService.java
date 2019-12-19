@@ -2,7 +2,9 @@ package io.choerodon.test.manager.app.service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 
 /**
  * @author zhaotianxin
@@ -39,4 +41,8 @@ public interface TestCaseAttachmentService {
     void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS,List<String> fileNames);
 
     void deleteByCaseId(Long caseId, List<String> collect);
+
+    List<TestCaseAttachmentDTO> listByCaseId(Long caseId);
+
+    void asynAttachToCase(List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS, TestCaseDTO testCaseDTO, Long executeId);
 }
