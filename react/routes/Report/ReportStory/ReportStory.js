@@ -544,7 +544,16 @@ class ReportStory extends Component {
     }];
 
     return (
-      <Page className="c7ntest-report-story">
+      <Page className="c7ntest-report-story"
+        // service={[
+        //   'test-service.test-case.createFormsFromIssueToDefect',
+        //   'test-service.test-status.query',
+        //   'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
+        //   'agile-service.scheme.queryStatusByProjectId',
+        //   'agile-service.product-version.listByProjectId',
+        //   'agile-service.sprint.queryNameByOptions',
+        // ]}
+      >
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}
           backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}
