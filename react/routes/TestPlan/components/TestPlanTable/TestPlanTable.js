@@ -268,7 +268,7 @@ const TestPlanTable = observer(({
           <SelectFocusLoad
             allowClear
             style={{ width: 216, marginLeft: 10 }}
-            placeholder="执行人"
+            placeholder="被指派人"
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
             onChange={onSearchAssign}
