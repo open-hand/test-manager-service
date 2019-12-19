@@ -62,7 +62,7 @@ public class TestManagerEventHandler {
     @SagaTask(code = TASK_PROJECT_CREATE,
             description = "test消费创建项目事件初始化项目数据",
             sagaCode = PROJECT_CREATE,
-            seq = 2)
+            seq = 3)
     public String handleProjectInitByConsumeSagaTask(String message) {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
