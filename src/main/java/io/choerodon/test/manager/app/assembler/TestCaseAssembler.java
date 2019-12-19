@@ -99,7 +99,9 @@ public class TestCaseAssembler {
                 testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
                 userMap.putAll(userMap1);
             }
-            testFolderCycleCaseVO.setAssignedUser(userMessage);
+            else {
+                testFolderCycleCaseVO.setAssignedUser(userMessage);
+            }
         }
         UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
         if(!ObjectUtils.isEmpty(updateUser)){
@@ -250,7 +252,8 @@ public class TestCaseAssembler {
         testCaseStepDTO.setIssueId(testCaseDTO.getCaseId());
         testCaseStepDTO.setLastUpdatedBy(userDetails.getUserId());
         testCaseStepDTO.setCreatedBy(userDetails.getUserId());
-        testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(), 8));
+        testCaseStepDTO.setRank(testCycleCaseStepDTO.getRank());
+        testCaseStepDTO.setCycleCaseStepId(testCycleCaseStepDTO.getExecuteStepId());
         return testCaseStepDTO;
     }
 
