@@ -405,7 +405,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void finishImport(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, TestFileLoadHistoryEnums.Status status) {
         testFileLoadHistoryDTO.setLastUpdateDate(new Date());
         testFileLoadHistoryDTO.setStatus(status.getTypeValue());
-        testFileLoadHistoryMapper.updateByPrimaryKey(testFileLoadHistoryDTO);
+        if(testFileLoadHistoryMapper.updateByPrimaryKey(testFileLoadHistoryDTO)!=1){
+            throw new CommonException("error.update.file.history");
+        }
 
         updateProgress(testFileLoadHistoryDTO, userId, 100.0);
     }
