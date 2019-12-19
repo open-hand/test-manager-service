@@ -125,6 +125,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private TestCaseAttachmentService testCaseAttachmentService;
 
     @Autowired
+    private IIssueAttachmentService iIssueAttachmentService;
+
+    @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
     @Override
@@ -883,6 +886,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCaseRepVO.setSummary(testCycleCaseDTO.getSummary());
                 testCaseRepVO.setDescription(testCycleCaseDTO.getDescription());
                 testCaseRepVO.setObjectVersionNumber(testCaseDTO.getObjectVersionNumber());
+                testCaseRepVO.setExecuteId(testCycleCaseDTO.getExecuteId());
                 List<String> fieldList = verifyUpdateUtil.verifyUpdateData((JSONObject) JSON.toJSON(testCaseRepVO), testCaseRepVO);
                 testCaseService.updateCase(testCaseDTO.getProjectId(), testCaseRepVO, fieldList.toArray(new String[fieldList.size()]));
                 testCycleCaseDTO.setVersionNum(testCaseDTO.getVersionNum() + 1);
@@ -890,13 +894,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             }
             if (caseCompareRepVO.getChangeAttach()) {
                 List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = testCycleCaseAttachmentRelService.listByExecuteId(caseCompareRepVO.getExecuteId());
-                List<String> collect = testCycleCaseAttachmentRelVOS.stream().map(TestCycleCaseAttachmentRelVO::getAttachmentName).collect(Collectors.toList());
-                testCaseAttachmentService.deleteByCaseId(caseCompareRepVO.getCaseId(), collect);
-                if (CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)) {
-                    return;
-                }
-                List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
-                testCaseAttachmentService.batchInsert(caseAttachDTOS, collect);
+                testCaseAttachmentService.asynAttachToCase(testCycleCaseAttachmentRelVOS,testCaseDTO,testCycleCaseDTO.getExecuteId());
+
             }
             if (caseCompareRepVO.getChangeStep()) {
                 testCaseStepMapper.deleteByCaseId(caseCompareRepVO.getCaseId());
@@ -906,7 +905,19 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 }
                 List<TestCaseStepDTO> stepDTOS = cycleCaseStepDTOS.stream().map(v -> testCaseAssembler.cycleStepToCaseStep(v, testCaseDTO, userDetails)).collect(Collectors.toList());
                 testCaseStepMapper.batchInsertTestCaseSteps(stepDTOS);
+
+                List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
+                if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+                    if(ObjectUtils.isEmpty(testCycleCaseDTO.getExecuteId())){
+                        testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+                    }
+                    else {
+                        List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !testCycleCaseDTO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
+                        testCaseAssembler.AutoAsyncCase(list,false,true,false);
+                    }
+                }
             }
+
         }
     }
 
@@ -1027,22 +1038,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             throw new CommonException("folder.not.bottom");
         }
     }
-
-    private TestCaseAttachmentDTO cycleAttachVoToDTO(TestCaseDTO testCaseDTO, TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO, CustomUserDetails userDetails) {
-        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
-        testCaseAttachmentDTO.setCaseId(testCaseDTO.getCaseId());
-        testCaseAttachmentDTO.setLastUpdatedBy(userDetails.getUserId());
-        testCaseAttachmentDTO.setCreatedBy(userDetails.getUserId());
-        testCaseAttachmentDTO.setFileName(testCycleCaseAttachmentRelVO.getAttachmentName());
-        String url = testCycleCaseAttachmentRelVO.getUrl();
-        url = url.replace("http://", "").replace("https://", "");
-        int index = url.indexOf("/");
-        String newUrl = url.substring(index);
-        testCaseAttachmentDTO.setUrl(newUrl);
-        testCaseAttachmentDTO.setProjectId(testCaseDTO.getProjectId());
-        return testCaseAttachmentDTO;
-    }
-
 
     private TestCycleCaseVO dtoToVo(TestCycleCaseDTO testCycleCaseDTO, TestCycleDTO testCycleDTO) {
         TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
