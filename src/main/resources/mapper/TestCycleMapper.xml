@@ -323,7 +323,7 @@
     </update>
 
     <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
-        SELECT b.cycle_id,b.cycle_name,b.parent_cycle_id,b.rank,b.plan_id,a.caseCount
+        SELECT b.*,a.caseCount
         from test_cycle b,
         (SELECT
         tc.cycle_id,
