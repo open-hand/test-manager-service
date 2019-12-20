@@ -1,15 +1,15 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.choerodon.test.manager.api.vo.agile.IssueInfoDTO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import com.google.common.collect.Lists;
 
-import io.choerodon.test.manager.api.vo.IssueInfosVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
@@ -141,15 +137,15 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
         List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
         if (res != null && !res.isEmpty()) {
-            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
-            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
-            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
-            res.forEach(testCycleCaseDTO -> {
-                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
-                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
-                testCycleCaseVOList.add(testCycleCaseVO);
-            });
-            return testCycleCaseVOList;
+//            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
+//            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
+//            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
+//            res.forEach(testCycleCaseDTO -> {
+//                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
+//                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
+//                testCycleCaseVOList.add(testCycleCaseVO);
+//            });
+            return modelMapper.map(res, new TypeToken<List<TestCycleCaseVO>>() {}.getType());
         } else {
             return new ArrayList<>();
         }
