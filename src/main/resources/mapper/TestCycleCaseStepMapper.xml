@@ -313,4 +313,16 @@
         ORDER BY
             rank
     </select>
+
+    <select id="countByExecuteIds" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        test_cycle_case_step
+        where
+        execute_id in
+        <foreach collection="list" item="executeId" open="(" close=")" separator=",">
+            #{executeId}
+        </foreach>
+    </select>
 </mapper>
