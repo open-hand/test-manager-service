@@ -45,9 +45,9 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
 
     changeSet(id: '2019-11-27-add-column', author: 'zhaotianxin') {
         addColumn(tableName:'test_cycle_case_step'){
-            column(name:'test_step',type:'varchar(300)',remarks: '测试步骤')
-            column(name:'test_data',type:'varchar(300)',remarks: '测试数据')
-            column(name:'expect_result',type:'varchar(300)',remarks: '预期结果')
+            column(name:'test_step',type:'TEXT',remarks: '测试步骤')
+            column(name:'test_data',type:'TEXT',remarks: '测试数据')
+            column(name:'expect_result',type:'TEXT',remarks: '预期结果')
         }
     }
 
@@ -57,9 +57,5 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
         }
     }
 
-    changeSet(author: 'zhaotianxin', id: '2019-12-20-change_column_type') {
-        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'test_step', newDataType: "TEXT")
-        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'test_data', newDataType: "TEXT")
-        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'expect_result', newDataType: "TEXT")
-    }
+
 }
