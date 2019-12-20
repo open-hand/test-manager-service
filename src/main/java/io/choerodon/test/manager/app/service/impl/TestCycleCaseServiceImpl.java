@@ -131,6 +131,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
+
+
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
         TestCycleCaseVO dto = new TestCycleCaseVO();
@@ -1027,7 +1029,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             // 复制步骤
             testCycleCaseStepService.cloneStep(caseIdMap, olderExecuteIds);
             // 复制附件
-            testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteIds);
+            testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteIds,"CYCLE_CASE");
         }
     }
 
