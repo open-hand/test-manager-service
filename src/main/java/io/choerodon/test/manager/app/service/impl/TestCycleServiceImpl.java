@@ -796,10 +796,12 @@ public class TestCycleServiceImpl implements TestCycleService {
         return endCycle;
     }
 
+
     private void findChildren(Map<Long, List<TestIssueFolderDTO>> parentMap, Long folderId, Map<Long, List<TestIssueFolderDTO>> collect) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = collect.get(folderId);
         if(!CollectionUtils.isEmpty(testIssueFolderDTOS)){
-            parentMap.put(folderId,testIssueFolderDTOS);
+            List<TestIssueFolderDTO> list = testIssueFolderDTOS.stream().sorted(Comparator.comparing(TestIssueFolderDTO::getRank)).collect(Collectors.toList());
+            parentMap.put(folderId,list);
             testIssueFolderDTOS.forEach(v -> findChildren(parentMap,v.getFolderId(),collect));
         }
     }
@@ -829,6 +831,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
         testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setRank(testCycleDTO.getRank());
         return testIssueFolderVO;
     }
 
