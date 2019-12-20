@@ -45,10 +45,9 @@ const TestPlanTable = observer(({
   const {
     tableLoading, statusList, executePagination, testList, checkIdMap, testPlanStatus,
   } = testPlanStore;
-
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
-    <span style={{ display: 'flex', alignItems: 'center' }}>
-      <Tooltip title={text}><span style={{ cursor: 'pointer', maxWidth: testPlanStatus === 'todo' ? '2rem' : '1.5rem' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
+    <span style={{ display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
+      <Tooltip title={text}><span style={{ cursor: 'pointer' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
       <Tooltip title="此用例需更新">
         <span
           style={
@@ -126,6 +125,9 @@ const TestPlanTable = observer(({
     key: 'summary',
     filters: [],
     flex: 2,
+    style: {
+      overflow: 'hidden',
+    },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
     title: '被指派人',

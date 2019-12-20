@@ -187,13 +187,14 @@ class TestPlanStore extends TestPlanTreeStore {
       const executes = await getExecutesByFolder({
         planId, folderId, current, pageSize, search, orderField, orderType, 
       });
-      this.setTableLoading(false);
-      this.setTestList(executes.list || []);
+      
+      this.setTestList(executes.list || []);      
       this.setExecutePagination({
         current: executePagination.current,
         pageSize: executePagination.pageSize,
         total: executes.total,
       });
+      this.setTableLoading(false);
     }
 
     /**

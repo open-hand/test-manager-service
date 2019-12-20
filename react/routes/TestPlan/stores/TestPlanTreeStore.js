@@ -129,7 +129,7 @@ class TestPlanTreeStore {
         };
       })) || [],
     };
-    window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
+    // window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
       this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
