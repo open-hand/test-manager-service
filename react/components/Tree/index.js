@@ -2,7 +2,7 @@ import React, {
   useState, useEffect, useCallback, useMemo, useImperativeHandle, forwardRef,
 } from 'react';
 import PropTypes from 'prop-types';
-import { Choerodon } from '@choerodon/boot';
+import { find } from 'lodash';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -205,6 +205,9 @@ function PureTree({
             name: undefined,
           },
         };
+        if (find(tree.items, { id: 'new' })) {
+          return; 
+        }
         setTree(oldTree => addItem(oldTree, node, newChild));
         break;
       }
@@ -212,7 +215,7 @@ function PureTree({
         onMenuClick(key, node);
         break;
     }
-  }, [handleDelete, onMenuClick]);
+  }, [handleDelete, onMenuClick, tree.items]);
   const handleCreate = async (value, path, item) => {
     if (value.trim()) {
       try {
