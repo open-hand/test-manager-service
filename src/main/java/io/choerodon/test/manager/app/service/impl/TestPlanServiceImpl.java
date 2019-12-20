@@ -475,7 +475,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if(!CollectionUtils.isEmpty(unSelectCaseIds) && !CollectionUtils.isEmpty(unSelectFolderIds)){
             caseIds.addAll(testCaseMapper.listUnSelectCaseId(testPlanVO.getProjectId(),unSelectCaseIds,unSelectFolderIds));
         }
-        if(CollectionUtils.isEmpty(allSelectFolderIds)){
+        if(!CollectionUtils.isEmpty(allSelectFolderIds)){
             caseIds.addAll(testCaseMapper.listCaseIds(testPlanVO.getProjectId(),allSelectFolderIds,null));
         }
     }

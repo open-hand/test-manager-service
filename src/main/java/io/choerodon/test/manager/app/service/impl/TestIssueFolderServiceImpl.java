@@ -234,8 +234,14 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     @Override
     public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
-        Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
-        Map<Long,TestIssueFolderDTO> map = new HashMap<>();
+        Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream()
+                .map(v -> {
+                    if(ObjectUtils.isEmpty(v.getParentId())){
+                        v.setParentId(v.getParentId());
+                    }
+                    return v;
+                }).collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        Map<Long,TestIssueFolderDTO> map = new TreeMap<>();
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
         List<TestIssueFolderDTO> collect = map.values().stream().collect(Collectors.toList());
         return collect;
