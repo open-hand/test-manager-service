@@ -243,45 +243,18 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     @Override
     public void asynAttachToCase(List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS, TestCaseDTO testCaseDTO, Long executeId) {
+        testAttachmentMapper.deleteByCaseId(testCaseDTO.getCaseId());
+        if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
+          return;
+        }
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCaseAttachmentDTO> testCaseAttachmentDTOS = listByCaseId(testCaseDTO.getCaseId());
-        List<String> collect = testCycleCaseAttachmentRelVOS.stream().map(TestCycleCaseAttachmentRelVO::getAttachmentName).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(testCaseAttachmentDTOS) && !CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
-            List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
-            batchInsert(caseAttachDTOS, collect);
-        }
-        else if (!CollectionUtils.isEmpty(testCaseAttachmentDTOS) && CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
-            deleteByCaseId(testCaseDTO.getCaseId(), collect);
-        }
-        else if (!CollectionUtils.isEmpty(testCaseAttachmentDTOS) && !CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
-            List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
-            List<String> newFileNames = caseAttachDTOS.stream().map(TestCaseAttachmentDTO::getFileName).collect(Collectors.toList());
-            List<String> olderFileNames = testCaseAttachmentDTOS.stream().map(TestCaseAttachmentDTO::getFileName).collect(Collectors.toList());
-            List<String> addFileName = new ArrayList<>();
-            List<TestCaseAttachmentDTO> needAdd = caseAttachDTOS.stream()
-                    .filter(v -> !olderFileNames.contains(v.getFileName()))
-                    .map(testCaseAttachmentDTO -> {
-                        addFileName.add(testCaseAttachmentDTO.getFileName());
-                        return testCaseAttachmentDTO;
-                    })
-                    .collect(Collectors.toList());
-            batchInsert(caseAttachDTOS, addFileName);
+        List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
+        testAttachmentMapper.batchInsert(caseAttachDTOS);
 
-            testCaseAttachmentDTOS.stream()
-                    .filter(v -> !newFileNames.contains(v.getFileName()))
-                    .forEach(v -> {
-                        iIssueAttachmentService.deleteBase(v.getAttachmentId());
-                    });
-        }
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            if(ObjectUtils.isEmpty(executeId)){
-                testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,false,true);
-            }
-            else {
-                List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
-                testCaseAssembler.AutoAsyncCase(list,false,false,true);
-            }
+            List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
+            testCaseAssembler.AutoAsyncCase(list,false,false,true);
         }
     }
 
