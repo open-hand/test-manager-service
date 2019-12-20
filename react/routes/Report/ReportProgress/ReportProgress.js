@@ -139,7 +139,7 @@ class ReportProgress extends Component {
           />
           <div className="c7ntest-tableContainer">
             <p className="c7ntest-table-title"><FormattedMessage id="report_progress_table_title" /></p>
-            <div style={{ overflowY: 'scroll', maxHeight: 300 }}>
+            <div style={{ overflowY: 'scroll', flex: 1 }}>
               <table>
                 <tr>
                   <td style={{ width: '158px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_statusTd" /></td>
@@ -184,8 +184,8 @@ class ReportProgress extends Component {
     return (
       <Page
         className="c7ntest-report-progress"
-        // service={['test-service.test-plan.allPlan',
-        //   'test-service.test-cycle-case.queryExecutionStatus']}
+      // service={['test-service.test-plan.allPlan',
+      //   'test-service.test-cycle-case.queryExecutionStatus']}
       >
         <Header
           title={<FormattedMessage id="report_defectToProgress" />}

@@ -2,6 +2,7 @@
   .page-content {
     position: relative;
   }
+
   .c7ntest-switch {
     display: flex;
 
@@ -31,6 +32,8 @@
       padding: 24px;
       padding-right: 10px;
       max-width: 380px;
+      display: flex;
+      flex-direction: column;
 
       .c7ntest-table-title {
         font-size: 18px;
@@ -74,5 +77,4 @@
       margin-top: 10px;
     }
   }
-
 }
