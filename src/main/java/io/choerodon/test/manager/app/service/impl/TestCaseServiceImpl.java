@@ -347,14 +347,9 @@ public class TestCaseServiceImpl implements TestCaseService {
         baseUpdate(map);
 
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
-        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-           if(ObjectUtils.isEmpty(testCaseRepVO.getExecuteId())){
-               testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,true,false,false);
-           }
-           else {
-               List<TestCycleCaseDTO> collect = testCycleCaseDTOS.stream().filter(v -> !testCaseRepVO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
-               testCaseAssembler.AutoAsyncCase(collect,true,false,false);
-           }
+        if (!CollectionUtils.isEmpty(testCycleCaseDTOS)) {
+            List<TestCycleCaseDTO> collect = testCycleCaseDTOS.stream().filter(v -> !testCaseRepVO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
+            testCaseAssembler.AutoAsyncCase(collect, true, false, false);
         }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);

@@ -911,13 +911,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 });
                 List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
                 if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-                    if(ObjectUtils.isEmpty(testCycleCaseDTO.getExecuteId())){
-                        testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
-                    }
-                    else {
                         List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !testCycleCaseDTO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
                         testCaseAssembler.AutoAsyncCase(list,false,true,false);
-                    }
                 }
             }
 
