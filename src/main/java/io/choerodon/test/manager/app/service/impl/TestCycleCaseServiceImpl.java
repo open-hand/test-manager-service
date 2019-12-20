@@ -781,8 +781,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             }
             // 获取case关联的步骤
             List<Long> currentIds = testCaseDTOS.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(currentIds);
-            Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+
             // 获取case关联的附件
             List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(currentIds);
             Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
@@ -790,7 +789,14 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
             List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOS, testCycleMap, defaultStatusId);
             bathcInsert(testCycleCaseDTOS);
-            testCycleCaseStepService.batchInsert(testCycleCaseDTOS, caseStepMap);
+            int stepCount = testCaseStepMapper.countByProjectIdAndCaseIds(currentIds);
+            int ceilStep = (int) Math.ceil(stepCount / AVG_NUM == 0 ? 1 : stepCount / AVG_NUM);
+            for (int page = 1; page <= ceilStep; page++) {
+                PageInfo<TestCaseStepDTO> stepPageInfo = PageHelper.startPage(page, (int) AVG_NUM).doSelectPageInfo(() -> testCaseStepMapper.listByCaseIds(currentIds));
+                List<TestCaseStepDTO> testCaseStepDTOS = stepPageInfo.getList();
+                Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+                testCycleCaseStepService.batchInsert(testCycleCaseDTOS, caseStepMap);
+            }
             // 同步附件
             testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOS, attachmentMap);
         }
