@@ -879,8 +879,20 @@ public class TestCycleServiceImpl implements TestCycleService {
                 v.setParentCycleId(0L);
             }
             return v;
-        }).sorted(Comparator.comparing(v -> v.getParentCycleId())).collect(Collectors.toList());
-        Map<Long, List<TestCycleDTO>> olderCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+        }).collect(Collectors.toList());
+
+        Map<Long, List<TestCycleDTO>> olderCycleMap = new TreeMap<>();
+        testCycleDTOS.forEach(v -> {
+            List<TestCycleDTO> testCycleDTOList = olderCycleMap.get(v.getParentCycleId());
+            if (ObjectUtils.isEmpty(testCycleDTOList)) {
+                olderCycleMap.put(v.getParentCycleId(), Arrays.asList(v));
+            } else {
+                List<TestCycleDTO> newTestCycleList = new ArrayList<>();
+                newTestCycleList.addAll(testCycleDTOList);
+                newTestCycleList.add(v);
+                olderCycleMap.put(v.getParentCycleId(), newTestCycleList);
+            }
+        });
 
         Map<Long, Long> newMapping = new HashMap<>();
         List<Long> cycIds = new ArrayList<>();

@@ -896,6 +896,18 @@ ORDER BY
         GROUP BY
             tcc.execution_status
     </select>
+
+    <select id="countByCycleIds" resultType="integer">
+        SELECT
+            count(execute_id)
+        FROM
+            `test_cycle_case`
+         where cycle_id IN
+        <foreach item="cycleId" index="index" collection="list"
+                 open="(" separator="," close=")">
+            #{cycleId}
+        </foreach>
+    </select>
 </mapper>
 
 

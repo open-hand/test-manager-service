@@ -166,11 +166,13 @@
        test_case
        WHERE
        project_id = #{projectId}
-       AND
-       case_id IN
-       <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
-           #{caseId}
-       </foreach>
+       <if test="caseIds != null and caseIds.size > 0">
+           AND
+           case_id IN
+           <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
+               #{caseId}
+           </foreach>
+       </if>
        order by case_id DESC
    </select>
 
@@ -265,4 +267,34 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="listUnSelectCaseId" resultType="long">
+       select case_id from test_case
+       <where>
+           project_id = #{project_id}
+           and
+           folder_id in
+           <foreach collection="folderIds" item="folderId" separator="," open="(" close=")">
+            #{folderId}
+           </foreach>
+           and case_id not in
+           <foreach collection="caseIds" item="caseId" separator="," open="(" close=")">
+               #{caseId}
+           </foreach>
+       </where>
+    </select>
+
+    <select id="countByProjectIdAndCaseIds" resultType="int">
+        select count(*) from test_case
+        <where>
+            project_id = #{projectId}
+           <if test="caseIds != null and caseIds.size > 0">
+               and
+               case_id  in
+               <foreach collection="caseIds" item="caseId" separator="," open="(" close=")">
+                   #{caseId}
+               </foreach>
+           </if>
+        </where>
+    </select>
 </mapper>
