@@ -184,8 +184,8 @@ class ReportProgress extends Component {
     return (
       <Page
         className="c7ntest-report-progress"
-      // service={['test-service.test-plan.allPlan',
-      //   'test-service.test-cycle-case.queryExecutionStatus']}
+      // service={['test-manager-service.test-plan.allPlan',
+      //   'test-manager-service.test-cycle-case.queryExecutionStatus']}
       >
         <Header
           title={<FormattedMessage id="report_defectToProgress" />}

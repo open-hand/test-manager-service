@@ -82,10 +82,10 @@ const CustomStatusHome = ({
     <Page
       className="c7ntest-custom-status"
       service={[
-        'test-service.test-status.query',
-        'test-service.test-status.insert',
-        'test-service.test-status.delete',
-        'test-service.test-status.update',
+        'test-manager-service.test-status.query',
+        'test-manager-service.test-status.insert',
+        'test-manager-service.test-status.delete',
+        'test-manager-service.test-status.update',
       ]}
     >
       <Header>

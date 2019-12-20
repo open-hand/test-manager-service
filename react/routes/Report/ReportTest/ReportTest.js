@@ -552,8 +552,8 @@ class ReportTest extends Component {
       <Page
         className="c7ntest-report-test"
         // service={[
-        //   'test-service.test-status.query',
-        //   'test-service.test-case.createFormDefectFromIssue',
+        //   'test-manager-service.test-status.query',
+        //   'test-manager-service.test-case.createFormDefectFromIssue',
         //   'agile-service.scheme.queryStatusByProjectId',
         // ]}
       >

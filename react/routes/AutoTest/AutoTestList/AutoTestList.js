@@ -152,10 +152,10 @@ const AutoTestList = ({
       service={[
         'devops-service.app-service.pageByOptions',
         'devops-service.devops-environment.listDevopsClusters',
-        'test-service.test-automation-history.queryWithInstance',
-        'test-service.test-app-instance.queryValues',
-        'test-service.test-app-instance.deploy',
-        'test-service.test-automation-history.queryLog',
+        'test-manager-service.test-automation-history.queryWithInstance',
+        'test-manager-service.test-app-instance.queryValues',
+        'test-manager-service.test-app-instance.deploy',
+        'test-manager-service.test-automation-history.queryLog',
       ]}
     >
       <Header title={<FormattedMessage id="autotestlist_title" />}>

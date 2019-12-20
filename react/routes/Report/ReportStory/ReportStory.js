@@ -546,8 +546,8 @@ class ReportStory extends Component {
     return (
       <Page className="c7ntest-report-story"
         // service={[
-        //   'test-service.test-case.createFormsFromIssueToDefect',
-        //   'test-service.test-status.query',
+        //   'test-manager-service.test-case.createFormsFromIssueToDefect',
+        //   'test-manager-service.test-status.query',
         //   'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
         //   'agile-service.scheme.queryStatusByProjectId',
         //   'agile-service.product-version.listByProjectId',
