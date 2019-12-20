@@ -38,7 +38,6 @@ public class TestCycleCaseAttachmentRelUploadServiceImpl implements TestCycleCas
         }
 
         testCycleCaseAttachmentRelDTO.setUrl(response.getBody());
-        testCycleCaseAttachmentRelDTO.setUrl("response.getBody()");
         testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
         DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert, testCycleCaseAttachmentRelDTO, 1, "error.attachment.insert");
 
