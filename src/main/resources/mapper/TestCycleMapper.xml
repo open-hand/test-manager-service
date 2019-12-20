@@ -323,14 +323,29 @@
     </update>
 
     <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
-      select * from test_cycle
+        SELECT
+        tc.cycle_id,
+        parent_cycle_id,
+        cycle_name,
+        plan_id,
+        rank,
+        (
+        SELECT
+        count(*)
+        FROM
+        test_cycle_case tcc
+        WHERE
+        tc.cycle_id = tcc.cycle_id
+        ) caseCount
+        FROM
+        test_cycle tc
       <where>
           <if  test="type != null and type != ''">
-           and   type = #{type}
+           and   tc.type = #{type}
           </if>
           <if test="planIds.size > 0">
             and
-            plan_id in
+            tc.plan_id in
             <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
                   #{planId}
             </foreach>
