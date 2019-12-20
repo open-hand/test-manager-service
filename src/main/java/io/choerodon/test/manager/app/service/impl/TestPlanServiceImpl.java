@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
 
+    @Autowired
+    private TestCaseMapper testCaseMapper;
     @Override
 
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
@@ -201,22 +204,23 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     public void sagaCreatePlan(TestPlanVO testPlanVO) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
-        List<TestCaseDTO> testCaseDTOS = new ArrayList<>();
+        List<Long> caseIds = new ArrayList<>();
         List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
         // 是否自选
         if (!testPlanVO.getCustom()) {
-            testCaseDTOS.addAll(allTestCase);
-            List<Long> folderIds = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toList());
-            testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(folderIds));
+            testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()));
         } else {
-            createPlanCustomCase(testPlanVO, testIssueFolderDTOS, allTestCase, testCaseDTOS);
+            createPlanCustomCase(testPlanVO, testIssueFolderDTOS, caseIds);
         }
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         // 创建测试循环
         List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
+        if (CollectionUtils.isEmpty(testCycleDTOS)) {
+            return;
+        }
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
-        testCycleCaseService.batchInsertByTestCase(testCycleMap, testCaseDTOS);
+        testCycleCaseService.batchInsertByTestCase(testCycleMap,caseIds,testPlanVO.getProjectId());
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
         testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);
@@ -450,44 +454,38 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     /**
      * 创建计划自选用例时，对用例的逻辑处理
-     *
      * @param testPlanVO
      * @param testIssueFolderDTOS
-     * @param allTestCase
-     * @param testCaseDTOS
+     * @param caseIds
      */
-    private void createPlanCustomCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS, List<TestCaseDTO> allTestCase, List<TestCaseDTO> testCaseDTOS) {
+    private void createPlanCustomCase(TestPlanVO testPlanVO, List<TestIssueFolderDTO> testIssueFolderDTOS,List<Long> caseIds) {
         Map<Long, CaseSelectVO> maps = testPlanVO.getCaseSelected();
         List<Long> folderIds = maps.keySet().stream().collect(Collectors.toList());
-        testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(folderIds));
-        Map<Long, List<TestCaseDTO>> caseMap = allTestCase.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
-        List<Long> caseIds = new ArrayList<>();
+        testIssueFolderDTOS.addAll(testIssueFolderService.listFolderByFolderIds(testPlanVO.getProjectId(),folderIds));
+        Set<Long> unSelectFolderIds = new HashSet<>();
+        List<Long> unSelectCaseIds= new ArrayList<>();
+        Set<Long> allSelectFolderIds = new HashSet<>();
         for (Long key : maps.keySet()) {
             CaseSelectVO caseSelectVO = maps.get(key);
             // 判断是否是自选
             if (!caseSelectVO.getCustom()) {
-                if (!CollectionUtils.isEmpty(caseMap.get(key))) {
-                    testCaseDTOS.addAll(caseMap.get(key));
-                }
+                allSelectFolderIds.add(key);
             } else {
                 // 判断是反选还是正向选择
                 if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
-                    // 反选就
-                    List<Long> unSelected = caseSelectVO.getUnSelected();
-                    // 获取文件夹所有的测试用例
-                    List<Long> allList = caseMap.get(key).stream().filter(v -> !ObjectUtils.isEmpty(v)).map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-                    allList.removeAll(unSelected);
-                    caseIds.addAll(allList);
+                    unSelectFolderIds.add(key);
+                    unSelectCaseIds.addAll(caseSelectVO.getUnSelected());
                 } else {
                     caseIds.addAll(caseSelectVO.getSelected());
                 }
             }
         }
-
-        if (!CollectionUtils.isEmpty(caseIds)) {
-            testCaseDTOS.addAll(testCaseService.listByCaseIds(testPlanVO.getProjectId(), caseIds));
+        if(!CollectionUtils.isEmpty(unSelectCaseIds) && !CollectionUtils.isEmpty(unSelectFolderIds)){
+            caseIds.addAll(testCaseMapper.listUnSelectCaseId(testPlanVO.getProjectId(),unSelectCaseIds,unSelectFolderIds));
         }
-
+        if(CollectionUtils.isEmpty(allSelectFolderIds)){
+            caseIds.addAll(testCaseMapper.listCaseIds(testPlanVO.getProjectId(),allSelectFolderIds,null));
+        }
     }
 
 }

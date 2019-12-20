@@ -90,6 +90,16 @@ ORDER BY
         </foreach>
     </select>
 
+    <select id="countByProjectIdAndCaseIds" resultType="int">
+        select count(*) from test_case_step
+        where
+        issue_id IN
+        <foreach item="caseId" index="index" collection="caseIds"
+                 open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </select>
+
     <delete id="deleteByCaseId">
         delete from test_case_step
         where issue_id = #{caseId}

@@ -247,8 +247,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        List<List<TestCycleCaseStepDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(testCycleCaseDTOList.size() / AVG_NUM));
-        lists.forEach(v -> testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(v));
+        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
     }
 
     @Override

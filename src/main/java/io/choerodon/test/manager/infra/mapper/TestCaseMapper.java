@@ -1,9 +1,6 @@
 package io.choerodon.test.manager.infra.mapper;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import io.choerodon.test.manager.api.vo.ExcelCaseVO;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
@@ -43,4 +40,8 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     Map<Long, CaseCompareVO> queryTestCaseMap(@Param("list") List<Long> caseIds,@Param("executedIds") List<Long> executedId);
 
     void updateAuditFields(@Param("projectId") Long projectId,@Param("caseIds") Long[] caseIds,@Param("userId") Long userId,@Param("date") Date date);
+
+    List<Long> listUnSelectCaseId(@Param("projectId") Long projectId,@Param("caseIds") List<Long> unSelectCaseIds,@Param("folderIds") Set<Long> unSelectFolderIds);
+
+    int countByProjectIdAndCaseIds(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
 }

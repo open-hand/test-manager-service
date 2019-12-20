@@ -73,9 +73,10 @@ public interface TestCycleCaseService {
     /**
      * 创建计划引入测试用例相关信息
      * @param testCycleMap
-     * @param testCaseDTOS
+     * @param caseId
+     * @param projectId
      */
-    void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<TestCaseDTO> testCaseDTOS);
+    void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseId,Long projectId);
 
     /**
      * 查看测试执行的详情
