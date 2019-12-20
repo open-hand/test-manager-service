@@ -70,7 +70,7 @@ function EditExecuteIssue(props) {
   return (
     <Spin dataSet={editDataset}>
       <Form dataSet={editDataset} className={`test-edit-execute-issue-form ${visibleDetail ? '' : 'test-edit-execute-issue-form-hidden'}`}>
-        <TextField name="summary" />
+        <TextField name="summary" maxLength={44} />
         <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
           <div className="test-edit-execute-issue-line" />
           <span className="test-edit-execute-issue-head">
