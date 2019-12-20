@@ -143,4 +143,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     List<TestCycleCaseDTO> listAsyncCycleCase(@Param("projectId")Long projectId,@Param("caseId")Long caseId);
 
     List<FormStatusVO> selectPlanStatus(@Param("planId") Long planId);
+
+    Integer countByCycleIds(@Param("list") List<Long> cycIds);
 }

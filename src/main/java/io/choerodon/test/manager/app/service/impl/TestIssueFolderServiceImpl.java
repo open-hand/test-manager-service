@@ -232,8 +232,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds) {
-        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectAll();
+    public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         Map<Long,TestIssueFolderDTO> map = new HashMap<>();
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
@@ -249,6 +249,15 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         testIssueFolderVO.setVersionId(0L);
         testIssueFolderVO.setType("cycle");
         create(projectEvent.getProjectId(),testIssueFolderVO);
+    }
+
+    @Override
+    public List<TestIssueFolderDTO> listByProject(Long projectId) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
+            return new ArrayList<>();
+        }
+        return testIssueFolderDTOS;
     }
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {
