@@ -62,7 +62,7 @@ public class TestManagerEventHandler {
     @SagaTask(code = TASK_PROJECT_CREATE,
             description = "test消费创建项目事件初始化项目数据",
             sagaCode = PROJECT_CREATE,
-            seq = 2)
+            seq = 3)
     public String handleProjectInitByConsumeSagaTask(String message) {
         ProjectEvent projectEvent = JSONObject.parseObject(message, ProjectEvent.class);
         LOGGER.info("接受创建项目消息{}", message);
@@ -103,8 +103,8 @@ public class TestManagerEventHandler {
     }
 
     @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
-    public void createPlan(String message) throws IOException {
-        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+    public void createPlan(String message) {
+        TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         try {
             testPlanServcie.sagaCreatePlan(testPlanVO);
         } catch (Exception e) {
@@ -114,21 +114,22 @@ public class TestManagerEventHandler {
 
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
-    public void clonePlan(String message) throws IOException {
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "复制计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
+    public void clonePlan(String message) {
         Map<String, Integer> map = null ;
         try {
-            map = (Map<String, Integer>) objectMapper.readValue(message, Map.class);
+            map = JSONObject.parseObject(message,Map.class);
             testPlanServcie.sagaClonePlan(map);
+
         } catch (Exception e) {
             testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()),TestPlanVO.class));
             throw e;
         }
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
-    public void changeStatusFail(String message) throws IOException {
-        TestPlanVO testPlanVO = objectMapper.readValue(message, TestPlanVO.class);
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL, description = "改变计划为失败状态", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
+    public void changeStatusFail(String message) {
+        TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);
         testPlanServcie.update(testPlanVO.getProjectId(),testPlanVO);
     }

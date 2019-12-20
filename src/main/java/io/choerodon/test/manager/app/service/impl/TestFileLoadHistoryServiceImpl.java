@@ -109,6 +109,7 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
         testFileLoadHistoryDTO.setProjectId(projectId);
         testFileLoadHistoryDTO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
         testFileLoadHistoryDTO.setActionType(TestFileLoadHistoryEnums.Action.UPLOAD_CASE.getTypeValue());
+        testFileLoadHistoryDTO.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
         testFileLoadHistoryDTO = queryLatestHistory(testFileLoadHistoryDTO);
         if (testFileLoadHistoryDTO == null) {
             return null;

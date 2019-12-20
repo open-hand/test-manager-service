@@ -895,17 +895,21 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             if (caseCompareRepVO.getChangeAttach()) {
                 List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS = testCycleCaseAttachmentRelService.listByExecuteId(caseCompareRepVO.getExecuteId());
                 testCaseAttachmentService.asynAttachToCase(testCycleCaseAttachmentRelVOS,testCaseDTO,testCycleCaseDTO.getExecuteId());
-
             }
             if (caseCompareRepVO.getChangeStep()) {
                 testCaseStepMapper.deleteByCaseId(caseCompareRepVO.getCaseId());
-                List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.querListByexecuteId(caseCompareRepVO.getExecuteId());
+                List<TestCycleCaseStepDTO> cycleCaseStepDTOS = testCycleCaseStepMapper.listByexecuteIds(Arrays.asList(testCycleCaseDTO.getExecuteId()));
                 if (CollectionUtils.isEmpty(cycleCaseStepDTOS)) {
                     return;
                 }
+                Map<Long, TestCycleCaseStepDTO> stepMap = cycleCaseStepDTOS.stream().collect(Collectors.toMap(TestCycleCaseStepDTO::getExecuteStepId, Function.identity()));
                 List<TestCaseStepDTO> stepDTOS = cycleCaseStepDTOS.stream().map(v -> testCaseAssembler.cycleStepToCaseStep(v, testCaseDTO, userDetails)).collect(Collectors.toList());
                 testCaseStepMapper.batchInsertTestCaseSteps(stepDTOS);
-
+                stepDTOS.forEach(v -> {
+                    TestCycleCaseStepDTO testCycleCaseStepDTO = stepMap.get(v.getCycleCaseStepId());
+                    testCycleCaseStepDTO.setStepId(v.getStepId());
+                    testCycleCaseStepService.baseUpdate(testCycleCaseStepDTO);
+                });
                 List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
                 if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
                     if(ObjectUtils.isEmpty(testCycleCaseDTO.getExecuteId())){
