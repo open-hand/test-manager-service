@@ -25,7 +25,7 @@ public interface TestCycleCaseDefectRelService {
 
     Boolean updateIssuesProjectId(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long organizationId);
 
-    List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
+//    List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
 
     void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds,String type);
 
