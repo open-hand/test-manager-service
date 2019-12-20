@@ -686,11 +686,30 @@ ORDER BY
 
     <select id="queryFolderCycleCase" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
         SELECT
-            tcc.*,ts.status_color AS statusColor,ts.status_name AS executionStatusName
+        tp.status_code AS planStatus,
+        tcc.execute_id,
+        tcc.cycle_id,
+        tcc.case_id,
+        tcc.rank,
+        tcc.execution_status,
+        tcc.assigned_to,
+        tcc.description,
+        tcc.object_version_number,
+        tcc.created_by,
+        tcc.creation_date,
+        tcc.project_id,
+        tcc.summary,
+        tcc.source,
+        tcc.version_num,
+        tcc.last_updated_by,
+        tcc.last_update_date,
+        ts.status_color AS statusColor,
+        ts.status_name AS executionStatusName
         FROM
             `test_cycle_case` tcc
         LEFT JOIN test_cycle tc ON tc.cycle_id = tcc.cycle_id
         LEFT JOIN test_status ts ON ts.status_id=tcc.execution_status
+        LEFT JOIN test_plan tp ON tp.plan_id = tc.plan_id
         WHERE
             tc.plan_id = #{planId}
         <if test="cycleIds !=null and cycleIds.size>0">
@@ -701,7 +720,7 @@ ORDER BY
         </foreach>
         </if>
         <include refid="sqlParam"/>
-        order by tcc.rank
+         order by tcc.rank
     </select>
 
     <update id="fixCycleCase">

@@ -806,8 +806,8 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
-        return cycleMapper.listByPlanIds(null, planIds);
+    public List<TestCycleDTO> listByPlanIds(List<Long> planIds,Long projectId) {
+        return cycleMapper.listByPlanIds(null, planIds,projectId);
     }
 
     @Override
@@ -868,9 +868,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId) {
+    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId,Long projectId) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId));
+        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId),projectId);
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             return;
         }
@@ -923,8 +923,8 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId) {
-        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId));
+    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId,Long projectId) {
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId),projectId);
         List<TestCycleDTO> collect = testCycleDTOS.stream().map(v -> {
             if (ObjectUtils.isEmpty(v.getParentCycleId())) {
                 v.setParentCycleId(0L);

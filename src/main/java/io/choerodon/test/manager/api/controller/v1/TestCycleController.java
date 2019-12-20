@@ -243,7 +243,7 @@ public class TestCycleController {
     @GetMapping(value = "/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
                                                            @RequestParam("plan_id") Long planId){
-        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId),HttpStatus.OK);
+        return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId,projectId),HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

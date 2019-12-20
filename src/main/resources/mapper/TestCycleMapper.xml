@@ -323,20 +323,31 @@
     </update>
 
     <select id="listByPlanIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
-      select * from test_cycle
-      <where>
-          <if  test="type != null and type != ''">
-           and   type = #{type}
-          </if>
-          <if test="planIds.size > 0">
+        SELECT b.cycle_id,b.cycle_name,b.parent_cycle_id,b.rank,b.plan_id,a.caseCount
+        from test_cycle b,
+        (SELECT
+        tc.cycle_id,
+        count(tcc.execute_id)as caseCount
+        FROM
+        test_cycle tc
+        LEFT JOIN test_cycle_case tcc ON tcc.cycle_id = tc.cycle_id
+        WHERE
+        tc.project_id=#{projectId}
+        <if test="type != null and type != ''">
+            and tc.type = #{type}
+        </if>
+        <if test="planIds.size>0">
             and
-            plan_id in
+            tc.plan_id in
             <foreach collection="planIds" item="planId" open="(" close=")" separator=",">
-                  #{planId}
+                #{planId}
             </foreach>
-          </if>
-      </where>
-      order by rank
+        </if>
+        GROUP BY tc.cycle_id) a
+        where
+        b.project_id = #{projectId} and
+        a.cycle_id=b.cycle_id
+        order by rank
     </select>
 
     <update id="fixPlanId">

@@ -51,7 +51,7 @@ public interface TestCycleMapper extends Mapper<TestCycleDTO> {
 
     List<TestCycleDTO> queryChildFolderByRank(@Param("cycleId") Long cycleId);
 
-    List<TestCycleDTO> listByPlanIds(@Param("type") String type,@Param("planIds") List<Long> planIds);
+    List<TestCycleDTO> listByPlanIds(@Param("type") String type,@Param("planIds") List<Long> planIds,Long projectId);
 
     List<Long> selectVersionId();
 
