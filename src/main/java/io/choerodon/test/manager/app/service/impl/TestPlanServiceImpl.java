@@ -89,7 +89,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     @Async
     public void delete(Long projectId, Long planId) {
-        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId));
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId),projectId);
         List<Long> collect = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
         testCycleService.batchDelete(collect);
         baseDelete(planId);
@@ -133,7 +133,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
         // 获取planIds,查询出所有底层文件夹Id
         List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
-        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds);
+        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds,projectId);
         Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
         // 获取项目下所有的文件夹
         Map<Long, TestCycleDTO> allCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
@@ -284,8 +284,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     public void sagaClonePlan(Map<String, Integer> map) {
         Long copyPlanId = map.get("older").longValue();
         Long newPlanId = map.get("new").longValue();
-        testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId);
         TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(newPlanId);
+        testCycleService.cloneCycleByPlanId(copyPlanId, newPlanId,testPlanDTO.getProjectId());
         testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
         baseUpdate(testPlanDTO);
     }

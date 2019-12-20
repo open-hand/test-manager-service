@@ -720,7 +720,7 @@ ORDER BY
         </foreach>
         </if>
         <include refid="sqlParam"/>
-         group by tcc.execute_id order by tcc.rank
+        order by tcc.rank
     </select>
 
     <update id="fixCycleCase">

@@ -78,7 +78,7 @@ public interface TestCycleService {
      */
     List<TestCycleDTO> batchInsertByFoldersAndPlan(TestPlanDTO testPlanDTO, List<TestIssueFolderDTO> testIssueFolderDTOS);
 
-    List<TestCycleDTO> listByPlanIds(List<Long> planIds);
+    List<TestCycleDTO> listByPlanIds(List<Long> planIds,Long projectId);
 
     void batchDelete(List<Long> needDeleteCycleIds);
 
@@ -86,9 +86,9 @@ public interface TestCycleService {
 
     void syncByCaseFolder(Long folderId, Long cycleId);
 
-    void cloneCycleByPlanId(Long copyPlanId, Long newPlanId);
+    void cloneCycleByPlanId(Long copyPlanId, Long newPlanId,Long projectId);
 
-    TestTreeIssueFolderVO queryTreeByPlanId(Long planId);
+    TestTreeIssueFolderVO queryTreeByPlanId(Long planId,Long projectId);
 
     String moveCycle(Long projectId, Long targetCycleId,TestCycleVO testCycleVO);
 
