@@ -158,18 +158,22 @@ function PureTree({
   const onDragEnd = async (
     source,
     destination,
-  ) => {  
+  ) => {
     if (!destination) {
       return;
     }
-    const sourceItem = getItemByPosition(tree, source);
+    const sourceItem = getItemByPosition(tree, source);    
     const destinationParent = tree.items[destination.parentId];
     // 不能拖动到已经有issue的文件夹下
     if (destinationParent.hasCase) {
       return;
     }
-    setTree(oldTree => moveItemOnTree(oldTree, source, destination));
     try {
+      const { path } = getItemById(flattenedTree, destinationParent.id);
+      if (path.length >= 9) {
+        return;
+      }
+      setTree(oldTree => moveItemOnTree(oldTree, source, destination));
       const newItem = await afterDrag(sourceItem, destination);
       setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {

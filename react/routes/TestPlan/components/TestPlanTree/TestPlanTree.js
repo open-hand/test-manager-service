@@ -239,7 +239,8 @@ class TestPlanTree extends Component {
               menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
               // 计划和没有执行的，可以添加子文件夹
-              enableAddFolder: item => item.topLevel || !item.hasCase,
+              // 最多9层
+              enableAddFolder: item => item.path.length < 10 && (item.topLevel || !item.hasCase),
             }
           }
           onMenuClick={this.handleMenuClick}
