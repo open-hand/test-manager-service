@@ -1,17 +1,14 @@
 import React, {
   useCallback, useContext, useEffect,
 } from 'react';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+
 import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import {
-  Icon, Tabs, Spin,
-} from 'choerodon-ui';
+import { Icon, Tabs } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, 
@@ -285,16 +282,11 @@ function TestPlanHome({ history }) {
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
               <Tabs defaultActiveKey="todo" onChange={handleTabsChange} activeKey={testPlanStatus}>
-                <TabPane tab="未开始" key="todo">
-                  <TestPlanTree />
-                </TabPane>
-                <TabPane tab="进行中" key="doing">
-                  <TestPlanTree />
-                </TabPane>
-                <TabPane tab="已完成" key="done">
-                  <TestPlanTree />
-                </TabPane>
+                <TabPane tab="未开始" key="todo" />
+                <TabPane tab="进行中" key="doing" />
+                <TabPane tab="已完成" key="done" />
               </Tabs>
+              <TestPlanTree />
             </div>
           </div>
           {

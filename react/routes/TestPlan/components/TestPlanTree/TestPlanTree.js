@@ -1,12 +1,10 @@
 import React, { Component, createRef } from 'react';
 import { observer } from 'mobx-react';
-import { toJS } from 'mobx';
 import { Menu, Icon } from 'choerodon-ui';
-import { Choerodon } from '@choerodon/boot';
 import { handleRequestFailed } from '@/common/utils';
 import './TestPlanTree.scss';
 import {
-  editPlan, deletePlan, addFolder, editFolder, moveFolder, deleteFolder,
+  editPlan, deletePlan, addFolder, editFolder, deleteFolder,
 } from '@/api/TestPlanApi';
 import { Loading } from '@/components';
 import Tree from '@/components/Tree';
@@ -80,7 +78,7 @@ class TestPlanTree extends Component {
       handleRequestFailed(deleteFolder(folderId));
     }
     // 只移除跟节点，作用是删除文件夹后可以正确判断是不是没文件夹了，来显示空插画
-    testPlanStore.removeRootItem(item.id);
+    // testPlanStore.removeRootItem(item.id);
   }
 
   handleCreateFolder = async (value, parentId, item) => {
@@ -103,7 +101,7 @@ class TestPlanTree extends Component {
     };
   }
 
-  setSelected = (item) => {
+  setSelected = (item) => {    
     const { context: { testPlanStore } } = this.props;
     const [planId, folderId] = testPlanStore.getId(item.id);
     if (item.id) {
@@ -224,7 +222,7 @@ class TestPlanTree extends Component {
         <Loading loading={treeLoading} />
         <Tree
           ref={this.treeRef}
-          data={toJS(treeData)}
+          data={treeData}
           onCreate={this.handleCreateFolder}
           onEdit={this.handleReName}
           onDelete={this.handleDelete}
