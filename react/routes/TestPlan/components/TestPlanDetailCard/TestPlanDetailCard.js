@@ -10,7 +10,7 @@ export default observer(() => {
   const { testPlanStore } = useContext(Store);
   const { planInfo } = testPlanStore;
   return (
-    <Card className="c7ntest-testPlan-detailCard" title="测试计划详情"> 
+    <Card className="c7ntest-testPlan-detailCard" title="测试计划详情">
       <div className="c7ntest-testPlan-detailCard-content">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.16rem' }}>
           <div className="c7ntest-testPlan-detailCard-content-item">
@@ -30,7 +30,7 @@ export default observer(() => {
         </div>
         <div className="c7ntest-testPlan-detailCard-content-item">
           <span className="c7ntest-testPlan-detailCard-content-item-field">描述</span>
-          <SmartToolTip title={planInfo.description || '无'} width="3.5rem" />
+          <SmartToolTip title={planInfo.description || '无'} width="3.5rem">{planInfo.description || '无'}</SmartToolTip>
         </div>
       </div>
     </Card>
