@@ -824,7 +824,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         // 删除步骤
         List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(executeIds);
-        if (CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list)) {
             List<Long> stepIds = list.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
             testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(stepIds, TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
             testCycleCaseAttachmentRelService.batchDeleteByExecutIds(stepIds, TestAttachmentCode.ATTACHMENT_CYCLE_STEP);

@@ -56,4 +56,10 @@ databaseChangeLog(logicalFilePath: 'script/script/init_tables.groovy.groovy') {
             column(name:'rank',type:'varchar(255)',remarks: 'rank')
         }
     }
+
+    changeSet(author: 'zhaotianxin', id: '2019-12-20-change_column_type') {
+        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'test_step', newDataType: "TEXT")
+        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'test_data', newDataType: "TEXT")
+        modifyDataType(tableName: 'test_cycle_case_step', columnName: 'expect_result', newDataType: "TEXT")
+    }
 }
