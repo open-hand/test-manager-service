@@ -207,13 +207,17 @@ public class TestCaseAssembler {
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
-        // 用例的问题链接
-//        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseInfoVO.getProjectId(), testCycleCaseInfoVO.getCaseId()));
         // 查询用例信息
-        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-        if (!ObjectUtils.isEmpty(testCaseDTO)) {
-            testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
-            testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+        if(!ObjectUtils.isEmpty(testCycleCaseInfoVO.getCaseId())){
+            Boolean hasExist = true;
+            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
+            if(ObjectUtils.isEmpty(testCaseDTO)){
+                hasExist = false;
+            }else {
+                testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
+                testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+            }
+            testCycleCaseInfoVO.setCaseHasExist(hasExist);
         }
         return testCycleCaseInfoVO;
     }
@@ -231,6 +235,7 @@ public class TestCaseAssembler {
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseAttachmentRelDTO.setAttachmentType(TYPE);
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseUpdateVO.setCycleCaseAttachmentRelVOList(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));

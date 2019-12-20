@@ -32,6 +32,8 @@ public class TestCycleCaseDTO extends BaseDTO {
     private String description;
 
     private String source;
+    @Transient
+    private String planStatus;
 
     @Transient
     private String executionStatusName;
@@ -98,6 +100,14 @@ public class TestCycleCaseDTO extends BaseDTO {
 
     @Transient
     List<TestCaseLinkDTO> testCaseLinks;
+
+    public String getPlanStatus() {
+        return planStatus;
+    }
+
+    public void setPlanStatus(String planStatus) {
+        this.planStatus = planStatus;
+    }
 
     public Long getProjectId() {
         return projectId;

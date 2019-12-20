@@ -757,18 +757,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             return new ArrayList<>();
         }
-        Map<Long, List<TestIssueFolderDTO>> parentMap = new TreeMap<>();
-        testIssueFolderDTOS.forEach(v -> {
-            List<TestIssueFolderDTO> testIssueFolder = parentMap.get(v.getParentId());
-            if (ObjectUtils.isEmpty(testIssueFolder)) {
-                parentMap.put(v.getParentId(), Arrays.asList(v));
-            } else {
-                List<TestIssueFolderDTO> testIssueFolderDTOList = new ArrayList<>();
-                testIssueFolderDTOList.addAll(testIssueFolder);
-                testIssueFolderDTOList.add(v);
-                parentMap.put(v.getParentId(), testIssueFolderDTOList);
-            }
-        });
+        Map<Long, List<TestIssueFolderDTO>> collect = testIssueFolderDTOS.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> parentMap = new LinkedHashMap<>();
+        findChildren(parentMap,0L,collect);
         Map<Long, Long> cycleMap = new HashMap<>();
         List<TestCycleDTO> endCycle = new ArrayList<>();
         parentMap.keySet().forEach(key -> {
@@ -805,9 +796,19 @@ public class TestCycleServiceImpl implements TestCycleService {
         return endCycle;
     }
 
+
+    private void findChildren(Map<Long, List<TestIssueFolderDTO>> parentMap, Long folderId, Map<Long, List<TestIssueFolderDTO>> collect) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = collect.get(folderId);
+        if(!CollectionUtils.isEmpty(testIssueFolderDTOS)){
+            List<TestIssueFolderDTO> list = testIssueFolderDTOS.stream().sorted(Comparator.comparing(TestIssueFolderDTO::getRank)).collect(Collectors.toList());
+            parentMap.put(folderId,list);
+            testIssueFolderDTOS.forEach(v -> findChildren(parentMap,v.getFolderId(),collect));
+        }
+    }
+
     @Override
-    public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
-        return cycleMapper.listByPlanIds(null, planIds);
+    public List<TestCycleDTO> listByPlanIds(List<Long> planIds,Long projectId) {
+        return cycleMapper.listByPlanIds(null, planIds,projectId);
     }
 
     @Override
@@ -830,6 +831,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
         testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setRank(testCycleDTO.getRank());
         return testIssueFolderVO;
     }
 
@@ -868,9 +870,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId) {
+    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId,Long projectId) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId));
+        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId),projectId);
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             return;
         }
@@ -923,8 +925,8 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId) {
-        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId));
+    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId,Long projectId) {
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId),projectId);
         List<TestCycleDTO> collect = testCycleDTOS.stream().map(v -> {
             if (ObjectUtils.isEmpty(v.getParentCycleId())) {
                 v.setParentCycleId(0L);

@@ -50,7 +50,17 @@ public class TestCycleDTO extends BaseDTO {
     private List<Map<Long, Object>> cycleCaseList;
 
     @Transient
+    private Long caseCount;
+    @Transient
     private Long oldCycleId;
+
+    public Long getCaseCount() {
+        return caseCount;
+    }
+
+    public void setCaseCount(Long caseCount) {
+        this.caseCount = caseCount;
+    }
 
     public Long getProjectId() {
         return projectId;

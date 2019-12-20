@@ -31,7 +31,7 @@
     </select>
 
     <select id="selectListByProjectId" resultType="io.choerodon.test.manager.infra.dto.TestIssueFolderDTO">
-         SELECT  *  FROM test_issue_folder WHERE project_id = #{projectId} ORDER BY rank ;
+         SELECT  *  FROM test_issue_folder WHERE project_id = #{projectId}  ORDER BY rank ;
     </select>
 
     <select id="selectVersionIdList" resultType="Long">

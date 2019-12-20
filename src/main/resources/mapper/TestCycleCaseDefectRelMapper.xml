@@ -51,26 +51,26 @@
         where id = #{defectId}
     </update>
 
-    <select id="queryByBug" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">
-        select
-        tcc.*,
-        ts.status_name as execution_status_name,
-        ts.status_color
-        from test_cycle_case tcc, test_status ts
-        where tcc.execute_id in (
-            select defect_link_id from test_cycle_case_defect_rel tccdr
-            where tccdr.project_id = #{projectId}
-            and tccdr.defect_type = 'CYCLE_CASE'
-            and tccdr.issue_id = #{bugId}
-            union all
-            select tccs.execute_id from test_cycle_case_defect_rel tccdr2, test_cycle_case_step tccs
-            where tccdr2.project_id = #{projectId}
-            and tccdr2.defect_type = 'CASE_STEP'
-            and tccdr2.issue_id = #{bugId}
-            and tccdr2.defect_link_id = tccs.step_id
-        )
-        and tcc.execution_status = ts.status_id
-    </select>
+    <!--<select id="queryByBug" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO">-->
+        <!--select-->
+        <!--tcc.*,-->
+        <!--ts.status_name as execution_status_name,-->
+        <!--ts.status_color-->
+        <!--from test_cycle_case tcc, test_status ts-->
+        <!--where tcc.execute_id in (-->
+            <!--select defect_link_id from test_cycle_case_defect_rel tccdr-->
+            <!--where tccdr.project_id = #{projectId}-->
+            <!--and tccdr.defect_type = 'CYCLE_CASE'-->
+            <!--and tccdr.issue_id = #{bugId}-->
+            <!--union all-->
+            <!--select tccs.execute_id from test_cycle_case_defect_rel tccdr2, test_cycle_case_step tccs-->
+            <!--where tccdr2.project_id = #{projectId}-->
+            <!--and tccdr2.defect_type = 'CASE_STEP'-->
+            <!--and tccdr2.issue_id = #{bugId}-->
+            <!--and tccdr2.defect_link_id = tccs.step_id-->
+        <!--)-->
+        <!--and tcc.execution_status = ts.status_id-->
+    <!--</select>-->
 
     <delete id="batchDeleteByExecutIds">
         delete from test_cycle_case_defect_rel where

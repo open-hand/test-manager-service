@@ -131,6 +131,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     @Autowired
     private VerifyUpdateUtil verifyUpdateUtil;
 
+
+
     @Override
     public void delete(Long cycleCaseId, Long projectId) {
         TestCycleCaseVO dto = new TestCycleCaseVO();
@@ -754,17 +756,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-        if(!ObjectUtils.isEmpty(testCycleCaseInfoVO.getCaseId())){
-            Boolean hasExist = true;
-            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-            if(ObjectUtils.isEmpty(testCaseDTO)){
-                hasExist = false;
-            }
-            testCycleCaseInfoVO.setCaseHasExist(hasExist);
-        }
-        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
+
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
-        testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
         previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
@@ -831,7 +824,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
         // 删除步骤
         List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(executeIds);
-        if (CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list)) {
             List<Long> stepIds = list.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
             testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(stepIds, TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
             testCycleCaseAttachmentRelService.batchDeleteByExecutIds(stepIds, TestAttachmentCode.ATTACHMENT_CYCLE_STEP);
@@ -1036,7 +1029,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             // 复制步骤
             testCycleCaseStepService.cloneStep(caseIdMap, olderExecuteIds);
             // 复制附件
-            testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteIds);
+            testCycleCaseAttachmentRelService.cloneAttach(caseIdMap, olderExecuteIds,"CYCLE_CASE");
         }
     }
 

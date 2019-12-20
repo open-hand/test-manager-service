@@ -6,7 +6,7 @@ import {
   Progress, Button, Tooltip,
 } from 'choerodon-ui';
 import {
-  Table, Form, DataSet,
+  Table, Form, DataSet, message,
 } from 'choerodon-ui/pro';
 import Record from 'choerodon-ui/pro/lib/data-set/Record';
 import _ from 'lodash';
@@ -95,12 +95,18 @@ function ExportSide(props) {
       ? humanizeDuration(diff)
       : null;
   };
-  const handleMessage = (message) => {
-    if (message === 'ok') {
+  const handleMessage = (res) => {
+    if (res === 'ok') {
       return;
     }
-    const data = JSON.parse(message);
+    const data = JSON.parse(res);
     const { id, rate, successfulCount } = data;
+    if (data.message === '文件夹下无用例') {
+      const record = exportSideDataSet.find(item => item.get('id') === id);
+      exportSideDataSet.remove(record);
+      message.warn(data.message);
+      return;
+    }
     const newData = {
       ...data,
       lastUpdateDate: moment(data.creationDate).format('YYYY-MM-DD HH:mm:ss'),

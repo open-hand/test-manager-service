@@ -133,23 +133,23 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         return true;
     }
 
-    @Override
-    public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
-        List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
-        if (res != null && !res.isEmpty()) {
-//            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
-//            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
-//            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
-//            res.forEach(testCycleCaseDTO -> {
-//                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
-//                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
-//                testCycleCaseVOList.add(testCycleCaseVO);
-//            });
-            return modelMapper.map(res, new TypeToken<List<TestCycleCaseVO>>() {}.getType());
-        } else {
-            return new ArrayList<>();
-        }
-    }
+//    @Override
+//    public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
+//        List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
+//        if (res != null && !res.isEmpty()) {
+////            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
+////            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
+////            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
+////            res.forEach(testCycleCaseDTO -> {
+////                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
+////                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
+////                testCycleCaseVOList.add(testCycleCaseVO);
+////            });
+//            return modelMapper.map(res, new TypeToken<List<TestCycleCaseVO>>() {}.getType());
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
 
     @Override
     public void deleteCaseRel(Long project,Long defectId) {
