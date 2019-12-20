@@ -754,17 +754,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             throw new CommonException("error.cycle.case.not.exist");
         }
         TestCycleCaseInfoVO testCycleCaseInfoVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseInfoVO.class);
-        if(!ObjectUtils.isEmpty(testCycleCaseInfoVO.getCaseId())){
-            Boolean hasExist = true;
-            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-            if(ObjectUtils.isEmpty(testCaseDTO)){
-                hasExist = false;
-            }
-            testCycleCaseInfoVO.setCaseHasExist(hasExist);
-        }
-        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(planId);
+
         testCycleCaseInfoVO.setExecutorDate(testCycleCaseDTO.getLastUpdateDate());
-        testCycleCaseInfoVO.setPlanStatus(testPlanDTO.getStatusCode());
         previousNextId(index, testCycleCaseDTOS, testCycleCaseInfoVO);
         return testCaseAssembler.cycleCaseExtraInfo(testCycleCaseInfoVO);
     }
