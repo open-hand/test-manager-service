@@ -240,10 +240,27 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public void delete(Long cycleId, Long projectId) {
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(Arrays.asList(cycleId));
-        List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-        testCycleCaseService.batchDeleteByExecuteIds(executeIds);
-        cycleMapper.deleteByPrimaryKey(cycleId);
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(testCycleDTO.getPlanId()), projectId);
+        List<Long> cycleIds = new ArrayList<>();
+        cycleIds.add(cycleId);
+        if (!CollectionUtils.isEmpty(testCycleDTOS)) {
+            Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+            findCycleChildren(cycleId, cycleIds, cycleMap);
+            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
+            List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+            testCycleCaseService.batchDeleteByExecuteIds(executeIds);
+        }
+        cycleMapper.batchDelete(cycleIds);
+    }
+
+    private void findCycleChildren(Long cycleId, List<Long> cycleIds, Map<Long, List<TestCycleDTO>> cycleMap) {
+        List<TestCycleDTO> testCycleDTOS = cycleMap.get(cycleId);
+        if(!CollectionUtils.isEmpty(testCycleDTOS)){
+            List<Long> child = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+            cycleIds.addAll(child);
+            child.forEach(v -> findCycleChildren(v,cycleIds,cycleMap));
+        }
     }
 
     @Override
