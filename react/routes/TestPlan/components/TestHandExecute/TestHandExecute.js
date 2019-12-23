@@ -254,9 +254,7 @@ function TestHandExecute(props) {
           {detailData.caseHasExist ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
             : (
               <Tooltip title="相关用例已删除">
-                <div>
-                  <Button funcType="raised" color="primary">保存并同步到用例库</Button>
-                </div>
+                <Button funcType="raised" color="primary">保存并同步到用例库</Button>
               </Tooltip>
             )
           }
