@@ -14,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.web.util.PageableHelper;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -944,7 +945,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             CaseSelectVO caseSelectVO = map.get(key);
             List<TestCaseDTO> caseList = folderCaseMap.get(key);
             if (CollectionUtils.isEmpty(caseList)) {
-                return;
+                continue;
             }
             List<Long> collect = caseList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
             if (!caseSelectVO.getCustom()) {
@@ -968,31 +969,26 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             });
         }
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
-
-        List<Long> caseIds = list.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(caseIds)) {
+        if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        // 获取case关联的步骤
-        List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
-        Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
-        // 获取case关联的附件
-        List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
-        Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
-        // 插入
         Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
-        List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(list, testCycleDTO, defaultStatusId);
-        List<List<TestCycleCaseDTO>> lists = ConvertUtils.averageAssign(testCycleCaseDTOS, (int) Math.ceil(testCycleCaseDTOS.size() / AVG_NUM == 0 ? 1 : testCycleCaseDTOS.size() / AVG_NUM));
-
-        List<TestCycleCaseDTO> testCycleCaseDTOList = new ArrayList<>();
-        lists.forEach(v -> {
-            bathcInsert(v);
-            testCycleCaseDTOList.addAll(v);
+        List<List<TestCaseDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(list.size() / AVG_NUM == 0 ? 1 : list.size() / AVG_NUM));
+        lists.forEach(testCaseDTOList -> {
+            List<Long> caseIds = testCaseDTOList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
+            // 获取case关联的步骤
+            List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
+            Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+            // 获取case关联的附件
+            List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
+            Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
+            List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOList, testCycleDTO, defaultStatusId);
+            bathcInsert(testCycleCaseDTOS);
+            // 同步步骤
+            testCycleCaseStepService.batchInsert(testCycleCaseDTOS, caseStepMap);
+            // 同步附件
+            testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOS, attachmentMap);
         });
-        // 同步步骤
-        testCycleCaseStepService.batchInsert(testCycleCaseDTOList, caseStepMap);
-        // 同步附件
-        testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOList, attachmentMap);
     }
 
     @Override
