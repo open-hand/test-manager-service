@@ -28,6 +28,17 @@ public class TestIssueFolderDTO extends BaseDTO {
 
     private String rank;
 
+    @Transient
+    private Long caseCount;
+
+    public Long getCaseCount() {
+        return caseCount;
+    }
+
+    public void setCaseCount(Long caseCount) {
+        this.caseCount = caseCount;
+    }
+
     public String getRank() {
         return rank;
     }

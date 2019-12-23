@@ -11,7 +11,11 @@ function EditTestStepTable(props) {
   const [testStepData, setTestStepData] = useState([]);
   const onClone = (newData, originStep) => ({
     ...originStep,
-    stepId: Math.random(),
+    executeStepId: Math.random(),
+  });
+  const onCreate = newStep => ({
+    ...newStep,
+    executeStepId: Math.random(),
   });
   useEffect(() => {
     if (current) {
@@ -19,7 +23,7 @@ function EditTestStepTable(props) {
     }
   }, [current, name, testStepData]);
   useEffect(() => {
-    if (current) {
+    if (current && current.get('caseStepVOS').length !== 0) {
       setTestStepData(current.get('caseStepVOS'));
     }
   }, [current]);
@@ -31,6 +35,7 @@ function EditTestStepTable(props) {
       setData={setTestStepData}
       caseId={executeId}
       onClone={onClone}
+      onCreate={onCreate}
     />
   );
 }
