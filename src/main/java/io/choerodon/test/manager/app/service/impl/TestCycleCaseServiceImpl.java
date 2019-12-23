@@ -976,17 +976,20 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         List<List<TestCaseDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(list.size() / AVG_NUM == 0 ? 1 : list.size() / AVG_NUM));
         lists.forEach(testCaseDTOList -> {
             List<Long> caseIds = testCaseDTOList.stream().map(TestCaseDTO::getCaseId).collect(Collectors.toList());
-            // 获取case关联的步骤
-            List<TestCaseStepDTO> testCaseStepDTOS = testCaseStepMapper.listByCaseIds(caseIds);
-            Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
-            // 获取case关联的附件
-            List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
-            Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
             List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOList, testCycleDTO, defaultStatusId);
             bathcInsert(testCycleCaseDTOS);
             // 同步步骤
-            testCycleCaseStepService.batchInsert(testCycleCaseDTOS, caseStepMap);
+            int count = testCaseStepMapper.countByProjectIdAndCaseIds(caseIds);
+            int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
+            for(int page = 1;page <= ceil;page++) {
+                PageInfo<TestCaseStepDTO> caseStepDTOPageInfo = PageHelper.startPage(page, 500).doSelectPageInfo(() -> testCaseStepMapper.listByCaseIds(caseIds));
+                List<TestCaseStepDTO> testCaseStepDTOS = caseStepDTOPageInfo.getList();
+                Map<Long, List<TestCaseStepDTO>> caseStepMap = testCaseStepDTOS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
+                testCycleCaseStepService.batchInsert(testCycleCaseDTOS, caseStepMap);
+            }
             // 同步附件
+            List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(caseIds);
+            Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
             testCycleCaseAttachmentRelService.batchInsert(testCycleCaseDTOS, attachmentMap);
         });
     }
