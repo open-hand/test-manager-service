@@ -50,7 +50,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String HIDDEN_PRIORITY = "hidden_priority";
     private static final String HIDDEN_USER = "hidden_user";
     private static final String HIDDEN_COMPONENT = "hidden_component";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[7];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[6];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -128,24 +128,24 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Override
     public void importIssueByExcel(Long projectId, Long folderId, Long userId, Workbook issuesWorkbook) {
         // 默认是导入到导入文件夹，不存在则创建
-//        TestIssueFolderDTO testIssueFolderDTO = getFolder(projectId, versionId, "导入");
-//        TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, testIssueFolderDTO.getFolderId(), userId);
         Sheet testCasesSheet = issuesWorkbook.getSheet("测试用例");
-        if(ObjectUtils.isEmpty(testCasesSheet)){
-            notifyService.postWebSocket(IMPORT_ERROR, userId.toString(), "错误的模板");
-            throw new CommonException("error.template.file ");
-        }
         TestFileLoadHistoryDTO testFileLoadHistoryDTO = initLoadHistory(projectId, folderId, userId);
         TestFileLoadHistoryEnums.Status status = TestFileLoadHistoryEnums.Status.SUCCESS;
         List<Long> issueIds = new ArrayList<>();
 
-        // 重构，先选择文件夹，然后把用例导入到选择的文件夹中
-
+        if(ObjectUtils.isEmpty(testCasesSheet)){
+            logger.info("错误的模板文件");
+            // 更新创建历史记录
+            testFileLoadHistoryDTO.setMessage("错误的模板文件");
+            finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
+            return;
+        }
         //测试用例页为空，则更新文件导入历史之后直接返回
         if (isEmptyTemp(testCasesSheet)) {
             logger.info("空模板");
             // 更新创建历史记录
-            finishImport(testFileLoadHistoryDTO, userId, status);
+            testFileLoadHistoryDTO.setMessage("空模板");
+            finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
             return;
         }
 
@@ -405,7 +405,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private void finishImport(TestFileLoadHistoryDTO testFileLoadHistoryDTO, Long userId, TestFileLoadHistoryEnums.Status status) {
         testFileLoadHistoryDTO.setLastUpdateDate(new Date());
         testFileLoadHistoryDTO.setStatus(status.getTypeValue());
-        testFileLoadHistoryMapper.updateByPrimaryKey(testFileLoadHistoryDTO);
+        if(testFileLoadHistoryMapper.updateByPrimaryKey(testFileLoadHistoryDTO)!=1){
+            throw new CommonException("error.update.file.history");
+        }
 
         updateProgress(testFileLoadHistoryDTO, userId, 100.0);
     }
@@ -519,15 +521,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             issueCreateDTO.setTestCaseLinkDTOList(testCaseLinkDTOList);
 
         }
-
-
-        //Todo：重构
         TestCaseDTO testCaseDTO = testCaseService.importTestCase(issueCreateDTO, projectId, "test");
-//                return null;
-//            }
-//        } else {
-//            markAsError(row, "导入测试任务异常");
-//        }
         return testCaseDTO;
     }
 
@@ -549,7 +543,11 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = modelMapper
                 .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
         testFileLoadHistoryWithRateVO.setRate(rate);
-        notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
+            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), testFileLoadHistoryWithRateVO.getMessage());
+        }else {
+            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        }
 
         logger.info("导入进度：{}", rate);
         if (rate == 100.) {

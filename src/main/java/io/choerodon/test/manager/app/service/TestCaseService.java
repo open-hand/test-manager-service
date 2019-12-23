@@ -184,4 +184,6 @@ public interface TestCaseService {
      * @param testCase
      */
     void syncByCycleCase(TestCaseDTO testCase);
+
+    TestCaseDTO baseUpdate(TestCaseDTO testCase);
 }

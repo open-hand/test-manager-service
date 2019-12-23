@@ -19,7 +19,10 @@
 
     <select id="listByExecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO">
         select * from test_cycle_case_attach_rel
-        where   attachment_link_id in
+        where
+        attachment_type = #{type}
+        and
+         attachment_link_id in
         <foreach collection="list" item="executId" open="(" close=")" separator=",">
             #{executId}
         </foreach>

@@ -87,15 +87,25 @@ public class TestCaseAssembler {
         return testCaseRepVO;
     }
 
-    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO) {
+    public TestFolderCycleCaseVO setAssianUser(TestCycleCaseDTO testCycleCaseDTO,Map<Long, UserMessageDTO> userMap) {
         TestFolderCycleCaseVO testFolderCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestFolderCycleCaseVO.class);
         Long assignedTo = testCycleCaseDTO.getAssignedTo();
         if (assignedTo != null && !Objects.equals(assignedTo, 0L)) {
-            BaseDTO baseDTO = new BaseDTO();
-            baseDTO.setCreatedBy(assignedTo);
-            Map<Long, UserMessageDTO> userMap = getUserMap(baseDTO, null);
-            UserMessageDTO userMessageDTO = userMap.get(assignedTo);
-            testFolderCycleCaseVO.setAssignedUser(userMessageDTO);
+            UserMessageDTO userMessage = userMap.get(assignedTo);
+            if(ObjectUtils.isEmpty(userMessage)){
+                BaseDTO baseDTO = new BaseDTO();
+                baseDTO.setCreatedBy(assignedTo);
+                Map<Long, UserMessageDTO> userMap1 = getUserMap(baseDTO, null);
+                testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
+                userMap.putAll(userMap1);
+            }
+            else {
+                testFolderCycleCaseVO.setAssignedUser(userMessage);
+            }
+        }
+        UserMessageDTO updateUser = userMap.get(testCycleCaseDTO.getLastUpdatedBy());
+        if(!ObjectUtils.isEmpty(updateUser)){
+            testFolderCycleCaseVO.setLastUpdateUser(updateUser);
         }
         return testFolderCycleCaseVO;
     }
@@ -197,13 +207,17 @@ public class TestCaseAssembler {
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseInfoVO.setAttachment(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
-        // 用例的问题链接
-//        testCycleCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCycleCaseInfoVO.getProjectId(), testCycleCaseInfoVO.getCaseId()));
         // 查询用例信息
-        TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
-        if (!ObjectUtils.isEmpty(testCaseDTO)) {
-            testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
-            testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+        if(!ObjectUtils.isEmpty(testCycleCaseInfoVO.getCaseId())){
+            Boolean hasExist = true;
+            TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCycleCaseInfoVO.getCaseId());
+            if(ObjectUtils.isEmpty(testCaseDTO)){
+                hasExist = false;
+            }else {
+                testCycleCaseInfoVO.setCaseNum(getIssueNum(testCaseDTO.getProjectId(), testCaseDTO.getCaseNum()));
+                testCycleCaseInfoVO.setCaseFolderId(testCaseDTO.getFolderId());
+            }
+            testCycleCaseInfoVO.setCaseHasExist(hasExist);
         }
         return testCycleCaseInfoVO;
     }
@@ -221,6 +235,7 @@ public class TestCaseAssembler {
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());
+        testCycleCaseAttachmentRelDTO.setAttachmentType(TYPE);
         List<TestCycleCaseAttachmentRelDTO> testCycleCaseAttachmentRelDTOS = testCycleCaseAttachmentRelMapper.select(testCycleCaseAttachmentRelDTO);
         testCycleCaseUpdateVO.setCycleCaseAttachmentRelVOList(modelMapper.map(testCycleCaseAttachmentRelDTOS, new TypeToken<List<TestCycleCaseAttachmentRelVO>>() {
         }.getType()));
@@ -242,7 +257,8 @@ public class TestCaseAssembler {
         testCaseStepDTO.setIssueId(testCaseDTO.getCaseId());
         testCaseStepDTO.setLastUpdatedBy(userDetails.getUserId());
         testCaseStepDTO.setCreatedBy(userDetails.getUserId());
-        testCaseStepDTO.setRank(StringUtils.abbreviate(UUID.randomUUID().toString(), 8));
+        testCaseStepDTO.setRank(testCycleCaseStepDTO.getRank());
+        testCaseStepDTO.setCycleCaseStepId(testCycleCaseStepDTO.getExecuteStepId());
         return testCaseStepDTO;
     }
 

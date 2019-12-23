@@ -549,7 +549,14 @@ class ReportTest extends Component {
       // },
     ];
     return (
-      <Page className="c7ntest-report-test">
+      <Page
+        className="c7ntest-report-test"
+        // service={[
+        //   'test-manager-service.test-status.query',
+        //   'test-manager-service.test-case.createFormDefectFromIssue',
+        //   'agile-service.scheme.queryStatusByProjectId',
+        // ]}
+      >
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
           backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}

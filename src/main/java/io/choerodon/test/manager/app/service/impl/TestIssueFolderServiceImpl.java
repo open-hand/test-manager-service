@@ -232,10 +232,16 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds) {
-        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectAll();
-        Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
-        Map<Long,TestIssueFolderDTO> map = new HashMap<>();
+    public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream()
+                .map(v -> {
+                    if(ObjectUtils.isEmpty(v.getParentId())){
+                        v.setParentId(v.getParentId());
+                    }
+                    return v;
+                }).collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
+        Map<Long,TestIssueFolderDTO> map = new TreeMap<>();
         folderIds.forEach(v -> bulidFolder(v,map,allFolderMap));
         List<TestIssueFolderDTO> collect = map.values().stream().collect(Collectors.toList());
         return collect;
@@ -247,9 +253,17 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         testIssueFolderVO.setName(projectEvent.getProjectName());
         testIssueFolderVO.setParentId(0L);
         testIssueFolderVO.setVersionId(0L);
-        testIssueFolderVO.setProjectId(projectEvent.getProjectId());
         testIssueFolderVO.setType("cycle");
         create(projectEvent.getProjectId(),testIssueFolderVO);
+    }
+
+    @Override
+    public List<TestIssueFolderDTO> listByProject(Long projectId) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
+        if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
+            return new ArrayList<>();
+        }
+        return testIssueFolderDTOS;
     }
 
     private void bulidFolder(Long folderId, Map<Long, TestIssueFolderDTO> map, Map<Long, TestIssueFolderDTO> allFolderMap) {

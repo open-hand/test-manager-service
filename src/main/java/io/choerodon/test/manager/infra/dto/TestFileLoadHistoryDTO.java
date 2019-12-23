@@ -34,6 +34,17 @@ public class TestFileLoadHistoryDTO extends BaseDTO {
     @Transient
     private String name;
 
+    @Transient
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public Long getCreatedBy() {
         return createdBy;

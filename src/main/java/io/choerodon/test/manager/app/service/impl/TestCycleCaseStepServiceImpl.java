@@ -12,13 +12,11 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
 import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
 import io.choerodon.test.manager.app.service.TestStatusService;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
+import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
@@ -69,6 +67,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Autowired
     private TestStatusService testStatusService;
+
+    @Autowired
+    private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -195,28 +196,34 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
 
     @Override
     public void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds) {
-
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleCaseStepDTO> list = testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds);
-        if (CollectionUtils.isEmpty(list)) {
-            return;
+        int count = testCycleCaseStepMapper.countByExecuteIds(olderExecuteIds);
+        int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
+        for(int page = 1;page <= ceil;page++){
+            PageInfo<TestCycleCaseStepDTO> stepDTOPageInfo = PageHelper.startPage(page, (int) AVG_NUM).doSelectPageInfo(() -> testCycleCaseStepMapper.listByexecuteIds(olderExecuteIds));
+            List<TestCycleCaseStepDTO> list = stepDTOPageInfo.getList();
+            if (CollectionUtils.isEmpty(list)) {
+                return;
+            }
+            List<Long> stepIds = new ArrayList<>();
+            list.forEach(v -> {
+                v.setExecuteId(caseIdMap.get(v.getExecuteId()));
+                v.setExecuteStepId(null);
+                v.setCreatedBy(userDetails.getUserId());
+                v.setLastUpdatedBy(userDetails.getUserId());
+                v.setCaseId(v.getExecuteStepId());
+                stepIds.add(v.getExecuteStepId());
+            });
+            testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
+            Map<Long,Long> valueMapping = new HashMap<>();
+            list.forEach(v -> {
+                valueMapping.put(v.getCaseId(),v.getExecuteStepId());
+            });
+            //克隆步骤关联的附件
+            testCycleCaseAttachmentRelService.cloneAttach(valueMapping,stepIds,"CASE_STEP");
+            // 克隆步骤的缺陷
+            testCycleCaseDefectRelService.cloneDefect(valueMapping,stepIds,"CASE_STEP");
         }
-        List<Long> stepIds = new ArrayList<>();
-        list.forEach(v -> {
-            v.setExecuteId(caseIdMap.get(v.getExecuteId()));
-            v.setExecuteStepId(null);
-            v.setCreatedBy(userDetails.getUserId());
-            v.setLastUpdatedBy(userDetails.getUserId());
-            v.setCaseId(v.getExecuteStepId());
-            stepIds.add(v.getExecuteStepId());
-        });
-        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
-        Map<Long,Long> valueMapping = new HashMap<>();
-        list.forEach(v -> {
-            valueMapping.put(v.getCaseId(),v.getExecuteStepId());
-        });
-        // 克隆步骤的缺陷
-        testCycleCaseDefectRelService.cloneDefect(valueMapping,stepIds,"CASE_STEP");
     }
 
     @Override
@@ -247,8 +254,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        List<List<TestCycleCaseStepDTO>> lists = ConvertUtils.averageAssign(list, (int) Math.ceil(testCycleCaseDTOList.size() / AVG_NUM));
-        lists.forEach(v -> testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(v));
+        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
     }
 
     @Override

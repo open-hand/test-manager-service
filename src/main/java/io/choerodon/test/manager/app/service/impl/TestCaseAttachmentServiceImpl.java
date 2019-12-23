@@ -5,8 +5,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.IIssueAttachmentService;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
@@ -14,6 +19,7 @@ import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
+import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
@@ -31,6 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -227,6 +234,43 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     @DataLog(type = DataLogConstants.BATCH_DELETE_ATTACH,single = false)
     public void deleteByCaseId(Long caseId, List<String> collect) {
         testAttachmentMapper.deleteByCaseId(caseId);
+    }
+
+    @Override
+    public List<TestCaseAttachmentDTO> listByCaseId(Long caseId) {
+        return testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
+    }
+
+    @Override
+    public void asynAttachToCase(List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS, TestCaseDTO testCaseDTO, Long executeId) {
+        testAttachmentMapper.deleteByCaseId(testCaseDTO.getCaseId());
+        if(CollectionUtils.isEmpty(testCycleCaseAttachmentRelVOS)){
+          return;
+        }
+        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        List<TestCaseAttachmentDTO> caseAttachDTOS = testCycleCaseAttachmentRelVOS.stream().map(v -> cycleAttachVoToDTO(testCaseDTO, v, userDetails)).collect(Collectors.toList());
+        testAttachmentMapper.batchInsert(caseAttachDTOS);
+
+        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
+        if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
+            List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
+            testCaseAssembler.AutoAsyncCase(list,false,false,true);
+        }
+    }
+
+    private TestCaseAttachmentDTO cycleAttachVoToDTO(TestCaseDTO testCaseDTO, TestCycleCaseAttachmentRelVO testCycleCaseAttachmentRelVO, CustomUserDetails userDetails) {
+        TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
+        testCaseAttachmentDTO.setCaseId(testCaseDTO.getCaseId());
+        testCaseAttachmentDTO.setLastUpdatedBy(userDetails.getUserId());
+        testCaseAttachmentDTO.setCreatedBy(userDetails.getUserId());
+        testCaseAttachmentDTO.setFileName(testCycleCaseAttachmentRelVO.getAttachmentName());
+        String url = testCycleCaseAttachmentRelVO.getUrl();
+        url = url.replace("http://", "").replace("https://", "");
+        int index = url.indexOf("/");
+        String newUrl = url.substring(index);
+        testCaseAttachmentDTO.setUrl(newUrl);
+        testCaseAttachmentDTO.setProjectId(testCaseDTO.getProjectId());
+        return testCaseAttachmentDTO;
     }
 
     private void baseInsert(TestCaseAttachmentDTO v) {

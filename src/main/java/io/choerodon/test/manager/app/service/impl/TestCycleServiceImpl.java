@@ -725,7 +725,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
-        testCycleVO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
         cycleMapper.insert(testCycleDTO);
 
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
@@ -757,18 +757,9 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             return new ArrayList<>();
         }
-        Map<Long, List<TestIssueFolderDTO>> parentMap = new TreeMap<>();
-        testIssueFolderDTOS.forEach(v -> {
-            List<TestIssueFolderDTO> testIssueFolder = parentMap.get(v.getParentId());
-            if (ObjectUtils.isEmpty(testIssueFolder)) {
-                parentMap.put(v.getParentId(), Arrays.asList(v));
-            } else {
-                List<TestIssueFolderDTO> testIssueFolderDTOList = new ArrayList<>();
-                testIssueFolderDTOList.addAll(testIssueFolder);
-                testIssueFolderDTOList.add(v);
-                parentMap.put(v.getParentId(), testIssueFolderDTOList);
-            }
-        });
+        Map<Long, List<TestIssueFolderDTO>> collect = testIssueFolderDTOS.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> parentMap = new LinkedHashMap<>();
+        findChildren(parentMap,0L,collect);
         Map<Long, Long> cycleMap = new HashMap<>();
         List<TestCycleDTO> endCycle = new ArrayList<>();
         parentMap.keySet().forEach(key -> {
@@ -805,9 +796,19 @@ public class TestCycleServiceImpl implements TestCycleService {
         return endCycle;
     }
 
+
+    private void findChildren(Map<Long, List<TestIssueFolderDTO>> parentMap, Long folderId, Map<Long, List<TestIssueFolderDTO>> collect) {
+        List<TestIssueFolderDTO> testIssueFolderDTOS = collect.get(folderId);
+        if(!CollectionUtils.isEmpty(testIssueFolderDTOS)){
+            List<TestIssueFolderDTO> list = testIssueFolderDTOS.stream().sorted(Comparator.comparing(TestIssueFolderDTO::getRank)).collect(Collectors.toList());
+            parentMap.put(folderId,list);
+            testIssueFolderDTOS.forEach(v -> findChildren(parentMap,v.getFolderId(),collect));
+        }
+    }
+
     @Override
-    public List<TestCycleDTO> listByPlanIds(List<Long> planIds) {
-        return cycleMapper.listByPlanIds(null, planIds);
+    public List<TestCycleDTO> listByPlanIds(List<Long> planIds,Long projectId) {
+        return cycleMapper.listByPlanIds(null, planIds,projectId);
     }
 
     @Override
@@ -830,6 +831,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
         testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setRank(testCycleDTO.getRank());
         return testIssueFolderVO;
     }
 
@@ -868,9 +870,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId) {
+    public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId,Long projectId) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
-        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId));
+        List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId),projectId);
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             return;
         }
@@ -879,8 +881,20 @@ public class TestCycleServiceImpl implements TestCycleService {
                 v.setParentCycleId(0L);
             }
             return v;
-        }).sorted(Comparator.comparing(v -> v.getParentCycleId())).collect(Collectors.toList());
-        Map<Long, List<TestCycleDTO>> olderCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+        }).collect(Collectors.toList());
+
+        Map<Long, List<TestCycleDTO>> olderCycleMap = new TreeMap<>();
+        testCycleDTOS.forEach(v -> {
+            List<TestCycleDTO> testCycleDTOList = olderCycleMap.get(v.getParentCycleId());
+            if (ObjectUtils.isEmpty(testCycleDTOList)) {
+                olderCycleMap.put(v.getParentCycleId(), Arrays.asList(v));
+            } else {
+                List<TestCycleDTO> newTestCycleList = new ArrayList<>();
+                newTestCycleList.addAll(testCycleDTOList);
+                newTestCycleList.add(v);
+                olderCycleMap.put(v.getParentCycleId(), newTestCycleList);
+            }
+        });
 
         Map<Long, Long> newMapping = new HashMap<>();
         List<Long> cycIds = new ArrayList<>();
@@ -911,8 +925,8 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     @Override
-    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId) {
-        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId));
+    public TestTreeIssueFolderVO queryTreeByPlanId(Long planId,Long projectId) {
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(planId),projectId);
         List<TestCycleDTO> collect = testCycleDTOS.stream().map(v -> {
             if (ObjectUtils.isEmpty(v.getParentCycleId())) {
                 v.setParentCycleId(0L);
@@ -983,7 +997,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     }
 
     private String getLastedRank(TestCycleVO testCycleVO) {
-        return cycleMapper.getPlanLastedRank(testCycleVO.getParentCycleId());
+        return cycleMapper.getPlanLastedRank(testCycleVO.getPlanId());
     }
 
     private void insertCaseToFolder(Long issueFolderId, Long cycleId) {
@@ -1314,7 +1328,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<TestCycleDTO> testCycleDTOS = new ArrayList<>();
         for (Map.Entry<Long, List<TestCycleDTO>> map : listMap.entrySet()
         ) {
-            String prevRank = RankUtil.Operation.INSERT.getRank(cycleMapper.getPlanLastedRank(map.getKey()), null);
+            String prevRank = null;
             if (!CollectionUtils.isEmpty(map.getValue())) {
                 for (TestCycleDTO testCycleDTO : map.getValue()) {
                     testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));

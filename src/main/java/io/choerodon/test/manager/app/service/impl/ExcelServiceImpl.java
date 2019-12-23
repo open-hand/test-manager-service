@@ -331,10 +331,11 @@ public class ExcelServiceImpl implements ExcelService {
         List<ExcelCaseVO> excelCaseVOS = handleCase(projectId,folderId);
         if(CollectionUtils.isEmpty(excelCaseVOS)){
             testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
-            testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.CANCEL.getTypeValue());
+            testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
+            testFileLoadHistoryWithRateVO.setMessage("文件夹下无用例");
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), "文件夹下无用例");
+            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
             throw new CommonException("error.folder.no.has.case");
         }
         int sum = excelCaseVOS.size();

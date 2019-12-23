@@ -39,7 +39,7 @@ const CardWrapper = ({ children, title, style }) => (
 function TestHandExecute(props) {
   const context = useContext(Store);
   const {
-    ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet, 
+    ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
   } = context;
   const [syncLoading, setSyncLoading] = useState(false);
   useEffect(() => {
@@ -224,6 +224,7 @@ function TestHandExecute(props) {
       if (editExecuteCaseDataSet.current.status === 'update') {
         ExecuteDetailStore.getInfo();
         stepTableDataSet.query();
+        executeHistoryDataSet.query();
       }
       editExecuteCaseDataSet.splice(0, 1);
     }
@@ -257,7 +258,7 @@ function TestHandExecute(props) {
                   <Button funcType="raised" color="primary">保存并同步到用例库</Button>
                 </div>
               </Tooltip>
-            )          
+            )
           }
           {cancelBtn}
         </div>
@@ -287,7 +288,34 @@ function TestHandExecute(props) {
       summary, nextExecuteId, previousExecuteId, planStatus = 'done',
     } = detailData;
     return (
-      <Page className="c7n-test-execute-detail">
+      <Page
+        className="c7n-test-execute-detail"
+        service={[
+          'test-manager-service.test-status.query',
+          'test-manager-service.test-cycle-case-history.query',
+          'test-manager-service.test-cycle-case.queryCaseInfo',
+          'test-manager-service.test-cycle-case-step.querySubStep',
+          'agile-service.issue-attachment.uploadForAddress',
+          'test-manager-service.test-cycle-case.updateCaseAndStep',
+          'test-manager-service.test-attachment.uploadFile',
+          'test-manager-service.test-attachment.removeAttachment',
+          'test-manager-service.test-cycle-case.queryCaseAndStep',
+          'test-manager-service.test-cycle-case-step.update',
+          'test-manager-service.test-cycle-case-defect-rel.removeAttachment',
+          'test-manager-service.test-cycle-case.update',
+          'test-manager-service.test-cycle-case-defect-rel.insert',
+          'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
+          'test-manager-service.test-cycle-case-defect-rel.createIssueAndLinkDefect',
+          'base-service.project.list',
+          'agile-service.issue.listEpicSelectData',
+          'agile-service.sprint.queryNameByOptions',
+          'agile-service.issue.queryIssueByOptionForAgile',
+          'agile-service.issue-link-type.listIssueLinkType',
+          'agile-service.field-value.queryPageFieldViewList',
+          'agile-service.scheme.queryByOrganizationIdList',
+          'agile-service.issue-attachment.uploadAttachment',
+        ]}
+      >
         <Header
           title={<FormattedMessage id="execute_detail" />}
         // backPath={disabled ? TestPlanLink() : TestExecuteLink()}
@@ -368,6 +396,7 @@ function TestHandExecute(props) {
                 >
                   <StepTable
                     dataSet={stepTableDataSet}
+                    updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
                     testStatusDataSet={testStatusDataSet}
                     readOnly={planStatus === 'done'} // 数据是否只读
                     operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改

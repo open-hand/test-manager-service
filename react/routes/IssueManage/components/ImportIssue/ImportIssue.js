@@ -6,7 +6,9 @@ import {
 } from '@choerodon/boot';
 import { Choerodon } from '@choerodon/boot';
 import { Progress, Divider } from 'choerodon-ui';
-import { DataSet, Form, Button } from 'choerodon-ui/pro';
+import {
+  DataSet, Form, Button, message, 
+} from 'choerodon-ui/pro';
 import moment from 'moment';
 import _ from 'lodash';
 import FileSaver from 'file-saver';
@@ -196,6 +198,12 @@ function ImportIssue(props) {
   };
   const debounceSetImportRecord = _.debounce(setImportRecord, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
+    if (res === '错误的模板文件') {
+      message.error(res);
+      dispatch({ type: 'cancel' });
+      setImportRecord({});
+      return;
+    }
     if (res !== 'ok') {
       const data = JSON.parse(res);
       const {

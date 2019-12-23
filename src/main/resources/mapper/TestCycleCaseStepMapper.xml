@@ -285,9 +285,20 @@
     </delete>
 
     <select id="listByexecuteIds" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
-        select  * from test_cycle_case_step
+        select
+        tccs.execute_step_id,
+        tccs.execute_id,
+        tccs.test_step,
+        tccs.test_data,
+        tccs.step_id,
+        tccs.rank,
+        tccs.description,
+        tccs.step_status,
+        tccs.expect_result as expectedResult,
+        tccs.object_version_number
+        from test_cycle_case_step tccs
         where
-        execute_id in
+        tccs.execute_id in
         <foreach collection="ids" item="executId" open="(" close=")" separator=",">
             #{executId}
         </foreach>
@@ -301,5 +312,17 @@
             tccs.execute_id = #{executeId}
         ORDER BY
             rank
+    </select>
+
+    <select id="countByExecuteIds" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        test_cycle_case_step
+        where
+        execute_id in
+        <foreach collection="list" item="executeId" open="(" close=")" separator=",">
+            #{executeId}
+        </foreach>
     </select>
 </mapper>

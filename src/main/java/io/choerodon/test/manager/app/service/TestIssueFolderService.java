@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
@@ -49,11 +50,13 @@ public interface TestIssueFolderService {
      */
     List<TestIssueFolderVO> queryListByProjectId(Long projectId);
 
-    List<TestIssueFolderDTO> listFolderByFolderIds(List<Long> folderIds);
+    List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds);
 
     /**
      * 创建项目时,用例库初始化文件夹
      * @param projectEvent
      */
     void initializationFolderInfo(ProjectEvent projectEvent);
+
+    List<TestIssueFolderDTO> listByProject(Long projectId);
 }

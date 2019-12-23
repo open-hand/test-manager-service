@@ -93,16 +93,16 @@ public class TestCycleCaseDefectRelController {
         testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelVO, organizationId);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("根据缺陷issueId查询测试步骤")
-    @GetMapping("/query_by_bug")
-    public ResponseEntity<List<TestCycleCaseVO>> queryByBug(@PathVariable(name = "project_id") Long projectId,
-                                                            @RequestParam Long bugId) {
-        return Optional.ofNullable(testCycleCaseDefectRelService.queryByBug(projectId, bugId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.testCaseStep.get"));
-
-    }
+//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//    @ApiOperation("根据缺陷issueId查询测试步骤")
+//    @GetMapping("/query_by_bug")
+//    public ResponseEntity<List<TestCycleCaseVO>> queryByBug(@PathVariable(name = "project_id") Long projectId,
+//                                                            @RequestParam Long bugId) {
+//        return Optional.ofNullable(testCycleCaseDefectRelService.queryByBug(projectId, bugId))
+//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+//                .orElseThrow(() -> new CommonException("error.testCaseStep.get"));
+//
+//    }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("删除缺陷后解除对应关系")

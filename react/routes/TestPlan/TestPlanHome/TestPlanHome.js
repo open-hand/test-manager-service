@@ -1,17 +1,14 @@
 import React, {
   useCallback, useContext, useEffect,
 } from 'react';
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
+
 import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import {
-  Icon, Tabs, Spin,
-} from 'choerodon-ui';
+import { Icon, Tabs } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, 
@@ -236,7 +233,38 @@ function TestPlanHome({ history }) {
     description = '当前项目下无已完成的计划';
   }
   return (
-    <Page className={prefixCls}>
+    <Page
+      className={prefixCls}
+      service={[
+        'test-manager-service.test-status.query',
+        'test-manager-service.test-plan.queryTree',
+        'test-manager-service.test-plan.queryInfo',
+        'test-manager-service.test-plan.create',
+        'test-manager-service.test-plan.query',
+        'test-manager-service.test-plan.deletePlan',
+        'test-manager-service.test-plan.clonePlan',
+        'test-manager-service.test-plan.updateStatus',
+        'test-manager-service.test-plan.allPlan',
+        'test-manager-service.test-plan.formStatus',
+        'test-manager-service.test-issue-folder.query',
+        'test-manager-service.test-case.listCaseByFolderId',
+        'test-manager-service.test-cycle-case.update',
+        'base-service.project-user.listProjectUsersByProjectIdAndRoleLable',
+        'base-service.project.list',
+        'test-manager-service.test-cycle.insert',
+        'test-manager-service.test-cycle.update',
+        'test-manager-service.test-cycle.batchChangeAssignedInOneCycle',
+        'test-manager-service.test-cycle.queryLatestLoadHistory',
+        'test-manager-service.test-cycle-case.importCase',
+        'test-manager-service.test-cycle.moveFolder',
+        'test-manager-service.test-cycle-case.delete',
+        'test-manager-service.test-cycle-case.listCaseByCycleId',
+        'test-manager-service.test-cycle-case.ignoreUpdate',
+        'test-manager-service.test-cycle-case.updateCompare',
+        'test-manager-service.test-cycle-case.selectUpdateCompare',
+        'test-manager-service.test-cycle-case.queryExecutionStatus',
+      ]}
+    >
       <Header
         title={<FormattedMessage id="testPlan_name" />}
       >
@@ -254,16 +282,11 @@ function TestPlanHome({ history }) {
           <div className={`${prefixCls}-contentWrap-left`}>
             <div className={`${prefixCls}-contentWrap-testPlanTree`}>
               <Tabs defaultActiveKey="todo" onChange={handleTabsChange} activeKey={testPlanStatus}>
-                <TabPane tab="未开始" key="todo">
-                  <TestPlanTree />
-                </TabPane>
-                <TabPane tab="进行中" key="doing">
-                  <TestPlanTree />
-                </TabPane>
-                <TabPane tab="已完成" key="done">
-                  <TestPlanTree />
-                </TabPane>
+                <TabPane tab="未开始" key="todo" />
+                <TabPane tab="进行中" key="doing" />
+                <TabPane tab="已完成" key="done" />
               </Tabs>
+              <TestPlanTree />
             </div>
           </div>
           {

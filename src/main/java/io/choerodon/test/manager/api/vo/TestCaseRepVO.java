@@ -62,6 +62,8 @@ public class TestCaseRepVO {
 
     private String nextRank;
 
+    private Long executeId;
+
     public Long getCaseId() {
         return caseId;
     }
@@ -204,5 +206,13 @@ public class TestCaseRepVO {
 
     public void setNextRank(String nextRank) {
         this.nextRank = nextRank;
+    }
+
+    public Long getExecuteId() {
+        return executeId;
+    }
+
+    public void setExecuteId(Long executeId) {
+        this.executeId = executeId;
     }
 }

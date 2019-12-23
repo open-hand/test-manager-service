@@ -139,25 +139,25 @@ class ReportProgress extends Component {
           />
           <div className="c7ntest-tableContainer">
             <p className="c7ntest-table-title"><FormattedMessage id="report_progress_table_title" /></p>
-            <div style={{ overflowY: 'scroll', maxHeight: 300 }}>
+            <div style={{ overflowY: 'scroll', flex: 1 }}>
               <table>
                 <tr>
                   <td style={{ width: '158px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_statusTd" /></td>
                   <td style={{ width: '62px', paddingBottom: 15 }}><FormattedMessage id="report_progress_table_countTd" /></td>
                 </tr>
                 {
-                versionProgress.statusVOList.map((item, index) => (
-                  <tr>
-                    <td style={{ display: 'flex', paddingBottom: 8 }}>
-                      <div className="c7ntest-table-icon" style={{ background: item.statusColor }} />
-                      <Tooltip title={item.statusName}>
-                        <div className="c7ntest-table-name">{item.statusName}</div>
-                      </Tooltip>
-                    </td>
-                    <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.count}</td>
-                  </tr>
-                ))
-              }
+                  versionProgress.statusVOList.map((item, index) => (
+                    <tr>
+                      <td style={{ display: 'flex', paddingBottom: 8 }}>
+                        <div className="c7ntest-table-icon" style={{ background: item.statusColor }} />
+                        <Tooltip title={item.statusName}>
+                          <div className="c7ntest-table-name">{item.statusName}</div>
+                        </Tooltip>
+                      </td>
+                      <td style={{ width: '62px', paddingRight: 15, paddingBottom: 8 }}>{item.count}</td>
+                    </tr>
+                  ))
+                }
               </table>
             </div>
           </div>
@@ -168,7 +168,7 @@ class ReportProgress extends Component {
         <Empty
           loading={loading}
           pic={EmptyPng}
-          title={`${planList && planList.length > 0 ? '暂无测试用例' : '暂无计划'}`} 
+          title={`${planList && planList.length > 0 ? '暂无测试用例' : '暂无计划'}`}
           description={`${planList && planList.length > 0 ? '当前计划下暂无测试用例' : '当前项目下无计划'}`}
         />
       );
@@ -182,7 +182,11 @@ class ReportProgress extends Component {
       planList, currentPlanId,
     } = this.state;
     return (
-      <Page className="c7ntest-report-progress">
+      <Page
+        className="c7ntest-report-progress"
+      // service={['test-manager-service.test-plan.allPlan',
+      //   'test-manager-service.test-cycle-case.queryExecutionStatus']}
+      >
         <Header
           title={<FormattedMessage id="report_defectToProgress" />}
           backPath={`/charts?type=${urlParams.type}&id=${urlParams.id}&name=${urlParams.name}&organizationId=${organizationId}&orgId=${organizationId}`}

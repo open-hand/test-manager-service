@@ -20,8 +20,8 @@ export const StoreProvider = withRouter(injectIntl(inject('AppState')(
     } = props;
     const testStatusDataSet = useMemo(() => new DataSet(TestStatusDataSet(id)), [id]);
     const ExecuteDetailStore = useMemo(() => new ExecuteDetailStoreObject(), []);
-    const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId, testStatusDataSet)), [caseId, id, intl, orgId, testStatusDataSet]);
     const executeHistoryDataSet = useMemo(() => new DataSet(ExecuteHistoryDataSet(id, intl, caseId)), [caseId, id, intl]);
+    const stepTableDataSet = useMemo(() => new DataSet(StepTableDataSet(id, orgId, intl, caseId, testStatusDataSet, executeHistoryDataSet)), [caseId, executeHistoryDataSet, id, intl, orgId, testStatusDataSet]);
     const editExecuteCaseDataSet = useMemo(() => new DataSet(EditExecuteCaseDataSet(caseId, 'issue', intl)), [caseId, intl]);
 
     const value = {

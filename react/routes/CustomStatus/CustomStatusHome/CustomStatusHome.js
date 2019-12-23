@@ -79,7 +79,15 @@ const CustomStatusHome = ({
       onCheckStatusRepeat={onCheckStatusRepeat}
       onSubmit={onEditStatusSubmit}
     />
-    <Page className="c7ntest-custom-status">
+    <Page
+      className="c7ntest-custom-status"
+      service={[
+        'test-manager-service.test-status.query',
+        'test-manager-service.test-status.insert',
+        'test-manager-service.test-status.delete',
+        'test-manager-service.test-status.update',
+      ]}
+    >
       <Header>
         <Button icon="playlist_add" onClick={onShowCreateClick}>
           <FormattedMessage id="status_create" />
