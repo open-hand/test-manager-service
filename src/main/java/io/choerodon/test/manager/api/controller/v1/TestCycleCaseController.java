@@ -48,70 +48,70 @@ public class TestCycleCaseController {
     }
 
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("查询测试组下循环用例")
-//    @GetMapping("/query/issue/{issueId}")
-//    public ResponseEntity<List<TestCycleCaseVO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
-//                                                               @PathVariable(name = "issueId") Long issueId,
-//                                                               @RequestParam Long organizationId) {
-//        return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId, organizationId))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询测试组下循环用例")
+    @GetMapping("/query/issue/{issueId}")
+    public ResponseEntity<List<TestCycleCaseVO>> queryByIssuse(@PathVariable(name = "project_id") Long projectId,
+                                                               @PathVariable(name = "issueId") Long issueId,
+                                                               @RequestParam Long organizationId) {
+        return Optional.ofNullable(testCycleCaseService.queryByIssuse(issueId, projectId, organizationId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.issueId"));
+    }
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("查询测试用例下循环case")
-//    @PostMapping("/query/cycleId")
-//    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
-//                                                                  @ApiIgnore
-//                                                                  @ApiParam(value = "分页信息", required = true)
-//                                                                  @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
-//                                                                          Pageable pageable,
-//                                                                  @RequestBody TestCycleCaseVO dto,
-//                                                                  @RequestParam Long organizationId) {
-//        Assert.notNull(dto.getCycleId(), "error.queryByCycle.cycleId.not.null");
-//        return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageable, projectId, organizationId))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询测试用例下循环case")
+    @PostMapping("/query/cycleId")
+    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycle(@PathVariable(name = "project_id") Long projectId,
+                                                                  @ApiIgnore
+                                                                  @ApiParam(value = "分页信息", required = true)
+                                                                  @SortDefault(value = "cycle_id,rank", direction = Sort.Direction.ASC)
+                                                                          Pageable pageable,
+                                                                  @RequestBody TestCycleCaseVO dto,
+                                                                  @RequestParam Long organizationId) {
+        Assert.notNull(dto.getCycleId(), "error.queryByCycle.cycleId.not.null");
+        return Optional.ofNullable(testCycleCaseService.queryByCycle(dto, pageable, projectId, organizationId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+    }
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("过滤查询测试用例下循环case")
-//    @PostMapping("/query/filtered/{cycleId}")
-//    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
-//                                                                                @PathVariable(name = "cycleId") Long cycleId,
-//                                                                                @RequestBody TestCycleCaseVO searchDTO,
-//                                                                                @ApiIgnore
-//                                                                                @ApiParam(value = "分页信息", required = true)
-//                                                                                @SortDefault(value = "rank", direction = Sort.Direction.ASC)
-//                                                                                        Pageable pageable) {
-//        return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageable, projectId, searchDTO))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("过滤查询测试用例下循环case")
+    @PostMapping("/query/filtered/{cycleId}")
+    public ResponseEntity<PageInfo<TestCycleCaseVO>> queryByCycleWithFilterArgs(@PathVariable(name = "project_id") Long projectId,
+                                                                                @PathVariable(name = "cycleId") Long cycleId,
+                                                                                @RequestBody TestCycleCaseVO searchDTO,
+                                                                                @ApiIgnore
+                                                                                @ApiParam(value = "分页信息", required = true)
+                                                                                @SortDefault(value = "rank", direction = Sort.Direction.ASC)
+                                                                                        Pageable pageable) {
+        return Optional.ofNullable(testCycleCaseService.queryByCycleWithFilterArgs(cycleId, pageable, projectId, searchDTO))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.cycleId"));
+    }
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("查询一个循环用例")
-//    @GetMapping("/query/one/{executeId}")
-//    public ResponseEntity<TestCycleCaseVO> queryOne(@PathVariable(name = "project_id") Long projectId,
-//                                                    @PathVariable(name = "executeId") Long executeId,
-//                                                    @RequestParam(name = "cycleId") Long cycleId,
-//                                                    @RequestParam Long organizationId) {
-//        return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId, cycleId, organizationId))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-//                .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("查询一个循环用例")
+    @GetMapping("/query/one/{executeId}")
+    public ResponseEntity<TestCycleCaseVO> queryOne(@PathVariable(name = "project_id") Long projectId,
+                                                    @PathVariable(name = "executeId") Long executeId,
+                                                    @RequestParam(name = "cycleId") Long cycleId,
+                                                    @RequestParam Long organizationId) {
+        return Optional.ofNullable(testCycleCaseService.queryOne(executeId, projectId, cycleId, organizationId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
+    }
 
 
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("增加一个测试组下循环用例")
-//    @PostMapping("/insert")
-//    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseVO testCycleCaseVO, @PathVariable(name = "project_id") Long projectId) {
-//        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseVO, projectId))
-//                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
-//                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
-//
-//    }
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("增加一个测试组下循环用例")
+    @PostMapping("/insert")
+    public ResponseEntity insertOneCase(@RequestBody TestCycleCaseVO testCycleCaseVO, @PathVariable(name = "project_id") Long projectId) {
+        return Optional.ofNullable(testCycleCaseService.create(testCycleCaseVO, projectId))
+                .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
+                .orElseThrow(() -> new CommonException("error.testCycleCase.insert"));
+
+    }
 
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

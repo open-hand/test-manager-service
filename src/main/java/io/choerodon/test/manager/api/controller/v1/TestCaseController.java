@@ -82,17 +82,6 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("通过IssueId生成issue到缺陷的报表")
-    @PostMapping("/get/reporter/from/issue/by/issueId")
-    public ResponseEntity createFormsFromIssueToDefectByIssueId(@PathVariable(name = "project_id") Long projectId,
-                                                                @RequestBody Long[] issueIds,
-                                                                @RequestParam Long organizationId) {
-
-        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, issueIds, organizationId))
-                .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
-                .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect.byId"));
-    }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
@@ -119,32 +108,10 @@ public class TestCaseController {
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
-    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("生成整个项目的excel")
-//    @GetMapping("/download/excel")
-//    public ResponseEntity downLoadByProject(@PathVariable(name = "project_id") Long projectId,
-//                                            HttpServletRequest request,
-//                                            HttpServletResponse response,
-//                                            @RequestParam Long organizationId) {
-//        excelServiceHandler.exportCaseByProject(projectId, request, response, organizationId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
 
-    // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
-//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-//    @ApiOperation("生成整个版本的excel")
-//    @GetMapping("/download/excel/version")
-//    public ResponseEntity downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
-//                                            @RequestParam(name = "versionId") Long versionId,
-//                                            HttpServletRequest request,
-//                                            HttpServletResponse response,
-//                                            @RequestParam Long organizationId) {
-//        excelServiceHandler.exportCaseByVersion(projectId, versionId, request, response, organizationId);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
-    // Todo：只导出选择文件夹下的所有用例
+    /**
+     *   导出选择文件夹下的所有用例
+     */
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
