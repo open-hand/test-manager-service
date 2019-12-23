@@ -65,6 +65,6 @@
     </update>
 
     <select id="projectLastRank" resultType="String">
-        select max(rank) from test_issue_folder where project_id=#{projectId}
+        select min(rank) from test_issue_folder where project_id=#{projectId}
     </select>
 </mapper>

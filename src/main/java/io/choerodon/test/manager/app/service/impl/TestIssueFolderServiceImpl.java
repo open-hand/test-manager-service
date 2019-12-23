@@ -140,7 +140,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         testIssueFolderVO.setProjectId(projectId);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
-        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(testIssueFolderMapper.projectLastRank(projectId),null));
+        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(null,testIssueFolderMapper.projectLastRank(projectId)));
         if (testIssueFolderMapper.insert(testIssueFolderDTO) != 1) {
             throw new CommonException("error.issueFolder.insert");
         }
