@@ -120,29 +120,29 @@ public class TestCaseController {
     }
 
     // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("生成整个项目的excel")
-    @GetMapping("/download/excel")
-    public ResponseEntity downLoadByProject(@PathVariable(name = "project_id") Long projectId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            @RequestParam Long organizationId) {
-        excelServiceHandler.exportCaseByProject(projectId, request, response, organizationId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//    @ApiOperation("生成整个项目的excel")
+//    @GetMapping("/download/excel")
+//    public ResponseEntity downLoadByProject(@PathVariable(name = "project_id") Long projectId,
+//                                            HttpServletRequest request,
+//                                            HttpServletResponse response,
+//                                            @RequestParam Long organizationId) {
+//        excelServiceHandler.exportCaseByProject(projectId, request, response, organizationId);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     // Todo: 重构：导出用例只能选择文件夹下的所有用例,该接口需要删除
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
-    @ApiOperation("生成整个版本的excel")
-    @GetMapping("/download/excel/version")
-    public ResponseEntity downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
-                                            @RequestParam(name = "versionId") Long versionId,
-                                            HttpServletRequest request,
-                                            HttpServletResponse response,
-                                            @RequestParam Long organizationId) {
-        excelServiceHandler.exportCaseByVersion(projectId, versionId, request, response, organizationId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+//    @ApiOperation("生成整个版本的excel")
+//    @GetMapping("/download/excel/version")
+//    public ResponseEntity downLoadByVersion(@PathVariable(name = "project_id") Long projectId,
+//                                            @RequestParam(name = "versionId") Long versionId,
+//                                            HttpServletRequest request,
+//                                            HttpServletResponse response,
+//                                            @RequestParam Long organizationId) {
+//        excelServiceHandler.exportCaseByVersion(projectId, versionId, request, response, organizationId);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     // Todo：只导出选择文件夹下的所有用例
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

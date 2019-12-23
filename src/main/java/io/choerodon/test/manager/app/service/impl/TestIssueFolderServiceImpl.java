@@ -54,37 +54,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
-        return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-    }
-
-    @Override
-    public List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
-        List<TestIssueFolderVO> resultTemp = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-        List<TestIssueFolderWithVersionNameVO> result = new ArrayList<>();
-        String versionName = testCaseService.getVersionInfo(projectId).getOrDefault(versionId, new ProductVersionDTO()).getName();
-
-        resultTemp.forEach(v -> {
-            TestIssueFolderWithVersionNameVO t = new TestIssueFolderWithVersionNameVO();
-            t.setFolderId(v.getFolderId());
-            t.setName(v.getName());
-            t.setVersionId(v.getVersionId());
-            t.setVersionName(versionName);
-            t.setProjectId(v.getProjectId());
-            t.setType(v.getType());
-            t.setObjectVersionNumber(v.getObjectVersionNumber());
-            result.add(t);
-        });
-
-        return result;
-    }
-
-    @Override
     public TestTreeIssueFolderVO queryTreeFolder(Long projectId) {
         List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderMapper.selectListByProjectId(projectId);
         //根目录
@@ -162,18 +131,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
-    @Override
-    public Long getDefaultFolderId(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, "temp", null);
-        TestIssueFolderVO resultTestIssueFolderVO = modelMapper.map(testIssueFolderMapper.selectOne(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
-        testIssueFolderVO.setName("临时");
-        if (resultTestIssueFolderVO == null) {
-            return create(projectId, testIssueFolderVO).getFolderId();
-        } else {
-            return resultTestIssueFolderVO.getFolderId();
-        }
-    }
 
     @Override
     public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {
