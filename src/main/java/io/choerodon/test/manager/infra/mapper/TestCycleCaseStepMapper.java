@@ -41,7 +41,5 @@ public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
 
     List<TestCycleCaseStepDTO>  listByexecuteIds(@Param("ids") List<Long> olderExecuteId);
 
-    List<TestCycleCaseStepDTO> selectByexecuteId(@Param("executeId") Long executeId);
-
     int countByExecuteIds(@Param("list") List<Long> olderExecuteIds);
 }
