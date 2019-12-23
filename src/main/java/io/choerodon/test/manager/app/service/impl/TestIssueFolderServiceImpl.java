@@ -100,6 +100,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class));
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
+            folderVO.setCaseCount(testIssueFolderDTO.getCaseCount());
             // 判断是否有case
             folderVO.setHasCase(testIssueFolderDTO.getCaseCount()==0?false:true);
             if (CollectionUtils.isEmpty(childrenIds)) {
