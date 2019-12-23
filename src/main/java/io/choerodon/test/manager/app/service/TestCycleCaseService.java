@@ -22,12 +22,6 @@ public interface TestCycleCaseService {
 
     PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, Pageable pageable, Long projectId, Long organizationId);
 
-    PageInfo<TestCycleCaseVO> queryByCycleWithFilterArgs(Long cycleId, Pageable pageable, Long projectId, TestCycleCaseVO searchDTO);
-
-    TestCycleCaseVO queryOne(Long cycleCaseId, Long projectId, Long cycleId, Long organizationId);
-
-    List<TestCycleCaseVO> queryByIssuse(Long issuseId, Long projectId, Long organizationId);
-
     List<TestCycleCaseVO> queryInIssues(Long[] issueIds, Long projectId, Long organizationId);
 
     List<TestCycleCaseVO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId, Long organizationId);
@@ -44,8 +38,6 @@ public interface TestCycleCaseService {
 
     List<TestCycleCaseVO> batchCreateForAutoTest(List<TestCycleCaseVO> list, Long projectId);
 
-    List<Long> getActiveCase(Long range, Long projectId, String day);
-
     /**
      * 修改一个case
      *
@@ -59,12 +51,6 @@ public interface TestCycleCaseService {
      * @param cycleCaseDTOS
      */
     void batchChangeCase(Long projectId, List<TestCycleCaseVO> cycleCaseDTOS);
-
-    Long countCaseNotRun(Long projectId);
-
-    Long countCaseNotPlain(Long projectId);
-
-    Long countCaseSum(Long projectId);
 
     void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 

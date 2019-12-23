@@ -20,7 +20,6 @@ import io.choerodon.test.manager.infra.dto.TestStatusDTO;
  */
 public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     List<TestCycleCaseDTO> queryWithAttachAndDefect(@Param("dto") TestCycleCaseDTO testCycleCaseDTO, @Param("page") int page, @Param("pageSize") int pageSize);
-
     /**
      * 查询为父cycle的所有子阶段的信息
      *
@@ -35,9 +34,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
 
     List<TestCycleCaseDTO> filter(Map map);
 
-    List<TestCycleCaseDTO> queryByIssue(@Param("issueId") Long issueId);
-
-
     /**
      * 查询issues下的cycleCase
      *
@@ -49,24 +45,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     List<TestCycleCaseDTO> queryCaseAllInfoInCyclesOrVersions(@Param("cycleIds") Long[] cycleIds, @Param("versionIds") Long[] versionIds);
 
     List<TestCycleCaseDTO> queryCycleCaseForReporter(@Param("ids") Long[] issueIds);
-
-    Long countCaseNotRun(@Param("ids") Long[] cycleIds);
-
-    /**
-     * 统计cycleIds下所有已经启动的Issue的数量
-     *
-     * @param cycleIds
-     * @return
-     */
-    Long countCaseNotPlain(@Param("ids") Long[] cycleIds);
-
-    /**
-     * 获取cycleIds下所有的测试实例数量
-     *
-     * @param cycleIds
-     * @return
-     */
-    Long countCaseSum(@Param("ids") Long[] cycleIds);
 
     /**
      * 获取cycle（除了temp类型）下是否存的同issue的测试用例
@@ -83,8 +61,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      * @return
      */
     String getLastedRank(@Param("planId") Long planId);
-
-    String getLastedRank_oracle(@Param("cycleId") Long cycleId);
 
     int batchInsertTestCycleCases(List<TestCycleCaseDTO> testCycleCaseDTOS);
 
