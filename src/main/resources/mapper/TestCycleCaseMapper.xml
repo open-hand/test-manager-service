@@ -46,6 +46,37 @@
         </collection>
     </resultMap>
 
+    <resultMap type="io.choerodon.test.manager.infra.dto.TestCycleCaseDTO" id="BaseCycleAndStep">
+    <id column="execute_id" property="executeId"/>
+    <id column="cycle_id" property="cycleId"/>
+    <id column="issue_id" property="caseId"/>
+    <id column="rank" property="rank"/>
+    <id column="object_version_number" property="objectVersionNumber"/>
+    <id column="execution_status" property="executionStatus"/>
+    <id column="status_name" property="executionStatusName"/>
+    <id column="assigned_to" property="assignedTo"/>
+    <id column="description" property="description"/>
+    <id column="summary" property="summary"/>
+    <id column="folder_name" property="folderName"/>
+    <id column="version_id" property="versionId"/>
+    <id column="last_update_date" property="lastUpdateDate"/>
+    <id column="creation_date" property="creationDate"/>
+    <id column="last_updated_by" property="lastUpdatedBy"/>
+    <id column="created_by" property="createdBy"/>
+        <collection property="cycleCaseStep" ofType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+            <id column="execute_step_id" property="executeStepId"/>
+            <id column="step_execute_id" property="executeId"/>
+            <id column="step_id" property="stepId"/>
+            <id column="step_description" property="description"/>
+            <id column="step_status_name" property="statusName"/>
+            <id column="test_step" property="testStep"/>
+            <id column="test_data" property="testData"/>
+            <id column="expect_result" property="expectedResult"/>
+            <id column="step_rank" property="rank"/>
+            <id column="step_object_version_number" property="objectVersionNumber"/>
+        </collection>
+    </resultMap>
+
     <select id="filter" resultMap="BaseResultMap">
         SELECT cycle.execute_id,cycle.cycle_id,cycle.case_id,cycle.rank,cycle.object_version_number,
         cycle.execution_status,cycle.assigned_to,cycle.description,cycle.last_update_date,cycle.last_updated_by,
@@ -926,6 +957,25 @@ ORDER BY
                  open="(" separator="," close=")">
             #{cycleId}
         </foreach>
+    </select>
+    <select id="selectCycleCaseAndStep" resultMap="BaseCycleAndStep">
+        SELECT
+	tcc.*, tccs.execute_step_id,
+	tccs.execute_id as step_execute_id,
+	tccs.test_step,
+	tccs.test_data,
+	tccs.step_id,
+	tccs.rank as step_rank,
+	tccs.description as step_description,
+	tccs.step_status,
+	tccs.expect_result,
+	tccs.object_version_number step_object_version_number
+    FROM
+        test_cycle_case tcc
+    LEFT JOIN test_cycle_case_step tccs ON tcc.execute_id = tccs.execute_id
+    WHERE
+        tcc.execute_id = #{executeId}
+        order by tccs.rank
     </select>
 </mapper>
 

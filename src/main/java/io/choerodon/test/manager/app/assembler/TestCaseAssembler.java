@@ -227,11 +227,10 @@ public class TestCaseAssembler {
             throw new CommonException("error.cycle.case.null");
         }
         TestCycleCaseUpdateVO testCycleCaseUpdateVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseUpdateVO.class);
-        //查询步骤信息
-        List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.selectByexecuteId(testCycleCaseDTO.getExecuteId());
-        List<TestCycleCaseStepUpdateVO> testCycleCaseStepVOList = modelMapper.map(testCycleCaseStepDTOS, new TypeToken<List<TestCycleCaseStepUpdateVO>>() {
+        List<TestCycleCaseStepDTO> cycleCaseStep = testCycleCaseDTO.getCycleCaseStep();
+        List<TestCycleCaseStepUpdateVO> stepUpdateVOS = modelMapper.map(cycleCaseStep, new TypeToken<List<TestCycleCaseStepUpdateVO>>() {
         }.getType());
-        testCycleCaseUpdateVO.setTestCycleCaseStepUpdateVOS(testCycleCaseStepVOList);
+        testCycleCaseUpdateVO.setTestCycleCaseStepUpdateVOS(stepUpdateVOS);
         // 查询附件信息
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(testCycleCaseDTO.getExecuteId());

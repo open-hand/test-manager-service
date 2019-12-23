@@ -797,7 +797,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public TestCycleCaseUpdateVO queryCaseAndStep(Long executeId) {
-        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(executeId);
+        TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectCycleCaseAndStep(executeId);
         return testCaseAssembler.dtoToUpdateVO(testCycleCaseDTO);
     }
 
