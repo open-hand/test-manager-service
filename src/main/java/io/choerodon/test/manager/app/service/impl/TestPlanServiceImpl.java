@@ -279,7 +279,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     public void sagaCreatePlan(TestPlanVO testPlanVO) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<Long> caseIds = new ArrayList<>();
-        List<TestCaseDTO> allTestCase = testCaseService.listCaseByProjectId(testPlanVO.getProjectId());
         // 是否自选
         if (!testPlanVO.getCustom()) {
             testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()));
@@ -290,6 +289,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 创建测试循环
         List<TestCycleDTO> testCycleDTOS = testCycleService.batchInsertByFoldersAndPlan(testPlanDTO, testIssueFolderDTOS);
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
+            testPlanDTO.setInitStatus(TestPlanInitStatus.SUCCESS);
+            baseUpdate(testPlanDTO);
             return;
         }
         // 创建测试循环用例
