@@ -997,6 +997,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
     @Override
     public void cloneCycleCase(Map<Long, Long> cycleMapping, List<Long> cycIds) {
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
         Integer count = testCycleCaseMapper.countByCycleIds(cycIds);
         int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
         for(int page=1;page<=ceil;page ++) {
@@ -1014,6 +1015,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 v.setCreatedBy(userDetails.getUserId());
                 v.setLastUpdatedBy(userDetails.getUserId());
                 v.setExecuteId(null);
+                v.setExecutionStatus(defaultStatusId);
             });
 
             bathcInsert(testCycleCaseDTOS);
