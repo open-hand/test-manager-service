@@ -830,7 +830,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setName(testCycleDTO.getCycleName());
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
-        testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setProjectId(testCycleDTO.getProjectId());
         testIssueFolderVO.setRank(testCycleDTO.getRank());
         return testIssueFolderVO;
     }
@@ -950,6 +950,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testTreeFolderVO.setId(cycle.getCycleId());
         testTreeFolderVO.setExpanded(false);
         TestIssueFolderVO issueFolderVO = new TestIssueFolderVO(cycle.getCycleId(), cycle.getCycleName(), null, cycle.getProjectId(), null, cycle.getObjectVersionNumber());
+        issueFolderVO.setParentId(cycle.getParentCycleId());
         issueFolderVO.setRank(cycle.getRank());
         testTreeFolderVO.setIssueFolderVO(issueFolderVO);
         testTreeFolderVO.setChildren(parentMap.get(cycle.getCycleId()));
