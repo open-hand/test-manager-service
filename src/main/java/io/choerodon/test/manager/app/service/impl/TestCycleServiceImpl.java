@@ -725,7 +725,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
-        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(testCycleVO)));
         cycleMapper.insert(testCycleDTO);
 
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
@@ -1243,7 +1243,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 protoTestCycleDTO.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
             }
         }
-        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(newTestCycleE), null));
+        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(newTestCycleE)));
         TestCycleDTO newCycleE = cloneCycle(protoTestCycleDTO, newTestCycleE);
         cloneSubCycleCase(protoTestCycleDTO.getCycleId(), newCycleE.getCycleId(), projectId);
 
