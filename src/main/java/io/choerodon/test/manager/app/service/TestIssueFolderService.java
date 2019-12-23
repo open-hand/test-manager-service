@@ -20,13 +20,7 @@ public interface TestIssueFolderService {
 
     TestIssueFolderVO update(TestIssueFolderVO testIssueFolderVO);
 
-    Long getDefaultFolderId(Long projectId, Long versionId);
-
     String moveFolder(Long projectId, Long targetFolderId,TestIssueFolderVO issueFolderVO);
-
-    List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId);
-
-    List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId);
 
     TestTreeIssueFolderVO queryTreeFolder(Long projectId);
 

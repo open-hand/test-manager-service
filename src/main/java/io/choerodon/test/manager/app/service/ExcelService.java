@@ -14,11 +14,7 @@ public interface ExcelService {
 
     void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId);
 
-    void exportCaseProjectByTransaction(Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
-
     void exportCycleCaseInOneCycleByTransaction(Long cycleId, Long projectId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
-
-    void exportCaseVersionByTransaction(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long userId, Long organizationId);
 
     void exportFailCaseByTransaction(Long projectId, Long fileHistoryId,Long userId);
 

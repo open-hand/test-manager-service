@@ -59,13 +59,6 @@ public class ReporterFormServiceImpl implements ReporterFormService {
         return page.toPageInfo();
     }
 
-    public List<ReporterFormVO> createFromIssueToDefect(Long projectId, Long[] issueIds, Long organizationId) {
-        Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
-
-        Map<Long, IssueInfosVO> issueResponse = testCaseService.getIssueInfoMap(projectId, issueIds, false, organizationId);
-        return doCreateFromIssueToDefect(issueResponse.values().stream().collect(Collectors.toList()), projectId, organizationId);
-
-    }
 
     private List<ReporterFormVO> doCreateFromIssueToDefect(List<IssueInfosVO> issueInfosVO, Long projectId, Long organizationId) {
         if (ObjectUtils.isEmpty(issueInfosVO)) {
