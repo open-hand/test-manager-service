@@ -79,4 +79,12 @@ public interface TestPlanServcie {
     List<FormStatusVO> planStatus(Long projectId,Long planId);
 
     TestPlanDTO baseCreate(TestPlanDTO testPlanDTO);
+
+    /**
+     * 构建计划树
+     * @param projectId
+     * @param statusCode
+     * @return
+     */
+    TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode);
 }

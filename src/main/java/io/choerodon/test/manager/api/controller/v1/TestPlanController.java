@@ -40,7 +40,7 @@ public class TestPlanController {
     @GetMapping("/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable("project_id") Long projectId,
                                                            @RequestParam("status_code") String statusCode) {
-        return new ResponseEntity<>(testPlanServcie.ListPlanAndFolderTree(projectId, statusCode), HttpStatus.OK);
+        return new ResponseEntity<>(testPlanServcie.buildPlanTree(projectId, statusCode), HttpStatus.OK);
     }
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})

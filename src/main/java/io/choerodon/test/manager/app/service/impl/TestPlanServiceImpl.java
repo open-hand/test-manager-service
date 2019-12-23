@@ -121,6 +121,83 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
         return testPlanDTO;
     }
+    @Override
+    public TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode) {
+        TestPlanDTO testPlanDTO = new TestPlanDTO();
+        testPlanDTO.setProjectId(projectId);
+        testPlanDTO.setStatusCode(statusCode);
+        List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
+        if (CollectionUtils.isEmpty(testPlanDTOS)) {
+            return new TestTreeIssueFolderVO();
+        }
+        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
+        List<TestCycleDTO> testCycle = testCycleService.listByPlanIds(planIds,projectId);
+        Map<Long, List<TestCycleDTO>> cycleMap = testCycle.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
+        TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
+        List<Long> root = new ArrayList<>();
+        List<TestTreeFolderVO> treeList = new ArrayList<>();
+        testPlanDTOS.stream()
+                .sorted(Comparator.comparing(TestPlanDTO::getPlanId).reversed())
+                .forEach(v -> {
+                    root.add(v.getPlanId());
+                    TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
+                    testIssueFolderVO.setProjectId(v.getProjectId());
+                    testIssueFolderVO.setName(v.getName());
+                    testIssueFolderVO.setFolderId(v.getPlanId());
+                    testIssueFolderVO.setInitStatus(v.getInitStatus());
+                    testIssueFolderVO.setObjectVersionNumber(v.getObjectVersionNumber());
+                    TestTreeFolderVO planTreeVO = new TestTreeFolderVO();
+                    planTreeVO.setId(v.getPlanId());
+                    planTreeVO.setIssueFolderVO(testIssueFolderVO);
+                    planTreeVO.setChildrenLoading(false);
+                    planTreeVO.setExpanded(false);
+                    planTreeVO.setTopLevel(true);
+                    planTreeVO.setHasCase(false);
+                    List<TestCycleDTO> testCycleDTOS = cycleMap.get(v.getPlanId());
+                    if(CollectionUtils.isEmpty(testCycleDTOS)){
+                        planTreeVO.setHasChildren(false);
+                        treeList.add(planTreeVO);
+                        return;
+                    }
+                    treeList.add(planTreeVO);
+                    Map<Long, List<Long>> cycleIdMap = testCycleDTOS.stream().map(testCycleDTO -> {
+                        if(testCycleDTO.getParentCycleId() == null){
+                            testCycleDTO.setParentCycleId(0L);
+                        }
+                        return testCycleDTO;
+                    }).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId, Collectors.mapping(TestCycleDTO::getCycleId, Collectors.toList())));
+                    List<Long> folderRoot = cycleIdMap.get(0L);
+                    if (!CollectionUtils.isEmpty(folderRoot)) {
+                        planTreeVO.setHasChildren(true);
+                        planTreeVO.setChildren(folderRoot);
+                    } else {
+                        planTreeVO.setHasChildren(false);
+                    }
+                    List<TestTreeFolderVO> folderVo = testCycleDTOS.stream().map(cycleDTO -> buildTreeCycleCaseToFolder(cycleDTO, cycleIdMap)).collect(Collectors.toList());
+                    treeList.addAll(folderVo);
+                });
+        testTreeIssueFolderVO.setRootIds(root);
+        testTreeIssueFolderVO.setTreeFolder(treeList);
+        return testTreeIssueFolderVO;
+    }
+
+    private TestTreeFolderVO buildTreeCycleCaseToFolder(TestCycleDTO testCycleDTO, Map<Long, List<Long>> cycleMap) {
+        TestTreeFolderVO testTreeFolderVO = new TestTreeFolderVO();
+        testTreeFolderVO.setId(testCycleDTO.getCycleId());
+        if (!ObjectUtils.isEmpty(cycleMap.get(testCycleDTO.getCycleId()))) {
+            testTreeFolderVO.setChildren(cycleMap.get(testCycleDTO.getCycleId()));
+            testTreeFolderVO.setHasChildren(true);
+        } else {
+            testTreeFolderVO.setHasChildren(false);
+        }
+        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0?false:true);
+        testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
+        testTreeFolderVO.setExpanded(false);
+        testTreeFolderVO.setChildrenLoading(false);
+        testTreeFolderVO.setPlanId(testCycleDTO.getPlanId());
+        testTreeFolderVO.setTopLevel(false);
+        return testTreeFolderVO;
+    }
 
     @Override
     public TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode) {
