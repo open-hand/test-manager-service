@@ -91,10 +91,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         List<Long> rootFolderId = testIssueFolderDTOList.stream().filter(IssueFolder ->
                 IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
 
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByProject(projectId);
-        Set<Long> folderSet = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toSet());
-        Map<Long, List<Long>> caseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
-        List<Long> longs = new ArrayList<>(folderSet);
         List<TestTreeFolderVO> list = new ArrayList<>();
         testIssueFolderDTOList.forEach(testIssueFolderDTO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
@@ -105,23 +101,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
             // 判断是否有case
+            folderVO.setHasCase(testIssueFolderDTO.getCaseCount()==0?false:true);
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
-                if (longs.contains(testIssueFolderDTO.getFolderId())) {
-                    folderVO.setHasCase(true);
-                    List<Long> caseIds = caseMap.get(testIssueFolderDTO.getFolderId());
-                    if(!CollectionUtils.isEmpty(caseIds)){
-                        folderVO.setCaseCount((long) caseIds.size());
-                    }
-                } else {
-                    folderVO.setHasCase(false);
-                }
-
             } else {
                 folderVO.setChildren(childrenIds);
                 folderVO.setHasChildren(true);
-                folderVO.setHasCase(false);
             }
             list.add(folderVO);
         });
