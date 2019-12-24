@@ -119,7 +119,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         // 生成Excel头部项目名称
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
         //Todo: 此处删除版本名称，换成文件夹的目录结构
-        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, sb.substring(0,sb.length()-1));
+        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, sb.toString());
         return 2;
     }
 
