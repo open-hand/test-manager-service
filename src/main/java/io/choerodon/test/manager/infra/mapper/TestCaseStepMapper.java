@@ -27,5 +27,7 @@ public interface TestCaseStepMapper extends Mapper<TestCaseStepDTO> {
 
     void deleteByCaseId(@Param("caseId") Long caseId);
 
+    void deleteByCaseIds(@Param("projectId") Long projectId,@Param("caseIds") List<Long> caseIds);
+
     int countByProjectIdAndCaseIds(@Param("caseIds") List<Long> caseIds);
 }

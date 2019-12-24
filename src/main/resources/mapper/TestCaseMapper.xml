@@ -297,4 +297,14 @@
            </if>
         </where>
     </select>
+    <delete id="batchDeleteCases">
+        delete from test_case where project_id=#{projectId}
+        <if test="caseIds != null and caseIds.size > 0">
+            and
+            case_id in
+            <foreach collection="caseIds" item="caseId" separator="," open="(" close=")">
+                #{caseId}
+            </foreach>
+        </if>
+    </delete>
 </mapper>

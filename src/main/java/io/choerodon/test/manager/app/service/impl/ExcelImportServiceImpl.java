@@ -41,7 +41,6 @@ import java.util.*;
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class ExcelImportServiceImpl implements ExcelImportService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExcelImportServiceImpl.class);
@@ -112,12 +111,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     @Autowired
     private ModelMapper modelMapper;
 
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean cancelFileUpload(Long historyId) {
         return testFileLoadHistoryMapper.cancelFileUpload(historyId) == 1;
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void downloadImportTemp(HttpServletRequest request, HttpServletResponse response, Long organizationId, Long projectId) {
         ExcelUtil.setExcelHeaderByStream(request, response);
@@ -148,7 +147,6 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             finishImport(testFileLoadHistoryDTO, userId, TestFileLoadHistoryEnums.Status.FAILURE);
             return;
         }
-
         Iterator<Row> rowIterator = rowIteratorSkipFirst(testCasesSheet);
         Map<String, Integer> headerLocationMap = getHeaderLocationMap(testCasesSheet);
         ExcelTitleUtil excelTitleUtil = new ExcelTitleUtil(headerLocationMap);
@@ -203,8 +201,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         finishImport(testFileLoadHistoryDTO, userId, status);
     }
-
-    // Todo：重构，导入用例模板不需要优先级和模块
+    @Transactional(rollbackFor = Exception.class)
     public Workbook buildImportTemp(Long organizationId, Long projectId) {
 
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
@@ -544,9 +541,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
         testFileLoadHistoryWithRateVO.setRate(rate);
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
-            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), testFileLoadHistoryWithRateVO.getMessage());
+//            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), testFileLoadHistoryWithRateVO.getMessage());
         }else {
-            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+//            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         }
 
         logger.info("导入进度：{}", rate);
