@@ -44,7 +44,9 @@ function TestStepTable(props) {
   // 用于 Tab 自动切换选项使用
   const secondInputRef = useRef();
   const thirdInputRef = useRef();
-  const [recordFirstRef, setRecordFirstRef] = useState(undefined);
+  const [recordFirstRef, setRecordFirstRef] = useState([]);
+  const [recordSecondRef, setRecordSecondRef] = useState([]);
+  const [recordThirdRef, setRecordThirdRef] = useState([]);
 
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
@@ -164,12 +166,26 @@ function TestStepTable(props) {
       okType: 'danger',
     });
   };
+
   /**
-   * 自动聚焦新创建步骤第一框框
+   * 保存每一步ref
+   * @param {*} record 
+   * @param {*} index 
    * @param {*} ref 
    */
-  const saveCreateRef = (record, ref) => {
-    setRecordFirstRef(ref);
+  const saveCreateRef = (record, index, type, ref) => {
+    if (type === 'second') {
+      recordSecondRef[index] = { ref, index };
+    } else if (type === 'third') {
+      recordThirdRef[index] = { ref, index };
+    }
+  };
+  /**
+ * 自动聚焦新创建步骤第一框框
+ * @param {*} ref 
+ */
+  const AutoEnterFirstRef = (record, index, ref) => {
+    recordFirstRef[index] = { ref, index };
     if (record.stepIsCreating) {
       setTimeout(() => {
         ref.enterEditing();
@@ -202,7 +218,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            saveRef={saveCreateRef.bind(this, record)}
+            saveRef={AutoEnterFirstRef.bind(this, record, index)}
             originData={testStep}
             formKey="testStep"
             style={{ marginLeft: '-5px' }}
@@ -238,8 +254,8 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      recordFirstRef.handleSubmit();
-                      secondInputRef.current.enterEditing();
+                      recordFirstRef[index].ref.handleSubmit();
+                      recordSecondRef[index].ref.enterEditing();
                     });
                   }
                 }}
@@ -260,7 +276,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={testData}
-            saveRef={secondInputRef}
+            saveRef={saveCreateRef.bind(this, record, index, 'second')}
             formKey="testData"
             onSubmit={(value) => {
               handleEditStep({
@@ -289,8 +305,8 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      secondInputRef.current.handleSubmit();
-                      thirdInputRef.current.enterEditing();
+                      recordSecondRef[index].ref.handleSubmit();
+                      recordThirdRef[index].ref.enterEditing();
                     });
                   }
                 }}
@@ -311,7 +327,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={expectedResult}
-            saveRef={thirdInputRef}
+            saveRef={saveCreateRef.bind(this, record, index, 'third')}
             formKey="expectedResult"
             onSubmit={(value) => {
               if (value) {
