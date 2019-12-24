@@ -460,7 +460,7 @@ public class ExcelServiceImpl implements ExcelService {
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIdList);
         if (!MapUtils.isEmpty(userMessageDTOMap)) {
             excelCaseVOS.forEach(e -> {
-                e.setCaseNum(e.getProjectCode() + e.getCaseId());
+                e.setCaseNum(e.getProjectCode() +"-"+ e.getCaseNum());
                 if (!ObjectUtils.isEmpty(e.getLastUpdatedBy()) && !e.getLastUpdatedBy().equals(0L)) {
                     e.setExecutor(userMessageDTOMap.get(e.getLastUpdatedBy()).getRealName());
                 }
