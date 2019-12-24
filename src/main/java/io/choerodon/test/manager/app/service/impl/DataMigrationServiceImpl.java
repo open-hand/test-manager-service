@@ -291,6 +291,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         statusDTOS.stream().forEach(e->testStatusMapper.insert(e));
         logger.info("=============>>>>>>> status fix suceess!!! <<<<<<<<===============");
     }
+
     private void fixCycleCaseStepRank(){
         testCycleCaseStepMapper.fixCycleCaseStepRank();
         logger.info("=============>>>>>>> cycle case step fix suceess!!! <<<<<<<<===============");
