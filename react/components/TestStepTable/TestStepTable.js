@@ -91,11 +91,27 @@ function TestStepTable(props) {
     data.splice(index, 1);
     setData([...data]);
   };
-
+  /**
+   * 检查多段文本是否全为空格
+   * @param  {...any} restText 
+   */
+  const checkAllSpace = (...texts) => {
+    let isAllSpace = false;
+    texts.forEach((text) => {
+      if (text.trim().length === 0) {
+        isAllSpace = true;
+      }
+    });
+    return isAllSpace;
+  };
 
   const onCreateStep = async (newStep, index) => {
-    const { expectedResult, testStep } = newStep;
-    // eslint-disable-next-line no-param-reassign
+    const { expectedResult, testStep, testData } = newStep;
+    // 特殊字符判断 全为空格时，则进行提示 
+    if (checkAllSpace(expectedResult, testData, testData)) {
+      Choerodon.prompt('不能有空格');
+      return;
+    }
     if (expectedResult && testStep) {
       try {
         const newStepResult = await onCreate(newStep, index);
