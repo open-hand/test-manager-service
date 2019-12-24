@@ -14,6 +14,7 @@
 
         <collection property="caseSteps"
                     ofType="io.choerodon.test.manager.api.vo.TestCaseStepVO">
+            <id column="step_id" property="stepId"/>
             <id column="test_step" property="testStep"/>
             <id column="test_data" property="testData"/>
             <id column="expected_result" property="expectedResult"/>
