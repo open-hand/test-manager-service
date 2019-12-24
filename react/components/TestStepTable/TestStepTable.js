@@ -41,7 +41,11 @@ function TestStepTable(props) {
   const {
     onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
-  const firstInputRef = useRef();
+  // 用于 Tab 自动切换选项使用
+  const secondInputRef = useRef();
+  const thirdInputRef = useRef();
+  const [recordFirstRef, setRecordFirstRef] = useState(undefined);
+
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
       return;
@@ -165,12 +169,15 @@ function TestStepTable(props) {
    * @param {*} ref 
    */
   const saveCreateRef = (record, ref) => {
+    setRecordFirstRef(ref);
     if (record.stepIsCreating) {
       setTimeout(() => {
         ref.enterEditing();
+        // recordTab.push()
       });
     }
   };
+
   function render() {
     const {
       disabled,
@@ -222,7 +229,21 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autosize autoFocus placeholder="测试步骤" />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autosize
+                autoFocus
+                placeholder="测试步骤"
+                onKeyDown={(e) => {
+                  if (e.keyCode === 9) {
+                    setTimeout(() => {
+                      recordFirstRef.handleSubmit();
+                      secondInputRef.current.enterEditing();
+                    });
+                  }
+                }}
+              />
             </Edit>
           </TextEditToggle>
         );
@@ -239,6 +260,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={testData}
+            saveRef={secondInputRef}
             formKey="testData"
             onSubmit={(value) => {
               handleEditStep({
@@ -259,7 +281,20 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autoFocus autosize />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autoFocus
+                autosize
+                onKeyDown={(e) => {
+                  if (e.keyCode === 9) {
+                    setTimeout(() => {
+                      secondInputRef.current.handleSubmit();
+                      thirdInputRef.current.enterEditing();
+                    });
+                  }
+                }}
+              />
             </Edit>
           </TextEditToggle>
         );
@@ -276,6 +311,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={expectedResult}
+            saveRef={thirdInputRef}
             formKey="expectedResult"
             onSubmit={(value) => {
               if (value) {
@@ -300,7 +336,13 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="预期结果" />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autoFocus
+                autosize
+                placeholder="预期结果"
+              />
             </Edit>
           </TextEditToggle>
         );
