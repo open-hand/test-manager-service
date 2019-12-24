@@ -397,7 +397,7 @@ function TestHandExecute(props) {
                     updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
                     testStatusDataSet={testStatusDataSet}
                     readOnly={planStatus === 'done'} // 数据是否只读
-                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改
+                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
                     ExecuteDetailStore={ExecuteDetailStore}
                   />
                 </CardWrapper>
