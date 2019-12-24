@@ -172,8 +172,8 @@ function TestHandExecute(props) {
           }
           // 删除文件 只能单个文件删除， 进行遍历删除
           await deleteFiles(formDataDel.map(i => i.id));
-          await updateSidebarDetail(newData);
         }
+        await updateSidebarDetail(newData);
         message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
         resolve(true);
       });
