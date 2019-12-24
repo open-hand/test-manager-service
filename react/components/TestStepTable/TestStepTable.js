@@ -41,7 +41,8 @@ function TestStepTable(props) {
   const {
     onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
-  const firstInputRef = useRef();
+  const { dragKey = 'stepId' } = props;
+  const [recordRef, setRecordRef] = useState([]);
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
       return;
@@ -90,11 +91,27 @@ function TestStepTable(props) {
     data.splice(index, 1);
     setData([...data]);
   };
-
+  /**
+   * 检查多段文本是否全为空格
+   * @param  {...any} restText 
+   */
+  const checkAllSpace = (...texts) => {
+    let isAllSpace = false;
+    texts.forEach((text) => {
+      if (text.trim().length === 0) {
+        isAllSpace = true;
+      }
+    });
+    return isAllSpace;
+  };
 
   const onCreateStep = async (newStep, index) => {
-    const { expectedResult, testStep } = newStep;
-    // eslint-disable-next-line no-param-reassign
+    const { expectedResult, testStep, testData } = newStep;
+    // 特殊字符判断 全为空格时，则进行提示 
+    if (checkAllSpace(expectedResult, testData, testData)) {
+      Choerodon.prompt('不能有空格');
+      return;
+    }
     if (expectedResult && testStep) {
       try {
         const newStepResult = await onCreate(newStep, index);
@@ -161,16 +178,61 @@ function TestStepTable(props) {
     });
   };
   /**
-   * 自动聚焦新创建步骤第一框框
-   * @param {*} ref 
+   * 根据Id寻找ref记录 
+   * 若无记录返回undefined
+   * 
+   * @param {*} id 
    */
-  const saveCreateRef = (record, ref) => {
+  const findRefByID = id => recordRef.find(item => item.id === id);
+  /**
+ * 保存每一步ref
+ * @param {*} record 
+ * @param {*} index 
+ * @param {*} ref 
+ */
+  const saveCreateRef = (record, index, type, ref) => {
+    const refData = findRefByID(record[dragKey]);
+    if (type === 'second') {
+      if (refData) {
+        refData.secondRef = ref;
+      } else {
+        recordRef.push({
+          id: record[dragKey], firstRef: {}, secondRef: ref, thirdRef: {},
+        });
+      }
+    } else if (type === 'third') {
+      if (refData) {
+        refData.thirdRef = ref;
+      } else {
+        recordRef.push({
+          id: record[dragKey], firstRef: {}, secondRef: {}, thirdRef: ref,
+        });
+      }
+    }
+  };
+  /**
+* 自动聚焦新创建步骤第一框框
+* @param {*} ref 
+*/
+  const AutoEnterFirstRef = (record, index, ref) => {
+    // eslint-disable-next-line no-param-reassign
+    const refData = findRefByID(record[dragKey]);
+    if (refData) {
+      refData.firstRef = ref;
+    } else {
+      recordRef.push({
+        id: record[dragKey], firstRef: ref, secondRef: {}, thirdRef: {},
+      });
+    }
+
     if (record.stepIsCreating) {
       setTimeout(() => {
         ref.enterEditing();
+        // recordTab.push()
       });
     }
   };
+
   function render() {
     const {
       disabled,
@@ -195,7 +257,7 @@ function TestStepTable(props) {
         return (
           <TextEditToggle
             simpleMode
-            saveRef={saveCreateRef.bind(this, record)}
+            saveRef={AutoEnterFirstRef.bind(this, record, index)}
             originData={testStep}
             formKey="testStep"
             style={{ marginLeft: '-5px' }}
@@ -222,7 +284,22 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autosize autoFocus placeholder="测试步骤" />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autosize
+                autoFocus
+                placeholder="测试步骤"
+                onKeyDown={(e) => {
+                  if (e.keyCode === 9) {
+                    setTimeout(() => {
+                      const refs = findRefByID(record[dragKey]);
+                      refs.firstRef.handleSubmit();
+                      refs.secondRef.enterEditing();
+                    });
+                  }
+                }}
+              />
             </Edit>
           </TextEditToggle>
         );
@@ -239,6 +316,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={testData}
+            saveRef={saveCreateRef.bind(this, record, index, 'second')}
             formKey="testData"
             onSubmit={(value) => {
               handleEditStep({
@@ -259,7 +337,21 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autoFocus autosize />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autoFocus
+                autosize
+                onKeyDown={(e) => {
+                  if (e.keyCode === 9) {
+                    setTimeout(() => {
+                      const refs = findRefByID(record[dragKey]);
+                      refs.secondRef.handleSubmit();
+                      refs.thirdRef.enterEditing();
+                    });
+                  }
+                }}
+              />
             </Edit>
           </TextEditToggle>
         );
@@ -276,6 +368,7 @@ function TestStepTable(props) {
             simpleMode
             style={{ marginLeft: '-5px' }}
             originData={expectedResult}
+            saveRef={saveCreateRef.bind(this, record, index, 'third')}
             formKey="expectedResult"
             onSubmit={(value) => {
               if (value) {
@@ -300,7 +393,13 @@ function TestStepTable(props) {
               )}
             </Text>
             <Edit>
-              <TextArea className="hidden-label" maxLength={500} autoFocus autosize placeholder="预期结果" />
+              <TextArea
+                className="hidden-label"
+                maxLength={500}
+                autoFocus
+                autosize
+                placeholder="预期结果"
+              />
             </Edit>
           </TextEditToggle>
         );
@@ -350,7 +449,7 @@ function TestStepTable(props) {
           dataSource={data}
           columns={columns}
           onDragEnd={onDragEnd}
-          dragKey={props.dragKey || 'stepId'}
+          dragKey={dragKey}
           customDragHandle
           scroll={{ x: true }}
         />

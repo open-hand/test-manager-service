@@ -263,7 +263,7 @@
         WHERE
            plan_id=#{planId}
         ORDER BY
-            rank DESC
+            rank ASC
             LIMIT 1
     </select>
 

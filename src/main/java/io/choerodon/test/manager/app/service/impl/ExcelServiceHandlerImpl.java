@@ -39,30 +39,6 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     }
 
     /**
-     * 导出项目下的所有用例
-     *
-     * @param projectId not null
-     * @param request
-     * @param response
-     */
-    @Override
-    public void exportCaseByProject(Long projectId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        excelService.exportCaseProjectByTransaction(projectId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    /**
-     * 导出版本下的所有用例
-     *
-     * @param versionId not null
-     * @param request
-     * @param response
-     */
-    @Override
-    public void exportCaseByVersion(Long projectId, Long versionId, HttpServletRequest request, HttpServletResponse response, Long organizationId) {
-        excelService.exportCaseVersionByTransaction(projectId, versionId, request, response, DetailsHelper.getUserDetails().getUserId(), organizationId);
-    }
-
-    /**
      * 导出文件夹下的所有用例
      *
      * @param projectId

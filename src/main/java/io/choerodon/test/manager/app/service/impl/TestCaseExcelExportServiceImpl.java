@@ -103,12 +103,23 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             parentId = testIssueFolderDTO.getParentId();
             stringBuilder.append("-").append(testIssueFolderDTO.getName());
         }
+        StringBuffer sb = new StringBuffer();
+        String fileName = stringBuilder.toString();
+        String[] split = fileName.split("-");
+        for(int i=split.length-1;i>=0;i--){
+            if(i==0){
+                sb.append(split[i]);
+            }else {
+                sb.append(split[i]+"-");
+            }
+
+        }
 
         Row row1 = ExcelUtil.createRow(sheet, 0, rowStyle);
         // 生成Excel头部项目名称
         ExcelUtil.createCell(row1, 0, ExcelUtil.CellType.TEXT, "项目：" + projectName);
         //Todo: 此处删除版本名称，换成文件夹的目录结构
-        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, stringBuilder.substring(0,stringBuilder.length()-1));
+        ExcelUtil.createCell(row1, 1, ExcelUtil.CellType.TEXT, sb.toString());
         return 2;
     }
 
@@ -138,8 +149,8 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
         if (sheet.getWorkbook().getNumberOfSheets() != 1) {
             //设置下拉框的值
              // setDataValidationByFormula(sheet, PRIORITIES, 3, 3);
-            setDataValidationByFormula(sheet, STATUS, 5, 5);
-            setDataValidationByFormula(sheet, USERS, 6, 6);
+//            setDataValidationByFormula(sheet, STATUS, 5, 5);
+//            setDataValidationByFormula(sheet, USERS, 6, 6);
 
             for (ExcelCaseVO caseVO : cycleCases) {
                 CellStyle style;
@@ -159,7 +170,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
             sheet.setColumnHidden(6, true);
             column += addLookupFormula(sheet, column, rowStyles);
         }
-        setDataValidationByFormula(sheet, sheet.getSheetName() + FOLDERS, 0, 0);
+//        setDataValidationByFormula(sheet, sheet.getSheetName() + FOLDERS, 0, 0);
         return column;
     }
 

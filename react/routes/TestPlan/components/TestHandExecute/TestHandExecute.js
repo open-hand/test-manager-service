@@ -153,7 +153,6 @@ function TestHandExecute(props) {
         };
         const { isAsync = false } = newData;
         const { fileList } = res;
-        await updateSidebarDetail(newData);
         if (fileList) {
           const formDataAdd = new FormData();
           const formDataDel = [];
@@ -174,6 +173,7 @@ function TestHandExecute(props) {
           // 删除文件 只能单个文件删除， 进行遍历删除
           await deleteFiles(formDataDel.map(i => i.id));
         }
+        await updateSidebarDetail(newData);
         message.success(`${isAsync ? '同步修改成功' : '修改成功'}`);
         resolve(true);
       });
@@ -254,9 +254,7 @@ function TestHandExecute(props) {
           {detailData.caseHasExist ? <Button loading={syncLoading} funcType="raised" color="primary" onClick={handleSaveSyncCase.bind(this, editModal)}>保存并同步到用例库</Button>
             : (
               <Tooltip title="相关用例已删除">
-                <div>
-                  <Button funcType="raised" color="primary">保存并同步到用例库</Button>
-                </div>
+                <Button funcType="raised" color="primary">保存并同步到用例库</Button>
               </Tooltip>
             )
           }
@@ -271,7 +269,7 @@ function TestHandExecute(props) {
   const renderBreadcrumbTitle = (text) => {
     const ellipsis = '...';
     const textArr = [...text];
-    return textArr.length > 15 ? textArr.slice(0, 15).join('') + ellipsis : text;
+    return textArr.length > 15 ? <Tooltip title={text}>{`${textArr.slice(0, 15).join('') + ellipsis}`}</Tooltip> : text;
   };
   function render() {
     // disabled 用于禁止action列
@@ -399,7 +397,7 @@ function TestHandExecute(props) {
                     updateHistory={() => executeHistoryDataSet.query()} // 更新执行历史
                     testStatusDataSet={testStatusDataSet}
                     readOnly={planStatus === 'done'} // 数据是否只读
-                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改
+                    operateStatus={planStatus === 'doing'} // 数据是否可以进行状态更改/缺陷更改
                     ExecuteDetailStore={ExecuteDetailStore}
                   />
                 </CardWrapper>

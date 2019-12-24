@@ -49,8 +49,8 @@ function SelectTree(props) {
         };
       case 'expand':
         return {
+          ...state,
           expandedKeys,
-          searchValue,
           autoExpandParent: false,
         };
       case 'search':
@@ -63,7 +63,7 @@ function SelectTree(props) {
         return {
           expandedKeys,
           searchValue,
-          autoExpandParent: false,
+          autoExpandParent: true,
         };
       default:
         return ({
@@ -114,6 +114,7 @@ function SelectTree(props) {
     if (record.get('parentId') !== 0 && record.get('parentId') !== record.get('folderId')) {
       const temp = dataSet.find(item => record.get('parentId') === item.get('folderId'));
       if (temp) {
+        temp.set('expanded', true);
         keys.push(temp.id.toString());
         searchParent(temp, keys);
       }

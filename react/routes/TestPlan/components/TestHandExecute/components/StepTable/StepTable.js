@@ -185,11 +185,11 @@ function StepTable(props) {
     );
   };
   /**
-   * 渲染缺陷
+   * 渲染缺陷 缺陷只在进行中可增添
    * @param {*} param0 
    */
   function renderDefects({ record, value: defects }) {
-    const disabled = readOnly;// 用于未完成 已完成 禁止操作
+    const disabled = !operateStatus;// 用于未完成 已完成 禁止操作
     return (
       <TextEditToggle
         disabled={disabled}
@@ -258,7 +258,7 @@ function StepTable(props) {
       <Column name="testStep" align="left" minWidth={200} tooltip="overflow" renderer={renderText} />
       <Column name="testData" align="left" minWidth={120} tooltip="overflow" renderer={renderText} />
       <Column name="expectedResult" align="left" minWidth={150} tooltip="overflow" renderer={renderText} />
-      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={<Select optionRenderer={renderStatus} />} />
+      <Column name="stepStatus" align="left" width={85} className="c7n-test-execute-detail-step-table-status" renderer={renderStatus} editor={operateStatus && <Select optionRenderer={renderStatus} />} />
       <Column name="stepAttachment" renderer={renderAttachment} align="left" width={200} />
       <Column name="description" editor={!readOnly} align="left" tooltip="overflow" renderer={renderText} />
       <Column name="defects" renderer={renderDefects} width={230} />

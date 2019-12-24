@@ -18,12 +18,12 @@ function DragPlanFolder({
   data, 
 }) {
   const treeRef = useRef();
-  const handleDrag = useCallback(async (sourceItem, destination) => { 
+  const handleDrag = useCallback(async (sourceItem, destination) => {
     const folderId = sourceItem.id;
     const { parentId } = destination; 
-    const { treeData } = treeRef.current;
-    const { index } = destination;
+    const { treeData } = treeRef.current;   
     const parent = treeData.items[destination.parentId];
+    const { index = parent.children.length } = destination;
     const lastId = parent.children[index - 1];
     const nextId = parent.children[index];    
     const lastRank = lastId ? treeData.items[lastId].data.rank : null;

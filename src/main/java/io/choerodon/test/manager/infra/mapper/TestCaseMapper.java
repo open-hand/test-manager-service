@@ -44,4 +44,6 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
     List<Long> listUnSelectCaseId(@Param("projectId") Long projectId,@Param("caseIds") List<Long> unSelectCaseIds,@Param("folderIds") Set<Long> unSelectFolderIds);
 
     int countByProjectIdAndCaseIds(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
+
+    void batchDeleteCases(@Param("projectId") Long projectId, @Param("caseIds") List<Long> caseIds);
 }

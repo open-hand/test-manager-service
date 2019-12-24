@@ -240,10 +240,27 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public void delete(Long cycleId, Long projectId) {
-        List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(Arrays.asList(cycleId));
-        List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-        testCycleCaseService.batchDeleteByExecuteIds(executeIds);
-        cycleMapper.deleteByPrimaryKey(cycleId);
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
+        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIds(null, Arrays.asList(testCycleDTO.getPlanId()), projectId);
+        List<Long> cycleIds = new ArrayList<>();
+        cycleIds.add(cycleId);
+        if (!CollectionUtils.isEmpty(testCycleDTOS)) {
+            Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+            findCycleChildren(cycleId, cycleIds, cycleMap);
+            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
+            List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+            testCycleCaseService.batchDeleteByExecuteIds(executeIds);
+        }
+        cycleMapper.batchDelete(cycleIds);
+    }
+
+    private void findCycleChildren(Long cycleId, List<Long> cycleIds, Map<Long, List<TestCycleDTO>> cycleMap) {
+        List<TestCycleDTO> testCycleDTOS = cycleMap.get(cycleId);
+        if(!CollectionUtils.isEmpty(testCycleDTOS)){
+            List<Long> child = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+            cycleIds.addAll(child);
+            child.forEach(v -> findCycleChildren(v,cycleIds,cycleMap));
+        }
     }
 
     @Override
@@ -725,7 +742,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testCycleDTO.setProjectId(projectId);
         validateCycle(testCycleDTO);
         checkRank(testCycleVO);
-        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(testCycleVO), null));
+        testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(testCycleVO)));
         cycleMapper.insert(testCycleDTO);
 
         return modelMapper.map(testCycleDTO, TestCycleVO.class);
@@ -830,7 +847,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setName(testCycleDTO.getCycleName());
         testIssueFolderVO.setObjectVersionNumber(testCycleDTO.getObjectVersionNumber());
         testIssueFolderVO.setType(testCycleDTO.getType());
-        testIssueFolderVO.setParentId(testCycleDTO.getParentCycleId());
+        testIssueFolderVO.setProjectId(testCycleDTO.getProjectId());
         testIssueFolderVO.setRank(testCycleDTO.getRank());
         return testIssueFolderVO;
     }
@@ -950,6 +967,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         testTreeFolderVO.setId(cycle.getCycleId());
         testTreeFolderVO.setExpanded(false);
         TestIssueFolderVO issueFolderVO = new TestIssueFolderVO(cycle.getCycleId(), cycle.getCycleName(), null, cycle.getProjectId(), null, cycle.getObjectVersionNumber());
+        issueFolderVO.setParentId(cycle.getParentCycleId());
         issueFolderVO.setRank(cycle.getRank());
         testTreeFolderVO.setIssueFolderVO(issueFolderVO);
         testTreeFolderVO.setChildren(parentMap.get(cycle.getCycleId()));
@@ -1242,7 +1260,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 protoTestCycleDTO.setToDate(TestDateUtil.increaseDaysOnDate(parentFromDate, differentDaysOldFolder));
             }
         }
-        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(getLastedRank(newTestCycleE), null));
+        newTestCycleE.setRank(RankUtil.Operation.INSERT.getRank(null, getLastedRank(newTestCycleE)));
         TestCycleDTO newCycleE = cloneCycle(protoTestCycleDTO, newTestCycleE);
         cloneSubCycleCase(protoTestCycleDTO.getCycleId(), newCycleE.getCycleId(), projectId);
 

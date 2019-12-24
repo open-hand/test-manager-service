@@ -1,5 +1,6 @@
 import React, { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
+import { toJS } from 'mobx';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
@@ -171,7 +172,9 @@ const TestPlanTable = observer(({
           className="c7ntest-text-dot"
           style={{ color: 'rgba(0, 0, 0, 0.65)' }}
         >
-          {lastUpdateDate}
+          <Tooltip title={lastUpdateDate}>
+            {lastUpdateDate}
+          </Tooltip>
         </div>
       );
     },
@@ -250,7 +253,7 @@ const TestPlanTable = observer(({
   //     render: (text, record) => renderSource(text),
   //   });
   // }
-
+  const data = toJS(testList);
   return (
     <Card
       className="c7ntest-testPlan-testPlanTableCard"
@@ -283,7 +286,7 @@ const TestPlanTable = observer(({
         pagination={executePagination}
         loading={tableLoading}
         onChange={onTableChange}
-        dataSource={testList}
+        dataSource={data}
         columns={columns}
         onDragEnd={onDragEnd}
         dragKey="executeId"

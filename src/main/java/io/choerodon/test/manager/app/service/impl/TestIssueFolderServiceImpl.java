@@ -54,47 +54,12 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderVO> queryByParameter(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
-        return modelMapper.map(testIssueFolderMapper.select(modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-    }
-
-    @Override
-    public List<TestIssueFolderWithVersionNameVO> queryByParameterWithVersionName(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, null, null);
-        List<TestIssueFolderVO> resultTemp = modelMapper.map(testIssueFolderMapper.select(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-        List<TestIssueFolderWithVersionNameVO> result = new ArrayList<>();
-        String versionName = testCaseService.getVersionInfo(projectId).getOrDefault(versionId, new ProductVersionDTO()).getName();
-
-        resultTemp.forEach(v -> {
-            TestIssueFolderWithVersionNameVO t = new TestIssueFolderWithVersionNameVO();
-            t.setFolderId(v.getFolderId());
-            t.setName(v.getName());
-            t.setVersionId(v.getVersionId());
-            t.setVersionName(versionName);
-            t.setProjectId(v.getProjectId());
-            t.setType(v.getType());
-            t.setObjectVersionNumber(v.getObjectVersionNumber());
-            result.add(t);
-        });
-
-        return result;
-    }
-
-    @Override
     public TestTreeIssueFolderVO queryTreeFolder(Long projectId) {
         List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderMapper.selectListByProjectId(projectId);
         //根目录
         List<Long> rootFolderId = testIssueFolderDTOList.stream().filter(IssueFolder ->
                 IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
 
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByProject(projectId);
-        Set<Long> folderSet = testCaseDTOS.stream().map(TestCaseDTO::getFolderId).collect(Collectors.toSet());
-        Map<Long, List<Long>> caseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId, Collectors.mapping(TestCaseDTO::getCaseId, Collectors.toList())));
-        List<Long> longs = new ArrayList<>(folderSet);
         List<TestTreeFolderVO> list = new ArrayList<>();
         testIssueFolderDTOList.forEach(testIssueFolderDTO -> {
             TestTreeFolderVO folderVO = new TestTreeFolderVO();
@@ -104,24 +69,15 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             folderVO.setIssueFolderVO(modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class));
             folderVO.setExpanded(false);
             folderVO.setChildrenLoading(false);
+            folderVO.setCaseCount(testIssueFolderDTO.getCaseCount());
             // 判断是否有case
+            folderVO.setHasCase(testIssueFolderDTO.getCaseCount()==0?false:true);
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
-                if (longs.contains(testIssueFolderDTO.getFolderId())) {
-                    folderVO.setHasCase(true);
-                    List<Long> caseIds = caseMap.get(testIssueFolderDTO.getFolderId());
-                    if(!CollectionUtils.isEmpty(caseIds)){
-                        folderVO.setCaseCount((long) caseIds.size());
-                    }
-                } else {
-                    folderVO.setHasCase(false);
-                }
-
             } else {
                 folderVO.setChildren(childrenIds);
                 folderVO.setHasChildren(true);
-                folderVO.setHasCase(false);
             }
             list.add(folderVO);
         });
@@ -140,7 +96,7 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         }
         testIssueFolderVO.setProjectId(projectId);
         TestIssueFolderDTO testIssueFolderDTO = modelMapper.map(testIssueFolderVO, TestIssueFolderDTO.class);
-        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(testIssueFolderMapper.projectLastRank(projectId),null));
+        testIssueFolderDTO.setRank(RankUtil.Operation.INSERT.getRank(null,testIssueFolderMapper.projectLastRank(projectId)));
         if (testIssueFolderMapper.insert(testIssueFolderDTO) != 1) {
             throw new CommonException("error.issueFolder.insert");
         }
@@ -176,18 +132,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         return modelMapper.map(testIssueFolderMapper.selectByPrimaryKey(testIssueFolderDTO.getFolderId()), TestIssueFolderVO.class);
     }
 
-    @Override
-    public Long getDefaultFolderId(Long projectId, Long versionId) {
-        TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO(null, null, versionId, projectId, "temp", null);
-        TestIssueFolderVO resultTestIssueFolderVO = modelMapper.map(testIssueFolderMapper.selectOne(modelMapper
-                .map(testIssueFolderVO, TestIssueFolderDTO.class)), TestIssueFolderVO.class);
-        testIssueFolderVO.setName("临时");
-        if (resultTestIssueFolderVO == null) {
-            return create(projectId, testIssueFolderVO).getFolderId();
-        } else {
-            return resultTestIssueFolderVO.getFolderId();
-        }
-    }
 
     @Override
     public String moveFolder(Long projectId, Long targetForderId, TestIssueFolderVO issueFolderVO) {

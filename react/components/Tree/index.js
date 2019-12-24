@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { find } from 'lodash';
+import { Choerodon } from '@choerodon/boot';
 import Tree, {
   mutateTree,
   moveItemOnTree,
@@ -169,15 +170,16 @@ function PureTree({
       return;
     }
     try {
-      const { path } = getItemById(flattenedTree, destinationParent.id);
-      if (path.length >= 9) {
-        return;
+      const parent = getItemById(flattenedTree, destinationParent.id);
+      if (parent && parent.path.length >= 9) {        
+        return;  
       }
+
       setTree(oldTree => moveItemOnTree(oldTree, source, destination));
       const newItem = await afterDrag(sourceItem, destination);
       setTree(oldTree => mutateTree(oldTree, sourceItem.id, { ...sourceItem, ...newItem }));
     } catch (error) {
-      // Choerodon.prompt(error.message, 'error');
+      Choerodon.prompt(error.message, 'error');
       setTree(oldTree => moveItemOnTree(oldTree, destination, source));
     }
   };

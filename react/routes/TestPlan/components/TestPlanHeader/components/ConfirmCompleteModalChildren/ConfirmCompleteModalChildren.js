@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import ReactEcharts from 'echarts-for-react';
+import { getStatusByFolder } from '../../../../../../api/TestPlanApi';
 import './ConfirmCompleteModalChildren.less';
 
-function ConfirmCompleteModalChildren({ planName, statusRes }) {
+function ConfirmCompleteModalChildren({ planName, testPlanStore }) {
+  const [statusRes, setStatusRes] = useState({});
+
+  useEffect(() => {
+    getStatusByFolder({ planId: testPlanStore.getId()[0], folderId: testPlanStore.getId()[0] }).then((res) => {
+      setStatusRes(res);
+    });
+  }, [testPlanStore]);
+
   const transformData = (data) => {
     const transformedRes = [];
     data.forEach((item) => {
@@ -33,7 +42,7 @@ function ConfirmCompleteModalChildren({ planName, statusRes }) {
           top: 0,
           bottom: 0,
         },
-        data: transformData(statusRes.statusVOList),
+        data: transformData(statusRes.statusVOList || []),
         itemStyle: {
           emphasis: {
             fontSize: 12,

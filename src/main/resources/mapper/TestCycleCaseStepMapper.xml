@@ -303,16 +303,6 @@
             #{executId}
         </foreach>
     </select>
-    <select id="selectByexecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
-        SELECT
-            tccs.*
-        FROM
-            test_cycle_case_step tccs
-        WHERE
-            tccs.execute_id = #{executeId}
-        ORDER BY
-            rank
-    </select>
 
     <select id="countByExecuteIds" resultType="int">
         SELECT

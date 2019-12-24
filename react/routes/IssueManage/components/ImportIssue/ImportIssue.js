@@ -7,7 +7,7 @@ import {
 import { Choerodon } from '@choerodon/boot';
 import { Progress, Divider } from 'choerodon-ui';
 import {
-  DataSet, Form, Button, message, 
+  DataSet, Form, Button, message,
 } from 'choerodon-ui/pro';
 import moment from 'moment';
 import _ from 'lodash';
@@ -81,6 +81,7 @@ function ImportIssue(props) {
   const [importRecord, setImportRecord] = useState({});
   const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
+  const wsRef = useRef();
   const { modal, defaultFolderValue } = props;
   const loadImportHistory = () => getImportHistory().then((data) => {
     setLastRecord(data);
@@ -93,10 +94,14 @@ function ImportIssue(props) {
           visibleImportBtn: false,
         };
       case 'process':
-        return {
-          visibleImportBtn: false,
-          visibleCancelBtn: true,
-        };
+        if (state.visibleCancelBtn === true && state.visibleImportBtn === false) {
+          return state;
+        } else {
+          return {
+            visibleImportBtn: false,
+            visibleCancelBtn: true,
+          };
+        }
       case 'finish':
         loadImportHistory();
         return {
@@ -129,7 +134,6 @@ function ImportIssue(props) {
     formData.append('file', file);
     dispatch({ type: 'import' });
     importIssue(formData, dataSet.current.get('folderId')).then(() => {
-      dispatch({ type: 'process' });
       uploadInput.current.value = '';
       setImportRecord({
         ...importRecord,
@@ -196,7 +200,12 @@ function ImportIssue(props) {
       upload(e.target.files[0]);
     }
   };
-  const debounceSetImportRecord = _.debounce(setImportRecord, 250, { maxWait: 1300 });
+  const onceSetState = _.once(() => dispatch({ type: 'process' }));
+  const debounceSetImportRecord = _.debounce((e) => {
+    setImportRecord(e);
+    onceSetState();
+    // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
+  }, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
     if (res === '错误的模板文件') {
       message.error(res);
@@ -268,6 +277,7 @@ function ImportIssue(props) {
         <WSHandler
           messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
           onMessage={handleMessage}
+          ref={wsRef}
         >
           <div className="c7ntest-ImportIssue-progress-area">
             <Progress

@@ -102,7 +102,7 @@ public class TestManagerEventHandler {
         });
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CREATE_PLAN_TASK, description = "创建计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN, seq = 1)
     public void createPlan(String message) {
         TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         try {
@@ -114,7 +114,7 @@ public class TestManagerEventHandler {
 
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN, description = "复制计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_CLONE_PLAN_TASK, description = "复制计划", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_CLONE_PLAN, seq = 1)
     public void clonePlan(String message) {
         Map<String, Integer> map = null ;
         try {
@@ -127,7 +127,7 @@ public class TestManagerEventHandler {
         }
     }
 
-    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL, description = "改变计划为失败状态", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
+    @SagaTask(code = SagaTaskCodeConstants.TEST_MANAGER_PLAN_FAIL_TASK, description = "改变计划为失败状态", sagaCode = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL, seq = 1)
     public void changeStatusFail(String message) {
         TestPlanVO testPlanVO = JSONObject.parseObject(message, TestPlanVO.class);
         testPlanVO.setInitStatus(TestPlanInitStatus.FAIL);

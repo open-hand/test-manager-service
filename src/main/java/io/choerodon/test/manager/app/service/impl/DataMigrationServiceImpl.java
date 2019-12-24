@@ -12,7 +12,6 @@ import io.choerodon.test.manager.infra.enums.TestPlanInitStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -291,6 +290,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
         statusDTOS.stream().forEach(e->testStatusMapper.insert(e));
         logger.info("=============>>>>>>> status fix suceess!!! <<<<<<<<===============");
     }
+
     private void fixCycleCaseStepRank(){
         testCycleCaseStepMapper.fixCycleCaseStepRank();
         logger.info("=============>>>>>>> cycle case step fix suceess!!! <<<<<<<<===============");

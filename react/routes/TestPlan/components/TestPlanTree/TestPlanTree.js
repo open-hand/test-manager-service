@@ -104,10 +104,16 @@ class TestPlanTree extends Component {
   setSelected = (item) => {    
     const { context: { testPlanStore } } = this.props;
     const [planId, folderId] = testPlanStore.getId(item.id);
+    const { executePagination } = testPlanStore;
     if (item.id) {
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();
+      testPlanStore.setExecutePagination({
+        ...executePagination,
+        current: 1,
+        pageSize: 20,
+      });
       testPlanStore.loadRightData(planId, folderId);
     }
     testPlanStore.setCurrentCycle(item);

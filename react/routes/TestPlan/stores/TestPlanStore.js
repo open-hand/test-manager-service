@@ -187,7 +187,6 @@ class TestPlanStore extends TestPlanTreeStore {
       const executes = await getExecutesByFolder({
         planId, folderId, current, pageSize, search, orderField, orderType, 
       });
-      
       this.setTestList(executes.list || []);      
       this.setExecutePagination({
         current: executePagination.current,

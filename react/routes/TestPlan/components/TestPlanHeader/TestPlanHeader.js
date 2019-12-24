@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useEffect } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { FormattedMessage } from 'react-intl';
@@ -13,7 +13,7 @@ const confirmCompletePlanModalKey = Modal.key();
 
 function TestPlanHeader() {
   const { testPlanStore, createAutoTestStore } = useContext(Store);
-  const { testPlanStatus, getCurrentPlanId, statusRes } = testPlanStore;
+  const { testPlanStatus, getCurrentPlanId } = testPlanStore;
 
   const onUpdatePlanStatus = (planItem, newStatus) => {
     updatePlanStatus({
@@ -44,7 +44,7 @@ function TestPlanHeader() {
       key: confirmCompletePlanModalKey,
       title: '完成计划确认',
       children: (
-        <ConfirmCompleteModalChildren planName={planItem.item.data.name} statusRes={statusRes} />
+        <ConfirmCompleteModalChildren planName={planItem.item.data.name} testPlanStore={testPlanStore} />
       ),
       okText: '确定',
       onOk: onUpdatePlanStatus.bind(this, planItem, newStatus),
@@ -90,6 +90,7 @@ function TestPlanHeader() {
       onEdit: handlePlanEdit,
     });
   }, [getCurrentPlanId, handlePlanEdit]);
+
   return (
     <React.Fragment>
       {

@@ -62,8 +62,8 @@ class IssueTree extends Component {
 
   handleDrag = async (sourceItem, destination) => {
     const { treeData } = this.treeRef.current;
-    const { index } = destination;
     const parent = treeData.items[destination.parentId];
+    const { index = parent.children.length } = destination;
     const lastId = parent.children[index - 1];
     const nextId = parent.children[index];
     const data = {

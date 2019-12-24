@@ -197,6 +197,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Override
     public void cloneStep(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+        Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE_STEP);
         int count = testCycleCaseStepMapper.countByExecuteIds(olderExecuteIds);
         int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
         for(int page = 1;page <= ceil;page++){
@@ -212,6 +213,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                 v.setCreatedBy(userDetails.getUserId());
                 v.setLastUpdatedBy(userDetails.getUserId());
                 v.setCaseId(v.getExecuteStepId());
+                v.setStepStatus(defaultStatusId);
                 stepIds.add(v.getExecuteStepId());
             });
             testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
