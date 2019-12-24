@@ -297,6 +297,7 @@
            </if>
         </where>
     </select>
+
     <delete id="batchDeleteCases">
         delete from test_case where project_id=#{projectId}
         <if test="caseIds != null and caseIds.size > 0">

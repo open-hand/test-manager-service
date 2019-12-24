@@ -104,6 +104,7 @@ ORDER BY
         delete from test_case_step
         where issue_id = #{caseId}
     </delete>
+
     <delete id="deleteByCaseIds">
         delete from test_case_step  where
         <if test="caseIds!=null and caseIds.size>0">
