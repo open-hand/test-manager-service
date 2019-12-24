@@ -241,10 +241,11 @@ public class ExcelServiceImpl implements ExcelService {
         testFileLoadHistoryWithRateVO.setRate(80.0);
         notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
 
-        workbook.setSheetHidden(0, true);
+//        workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
-        workbook.setSheetName(0, LOOKUPSHEETNAME);
-        workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
+//        workbook.setSheetName(0, LOOKUPSHEETNAME);
+//        workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
+        workbook.removeSheetAt(0);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
         // 将workbook上载到对象存储服务中
         downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
