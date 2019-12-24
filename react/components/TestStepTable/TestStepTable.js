@@ -41,12 +41,7 @@ function TestStepTable(props) {
   const {
     onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
-  // 用于 Tab 自动切换选项使用
-  const secondInputRef = useRef();
-  const thirdInputRef = useRef();
-  const [recordFirstRef, setRecordFirstRef] = useState([]);
-  const [recordSecondRef, setRecordSecondRef] = useState([]);
-  const [recordThirdRef, setRecordThirdRef] = useState([]);
+  const { dragKey = 'stepId' } = props;
 
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
@@ -168,24 +163,27 @@ function TestStepTable(props) {
   };
 
   /**
-   * 保存每一步ref
-   * @param {*} record 
-   * @param {*} index 
-   * @param {*} ref 
-   */
+ * 保存每一步ref
+ * @param {*} record 
+ * @param {*} index 
+ * @param {*} ref 
+ */
   const saveCreateRef = (record, index, type, ref) => {
     if (type === 'second') {
-      recordSecondRef[index] = { ref, index };
+      // eslint-disable-next-line no-param-reassign
+      record.second = ref;
     } else if (type === 'third') {
-      recordThirdRef[index] = { ref, index };
+      // eslint-disable-next-line no-param-reassign
+      record.third = ref;
     }
   };
   /**
- * 自动聚焦新创建步骤第一框框
- * @param {*} ref 
- */
+* 自动聚焦新创建步骤第一框框
+* @param {*} ref 
+*/
   const AutoEnterFirstRef = (record, index, ref) => {
-    recordFirstRef[index] = { ref, index };
+    // eslint-disable-next-line no-param-reassign
+    record.first = ref; // 保存ref
     if (record.stepIsCreating) {
       setTimeout(() => {
         ref.enterEditing();
@@ -254,8 +252,8 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      recordFirstRef[index].ref.handleSubmit();
-                      recordSecondRef[index].ref.enterEditing();
+                      record.first.handleSubmit();
+                      record.second.enterEditing();
                     });
                   }
                 }}
@@ -305,8 +303,8 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      recordSecondRef[index].ref.handleSubmit();
-                      recordThirdRef[index].ref.enterEditing();
+                      record.second.handleSubmit();
+                      record.third.enterEditing();
                     });
                   }
                 }}
@@ -408,7 +406,7 @@ function TestStepTable(props) {
           dataSource={data}
           columns={columns}
           onDragEnd={onDragEnd}
-          dragKey={props.dragKey || 'stepId'}
+          dragKey={dragKey}
           customDragHandle
           scroll={{ x: true }}
         />
