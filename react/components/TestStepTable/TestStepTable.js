@@ -42,7 +42,7 @@ function TestStepTable(props) {
     onCreate, setData, data, onDelete, onUpdate, onClone, onDrag, caseId,
   } = props;
   const { dragKey = 'stepId' } = props;
-
+  const [recordRef, setRecordRef] = useState([]);
   const onDragEnd = async (sourceIndex, targetIndex) => {
     if (sourceIndex === targetIndex) {
       return;
@@ -177,7 +177,13 @@ function TestStepTable(props) {
       okType: 'danger',
     });
   };
-
+  /**
+   * 根据Id寻找ref记录 
+   * 若无记录返回undefined
+   * 
+   * @param {*} id 
+   */
+  const findRefByID = id => recordRef.find(item => item.id === id);
   /**
  * 保存每一步ref
  * @param {*} record 
@@ -185,12 +191,23 @@ function TestStepTable(props) {
  * @param {*} ref 
  */
   const saveCreateRef = (record, index, type, ref) => {
+    const refData = findRefByID(record[dragKey]);
     if (type === 'second') {
-      // eslint-disable-next-line no-param-reassign
-      record.second = ref;
+      if (refData) {
+        refData.secondRef = ref;
+      } else {
+        recordRef.push({
+          id: record[dragKey], firstRef: {}, secondRef: ref, thirdRef: {},
+        });
+      }
     } else if (type === 'third') {
-      // eslint-disable-next-line no-param-reassign
-      record.third = ref;
+      if (refData) {
+        refData.thirdRef = ref;
+      } else {
+        recordRef.push({
+          id: record[dragKey], firstRef: {}, secondRef: {}, thirdRef: ref,
+        });
+      }
     }
   };
   /**
@@ -199,7 +216,15 @@ function TestStepTable(props) {
 */
   const AutoEnterFirstRef = (record, index, ref) => {
     // eslint-disable-next-line no-param-reassign
-    record.first = ref; // 保存ref
+    const refData = findRefByID(record[dragKey]);
+    if (refData) {
+      refData.firstRef = ref;
+    } else {
+      recordRef.push({
+        id: record[dragKey], firstRef: ref, secondRef: {}, thirdRef: {},
+      });
+    }
+
     if (record.stepIsCreating) {
       setTimeout(() => {
         ref.enterEditing();
@@ -268,8 +293,9 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      record.first.handleSubmit();
-                      record.second.enterEditing();
+                      const refs = findRefByID(record[dragKey]);
+                      refs.firstRef.handleSubmit();
+                      refs.secondRef.enterEditing();
                     });
                   }
                 }}
@@ -319,8 +345,9 @@ function TestStepTable(props) {
                 onKeyDown={(e) => {
                   if (e.keyCode === 9) {
                     setTimeout(() => {
-                      record.second.handleSubmit();
-                      record.third.enterEditing();
+                      const refs = findRefByID(record[dragKey]);
+                      refs.secondRef.handleSubmit();
+                      refs.thirdRef.enterEditing();
                     });
                   }
                 }}
