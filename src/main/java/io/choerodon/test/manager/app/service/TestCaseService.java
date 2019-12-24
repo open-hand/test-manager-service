@@ -61,7 +61,7 @@ public interface TestCaseService {
 
     ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds);
 
-    ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds);
+    void batchDeleteIssues(Long projectId, List<Long> issueIds);
 
     LookupTypeWithValuesDTO queryLookupValueByCode(String typeCode);
 

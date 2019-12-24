@@ -67,6 +67,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestCaseMapper testCaseMapper;
 
     @Autowired
+    private TestCaseStepMapper testCaseStepMapper;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -491,9 +494,12 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public ResponseEntity batchDeleteIssues(Long projectId, List<Long> issueIds) {
+    public void batchDeleteIssues(Long projectId, List<Long> issueIds) {
         Assert.notNull(projectId, "error.TestCaseService.batchDeleteIssues.param.projectId.not.be.null");
-        return testCaseFeignClient.batchDeleteIssues(projectId, issueIds);
+        if(!CollectionUtils.isEmpty(issueIds)){
+            testCaseStepMapper.deleteByCaseIds(projectId,issueIds);
+            testCaseMapper.batchDeleteCases(projectId, issueIds);
+        }
     }
 
     private ResponseEntity<PageInfo<IssueListTestWithSprintVersionDTO>> listIssueWithLinkedIssues(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId) {
