@@ -3,13 +3,14 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Modal, Form, TextField, DataSet, TextArea, DateTimePicker, Select, Radio,
+  Modal, Form, DataSet, TextArea, DateTimePicker, Select, Radio,
 } from 'choerodon-ui/pro';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import moment from 'moment';
 import UserHead from '@/components/UserHead';
 import Tip from '@/components/Tip';
+import { PromptInput } from '@/components';
 import { getProjectId } from '@/common/utils';
 import {
   createPlan, getPlan, editPlan, clonePlan,
@@ -78,7 +79,7 @@ function TestPlanModal({
   return (
     <Context.Provider value={{ SelectIssueStore: selectIssueStore }}>
       <Form dataSet={dataSet} style={{ width: 512 }}>
-        <TextField name="name" required maxLength={44} />
+        <PromptInput name="name" required maxLength={44} />
         <TextArea
           name="description"
         />

@@ -12,6 +12,7 @@ import { getProjectId } from '../../../../common/utils';
 import { createIssue } from '../../../../api/IssueManageApi';
 import IssueStore from '../../stores/IssueStore';
 import IssueTreeStore from '../../stores/IssueTreeStore';
+import { PromptInput } from '@/components';
 import './CreateIssueTiny.less';
 
 const { Option } = Select;
@@ -65,7 +66,7 @@ export default observer(() => {
     <div className="c7ntest-add" style={{ display: 'block', width: '100%' }}>
       <div className="c7ntest-add-testCase">
         <div style={{ flexGrow: 1 }}>
-          <TextField
+          <PromptInput
             autoFocus
             placeholder="请输入用例概要"
             onChange={(value) => { // 失焦才会触发onChange
