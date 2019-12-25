@@ -87,9 +87,9 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         dataSet, record, name, value, oldValue,
       }) => {
         const data = record.toData();
-        const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
         switch (name) {
           case 'defects': {
+            const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
             if (value.length < oldValue.length) {
               removeDefect(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => { executeHistoryDataSet.query(); }).catch((error) => {
                 record.set(name, oldValue);
@@ -109,11 +109,12 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
             break;
           }
           case 'description': {
-            data.description = value;
+            data.description = value || '';
             updateRecordData(data, dataSet, executeHistoryDataSet, record, name, oldValue);
             break;
           }
           case 'stepAttachment': {
+            const arrIDs = [...value].map(i => i.id); // 缺陷,附件使用
             if (value.length < oldValue.length) {
               deleteFile(oldValue.find(item => !arrIDs.includes(item.id)).id).then(() => {
                 executeHistoryDataSet.query();
