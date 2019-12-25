@@ -25,7 +25,7 @@ class IssueTree extends Component {
       name: value,
       type: 'cycle',
     };
-    const result = await handleRequestFailed(addFolder(data));
+    const result = await handleRequestFailed(addFolder(data));    
     return {
       id: result.folderId,
       data: {
@@ -55,7 +55,7 @@ class IssueTree extends Component {
   }
 
   handleDelete = async (item) => {
-    await handleRequestFailed(deleteFolder(item.id));
+    await handleRequestFailed(deleteFolder(item.id));    
     // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
     IssueTreeStore.removeRootItem(item.id);
   }
@@ -88,11 +88,14 @@ class IssueTree extends Component {
     IssueStore.loadIssues();
   }
 
+  handleUpdateItem=(item) => {
+    IssueTreeStore.setCurrentFolder(item);
+  }
+
   renderTreeNode = (node, { item }) => <TreeNode item={item}>{node}</TreeNode>
 
   render() {
-    const { loading } = IssueTreeStore;
-    const treeData = IssueTreeStore.getTreeData;
+    const { loading, treeData } = IssueTreeStore;
 
     return (
       <div className="c7ntest-IssueTree">
@@ -106,6 +109,7 @@ class IssueTree extends Component {
           afterDrag={this.handleDrag}
           selected={IssueTreeStore.getCurrentFolder}
           setSelected={this.setSelected}
+          updateItem={this.handleUpdateItem}
           renderTreeNode={this.renderTreeNode}
           treeNodeProps={{
             // 最多8层

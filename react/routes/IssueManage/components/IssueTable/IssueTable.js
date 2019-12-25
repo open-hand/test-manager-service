@@ -304,7 +304,6 @@ export default observer((props) => {
   ]);
 
   const { currentFolder } = IssueTreeStore;
-
   return (
     <div className="c7ntest-issueArea">
       <div id="template_copy" style={{ display: 'none' }}>

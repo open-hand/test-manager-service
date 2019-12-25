@@ -75,6 +75,7 @@ function PureTree({
   afterDrag,
   selected,
   setSelected,
+  updateItem,
   renderTreeNode,
   treeNodeProps,
   onMenuClick,
@@ -230,6 +231,12 @@ function PureTree({
           isChildrenLoading: false,
           isEditing: false,
         }));
+        setTree((newTree) => {
+          if (updateItem && selected.id === item.parentId && selected.children.length === 0) {
+            updateItem(newTree.items[selected.id]);
+          }
+          return newTree;
+        });
       } catch (error) {
         setTree(oldTree => removeItem(oldTree, path));
       }

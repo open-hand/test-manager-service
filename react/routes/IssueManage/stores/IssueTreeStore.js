@@ -50,7 +50,7 @@ class IssueTreeStore {
 
   async loadIssueTree(defaultSelectId) {
     this.setLoading(true);
-    const treeData = await getIssueTree();   
+    const treeData = await getIssueTree();
     this.setTreeData(treeData, defaultSelectId);
     this.setLoading(false);
   }
@@ -60,13 +60,13 @@ class IssueTreeStore {
     // 选中之前选中的
     let selectedId = this.currentFolder ? this.currentFolder.id : undefined;
     if (!this.currentFolder.id && rootIds.length > 0) {
-      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];      
+      selectedId = defaultSelectId ? Number(defaultSelectId) : rootIds[0];
     }
     this.treeData = {
       rootIds,
       treeFolder: treeFolder.map((folder) => {
         const {
-          issueFolderVO, expanded, children, ...other 
+          issueFolderVO, expanded, children, ...other
         } = folder;
         return {
           children: children || [],
@@ -81,7 +81,7 @@ class IssueTreeStore {
       this.setCurrentFolder(find(this.treeData.treeFolder, { id: selectedId }) || {});
     }
   }
-  
+
   @action removeRootItem(folderId) {
     pull(this.treeData.rootIds, folderId);
   }
@@ -104,7 +104,7 @@ class IssueTreeStore {
   @action setTreeRef = (treeRef) => {
     this.treeRef = treeRef;
   }
-  
+
   updateHasCase(itemId, flag) {
     if (this.treeRef && this.treeRef.current) {
       const item = this.treeRef.current.getItem(itemId);
@@ -113,6 +113,14 @@ class IssueTreeStore {
       }
     }
   }
+
+  @action
+  updateChildren(itemId, folderId) {
+    const target = find(this.treeData.treeFolder, { id: itemId });
+    if (target && target.children) {
+      target.children.push(folderId);
+    }
+  }  
 }
 
 export default new IssueTreeStore();
