@@ -161,6 +161,13 @@ class TestPlanTree extends Component {
     }
   }
 
+  handleUpdateItem=(item) => { 
+    const { context: { testPlanStore } } = this.props;
+    if (testPlanStore.getCurrentPlanId === item.id) {
+      testPlanStore.setPlanInfo({ ...testPlanStore.planInfo, name: item.data.name });
+    }    
+  }
+
   renderTreeNode = (node, { item }) => {
     if (!item.topLevel) {
       return (
@@ -238,6 +245,7 @@ class TestPlanTree extends Component {
           }}
           selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}
+          updateItem={this.handleUpdateItem}
           renderTreeNode={this.renderTreeNode}
           isDragEnabled={false}
           treeNodeProps={

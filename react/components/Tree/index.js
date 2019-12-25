@@ -11,6 +11,7 @@ import Tree, {
 import { flattenTree } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
+import useAvoidClosure from '@/hooks/useAvoidClosure';
 import TreeNode from './TreeNode';
 import {
   selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode, getSiblingOrParent,
@@ -244,7 +245,7 @@ function PureTree({
       setTree(oldTree => removeItem(oldTree, path));
     }
   };
-  const handleEdit = async (value, item) => {
+  const handleEdit = useAvoidClosure(async (value, item) => {
     // 值未变，或为空，不编辑，还原
     if (!value.trim() || value === item.data.name) {
       setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
@@ -252,11 +253,17 @@ function PureTree({
       try {
         const newItem = await onEdit(value, item);     
         setTree(oldTree => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
+        setTree((newTree) => {
+          if (updateItem && selected.id === item.id) {
+            updateItem(newTree.items[selected.id]);
+          }
+          return newTree;
+        });
       } catch (error) {
         setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
       }
     }
-  };
+  });
   const renderItem = ({
     item, provided,
   }) => {
