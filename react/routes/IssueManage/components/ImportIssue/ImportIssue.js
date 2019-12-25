@@ -200,10 +200,9 @@ function ImportIssue(props) {
       upload(e.target.files[0]);
     }
   };
-  const onceSetState = _.once(() => dispatch({ type: 'process' }));
+
   const debounceSetImportRecord = _.debounce((e) => {
     setImportRecord(e);
-    onceSetState();
     // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
   }, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
@@ -225,6 +224,8 @@ function ImportIssue(props) {
         window.location.href = fileUrl;
       }
       debounceSetImportRecord(data);
+    } else {
+      dispatch({ type: 'process' }); 
     }
   };
 
