@@ -36,6 +36,7 @@ class ExecuteDetailStore {
       page: data.page,
       plan_id: data.plan_id,
       size: data.size,
+      assignerId: data.assignerId,
     };
   }
 
