@@ -104,7 +104,7 @@ function TreeNode(props) {
       role="none"
       className={`${prefix}-tree-item`}
     >
-      <TextField placeholder="请输入文件夹名称" style={{ width: '100%' }} maxLength={20} defaultValue={item.data.name} onBlur={onSave} autoFocus />
+      <TextField placeholder="请输入目录名称" style={{ width: '100%' }} maxLength={20} defaultValue={item.data.name} onBlur={onSave} autoFocus />
     </div>
   );
   const renderTitle = () => {

@@ -77,7 +77,7 @@ class TestPlanTree extends Component {
       const [, folderId] = testPlanStore.getId(item.id);
       handleRequestFailed(deleteFolder(folderId));
     }
-    // 只移除跟节点，作用是删除文件夹后可以正确判断是不是没文件夹了，来显示空插画
+    // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
     // testPlanStore.removeRootItem(item.id);
   }
 
@@ -241,7 +241,7 @@ class TestPlanTree extends Component {
           onDelete={this.handleDelete}
           getDeleteTitle={(item) => {
             const isPlan = item.topLevel;
-            return isPlan ? '确认删除计划? |删除后计划下的所有执行也将被删除' : '确认删除文件夹? |删除后文件夹下的所有执行也将被删除';
+            return isPlan ? '确认删除计划? |删除后计划下的所有执行也将被删除' : '确认删除目录? |删除后目录下的所有执行也将被删除';
           }}
           selected={testPlanStore.currentCycle}
           setSelected={this.setSelected}
@@ -252,7 +252,7 @@ class TestPlanTree extends Component {
             {
               menuItems: this.getMenuItems,
               getFolderIcon: (item, defaultIcon) => (item.topLevel ? <Icon type="insert_invitation" style={{ marginRight: 5 }} /> : defaultIcon),
-              // 计划和没有执行的，可以添加子文件夹
+              // 计划和没有执行的，可以添加子目录
               // 最多9层
               enableAddFolder: item => item.path.length < 10 && (item.topLevel || !item.hasCase),
             }

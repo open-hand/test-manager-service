@@ -115,7 +115,7 @@ class IssueTree extends Component {
             // 最多8层
             enableAddFolder: item => item.path.length < 9 && !item.hasCase,
           }}
-          getDeleteTitle={item => `确认删除“${item.data.name}”文件夹？|删除后文件夹下的所有用例也将被删除`}        
+          getDeleteTitle={item => `确认删除“${item.data.name}”目录？|删除后目录下的所有用例也将被删除`}        
         />
       </div>
     );

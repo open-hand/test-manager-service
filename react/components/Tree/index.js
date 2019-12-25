@@ -117,7 +117,7 @@ function PureTree({
   const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
   const handleDelete = useCallback((item) => {   
     Modal.confirm({
-      title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除文件夹',
+      title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
       children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
     }).then(async (button) => {
       if (button === 'ok') {
@@ -167,7 +167,7 @@ function PureTree({
     }
     const sourceItem = getItemByPosition(tree, source);    
     const destinationParent = tree.items[destination.parentId];
-    // 不能拖动到已经有issue的文件夹下
+    // 不能拖动到已经有issue的目录下
     if (destinationParent.hasCase) {
       return;
     }

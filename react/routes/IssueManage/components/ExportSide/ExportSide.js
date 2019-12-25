@@ -101,7 +101,7 @@ function ExportSide(props) {
     }
     const data = JSON.parse(res);
     const { id, rate, successfulCount } = data;
-    if (data.message === '文件夹下无用例') {
+    if (data.message === '目录下无用例') {
       const record = exportSideDataSet.find(item => item.get('id') === id);
       exportSideDataSet.remove(record);
       message.warn(data.message);

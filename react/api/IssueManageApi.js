@@ -124,7 +124,7 @@ export function getIssueTree() {
   return request.get(`/test/v1/projects/${getProjectId()}/issueFolder/query`);
 }
 /**
- *增加文件夹
+ *增加目录
  *
  * @export
  * @param {*} data
@@ -134,7 +134,7 @@ export function addFolder(data) {
   return request.post(`/test/v1/projects/${getProjectId()}/issueFolder`, { ...data, versionId: 0 });
 }
 /**
- *修改文件夹
+ *修改目录
  *
  * @export
  * @param {*} data
@@ -144,7 +144,7 @@ export function editFolder(data) {
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/update`, data);
 }
 /**
- *移动文件夹
+ *移动目录
  *
  * @export
  * @param {*} data
@@ -154,7 +154,7 @@ export function moveFolder(data, targetFolderId) {
   return request.put(`/test/v1/projects/${getProjectId()}/issueFolder/move?targetFolderId=${targetFolderId}`, data);
 }
 /**
- *删除文件夹
+ *删除目录
  *
  * @export
  * @param {*} folderId
@@ -185,7 +185,7 @@ export function createIssueStep(testCaseStepDTO) {
 }
 
 /**
- *获取文件夹中的用例
+ *获取目录中的用例
  *
  * @export
  * @param {*} folderId
@@ -230,7 +230,7 @@ export function copyIssues(issueLinks, folderId) {
   return request.post(`/test/v1/projects/${getProjectId()}/case/batch_clone?folder_id=${folderId}`, issueLinks);
 }
 /**
- *文件夹克隆
+ *目录克隆
  *
  * @export
  * @param {*} data
