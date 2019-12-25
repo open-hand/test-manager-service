@@ -206,14 +206,14 @@ function ImportIssue(props) {
     // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
   }, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
-    if (res === '错误的模板文件' || res === '空模板') {
-      message.error(res);
-      dispatch({ type: 'cancel' });
-      setImportRecord({});
-      return;
-    }
     if (res !== 'ok') {
       const data = JSON.parse(res);
+      if (res.code === 'test-issue-import-error') {
+        message.error(res.message);
+        dispatch({ type: 'cancel' });
+        setImportRecord({});
+        return;
+      }
       const {
         id, status, fileUrl,
       } = data;
