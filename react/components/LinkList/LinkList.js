@@ -21,7 +21,7 @@ function LinkList(props) {
   function render() {
     const { issue, i } = props;
     const {
-      priorityVO, issueTypeVO, issueNum, summary, issueId, linkedIssueId, assigneeId, assigneeName, imageUrl,
+      priorityVO, issueTypeVO, issueNum, summary, issueId, assigneeId, assigneeName, imageUrl,
       linkId, ward, statusVO, deleteLink,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
@@ -53,7 +53,7 @@ function LinkList(props) {
               }}
               role="none"
             >
-              <Link to={issueLink(Reg.test(ward) ? issueId : linkedIssueId, typeCode, issueNum)}>
+              <Link to={issueLink(issueId, typeCode, issueNum)}>
                 {`${issueNum} ${summary}`}
               </Link>
             </p>
