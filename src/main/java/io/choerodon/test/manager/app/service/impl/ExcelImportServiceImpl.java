@@ -541,7 +541,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 .map(testFileLoadHistoryDTO, TestFileLoadHistoryWithRateVO.class);
         testFileLoadHistoryWithRateVO.setRate(rate);
         if(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue().equals(testFileLoadHistoryWithRateVO.getStatus())){
-            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), testFileLoadHistoryWithRateVO.getMessage());
+            testFileLoadHistoryWithRateVO.setCode(IMPORT_ERROR);
+            notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         }else {
             notifyService.postWebSocket(IMPORT_NOTIFY_CODE, userId.toString(), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         }

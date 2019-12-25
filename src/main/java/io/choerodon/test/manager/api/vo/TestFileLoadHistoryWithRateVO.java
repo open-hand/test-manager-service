@@ -57,6 +57,17 @@ public class TestFileLoadHistoryWithRateVO {
     @ApiModelProperty(value = "消息")
     private String message;
 
+    @ApiModelProperty(value = "错误消息编码")
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getMessage() {
         return message;
     }
