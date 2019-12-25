@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Form, TextField, DataSet, Icon, message,
+  Form, DataSet, Icon, message,
 } from 'choerodon-ui/pro';
 import UploadButton from './UploadButton';
 import { WYSIWYGEditor } from '../../../../components';
@@ -13,7 +13,7 @@ import SelectTree from '../SelectTree';
 import { beforeTextUpload, returnBeforeTextUpload } from '../../../../common/utils';
 import './CreateIssue.less';
 import { uploadFile } from '../../../../api/IssueManageApi';
-
+import { PromptInput } from '@/components';
 
 function CreateIssue(props) {
   const [visibleDetail, setVisibleDetail] = useState(true);
@@ -73,7 +73,7 @@ function CreateIssue(props) {
 
   return (
     <Form dataSet={createDataset} className={`test-create-issue-form ${visibleDetail ? '' : 'test-create-issue-form-hidden'}`}>
-      <TextField name="summary" maxLength={44} />
+      <PromptInput name="summary" maxLength={44} />
       <SelectTree name="folder" parentDataSet={createDataset} defaultValue={defaultFolderValue.id} />
       <div role="none" style={{ cursor: 'pointer' }} onClick={() => setVisibleDetail(!visibleDetail)}>
         <div className="test-create-issue-line" />

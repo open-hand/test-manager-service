@@ -206,7 +206,7 @@ function ImportIssue(props) {
     // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
   }, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
-    if (res === '错误的模板文件') {
+    if (res === '错误的模板文件' || res === '空模板') {
       message.error(res);
       dispatch({ type: 'cancel' });
       setImportRecord({});
@@ -225,7 +225,7 @@ function ImportIssue(props) {
       }
       debounceSetImportRecord(data);
     } else {
-      dispatch({ type: 'process' }); 
+      dispatch({ type: 'process' });
     }
   };
 
