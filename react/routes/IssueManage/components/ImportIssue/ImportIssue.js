@@ -208,8 +208,8 @@ function ImportIssue(props) {
   const handleMessage = (res) => {
     if (res !== 'ok') {
       const data = JSON.parse(res);
-      if (res.code === 'test-issue-import-error') {
-        message.error(res.message);
+      if (data.code === 'test-issue-import-error') {
+        message.error(data.message);
         dispatch({ type: 'cancel' });
         setImportRecord({});
         return;
