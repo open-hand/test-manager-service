@@ -85,6 +85,7 @@ class IssueTree extends Component {
 
   setSelected = (item) => {
     IssueTreeStore.setCurrentFolder(item);
+    IssueStore.setClickIssue({});
     IssueStore.loadIssues();
   }
 

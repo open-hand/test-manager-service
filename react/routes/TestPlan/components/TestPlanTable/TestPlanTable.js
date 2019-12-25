@@ -54,6 +54,7 @@ const TestPlanTable = observer(({
           style={
             {
               display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none',
+              flexShrink: 0,
               alignItems: 'center',
               justifyContent: 'center',
               width: 46,
