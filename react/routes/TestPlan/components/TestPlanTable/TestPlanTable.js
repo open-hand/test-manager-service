@@ -274,6 +274,7 @@ const TestPlanTable = observer(({
             allowClear
             style={{ width: 216, marginLeft: 10 }}
             placeholder="被指派人"
+            loadWhenMount
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
             onChange={onSearchAssign}
