@@ -58,12 +58,12 @@ export function editCycleStep(data) {
 }
 export function geDetailsData(cycleCaseId, param) {
   return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`,
-    {
+    param.assignerId ? {
       searchArgs: {
         assignUser: param.assignerId,
       },
       contents: [],
-    });
+    } : {});
 }
 export function getCycleHistiorys(pagination, cycleCaseId) {
   const { size, page } = pagination;
