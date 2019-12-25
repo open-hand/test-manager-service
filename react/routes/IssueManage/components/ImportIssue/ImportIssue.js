@@ -149,10 +149,13 @@ function ImportIssue(props) {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
-
-    const diff = lastTime.diff(startTime);
+    let diff = lastTime.diff(startTime);
+    // console.log(diff);
+    if (diff <= 0) {
+      diff = moment().diff(startTime);
+    }
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   };
 
