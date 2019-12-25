@@ -111,7 +111,7 @@ function TestPlanHome({ history }) {
   const handleTableSummaryClick = (record) => {
     const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('-');
     const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
-    const assignerId = testPlanStore.getFilters.assignUser;
+    const assignerId = testPlanStore.getFilters.assignUser || '';
     history.push(executeDetailLink(record.executeId, cycleId, testPlanStore.getCurrentPlanId, assignerId));
   };
 
