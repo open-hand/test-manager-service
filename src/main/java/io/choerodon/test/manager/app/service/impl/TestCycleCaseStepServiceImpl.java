@@ -182,7 +182,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                 TestCaseStepDTO testCaseStepDTO = caseStepMap.get(cycleCaseStep.getStepId());
                 String caseStepInfo = String.format("%s,%s,%s,%s", testCaseStepDTO.getExpectedResult(), testCaseStepDTO.getTestData(), testCaseStepDTO.getTestStep(), testCaseStepDTO.getRank());
                 String cycleCaseStepInfo = String.format("%s,%s,%s,%s", cycleCaseStep.getExpectedResult(), cycleCaseStep.getTestData(), cycleCaseStep.getTestStep(), cycleCaseStep.getRank());
-                if (!Objects.equals(caseStepIds, cycleCaseStepInfo)) {
+                if (!Objects.equals(caseStepInfo, cycleCaseStepInfo)) {
                     cycleCaseStep.setTestStep(testCaseStepDTO.getTestStep());
                     cycleCaseStep.setTestData(testCaseStepDTO.getTestData());
                     cycleCaseStep.setRank(testCaseStepDTO.getRank());
@@ -248,7 +248,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             testCaseStepDTOS.forEach(testCaseStepDTO -> {
                 TestCycleCaseStepDTO testCycleCaseStepDTO = new TestCycleCaseStepDTO(v.getExecuteId(), testCaseStepDTO.getStepId()
                         , v.getCreatedBy(), v.getLastUpdatedBy(), testCaseStepDTO.getTestStep(), testCaseStepDTO.getTestData(), testCaseStepDTO.getExpectedResult());
-                testCycleCaseStepDTO.setRank(v.getRank());
+                testCycleCaseStepDTO.setRank(testCaseStepDTO.getRank());
                 testCycleCaseStepDTO.setStepStatus(defaultStatusId);
                 list.add(testCycleCaseStepDTO);
             });
