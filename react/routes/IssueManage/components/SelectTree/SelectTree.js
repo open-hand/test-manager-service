@@ -245,7 +245,12 @@ function SelectTree(props) {
           // onChange={_.debounce(handleFilterNode, 300)}
           // onEnterDown={handleEnd}
           clearButton
-          onClear={() => dispatch({ type: 'init' })}
+          onClear={() => {
+            dispatch({ type: 'init' });
+            dataSet.forEach((record) => {
+              record.set('expanded', false);
+            });
+          }}
         />
       </div>
       <Divider />
