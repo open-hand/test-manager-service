@@ -138,7 +138,7 @@ class IssueTreeStore {
     }
   }
 
-  // 递归自动选中或取消所有子文件夹
+  // 递归自动选中或取消所有子目录
   @action autoHandleChildren(item, checked) {
     item.isIndeterminate = false;
     item.children.forEach((folderId) => {
@@ -222,7 +222,7 @@ class IssueTreeStore {
   getSelectedFolders() {
     const result = {};
     for (const [id, item] of this.treeMap) {
-      // 只取树最后一层的文件夹
+      // 只取树最后一层的目录
       if (item.checked && item.children.length === 0) {
         const { unSelected, selected } = item;
         // 有一个就是custom

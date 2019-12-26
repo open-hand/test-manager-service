@@ -19,7 +19,7 @@ function UpdateContent(props) {
       <div className={`${prefix}-detail-tag ${tag}-tag`}><span>{tag === 'new' ? '新' : '旧'}</span></div>
       <div className={`${prefix}-detail-info`}>
         <div className={`${prefix}-item`}>
-          <div className={`${prefix}-item-field`}>文件夹</div>
+          <div className={`${prefix}-item-field`}>目录</div>
           <div className={`${prefix}-item-value`}>{tag === 'old' ? updateData && updateData.folderName : updateData && updateData.folder}</div>
         </div>
         <div className={`${prefix}-item`}>

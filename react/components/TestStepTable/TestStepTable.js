@@ -98,7 +98,7 @@ function TestStepTable(props) {
   const checkAllSpace = (...texts) => {
     let isAllSpace = false;
     texts.forEach((text) => {
-      if (text.trim().length === 0) {
+      if (text !== null && text.length !== 0 && text.trim().length === 0) {
         isAllSpace = true;
       }
     });
@@ -108,7 +108,7 @@ function TestStepTable(props) {
   const onCreateStep = async (newStep, index) => {
     const { expectedResult, testStep, testData } = newStep;
     // 特殊字符判断 全为空格时，则进行提示 
-    if (checkAllSpace(expectedResult, testData, testData)) {
+    if (checkAllSpace(expectedResult, testStep, testData)) {
       Choerodon.prompt('不能有空格');
       return;
     }

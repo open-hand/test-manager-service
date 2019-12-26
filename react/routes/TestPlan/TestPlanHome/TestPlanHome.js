@@ -11,7 +11,7 @@ import {
 import { Icon, Tabs } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
-  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate, 
+  deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
 } from '../../../api/TestPlanApi';
 import CreateAutoTest from '../components/CreateAutoTest';
 import TestPlanDetailCard from '../components/TestPlanDetailCard';
@@ -35,7 +35,7 @@ let updateModal;
 
 function TestPlanHome({ history }) {
   const {
-    prefixCls, createAutoTestStore, testPlanStore, 
+    prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
@@ -111,7 +111,8 @@ function TestPlanHome({ history }) {
   const handleTableSummaryClick = (record) => {
     const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('-');
     const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
-    history.push(executeDetailLink(record.executeId, cycleId, testPlanStore.getCurrentPlanId, testPlanStore.executePagination));
+    const assignerId = testPlanStore.getFilters.assignUser || '';
+    history.push(executeDetailLink(record.executeId, cycleId, testPlanStore.getCurrentPlanId, assignerId));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {
@@ -310,13 +311,13 @@ function TestPlanHome({ history }) {
                 <div className={`${prefixCls}-contentWrap-right-card`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'nowrap' }}>
                     <div style={{
-                      flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                      flex: 1, marginRight: '0.16rem', paddingTop: '0.05rem', paddingBottom: '0.05rem',
                     }}
                     >
                       <TestPlanDetailCard />
                     </div>
                     <div style={{
-                      flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem', 
+                      flex: 1, overflowX: 'hidden', paddingTop: '0.05rem', paddingBottom: '0.05rem',
                     }}
                     >
                       <TestPlanStatusCard />

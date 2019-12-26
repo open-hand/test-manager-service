@@ -149,10 +149,13 @@ function ImportIssue(props) {
     const { creationDate, lastUpdateDate } = record;
     const startTime = moment(creationDate);
     const lastTime = moment(lastUpdateDate);
-
-    const diff = lastTime.diff(startTime);
+    let diff = lastTime.diff(startTime);
+    // console.log(diff);
+    if (diff <= 0) {
+      diff = moment().diff(startTime);
+    }
     return creationDate && lastUpdateDate
-      ? humanizeDuration(diff / 1000)
+      ? humanizeDuration(diff)
       : null;
   };
 
@@ -200,21 +203,20 @@ function ImportIssue(props) {
       upload(e.target.files[0]);
     }
   };
-  const onceSetState = _.once(() => dispatch({ type: 'process' }));
+
   const debounceSetImportRecord = _.debounce((e) => {
     setImportRecord(e);
-    onceSetState();
     // wsRef.current.context.ws.destroySocketByPath(wsRef.current.props.path);
   }, 250, { maxWait: 1300 });
   const handleMessage = (res) => {
-    if (res === '错误的模板文件') {
-      message.error(res);
-      dispatch({ type: 'cancel' });
-      setImportRecord({});
-      return;
-    }
     if (res !== 'ok') {
       const data = JSON.parse(res);
+      if (data.code === 'test-issue-import-error') {
+        message.error(data.message);
+        dispatch({ type: 'cancel' });
+        setImportRecord({});
+        return;
+      }
       const {
         id, status, fileUrl,
       } = data;
@@ -225,6 +227,8 @@ function ImportIssue(props) {
         window.location.href = fileUrl;
       }
       debounceSetImportRecord(data);
+    } else {
+      dispatch({ type: 'process' });
     }
   };
 

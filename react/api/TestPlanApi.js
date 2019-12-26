@@ -50,7 +50,7 @@ export function importIssueToFolder(planId, folderId, data) {
   return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/import?plan_id=${planId}&cycle_id=${folderId}`, data);
 }
 /**
- *  根据文件夹id和计划id获取执行
+ *  根据目录id和计划id获取执行
  */
 export function getExecutesByFolder({
   planId, folderId, search, orderField, orderType, current, pageSize,

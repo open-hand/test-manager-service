@@ -581,6 +581,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             if (cyclecase.getExecuteId().equals(executeId)) {
                 testCycleCaseDTO = cyclecase;
                 index = testCycleCaseDTOS.indexOf(cyclecase);
+                break;
             }
         }
         if (ObjectUtils.isEmpty(testCycleCaseDTO)) {

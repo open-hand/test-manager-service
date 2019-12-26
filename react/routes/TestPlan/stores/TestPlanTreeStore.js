@@ -135,7 +135,7 @@ class TestPlanTreeStore {
     }
   }
 
-  @action setCurrentCycle(currentCycle) {
+  @action setCurrentCycle(currentCycle) {  
     this.currentCycle = currentCycle;
   }
 

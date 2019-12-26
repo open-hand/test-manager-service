@@ -181,7 +181,7 @@ const zhCN = {
   // 测试计划
   testPlan_name: '测试计划',
   testPlan_createStage: '添加测试阶段',
-  testPlan_linkFolder: '关联文件夹',
+  testPlan_linkFolder: '关联目录',
   testPlan_createStageIn: '在测试循环“{cycleName}”中添加测试阶段',
   testPlan_EditStage_title: '编辑测试阶段',
   testPlan_EditStage: '编辑测试阶段“{cycleName}”',
@@ -289,7 +289,7 @@ const zhCN = {
   issue_issueUpdateOn: '更新于',
   issue_issueCreateAt: '创建于',
   issue_repository: '用例仓库',
-  issue_folder: '文件夹',
+  issue_folder: '目录',
   issue_download_tpl: '下载模板',
   issue_import: '导入用例',
   issue_export: '导出用例',
@@ -308,7 +308,7 @@ const zhCN = {
   issue_create_content_epic: '史诗',
   issue_create_content_sprint: '冲刺',
   issue_create_content_version: '版本',
-  issue_create_content_folder: '文件夹',
+  issue_create_content_folder: '目录',
   // 编辑详情侧边栏
   issue_edit_hide: '隐藏详情',
   issue_edit_planTime: '预估时间',
@@ -341,7 +341,7 @@ const zhCN = {
   issue_createStep_content_description: '您可以创建任意个测试步骤。',
   // 执行测试侧边栏
   issue_executeTest_content_title: '在测试“{issueName}”中执行测试',
-  issue_executeTest_content_description: '将测试用例添加到测试循环或文件夹中，构成一次测试执行。',
+  issue_executeTest_content_description: '将测试用例添加到测试循环或目录中，构成一次测试执行。',
   // 拷贝issue
   issue_copy_title: '复制问题{issueNum}',
   issue_copy_copySprint: '是否复制冲刺',

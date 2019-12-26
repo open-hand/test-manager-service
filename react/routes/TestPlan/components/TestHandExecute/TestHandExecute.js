@@ -55,9 +55,9 @@ function TestHandExecute(props) {
     const { nextExecuteId, previousExecuteId } = detailData;
     const { history } = context;
     const toExecuteId = mode === 'pre' ? previousExecuteId : nextExecuteId;
-    const { plan_id: planId, cycle_id: cycleId } = ExecuteDetailStore.getDetailParams;
+    const { plan_id: planId, cycle_id: cycleId, assignerId } = ExecuteDetailStore.getDetailParams;
     if (toExecuteId) {
-      history.replace(executeDetailLink(toExecuteId, cycleId, planId));
+      history.replace(executeDetailLink(toExecuteId, cycleId, planId, assignerId));
       // ExecuteDetailStore.getInfo(toExecuteId);
     }
   };

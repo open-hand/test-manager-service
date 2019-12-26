@@ -19,3 +19,4 @@ export { default as Loading } from './Loading';
 export { default as ColorPicker } from './ColorPicker';
 export { default as Tags } from './Tags';
 export { default as ResizeAble } from './ResizeAble';
+export { default as PromptInput } from './PromptInput';

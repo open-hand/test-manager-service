@@ -11,6 +11,7 @@ import Tree, {
 import { flattenTree } from '@atlaskit/tree/dist/cjs/utils/tree';
 import { getItemById } from '@atlaskit/tree/dist/cjs/utils/flat-tree';
 import { Modal } from 'choerodon-ui/pro';
+import useAvoidClosure from '@/hooks/useAvoidClosure';
 import TreeNode from './TreeNode';
 import {
   selectItemWithExpand, usePrevious, removeItem, addItem, createItem, expandTreeBySearch, getItemByPosition, getRootNode, getSiblingOrParent,
@@ -75,6 +76,7 @@ function PureTree({
   afterDrag,
   selected,
   setSelected,
+  updateItem,
   renderTreeNode,
   treeNodeProps,
   onMenuClick,
@@ -115,7 +117,7 @@ function PureTree({
   const getItem = useCallback(itemId => getItemById(flattenedTree, itemId), [flattenedTree]);
   const handleDelete = useCallback((item) => {   
     Modal.confirm({
-      title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除文件夹',
+      title: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[0] : '确认删除目录',
       children: getDeleteTitle ? callFunction(getDeleteTitle, item).split('|')[1] : undefined,
     }).then(async (button) => {
       if (button === 'ok') {
@@ -165,7 +167,7 @@ function PureTree({
     }
     const sourceItem = getItemByPosition(tree, source);    
     const destinationParent = tree.items[destination.parentId];
-    // 不能拖动到已经有issue的文件夹下
+    // 不能拖动到已经有issue的目录下
     if (destinationParent.hasCase) {
       return;
     }
@@ -230,6 +232,12 @@ function PureTree({
           isChildrenLoading: false,
           isEditing: false,
         }));
+        setTree((newTree) => {
+          if (updateItem && selected.id === item.parentId && selected.children.length === 0) {
+            updateItem(newTree.items[selected.id]);
+          }
+          return newTree;
+        });
       } catch (error) {
         setTree(oldTree => removeItem(oldTree, path));
       }
@@ -237,7 +245,7 @@ function PureTree({
       setTree(oldTree => removeItem(oldTree, path));
     }
   };
-  const handleEdit = async (value, item) => {
+  const handleEdit = useAvoidClosure(async (value, item) => {
     // 值未变，或为空，不编辑，还原
     if (!value.trim() || value === item.data.name) {
       setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
@@ -245,11 +253,17 @@ function PureTree({
       try {
         const newItem = await onEdit(value, item);     
         setTree(oldTree => mutateTree(oldTree, item.id, { ...item, ...newItem, isEditing: false }));
+        setTree((newTree) => {
+          if (updateItem && selected.id === item.id) {
+            updateItem(newTree.items[selected.id]);
+          }
+          return newTree;
+        });
       } catch (error) {
         setTree(oldTree => mutateTree(oldTree, item.id, { isEditing: false }));
       }
     }
-  };
+  });
   const renderItem = ({
     item, provided,
   }) => {

@@ -54,6 +54,7 @@ const TestPlanTable = observer(({
           style={
             {
               display: testPlanStatus !== 'done' && record.hasChange ? 'flex' : 'none',
+              flexShrink: 0,
               alignItems: 'center',
               justifyContent: 'center',
               width: 46,
@@ -274,6 +275,7 @@ const TestPlanTable = observer(({
             allowClear
             style={{ width: 216, marginLeft: 10 }}
             placeholder="被指派人"
+            loadWhenMount
             getPopupContainer={trigger => trigger.parentNode}
             type="user"
             onChange={onSearchAssign}
