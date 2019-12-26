@@ -1,5 +1,5 @@
 import React, {
-  Component, useState, useEffect, useReducer, useCallback, useRef,
+  useState, useEffect, useReducer, useCallback, useRef,
 } from 'react';
 import { Select, Button } from 'choerodon-ui';
 import _ from 'lodash';
@@ -65,16 +65,14 @@ function DefectSelect(props) {
   }, [initIssuesForDefects]);
 
   const handleDefectsChange = (List) => {
-    const {
-      handleSubmit, record, executeStepId, setNeedAdd,
-    } = props;
+    const { executeStepId, setNeedAdd } = props;
     const { issueList } = issue;
     const oldList = [...defectIds];
     // window.console.log('old', oldList, 'new', List);
     // 删除元素
     if (oldList.length > List.length) {
       const deleteEle = oldList.filter(old => !List.includes(old));
-      // 如果isse已存在，调用删除接口
+      // 如果issue已存在，调用删除接口
       if (defectIds.includes(deleteEle[0])
         && _.find(defects, { issueId: Number(deleteEle[0]) })) {
         // window.console.log(defects, oldList, deleteEle, List);
@@ -101,11 +99,6 @@ function DefectSelect(props) {
       }));
     setNeedAdd(needAdd);
     setDefectIds(List);
-  };
-
-  const handleHiddenCresteBug = () => {
-    const { ExecuteDetailStore } = props;
-    ExecuteDetailStore.setCreateBugShow(false);
   };
 
   const loadMore = () => {
@@ -167,7 +160,7 @@ function DefectSelect(props) {
               handleSubmit(record);
               ExecuteDetailStore.setCreateBugShow(true);
               ExecuteDetailStore.setDefectType('CASE_STEP');
-              ExecuteDetailStore.setCreateDectTypeId(executeStepId);
+              ExecuteDetailStore.setCreateDefectTypeId(executeStepId);
               if (selectRef.current) {
                 selectRef.current.rcSelect.setOpenState(false, false);
               }

@@ -1,9 +1,9 @@
 import React from 'react';
-import TestHandExecute from './TestHandExecute';
+import TestPlanExecuteDetail from './TestPlanExecuteDetail';
 import { StoreProvider } from './stores';
 
 export default props => (
   <StoreProvider {...props}>
-    <TestHandExecute />
+    <TestPlanExecuteDetail />
   </StoreProvider>
 );

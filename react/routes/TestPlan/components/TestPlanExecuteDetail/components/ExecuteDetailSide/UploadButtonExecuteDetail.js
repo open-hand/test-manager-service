@@ -2,7 +2,7 @@ import React from 'react';
 import SingleFileUpload from '@/components/SingleFileUpload';
 import './UploadButtonNow.less';
 
-class UploadButtonExcuteDetail extends React.Component {
+class UploadButtonExecuteDetail extends React.Component {
   render() {
     const {
       fileList,
@@ -26,4 +26,4 @@ class UploadButtonExcuteDetail extends React.Component {
   }
 }
 
-export default UploadButtonExcuteDetail;
+export default UploadButtonExecuteDetail;

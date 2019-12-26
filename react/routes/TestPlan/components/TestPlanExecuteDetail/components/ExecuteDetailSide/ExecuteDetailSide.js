@@ -16,7 +16,7 @@ import {
   ResizeAble,
 } from '../../../../../../components';
 import './ExecuteDetailSide.less';
-import UploadButtonExcuteDetail from './UploadButtonExcuteDetail';
+import UploadButtonExecuteDetail from './UploadButtonExecuteDetail';
 import LinkIssues from './link-issues';
 import { getIssueInfos } from '../../../../../../api/ExecuteDetailApi';
 
@@ -124,11 +124,7 @@ function ExecuteDetailSide(props) {
       });
     }
   }, [detailData]);
-  // componentWillUnmount() {
-  //   if (document.getElementById('scroll-area')) {
-  //     document.getElementById('scroll-area').removeEventListener('scroll', handleScroll);
-  //   }
-  // }
+
 
   const scrollToAnchor = (anchorName) => {
     if (anchorName) {
@@ -288,7 +284,7 @@ function ExecuteDetailSide(props) {
                   icon="attach_file"
                   title="附件"
                 >
-                  <UploadButtonExcuteDetail
+                  <UploadButtonExecuteDetail
                     fileList={fileList}
                   />
                 </Section>

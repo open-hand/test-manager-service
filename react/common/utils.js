@@ -1,6 +1,7 @@
 import { stores, axios, Choerodon } from '@choerodon/boot';
 import QuillDeltaToHtmlConverter from 'quill-delta-to-html';
 import _ from 'lodash';
+import queryString from 'query-string';
 // eslint-disable-next-line import/no-cycle
 import { uploadImage, uploadFileAgile } from '../api/FileApi';
 import humanize from './humanizeDuration';
@@ -359,12 +360,12 @@ export function TestPlanLink(cycleId) {
 
   return encodeURI(`/testManager/TestPlan?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}${`${cycleId ? `&cycleId=${cycleId || 0}` : ''}`}`);
 }
-export function executeDetailLink(executeId, cycleId, planId, assignerId) {
+export function executeDetailLink(executeId, filters) {
   const menu = AppState.currentMenuType;
   const {
     type, id: projectId, name, organizationId,
   } = menu;
-  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&cycle_id=${cycleId}&plan_id=${planId}&assignerId=${assignerId || ''}`);
+  return encodeURI(`/testManager/TestPlan/execute/${executeId}?type=${type}&id=${projectId}&name=${name}&organizationId=${organizationId}&orgId=${organizationId}&${queryString.stringify(filters)}`);
 }
 export function executeDetailShowLink(executeId) {
   return commonLink(`/TestPlan/executeShow/${executeId}`);

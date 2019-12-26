@@ -75,7 +75,14 @@ function UploadInTable(props) {
               //   attachmentLinkId: record.executeStepId,
               //   attachmentType: 'CYCLE_STEP',
               // }; 
-              // upload file    
+              // upload file   
+              if (file.size > 1024 * 1024 * 30) {
+                Choerodon.prompt('文件不能超过30M');
+                return false;
+              } else if (file.name && encodeURI(file.name).length > 210) {
+                Choerodon.prompt('文件名过长');
+                return false;
+              }
 
               formData.append('file', file);
               // formData.append('file', file);
