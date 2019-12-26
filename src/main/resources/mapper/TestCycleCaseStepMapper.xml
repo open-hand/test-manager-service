@@ -315,4 +315,11 @@
             #{executeId}
         </foreach>
     </select>
+
+    <select id="queryStepByExecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        SELECT *
+        FROM test_cycle_case_step
+        WHERE
+            execute_id = #{executeId}
+    </select>
 </mapper>
