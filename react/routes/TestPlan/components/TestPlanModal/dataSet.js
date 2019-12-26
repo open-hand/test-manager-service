@@ -2,18 +2,18 @@ import { getProjectId } from '@/common/utils';
 
 export default function DataSetFactory({ initValue = {} } = {}) {
   const {
-    startDate, endDate, 
-  } = initValue;  
+    startDate, endDate,
+  } = initValue;
   if (startDate && endDate) {
     // eslint-disable-next-line no-param-reassign
     initValue.range = [startDate, endDate];
-  }  
+  }
   return {
     autoCreate: true,
     data: [initValue],
     fields: [
       {
-        name: 'name', type: 'string', label: '计划名称', required: true, 
+        name: 'name', type: 'string', label: '计划名称', required: true,
       },
       {
         name: 'range',
@@ -28,18 +28,20 @@ export default function DataSetFactory({ initValue = {} } = {}) {
       {
         name: 'managerId',
         type: 'number',
-        label: '负责人', 
-        required: true,      
-        lookupAxiosConfig: ({ record, dataSet: ds }) => {
-          let managerId = null;
-          if (record && record.data.managerId) {
-            // eslint-disable-next-line prefer-destructuring
-            managerId = record.data.managerId;
-          }
-          return {
-            url: `/base/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
-          };          
-        },
+        label: '负责人',
+        required: true,
+        dynamicProps: {
+          lookupAxiosConfig: ({ record, dataSet: ds }) => {
+            let managerId = null;
+            if (record && record.data.managerId) {
+              // eslint-disable-next-line prefer-destructuring
+              managerId = record.data.managerId;
+            }
+            return {
+              url: `/base/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
+            };
+          },
+        },   
         textField: 'realName',
         valueField: 'id',
       },

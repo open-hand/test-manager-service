@@ -45,32 +45,14 @@ export function addDefects(defects) {
 export function removeDefect(defectId) {
   return request.delete(`/test/v1/projects/${getProjectId()}/defect/delete/${defectId}`);
 }
-export function editCycleSide(data) {
-  const axiosConfig = {
-    headers: { 'content-type': 'multipart/form-datal' },
-  };
 
-  return request.post(`/zuul/test/v1/projects/${getProjectId()}/cycle/case/step/updateWithAttach`, data, axiosConfig);
-}
 export function editCycleStep(data) {
   // /v1/projects/28/cycle/case/case_step/25 /v1/projects/28/cycle/case/step
   return Axios.put(`/test/v1/projects/${getProjectId()}/cycle/case/step`, data);
 }
-export function geDetailsData(cycleCaseId, param) {
-  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`,
-    param.assignerId ? {
-      searchArgs: {
-        assignUser: param.assignerId,
-      },
-      contents: [],
-    } : {});
+export function getDetailsData(cycleCaseId, param, data) {
+  return request.post(`test/v1/projects/${getProjectId()}/cycle/case/${cycleCaseId}/info?${queryString.stringify(param)}`, data);
 }
-export function getCycleHistiorys(pagination, cycleCaseId) {
-  const { size, page } = pagination;
-
-  return request.get(`test/v1/projects/${getProjectId()}/cycle/case/history/${cycleCaseId}?size=${size}&page=${page}`);
-}
-
 /**
  * 在执行详情中为执行或步骤增加缺陷
  * 

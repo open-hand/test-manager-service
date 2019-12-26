@@ -4,7 +4,7 @@ import {
 } from 'mobx';
 import { Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
-import { geDetailsData } from '@/api/ExecuteDetailApi';
+import { getDetailsData } from '@/api/ExecuteDetailApi';
 import { getStatusList } from '@/api/TestStatusApi';
 
 class ExecuteDetailStore {
@@ -23,6 +23,16 @@ class ExecuteDetailStore {
 
   @observable detailData = false;
 
+  @observable searchFilter = {};
+
+  @computed get getSearchFilter() {
+    return this.searchFilter;
+  }
+
+  @action setSearchFilter(data) {
+    this.searchFilter = data;
+  }
+
   @observable createBugShow = false;
 
   @computed get getDetailParams() {
@@ -36,8 +46,16 @@ class ExecuteDetailStore {
       page: data.page,
       plan_id: data.plan_id,
       size: data.size,
-      assignerId: data.assignerId,
     };
+    // contents 未处理
+    this.setSearchFilter({
+      searchArgs: {
+        assignUser: data.assignerId,
+        executionStatus: data.executionStatus,
+        summary: data.summary,
+      },
+      contents: [],
+    });
   }
 
 
@@ -59,23 +77,23 @@ class ExecuteDetailStore {
     this.defectType = data;
   }
 
-  @observable createDectTypeId = 0;
+  @observable createDefectTypeId = 0;
 
-  @computed get getCreateDectTypeId() {
-    return this.createDectTypeId;
+  @computed get getCreateDefectTypeId() {
+    return this.createDefectTypeId;
   }
 
-  @action setCreateDectTypeId(data) {
-    this.createDectTypeId = data;
+  @action setCreateDefectTypeId(data) {
+    this.createDefectTypeId = data;
   }
 
   getInfo = (id = this.id) => {
-    this.enterloading();
+    this.enterLoading();
     this.setId(id);
     Promise.all([
       // getCycle(id, cycleId),
       getStatusList('CYCLE_CASE'),
-      geDetailsData(id, this.detailParams),
+      getDetailsData(id, this.detailParams, this.getSearchFilter),
     ])
       .then(([statusList, detailData]) => {
         // console.log('statusList', statusList);
@@ -95,7 +113,7 @@ class ExecuteDetailStore {
   }
 
   loadDetailData(id = this.id) {
-    geDetailsData(id, this.detailParams).then((res) => {
+    getDetailsData(id, this.detailParams, this.getSearchFilter).then((res) => {
       this.setDetailData(res);
     });
   }
@@ -165,7 +183,7 @@ class ExecuteDetailStore {
     this.selectLoading = false;
   }
 
-  @action enterloading = () => {
+  @action enterLoading = () => {
     this.loading = true;
   }
 

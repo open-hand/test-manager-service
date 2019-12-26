@@ -18,7 +18,7 @@ import { StatusTags } from '../../../../components';
 import { executeDetailLink, returnBeforeTextUpload } from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
 import { uploadFile, deleteFile } from '@/api/FileApi';
-import './TestHandExecute.less';
+import './TestPlanExecuteDetail.less';
 import {
   ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
 } from './components';
@@ -36,7 +36,7 @@ const CardWrapper = ({ children, title, style }) => (
     {children}
   </Card>
 );
-function TestHandExecute(props) {
+function TestPlanExecuteDetail(props) {
   const context = useContext(Store);
   const {
     ExecuteDetailStore, stepTableDataSet, executeHistoryDataSet, testStatusDataSet,
@@ -55,9 +55,19 @@ function TestHandExecute(props) {
     const { nextExecuteId, previousExecuteId } = detailData;
     const { history } = context;
     const toExecuteId = mode === 'pre' ? previousExecuteId : nextExecuteId;
-    const { plan_id: planId, cycle_id: cycleId, assignerId } = ExecuteDetailStore.getDetailParams;
     if (toExecuteId) {
-      history.replace(executeDetailLink(toExecuteId, cycleId, planId, assignerId));
+      const {
+        contents, plan_id: planId, cycle_id: cycleId, assignerId, executionStatus, summary,
+      } = queryString.parse(context.location.search);
+      const filters = {
+        cycle_id: cycleId,
+        plan_id: planId,
+        assignerId,
+        contents,
+        executionStatus,
+        summary,
+      };
+      history.replace(executeDetailLink(toExecuteId, filters));
       // ExecuteDetailStore.getInfo(toExecuteId);
     }
   };
@@ -280,7 +290,7 @@ function TestHandExecute(props) {
     const statusList = ExecuteDetailStore.getStatusList;
     const createBugShow = ExecuteDetailStore.getCreateBugShow;
     const defectType = ExecuteDetailStore.getDefectType;
-    const createDectTypeId = ExecuteDetailStore.getCreateDectTypeId;
+    const createDefectTypeId = ExecuteDetailStore.getCreateDefectTypeId;
     const { statusColor, statusName } = ExecuteDetailStore.getStatusById(detailData.executionStatus);
     const {
       summary, nextExecuteId, previousExecuteId, planStatus = 'done',
@@ -345,13 +355,6 @@ function TestHandExecute(props) {
             <span><FormattedMessage id="execute_next" /></span>
             <Icon type="navigate_next" />
           </Button>
-          {/* <Button onClick={() => {
-            ExecuteDetailStore.getInfo();
-          }}
-          >
-            <Icon type="autorenew icon" />
-            <span><FormattedMessage id="refresh" /></span>
-          </Button> */}
 
         </Header>
 
@@ -423,7 +426,7 @@ function TestHandExecute(props) {
                   <CreateBug
                     visible={createBugShow}
                     defectType={defectType}
-                    id={createDectTypeId}
+                    id={createDefectTypeId}
                     onCancel={handleHiddenCreateBug}
                     onOk={handleBugCreate}
                   />
@@ -440,4 +443,4 @@ function TestHandExecute(props) {
 }
 
 
-export default withRouter(observer(TestHandExecute));
+export default withRouter(observer(TestPlanExecuteDetail));

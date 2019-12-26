@@ -1,8 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Icon, Popconfirm, Tooltip } from 'choerodon-ui';
 import { Link } from 'react-router-dom';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import TypeTag from '../../../../../../components/TypeTag';
 import PriorityTag from '../../../../../../components/PriorityTag';
@@ -10,20 +8,19 @@ import StatusTag from '../../../../../../components/StatusTag';
 import { issueLink } from '../../../../../../common/utils';
 
 const DefectList = ({ defects, onRemoveDefect }) => {
-  const confirm = (issueId, e) => {
+  const confirm = (issueId) => {
     onRemoveDefect(issueId);
   };
 
   const renderItem = (defect, index) => {
     const { id, issueInfosVO } = defect;
     const {
-      priorityVO, issueTypeVO, issueNum, summary, issueId, 
-      ward, statusVO,
+      priorityVO, issueTypeVO, issueNum, summary, issueId,
+      statusVO,
     } = issueInfosVO;
-    const { colour: priorityColor, name: priorityName } = priorityVO || {};
-    const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
-    const { colour: statusColor, name: statusName } = statusVO || {};
-    const Reg = /被/g;
+    const { name: priorityName } = priorityVO || {};
+    const { name: typeName, typeCode } = issueTypeVO || {};
+    const { name: statusName } = statusVO || {};
     return (
       <div
         style={{

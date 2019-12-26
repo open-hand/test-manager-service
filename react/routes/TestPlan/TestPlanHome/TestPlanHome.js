@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
-
 import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
@@ -111,8 +110,17 @@ function TestPlanHome({ history }) {
   const handleTableSummaryClick = (record) => {
     const lastIndexOf = testPlanStore.currentCycle.id.toString().lastIndexOf('-');
     const cycleId = lastIndexOf === -1 ? '' : testPlanStore.currentCycle.id.substring(lastIndexOf + 1);
-    const assignerId = testPlanStore.getFilters.assignUser || '';
-    history.push(executeDetailLink(record.executeId, cycleId, testPlanStore.getCurrentPlanId, assignerId));
+    const assignerId = testPlanStore.getFilters.assignUser;
+    const { contents, searchArgs: { executionStatus, summary } } = testPlanStore.getSearchObj;
+    const filters = {
+      cycle_id: cycleId,
+      plan_id: testPlanStore.getCurrentPlanId,
+      assignerId,
+      contents,
+      executionStatus,
+      summary,
+    };
+    history.push(executeDetailLink(record.executeId, filters));
   };
 
   const onDragEnd = (sourceIndex, targetIndex) => {

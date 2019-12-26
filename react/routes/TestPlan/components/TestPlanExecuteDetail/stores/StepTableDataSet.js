@@ -7,7 +7,7 @@ function updateRecordData(data, dataSet, executeHistoryDataSet, record, name, ol
   delete data.defects;
   // eslint-disable-next-line no-param-reassign
   delete data.stepAttachment;
-  editCycleStep(data).then((Data) => {
+  editCycleStep(data).then(() => {
     dataSet.query(dataSet.currentPage);
     executeHistoryDataSet.query();
   }).catch((error) => {
