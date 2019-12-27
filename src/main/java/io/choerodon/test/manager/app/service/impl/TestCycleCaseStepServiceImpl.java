@@ -83,11 +83,8 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseStepDTO.getExecuteId());
             if (!CollectionUtils.isEmpty(testCycleCaseStepDTOS)) {
                 //步骤-全部通过->用例通过
-                List<TestCycleCaseStepDTO> passStepIds = testCycleCaseStepDTOS.stream().filter(e -> e.getStepStatus()
-                        .equals(defaultStatus.getStatusId()))
-                        .collect(Collectors.toList());
-
-                if (testCycleCaseStepDTOS.size()==passStepIds.size()) {
+                boolean result = testCycleCaseStepDTOS.stream().allMatch(e -> e.getStepStatus().equals(defaultStatus.getStatusId()));
+               if(result){
                     if(testCycleCaseMapper.updateExecuteStatus(testCycleCaseStepVO.getExecuteId())!=1){
                         throw new CommonException("error.update.cycle.case.status");
                     }
