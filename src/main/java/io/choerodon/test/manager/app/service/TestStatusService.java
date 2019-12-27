@@ -20,4 +20,7 @@ public interface TestStatusService {
     void populateStatus(TestCycleCaseVO testCycleCaseVO);
 
     Long getDefaultStatusId(String type);
+
+    TestStatusVO queryDefaultStatus(String type, String statusNames);
+
 }

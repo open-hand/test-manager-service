@@ -21,5 +21,7 @@ public interface TestStatusMapper extends Mapper<TestStatusDTO> {
 
     Long getDefaultStatus(@Param("statusType") String statusType);
 
+    TestStatusDTO queryDefaultStatus(@Param("statusType") String statusType,@Param("statusName")String statusName);
+
     void updateAuditFields(@Param("statusId") Long statusId, @Param("userId") Long userId, @Param("date") Date date);
 }

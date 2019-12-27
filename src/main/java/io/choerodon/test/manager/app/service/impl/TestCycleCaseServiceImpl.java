@@ -435,6 +435,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
 
         baseUpdate(testCycleCaseDTO);
+        TestStatusVO defaultCaseStatus = testStatusService.queryDefaultStatus(TestStatusType.STATUS_TYPE_CASE, "通过");
+        if(defaultCaseStatus.getStatusId().equals(testCycleCaseVO.getExecutionStatus())){
+            List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseDTO.getExecuteId());
+            if(!CollectionUtils.isEmpty(testCycleCaseStepDTOList)){
+                if(testCycleCaseStepMapper.updateCycleCaseStepStatus(testCycleCaseDTO.getExecuteId())!=1){
+                    throw new CommonException("error.update.step.status");
+                }
+            }
+        }
     }
 
     @Override

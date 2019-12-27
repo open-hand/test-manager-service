@@ -117,4 +117,6 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
     List<FormStatusVO> selectPlanStatus(@Param("planId") Long planId);
 
     Integer countByCycleIds(@Param("list") List<Long> cycIds);
+
+    int updateExecuteStatus(@Param("executeId") Long executeId);
 }

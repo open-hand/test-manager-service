@@ -12,6 +12,7 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
+import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
@@ -77,26 +78,19 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
         baseUpdate(testCycleCaseStepDTO);
-        if (TestStatusType.Status.STEP_PASS.getStatusId().equals(testCycleCaseStepDTO.getStepStatus())||
-                TestStatusType.Status.STEP_FAIL.getStatusId().equals(testCycleCaseStepDTO.getStepStatus())) {
+        TestStatusVO defaultStatus = testStatusService.queryDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP, "通过");
+        if (defaultStatus.getStatusId().equals(testCycleCaseStepVO.getStepStatus())) {
             List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseStepDTO.getExecuteId());
             if (!CollectionUtils.isEmpty(testCycleCaseStepDTOS)) {
-                //步骤-全部通过->用例通过  全部失败->用例失败
+                //步骤-全部通过->用例通过
                 List<TestCycleCaseStepDTO> passStepIds = testCycleCaseStepDTOS.stream().filter(e -> e.getStepStatus()
-                        .equals(TestStatusType.Status.STEP_PASS.getStatusId()))
-                        .collect(Collectors.toList());
-                List<TestCycleCaseStepDTO> failStepIds = testCycleCaseStepDTOS.stream().filter(e -> e.getStepStatus()
-                        .equals(TestStatusType.Status.STEP_FAIL.getStatusId()))
+                        .equals(defaultStatus.getStatusId()))
                         .collect(Collectors.toList());
 
-                if (testCycleCaseStepDTOS.size()==passStepIds.size()||testCycleCaseStepDTOS.size()==failStepIds.size()) {
-                    TestCycleCaseDTO testCycleCaseDTO = testCycleCaseMapper.selectByPrimaryKey(testCycleCaseStepDTO.getExecuteId());
-                    if(testCycleCaseStepDTOS.size()==passStepIds.size()){
-                        testCycleCaseDTO.setExecutionStatus(TestStatusType.Status.CASE_PASS.getStatusId());
-                    }else {
-                        testCycleCaseDTO.setExecutionStatus(TestStatusType.Status.CASE_FAIL.getStatusId());
+                if (testCycleCaseStepDTOS.size()==passStepIds.size()) {
+                    if(testCycleCaseMapper.updateExecuteStatus(testCycleCaseStepVO.getExecuteId())!=1){
+                        throw new CommonException("error.update.cycle.case.status");
                     }
-                    testCycleCaseService.baseUpdate(testCycleCaseDTO);
                 }
 
             }
