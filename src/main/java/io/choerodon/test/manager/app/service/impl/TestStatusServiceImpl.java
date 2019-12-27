@@ -80,6 +80,12 @@ public class TestStatusServiceImpl implements TestStatusService {
     }
 
     @Override
+    public TestStatusVO queryDefaultStatus(String type, String statusName) {
+        Assert.notNull(type, "error.get.default.id.param.not.");
+        return modelMapper.map(testStatusMapper.queryDefaultStatus(type, statusName),TestStatusVO.class);
+    }
+
+    @Override
     public Long getDefaultStatusId(String type) {
         Assert.notNull(type, "error.get.default.id.param.not.");
         return testStatusMapper.getDefaultStatus(type);

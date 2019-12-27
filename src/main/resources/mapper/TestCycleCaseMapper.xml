@@ -764,6 +764,22 @@
         tcc.execute_id = #{executeId}
         order by tccs.rank
     </select>
+
+    <update id="updateExecuteStatus">
+         UPDATE test_cycle_case
+        SET execution_status = (
+            SELECT
+                status_id
+            FROM
+                test_status
+            WHERE
+                project_id = 0
+            AND status_type = 'CYCLE_CASE'
+            AND status_name = '通过'
+        )
+        WHERE
+	execute_id = #{executeId}
+    </update>
 </mapper>
 
 
