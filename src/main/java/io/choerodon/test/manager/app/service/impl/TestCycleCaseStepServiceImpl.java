@@ -12,10 +12,8 @@ import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseDefectRelService;
-import io.choerodon.test.manager.app.service.TestCycleCaseStepService;
-import io.choerodon.test.manager.app.service.TestStatusService;
+import io.choerodon.test.manager.api.vo.TestStatusVO;
+import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
@@ -71,10 +69,29 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     @Autowired
     private TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
+    @Autowired
+    private TestCycleCaseService testCycleCaseService;
+
+    @Autowired
+    private TestCycleCaseMapper testCycleCaseMapper;
     @Override
     public void update(TestCycleCaseStepVO testCycleCaseStepVO) {
         TestCycleCaseStepDTO testCycleCaseStepDTO = modelMapper.map(testCycleCaseStepVO, TestCycleCaseStepDTO.class);
         baseUpdate(testCycleCaseStepDTO);
+        TestStatusVO defaultStatus = testStatusService.queryDefaultStatus(TestStatusType.STATUS_TYPE_CASE_STEP, "通过");
+        if (defaultStatus.getStatusId().equals(testCycleCaseStepVO.getStepStatus())) {
+            List<TestCycleCaseStepDTO> testCycleCaseStepDTOS = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseStepDTO.getExecuteId());
+            if (!CollectionUtils.isEmpty(testCycleCaseStepDTOS)) {
+                //步骤-全部通过->用例通过
+                boolean result = testCycleCaseStepDTOS.stream().allMatch(e -> e.getStepStatus().equals(defaultStatus.getStatusId()));
+               if(result){
+                    if(testCycleCaseMapper.updateExecuteStatus(testCycleCaseStepVO.getExecuteId())!=1){
+                        throw new CommonException("error.update.cycle.case.status");
+                    }
+                }
+
+            }
+        }
     }
 
     @Override

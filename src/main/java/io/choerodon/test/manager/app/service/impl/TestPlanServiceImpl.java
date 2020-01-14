@@ -193,7 +193,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         } else {
             testTreeFolderVO.setHasChildren(false);
         }
-        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0?false:true);
+        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0);
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
         testTreeFolderVO.setChildrenLoading(false);
@@ -224,7 +224,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         // 接收位于树顶层的测试计划
         List<TestTreeFolderVO> planTreeList = new ArrayList<>();
         List<Long> root = new ArrayList<>();
-        List<TestTreeFolderVO> testTreeFolderVOS = new ArrayList<>();
         testPlanDTOS.stream().sorted(Comparator.comparing(TestPlanDTO::getPlanId).reversed()).forEach(v -> {
             // 用于接收TestTreeFolderVO,便于判断和构建树
             Map<Long, TestTreeFolderVO> map = new HashMap<>();
@@ -476,7 +475,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         } else {
             testTreeFolderVO.setHasChildren(true);
         }
-        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0?false:true);
+        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0);
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
         testTreeFolderVO.setChildrenLoading(false);
@@ -538,15 +537,15 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         Set<Long> unSelectFolderIds = new HashSet<>();
         List<Long> unSelectCaseIds= new ArrayList<>();
         Set<Long> allSelectFolderIds = new HashSet<>();
-        for (Long key : maps.keySet()) {
+        for (Map.Entry<Long, CaseSelectVO> key : maps.entrySet()) {
             CaseSelectVO caseSelectVO = maps.get(key);
             // 判断是否是自选
             if (!caseSelectVO.getCustom()) {
-                allSelectFolderIds.add(key);
+                allSelectFolderIds.add(key.getKey());
             } else {
                 // 判断是反选还是正向选择
                 if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
-                    unSelectFolderIds.add(key);
+                    unSelectFolderIds.add(key.getKey());
                     unSelectCaseIds.addAll(caseSelectVO.getUnSelected());
                 } else {
                     caseIds.addAll(caseSelectVO.getSelected());

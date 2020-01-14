@@ -34,6 +34,16 @@
                 and status_name='未执行'
     </select>
 
+    <select id="queryDefaultStatus" resultMap="BaseResultMap">
+        SELECT
+	    *
+        FROM
+            test_status
+        WHERE
+            project_id = 0
+        AND status_type = #{statusType}
+        AND status_name = #{statusName}
+    </select>
 
     <select id="ifDeleteCycleCaseAllow" resultType="java.lang.Long">
 SELECT

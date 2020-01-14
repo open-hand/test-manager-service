@@ -34,8 +34,6 @@ import org.springframework.util.CollectionUtils;
 @Transactional(rollbackFor = Exception.class)
 public class DemoServiceImpl implements DemoService {
 
-    private static final String DATE_FORMATTER = "yyyy-MM-dd";
-    private static final String REDIS_COUNT_KEY = "summary:";
     private static final String RANK_1 = "0|c00000:";
     private static final String RANK_2 = "0|c00004:";
     private static final String RANK_3 = "0|c00008:";
@@ -116,7 +114,6 @@ public class DemoServiceImpl implements DemoService {
         long versionId = 0L;
         long projectId = project.getId();
         long userId = user.getId();
-        long organizationId = organization.getId();
         Date dateOne = testData.getDateOne();
         Date dateTwo = testData.getDateTwo();
         Date dateThree = testData.getDateThree();
@@ -195,7 +192,6 @@ public class DemoServiceImpl implements DemoService {
         });
         testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(stepDTOS);
         List<Long> cycleCaseIds = cycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
-        List<Long> stepIds = stepDTOS.stream().map(TestCycleCaseStepDTO::getExecuteStepId).collect(Collectors.toList());
         testCycleCaseStepMapper.updateAuditFields(cycleCaseIds.toArray(new Long[cycleCaseIds.size()]),userId,dateOne);
     }
 

@@ -315,4 +315,27 @@
             #{executeId}
         </foreach>
     </select>
+
+    <select id="queryStepByExecuteId" resultType="io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO">
+        SELECT *
+        FROM test_cycle_case_step
+        WHERE
+            execute_id = #{executeId}
+    </select>
+
+    <update id="updateCycleCaseStepStatus">
+        UPDATE test_cycle_case_step
+        SET step_status = (
+            SELECT
+                status_id
+            FROM
+                test_status
+            WHERE
+                project_id = 0
+            AND status_type = 'CASE_STEP'
+            AND status_name = '通过'
+        )
+        WHERE
+	execute_id = #{executeId}
+    </update>
 </mapper>

@@ -734,7 +734,6 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setParentCycleId(cycleId);
         testCycleDTO.setType(TestCycleType.FOLDER);
-        List<TestCycleDTO> select = cycleMapper.select(testCycleDTO);
         return modelMapper.map(cycleMapper.select(testCycleDTO), new TypeToken<List<TestCycleVO>>() {
         }.getType());
     }
@@ -961,7 +960,6 @@ public class TestCycleServiceImpl implements TestCycleService {
             }
             return v;
         }).collect(toList());
-        Map<Long, TestCycleDTO> allMap = collect.stream().collect(toMap(TestCycleDTO::getCycleId, Function.identity()));
         Map<Long, List<Long>> parentMap = collect.stream().collect(groupingBy(TestCycleDTO::getParentCycleId, mapping(TestCycleDTO::getCycleId, toList())));
         List<Long> root = new ArrayList<>();
         List<TestTreeFolderVO> treeFolder = new ArrayList<>();

@@ -2,15 +2,12 @@ package io.choerodon.test.manager.infra.aspect;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,11 +16,13 @@ import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
 import io.choerodon.test.manager.app.service.TestCycleCaseHistoryService;
-import io.choerodon.test.manager.infra.dto.*;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseDefectRelDTO;
+import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseHistoryType;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
@@ -75,21 +74,6 @@ public class TestCycleCaseHistoryRecordAspect {
         }
         if (!ObjectUtils.isEmpty(testCycleCaseVO.getDescription())&&!StringUtils.equals(testCycleCaseVO.getDescription(), before.getDescription())) {
             testCycleCaseHistoryService.createCommentHistory(beforeCeaseDTO.getExecuteId(),beforeCeaseDTO.getDescription(),testCycleCaseVO.getDescription());
-        }
-        return o;
-    }
-
-    //修改步骤
-    @Around("execution(* io.choerodon.test.manager.app.service.TestCycleCaseStepService.update(..))&& args(testCycleCaseStepVO)")
-    public Object afterTest(ProceedingJoinPoint pjp, TestCycleCaseStepVO testCycleCaseStepVO) throws Throwable {
-        TestCycleCaseStepDTO beforeCycleCaseStep = testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepVO.getExecuteStepId());
-        TestStatusDTO testStatusDTO = testStatusMapper.selectByPrimaryKey(beforeCycleCaseStep.getStepStatus());
-        Object o = pjp.proceed();
-        if (!ObjectUtils.isEmpty(testCycleCaseStepVO.getStepStatus())&& testCycleCaseStepVO.getStepStatus().longValue() != beforeCycleCaseStep.getStepStatus().longValue()) {
-            testCycleCaseHistoryService.createStatusHistory(beforeCycleCaseStep.getExecuteId(),testStatusDTO.getStatusName(),testCycleCaseStepVO.getStatusName());
-        }
-        if (!ObjectUtils.isEmpty(testCycleCaseStepVO.getDescription())&&!StringUtils.equals(testCycleCaseStepVO.getDescription(), beforeCycleCaseStep.getDescription())) {
-            testCycleCaseHistoryService.createCommentHistory(beforeCycleCaseStep.getExecuteId(),beforeCycleCaseStep.getDescription(), testCycleCaseStepVO.getDescription());
         }
         return o;
     }

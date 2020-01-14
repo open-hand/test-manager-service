@@ -7,7 +7,6 @@ import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
 import io.choerodon.test.manager.infra.dto.TestCaseAttachmentDTO;
 import io.swagger.annotations.ApiOperation;

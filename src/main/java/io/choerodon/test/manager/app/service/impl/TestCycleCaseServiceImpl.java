@@ -1,7 +1,5 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -12,32 +10,26 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.choerodon.mybatis.entity.BaseDTO;
-import io.choerodon.web.util.PageableHelper;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
-import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import io.choerodon.test.manager.api.vo.agile.UserDO;
-import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.mybatis.entity.BaseDTO;
 import io.choerodon.test.manager.api.vo.*;
+import io.choerodon.test.manager.api.vo.agile.SearchDTO;
+import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.app.assembler.TestCaseAssembler;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.dto.*;
@@ -45,10 +37,7 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
-import io.choerodon.test.manager.infra.util.PageUtil;
-import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
+import io.choerodon.test.manager.infra.util.*;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -435,6 +424,15 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }
 
         baseUpdate(testCycleCaseDTO);
+        TestStatusVO defaultCaseStatus = testStatusService.queryDefaultStatus(TestStatusType.STATUS_TYPE_CASE, "通过");
+        if(defaultCaseStatus.getStatusId().equals(testCycleCaseVO.getExecutionStatus())){
+            List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseDTO.getExecuteId());
+            if(!CollectionUtils.isEmpty(testCycleCaseStepDTOList)){
+                if(testCycleCaseStepMapper.updateCycleCaseStepStatus(testCycleCaseDTO.getExecuteId())!=1){
+                    throw new CommonException("error.update.step.status");
+                }
+            }
+        }
     }
 
     @Override
@@ -1080,4 +1078,5 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             preRank = testCycleCaseStepVO.getRank();
         }
     }
+
 }
