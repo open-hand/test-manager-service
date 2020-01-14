@@ -387,4 +387,26 @@
             where cycle_id = #{cycle.cycleId}
         </foreach>
     </update>
+
+    <select id="listByPlanIdAndProjectId" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+      SELECT
+       cycle_id,
+       cycle_name,
+        CASE
+            WHEN parent_cycle_id IS NOT NULL THEN
+            parent_cycle_id
+            WHEN parent_cycle_id IS NULL THEN
+            0
+            END AS parent_cycle_id,
+            object_version_number,
+            from_date,
+            to_date,
+            project_id,
+            plan_id
+        FROM
+            test_cycle
+        WHERE
+            project_id = #{projectId}
+        AND plan_id = #{planId}
+    </select>
 </mapper>

@@ -146,6 +146,8 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                     testIssueFolderVO.setFolderId(v.getPlanId());
                     testIssueFolderVO.setInitStatus(v.getInitStatus());
                     testIssueFolderVO.setObjectVersionNumber(v.getObjectVersionNumber());
+                    testIssueFolderVO.setFromDate(v.getStartDate());
+                    testIssueFolderVO.setToDate(v.getEndDate());
                     TestTreeFolderVO planTreeVO = new TestTreeFolderVO();
                     planTreeVO.setId(v.getPlanId());
                     planTreeVO.setIssueFolderVO(testIssueFolderVO);
@@ -153,6 +155,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                     planTreeVO.setExpanded(false);
                     planTreeVO.setTopLevel(true);
                     planTreeVO.setHasCase(false);
+
                     List<TestCycleDTO> testCycleDTOS = cycleMap.get(v.getPlanId());
                     if(CollectionUtils.isEmpty(testCycleDTOS)){
                         planTreeVO.setHasChildren(false);
