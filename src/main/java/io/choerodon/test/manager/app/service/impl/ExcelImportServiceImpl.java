@@ -159,40 +159,34 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row currentRow;
         logger.info("开始导入");
         //更新文件和用例的关联表
-        List<Row> rowList = new ArrayList<>();
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
-            rowList.add(currentRow);
-        }
-        if(!CollectionUtils.isEmpty(rowList)){
-            Collections.reverse(rowList);
-            for (Row row:rowList) {
-                if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(testFileLoadHistoryMapper
-                        .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
-                    status = TestFileLoadHistoryEnums.Status.CANCEL;
-                    logger.info("已取消");
-                    removeRow(row);
-                    if (!issueIds.isEmpty()) {
-                        testCaseService.batchDeleteIssues(projectId, issueIds);
-                    }
-                    break;
-                }
 
-                if (isIssueHeaderRow(row, excelTitleUtil)) {
-                    //插入用例
-                    testCaseDTO = processIssueHeaderRow(row, projectId, folderId, excelTitleUtil);
-                    if (testCaseDTO == null) {
-                        failedCount++;
-                    } else {
-                        successfulCount++;
-                        issueIds.add(testCaseDTO.getCaseId());
-                    }
+            if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(testFileLoadHistoryMapper
+                    .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
+                status = TestFileLoadHistoryEnums.Status.CANCEL;
+                logger.info("已取消");
+                removeRow(currentRow);
+                if (!issueIds.isEmpty()) {
+                    testCaseService.batchDeleteIssues(projectId, issueIds);
                 }
-                //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
-                // 插入循环步骤
-                processRow(testCaseDTO, row, errorRowIndexes ,excelTitleUtil);
-                updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
+                break;
             }
+
+            if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
+                //插入用例
+                testCaseDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil);
+                if (testCaseDTO == null) {
+                    failedCount++;
+                } else {
+                    successfulCount++;
+                    issueIds.add(testCaseDTO.getCaseId());
+                }
+            }
+            //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
+            // 插入循环步骤
+            processRow(testCaseDTO, currentRow, errorRowIndexes ,excelTitleUtil);
+            updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
         }
 
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
