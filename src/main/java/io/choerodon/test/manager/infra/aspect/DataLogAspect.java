@@ -115,6 +115,8 @@ public class DataLogAspect {
                     case DataLogConstants.BATCH_INSERT_ATTACH:
                         handleCaseBatchInsertAttach(args);
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -141,12 +143,8 @@ public class DataLogAspect {
                     attachNames.addAll((List<String>) arg);
                 }
             }
-
-            List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(testCaseAttachmentDTOS.get(0).getCaseId()));
             if(!CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
-                testCaseAttachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v ->{
-                    createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, null, v.getUrl(), null, null);
-                });
+                testCaseAttachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, null, v.getUrl(), null, null));
              }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -167,9 +165,7 @@ public class DataLogAspect {
             }
             if (!ObjectUtils.isEmpty(caseId)) {
                 List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
-                attachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v ->{
-                    createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, v.getUrl(), null, v.getAttachmentId().toString(), null);
-                });
+                attachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, v.getUrl(), null, v.getAttachmentId().toString(), null));
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();

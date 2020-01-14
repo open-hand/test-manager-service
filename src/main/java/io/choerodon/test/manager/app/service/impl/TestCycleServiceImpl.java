@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.*;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -19,7 +18,6 @@ import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestCycleType;
-import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import org.apache.commons.lang.StringUtils;
@@ -51,19 +49,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private TestCycleMapper cycleMapper;
 
     @Autowired
-    private TestStatusMapper testStatusMapper;
-
-    @Autowired
-    private TestIssueFolderRelMapper testIssueFolderRelMapper;
-
-    @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
-
-    @Autowired
-    private TestCaseStepMapper testCaseStepMapper;
-
-    @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
     @Autowired
     private ModelMapper modelMapper;

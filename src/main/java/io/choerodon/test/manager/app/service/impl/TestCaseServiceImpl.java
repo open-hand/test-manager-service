@@ -359,7 +359,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             else {
                 collect.addAll(testCycleCaseDTOS);
             }
-            testCaseAssembler.AutoAsyncCase(collect, true, false, false);
+            testCaseAssembler.autoAsyncCase(collect, true, false, false);
         }
         TestCaseDTO testCaseDTO1 = testCaseMapper.selectByPrimaryKey(map.getCaseId());
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
@@ -437,12 +437,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseDTO> queryAllCase() {
-        return testCaseMapper.selectAll();
-    }
-
-
-    @Override
     public List<IssueLinkDTO> getLinkIssueFromIssueToTest(Long projectId, List<Long> issueId) {
         return listIssueLinkByIssueId(projectId, issueId).stream()
                 .filter(u -> u.getTypeCode().matches(IssueTypeCode.ISSUE_TEST + "|" + IssueTypeCode.ISSUE_AUTO_TEST)).collect(Collectors.toList());
@@ -457,11 +451,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
         Assert.notNull(projectId, "error.TestCaseService.getVersionInfo.param.projectId.not.be.null");
         return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
-    }
-
-    @Override
-    public ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap) {
-        return productionVersionClient.listByOptions(projectId, searchParamMap);
     }
 
     public Long[] getVersionIds(Long projectId) {
@@ -486,18 +475,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     public IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId, String applyType) {
         Assert.notNull(projectId, "error.TestCaseService.createTest.param.projectId.not.be.null");
         return testCaseFeignClient.createIssue(projectId, applyType, issueCreateDTO).getBody();
-    }
-
-    @Override
-    public List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds) {
-        Assert.notNull(projectId, "error.TestCaseService.batchCloneIssue.param.projectId.not.be.null");
-        return testCaseFeignClient.batchCloneIssue(projectId, versionId, issueIds).getBody();
-    }
-
-    @Override
-    public ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds) {
-        Assert.notNull(projectId, "error.TestCaseService.batchIssueToVersionTest.param.projectId.not.be.null");
-        return testCaseFeignClient.batchIssueToVersionTest(projectId, versionId, issueIds);
     }
 
     @Override

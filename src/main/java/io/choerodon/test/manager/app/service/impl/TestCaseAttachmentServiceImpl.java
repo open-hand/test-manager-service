@@ -146,7 +146,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,false,true);
+            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,false,true);
         }
         return issueAttachmentDTOList;
     }
@@ -175,7 +175,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         testCaseService.updateVersionNum(issueAttachmentDTO.getCaseId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueAttachmentDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,false,true);
+            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,false,true);
         }
         return result;
     }
@@ -254,7 +254,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
             List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !executeId.equals(v.getExecuteId())).collect(Collectors.toList());
-            testCaseAssembler.AutoAsyncCase(list,false,false,true);
+            testCaseAssembler.autoAsyncCase(list,false,false,true);
         }
     }
 

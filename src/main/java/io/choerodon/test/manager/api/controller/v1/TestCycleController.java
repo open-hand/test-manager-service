@@ -1,29 +1,19 @@
 package io.choerodon.test.manager.api.controller.v1;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
-import io.choerodon.test.manager.app.service.TestPlanServcie;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.*;
-import com.github.pagehelper.PageInfo;
-
-import io.choerodon.test.manager.api.vo.agile.ProductVersionPageDTO;
 import io.choerodon.core.annotation.Permission;
 import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.test.manager.api.vo.BatchCloneCycleVO;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
-import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
+import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCycleService;
+import io.choerodon.test.manager.app.service.TestPlanServcie;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by 842767365@qq.com on 6/12/18.

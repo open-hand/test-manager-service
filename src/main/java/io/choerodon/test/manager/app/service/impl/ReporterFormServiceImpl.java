@@ -76,7 +76,7 @@ public class ReporterFormServiceImpl implements ReporterFormService {
 
     }
 
-
+    @Override
     public List<DefectReporterFormVO> createFormDefectFromIssue(Long projectId, Long[] issueIds, Long organizationId) {
         Assert.notEmpty(issueIds, "error.query.form.issueId.not.empty");
 

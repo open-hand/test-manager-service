@@ -13,14 +13,12 @@ import io.choerodon.test.manager.app.service.TestCycleCaseService;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.mapper.*;
-import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -30,9 +28,6 @@ import org.springframework.util.ObjectUtils;
  */
 @Component
 public class TestCaseAssembler {
-
-    private static final String BACKETNAME = "agile-service";
-
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
 
@@ -53,9 +48,6 @@ public class TestCaseAssembler {
 
     @Autowired
     private TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
-
-    @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
 
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
@@ -111,8 +103,6 @@ public class TestCaseAssembler {
     }
 
     public List<TestCaseRepVO> listDtoToRepVo(Long projectId, List<TestCaseDTO> list, Long planId) {
-        Map<Long, UserMessageDTO> userMap = getUserMap(null, modelMapper.map(list, new TypeToken<List<BaseDTO>>() {
-        }.getType()));
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> folderMap = testIssueFolderDTOS.stream().collect(Collectors.toMap(TestIssueFolderDTO::getFolderId, Function.identity()));
         List<Long> caseIds = null;
@@ -139,12 +129,12 @@ public class TestCaseAssembler {
     public TestCaseInfoVO dtoToInfoVO(TestCaseDTO testCaseDTO) {
         TestCaseInfoVO testCaseInfoVO = modelMapper.map(testCaseDTO, TestCaseInfoVO.class);
         // 获取用户信息
-        Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(testCaseDTO, null);
-        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
-            testCaseInfoVO.setCreateUser(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()));
+        Map<Long, UserMessageDTO> userMessageDTOMap = getUserMap(testCaseDTO, null);
+        if (!ObjectUtils.isEmpty(userMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
+            testCaseInfoVO.setCreateUser(userMessageDTOMap.get(testCaseDTO.getCreatedBy()));
         }
-        if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
-            testCaseInfoVO.setLastUpdateUser(UserMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
+        if (!ObjectUtils.isEmpty(userMessageDTOMap.get(testCaseDTO.getCreatedBy()))) {
+            testCaseInfoVO.setLastUpdateUser(userMessageDTOMap.get(testCaseDTO.getLastUpdatedBy()));
         }
         // 用例的问题链接
         testCaseInfoVO.setIssuesInfos(testCaseLinkService.listIssueInfo(testCaseDTO.getProjectId(), testCaseDTO.getCaseId()));
@@ -153,9 +143,7 @@ public class TestCaseAssembler {
         testCaseAttachmentDTO.setCaseId(testCaseDTO.getCaseId());
         List<TestCaseAttachmentDTO> attachment = testAttachmentMapper.select(testCaseAttachmentDTO);
         if (!CollectionUtils.isEmpty(attachment)) {
-            attachment.forEach(v -> {
-                v.setUrl(attachmentUrl + v.getUrl());
-            });
+            attachment.forEach(v -> v.setUrl(attachmentUrl + v.getUrl()));
             testCaseInfoVO.setAttachment(attachment);
         }
         // 查询测试用例所属的文件夹
@@ -249,7 +237,6 @@ public class TestCaseAssembler {
 
     public TestCaseStepDTO cycleStepToCaseStep(TestCycleCaseStepDTO testCycleCaseStepDTO, TestCaseDTO testCaseDTO, CustomUserDetails userDetails) {
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
-        // todo rank未写
         testCaseStepDTO.setTestStep(testCycleCaseStepDTO.getTestStep());
         testCaseStepDTO.setTestData(testCycleCaseStepDTO.getTestData());
         testCaseStepDTO.setExpectedResult(testCycleCaseStepDTO.getExpectedResult());
@@ -262,7 +249,7 @@ public class TestCaseAssembler {
     }
 
     // 执行同步
-    public void AutoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
+    public void autoAsyncCase(List<TestCycleCaseDTO> testCycleCaseDTOS, Boolean changeCase, Boolean changeStep, Boolean changeAttach) {
         testCycleCaseDTOS.forEach(v -> {
             CaseCompareRepVO caseCompareVO = new CaseCompareRepVO();
             caseCompareVO.setCaseId(v.getCaseId());

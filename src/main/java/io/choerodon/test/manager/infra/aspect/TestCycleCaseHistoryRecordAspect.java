@@ -41,9 +41,6 @@ public class TestCycleCaseHistoryRecordAspect {
     private TestCaseService testCaseService;
 
     @Autowired
-    private TestStatusMapper testStatusMapper;
-
-    @Autowired
     TestCycleCaseAttachmentRelMapper testCycleCaseAttachmentRelMapper;
 
     @Autowired

@@ -7,7 +7,6 @@ import com.github.pagehelper.PageInfo;
 
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.*;
-import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -20,13 +19,9 @@ public interface TestCycleCaseService {
 
     void delete(Long cycleCaseId, Long projectId);
 
-    PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, Pageable pageable, Long projectId, Long organizationId);
-
     List<TestCycleCaseVO> queryInIssues(Long[] issueIds, Long projectId, Long organizationId);
 
     List<TestCycleCaseVO> queryCaseAllInfoInCyclesOrVersions(Long[] cycleIds, Long[] versionIds, Long projectId, Long organizationId);
-
-    void batchDelete(TestCycleCaseVO testCycleCaseVO, Long projectId);
 
     /**
      * 启动一个测试例
@@ -44,13 +39,6 @@ public interface TestCycleCaseService {
      * @param testCycleCaseVO
      */
     TestCycleCaseVO changeOneCase(TestCycleCaseVO testCycleCaseVO, Long projectId);
-
-    /**
-     * 修改一堆case
-     *
-     * @param cycleCaseDTOS
-     */
-    void batchChangeCase(Long projectId, List<TestCycleCaseVO> cycleCaseDTOS);
 
     void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 

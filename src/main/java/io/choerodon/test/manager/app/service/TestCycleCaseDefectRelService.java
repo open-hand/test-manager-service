@@ -17,15 +17,9 @@ public interface TestCycleCaseDefectRelService {
 
     void populateDefectInfo(List<TestCycleCaseDefectRelVO> lists, Long projectId, Long organizationId);
 
-    void populateDefectAndIssue(TestCycleCaseVO dto, Long projectId, Long organizationId);
-
-    void populateCycleCaseDefectInfo(List<TestCycleCaseVO> testCycleCaseVOS, Long projectId, Long organizationId);
-
     void populateCaseStepDefectInfo(List<TestCycleCaseStepVO> testCycleCaseDTOS, Long projectId, Long organizationId);
 
     Boolean updateIssuesProjectId(TestCycleCaseDefectRelVO testCycleCaseDefectRelVO, Long organizationId);
-
-//    List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId);
 
     void cloneDefect(Map<Long, Long> caseIdMap, List<Long> olderExecuteIds,String type);
 

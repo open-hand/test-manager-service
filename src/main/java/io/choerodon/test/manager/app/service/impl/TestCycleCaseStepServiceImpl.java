@@ -18,8 +18,6 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.ConvertUtils;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -29,7 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 
@@ -39,7 +36,7 @@ import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
-    private final static double AVG_NUM = 500.00;
+    private static final  double AVG_NUM = 500.00;
 
     @Value("${spring.datasource.url}")
     private String dsUrl;
@@ -135,19 +132,6 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
-        testCycleCaseStepDTOS.forEach(e -> {
-            testCycleCaseStepMapper.updateByPrimaryKeySelective(e);
-        });
-
-    }
-
-    @Override
-    public void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS) {
-        testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(testCycleCaseStepDTOS);
-    }
-
-    @Override
     public void snycByCase(TestCycleCaseDTO testCycleCaseDTO, TestCaseDTO testCaseDTO) {
         CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         testCycleCaseDTO.setLastUpdatedBy(userDetails.getUserId());
@@ -176,19 +160,14 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         // 去新增
         List<TestCaseStepDTO> testCaseStepS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(needAdd)) {
-            needAdd.forEach(v -> {
-                testCaseStepS.add(caseStepMap.get(v));
-            });
+            needAdd.forEach(v -> testCaseStepS.add(caseStepMap.get(v)));
             Map<Long, List<TestCaseStepDTO>> caseStepMapToAdd = testCaseStepS.stream().collect(Collectors.groupingBy(TestCaseStepDTO::getIssueId));
             batchInsert(Arrays.asList(testCycleCaseDTO), caseStepMapToAdd);
         }
         // 直接删除的测试执行步骤
         List<Long> needDeleteExecutedStepIds = new ArrayList<>();
         if (!CollectionUtils.isEmpty(needDelete)) {
-            needDelete.forEach(v -> {
-                needDeleteExecutedStepIds.addAll(cycleStepIdsMap.get(v));
-
-            });
+            needDelete.forEach(v -> needDeleteExecutedStepIds.addAll(cycleStepIdsMap.get(v)));
             testCycleCaseStepMapper.batchDeleteTestCycleCaseSteps(needDeleteExecutedStepIds);
             testCycleCaseAttachmentRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
             testCycleCaseDefectRelMapper.batchDeleteByLinkIdsAndType(needDeleteExecutedStepIds, TestAttachmentCode.ATTACHMENT_CASE_STEP);
@@ -235,19 +214,12 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             });
             testCycleCaseStepMapper.batchInsertTestCycleCaseSteps(list);
             Map<Long,Long> valueMapping = new HashMap<>();
-            list.forEach(v -> {
-                valueMapping.put(v.getCaseId(),v.getExecuteStepId());
-            });
+            list.forEach(v -> valueMapping.put(v.getCaseId(),v.getExecuteStepId()));
             //克隆步骤关联的附件
             testCycleCaseAttachmentRelService.cloneAttach(valueMapping,stepIds,"CASE_STEP");
             // 克隆步骤的缺陷
             testCycleCaseDefectRelService.cloneDefect(valueMapping,stepIds,"CASE_STEP");
         }
-    }
-
-    @Override
-    public void batchDelete(List<Long> executeStepIds) {
-        testCycleCaseStepMapper.batchDeleteTestCycleCaseSteps(executeStepIds);
     }
 
     @Override
@@ -295,17 +267,4 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
         }
     }
 
-    private TestCycleCaseStepDTO updateSelf(TestCycleCaseStepDTO testCycleCaseStepDTO) {
-        if (testCycleCaseStepMapper.updateByPrimaryKeySelective(testCycleCaseStepDTO) != 1) {
-            throw new CommonException("error.testStepCase.update");
-        }
-        return testCycleCaseStepMapper.selectByPrimaryKey(testCycleCaseStepDTO.getExecuteStepId());
-    }
-
-    public void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO) {
-        if (ObjectUtils.isEmpty(testCycleCaseStepDTO)) {
-            throw new CommonException("error.insert.cycle.case.step.is.null");
-        }
-        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseStepMapper::insertSelective, testCycleCaseStepDTO, 1, "error.insert.cycle.case.step");
-    }
 }
