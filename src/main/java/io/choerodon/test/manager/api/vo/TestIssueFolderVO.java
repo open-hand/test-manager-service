@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.api.vo;
 
+import java.util.Date;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -35,6 +36,10 @@ public class TestIssueFolderVO {
     private String lastRank;
 
     private String nextRank;
+
+    private Date fromDate;
+
+    private Date toDate;
 
     public TestIssueFolderVO() {
     }
@@ -161,5 +166,21 @@ public class TestIssueFolderVO {
 
     public void setInitStatus(String initStatus) {
         this.initStatus = initStatus;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
     }
 }

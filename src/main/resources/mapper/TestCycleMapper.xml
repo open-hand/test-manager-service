@@ -387,4 +387,9 @@
             where cycle_id = #{cycle.cycleId}
         </foreach>
     </update>
+
+    <select id="listByPlanIdAndProjectId" resultType="io.choerodon.test.manager.infra.dto.TestCycleDTO">
+       select * from test_cycle
+       where project_id = #{projectId} and plan_id = #{planId}
+    </select>
 </mapper>

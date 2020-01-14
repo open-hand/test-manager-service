@@ -1,5 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import static java.util.stream.Collectors.*;
+
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -10,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
@@ -99,6 +102,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private TestCycleAssembler testCycleAssembler;
+
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -110,6 +116,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         testCycleVO.setType("folder");
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
+        testCycleAssembler.updateTime(projectId,modelMapper.map(cycleDTO,TestCycleDTO.class));
         return cycleDTO;
     }
 
@@ -135,12 +142,12 @@ public class TestCycleServiceImpl implements TestCycleService {
         TestIssueFolderRelDTO folder = new TestIssueFolderRelDTO();
         folder.setFolderId(folderId);
         List<TestIssueFolderRelDTO> list = Optional.ofNullable(testIssueFolderRelMapper.select(folder)).orElseGet(ArrayList::new);
-        Set<Long> folderIssues = list.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toSet());
+        Set<Long> folderIssues = list.stream().map(TestIssueFolderRelDTO::getIssueId).collect(toSet());
         //获取cycle下所有issue执行
         TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setCycleId(cycleId);
         List<TestCycleCaseDTO> caseList = Optional.ofNullable(testCycleCaseMapper.select(cycleCaseE)).orElseGet(ArrayList::new);
-        Map<Long, Long> caseIssues = caseList.stream().collect(Collectors.toMap(TestCycleCaseDTO::getCaseId, TestCycleCaseDTO::getExecuteId));
+        Map<Long, Long> caseIssues = caseList.stream().collect(toMap(TestCycleCaseDTO::getCaseId, TestCycleCaseDTO::getExecuteId));
         //对比执行和folder中的issue添加未添加的执行
         TestCycleCaseVO dto = new TestCycleCaseVO();
         dto.setCycleId(cycleId);
@@ -202,8 +209,8 @@ public class TestCycleServiceImpl implements TestCycleService {
      */
     private Set<Long> compareStep(List<TestCaseStepDTO> caseSteps, List<TestCycleCaseStepDTO> cycleSteps) {
         Set<Long> newStep = new HashSet<>();
-        Set caseStepSet = caseSteps.stream().map(TestCaseStepDTO::getStepId).collect(Collectors.toSet());
-        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepDTO::getStepId).collect(Collectors.toSet());
+        Set caseStepSet = caseSteps.stream().map(TestCaseStepDTO::getStepId).collect(toSet());
+        Set cycleStepSet = cycleSteps.stream().map(TestCycleCaseStepDTO::getStepId).collect(toSet());
         Iterator<Long> iterator = caseStepSet.iterator();
         while (iterator.hasNext()) {
             Long stepId = iterator.next();
@@ -245,10 +252,10 @@ public class TestCycleServiceImpl implements TestCycleService {
         List<Long> cycleIds = new ArrayList<>();
         cycleIds.add(cycleId);
         if (!CollectionUtils.isEmpty(testCycleDTOS)) {
-            Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+            Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(groupingBy(TestCycleDTO::getParentCycleId));
             findCycleChildren(cycleId, cycleIds, cycleMap);
             List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseService.listByCycleIds(cycleIds);
-            List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+            List<Long> executeIds = testCycleCaseDTOS.stream().map(TestCycleCaseDTO::getExecuteId).collect(toList());
             testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         }
         cycleMapper.batchDelete(cycleIds);
@@ -257,7 +264,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private void findCycleChildren(Long cycleId, List<Long> cycleIds, Map<Long, List<TestCycleDTO>> cycleMap) {
         List<TestCycleDTO> testCycleDTOS = cycleMap.get(cycleId);
         if(!CollectionUtils.isEmpty(testCycleDTOS)){
-            List<Long> child = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(Collectors.toList());
+            List<Long> child = testCycleDTOS.stream().map(TestCycleDTO::getCycleId).collect(toList());
             cycleIds.addAll(child);
             child.forEach(v -> findCycleChildren(v,cycleIds,cycleMap));
         }
@@ -268,7 +275,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
         TestCycleDTO map = modelMapper.map(testCycleVO, TestCycleDTO.class);
         updateSelf(map);
-        return modelMapper.map(cycleMapper.selectByPrimaryKey(map.getCycleId()), TestCycleVO.class);
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(map.getCycleId());
+        testCycleAssembler.updateTime(projectId, testCycleDTO);
+        return modelMapper.map(testCycleDTO, TestCycleVO.class);
     }
 
     /**
@@ -368,7 +377,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public JSONObject getTestCycle(Long projectId, Long assignedTo) {
         List<ProductVersionDTO> versions = testCaseService.getVersionInfo(projectId).values()
-                .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(Collectors.toList());
+                .stream().sorted(Comparator.comparing(ProductVersionDTO::getStatusCode).reversed().thenComparing(ProductVersionDTO::getSequence)).collect(toList());
         JSONObject root = new JSONObject();
 
         if (versions.isEmpty()) {
@@ -465,15 +474,15 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public void initVersionTree(Long projectId, JSONArray versionStatus, List<ProductVersionDTO> versionDTOList, List<TestCycleVO> cycleDTOList) {
         Map<String, JSONObject> versionsMap = new HashMap<>(versionDTOList.size());
-        Map<Long, String> versions = versionDTOList.stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
-        Map<Long, List<TestCycleVO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.CYCLE)).collect(Collectors.groupingBy(TestCycleVO::getVersionId));
-        Map<Long, List<TestCycleVO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.TEMP)).collect(Collectors.groupingBy(TestCycleVO::getVersionId));
-        Map<Long, List<TestCycleVO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(Collectors.groupingBy(TestCycleVO::getParentCycleId));
+        Map<Long, String> versions = versionDTOList.stream().collect(toMap(ProductVersionDTO::getVersionId, ProductVersionDTO::getName));
+        Map<Long, List<TestCycleVO>> cycleVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.CYCLE)).collect(groupingBy(TestCycleVO::getVersionId));
+        Map<Long, List<TestCycleVO>> tempVersionGroup = cycleDTOList.stream().filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.TEMP)).collect(groupingBy(TestCycleVO::getVersionId));
+        Map<Long, List<TestCycleVO>> parentGroup = cycleDTOList.stream().filter(x -> x.getParentCycleId() != null).collect(groupingBy(TestCycleVO::getParentCycleId));
         TestIssueFolderDTO foldE = new TestIssueFolderDTO();
         foldE.setProjectId(projectId);
         List<TestIssueFolderVO> testIssueFolderVOS = modelMapper.map(testIssueFolderMapper.select(foldE), new TypeToken<List<TestIssueFolderVO>>() {
         }.getType());
-        Map<Long, TestIssueFolderVO> folderMap = testIssueFolderVOS.stream().collect(Collectors.toMap(TestIssueFolderVO::getFolderId, Function.identity()));
+        Map<Long, TestIssueFolderVO> folderMap = testIssueFolderVOS.stream().collect(toMap(TestIssueFolderVO::getFolderId, Function.identity()));
         for (ProductVersionDTO versionDTO : versionDTOList) {
             JSONObject version = versionsMap.get(versionDTO.getStatusName());
             if (version == null) {
@@ -538,11 +547,11 @@ public class TestCycleServiceImpl implements TestCycleService {
 
         Map<Long, List<TestCycleVO>> cycleVersionGroup = cycles.stream()
                 .filter(cycleDTO -> StringUtils.equals(cycleDTO.getType(), TestCycleType.CYCLE))
-                .collect(Collectors.groupingBy(TestCycleVO::getVersionId));
+                .collect(groupingBy(TestCycleVO::getVersionId));
 
         Map<Long, List<TestCycleVO>> parentGroup = cycles.stream()
                 .filter(x -> x.getParentCycleId() != null)
-                .collect(Collectors.groupingBy(TestCycleVO::getParentCycleId));
+                .collect(groupingBy(TestCycleVO::getParentCycleId));
         if (ObjectUtils.isEmpty(cycleVersionGroup.get(versionId))) {
             root.put("cycle", new ArrayList<>());
         } else {
@@ -774,7 +783,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         if (CollectionUtils.isEmpty(testIssueFolderDTOS)) {
             return new ArrayList<>();
         }
-        Map<Long, List<TestIssueFolderDTO>> collect = testIssueFolderDTOS.stream().collect(Collectors.groupingBy(TestIssueFolderDTO::getParentId));
+        Map<Long, List<TestIssueFolderDTO>> collect = testIssueFolderDTOS.stream().collect(groupingBy(TestIssueFolderDTO::getParentId));
         Map<Long, List<TestIssueFolderDTO>> parentMap = new LinkedHashMap<>();
         findChildren(parentMap,0L,collect);
         Map<Long, Long> cycleMap = new HashMap<>();
@@ -803,10 +812,10 @@ public class TestCycleServiceImpl implements TestCycleService {
                 testCycleDTO.setLastUpdatedBy(testPlanDTO.getLastUpdatedBy());
                 testCycleDTOS.add(testCycleDTO);
             });
-            Map<Long, List<TestCycleDTO>> listMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
+            Map<Long, List<TestCycleDTO>> listMap = testCycleDTOS.stream().collect(groupingBy(TestCycleDTO::getPlanId));
             List<TestCycleDTO> cycleDTOList = doRank(listMap);
             cycleMapper.batchInsert(cycleDTOList);
-            Map<Long, Long> returnCycleId = cycleDTOList.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
+            Map<Long, Long> returnCycleId = cycleDTOList.stream().collect(toMap(TestCycleDTO::getFolderId, TestCycleDTO::getCycleId));
             cycleMap.putAll(returnCycleId);
             endCycle.addAll(cycleDTOList);
         });
@@ -817,7 +826,7 @@ public class TestCycleServiceImpl implements TestCycleService {
     private void findChildren(Map<Long, List<TestIssueFolderDTO>> parentMap, Long folderId, Map<Long, List<TestIssueFolderDTO>> collect) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = collect.get(folderId);
         if(!CollectionUtils.isEmpty(testIssueFolderDTOS)){
-            List<TestIssueFolderDTO> list = testIssueFolderDTOS.stream().sorted(Comparator.comparing(TestIssueFolderDTO::getRank)).collect(Collectors.toList());
+            List<TestIssueFolderDTO> list = testIssueFolderDTOS.stream().sorted(Comparator.comparing(TestIssueFolderDTO::getRank)).collect(toList());
             parentMap.put(folderId,list);
             testIssueFolderDTOS.forEach(v -> findChildren(parentMap,v.getFolderId(),collect));
         }
@@ -834,7 +843,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             return;
         }
         List<TestCycleCaseDTO> needDeleteCycleCase = testCycleCaseService.listByCycleIds(needDeleteCycleIds);
-        List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(Collectors.toList());
+        List<Long> executeIds = needDeleteCycleCase.stream().map(TestCycleCaseDTO::getExecuteId).collect(toList());
         testCycleCaseService.batchDeleteByExecuteIds(executeIds);
         cycleMapper.batchDelete(needDeleteCycleIds);
     }
@@ -849,6 +858,8 @@ public class TestCycleServiceImpl implements TestCycleService {
         testIssueFolderVO.setType(testCycleDTO.getType());
         testIssueFolderVO.setProjectId(testCycleDTO.getProjectId());
         testIssueFolderVO.setRank(testCycleDTO.getRank());
+        testIssueFolderVO.setFromDate(testCycleDTO.getFromDate());
+        testIssueFolderVO.setToDate(testCycleDTO.getToDate());
         return testIssueFolderVO;
     }
 
@@ -898,7 +909,7 @@ public class TestCycleServiceImpl implements TestCycleService {
                 v.setParentCycleId(0L);
             }
             return v;
-        }).collect(Collectors.toList());
+        }).collect(toList());
 
         Map<Long, List<TestCycleDTO>> olderCycleMap = new TreeMap<>();
         testCycleDTOS.forEach(v -> {
@@ -949,9 +960,9 @@ public class TestCycleServiceImpl implements TestCycleService {
                 v.setParentCycleId(0L);
             }
             return v;
-        }).collect(Collectors.toList());
-        Map<Long, TestCycleDTO> allMap = collect.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
-        Map<Long, List<Long>> parentMap = collect.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId, Collectors.mapping(TestCycleDTO::getCycleId, Collectors.toList())));
+        }).collect(toList());
+        Map<Long, TestCycleDTO> allMap = collect.stream().collect(toMap(TestCycleDTO::getCycleId, Function.identity()));
+        Map<Long, List<Long>> parentMap = collect.stream().collect(groupingBy(TestCycleDTO::getParentCycleId, mapping(TestCycleDTO::getCycleId, toList())));
         List<Long> root = new ArrayList<>();
         List<TestTreeFolderVO> treeFolder = new ArrayList<>();
         collect.stream().forEach(cycle -> bulidTree(cycle, planId, root, parentMap, treeFolder));
@@ -1123,7 +1134,7 @@ public class TestCycleServiceImpl implements TestCycleService {
         }.getType());
 
         Map<Long, List<TestCycleProDTO>> parentGroup = testCycleProDTOS.stream().filter(x -> x.getParentCycleId() != null
-                && TestCycleType.FOLDER.equals(x.getType())).collect(Collectors.groupingBy(TestCycleProDTO::getParentCycleId));
+                && TestCycleType.FOLDER.equals(x.getType())).collect(groupingBy(TestCycleProDTO::getParentCycleId));
 
         testCycleProDTOS.parallelStream().filter(v -> StringUtils.equals(v.getType(), TestCycleType.CYCLE))
                 .forEach(u -> u.countChildStatus(parentGroup.get(u.getCycleId())));
