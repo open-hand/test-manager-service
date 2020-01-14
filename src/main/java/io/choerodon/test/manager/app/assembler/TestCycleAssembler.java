@@ -38,15 +38,11 @@ public class TestCycleAssembler {
             checkPlanTime(cycleDTO, testPlanVO);
             return;
         }
-        List<TestCycleDTO> collect = testCycleDTOS.stream().map(v -> {
-            if (v.getParentCycleId() == null) {
-                v.setParentCycleId(0L);
-            }
-            return v;
-        }).collect(Collectors.toList());
-        Map<Long, List<TestCycleDTO>> cycleMap = collect.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
-        Map<Long, TestCycleDTO> map = collect.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+        Map<Long, TestCycleDTO> map = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
+        // 往父文件夹验证日期
         lookUp(map, cycleDTO, testPlanVO);
+        // 往子文件夹验证日期
         lookDown(cycleMap, cycleDTO);
     }
 
