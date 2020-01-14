@@ -257,4 +257,13 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
 
+    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @ApiOperation("操作计划日历")
+    @PostMapping("/operate_calendar")
+    public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,
+                                                           @RequestBody TestCycleVO testCycleVO,
+                                                           @RequestParam(defaultValue = "true") Boolean isCycle){
+        testCycleService.operatePlanCalendar(projectId,testCycleVO,isCycle);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
