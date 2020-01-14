@@ -101,11 +101,17 @@ class TestPlanTree extends Component {
     };
   }
 
-  setSelected = (item) => {    
+  setSelected = (item) => {
     const { context: { testPlanStore } } = this.props;
     const [planId, folderId] = testPlanStore.getId(item.id);
     const { executePagination } = testPlanStore;
     if (item.id) {
+      if (testPlanStore.isPlan(item.id)) { // 如果是计划
+        testPlanStore.updateTimes([item]);
+        testPlanStore.setMainActiveTab('testPlanSchedule');
+      } else {
+        testPlanStore.setMainActiveTab('testPlanTable');
+      }
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
       testPlanStore.checkIdMap.clear();
@@ -161,11 +167,11 @@ class TestPlanTree extends Component {
     }
   }
 
-  handleUpdateItem=(item) => { 
+  handleUpdateItem=(item) => {
     const { context: { testPlanStore } } = this.props;
     if (testPlanStore.getCurrentPlanId === item.id) {
       testPlanStore.setPlanInfo({ ...testPlanStore.planInfo, name: item.data.name });
-    }    
+    }
   }
 
   renderTreeNode = (node, { item }) => {

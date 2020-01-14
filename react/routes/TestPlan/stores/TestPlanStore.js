@@ -1,11 +1,12 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import moment from 'moment';
 import { Choerodon } from '@choerodon/boot';
-import TestPlanTreeStore from './TestPlanTreeStore'; 
+import TestPlanTreeStore from './TestPlanTreeStore';
 import { getStatusList } from '@/api/TestStatusApi';
 import {
-  getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo, 
+  getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo,
 } from '@/api/TestPlanApi';
 
 
@@ -20,11 +21,62 @@ class TestPlanStore extends TestPlanTreeStore {
       return this.loading;
     }
 
+    // @observable mainActiveTab = this.isPlan(this.currentCycle.id) ? 'testPlanSchedule' : 'testPlanTable';
+    @observable mainActiveTab = 'testPlanSchedule';
+
+    @action setMainActiveTab = (mainActiveTab) => {
+      this.mainActiveTab = mainActiveTab;
+    }
+
+    @observable times = [];
+
+    @action setTimes = (times) => {
+      this.times = times;
+    }
+
+    updateTimes = (data) => {
+      const times = [];
+      this.generateTimes(data, times);
+      this.setTimes(times);
+    }
+
+  getAllChildren = parent => this.treeData.treeFolder.filter((item) => {
+    return parent.children.includes(item.id);
+  });
+
+
+  generateTimes = (data, times) => {
+    for (let i = 0; i < data.length; i += 1) {
+      const node = data[i];
+      const {
+        fromDate, toDate, children,
+      } = node.data;
+
+      times.push({
+        ...node,
+        children,
+        type: this.isPlan(node.id) ? 'plan' : 'folder',
+        start: `${moment(moment.min(fromDate)).format('YYYY-MM-DD')} 00:00:00`,
+        end: `${moment(moment.max(toDate)).format('YYYY-MM-DD')} 23:59:59`,
+      });
+
+      if (node.children && node.children.length > 0) {
+        this.generateTimes(this.getAllChildren(node), times);
+      }
+    }
+  }
+
     @observable tableLoading = false;
 
     @action setTableLoading = (tableLoading) => {
       this.tableLoading = tableLoading;
     }
+
+    @observable calendarLoading = false;
+
+    @action setCalendarLoading = (calendarLoading) => {
+      this.calendarLoading = calendarLoading;
+    };
 
     @computed get getTableLoading() {
       return this.tableLoading;
@@ -35,11 +87,11 @@ class TestPlanStore extends TestPlanTreeStore {
       total: 0,
       pageSize: 20,
     };
-     
+
     @action setExecutePagination(executePagination) {
       this.executePagination = { ...this.executePagination, ...executePagination };
     }
-  
+
     @computed get getExecutePagination() {
       return toJS(this.executePagination);
     }
@@ -76,7 +128,7 @@ class TestPlanStore extends TestPlanTreeStore {
       orderField: '',
       orderType: '',
     };
-  
+
     @computed get getSearchObj() {
       return {
         searchArgs: this.filter,
@@ -87,7 +139,7 @@ class TestPlanStore extends TestPlanTreeStore {
     @computed get getFilters() {
       return this.filter;
     }
-    
+
     @observable assignToUserId;
 
     @action setAssignToUserId = (assignToUserId) => {
@@ -117,10 +169,10 @@ class TestPlanStore extends TestPlanTreeStore {
     @action clearStore = () => {
       this.tableLoading = false;
       this.treeData = {};
-      this.testList = [];  
-      this.expandedKeys = ['0-0'];  
-      this.selectedKeys = [];  
-      this.currentCycle = {};  
+      this.testList = [];
+      this.expandedKeys = ['0-0'];
+      this.selectedKeys = [];
+      this.currentCycle = {};
       this.preCycle = {};
       this.filter = {};
       this.barFilter = [];
@@ -137,6 +189,8 @@ class TestPlanStore extends TestPlanTreeStore {
       this.testPlanStatus = 'todo';
       this.planInfo = {};
       this.statusRes = {};
+      this.mainActiveTab = 'testPlanSchedule';
+      this.times = [];
     }
 
     /**
@@ -178,16 +232,16 @@ class TestPlanStore extends TestPlanTreeStore {
      */
     async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1]) {
       const {
-        executePagination, order, getSearchObj, 
+        executePagination, order, getSearchObj,
       } = this;
       const { orderField, orderType } = order;
       const { current, pageSize } = executePagination;
       const search = getSearchObj;
       this.setTableLoading(true);
       const executes = await getExecutesByFolder({
-        planId, folderId, current, pageSize, search, orderField, orderType, 
+        planId, folderId, current, pageSize, search, orderField, orderType,
       });
-      this.setTestList(executes.list || []);      
+      this.setTestList(executes.list || []);
       this.setExecutePagination({
         current: executePagination.current,
         pageSize: executePagination.pageSize,
@@ -201,7 +255,7 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    loadStatusRes(planId = this.getId()[0], folderId = this.getId()[1]) {      
+    loadStatusRes(planId = this.getId()[0], folderId = this.getId()[1]) {
       getStatusByFolder({ planId, folderId }).then((res) => {
         this.setStatusRes(res);
       });
