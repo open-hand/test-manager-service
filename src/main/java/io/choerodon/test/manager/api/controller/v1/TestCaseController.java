@@ -152,7 +152,7 @@ public class TestCaseController {
         excelImportService.downloadImportTemp(request, response, organizationId, projectId);
     }
 
-    // Todo: 重构，导入用例不需要指定版本号
+
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")

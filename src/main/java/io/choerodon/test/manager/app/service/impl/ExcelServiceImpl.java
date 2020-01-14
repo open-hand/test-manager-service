@@ -451,11 +451,12 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private List<ExcelCaseVO> handleCase(Long projectId,Long folderId){
+        List<ExcelCaseVO> excelCaseVOS = new ArrayList<>();
         List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
-        if(CollectionUtils.isEmpty(caseIdList)){
-            return null;
+        if(!CollectionUtils.isEmpty(caseIdList)){
+            return excelCaseVOS;
         }
-        List<ExcelCaseVO> excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
+        excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
         List<Long> userIdList = excelCaseVOS.stream().map(ExcelCaseVO::getLastUpdatedBy).collect(Collectors.toList());
         Map<Long, UserMessageDTO> userMessageDTOMap = userService.queryUsersMap(userIdList);
         if (!MapUtils.isEmpty(userMessageDTOMap)) {

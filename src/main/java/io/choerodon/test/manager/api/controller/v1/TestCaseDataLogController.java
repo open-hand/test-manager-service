@@ -6,7 +6,6 @@ import io.choerodon.core.enums.ResourceType;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
-import io.choerodon.test.manager.infra.dto.TestDataLogDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

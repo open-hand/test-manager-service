@@ -124,10 +124,10 @@ public class CycleCaseExcelExportServiceImpl extends AbstarctExcelExportServiceI
             return null;
         }
 
-        if ("CASE_STEP".equals(type)) {
+        if (CASE_STEP.equals(type)) {
             list = list.stream().filter(v -> v.getDefectType().equals(CASE_STEP)).collect(Collectors.toList());
 
-        } else if ("CYCLE_CASE".equals(type)) {
+        } else if (CYCLE_CASE.equals(type)) {
             list = list.stream().filter(v -> v.getDefectType().equals(CYCLE_CASE)).collect(Collectors.toList());
 
         }

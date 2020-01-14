@@ -49,7 +49,7 @@ public class TestAutomationController {
 //        logger.info("xml:{}", xml);
         try {
             return new ResponseEntity<>(jsonImportService.importMochaReport(releaseName, xml), HttpStatus.CREATED);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             appInstanceService.updateStatus(Long.parseLong(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入mocha测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.mocha.report");
@@ -72,7 +72,7 @@ public class TestAutomationController {
 //        logger.info("xml:{}", xml);
         try {
             return new ResponseEntity<>(jsonImportService.importTestNgReport(releaseName, xml), HttpStatus.CREATED);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             appInstanceService.updateStatus(Long.parseLong(TestAppInstanceDTO.getInstanceIDFromReleaseName(releaseName)), 3L);
             logger.error("导入testng测试报告失败，测试状态置为失败", e);
             throw new CommonException("error.automation.import.testng.report");
