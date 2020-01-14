@@ -1074,7 +1074,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private void doRank(List<TestCycleCaseStepVO> newTestCycleCaseStepVOS) {
         String preRank = null;
         for (TestCycleCaseStepVO testCycleCaseStepVO : newTestCycleCaseStepVOS) {
-            testCycleCaseStepVO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
+            testCycleCaseStepVO.setRank(RankUtil.Operation.INSERT.getRank(null, preRank));
             preRank = testCycleCaseStepVO.getRank();
         }
     }
