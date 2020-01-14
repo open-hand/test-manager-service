@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import { Icon, Tabs } from 'choerodon-ui';
+import { Icon, Tabs, Card, DatePicker } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
@@ -20,7 +20,9 @@ import TestPlanTree from '../components/TestPlanTree';
 import TestPlanTable from '../components/TestPlanTable';
 import TestPlanHeader from '../components/TestPlanHeader';
 import { openCreatePlan } from '../components/TestPlanModal';
+import EventCalendar from '../components/EventCalendar';
 import Empty from '../../../components/Empty';
+import { SelectFocusLoad } from '../../../components';
 import testCaseEmpty from './testCaseEmpty.svg';
 
 import Store from '../stores';
@@ -29,6 +31,7 @@ import { getDragRank, executeDetailLink } from '../../../common/utils';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
+const { RangePicker } = DatePicker;
 const updateRemindModal = Modal.key();
 let updateModal;
 
@@ -37,7 +40,7 @@ function TestPlanHome({ history }) {
     prefixCls, createAutoTestStore, testPlanStore,
   } = useContext(Store);
   const {
-    loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle,
+    loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
   const handleTabsChange = (value) => {
     // testPlanStore.clearStore();
@@ -45,6 +48,10 @@ function TestPlanHome({ history }) {
     testPlanStore.setCurrentCycle({});
     testPlanStore.setFilter({});
     testPlanStore.loadAllData();
+  };
+
+  const handleMainTabsChange = (value) => {
+    testPlanStore.setMainActiveTab(value);
   };
 
   const handleUpdateOk = (record) => {
@@ -331,18 +338,59 @@ function TestPlanHome({ history }) {
                       <TestPlanStatusCard />
                     </div>
                   </div>
-                  <div className={`${prefixCls}-contentWrap-table`}>
-                    <TestPlanTable
-                      onDragEnd={onDragEnd}
-                      onTableChange={handleExecuteTableChange}
-                      onDeleteExecute={handleDeleteExecute}
-                      onQuickPass={handleQuickPassOrFail}
-                      onQuickFail={handleQuickPassOrFail}
-                      onAssignToChange={handleAssignToChange}
-                      onSearchAssign={handleSearchAssign}
-                      onOpenUpdateRemind={handleOpenUpdateRemind}
-                      onTableSummaryClick={handleTableSummaryClick}
-                    />
+                  <div className={`${prefixCls}-contentWrap-main`}>
+                    <Card
+                      className={`${prefixCls}-contentWrap-main-card`}
+                    >
+                      <Tabs
+                        defaultActiveKey="testPlanSchedule"
+                        onChange={handleMainTabsChange}
+                        activeKey={mainActiveTab}
+                        tabBarExtraContent={mainActiveTab === 'testPlanTable' ? (
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <SelectFocusLoad
+                              allowClear
+                              disabled={!checkIdMap.size}
+                              style={{ width: 216, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
+                              placeholder="批量指派"
+                              getPopupContainer={trigger => trigger.parentNode}
+                              type="user"
+                              onChange={handleAssignToChange}
+                              value={testPlanStore.assignToUserId}
+                            />
+                            <SelectFocusLoad
+                              allowClear
+                              style={{ width: 216, marginLeft: 10 }}
+                              placeholder="被指派人"
+                              loadWhenMount
+                              getPopupContainer={trigger => trigger.parentNode}
+                              type="user"
+                              onChange={handleSearchAssign}
+                              value={testPlanStore.filter.assignUser}
+                            />
+                          </div>
+                        ) : ''}
+                      >
+                        {
+                          testPlanStore.isPlan(currentCycle.id) ? (
+                            <TabPane tab="计划日历" key="testPlanSchedule">
+                              <EventCalendar key={`${currentCycle.id}`} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                            </TabPane>
+                          ) : ''
+                        }
+                        <TabPane tab="测试用例" key="testPlanTable">
+                          <TestPlanTable
+                            onDragEnd={onDragEnd}
+                            onTableChange={handleExecuteTableChange}
+                            onDeleteExecute={handleDeleteExecute}
+                            onQuickPass={handleQuickPassOrFail}
+                            onQuickFail={handleQuickPassOrFail}
+                            onOpenUpdateRemind={handleOpenUpdateRemind}
+                            onTableSummaryClick={handleTableSummaryClick}
+                          />
+                        </TabPane>
+                      </Tabs>
+                    </Card>
                   </div>
                 </div>
               </div>
