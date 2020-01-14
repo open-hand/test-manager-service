@@ -161,33 +161,32 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         //更新文件和用例的关联表
         while (rowIterator.hasNext()) {
             currentRow = rowIterator.next();
-
             if (Objects.equals(TestFileLoadHistoryEnums.Status.valueOf(testFileLoadHistoryMapper
-                    .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
-                status = TestFileLoadHistoryEnums.Status.CANCEL;
-                logger.info("已取消");
+                        .queryLoadHistoryStatus(testFileLoadHistoryDTO.getId())), TestFileLoadHistoryEnums.Status.CANCEL)) {
+                    status = TestFileLoadHistoryEnums.Status.CANCEL;
+                    logger.info("已取消");
                 removeRow(currentRow);
-                if (!issueIds.isEmpty()) {
-                    testCaseService.batchDeleteIssues(projectId, issueIds);
+                    if (!issueIds.isEmpty()) {
+                        testCaseService.batchDeleteIssues(projectId, issueIds);
+                    }
+                    break;
                 }
-                break;
-            }
 
             if (isIssueHeaderRow(currentRow, excelTitleUtil)) {
-                //插入用例
+                    //插入用例
                 testCaseDTO = processIssueHeaderRow(currentRow, projectId, folderId, excelTitleUtil);
-                if (testCaseDTO == null) {
-                    failedCount++;
-                } else {
-                    successfulCount++;
-                    issueIds.add(testCaseDTO.getCaseId());
+                    if (testCaseDTO == null) {
+                        failedCount++;
+                    } else {
+                        successfulCount++;
+                        issueIds.add(testCaseDTO.getCaseId());
+                    }
                 }
-            }
-            //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
-            // 插入循环步骤
+                //processRow(issueDTO, currentRow, errorRowIndexes, excelTitleUtil);
+                // 插入循环步骤
             processRow(testCaseDTO, currentRow, errorRowIndexes ,excelTitleUtil);
-            updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
-        }
+                updateProgress(testFileLoadHistoryDTO, userId, ++progress / nonBlankRowCount);
+            }
 
         testFileLoadHistoryDTO.setSuccessfulCount(successfulCount);
         testFileLoadHistoryDTO.setFailedCount(failedCount);
@@ -200,6 +199,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         finishImport(testFileLoadHistoryDTO, userId, status);
     }
+
     @Transactional(rollbackFor = Exception.class)
     public Workbook buildImportTemp(Long organizationId, Long projectId) {
 
