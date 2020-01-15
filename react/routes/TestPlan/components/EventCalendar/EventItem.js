@@ -4,6 +4,7 @@ import { Choerodon } from '@choerodon/boot';
 import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
+import { toJS } from 'mobx';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import Store from '../../stores';
@@ -11,10 +12,8 @@ import { updateFoldRangeDate } from '../../../../api/TestPlanApi';
 import './EventItem.scss';
 
 const types = {
-  topversion: '版本类型',
-  version: '版本',
-  cycle: '测试循环',
-  folder: '测试阶段',
+  plan: '计划',
+  folder: '文件夹',
 };
 const canResizes = ['plan', 'folder'];
 const CURSORS = {
@@ -113,7 +112,8 @@ class EventItem extends Component {
     const {
       range, itemRange, data,
     } = props;
-    const { type, title } = data;
+    const { type } = data;
+    const { name: title } = data.data;
     let preFlex = 0;
     let flex = 0;
     let lastFlex = 0;
@@ -205,11 +205,18 @@ class EventItem extends Component {
   }
 
   renderItems = () => {
-    const { context: { testPlanStore } } = this.props;
+    const { context: { testPlanStore }, data } = this.props;
+    const { data: { fromDate, toDate } } = data;
     const {
       type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
-    const tipTitle = `${types[type]}：${title}`;
+    const tipTitle = (
+      <span>
+        {`${types[type]}：${title}`}
+        <br />
+        <span style={{ fontSize: 12 }}>{`${moment(fromDate).format('MM月DD日(dddd)')} ~ ${moment(toDate).format('MM月DD日(dddd)')}`}</span>
+      </span>
+    );
     const canResize = canResizes.includes(type) && testPlanStore.testPlanStatus !== 'done';
     return [
       <div style={{ flex: preFlex }} />,
@@ -407,8 +414,8 @@ class EventItem extends Component {
    */
   updateCycle = () => {
     const { context: { testPlanStore } } = this.props;
-    const { preFlex, lastFlex, mode } = this.state;
-    const { range, itemRange, data } = this.props;
+    const { preFlex, lastFlex } = this.state;
+    const { range, data } = this.props;
     const { start, end } = range;
 
     const fromDate = moment(start).add(preFlex, 'days');
@@ -425,6 +432,7 @@ class EventItem extends Component {
     testPlanStore.setCalendarLoading(true);
     // console.log(updateData);
     updateFoldRangeDate(!!folderId, updateData).then((res) => {
+      testPlanStore.loadPlanDetail();
       testPlanStore.loadIssueTree().finally(() => {
         testPlanStore.setCalendarLoading(false);
         this.setState({
