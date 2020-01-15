@@ -28,6 +28,8 @@ import org.springframework.util.ObjectUtils;
  */
 @Component
 public class TestCaseAssembler {
+
+
     @Autowired
     private TestProjectInfoMapper testProjectInfoMapper;
 
@@ -183,9 +185,9 @@ public class TestCaseAssembler {
         if (testCycleCaseInfoVO.getAssignedTo() != null && !Objects.equals(testCycleCaseInfoVO.getAssignedTo(), 0L)) {
             BaseDTO baseDTO = new BaseDTO();
             baseDTO.setCreatedBy(testCycleCaseInfoVO.getAssignedTo());
-            Map<Long, UserMessageDTO> UserMessageDTOMap = getUserMap(baseDTO, null);
-            if (!ObjectUtils.isEmpty(UserMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()))) {
-                testCycleCaseInfoVO.setExecutor(UserMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()));
+            Map<Long, UserMessageDTO> userMessageDTOMap = getUserMap(baseDTO, null);
+            if (!ObjectUtils.isEmpty(userMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()))) {
+                testCycleCaseInfoVO.setExecutor(userMessageDTOMap.get(testCycleCaseInfoVO.getAssignedTo()));
             }
         }
         // 查询附件信息

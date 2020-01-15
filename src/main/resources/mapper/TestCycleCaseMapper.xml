@@ -220,7 +220,7 @@
     </select>
 
 
-    <select id="queryWithAttachAndDefect_count" resultType="java.lang.Long">
+    <select id="queryWithAttachAndDefectCount" resultType="java.lang.Long">
         SELECT count(execute_id) FROM test_cycle_case
         <where>
             <if test="dto!=null and dto.caseId != null">
@@ -435,7 +435,7 @@
 
     <select id="getLastedRank" resultType="java.lang.String">
         SELECT
-            tcc.*
+            tcc.rank
         FROM
             test_cycle_case tcc
         LEFT JOIN test_cycle tc

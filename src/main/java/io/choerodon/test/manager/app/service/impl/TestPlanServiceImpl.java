@@ -317,7 +317,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         }
         // 创建测试循环用例
         Map<Long, TestCycleDTO> testCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getFolderId, Function.identity()));
-        testCycleCaseService.batchInsertByTestCase(testCycleMap,caseIds,testPlanVO.getProjectId());
+        testCycleCaseService.batchInsertByTestCase(testCycleMap,caseIds,testPlanVO.getProjectId(),testPlanVO.getPlanId());
         TestPlanDTO testPlan = new TestPlanDTO();
         testPlan.setPlanId(testPlanVO.getPlanId());
         testPlan.setInitStatus(TestPlanInitStatus.SUCCESS);

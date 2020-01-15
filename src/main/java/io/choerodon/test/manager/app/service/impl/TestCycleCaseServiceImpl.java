@@ -496,7 +496,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     }
 
     @Override
-    public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseIds, Long project) {
+    public void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseIds, Long project,Long planId) {
         int count = testCaseMapper.countByProjectIdAndCaseIds(project, caseIds);
         int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
         for (int i = 1; i <= ceil; i++) {
@@ -513,7 +513,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             Map<Long, List<TestCaseAttachmentDTO>> attachmentMap = attachmentDTOS.stream().collect(Collectors.groupingBy(TestCaseAttachmentDTO::getCaseId));
             // 插入
             Long defaultStatusId = testStatusService.getDefaultStatusId(TestStatusType.STATUS_TYPE_CASE);
-            List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOS, testCycleMap, defaultStatusId);
+            String lastedRank = testCycleCaseMapper.getLastedRank(planId);
+            List<TestCycleCaseDTO> testCycleCaseDTOS = caseToCycleCase(testCaseDTOS, testCycleMap, defaultStatusId,lastedRank);
             bathcInsert(testCycleCaseDTOS);
             int stepCount = testCaseStepMapper.countByProjectIdAndCaseIds(currentIds);
             int ceilStep = (int) Math.ceil(stepCount / AVG_NUM == 0 ? 1 : stepCount / AVG_NUM);
@@ -869,12 +870,11 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return cycleIds;
     }
 
-    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, Map<Long, TestCycleDTO> testCycleMap, Long defaultStatusId) {
+    private List<TestCycleCaseDTO> caseToCycleCase(List<TestCaseDTO> testCaseDTOS, Map<Long, TestCycleDTO> testCycleMap, Long defaultStatusId,String lastedRank) {
         if (CollectionUtils.isEmpty(testCaseDTOS)) {
             return new ArrayList<>();
         }
         List<TestCycleCaseDTO> testCycleCaseDTOS = new ArrayList<>();
-        String preRank = null;
         for (TestCaseDTO v : testCaseDTOS
         ) {
             TestCycleDTO testCycleDTO = testCycleMap.get(v.getFolderId());
@@ -890,8 +890,8 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 testCycleCaseDTO.setLastUpdatedBy(testCycleDTO.getLastUpdatedBy());
                 testCycleCaseDTO.setSummary(v.getSummary());
                 testCycleCaseDTO.setSource("none");
-                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(preRank, null));
-                preRank = testCycleCaseDTO.getRank();
+                testCycleCaseDTO.setRank(RankUtil.Operation.INSERT.getRank(lastedRank, null));
+                lastedRank = testCycleCaseDTO.getRank();
                 testCycleCaseDTOS.add(testCycleCaseDTO);
             }
         }

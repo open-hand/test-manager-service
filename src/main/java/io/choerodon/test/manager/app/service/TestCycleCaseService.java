@@ -50,7 +50,7 @@ public interface TestCycleCaseService {
      * @param caseId
      * @param projectId
      */
-    void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseId,Long projectId);
+    void batchInsertByTestCase(Map<Long, TestCycleDTO> testCycleMap, List<Long> caseId,Long projectId,Long planId);
 
     /**
      * 查看测试执行的详情
