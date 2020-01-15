@@ -56,6 +56,9 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Autowired
     private TestCycleAssembler testCycleAssembler;
+    
+    @Autowired
+    private TestPlanMapper testPlanMapper;
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -66,8 +69,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         testCycleVO.setType("folder");
+        updateTime(testCycleVO);
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
-        testCycleAssembler.updateTime(projectId,modelMapper.map(cycleDTO,TestCycleDTO.class));
+        testCycleAssembler.updateTime(projectId, modelMapper.map(cycleDTO,TestCycleDTO.class));
         return cycleDTO;
     }
 
@@ -421,5 +425,24 @@ public class TestCycleServiceImpl implements TestCycleService {
             }
         }
         return testCycleDTOS;
+    }
+
+    private void updateTime(TestCycleVO testCycleVO){
+        TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
+        if(testCycleVO.getParentCycleId() == 0L){
+            testCycleVO.setFromDate(testPlanDTO.getStartDate());
+            testCycleVO.setToDate(testPlanDTO.getEndDate());
+        }
+        else  {
+            TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
+            if(testCycleDTO.getFromDate() != null && testCycleDTO.getToDate() != null){
+                testCycleVO.setFromDate(testCycleDTO.getFromDate());
+                testCycleVO.setToDate(testCycleDTO.getToDate());
+            }
+            else {
+                testCycleVO.setFromDate(testPlanDTO.getStartDate());
+                testCycleVO.setToDate(testPlanDTO.getEndDate());
+            }
+        }
     }
 }
