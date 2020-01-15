@@ -581,7 +581,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if(CollectionUtils.isEmpty(caseIds)){
             return new ArrayList<>();
         }
-        return testCaseMapper.listByCaseIds(projectId,caseIds,false);
+        return testCaseMapper.listByCaseIds(projectId,caseIds,true);
     }
 
     @Override
