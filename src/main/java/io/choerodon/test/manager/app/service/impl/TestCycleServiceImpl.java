@@ -414,7 +414,7 @@ public class TestCycleServiceImpl implements TestCycleService {
             String prevRank = null;
             if (!CollectionUtils.isEmpty(map.getValue())) {
                 for (TestCycleDTO testCycleDTO : map.getValue()) {
-                    testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(null, prevRank));
+                    testCycleDTO.setRank(RankUtil.Operation.INSERT.getRank(prevRank, null));
                     prevRank = testCycleDTO.getRank();
                     testCycleDTOS.add(testCycleDTO);
                 }
