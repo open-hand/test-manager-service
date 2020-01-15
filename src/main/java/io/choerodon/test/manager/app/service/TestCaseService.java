@@ -47,8 +47,6 @@ public interface TestCaseService {
 
     Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
 
-    ResponseEntity<PageInfo<ProductVersionPageDTO>> getTestCycleVersionInfo(Long projectId, Map<String, Object> searchParamMap);
-
     Long[] getVersionIds(Long projectId);
 
     ProjectDTO getProjectInfo(Long projectId);
@@ -56,10 +54,6 @@ public interface TestCaseService {
     List<Long> queryIssueIdsByOptions(SearchDTO searchDTO, Long projectId);
 
     IssueDTO createTest(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
-
-    List<Long> batchCloneIssue(Long projectId, Long versionId, Long[] issueIds);
-
-    ResponseEntity batchIssueToVersionTest(Long projectId, Long versionId, List<Long> issueIds);
 
     void batchDeleteIssues(Long projectId, List<Long> issueIds);
 
@@ -147,10 +141,6 @@ public interface TestCaseService {
      */
     void updateVersionNum(Long caseId);
 
-    /**
-     * 查询所有用例（迁移标签使用）
-     */
-    List<TestCaseDTO> queryAllCase();
 
     TestCaseDTO importTestCase(IssueCreateDTO issueCreateDTO, Long projectId, String applyType);
 

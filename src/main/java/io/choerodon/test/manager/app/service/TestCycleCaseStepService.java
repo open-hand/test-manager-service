@@ -8,7 +8,6 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import org.springframework.data.domain.Pageable;
 
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
-import io.choerodon.test.manager.api.vo.TestStatusVO;
 import io.choerodon.test.manager.infra.dto.TestCaseStepDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
@@ -48,10 +47,6 @@ public interface TestCycleCaseStepService {
 
     void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);
 
-    void baseInsert(TestCycleCaseStepDTO testCycleCaseStepDTO);
-
-    void batchUpdate(Long executeId, List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
-
     void delete(Long executeStepId);
 
     void create(TestCycleCaseStepVO testCycleCaseStepVO);
@@ -63,18 +58,6 @@ public interface TestCycleCaseStepService {
      * @param caseStepMap
      */
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOList, Map<Long, List<TestCaseStepDTO>> caseStepMap);
-
-    /**
-     * 批量删除
-     *
-     * @param executeStepIds
-     */
-    void batchDelete(List<Long> executeStepIds);
-
-    /**
-     * 批量创建
-     */
-    void batchCreate(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
 
     /**
      * 用例库测试步骤更新到测试执行

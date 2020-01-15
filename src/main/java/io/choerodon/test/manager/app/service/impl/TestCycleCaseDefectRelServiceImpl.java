@@ -1,15 +1,11 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
-import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +36,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
     private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     @Autowired
-    private TestCaseFeignClient testCaseFeignClient;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -69,28 +62,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         Long[] issueLists = lists.stream().map(TestCycleCaseDefectRelVO::getIssueId).filter(Objects::nonNull).distinct().toArray(Long[]::new);
         Map<Long, IssueInfosVO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, false, organizationId);
         lists.forEach(v -> v.setIssueInfosVO(defectMap.get(v.getIssueId())));
-    }
-
-    @Override
-    public void populateDefectAndIssue(TestCycleCaseVO dto, Long projectId, Long organizationId) {
-        Stream<Long> stream = Stream.of(dto.getIssueId());
-        if (!ObjectUtils.isEmpty(dto.getDefects())) {
-            stream = Stream.concat(stream, dto.getDefects().stream().map(TestCycleCaseDefectRelVO::getIssueId));
-        }
-        Long[] issueLists = stream.filter(Objects::nonNull).distinct().toArray(Long[]::new);
-        Map<Long, IssueInfosVO> defectMap = testCaseService.getIssueInfoMap(projectId, issueLists, true, organizationId);
-        dto.setIssueInfosVO(defectMap.get(dto.getIssueId()));
-        Optional.ofNullable(dto.getDefects()).ifPresent(v -> v.forEach(u -> u.setIssueInfosVO(defectMap.get(u.getIssueId()))));
-    }
-
-    @Override
-    public void populateCycleCaseDefectInfo(List<TestCycleCaseVO> testCycleCaseVOS, Long projectId, Long organizationId) {
-        List<TestCycleCaseDefectRelVO> list = new ArrayList<>();
-        for (TestCycleCaseVO v : testCycleCaseVOS) {
-            List<TestCycleCaseDefectRelVO> defects = v.getDefects();
-            list.addAll(defects);
-        }
-        populateDefectInfo(list, projectId, organizationId);
     }
 
     @Override
@@ -132,24 +103,6 @@ public class TestCycleCaseDefectRelServiceImpl implements TestCycleCaseDefectRel
         }
         return true;
     }
-
-//    @Override
-//    public List<TestCycleCaseVO> queryByBug(Long projectId, Long bugId) {
-//        List<TestCycleCaseDTO> res = testCycleCaseDefectRelMapper.queryByBug(projectId, bugId);
-//        if (res != null && !res.isEmpty()) {
-////            List<Long> issueIds = res.stream().map(TestCycleCaseDTO::getCaseId).collect(Collectors.toList());
-////            Map<Long, String> issueMap = testCaseFeignClient.listByIssueIds(projectId, issueIds).getBody().stream().collect(Collectors.toMap(IssueInfoDTO::getIssueId, IssueInfoDTO::getSummary));
-////            List<TestCycleCaseVO> testCycleCaseVOList = new ArrayList<>();
-////            res.forEach(testCycleCaseDTO -> {
-////                TestCycleCaseVO testCycleCaseVO = modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
-////                testCycleCaseVO.setSummary(issueMap.get(testCycleCaseVO.getIssueId()));
-////                testCycleCaseVOList.add(testCycleCaseVO);
-////            });
-//            return modelMapper.map(res, new TypeToken<List<TestCycleCaseVO>>() {}.getType());
-//        } else {
-//            return new ArrayList<>();
-//        }
-//    }
 
     @Override
     public void deleteCaseRel(Long project,Long defectId) {

@@ -4,25 +4,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang.StringUtils;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
-
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -37,7 +22,21 @@ import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.mapper.*;
-import io.choerodon.test.manager.infra.util.*;
+import io.choerodon.test.manager.infra.util.ConvertUtils;
+import io.choerodon.test.manager.infra.util.DBValidateUtil;
+import io.choerodon.test.manager.infra.util.RankUtil;
+import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -46,7 +45,7 @@ import io.choerodon.test.manager.infra.util.*;
 @Transactional(rollbackFor = Exception.class)
 public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
-    private final static double AVG_NUM = 500.00;
+    private static final  double AVG_NUM = 500.00;
 
     @Autowired
     private TestCycleCaseDefectRelService testCycleCaseDefectRelService;
@@ -130,62 +129,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         delete(modelMapper.map(dto, TestCycleCaseDTO.class));
     }
 
-    @Override
-    public void batchDelete(TestCycleCaseVO testCycleCaseVO, Long projectId) {
-        List<TestCycleCaseDTO> list = testCycleCaseMapper.select(modelMapper.map(testCycleCaseVO, TestCycleCaseDTO.class));
-        if (!ObjectUtils.isEmpty(list)) {
-            list.forEach(v -> delete(v.getExecuteId(), projectId));
-        }
-    }
-
-    @Override
-    public PageInfo<TestCycleCaseVO> queryByCycle(TestCycleCaseVO dto, Pageable pageable, Long projectId, Long organizationId) {
-
-        //找到所有的子阶段
-        List<TestCycleDTO> testCycleES = cycleMapper.queryChildCycle(modelMapper.map(dto, TestCycleDTO.class));
-        //装配值进DTO中
-        List<TestCycleCaseVO> testCycleCaseVOS = new ArrayList<>();
-        testCycleCaseVOS.add(dto);
-        testCycleES.forEach(v -> {
-                    TestCycleCaseVO tempDTO = new TestCycleCaseVO();
-                    tempDTO.setAssignedTo(dto.getAssignedTo());
-                    tempDTO.setLastUpdatedBy(dto.getLastUpdatedBy());
-                    tempDTO.setCycleId(v.getCycleId());
-                    tempDTO.setCycleName(v.getCycleName());
-                    testCycleCaseVOS.add(tempDTO);
-                }
-        );
-
-        PageInfo<TestCycleCaseDTO> serviceEPage = queryByFatherCycle(modelMapper.map(testCycleCaseVOS,
-                new TypeToken<List<TestCycleCaseDTO>>() {
-                }.getType()), pageable);
-
-        PageInfo<TestCycleCaseVO> dots = PageUtil.buildPageInfoWithPageInfoList(serviceEPage, modelMapper.map(serviceEPage.getList(), new TypeToken<List<TestCycleCaseVO>>() {
-        }.getType()));
-        List<TestCycleCaseVO> cycleCaseDTOS = dots.getList();
-        Long[] issues = cycleCaseDTOS.stream().map(TestCycleCaseVO::getIssueId).toArray(Long[]::new);
-
-        if (!ObjectUtils.isEmpty(dto.getSearchDTO())) {
-            //先去敏捷筛选issue
-            Map map = new HashMap<String, Long[]>();
-            map.put("issueIds", issues);
-            dto.getSearchDTO().setOtherArgs(map);
-            Map<Long, IssueInfosVO> filterMap = testCaseService.getIssueInfoMap(projectId, dto.getSearchDTO(), false, organizationId);
-            List<TestCycleCaseVO> filterCase = new ArrayList<>();
-            //根据筛选出来的issueId,进行本地筛选
-            for (TestCycleCaseVO caseDTO : cycleCaseDTOS) {
-                if (filterMap.keySet().contains(caseDTO.getIssueId())) {
-                    filterCase.add(caseDTO);
-                }
-            }
-            dots.setList(filterCase);
-        }
-
-        populateCycleCaseWithDefect(dots.getList(), projectId, organizationId, true);
-        populateUsers(dots.getList());
-        return dots;
-    }
-
 
     /**
      * 查询issues的cycleCase 在生成报表处使用
@@ -249,11 +192,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseVOS.forEach(v -> v.setIssueInfosVO(defectMap.get(v.getIssueId())));
     }
 
-
-    private boolean checkoutListLength(int size, int index) {
-        return index >= 0 && index < size;
-    }
-
     private void populateUsers(List<TestCycleCaseVO> users) {
         List<Long> usersId = new ArrayList<>();
         users.stream().forEach(v -> {
@@ -310,17 +248,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return dto;
     }
 
-    @Override
-    public void batchChangeCase(Long projectId, List<TestCycleCaseVO> cycleCaseDTOS) {
-        for (TestCycleCaseVO cycleCaseDTO : cycleCaseDTOS) {
-            testStatusService.populateStatus(cycleCaseDTO);
-            TestCycleCaseVO dto = modelMapper.map(changeStep(projectId, cycleCaseDTO), TestCycleCaseVO.class);
-            userService.populateTestCycleCaseDTO(dto);
-        }
-    }
-
-
-
     public void delete(TestCycleCaseDTO testCycleCaseDTO) {
         Optional.ofNullable(testCycleCaseMapper.select(testCycleCaseDTO)).ifPresent(m ->
                 m.forEach(this::deleteCaseWithSubStep));
@@ -356,31 +283,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         testCycleCaseStepMapper.delete(testCycleCaseStepDTO);
     }
 
-    private PageInfo<TestCycleCaseDTO> queryByFatherCycle(List<TestCycleCaseDTO> testCycleCaseES, Pageable pageable) {
-        List<TestCycleCaseDTO> converts = modelMapper.map(testCycleCaseES, new TypeToken<List<TestCycleCaseDTO>>() {
-        }.getType());
-        List<TestCycleCaseDTO> dtos = queryByFatherCycleWithDataBase(converts, pageable);
-        Long total = 0L;
-        for (TestCycleCaseDTO convert : converts) {
-            total += testCycleCaseMapper.queryWithAttachAndDefect_count(convert);
-        }
-        if (dtos.isEmpty() && total != 0L) {
-            pageable = PageRequest.of(((total.intValue() / pageable.getPageSize()) - 1), pageable.getPageSize(), pageable.getSort());
-            dtos = queryByFatherCycleWithDataBase(converts, pageable);
-        }
-        Page page = new Page<>(pageable.getPageNumber(), pageable.getPageSize());
-        page.setTotal(total);
-        page.addAll(dtos);
-        return page.toPageInfo();
-    }
-
-    private List<TestCycleCaseDTO> queryByFatherCycleWithDataBase(List<TestCycleCaseDTO> converts, Pageable pageable) {
-        return testCycleCaseMapper.queryByFatherCycleWithAttachAndDefect(converts,
-                (pageable.getPageNumber() - 1) * pageable.getPageSize(),
-                pageable.getPageSize(), PageUtil.sortToSql(pageable.getSort()));
-    }
-
-
+    @Override
     public List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable) {
         return testCycleCaseMapper.queryWithAttachAndDefect(convert, (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
     }
@@ -474,9 +377,9 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
             Map<Long, CaseCompareVO> cycleCaseMap = testCycleCaseMapper.queryTestCaseMap(Arrays.asList(testCycleCase.getExecuteId()));
             Map<Long, CaseCompareVO> caseMap = testCaseMapper.queryTestCaseMap(Arrays.asList(testCycleCase.getCaseId()), Arrays.asList(testCycleCase.getExecuteId()));
             List<TestCycleCaseDTO> testCycleCaseDTOS = Arrays.asList(testCycleCase);
-            testCycleCaseDTOS.forEach(CycleCase -> {
-                CaseCompareVO cycleCaseVo = cycleCaseMap.get(CycleCase.getCaseId());
-                CaseCompareVO caseVo = caseMap.get(CycleCase.getCaseId());
+            testCycleCaseDTOS.forEach(cycleCase -> {
+                CaseCompareVO cycleCaseVo = cycleCaseMap.get(cycleCase.getCaseId());
+                CaseCompareVO caseVo = caseMap.get(cycleCase.getCaseId());
                 Boolean changeCase = false;
                 Boolean changeAttach = false;
                 Boolean changeStep = false;
@@ -514,7 +417,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         }.getType()));
         List<TestFolderCycleCaseVO> testFolderCycleCaseVOS = caseDTOPageInfo.getList().stream().map(v -> testCaseAssembler.setAssianUser(v,userMap)).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(testFolderCycleCaseVOS)) {
-            return new PageInfo<TestFolderCycleCaseVO>();
+            return new PageInfo<>();
         }
 
         List<Long> executedIds = testFolderCycleCaseVOS.stream().map(TestFolderCycleCaseVO::getExecuteId).collect(Collectors.toList());
@@ -742,7 +645,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(testCaseDTO.getProjectId(), testCaseDTO.getCaseId());
                 if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
                         List<TestCycleCaseDTO> list = testCycleCaseDTOS.stream().filter(v -> !testCycleCaseDTO.getExecuteId().equals(v.getExecuteId())).collect(Collectors.toList());
-                        testCaseAssembler.AutoAsyncCase(list,false,true,false);
+                        testCaseAssembler.autoAsyncCase(list,false,true,false);
                 }
             }
 
@@ -769,10 +672,10 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         Map<Long, List<TestCaseDTO>> folderCaseMap = testCaseDTOS.stream().collect(Collectors.groupingBy(TestCaseDTO::getFolderId));
         List<Long> existCaseIds = testCycleCaseMapper.listByPlanId(planId);
         List<TestCaseDTO> list = new ArrayList<>();
-        for (Long key : map.keySet()) {
+        for (Map.Entry<Long,CaseSelectVO> entry : map.entrySet()) {
             List<Long> insertCaseIds = new ArrayList<>();
-            CaseSelectVO caseSelectVO = map.get(key);
-            List<TestCaseDTO> caseList = folderCaseMap.get(key);
+            CaseSelectVO caseSelectVO = entry.getValue();
+            List<TestCaseDTO> caseList = folderCaseMap.get(entry.getKey());
             if (CollectionUtils.isEmpty(caseList)) {
                 continue;
             }
@@ -793,9 +696,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
                 }
 
             }
-            insertCaseIds.forEach(v -> {
-                list.add(caseMap.get(v));
-            });
+            insertCaseIds.forEach(v -> list.add(caseMap.get(v)));
         }
         TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(cycleId);
         if (CollectionUtils.isEmpty(list)) {
@@ -848,9 +749,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
 
             bathcInsert(testCycleCaseDTOS);
             Map<Long, Long> caseIdMap = new HashMap<>();
-            testCycleCaseDTOS.forEach(v -> {
-                caseIdMap.put(v.getLastExecuteId(), v.getExecuteId());
-            });
+            testCycleCaseDTOS.forEach(v -> caseIdMap.put(v.getLastExecuteId(), v.getExecuteId()));
             // 复制步骤
             testCycleCaseStepService.cloneStep(caseIdMap, olderExecuteIds);
             // 复制附件
@@ -909,6 +808,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return modelMapper.map(testCycleCaseDTO, TestCycleCaseVO.class);
     }
 
+    @Override
     public void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO) {
         TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
         testCaseStepDTO.setIssueId(testCycleCaseDTO.getCaseId());
@@ -934,30 +834,6 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         return testCycleCaseDTO;
     }
 
-    /**
-     * 获取项目下所有cycleId
-     *
-     * @param projectId
-     * @return
-     */
-    private List<Long> getCycleIdByProjectId(Long projectId) {
-        Long[] versionIds = testCaseService.getVersionIds(projectId);
-        if (ObjectUtils.isEmpty(versionIds)) {
-            return new ArrayList<>();
-        }
-        return selectCyclesInVersions(versionIds);
-    }
-
-
-    private List<Long> selectCyclesInVersions(Long[] versionIds) {
-        Assert.notNull(versionIds, "error.query.cycle.In.Versions.not.null");
-        versionIds = Stream.of(versionIds).filter(Objects::nonNull).toArray(Long[]::new);
-
-        if (versionIds.length > 0) {
-            return cycleMapper.selectCyclesInVersions(versionIds);
-        }
-        return new ArrayList<>();
-    }
 
     @Override
     public TestCycleCaseDTO baseInsert(TestCycleCaseDTO testCycleCaseDTO) {

@@ -58,7 +58,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
         }
     }
 
@@ -84,7 +84,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
            testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
            if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-                testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+                testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
            }
         }
         return modelMapper.map(testCaseStepDTO, TestCaseStepVO.class);
@@ -123,7 +123,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
         if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
-            testCaseAssembler.AutoAsyncCase(testCycleCaseDTOS,false,true,false);
+            testCaseAssembler.autoAsyncCase(testCycleCaseDTOS,false,true,false);
         }
         return testCaseStepVOS;
     }

@@ -2,9 +2,6 @@ package io.choerodon.test.manager.infra.mapper;
 
 import java.util.Date;
 import java.util.List;
-
-import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
-import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import org.apache.ibatis.annotations.Param;
 
 import io.choerodon.mybatis.common.Mapper;
