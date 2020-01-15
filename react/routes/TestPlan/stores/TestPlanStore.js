@@ -1,7 +1,6 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import moment from 'moment';
 import { Choerodon } from '@choerodon/boot';
 import TestPlanTreeStore from './TestPlanTreeStore';
 import { getStatusList } from '@/api/TestStatusApi';
@@ -27,44 +26,6 @@ class TestPlanStore extends TestPlanTreeStore {
     @action setMainActiveTab = (mainActiveTab) => {
       this.mainActiveTab = mainActiveTab;
     }
-
-    @observable times = [];
-
-    @action setTimes = (times) => {
-      this.times = times;
-    }
-
-    updateTimes = (data) => {
-      const times = [];
-      this.generateTimes(data, times);
-      this.setTimes(times);
-    }
-
-  getAllChildren = parent => this.treeData.treeFolder.filter((item) => {
-    return parent.children.includes(item.id);
-  });
-
-
-  generateTimes = (data, times) => {
-    for (let i = 0; i < data.length; i += 1) {
-      const node = data[i];
-      const {
-        fromDate, toDate, children,
-      } = node.data;
-
-      times.push({
-        ...node,
-        children,
-        type: this.isPlan(node.id) ? 'plan' : 'folder',
-        start: `${moment(moment.min(fromDate)).format('YYYY-MM-DD')} 00:00:00`,
-        end: `${moment(moment.max(toDate)).format('YYYY-MM-DD')} 23:59:59`,
-      });
-
-      if (node.children && node.children.length > 0) {
-        this.generateTimes(this.getAllChildren(node), times);
-      }
-    }
-  }
 
     @observable tableLoading = false;
 

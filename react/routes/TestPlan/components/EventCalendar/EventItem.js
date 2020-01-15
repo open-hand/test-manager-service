@@ -7,7 +7,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { Tooltip } from 'choerodon-ui';
 import Store from '../../stores';
-import { editFolder } from '../../../../api/TestPlanApi';
+import { updateFoldRangeDate } from '../../../../api/TestPlanApi';
 import './EventItem.scss';
 
 const types = {
@@ -205,11 +205,12 @@ class EventItem extends Component {
   }
 
   renderItems = () => {
+    const { context: { testPlanStore } } = this.props;
     const {
       type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
     const tipTitle = `${types[type]}：${title}`;
-    const canResize = canResizes.includes(type);
+    const canResize = canResizes.includes(type) && testPlanStore.testPlanStatus !== 'done';
     return [
       <div style={{ flex: preFlex }} />,
       <div
@@ -416,21 +417,22 @@ class EventItem extends Component {
     const [planId, folderId] = testPlanStore.getId(data.id);
 
     const updateData = {
-      id: folderId || planId,
+      cycleId: folderId || planId,
       objectVersionNumber: data.data.objectVersionNumber,
       fromDate: fromDate ? fromDate.format('YYYY-MM-DD HH:mm:ss') : null,
       toDate: toDate ? toDate.format('YYYY-MM-DD HH:mm:ss') : null,
     };
     testPlanStore.setCalendarLoading(true);
     // console.log(updateData);
-    editFolder(updateData).then((res) => {
-      testPlanStore.getTree().finally(() => {
+    updateFoldRangeDate(!!folderId, updateData).then((res) => {
+      testPlanStore.loadIssueTree().finally(() => {
+        testPlanStore.setCalendarLoading(false);
         this.setState({
           done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现
         });
       });
     }).catch((err) => {
-      Choerodon.prompt('网络错误');
+      Choerodon.prompt('更新失败');
       testPlanStore.setCalendarLoading(false);
       this.setState({
         done: true, // 不在mouseup设置而是延迟设置false,防止旧值闪现

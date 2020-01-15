@@ -16,14 +16,14 @@ class DragTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      data: props.dataSource,
       filteredColumns: [],
     };
   }
 
   componentWillReceiveProps(nextProps) {
     // 更新数据并避免拖动后的跳动
-    if (!(this.props.loading === false && nextProps.loading === true)) {
+    if (this.props.loading === true && nextProps.loading === false) {
       this.setState({ data: nextProps.dataSource });
     }
   }
@@ -65,8 +65,8 @@ class DragTable extends Component {
   }
 
   onDragStart = () => {
-    // document.addEventListener('keydown', (e) => { 
-    //   e.preventDefault();  
+    // document.addEventListener('keydown', (e) => {
+    //   e.preventDefault();
     //   e.stopImmediatePropagation();
     //   console.log(e.keyCode);
     // });
@@ -117,7 +117,7 @@ class DragTable extends Component {
 
   renderThead = () => {
     const {
-      columns, checkedMap, dataSource, checkField, 
+      columns, checkedMap, dataSource, checkField,
     } = this.props;
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (

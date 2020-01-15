@@ -124,7 +124,7 @@ export function updateExecute(data) {
 }
 
 /**
- * 
+ *
  *
  * @export
  * @param {*} executeId
@@ -151,4 +151,8 @@ export function ignoreUpdate(executed) {
 
 export function getPlanList() {
   return request.get(`/test/v1/projects/${getProjectId()}/plan/project_plan`);
+}
+
+export function updateFoldRangeDate(isCycle, data) {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/operate_calendar?isCycle=${isCycle}`, data);
 }

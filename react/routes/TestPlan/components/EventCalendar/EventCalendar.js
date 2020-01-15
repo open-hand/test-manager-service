@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import isEqual from 'react-fast-compare';
 import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { DatePicker, Spin } from 'choerodon-ui';
@@ -22,7 +23,7 @@ class EventCalendar extends Component {
     let endDate = moment();
     if (times && times.length > 0) {
       baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
-      endDate = moment.max(times.map(time => moment(time.end)));
+      endDate = times[0].end ? moment(times[0].end).startOf('day') : moment();
     }
 
     this.currentDate = baseDate;
@@ -159,57 +160,56 @@ class EventCalendar extends Component {
   }
 
   render() {
-    // console.log('render');
     const { showMode, times, calendarLoading } = this.props;
     const { context: { testPlanStore } } = this.props;
     const { start, end } = this.calculateTime();
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
     const dateFormat = 'YYYY/MM/DD';
-    return calendarLoading ? (
-      <Spin spining={calendarLoading} />
-    ) : (
-      <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
-        {/* 头部 */}
-        <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
-          <div className="c7ntest-EventCalendar-header-title">
-            <div className="c7ntest-EventCalendar-header-skip">
-              <RangePicker
-                // placement="bottomRight"
-                onChange={this.handleRangeChange}
-                defaultValue={[start, end]}
-                format={dateFormat}
-              />
-            </div>
-          </div>
-          <div className="c7ntest-flex-space" />
-        </div>
-        <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>
-          <div style={{
-            display: 'table', minWidth: '100%', minHeight: '100%', position: 'relative',
-          }}
-          >
-            <div className="c7ntest-EventCalendar-fixed-header">
-              {timeArray.map((m, i) => (<CalendarBackItem date={m} />))}
-            </div>
-            <div className="c7ntest-EventCalendar-eventContainer">
-              <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
-                {
-                  timeArray.map((m, i) => <div className="c7ntest-EventCalendar-BackItems-item" />)
-                }
-              </div>
-              {times.map(event => (
-                <EventItem
-                  key={event.key}
-                  itemRange={moment.range(event.start, event.end)}
-                  data={event}
-                  range={range}
+    return (
+      <Spin spinning={calendarLoading}>
+        <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
+          {/* 头部 */}
+          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
+            <div className="c7ntest-EventCalendar-header-title">
+              <div className="c7ntest-EventCalendar-header-skip">
+                <RangePicker
+                  // placement="bottomRight"
+                  onChange={this.handleRangeChange}
+                  defaultValue={[start, end]}
+                  format={dateFormat}
                 />
-              ))}
+              </div>
+            </div>
+            <div className="c7ntest-flex-space" />
+          </div>
+          <div role="none" className="c7ntest-EventCalendar-content" ref={this.saveRef('scroller')} onMouseDown={this.handleMouseDown}>
+            <div style={{
+              display: 'table', minWidth: '100%', minHeight: '100%', position: 'relative',
+            }}
+            >
+              <div className="c7ntest-EventCalendar-fixed-header">
+                {timeArray.map(m => (<CalendarBackItem date={m} />))}
+              </div>
+              <div className="c7ntest-EventCalendar-eventContainer">
+                <div className="c7ntest-EventCalendar-BackItems" ref={this.saveRef('BackItems')}>
+                  {
+                    timeArray.map(() => <div className="c7ntest-EventCalendar-BackItems-item" />)
+                  }
+                </div>
+                {times.map(event => (
+                  <EventItem
+                    key={event.key}
+                    itemRange={moment.range(event.start, event.end)}
+                    data={event}
+                    range={range}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Spin>
     );
   }
 }

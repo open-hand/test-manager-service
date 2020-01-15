@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import {
   Page, Header, Content, Breadcrumb, Choerodon,
 } from '@choerodon/boot';
-import { Icon, Tabs, Card, DatePicker } from 'choerodon-ui';
+import { Icon, Tabs, Card } from 'choerodon-ui';
 import { Modal, Button } from 'choerodon-ui/pro';
 import {
   deleteExecute, updateExecute, comfirmUpdate, ignoreUpdate,
@@ -31,7 +31,6 @@ import { getDragRank, executeDetailLink } from '../../../common/utils';
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
-const { RangePicker } = DatePicker;
 const updateRemindModal = Modal.key();
 let updateModal;
 
@@ -374,7 +373,7 @@ function TestPlanHome({ history }) {
                         {
                           testPlanStore.isPlan(currentCycle.id) ? (
                             <TabPane tab="计划日历" key="testPlanSchedule">
-                              <EventCalendar key={`${currentCycle.id}`} showMode="multi" times={times} calendarLoading={calendarLoading} />
+                              <EventCalendar key={currentCycle.id} showMode="multi" times={times} calendarLoading={calendarLoading} />
                             </TabPane>
                           ) : ''
                         }
