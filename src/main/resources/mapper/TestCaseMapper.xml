@@ -174,7 +174,6 @@
                #{caseId}
            </foreach>
        </if>
-       order by case_id DESC
    </select>
 
     <select id="excelCaseList" resultMap="BaseResultMap">

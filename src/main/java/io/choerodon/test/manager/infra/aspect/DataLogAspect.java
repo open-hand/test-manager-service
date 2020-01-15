@@ -89,12 +89,6 @@ public class DataLogAspect {
                     case DataLogConstants.CASE_UPDATE:
                         handleCaseDataLog(args);
                         break;
-                    case DataLogConstants.LABEL_CREATE:
-                        handleLabelCreateLog(args);
-                        break;
-                    case DataLogConstants.LABEL_DELETE:
-                        handleLabelDeleteLog(args);
-                        break;
                     case DataLogConstants.CREATE_ATTACHMENT:
                         result = handleAttachmentCreateLog(pjp,args);
                         break;
@@ -143,10 +137,11 @@ public class DataLogAspect {
                     attachNames.addAll((List<String>) arg);
                 }
             }
+
             if(!CollectionUtils.isEmpty(testCaseAttachmentDTOS)){
                 testCaseAttachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, null, v.getUrl(), null, null));
              }
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             throwable.printStackTrace();
         }
     }
@@ -167,7 +162,7 @@ public class DataLogAspect {
                 List<TestCaseAttachmentDTO> attachmentDTOS = testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
                 attachmentDTOS.stream().filter(v -> !attachNames.contains(v.getFileName())).forEach( v -> createDataLog(v.getProjectId(), v.getCaseId(), FIELD_ATTACHMENT, v.getUrl(), null, v.getAttachmentId().toString(), null));
             }
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             throwable.printStackTrace();
         }
     }
@@ -210,34 +205,6 @@ public class DataLogAspect {
         return  result;
     }
 
-    private void handleLabelDeleteLog(Object[] args) {
-        try {
-            TestCaseLabelRelDTO testCaseLabelRelDTO = null;
-            for (Object arg : args) {
-                if (arg instanceof TestCaseLabelRelDTO) {
-                    testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
-                }
-            }
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
-    private void handleLabelCreateLog(Object[] args) {
-        try {
-            TestCaseLabelRelDTO testCaseLabelRelDTO = null;
-            for (Object arg : args) {
-                if (arg instanceof TestCaseLabelRelDTO) {
-                    testCaseLabelRelDTO = (TestCaseLabelRelDTO) arg;
-                }
-            }
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-    }
-
     @SuppressWarnings("checkstyle:LineLength")
     private void handleCaseMoveFolder(Object[] args) {
         try {
@@ -269,7 +236,7 @@ public class DataLogAspect {
                 });
             }
 
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             throwable.printStackTrace();
         }
     }
@@ -285,13 +252,13 @@ public class DataLogAspect {
                     field = Arrays.asList((String[]) arg);
                 }
             }
-            if (!ObjectUtils.isEmpty(testCaseRepVO) && !field.isEmpty()) {
+            if (!ObjectUtils.isEmpty(testCaseRepVO) && !CollectionUtils.isEmpty(field)) {
                 TestCaseDTO testCaseDTO = testCaseMapper.selectByPrimaryKey(testCaseRepVO.getCaseId());
                 handleIssueSummary(field, testCaseDTO, testCaseRepVO);
                 handleIssueDescription(field, testCaseDTO, testCaseRepVO);
                 handleIssueFolder(field, testCaseDTO, testCaseRepVO);
             }
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             throwable.printStackTrace();
         }
     }

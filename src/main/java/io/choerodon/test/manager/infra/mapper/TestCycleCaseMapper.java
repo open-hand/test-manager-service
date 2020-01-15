@@ -30,7 +30,7 @@ public interface TestCycleCaseMapper extends Mapper<TestCycleCaseDTO> {
      */
     List<TestCycleCaseDTO> queryByFatherCycleWithAttachAndDefect(@Param("dtos") List<TestCycleCaseDTO> testCycleCaseDTOS, @Param("page") int page, @Param("pageSize") int pageSize, @Param("sort") String sort);
 
-    Long queryWithAttachAndDefect_count(@Param("dto") TestCycleCaseDTO testCycleCaseDTO);
+    Long queryWithAttachAndDefectCount(@Param("dto") TestCycleCaseDTO testCycleCaseDTO);
 
     List<TestCycleCaseDTO> filter(Map map);
 
