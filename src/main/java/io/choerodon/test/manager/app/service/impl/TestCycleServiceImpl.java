@@ -105,6 +105,9 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Autowired
     private TestCycleAssembler testCycleAssembler;
 
+    @Autowired
+    private TestPlanServcie testPlanServcie;
+
 
     /**
      * 新建cycle，folder 并同步folder下的执行
@@ -968,6 +971,21 @@ public class TestCycleServiceImpl implements TestCycleService {
         testTreeIssueFolderVO.setTreeFolder(treeFolder);
         testTreeIssueFolderVO.setRootIds(root);
         return testTreeIssueFolderVO;
+    }
+
+    @Override
+    public void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle) {
+        if(isCycle){
+            update(projectId,testCycleVO);
+        }
+        else {
+            TestPlanVO testPlanVO = new TestPlanVO();
+            testPlanVO.setPlanId(testCycleVO.getCycleId());
+            testPlanVO.setStartDate(testCycleVO.getFromDate());
+            testPlanVO.setEndDate(testCycleVO.getToDate());
+            testPlanVO.setObjectVersionNumber(testCycleVO.getObjectVersionNumber());
+            testPlanServcie.update(projectId,testPlanVO);
+        }
     }
 
     private void bulidTree(TestCycleDTO cycle, Long planId, List<Long> root, Map<Long, List<Long>> parentMap, List<TestTreeFolderVO> treeFolder) {

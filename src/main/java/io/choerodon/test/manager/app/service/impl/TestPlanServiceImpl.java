@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.choerodon.test.manager.app.assembler.TestCycleAssembler;
 import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -71,8 +72,11 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Autowired
     private TestCaseMapper testCaseMapper;
-    @Override
 
+    @Autowired
+    private TestCycleAssembler testCycleAssembler;
+
+    @Override
     public TestPlanVO update(Long projectId, TestPlanVO testPlanVO) {
         TestPlanDTO testPlan = testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId());
         if (TestPlanStatus.DOING.getStatus().equals(testPlan.getInitStatus())) {
@@ -83,6 +87,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
             throw new CommonException("error.update.plan");
         }
+        testCycleAssembler.updatePlanTime(projectId,testPlanVO);
         return modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId()), TestPlanVO.class);
     }
 
@@ -537,15 +542,15 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         Set<Long> unSelectFolderIds = new HashSet<>();
         List<Long> unSelectCaseIds= new ArrayList<>();
         Set<Long> allSelectFolderIds = new HashSet<>();
-        for (Map.Entry<Long, CaseSelectVO> key : maps.entrySet()) {
-            CaseSelectVO caseSelectVO = maps.get(key);
+        for (Map.Entry<Long, CaseSelectVO> entry : maps.entrySet()) {
+            CaseSelectVO caseSelectVO = entry.getValue();
             // 判断是否是自选
             if (!caseSelectVO.getCustom()) {
-                allSelectFolderIds.add(key.getKey());
+                allSelectFolderIds.add(entry.getKey());
             } else {
                 // 判断是反选还是正向选择
                 if (CollectionUtils.isEmpty(caseSelectVO.getSelected())) {
-                    unSelectFolderIds.add(key.getKey());
+                    unSelectFolderIds.add(entry.getKey());
                     unSelectCaseIds.addAll(caseSelectVO.getUnSelected());
                 } else {
                     caseIds.addAll(caseSelectVO.getSelected());
