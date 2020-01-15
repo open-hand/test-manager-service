@@ -3,10 +3,7 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
-import io.choerodon.test.manager.api.vo.FormStatusVO;
-import io.choerodon.test.manager.api.vo.TestPlanTreeVO;
-import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
+import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 
 /**
@@ -87,4 +84,12 @@ public interface TestPlanServcie {
      * @return
      */
     TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode);
+
+    /**
+     * 改变计划日历时间
+     * @param projectId
+     * @param testCycleVO
+     * @param isCycle
+     */
+    void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle);
 }

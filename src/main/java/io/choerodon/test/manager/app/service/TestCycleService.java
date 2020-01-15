@@ -93,6 +93,4 @@ public interface TestCycleService {
     String moveCycle(Long projectId, Long targetCycleId,TestCycleVO testCycleVO);
 
     void baseUpdate(TestCycleDTO testCycleDTO);
-
-    void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle);
 }

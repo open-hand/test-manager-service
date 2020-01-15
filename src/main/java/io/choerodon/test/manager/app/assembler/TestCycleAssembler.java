@@ -54,7 +54,6 @@ public class TestCycleAssembler {
         if (cycleDTO.getFromDate() == null && cycleDTO.getToDate() == null) {
             return;
         }
-
         TestPlanDTO testPlanVO = testPlanMapper.selectByPrimaryKey(cycleDTO.getPlanId());
         List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, cycleDTO.getPlanId());
         if (CollectionUtils.isEmpty(testCycleDTOS)) {

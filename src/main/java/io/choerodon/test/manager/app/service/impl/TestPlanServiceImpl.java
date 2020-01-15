@@ -92,6 +92,21 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
+    public void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle) {
+        if(isCycle){
+            testCycleService.update(projectId,testCycleVO);
+        }
+        else {
+            TestPlanVO testPlanVO = new TestPlanVO();
+            testPlanVO.setPlanId(testCycleVO.getCycleId());
+            testPlanVO.setStartDate(testCycleVO.getFromDate());
+            testPlanVO.setEndDate(testCycleVO.getToDate());
+            testPlanVO.setObjectVersionNumber(testCycleVO.getObjectVersionNumber());
+            update(projectId,testPlanVO);
+        }
+    }
+
+    @Override
     @Async
     public void delete(Long projectId, Long planId) {
         List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(Arrays.asList(planId),projectId);
