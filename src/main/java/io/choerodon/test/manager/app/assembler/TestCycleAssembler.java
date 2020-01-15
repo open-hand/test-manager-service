@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
-import io.choerodon.test.manager.app.service.TestCycleService;
-import io.choerodon.test.manager.app.service.TestPlanServcie;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
+import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 import io.choerodon.test.manager.infra.mapper.TestCycleMapper;
+import io.choerodon.test.manager.infra.mapper.TestPlanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +23,9 @@ import org.springframework.util.CollectionUtils;
 @Transactional(rollbackFor = Exception.class)
 public class TestCycleAssembler {
     @Autowired
-    private TestCycleService testCycleService;
-    @Autowired
     private TestCycleMapper cycleMapper;
     @Autowired
-    private TestPlanServcie testPlanServcie;
+    private TestPlanMapper testPlanMapper;
 
     public void updatePlanTime(Long projectId,TestPlanVO testPlanVO){
         List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, testPlanVO.getPlanId());
@@ -40,20 +39,23 @@ public class TestCycleAssembler {
         }
         testCycle.forEach(v -> planLookDown(cycleMap,testPlanVO,v));
     }
+
     private void planLookDown(Map<Long, List<TestCycleDTO>> cycleMap,TestPlanVO testPlanVO,TestCycleDTO testCycleDTO){
         Boolean isChange = checkPlanTimeToLookDown(testCycleDTO, testPlanVO);
-        if(isChange){
+        if(Boolean.TRUE.equals(isChange)){
             List<TestCycleDTO> testCycleDTOS = cycleMap.get(testCycleDTO.getCycleId());
             if(!CollectionUtils.isEmpty(testCycleDTOS)){
                 testCycleDTOS.forEach(v -> planLookDown(cycleMap,testPlanVO,v));
             }
         }
     }
+
     public void updateTime(Long projectId, TestCycleDTO cycleDTO) {
         if (cycleDTO.getFromDate() == null && cycleDTO.getToDate() == null) {
             return;
         }
-        TestPlanVO testPlanVO = testPlanServcie.queryPlan(projectId, cycleDTO.getPlanId());
+
+        TestPlanDTO testPlanVO = testPlanMapper.selectByPrimaryKey(cycleDTO.getPlanId());
         List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, cycleDTO.getPlanId());
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             checkPlanTime(cycleDTO, testPlanVO);
@@ -72,22 +74,21 @@ public class TestCycleAssembler {
         if (!CollectionUtils.isEmpty(testCycleDTOS)) {
             testCycleDTOS.forEach(compareCycle -> {
                 Boolean isChange = checkTime(cycleDTO, compareCycle, false);
-                if (isChange) {
+                if (Boolean.TRUE.equals(isChange)) {
                     lookDown(cycleMap, compareCycle);
                 }
             });
         }
-
     }
 
-    private void lookUp(Map<Long, TestCycleDTO> map, TestCycleDTO cycleDTO, TestPlanVO testPlanDTO) {
+    private void lookUp(Map<Long, TestCycleDTO> map, TestCycleDTO cycleDTO, TestPlanDTO testPlanDTO) {
         Long parentCycleId = cycleDTO.getParentCycleId();
         if (parentCycleId == 0L) {
             checkPlanTime(cycleDTO, testPlanDTO);
         } else {
             TestCycleDTO testCycleDTO = map.get(parentCycleId);
             Boolean isChange = checkTime(cycleDTO, testCycleDTO, true);
-            if (isChange) {
+            if (Boolean.TRUE.equals(isChange)) {
                 lookUp(map, testCycleDTO, testPlanDTO);
             }
         }
@@ -99,10 +100,10 @@ public class TestCycleAssembler {
             // 更新
             isChange = true;
             compareCycle.setFromDate(cycleDTO.getFromDate());
-            compareCycle.setFromDate(cycleDTO.getFromDate());
+            compareCycle.setToDate(cycleDTO.getToDate());
         }
         else {
-            if (isUp) {
+            if (Boolean.TRUE.equals(isUp)) {
                 if (cycleDTO.getFromDate().before(compareCycle.getFromDate())) {
                     isChange = true;
                     compareCycle.setFromDate(cycleDTO.getFromDate());
@@ -122,11 +123,12 @@ public class TestCycleAssembler {
                 }
             }
         }
-        if (isChange) {
-            testCycleService.baseUpdate(compareCycle);
+        if (Boolean.TRUE.equals(isChange)) {
+            updateCycle(compareCycle);
         }
         return isChange;
     }
+
     private Boolean checkPlanTimeToLookDown(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO){
         Boolean isChange = false;
         if (cycleDTO.getFromDate() == null || cycleDTO.getToDate() == null) {
@@ -145,13 +147,13 @@ public class TestCycleAssembler {
                 cycleDTO.setToDate(testPlanDTO.getEndDate());
             }
         }
-        if (isChange) {
-            testCycleService.baseUpdate(cycleDTO);
+        if (Boolean.TRUE.equals(isChange)) {
+            updateCycle(cycleDTO);
         }
         return isChange;
     }
 
-    private void checkPlanTime(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO) {
+    private void checkPlanTime(TestCycleDTO cycleDTO, TestPlanDTO testPlanDTO) {
         Boolean isChange = false;
         if (cycleDTO.getFromDate().before(testPlanDTO.getStartDate())) {
             isChange = true;
@@ -161,8 +163,20 @@ public class TestCycleAssembler {
             isChange = true;
             testPlanDTO.setEndDate(cycleDTO.getToDate());
         }
-        if (isChange) {
-            testPlanServcie.update(testPlanDTO.getProjectId(), testPlanDTO);
+        if (Boolean.TRUE.equals(isChange)) {
+            updatePlan(testPlanDTO);
+        }
+    }
+
+     private void updatePlan(TestPlanDTO testPlanDTO){
+         if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
+             throw new CommonException("error.update.plan");
+         }
+     }
+
+    private void updateCycle(TestCycleDTO cycleDTO){
+        if (cycleMapper.updateByPrimaryKeySelective(cycleDTO) != 1) {
+            throw new CommonException("error.update.cycle");
         }
     }
 }
