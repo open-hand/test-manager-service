@@ -325,7 +325,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             pageRepList.setList(new ArrayList<>());
             return pageRepList;
         }
-        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList());
+        List<TestCaseDTO> testCaseDTOS = testCaseMapper.listByCaseIds(projectId, longPageInfo.getList(),true);
         List<TestCaseRepVO> repVOS = testCaseAssembler.listDtoToRepVo(projectId,testCaseDTOS,planId);
         pageRepList.setList(repVOS);
         return pageRepList;
@@ -581,7 +581,7 @@ public class TestCaseServiceImpl implements TestCaseService {
         if(CollectionUtils.isEmpty(caseIds)){
             return new ArrayList<>();
         }
-        return testCaseMapper.listByCaseIds(projectId,caseIds);
+        return testCaseMapper.listByCaseIds(projectId,caseIds,true);
     }
 
     @Override

@@ -30,7 +30,7 @@ public interface TestCaseMapper extends Mapper<TestCaseDTO> {
 
     List<Long> queryFolderId(@Param("projectId") Long projectId);
 
-    List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds);
+    List<TestCaseDTO> listByCaseIds(@Param("projectId") Long projectId ,@Param("caseIds") List<Long> caseIds,@Param("isDesc")Boolean isDesc);
 
     List<ExcelCaseVO> excelCaseList(@Param("projectId") Long projectId , @Param("caseIds") List<Long> caseIds);
 
