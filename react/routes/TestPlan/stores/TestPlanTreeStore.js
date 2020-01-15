@@ -2,13 +2,14 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
+import moment from 'moment';
 import { find, pull } from 'lodash';
 import { getPlanTree } from '@/api/TestPlanApi';
 // import { getIssueTree } from '@/api/IssueManageApi';
 // 数据处理成tree形式，便于查看数据
 function makeTree(rootIds, treeFolder) {
   const map = new Map(treeFolder.map(item => ([item.id, item])));
-  const transverse = (item) => {   
+  const transverse = (item) => {
     item.children = item.children.map(id => transverse(map.get(id)));
     return item;
   };
@@ -98,6 +99,41 @@ class TestPlanTreeStore {
     this.selectedKeys = selectedKeys;
   }
 
+  @observable times = [];
+
+  @action setTimes = (times) => {
+    this.times = times;
+  }
+
+  updateTimes = (data) => {
+    const times = [];
+    this.generateTimes(data, times);
+    this.setTimes(times);
+  }
+
+  getAllChildren = parent => this.treeData.treeFolder.filter(item => parent.children.includes(item.id));
+
+  generateTimes = (data, times) => {
+    for (let i = 0; i < data.length; i += 1) {
+      const node = data[i];
+      const {
+        fromDate, toDate, children,
+      } = node.data;
+
+      times.push({
+        ...node,
+        children,
+        type: this.isPlan(node.id) ? 'plan' : 'folder',
+        start: `${moment(moment.min(fromDate)).format('YYYY-MM-DD')} 00:00:00`,
+        end: `${moment(moment.max(toDate)).format('YYYY-MM-DD')} 23:59:59`,
+      });
+
+      if (node.children && node.children.length > 0) {
+        this.generateTimes(this.getAllChildren(node), times);
+      }
+    }
+  }
+
   async loadIssueTree(defaultSelectId) {
     this.setTreeLoading(true);
     const treeData = await getPlanTree(this.testPlanStatus);
@@ -131,11 +167,13 @@ class TestPlanTreeStore {
     };
     // window.console.log(makeTree(toJS(this.treeData.rootIds), toJS(this.treeData.treeFolder)));
     if (selectedId) {
-      this.setCurrentCycle(find(this.treeData.treeFolder, { id: selectedId }) || {});
+      const currentCycle = find(this.treeData.treeFolder, { id: selectedId }) || {};
+      this.setCurrentCycle(currentCycle);
+      this.updateTimes([currentCycle]);
     }
   }
 
-  @action setCurrentCycle(currentCycle) {  
+  @action setCurrentCycle(currentCycle) {
     this.currentCycle = currentCycle;
   }
 
@@ -152,7 +190,7 @@ class TestPlanTreeStore {
 
   @action setTreeRef = (treeRef) => {
     this.treeRef = treeRef;
-  } 
+  }
 }
 
 export default TestPlanTreeStore;
