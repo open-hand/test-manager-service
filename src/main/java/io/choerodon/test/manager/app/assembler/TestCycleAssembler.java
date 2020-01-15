@@ -54,7 +54,6 @@ public class TestCycleAssembler {
         if (cycleDTO.getFromDate() == null && cycleDTO.getToDate() == null) {
             return;
         }
-
         TestPlanDTO testPlanVO = testPlanMapper.selectByPrimaryKey(cycleDTO.getPlanId());
         List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, cycleDTO.getPlanId());
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
@@ -103,28 +102,34 @@ public class TestCycleAssembler {
             compareCycle.setToDate(cycleDTO.getToDate());
         }
         else {
-            if (Boolean.TRUE.equals(isUp)) {
-                if (cycleDTO.getFromDate().before(compareCycle.getFromDate())) {
-                    isChange = true;
-                    compareCycle.setFromDate(cycleDTO.getFromDate());
-                }
-                if (cycleDTO.getToDate().after(compareCycle.getToDate())) {
-                    isChange = true;
-                    compareCycle.setToDate(cycleDTO.getToDate());
-                }
-            } else {
-                if (cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
-                    isChange = true;
-                    compareCycle.setFromDate(cycleDTO.getFromDate());
-                }
-                if (cycleDTO.getToDate().before(compareCycle.getToDate())) {
-                    isChange = true;
-                    compareCycle.setToDate(cycleDTO.getToDate());
-                }
-            }
+            isChange = replaceTime(cycleDTO,compareCycle,isUp);
         }
         if (Boolean.TRUE.equals(isChange)) {
             updateCycle(compareCycle);
+        }
+        return isChange;
+    }
+
+    private Boolean replaceTime(TestCycleDTO cycleDTO, TestCycleDTO compareCycle,Boolean isUp){
+        Boolean isChange = false;
+        if (Boolean.TRUE.equals(isUp)) {
+            if (cycleDTO.getFromDate().before(compareCycle.getFromDate())) {
+                isChange = true;
+                compareCycle.setFromDate(cycleDTO.getFromDate());
+            }
+            if (cycleDTO.getToDate().after(compareCycle.getToDate())) {
+                isChange = true;
+                compareCycle.setToDate(cycleDTO.getToDate());
+            }
+        } else {
+            if (cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
+                isChange = true;
+                compareCycle.setFromDate(cycleDTO.getFromDate());
+            }
+            if (cycleDTO.getToDate().before(compareCycle.getToDate())) {
+                isChange = true;
+                compareCycle.setToDate(cycleDTO.getToDate());
+            }
         }
         return isChange;
     }

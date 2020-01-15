@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
+import io.choerodon.test.manager.app.service.TestPlanServcie;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ import io.choerodon.test.manager.app.service.TestCycleService;
 public class TestCycleController {
     @Autowired
     TestCycleService testCycleService;
+
+    @Autowired
+    TestPlanServcie testPlanServcie;
 
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("增加计划文件夹")
@@ -263,7 +267,7 @@ public class TestCycleController {
     public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,
                                                            @RequestBody TestCycleVO testCycleVO,
                                                            @RequestParam(defaultValue = "true") Boolean isCycle){
-        testCycleService.operatePlanCalendar(projectId,testCycleVO,isCycle);
+        testPlanServcie.operatePlanCalendar(projectId,testCycleVO,isCycle);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
