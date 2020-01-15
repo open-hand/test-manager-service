@@ -500,7 +500,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         int count = testCaseMapper.countByProjectIdAndCaseIds(project, caseIds);
         int ceil = (int) Math.ceil(count / AVG_NUM == 0 ? 1 : count / AVG_NUM);
         for (int i = 1; i <= ceil; i++) {
-            PageInfo<TestCaseDTO> testCasePage = PageHelper.startPage(i, (int) AVG_NUM).doSelectPageInfo(() -> testCaseMapper.listByCaseIds(project, caseIds,false));
+            PageInfo<TestCaseDTO> testCasePage = PageHelper.startPage(i, (int) AVG_NUM).doSelectPageInfo(() -> testCaseMapper.listByCaseIds(project, caseIds,true));
             List<TestCaseDTO> testCaseDTOS = testCasePage.getList();
             if (CollectionUtils.isEmpty(testCaseDTOS)) {
                 return;
