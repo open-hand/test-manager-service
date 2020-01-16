@@ -267,15 +267,16 @@ public class TestCycleServiceImpl implements TestCycleService {
 
     @Override
     public void cloneCycleByPlanId(Long copyPlanId, Long newPlanId,Long projectId) {
-        CustomUserDetails userDetails = DetailsHelper.getUserDetails();
         List<TestCycleDTO> testCycleDTOS = listByPlanIds(Arrays.asList(copyPlanId),projectId);
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             return;
         }
+        List<Long> cycIds = new ArrayList<>();
         testCycleDTOS = testCycleDTOS.stream().map(v -> {
             if (ObjectUtils.isEmpty(v.getParentCycleId())) {
                 v.setParentCycleId(0L);
             }
+            cycIds.add(v.getCycleId());
             return v;
         }).collect(toList());
 
@@ -293,29 +294,13 @@ public class TestCycleServiceImpl implements TestCycleService {
         });
 
         Map<Long, Long> newMapping = new HashMap<>();
-        List<Long> cycIds = new ArrayList<>();
-        olderCycleMap.keySet().forEach(key -> {
-            List<TestCycleDTO> testCycle = new ArrayList<>();
-            List<TestCycleDTO> testCycleDTOS1 = olderCycleMap.get(key);
-            testCycleDTOS1.forEach(testCycleDTO -> {
-                Long olderCycle = testCycleDTO.getCycleId();
-                cycIds.add(olderCycle);
-                if (testCycleDTO.getParentCycleId() != 0) {
-                    Long cycleId = newMapping.get(testCycleDTO.getParentCycleId());
-                    testCycleDTO.setParentCycleId(cycleId);
-                }
-                testCycleDTO.setCycleId(null);
-                testCycleDTO.setCreatedBy(userDetails.getUserId());
-                testCycleDTO.setLastUpdatedBy(userDetails.getUserId());
-                testCycleDTO.setOldCycleId(olderCycle);
-                testCycleDTO.setPlanId(newPlanId);
-                testCycle.add(testCycleDTO);
-            });
-            cycleMapper.batchInsert(testCycle);
-            testCycle.forEach(v -> newMapping.put(v.getOldCycleId(), v.getCycleId()));
-        });
-        // 复制执行
-        testCycleCaseService.cloneCycleCase(newMapping, cycIds);
+        List<TestCycleDTO> testCycleDTOS1 = olderCycleMap.get(0L);
+        if (!CollectionUtils.isEmpty(testCycleDTOS1)) {
+            CustomUserDetails userDetails = DetailsHelper.getUserDetails();
+            cloneCycle(olderCycleMap, testCycleDTOS1, newMapping, newPlanId, userDetails.getUserId());
+            // 复制执行
+            testCycleCaseService.cloneCycleCase(newMapping, cycIds);
+        }
     }
 
     @Override
@@ -425,4 +410,31 @@ public class TestCycleServiceImpl implements TestCycleService {
         }
         return testCycleDTOS;
     }
+
+    private void cloneCycle(Map<Long, List<TestCycleDTO>> olderCycleMap,List<TestCycleDTO> testCycleDTOS,Map<Long, Long> newMapping, Long newPlanId,Long userId){
+        List<TestCycleDTO> testCycle = new ArrayList<>();
+        if (CollectionUtils.isEmpty(testCycleDTOS)) {
+            return;
+        }
+        testCycleDTOS.forEach(testCycleDTO -> {
+            Long olderCycle = testCycleDTO.getCycleId();
+            if (testCycleDTO.getParentCycleId() != 0) {
+                Long cycleId = newMapping.get(testCycleDTO.getParentCycleId());
+                testCycleDTO.setParentCycleId(cycleId);
+            }
+            testCycleDTO.setCycleId(null);
+            testCycleDTO.setCreatedBy(userId);
+            testCycleDTO.setLastUpdatedBy(userId);
+            testCycleDTO.setOldCycleId(olderCycle);
+            testCycleDTO.setPlanId(newPlanId);
+            testCycle.add(testCycleDTO);
+        });
+        cycleMapper.batchInsert(testCycle);
+        testCycle.forEach(v -> {
+            newMapping.put(v.getOldCycleId(), v.getCycleId());
+            List<TestCycleDTO> testCycleDTOS1 = olderCycleMap.get(v.getOldCycleId());
+            cloneCycle(olderCycleMap,testCycleDTOS1,newMapping,newPlanId,userId);
+        });
+    }
+
 }

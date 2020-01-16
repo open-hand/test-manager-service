@@ -6,7 +6,6 @@ import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.validator.ProjectInfoValidator;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
