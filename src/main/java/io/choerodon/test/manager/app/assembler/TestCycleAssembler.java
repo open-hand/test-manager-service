@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.test.manager.api.vo.TestCycleVO;
 import io.choerodon.test.manager.api.vo.TestPlanVO;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
@@ -182,6 +183,22 @@ public class TestCycleAssembler {
     private void updateCycle(TestCycleDTO cycleDTO){
         if (cycleMapper.updateByPrimaryKeySelective(cycleDTO) != 1) {
             throw new CommonException("error.update.cycle");
+        }
+    }
+
+    public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO){
+        if (testCycleDTO.getFromDate() != null && testCycleDTO.getToDate() != null) {
+            testCycleVO.setFromDate(testCycleDTO.getFromDate());
+            testCycleVO.setToDate(testCycleDTO.getToDate());
+        } else {
+            if (testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
+                TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
+                testCycleVO.setFromDate(testPlanDTO.getStartDate());
+                testCycleVO.setToDate(testPlanDTO.getEndDate());
+            } else {
+                TestCycleDTO testCycle = cycleMapper.selectByPrimaryKey(testCycleDTO.getParentCycleId());
+                assignmentTime(testCycleVO, testCycle);
+            }
         }
     }
 }
