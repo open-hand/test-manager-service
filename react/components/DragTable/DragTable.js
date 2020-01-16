@@ -23,7 +23,7 @@ class DragTable extends Component {
 
   componentWillReceiveProps(nextProps) {
     // 更新数据并避免拖动后的跳动
-    if (this.props.loading === true && nextProps.loading === false) {
+    if (!(this.props.loading === false && nextProps.loading === true)) {
       this.setState({ data: nextProps.dataSource });
     }
   }
