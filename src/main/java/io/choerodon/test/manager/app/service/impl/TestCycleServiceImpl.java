@@ -66,8 +66,11 @@ public class TestCycleServiceImpl implements TestCycleService {
     @Override
     public TestCycleVO insert(Long projectId, TestCycleVO testCycleVO) {
         testCycleVO.setType("folder");
+        TestCycleDTO testCycleDTO = cycleMapper.selectByPrimaryKey(testCycleVO.getParentCycleId());
+        // 给文件夹设置时间
+        testCycleAssembler.assignmentTime(testCycleVO,testCycleDTO);
         TestCycleVO cycleDTO = baseInsert(projectId, testCycleVO);
-        testCycleAssembler.updateTime(projectId,modelMapper.map(cycleDTO,TestCycleDTO.class));
+        testCycleAssembler.updateTime(projectId, modelMapper.map(cycleDTO,TestCycleDTO.class));
         return cycleDTO;
     }
 

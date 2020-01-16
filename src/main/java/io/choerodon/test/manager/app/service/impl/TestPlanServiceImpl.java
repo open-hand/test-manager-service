@@ -93,7 +93,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
 
     @Override
     public void operatePlanCalendar(Long projectId, TestCycleVO testCycleVO, Boolean isCycle) {
-        if(isCycle){
+        if(Boolean.TRUE.equals(isCycle)){
             testCycleService.update(projectId,testCycleVO);
         }
         else {
@@ -213,7 +213,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         } else {
             testTreeFolderVO.setHasChildren(false);
         }
-        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount()==0);
+        testTreeFolderVO.setHasCase(testCycleDTO.getCaseCount() > 0);
         testTreeFolderVO.setIssueFolderVO(testCycleService.cycleToIssueFolderVO(testCycleDTO));
         testTreeFolderVO.setExpanded(false);
         testTreeFolderVO.setChildrenLoading(false);
@@ -302,7 +302,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         List<TestIssueFolderDTO> testIssueFolderDTOS = new ArrayList<>();
         List<Long> caseIds = new ArrayList<>();
         // 是否自选
-        if (!testPlanVO.getCustom()) {
+        if (Boolean.FALSE.equals(testPlanVO.getCustom())) {
             testIssueFolderDTOS.addAll(testIssueFolderService.listByProject(testPlanVO.getProjectId()));
         } else {
             createPlanCustomCase(testPlanVO, testIssueFolderDTOS, caseIds);
@@ -482,7 +482,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             if (!root.contains(testCycleDTO.getCycleId())) {
                 root.add(testCycleDTO.getCycleId());
             }
-            return;
         } else {
             folderParentNotZero(root, testCycleDTO, allFolderMap, map, parentMap, planId);
         }
@@ -560,7 +559,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
         for (Map.Entry<Long, CaseSelectVO> entry : maps.entrySet()) {
             CaseSelectVO caseSelectVO = entry.getValue();
             // 判断是否是自选
-            if (!caseSelectVO.getCustom()) {
+            if (Boolean.FALSE.equals(caseSelectVO.getCustom())) {
                 allSelectFolderIds.add(entry.getKey());
             } else {
                 // 判断是反选还是正向选择
