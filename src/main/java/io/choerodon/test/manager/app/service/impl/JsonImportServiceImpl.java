@@ -1,24 +1,16 @@
 package io.choerodon.test.manager.app.service.impl;
 
+import java.util.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import feign.FeignException;
-import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.testng.TestNgResult;
 import io.choerodon.test.manager.app.service.JsonImportService;
-import io.choerodon.test.manager.app.service.TestCaseService;
-import io.choerodon.test.manager.app.service.TestCycleCaseService;
-import io.choerodon.test.manager.app.service.TestCycleService;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.TestAutomationHistoryEnums;
 import io.choerodon.test.manager.infra.enums.TestStatusType;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
-import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import io.choerodon.test.manager.infra.util.TestNgUtil;
@@ -27,17 +19,12 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.json.XML;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 @Service
 public class JsonImportServiceImpl implements JsonImportService {
@@ -45,28 +32,7 @@ public class JsonImportServiceImpl implements JsonImportService {
     private static final Logger logger = LoggerFactory.getLogger(JsonImportServiceImpl.class);
     private static final String APP_INSTANCE_NOT_EXIST = "app instance 不存在";
     private static final String INSTANCE_ID = "instanceId";
-    private static final Pattern DATA_PATTERN = Pattern.compile("(?:@data\\s+)(.*?)(?:\\s*\\n)");
-    private static final Pattern EXPECT_PATTERN = Pattern.compile("(?:@expect\\s+)(.*?)(?:\\s*\\n)");
-    private static final Pattern AUTO_TEST_STAGE_SUFFIX_PATTERN = Pattern.compile("第(\\d+)次测试");
-    private static final String ERROR_GET_APP_NAME = "error.get.app.name";
-    private static final String ERROR_GET_APP_VERSION_NAME = "error.get.app.version.name";
-    private static final String ERROR_GET_ORGANIZATION_ID = "error.get.organization.id";
-    private static final String ERROR_STEP_ID_NOT_NULL = "error.case.step.insert.stepId.should.be.null";
 
-    @Autowired
-    private TestCycleService testCycleService;
-
-    @Autowired
-    private TestCaseService testCaseService;
-
-    @Autowired
-    private TestCycleCaseService testCycleCaseService;
-
-    @Autowired
-    private TestCaseStepMapper testCaseStepMapper;
-
-    @Autowired
-    private TestCycleMapper cycleMapper;
 
     @Autowired
     private TestAppInstanceMapper testAppInstanceMapper;
@@ -75,19 +41,8 @@ public class JsonImportServiceImpl implements JsonImportService {
     private TestAutomationHistoryMapper automationHistoryMapper;
 
     @Autowired
-    private TestIssueFolderRelMapper issueFolderRelMapper;
-
-    @Autowired
-    private TestCaseStepMapper caseStepMapper;
-
-    @Autowired
     private TestAutomationResultMapper testAutomationResultMapper;
 
-    @Autowired
-    private TestCycleCaseStepMapper testCycleCaseStepMapper;
-
-    @Autowired
-    private TestIssueFolderMapper testIssueFolderMapper;
 
     @Autowired
     private TestCycleCaseMapper testCycleCaseMapper;
@@ -97,12 +52,6 @@ public class JsonImportServiceImpl implements JsonImportService {
 
     @Autowired
     private ApplicationFeignClient applicationFeignClient;
-
-    @Autowired
-    private BaseFeignClient baseFeignClient;
-
-    @Autowired
-    private IssueFeignClient issueFeignClient;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -165,21 +114,6 @@ public class JsonImportServiceImpl implements JsonImportService {
 //        }
 //    }
 
-    private List<TestCycleCaseProDTO> createCycleCases(List<TestCycleCaseProDTO> testCycleCases, Long projectId) {
-        TestCycleCaseProDTO currentCycleCase = testCycleCases.get(0);
-        currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(testCycleCaseMapper.getLastedRank(currentCycleCase.getCycleId()), null));
-        TestCycleCaseProDTO prevCycleCase = currentCycleCase;
-
-        for (int i = 1; i < testCycleCases.size(); i++) {
-            currentCycleCase = testCycleCases.get(i);
-            currentCycleCase.setRank(RankUtil.Operation.INSERT.getRank(prevCycleCase.getRank(), null));
-            prevCycleCase = currentCycleCase;
-        }
-        return modelMapper.map(testCycleCaseService.batchCreateForAutoTest(modelMapper.map(testCycleCases, new TypeToken<List<TestCycleCaseVO>>() {
-        }.getType()), projectId), new TypeToken<List<TestCycleCaseProDTO>>() {
-        }.getType());
-    }
-
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public Long importMochaReport(String releaseName, String json) {
@@ -217,7 +151,7 @@ public class JsonImportServiceImpl implements JsonImportService {
         if (testAutomationResultMapper.insertOneResult(testAutomationResultDTO) != 1) {
             throw new CommonException("error.TestAutomationResult.insert");
         }
-        Long resultId = Long.valueOf(testAutomationResultDTO.getId());
+        Long resultId = testAutomationResultDTO.getId();
 
 //        // 创建文件夹
 //        TestIssueFolderProDTO targetFolderE = getFolder(projectId, versionId, folderName);
@@ -477,21 +411,6 @@ public class JsonImportServiceImpl implements JsonImportService {
         fragments.put("instanceId", Long.parseLong(strings[3]));
 
         return fragments;
-    }
-
-    private String getAppName(Long projectId, Long appId) {
-        try {
-            ResponseEntity<ApplicationRepDTO> response = applicationFeignClient.queryByAppId(projectId, appId);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("get app name {} by app id {} project id {}", response.getBody().getName(), appId, projectId);
-                return response.getBody().getName();
-            } else {
-                throw new CommonException(ERROR_GET_APP_NAME);
-            }
-        } catch (FeignException e) {
-            throw new CommonException(ERROR_GET_APP_NAME, e);
-        }
     }
 
 //    private String getAppVersionName(Long projectId, Long appVersionId) {

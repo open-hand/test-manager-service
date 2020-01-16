@@ -20,10 +20,6 @@ import java.util.List;
 @FeignClient(value = "base-service", fallback = BaseFeignClientFallback.class)
 public interface BaseFeignClient {
 
-    @GetMapping(value = "/v1/organizations/{organization_id}/users/{id}")
-    ResponseEntity<UserDO> query(@PathVariable(name = "organization_id") Long organizationId,
-                                 @PathVariable("id") Long id);
-
     @PostMapping(value = "/v1/users/ids")
     ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids,
                                                 @RequestParam(value = "only_enabled", defaultValue = "true", required = false) Boolean onlyEnabled);

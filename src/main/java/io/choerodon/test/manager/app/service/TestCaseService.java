@@ -152,12 +152,6 @@ public interface TestCaseService {
      */
     List<Long> listAllCaseByFolderId(Long projectId, Long folderId);
 
-    /**
-     * 查询项目下的所有用例
-     * @param projectId
-     * @return
-     */
-    List<TestCaseDTO> listCaseByProjectId(Long projectId);
 
     /**
      * 根据caseIds 查询用例
@@ -168,12 +162,6 @@ public interface TestCaseService {
     List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds);
 
     TestCaseInfoVO queryCaseRep(Long caseId);
-
-    /**
-     * 同步versionNum到测试执行 versionNum
-     * @param testCase
-     */
-    void syncByCycleCase(TestCaseDTO testCase);
 
     TestCaseDTO baseUpdate(TestCaseDTO testCase);
 }

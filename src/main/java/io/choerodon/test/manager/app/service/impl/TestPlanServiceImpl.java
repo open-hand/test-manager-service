@@ -223,73 +223,6 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     }
 
     @Override
-    public TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode) {
-        TestPlanDTO testPlanDTO = new TestPlanDTO();
-        testPlanDTO.setProjectId(projectId);
-        testPlanDTO.setStatusCode(statusCode);
-        List<TestPlanDTO> testPlanDTOS = testPlanMapper.select(testPlanDTO);
-        if (CollectionUtils.isEmpty(testPlanDTOS)) {
-            return new TestTreeIssueFolderVO();
-        }
-        // 获取planIds,查询出所有底层文件夹Id
-        List<Long> planIds = testPlanDTOS.stream().map(TestPlanDTO::getPlanId).collect(Collectors.toList());
-        List<TestCycleDTO> testCycleDTOS = testCycleService.listByPlanIds(planIds,projectId);
-        Map<Long, List<TestCycleDTO>> testCycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getPlanId));
-        // 获取项目下所有的文件夹
-        Map<Long, TestCycleDTO> allCycleMap = testCycleDTOS.stream().collect(Collectors.toMap(TestCycleDTO::getCycleId, Function.identity()));
-        Map<Long, List<TestCycleDTO>> parentCycleMap = testCycleDTOS.stream().filter(v -> !ObjectUtils.isEmpty(v.getParentCycleId())).collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
-        // 实例化返回的树
-        TestTreeIssueFolderVO testTreeIssueFolderVO = new TestTreeIssueFolderVO();
-
-        // 接收位于树顶层的测试计划
-        List<TestTreeFolderVO> planTreeList = new ArrayList<>();
-        List<Long> root = new ArrayList<>();
-        testPlanDTOS.stream().sorted(Comparator.comparing(TestPlanDTO::getPlanId).reversed()).forEach(v -> {
-            // 用于接收TestTreeFolderVO,便于判断和构建树
-            Map<Long, TestTreeFolderVO> map = new HashMap<>();
-            // 将计划Id设置为root
-            root.add(v.getPlanId());
-            List<Long> folderRoot = new ArrayList<>();
-            List<TestCycleDTO> testCycles = testCycleMap.get(v.getPlanId());
-            // 构建顶层
-            TestIssueFolderVO testIssueFolderVO = new TestIssueFolderVO();
-            testIssueFolderVO.setProjectId(v.getProjectId());
-            testIssueFolderVO.setName(v.getName());
-            testIssueFolderVO.setFolderId(v.getPlanId());
-            testIssueFolderVO.setInitStatus(v.getInitStatus());
-            testIssueFolderVO.setObjectVersionNumber(v.getObjectVersionNumber());
-            TestTreeFolderVO planTreeVO = new TestTreeFolderVO();
-            planTreeVO.setId(v.getPlanId());
-            planTreeVO.setIssueFolderVO(testIssueFolderVO);
-            planTreeVO.setChildrenLoading(false);
-            planTreeVO.setExpanded(false);
-            planTreeVO.setTopLevel(true);
-            if (!CollectionUtils.isEmpty(testCycles)) {
-                // 构建文件夹树
-                testCycles.forEach(testCycleDTO ->
-                        buildTree(folderRoot, testCycleDTO.getCycleId(), allCycleMap, map, parentCycleMap, v.getPlanId()));
-            }
-            if (!CollectionUtils.isEmpty(folderRoot)) {
-                planTreeVO.setHasChildren(true);
-                planTreeVO.setChildren(folderRoot);
-            } else {
-                planTreeVO.setHasChildren(false);
-            }
-            planTreeVO.setHasCase(false);
-            List<TestTreeFolderVO> collect = map.values().stream().collect(Collectors.toList());
-            planTreeList.add(planTreeVO);
-            if (!CollectionUtils.isEmpty(collect)) {
-                planTreeList.addAll(collect);
-            }
-
-        });
-        // 合并、构建树
-        testTreeIssueFolderVO.setRootIds(root);
-        testTreeIssueFolderVO.setTreeFolder(planTreeList);
-        return testTreeIssueFolderVO;
-    }
-
-    @Override
     public void baseUpdate(TestPlanDTO testPlanDTO) {
         if (ObjectUtils.isEmpty(testPlanDTO)) {
             throw new CommonException("error.test.plan.is.null");
@@ -420,7 +353,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Override
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_PLAN_FAIL,
             description = "test-manager 改变测试测试计划的状态为fail", inputSchema = "{}")
-    public void SetPlanInitStatusFail(TestPlanVO testPlanVO) {
+    public void setPlanInitStatusFail(TestPlanVO testPlanVO) {
         producer.apply(
                 StartSagaBuilder
                         .newBuilder()

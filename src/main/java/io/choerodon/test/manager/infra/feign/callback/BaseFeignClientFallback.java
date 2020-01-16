@@ -23,11 +23,6 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     private static final String BATCH_QUERY_ERROR = "error.baseFeign.queryList";
 
     @Override
-    public ResponseEntity<UserDO> query(Long organizationId, Long id) {
-        throw new CommonException(QUERY_ERROR);
-    }
-
-    @Override
     public ResponseEntity<List<UserDO>> listUsersByIds(Long[] ids, Boolean onlyEnabled) {
         throw new CommonException(BATCH_QUERY_ERROR);
     }

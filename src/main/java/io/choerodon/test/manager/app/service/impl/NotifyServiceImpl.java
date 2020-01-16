@@ -1,7 +1,6 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import io.choerodon.test.manager.app.service.NotifyService;
 import io.choerodon.test.manager.infra.feign.NotifyFeignClient;

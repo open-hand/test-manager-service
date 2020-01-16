@@ -43,44 +43,17 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     private TestIssueFolderMapper testIssueFolderMapper;
     private TestCycleMapper cycleMapper;
     private ModelMapper modelMapper;
-    private TestIssueFolderService testIssueFolderService;
 
     public TestFileLoadHistoryServiceImpl(TestCaseService testCaseService,
                                           TestFileLoadHistoryMapper testFileLoadHistoryMapper,
                                           TestIssueFolderMapper testIssueFolderMapper,
                                           TestCycleMapper cycleMapper,
-                                          ModelMapper modelMapper,
-                                          TestIssueFolderService testIssueFolderService) {
+                                          ModelMapper modelMapper) {
         this.testCaseService = testCaseService;
         this.testFileLoadHistoryMapper = testFileLoadHistoryMapper;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.cycleMapper = cycleMapper;
         this.modelMapper = modelMapper;
-        this.testIssueFolderService = testIssueFolderService;
-    }
-
-    @Override
-    public List<TestFileLoadHistoryVO> queryIssues(Long projectId) {
-        TestFileLoadHistoryVO testFileLoadHistoryVO = new TestFileLoadHistoryVO();
-        testFileLoadHistoryVO.setCreatedBy(DetailsHelper.getUserDetails().getUserId());
-        testFileLoadHistoryVO.setProjectId(projectId);
-
-        List<TestFileLoadHistoryVO> historyDTOS = modelMapper.map(testFileLoadHistoryMapper
-                        .queryDownloadFile(modelMapper.map(testFileLoadHistoryVO, TestFileLoadHistoryDTO.class)),
-                new TypeToken<List<TestFileLoadHistoryVO>>() {
-                }.getType());
-
-//        historyDTOS.stream().filter(v -> v.getSourceType().equals(1L)).forEach(v -> v
-//                .setName(testCaseService.getProjectInfo(v.getLinkedId()).getName()));
-//        historyDTOS.stream().filter(v -> v.getSourceType().equals(2L)).forEach(v ->
-//                v.setName(Optional.ofNullable(testCaseService.getVersionInfo(v.getProjectId())
-//                        .get(v.getLinkedId())).map(ProductVersionDTO::getName).orElse("版本已被删除")));
-//        historyDTOS.removeIf(v -> v.getSourceType().equals(3L));
-        historyDTOS.stream().filter(v -> v.getSourceType().equals(4L)).forEach(v -> v.setName(Optional
-                .ofNullable(testIssueFolderMapper.selectByPrimaryKey(v.getLinkedId()))
-                .map(TestIssueFolderDTO::getName).orElse("文件夹已被删除")));
-
-        return historyDTOS;
     }
 
     @Override
@@ -142,21 +115,6 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
             return null;
         }
         return modelMapper.map(testFileLoadHistoryDTOS.get(0), TestFileLoadHistoryDTO.class);
-    }
-
-    @Override
-    public PageInfo<TestFileLoadHistoryDTO> basePageFileHistoryByOptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable) {
-        //获取所有底层文件夹id
-        List<Long> folderIds = testIssueFolderService.queryChildFolder(folderId)
-                .stream()
-                .map(TestIssueFolderDTO::getFolderId)
-                .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(folderIds)) {
-            throw new CommonException("query.file.load.history.error");
-        }
-
-        return PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize())
-                .doSelectPageInfo(() -> testFileLoadHistoryMapper.queryLatestHistoryByOptions(folderIds, searchDTO.getAdvancedSearchArgs()));
     }
 
     @Override

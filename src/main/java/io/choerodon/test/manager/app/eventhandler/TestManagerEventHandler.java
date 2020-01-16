@@ -108,7 +108,7 @@ public class TestManagerEventHandler {
         try {
             testPlanServcie.sagaCreatePlan(testPlanVO);
         } catch (Exception e) {
-            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
+            testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(testPlanVO.getPlanId()),TestPlanVO.class));
             throw e;
         }
 
@@ -122,7 +122,7 @@ public class TestManagerEventHandler {
             testPlanServcie.sagaClonePlan(map);
 
         } catch (Exception e) {
-            testPlanServcie.SetPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()),TestPlanVO.class));
+            testPlanServcie.setPlanInitStatusFail(modelMapper.map(testPlanMapper.selectByPrimaryKey(map.get("new").longValue()),TestPlanVO.class));
             throw e;
         }
     }

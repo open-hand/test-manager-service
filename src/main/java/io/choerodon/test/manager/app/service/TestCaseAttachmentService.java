@@ -19,14 +19,6 @@ public interface TestCaseAttachmentService {
     List<String> uploadForAddress(Long projectId, HttpServletRequest request);
 
     /**
-     * 根据issueId删除附件
-     *
-     * @param issueId issueId
-     * @return int
-     */
-    int deleteByIssueId(Long issueId);
-
-    /**
      * 生成issueAttachment记录并生成日志（用于复制issue）
      *
      * @param projectId projectId
@@ -39,10 +31,6 @@ public interface TestCaseAttachmentService {
     void cloneAttachmentByCaseId(Long projectId,Long caseId,Long oldCaseId);
 
     void batchInsert(List<TestCaseAttachmentDTO> caseAttachDTOS,List<String> fileNames);
-
-    void deleteByCaseId(Long caseId, List<String> collect);
-
-    List<TestCaseAttachmentDTO> listByCaseId(Long caseId);
 
     void asynAttachToCase(List<TestCycleCaseAttachmentRelVO> testCycleCaseAttachmentRelVOS, TestCaseDTO testCaseDTO, Long executeId);
 }

@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
@@ -194,13 +193,6 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     }
 
     @Override
-    public int deleteByIssueId(Long issueId) {
-        TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
-        issueAttachmentDTO.setCaseId(issueId);
-        return testAttachmentMapper.delete(issueAttachmentDTO);
-    }
-
-    @Override
     public void cloneAttachmentByCaseId(Long projectId, Long caseId, Long oldCaseId) {
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setCaseId(oldCaseId);
@@ -223,17 +215,6 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             return;
         }
         testAttachmentMapper.batchInsert(caseAttachDTOS);
-    }
-
-    @Override
-    @DataLog(type = DataLogConstants.BATCH_DELETE_ATTACH,single = false)
-    public void deleteByCaseId(Long caseId, List<String> collect) {
-        testAttachmentMapper.deleteByCaseId(caseId);
-    }
-
-    @Override
-    public List<TestCaseAttachmentDTO> listByCaseId(Long caseId) {
-        return testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
     }
 
     @Override

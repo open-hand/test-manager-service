@@ -22,10 +22,6 @@ public class ExcelServiceHandlerImpl implements ExcelServiceHandler {
     @Autowired
     private ExcelService excelService;
 
-    public void setExcelService(ExcelService excelService) {
-        this.excelService = excelService;
-    }
-
     /**
      * 导出一个cycle下的测试详情
      *
