@@ -4,8 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.test.manager.app.service.ExcelService;
 import io.choerodon.test.manager.app.service.ExcelServiceHandler;

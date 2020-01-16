@@ -22,7 +22,6 @@ import org.springframework.util.ObjectUtils;
 
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
-import io.choerodon.test.manager.api.vo.TestCaseVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
 import io.choerodon.test.manager.infra.annotation.DataLog;
 import io.choerodon.test.manager.infra.constant.DataLogConstants;
@@ -261,28 +260,6 @@ public class DataLogAspect {
         } catch (Exception throwable) {
             throwable.printStackTrace();
         }
-    }
-
-    private Object handleIssueCreateDataLog(ProceedingJoinPoint pjp, Object[] args) {
-        Object result = null;
-        try {
-            result = pjp.proceed();
-            TestCaseVO testCaseVO = null;
-            Long projectId = null;
-            for (Object arg : args) {
-                if (arg instanceof TestCaseVO) {
-                    testCaseVO = (TestCaseVO) arg;
-                } else if (arg instanceof Long) {
-                    projectId = (Long) arg;
-                }
-            }
-            if (!ObjectUtils.isEmpty(testCaseVO)) {
-                createDataLog(projectId, null, null, "sad", "sadad", "", "");
-            }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-        return result;
     }
 
     private void createDataLog(Long projectId, Long issueId, String field, String oldString,
