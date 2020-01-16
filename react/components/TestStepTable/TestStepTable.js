@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import PropTypes from 'prop-types';
 import {
@@ -93,7 +93,7 @@ function TestStepTable(props) {
   };
   /**
    * 检查多段文本是否全为空格
-   * @param  {...any} restText 
+   * @param  {...any} restText
    */
   const checkAllSpace = (...texts) => {
     let isAllSpace = false;
@@ -107,7 +107,7 @@ function TestStepTable(props) {
 
   const onCreateStep = async (newStep, index) => {
     const { expectedResult, testStep, testData } = newStep;
-    // 特殊字符判断 全为空格时，则进行提示 
+    // 特殊字符判断 全为空格时，则进行提示
     if (checkAllSpace(expectedResult, testStep, testData)) {
       Choerodon.prompt('不能有空格');
       return;
@@ -123,7 +123,7 @@ function TestStepTable(props) {
           handleAddCreating();
         }
       } catch (error) {
-        // 
+        //
       }
       // 清除当前创建的值
     } else {
@@ -155,7 +155,7 @@ function TestStepTable(props) {
       setData([...data]);
       reset();
     } catch (error) {
-      //    
+      //
       reset();
     }
   });
@@ -178,17 +178,17 @@ function TestStepTable(props) {
     });
   };
   /**
-   * 根据Id寻找ref记录 
+   * 根据Id寻找ref记录
    * 若无记录返回undefined
-   * 
-   * @param {*} id 
+   *
+   * @param {*} id
    */
   const findRefByID = id => recordRef.find(item => item.id === id);
   /**
  * 保存每一步ref
- * @param {*} record 
- * @param {*} index 
- * @param {*} ref 
+ * @param {*} record
+ * @param {*} index
+ * @param {*} ref
  */
   const saveCreateRef = (record, index, type, ref) => {
     const refData = findRefByID(record[dragKey]);
@@ -212,7 +212,7 @@ function TestStepTable(props) {
   };
   /**
 * 自动聚焦新创建步骤第一框框
-* @param {*} ref 
+* @param {*} ref
 */
   const AutoEnterFirstRef = (record, index, ref) => {
     // eslint-disable-next-line no-param-reassign
@@ -243,7 +243,7 @@ function TestStepTable(props) {
       title: null,
       dataIndex: 'stepId',
       key: 'stepId',
-      flex: 0.2,
+      flex: 0.3,
       render(stepId, record, index) {
         return index + 1;
       },
