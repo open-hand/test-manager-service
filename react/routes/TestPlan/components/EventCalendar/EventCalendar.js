@@ -158,7 +158,7 @@ class EventCalendar extends Component {
       this.currentDate = mode === 'pre' ? baseDate : endDate;
     }
   }
-
+  
   render() {
     const { showMode, times, calendarLoading } = this.props;
     const { context: { testPlanStore } } = this.props;
