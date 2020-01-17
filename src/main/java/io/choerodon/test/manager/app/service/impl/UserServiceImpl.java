@@ -3,7 +3,6 @@ package io.choerodon.test.manager.app.service.impl;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.choerodon.test.manager.infra.dto.UserMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.UserService;
 import io.choerodon.test.manager.infra.util.LongUtils;
@@ -54,16 +52,6 @@ public class UserServiceImpl implements UserService {
                 v.setUser(user.get(v.getLastUpdatedBy()));
             }
         });
-    }
-
-    public void populateTestCycleCaseDTO(TestCycleCaseVO dto) {
-        Long[] users = Stream.of(dto.getAssignedTo(), dto.getLastUpdatedBy()).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
-        if (ObjectUtils.isEmpty(users)) {
-            return;
-        }
-        Map<Long, UserDO> user = query(users);
-        Optional.ofNullable(dto.getAssignedTo()).ifPresent(v -> dto.setAssigneeUser(user.get(v)));
-        Optional.ofNullable(dto.getLastUpdatedBy()).ifPresent(v -> dto.setLastUpdateUser(user.get(v)));
     }
 
     public void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto) {

@@ -23,12 +23,6 @@ public interface TestPlanServcie {
 
     TestPlanVO update(Long projectId, TestPlanVO testPlanVO);
 
-    /**
-     * 查询测试计划信息和文件夹目录
-     * @return
-     */
-    TestTreeIssueFolderVO ListPlanAndFolderTree(Long projectId, String statusCode);
-
     void baseUpdate(TestPlanDTO testPlanDTO);
 
     void delete(Long projectId, Long planId);
@@ -69,7 +63,7 @@ public interface TestPlanServcie {
      * 改变计划的init状态为fail
      * @param testPlanVO
      */
-    void SetPlanInitStatusFail(TestPlanVO testPlanVO);
+    void setPlanInitStatusFail(TestPlanVO testPlanVO);
 
     List<TestPlanVO> projectPlan(Long projectId);
 

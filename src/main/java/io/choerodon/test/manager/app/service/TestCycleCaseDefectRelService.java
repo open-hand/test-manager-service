@@ -3,7 +3,6 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseDefectRelVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseStepVO;
 

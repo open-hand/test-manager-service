@@ -19,8 +19,6 @@ import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestCaseStepVO;
 import io.choerodon.test.manager.app.service.TestCaseStepService;
-import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
-import io.choerodon.test.manager.infra.enums.TestCycleCaseDefectCode;
 import io.choerodon.test.manager.infra.util.DBValidateUtil;
 import org.springframework.util.CollectionUtils;
 
@@ -32,9 +30,6 @@ import org.springframework.util.CollectionUtils;
 public class TestCaseStepServiceImpl implements TestCaseStepService {
 
     private static final String ERROR_STEP_ID_NOT_NULL = "error.case.step.insert.stepId.should.be.null";
-
-    @Autowired
-    private TestCycleCaseDefectRelMapper testCycleCaseDefectRelMapper;
 
     @Autowired
     private TestCaseStepMapper testCaseStepMapper;
@@ -80,7 +75,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         } else {
             testCaseStepDTO = changeOneStep(testCaseStepProDTO);
         }
-        if (changeVersionNum) {
+        if (Boolean.TRUE.equals(changeVersionNum)) {
            testCaseService.updateVersionNum(testCaseStepVO.getIssueId());
            List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,testCaseStepVO.getIssueId());
            if(!CollectionUtils.isEmpty(testCycleCaseDTOS)){
@@ -128,16 +123,6 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         return testCaseStepVOS;
     }
 
-    private void deleteLinkedDefect(Long stepId) {
-        TestCycleCaseDefectRelDTO testCycleCaseDefectRelDTO = new TestCycleCaseDefectRelDTO();
-        testCycleCaseDefectRelDTO.setDefectLinkId(stepId);
-        testCycleCaseDefectRelDTO.setDefectType(TestCycleCaseDefectCode.CASE_STEP);
-        testCycleCaseDefectRelMapper.select(testCycleCaseDefectRelDTO).forEach(v -> {
-            TestCycleCaseDefectRelDTO convert = modelMapper.map(v, TestCycleCaseDefectRelDTO.class);
-            testCycleCaseDefectRelMapper.delete(convert);
-        });
-    }
-
     @Override
     public TestCaseStepDTO createOneStep(TestCaseStepProDTO testCaseStepProDTO) {
         if (testCaseStepProDTO.getLastRank() == null) {
@@ -156,9 +141,7 @@ public class TestCaseStepServiceImpl implements TestCaseStepService {
         if(CollectionUtils.isEmpty(list)) {
             return;
         }
-        list.forEach(v -> {
-            removeStep(projectId,modelMapper.map(v,TestCaseStepVO.class));
-        });
+        list.forEach(v -> removeStep(projectId,modelMapper.map(v,TestCaseStepVO.class)));
     }
 
     @Override

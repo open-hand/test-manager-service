@@ -572,11 +572,6 @@ public class TestCaseServiceImpl implements TestCaseService {
     }
 
     @Override
-    public List<TestCaseDTO> listCaseByProjectId(Long projectId) {
-        return testCaseMapper.listByProject(projectId);
-    }
-
-    @Override
     public List<TestCaseDTO> listByCaseIds(Long projectId,List<Long> caseIds) {
         if(CollectionUtils.isEmpty(caseIds)){
             return new ArrayList<>();
@@ -597,11 +592,4 @@ public class TestCaseServiceImpl implements TestCaseService {
         }
         return testCaseInfoVO;
     }
-
-    @Override
-    public void syncByCycleCase(TestCaseDTO testCase) {
-        testCase.setVersionNum(testCase.getVersionNum() + 1);
-        baseUpdate(testCase);
-    }
-
 }

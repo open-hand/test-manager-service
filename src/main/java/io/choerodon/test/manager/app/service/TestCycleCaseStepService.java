@@ -28,21 +28,21 @@ public interface TestCycleCaseStepService {
     /**
      * 查询循环测试步骤
      *
-     * @param CycleCaseId    CycleCaseId
+     * @param cycleCaseId    cycleCaseId
      * @param projectId      projectId
      * @param organizationId organizationId
      * @return TestCycleCaseStepVO
      */
-    List<TestCycleCaseStepVO> querySubStep(Long CycleCaseId, Long projectId, Long organizationId);
+    List<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId);
 
     /**
      * 查询用例下的步骤
      *
-     * @param CycleCaseId
+     * @param cycleCaseId
      * @param projectId
      * @return
      */
-    PageInfo<TestCycleCaseStepVO> queryCaseStep(Long CycleCaseId, Long projectId, Pageable pageable);
+    PageInfo<TestCycleCaseStepVO> queryCaseStep(Long cycleCaseId, Long projectId, Pageable pageable);
 
 
     void baseUpdate(TestCycleCaseStepDTO testCycleCaseStepDTO);

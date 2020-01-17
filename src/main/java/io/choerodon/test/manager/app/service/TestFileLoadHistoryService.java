@@ -13,13 +13,9 @@ public interface TestFileLoadHistoryService {
 
     TestIssuesUploadHistoryVO queryLatestImportIssueHistory(Long projectId);
 
-    List<TestFileLoadHistoryVO> queryIssues(Long projectId);
-
     List<TestFileLoadHistoryVO> queryCycles(Long projectId);
 
     TestFileLoadHistoryDTO queryLatestHistory(TestFileLoadHistoryDTO testFileLoadHistoryDTO);
-
-    PageInfo<TestFileLoadHistoryDTO> basePageFileHistoryByOptions(Long projectId, Long folderId, SearchDTO searchDTO, Pageable pageable);
 
     PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, SearchDTO searchDTO, Pageable pageable);
 }

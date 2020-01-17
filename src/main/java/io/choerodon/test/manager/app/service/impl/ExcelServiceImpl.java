@@ -17,7 +17,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -28,7 +27,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.app.service.*;
@@ -189,7 +187,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId) {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = null;
-        if (retry) {
+        if (Boolean.TRUE.equals(retry)) {
             TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
             testFileLoadHistoryDTO.setId(fileHistoryId);
              testFileLoadHistoryWithRateVO = modelMapper.map(testFileLoadHistoryMapper
@@ -384,72 +382,6 @@ public class ExcelServiceImpl implements ExcelService {
         }
     }
 
-    /**
-     * 按照一定格式装载信息到特定Map中
-     *
-     * @param testIssueFolderDTO
-     * @param userId
-     * @param startRate
-     * @param offset
-     * @return 适用于装载excel的Map
-     */
-    private Map<Long, List<TestIssueFolderRelVO>> populateFolder(TestIssueFolderDTO testIssueFolderDTO, Long userId, double startRate, double offset, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long organizationId) {
-        // TODO：重构，取消项目和版本之后，假如选择的是父文件夹，那么要生成多个子文件夹
-        List<TestIssueFolderDTO> folders;
-        if (testIssueFolderDTO == null){
-            throw  new CommonException("error.issue.folder.is.null");
-        }
-        folders = testIssueFolderService.queryChildFolder(testIssueFolderDTO.getFolderId());
-
-        //List<TestIssueFolderDTO> folders = Optional.ofNullable(testIssueFolderMapper.select(testIssueFolderDTO)).orElseGet(ArrayList::new);
-
-        //后面一个循环中使用了 两次进度增加 所以/2
-        double folderOffset = offset / (folders.size() * 2);
-
-        Map<Long, List<TestIssueFolderRelVO>> folderRelMap = new HashMap<>();
-
-        TestCaseStepDTO testCaseStepDTO = new TestCaseStepDTO();
-
-        List<TestCaseStepVO> testCaseStepVOList = modelMapper.map(testCaseStepMapper
-                .query(testCaseStepDTO), new TypeToken<List<TestCaseStepVO>>() {
-        }.getType());
-        Map<Long, List<TestCaseStepVO>> caseStepMap = Optional.ofNullable(testCaseStepVOList).orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCaseStepVO::getIssueId));
-
-        int i = 0;
-        for (TestIssueFolderDTO folder : folders) {
-            TestIssueFolderRelDTO testIssueFolderRelDTO = new TestIssueFolderRelDTO();
-            testIssueFolderRelDTO.setFolderId(folder.getFolderId());
-            List<TestIssueFolderRelDTO> folderRels = testIssueFolderRelMapper.select(testIssueFolderRelDTO);
-
-            List<TestIssueFolderRelVO> folderRelDTOS = new ArrayList<>();
-
-            List<Long> issueIds = folderRels.stream().map(TestIssueFolderRelDTO::getIssueId).collect(Collectors.toList());
-            testFileLoadHistoryWithRateVO.setRate(startRate + folderOffset * (++i));
-            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
-            Map<Long, IssueInfosVO> issueInfosMap = batchGetIssueInfo(issueIds, testIssueFolderDTO, userId, startRate + (folderOffset * i),
-                    folderOffset, testFileLoadHistoryWithRateVO, organizationId);
-
-            testFileLoadHistoryWithRateVO.setRate(startRate + (folderOffset * (++i)));
-            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
-            for (TestIssueFolderRelDTO folderRel : folderRels) {
-                TestIssueFolderRelVO needRel = modelMapper.map(folderRel, TestIssueFolderRelVO.class);
-                needRel.setIssueInfosVO(issueInfosMap.get(folderRel.getIssueId()));
-                needRel.setFolderName(folder.getName());
-
-                needRel.setTestCaseStepVOS(caseStepMap.get(folderRel.getIssueId()));
-
-                folderRelDTOS.add(needRel);
-            }
-
-            folderRelMap.put(folder.getFolderId(), folderRelDTOS);
-        }
-        testFileLoadHistoryWithRateVO.setRate(startRate + offset);
-        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-        return folderRelMap;
-    }
-
     private List<ExcelCaseVO> handleCase(Long projectId,Long folderId){
         List<ExcelCaseVO> excelCaseVOS = new ArrayList<>();
         List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
@@ -470,39 +402,6 @@ public class ExcelServiceImpl implements ExcelService {
         return excelCaseVOS;
     }
 
-    /**
-     * 批量获取到issue信息
-     *
-     * @param issueIds
-     * @param testIssueFolderDTO
-     * @param userId
-     * @param startRate
-     * @param offset
-     * @param testFileLoadHistoryWithRateVO
-     * @param organizationId
-     * @return
-     */
-    private Map<Long, IssueInfosVO> batchGetIssueInfo(List<Long> issueIds, TestIssueFolderDTO testIssueFolderDTO, Long userId, double startRate, double offset, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long organizationId) {
-        Map<Long, IssueInfosVO> issueInfosMap = new HashMap<>();
-
-        int flag = issueIds.size() / 40;
-        double issuesOffset = offset / (flag + 1.00);
-        for (int j = 0; j <= flag; j++) {
-            Long[] toSendIds;
-            if (issueIds.size() > 40 && j != flag) {
-                toSendIds = issueIds.subList(j * 40, (j + 1) * 40).toArray(new Long[40]);
-                testFileLoadHistoryWithRateVO.setRate(startRate + (j + 1) * issuesOffset);
-                notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-            } else {
-                toSendIds = issueIds.subList(j * 40, issueIds.size()).toArray(new Long[40]);
-            }
-            if (!ObjectUtils.isEmpty(issueIds)) {
-                printDebug("开始分批获取issue信息（最大40一批），当前第" + (j + 1) + "批");
-                issueInfosMap.putAll(testCaseService.getIssueInfoMap(testIssueFolderDTO.getProjectId(), toSendIds, true, organizationId));
-            }
-        }
-        return issueInfosMap;
-    }
 
     /**
      * 傻瓜式装载read

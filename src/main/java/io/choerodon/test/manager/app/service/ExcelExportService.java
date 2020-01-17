@@ -8,8 +8,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import io.choerodon.test.manager.api.vo.ExcelCaseVO;
-
 /**
  * Created by 842767365@qq.com on 8/9/18.
  */

@@ -11,7 +11,6 @@ import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
 import org.springframework.data.domain.Pageable;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
-import io.choerodon.test.manager.api.vo.TestCycleCaseVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 
 /**
@@ -23,8 +22,6 @@ public interface UserService {
     ResponseEntity<PageInfo<UserDTO>> list(Pageable pageable, Long projectId, String param, Long userId);
 
     void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto);
-
-    void populateTestCycleCaseDTO(TestCycleCaseVO dto);
 
     void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto);
 

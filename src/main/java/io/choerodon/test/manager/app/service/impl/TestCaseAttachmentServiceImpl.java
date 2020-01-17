@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import io.choerodon.core.exception.CommonException;
@@ -24,12 +23,10 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -139,9 +135,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         issueAttachmentDTO.setCaseId(issueId);
         List<TestCaseAttachmentDTO> issueAttachmentDTOList = testAttachmentMapper.select(issueAttachmentDTO);
         if (issueAttachmentDTOList != null && !issueAttachmentDTOList.isEmpty()) {
-            issueAttachmentDTOList.forEach(attachment -> {
-                attachment.setUrl(attachmentUrl + attachment.getUrl());
-            });
+            issueAttachmentDTOList.forEach(attachment -> attachment.setUrl(attachmentUrl + attachment.getUrl()));
         }
         testCaseService.updateVersionNum(issueId);
         List<TestCycleCaseDTO> testCycleCaseDTOS = testCycleCaseMapper.listAsyncCycleCase(projectId,issueId);
@@ -199,13 +193,6 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
     }
 
     @Override
-    public int deleteByIssueId(Long issueId) {
-        TestCaseAttachmentDTO issueAttachmentDTO = new TestCaseAttachmentDTO();
-        issueAttachmentDTO.setCaseId(issueId);
-        return testAttachmentMapper.delete(issueAttachmentDTO);
-    }
-
-    @Override
     public void cloneAttachmentByCaseId(Long projectId, Long caseId, Long oldCaseId) {
         TestCaseAttachmentDTO testCaseAttachmentDTO = new TestCaseAttachmentDTO();
         testCaseAttachmentDTO.setCaseId(oldCaseId);
@@ -228,17 +215,6 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             return;
         }
         testAttachmentMapper.batchInsert(caseAttachDTOS);
-    }
-
-    @Override
-    @DataLog(type = DataLogConstants.BATCH_DELETE_ATTACH,single = false)
-    public void deleteByCaseId(Long caseId, List<String> collect) {
-        testAttachmentMapper.deleteByCaseId(caseId);
-    }
-
-    @Override
-    public List<TestCaseAttachmentDTO> listByCaseId(Long caseId) {
-        return testAttachmentMapper.listByCaseIds(Arrays.asList(caseId));
     }
 
     @Override
@@ -266,7 +242,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         testCaseAttachmentDTO.setFileName(testCycleCaseAttachmentRelVO.getAttachmentName());
         String url = testCycleCaseAttachmentRelVO.getUrl();
         url = url.replace("http://", "").replace("https://", "");
-        int index = url.indexOf("/");
+        int index = url.indexOf('/');
         String newUrl = url.substring(index);
         testCaseAttachmentDTO.setUrl(newUrl);
         testCaseAttachmentDTO.setProjectId(testCaseDTO.getProjectId());

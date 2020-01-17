@@ -7,19 +7,15 @@ import java.util.stream.Collectors;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
-import io.choerodon.test.manager.api.vo.agile.ProductVersionDTO;
 import io.choerodon.test.manager.infra.util.RankUtil;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
 import io.choerodon.test.manager.api.vo.TestTreeFolderVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.app.service.TestCaseService;
@@ -27,7 +23,6 @@ import io.choerodon.test.manager.app.service.TestIssueFolderService;
 import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;
 import io.choerodon.test.manager.infra.exception.IssueFolderException;
-import io.choerodon.test.manager.infra.mapper.TestCaseMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;
 
 
@@ -39,16 +34,13 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public static final String TYPE_TEMP = "temp";
 
     private TestCaseService testCaseService;
-    private TestCaseMapper testCaseMapper;
     private TestIssueFolderMapper testIssueFolderMapper;
     private ModelMapper modelMapper;
 
     public TestIssueFolderServiceImpl(TestCaseService testCaseService,
-                                      TestCaseMapper testCaseMapper,
                                       TestIssueFolderMapper testIssueFolderMapper,
                                       ModelMapper modelMapper) {
         this.testCaseService = testCaseService;
-        this.testCaseMapper = testCaseMapper;
         this.testIssueFolderMapper = testIssueFolderMapper;
         this.modelMapper = modelMapper;
     }
@@ -71,7 +63,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
             folderVO.setChildrenLoading(false);
             folderVO.setCaseCount(testIssueFolderDTO.getCaseCount());
             // 判断是否有case
-            folderVO.setHasCase(testIssueFolderDTO.getCaseCount()==0?false:true);
+            Boolean hasCase = testIssueFolderDTO.getCaseCount()==0 ? Boolean.FALSE : Boolean.TRUE;
+            folderVO.setHasCase(hasCase);
             if (CollectionUtils.isEmpty(childrenIds)) {
                 folderVO.setHasChildren(false);
                 folderVO.setChildren(childrenIds);
@@ -112,14 +105,10 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
         Set<TestIssueFolderDTO> testIssueFolderDTOS = findchildFolder(folderId, folderDTOSet);
         //删除文件夹下用例
         if (!CollectionUtils.isEmpty(caseIdList)) {
-            caseIdList.forEach(caseId -> {
-                testCaseService.deleteCase(projectId, caseId);
-            });
+            caseIdList.forEach(caseId -> testCaseService.deleteCase(projectId, caseId));
         }
         //删除文件夹
-        testIssueFolderDTOS.forEach(e -> {
-            testIssueFolderMapper.delete(modelMapper.map(e, TestIssueFolderDTO.class));
-        });
+        testIssueFolderDTOS.forEach(e -> testIssueFolderMapper.delete(modelMapper.map(e, TestIssueFolderDTO.class)));
     }
 
     @Override
@@ -170,12 +159,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     }
 
     @Override
-    public List<TestIssueFolderVO> queryListByProjectId(Long projectId) {
-        return modelMapper.map(testIssueFolderMapper.selectListByProjectId(projectId), new TypeToken<List<TestIssueFolderVO>>() {
-        }.getType());
-    }
-
-    @Override
     public List<TestIssueFolderDTO> listFolderByFolderIds(Long projectId,List<Long> folderIds) {
         List<TestIssueFolderDTO> testIssueFolderDTOS = testIssueFolderMapper.selectListByProjectId(projectId);
         Map<Long, TestIssueFolderDTO> allFolderMap = testIssueFolderDTOS.stream()
@@ -221,9 +204,6 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
                }
            }
          }
-        else {
-            return;
-        }
     }
 
     // 递归查询最底层文件夹

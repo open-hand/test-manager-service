@@ -1,12 +1,9 @@
 package io.choerodon.test.manager.app.service.impl;
 
-import java.util.List;
-
 import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.validator.ProjectInfoValidator;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +26,6 @@ public class TestProjectInfoServiceImpl implements TestProjectInfoService {
 
     @Autowired
     private ProjectInfoValidator projectInfoValidator;
-
-    @Override
-    public void batchCreate(List<TestProjectInfoDTO> testProjectInfoDTOList) {
-        testProjectInfoMapper.batchInsert(testProjectInfoDTOList);
-    }
 
     @Override
     public void initializationProjectInfo(ProjectEvent projectEvent) {
