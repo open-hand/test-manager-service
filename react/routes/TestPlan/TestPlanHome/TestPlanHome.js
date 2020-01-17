@@ -51,6 +51,10 @@ function TestPlanHome({ history }) {
 
   const handleMainTabsChange = (value) => {
     testPlanStore.setMainActiveTab(value);
+    if (value === 'testPlanTable') {
+      testPlanStore.setFilter({});
+      testPlanStore.loadExecutes();
+    }
   };
 
   const handleUpdateOk = (record) => {
@@ -345,30 +349,6 @@ function TestPlanHome({ history }) {
                         defaultActiveKey="testPlanSchedule"
                         onChange={handleMainTabsChange}
                         activeKey={mainActiveTab}
-                        tabBarExtraContent={mainActiveTab === 'testPlanTable' ? (
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <SelectFocusLoad
-                              allowClear
-                              disabled={!checkIdMap.size}
-                              style={{ width: 216, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
-                              placeholder="批量指派"
-                              getPopupContainer={trigger => trigger.parentNode}
-                              type="user"
-                              onChange={handleAssignToChange}
-                              value={testPlanStore.assignToUserId}
-                            />
-                            <SelectFocusLoad
-                              allowClear
-                              style={{ width: 216, marginLeft: 10 }}
-                              placeholder="被指派人"
-                              loadWhenMount
-                              getPopupContainer={trigger => trigger.parentNode}
-                              type="user"
-                              onChange={handleSearchAssign}
-                              value={testPlanStore.filter.assignUser}
-                            />
-                          </div>
-                        ) : ''}
                       >
                         {
                           testPlanStore.isPlan(currentCycle.id) ? (
@@ -386,6 +366,8 @@ function TestPlanHome({ history }) {
                             onQuickFail={handleQuickPassOrFail}
                             onOpenUpdateRemind={handleOpenUpdateRemind}
                             onTableSummaryClick={handleTableSummaryClick}
+                            onAssignToChange={handleAssignToChange}
+                            onSearchAssign={handleSearchAssign}
                           />
                         </TabPane>
                       </Tabs>
