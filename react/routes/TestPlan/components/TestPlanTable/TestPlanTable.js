@@ -25,6 +25,8 @@ const propTypes = {
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
   onOpenUpdateRemind: PropTypes.func.isRequired,
+  onAssignToChange: PropTypes.func.isRequired,
+  onSearchAssign: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
   onDragEnd,
@@ -34,6 +36,8 @@ const TestPlanTable = observer(({
   onQuickPass,
   onQuickFail,
   onOpenUpdateRemind,
+  onAssignToChange,
+  onSearchAssign,
 }) => {
   const {
     testPlanStore,
@@ -252,18 +256,45 @@ const TestPlanTable = observer(({
   // }
   const data = toJS(testList);
   return (
-    <DragTable
-      pagination={executePagination}
-      loading={tableLoading}
-      onChange={onTableChange}
-      dataSource={data}
-      columns={columns}
-      onDragEnd={onDragEnd}
-      dragKey="executeId"
-      checkedMap={checkIdMap}
-      checkField="executeId"
-      key={testPlanStore.currentCycle.id}
-    />
+    <div>
+      <div style={{
+        marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none'
+      }}
+      >
+        <SelectFocusLoad
+          allowClear
+          style={{ width: 216, zIndex: 100, marginLeft: 10 }}
+          placeholder="被指派人"
+          loadWhenMount
+          getPopupContainer={trigger => trigger.parentNode}
+          type="user"
+          onChange={onSearchAssign}
+          value={testPlanStore.filter.assignUser}
+        />
+        <SelectFocusLoad
+          allowClear
+          disabled={!checkIdMap.size}
+          style={{ width: 216, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
+          placeholder="批量指派"
+          getPopupContainer={trigger => trigger.parentNode}
+          type="user"
+          onChange={onAssignToChange}
+          value={testPlanStore.assignToUserId}
+        />
+      </div>
+      <DragTable
+        pagination={executePagination}
+        loading={tableLoading}
+        onChange={onTableChange}
+        dataSource={data}
+        columns={columns}
+        onDragEnd={onDragEnd}
+        dragKey="executeId"
+        checkedMap={checkIdMap}
+        checkField="executeId"
+        key={testPlanStore.currentCycle.id}
+      />
+    </div>
   );
 });
 TestPlanTable.propTypes = propTypes;

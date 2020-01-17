@@ -170,7 +170,7 @@ class EventCalendar extends Component {
       <Spin spinning={calendarLoading}>
         <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
           {/* 头部 */}
-          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
+          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', zIndex: 100, flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
             <div className="c7ntest-EventCalendar-header-title">
               <div className="c7ntest-EventCalendar-header-skip">
                 <RangePicker
@@ -178,6 +178,7 @@ class EventCalendar extends Component {
                   onChange={this.handleRangeChange}
                   defaultValue={[start, end]}
                   format={dateFormat}
+                  allowClear={false}
                 />
               </div>
             </div>
