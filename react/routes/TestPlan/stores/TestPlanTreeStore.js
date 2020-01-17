@@ -113,7 +113,7 @@ class TestPlanTreeStore {
 
   getAllChildren = parent => this.treeData.treeFolder.filter(item => parent.children.includes(item.id));
 
-  generateTimes = (data, times) => {
+  generateTimes = (data, times, level = 0) => {
     for (let i = 0; i < data.length; i += 1) {
       const node = data[i];
       const {
@@ -126,10 +126,11 @@ class TestPlanTreeStore {
         type: this.isPlan(node.id) ? 'plan' : 'folder',
         start: `${moment(moment.min(fromDate)).format('YYYY-MM-DD')} 00:00:00`,
         end: `${moment(moment.max(toDate)).format('YYYY-MM-DD')} 23:59:59`,
+        level,
       });
 
       if (node.children && node.children.length > 0) {
-        this.generateTimes(this.getAllChildren(node), times);
+        this.generateTimes(this.getAllChildren(node), times, level + 1);
       }
     }
   }
@@ -142,6 +143,12 @@ class TestPlanTreeStore {
   }
 
   @action setTreeData(treeData, defaultSelectId) {
+    const { flattenedTree } = this.treeRef.current || {};
+    let flattenedTreeIds;
+    if (flattenedTree) {
+      flattenedTreeIds = flattenedTree.map(node => node.item).filter(item => item.isExpanded).map(item => item.id);
+    }
+
     const { rootIds, treeFolder } = treeData;
     const firstRoot = (treeFolder && treeFolder.find(item => item.issueFolderVO.initStatus === 'success' && item.topLevel)) || {};
     // 选中之前选中的
@@ -159,7 +166,7 @@ class TestPlanTreeStore {
           id: planId ? `${planId}-${id}` : id,
           children: children ? children.map(child => `${planId || id}-${child}`) : [],
           data: issueFolderVO,
-          isExpanded: expanded,
+          isExpanded: (flattenedTreeIds && (flattenedTreeIds.includes(id) || flattenedTreeIds.includes(`${planId}-${id}`))) || expanded,
           selected: folder.id === selectedId,
           ...other,
         };

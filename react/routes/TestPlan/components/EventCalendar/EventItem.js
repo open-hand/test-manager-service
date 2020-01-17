@@ -22,29 +22,64 @@ const CURSORS = {
   move: 'move',
 };
 const styles = {
-  plan: {
-    borderTop: '4px solid #3F51B5',
-    background: '#E8ECFC',
+  0: {
+    borderTop: '4px solid #3F51B5', // 边框
+    background: '#E8ECFC', // 背景
     tipBackground: 'rgba(63,81,181,0.6)',
     color: '#3F51B5',
   },
-  version: {
-    borderTop: '4px solid #FFB100',
-    background: '#FFF8E7',
-    tipBackground: 'rgba(255,177,0,0.6)',
-    color: '#FFB100',
-  },
-  cycle: {
+  1: {
     borderTop: '4px solid #00BFA5',
     background: '#E5F9F6',
     tipBackground: 'rgba(0,191,165,0.6)',
     color: '#00BFA5',
   },
-  folder: {
-    // borderTop: '4px solid #3F51B5',
+  2: {
+    borderTop: '4px solid #FFB100',
+    background: '#FFF8E7',
+    tipBackground: 'rgba(255,177,0,0.6)',
+    color: '#FFB100',
+  },
+  3: {
+    borderTop: '4px solid #4D90FE',
     background: '#E9F1FF',
     color: '#4D90FE',
     tipBackground: 'rgba(77,144,254,0.6)',
+    lineHeight: '34px',
+  },
+  4: {
+    borderTop: '4px solid #FF3339',
+    background: '#FFDBDC',
+    color: '#FF3339',
+    tipBackground: 'rgba(255,51,57,0.6)',
+    lineHeight: '34px',
+  },
+  5: {
+    borderTop: '4px solid #38A5FF',
+    background: '#E9F5FF',
+    color: '#38A5FF',
+    tipBackground: 'rgba(56,165,255,0.6)',
+    lineHeight: '34px',
+  },
+  6: {
+    borderTop: '4px solid #FF8F31',
+    background: '#FFECDB',
+    color: '#FF8F31',
+    tipBackground: 'rgba(255,143,49,0.6)',
+    lineHeight: '34px',
+  },
+  7: {
+    borderTop: '4px solid #1CA9C9',
+    background: '#DCF9FF',
+    color: '#1CA9C9',
+    tipBackground: 'rgba(28,169,201,0.6)',
+    lineHeight: '34px',
+  },
+  8: {
+    borderTop: '4px solid #3B45FF',
+    background: '#E9EAFF',
+    color: '#3B45FF',
+    tipBackground: 'rgba(59,69,255,0.6)',
     lineHeight: '34px',
   },
 };
@@ -206,7 +241,7 @@ class EventItem extends Component {
 
   renderItems = () => {
     const { context: { testPlanStore }, data } = this.props;
-    const { data: { fromDate, toDate } } = data;
+    const { data: { fromDate, toDate }, level, hasChildren } = data;
     const {
       type, title, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
@@ -228,13 +263,14 @@ class EventItem extends Component {
         style={{
           flex,
           display: flex === 0 && 'none',
-          ...styles[type],
+          ...styles[level],
+          borderTop: hasChildren ? styles[level].borderTop : 0,
         }}
       >
         {canResize && <div className="c7ntest-EventItem-event-resizer-left" style={{ left: preFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'left')} role="none" />}
         {canResize && <div className="c7ntest-EventItem-event-resizer-right" style={{ right: lastFlex === 0 ? 0 : -10 }} onMouseDown={this.handleMouseDown.bind(this, 'right')} role="none" />}
-        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[type].tipBackground }} />}
-        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[type].tipBackground }} />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-left" style={{ background: styles[level] && styles[level].tipBackground }} />}
+        {(enter || resizing) && <div className="c7ntest-EventItem-event-tip-right" style={{ background: styles[level] && styles[level].tipBackground }} />}
         <Tooltip getPopupContainer={triggerNode => triggerNode.parentNode} title={tipTitle} placement="topLeft">
           <div className="c7ntest-EventItem-event-title c7ntest-text-dot" onMouseDown={canResize ? this.handleMouseDown.bind(this, 'move') : null} role="none">
             {title}

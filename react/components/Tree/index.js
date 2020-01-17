@@ -139,6 +139,7 @@ function PureTree({
     updateTree,
     getItem,
     treeData: tree,
+    flattenedTree,
     trigger: {
       delete: handleDelete,
     },
