@@ -187,14 +187,14 @@ public class TestCycleAssembler {
     }
 
     public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO){
-        if (testCycleDTO.getFromDate() != null && testCycleDTO.getToDate() != null) {
-            testCycleVO.setFromDate(testCycleDTO.getFromDate());
-            testCycleVO.setToDate(testCycleDTO.getToDate());
+        if (testCycleDTO == null || testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
+            TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
+            testCycleVO.setFromDate(testPlanDTO.getStartDate());
+            testCycleVO.setToDate(testPlanDTO.getEndDate());
         } else {
-            if (testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
-                TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
-                testCycleVO.setFromDate(testPlanDTO.getStartDate());
-                testCycleVO.setToDate(testPlanDTO.getEndDate());
+            if (testCycleDTO.getFromDate() != null && testCycleDTO.getToDate() != null) {
+                testCycleVO.setFromDate(testCycleDTO.getFromDate());
+                testCycleVO.setToDate(testCycleDTO.getToDate());
             } else {
                 TestCycleDTO testCycle = cycleMapper.selectByPrimaryKey(testCycleDTO.getParentCycleId());
                 assignmentTime(testCycleVO, testCycle);
