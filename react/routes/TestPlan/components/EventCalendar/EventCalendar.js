@@ -18,14 +18,8 @@ const moment = extendMoment(Moment);
 class EventCalendar extends Component {
   constructor(props) {
     super(props);
-    const { times } = props;
-    let baseDate = moment();
-    let endDate = moment();
-    if (times && times.length > 0) {
-      baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
-      endDate = times[0].end ? moment(times[0].end).startOf('day') : moment();
-    }
-
+    const baseDate = moment();
+    const endDate = moment();
     this.currentDate = baseDate;
     this.state = {
       baseDate, // 显示的开始时间
@@ -35,9 +29,23 @@ class EventCalendar extends Component {
     };
   }
 
+  static getDerivedStateFromProps(nextProps, state) {
+    if (!isEqual(state.times, nextProps.times)) {
+      let baseDate = moment();
+      let endDate = moment();
+      const { times } = nextProps;
+      if (times && times.length > 0) {
+        baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
+        endDate = times[0].end ? moment(times[0].end).startOf('day') : moment();
+      }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
+      return {
+        baseDate, // 显示的开始时间
+        endDate, // 显示的结束时间
+      };
+    } else {
+      return null;
+    }
   }
 
   componentDidMount() {
@@ -170,13 +178,13 @@ class EventCalendar extends Component {
       <Spin spinning={calendarLoading}>
         <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
           {/* 头部 */}
-          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', zIndex: 100, flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
-            <div className="c7ntest-EventCalendar-header-title">
+          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
+            <div className="c7ntest-EventCalendar-header-title" style={{ zIndex: 100 }}>
               <div className="c7ntest-EventCalendar-header-skip">
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}
-                  defaultValue={[start, end]}
+                  value={[start, end]}
                   format={dateFormat}
                   allowClear={false}
                 />

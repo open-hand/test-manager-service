@@ -70,14 +70,12 @@ function TestPlanHeader() {
     createAutoTestStore.setVisible(true);
   };
   const handlePlanEdit = useCallback((newPlan) => {
-    const { getItem, updateTree } = testPlanStore.treeRef.current;
-    const oldPlan = getItem(newPlan.planId);
-    updateTree(newPlan.planId, {
-      data: {
-        ...oldPlan.data,
-        name: newPlan.name,
-        objectVersionNumber: newPlan.objectVersionNumber,
-      },
+    testPlanStore.setCalendarLoading(true);
+    testPlanStore.loadIssueTree().then(() => {
+      testPlanStore.setCalendarLoading(false);
+    }).catch(() => {
+      Choerodon.prompt('更新计划日历失败');
+      testPlanStore.setCalendarLoading(false);
     });
     // 更新右侧数据
     if (testPlanStore.getCurrentPlanId === newPlan.planId) {
