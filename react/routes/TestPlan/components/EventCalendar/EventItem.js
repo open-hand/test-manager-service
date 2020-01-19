@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { Choerodon } from '@choerodon/boot';
 import { findDOMNode } from 'react-dom';
+import isEqual from 'react-fast-compare';
 import PropTypes from 'prop-types';
 import Moment from 'moment';
 import { toJS } from 'mobx';
@@ -140,6 +141,7 @@ class EventItem extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
+    console.log(props);
     // 调整大小时以state为准
     if (!state.done) {
       return null;
@@ -241,9 +243,9 @@ class EventItem extends Component {
 
   renderItems = () => {
     const { context: { testPlanStore }, data } = this.props;
-    const { data: { fromDate, toDate }, level, hasChildren } = data;
+    const { data: { fromDate, toDate, name: title }, level, hasChildren } = data;
     const {
-      type, title, preFlex, flex, lastFlex, enter, resizing,
+      type, preFlex, flex, lastFlex, enter, resizing,
     } = this.state;
     const tipTitle = (
       <span>

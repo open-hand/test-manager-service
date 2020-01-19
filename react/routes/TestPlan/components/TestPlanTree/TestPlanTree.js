@@ -25,6 +25,7 @@ class TestPlanTree extends Component {
   }
 
   editPlanName = async (newName, item) => {
+    const { context: { testPlanStore } } = this.props;
     const { objectVersionNumber } = item.data;
     const data = {
       planId: item.id,
@@ -33,6 +34,7 @@ class TestPlanTree extends Component {
       caseChanged: false,
     };
     const result = await handleRequestFailed(editPlan(data));
+    testPlanStore.loadIssueTree();
     return {
       data: {
         ...item.data,
@@ -53,6 +55,7 @@ class TestPlanTree extends Component {
       projectId: getProjectId(),
     };
     const result = await handleRequestFailed(editFolder(data));
+    testPlanStore.loadIssueTree();
     return {
       data: {
         ...item.data,

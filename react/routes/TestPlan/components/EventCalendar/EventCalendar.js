@@ -31,6 +31,7 @@ class EventCalendar extends Component {
 
   static getDerivedStateFromProps(nextProps, state) {
     if (!isEqual(state.times, nextProps.times)) {
+      console.log(toJS(nextProps.times));
       let baseDate = moment();
       let endDate = moment();
       const { times } = nextProps;
@@ -178,22 +179,18 @@ class EventCalendar extends Component {
     const range = moment.range(start, end);
     const timeArray = Array.from(range.by('day'));
     const dateFormat = 'YYYY/MM/DD';
+    console.log('render');
     return (
       <Spin spinning={calendarLoading}>
         <div className="c7ntest-EventCalendar" style={{ height: showMode === 'multi' ? '100%' : '162px' }}>
           {/* 头部 */}
-          <div
-            className="c7ntest-EventCalendar-header"
-            style={{
-              marginTop: '-50px', zIndex: 100, flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex', 
-            }}
-          >
-            <div className="c7ntest-EventCalendar-header-title">
+          <div className="c7ntest-EventCalendar-header" style={{ marginTop: '-50px', flexDirection: 'row-reverse', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'none' : 'flex' }}>
+            <div className="c7ntest-EventCalendar-header-title" style={{ zIndex: 100 }}>
               <div className="c7ntest-EventCalendar-header-skip">
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}
-                  defaultValue={[start, end]}
+                  value={[start, end]}
                   format={dateFormat}
                   allowClear={false}
                 />
@@ -215,14 +212,17 @@ class EventCalendar extends Component {
                     timeArray.map(() => <div className="c7ntest-EventCalendar-BackItems-item" />)
                   }
                 </div>
-                {times.map(event => (
-                  <EventItem
-                    key={event.key}
-                    itemRange={moment.range(event.start, event.end)}
-                    data={event}
-                    range={range}
-                  />
-                ))}
+                {times.map((event) => {
+                  console.log(event);
+                  return (
+                    <EventItem
+                      key={event.key}
+                      itemRange={moment.range(event.start, event.end)}
+                      data={event}
+                      range={range}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
