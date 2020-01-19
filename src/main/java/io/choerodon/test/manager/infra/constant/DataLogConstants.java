@@ -6,6 +6,9 @@ package io.choerodon.test.manager.infra.constant;
  */
 public class DataLogConstants {
 
+    private DataLogConstants() {
+    }
+
     public static final String CASE_CREATE = "caseCreate";
     public static final String CASE_UPDATE = "caseUpdate";
     public static final String LABEL_DELETE = "labelDelete";

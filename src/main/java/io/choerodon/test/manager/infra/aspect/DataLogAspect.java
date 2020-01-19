@@ -178,7 +178,7 @@ public class DataLogAspect {
                 TestCaseAttachmentDTO testCaseAttachmentDTO = testAttachmentMapper.selectByPrimaryKey(attachmentId);
                 createDataLog(testCaseAttachmentDTO.getProjectId(), testCaseAttachmentDTO.getCaseId(), FIELD_ATTACHMENT, testCaseAttachmentDTO.getUrl(), null, testCaseAttachmentDTO.getAttachmentId().toString(), null);
             }
-        } catch (Throwable throwable) {
+        } catch (Exception throwable) {
             throwable.printStackTrace();
         }
     }

@@ -6,6 +6,9 @@ package io.choerodon.test.manager.infra.util;
  */
 public class NameUtil {
 
+    private NameUtil() {
+    }
+
     public static final String UNDERLINE = "_";
     public static final String MIDDLELINE = "-";
 
@@ -14,7 +17,7 @@ public class NameUtil {
      *
      * @param para 下划线命名的字符串
      */
-    public static String UnderlineToHump(String para) {
+    public static String underlineToHump(String para) {
         StringBuilder result = new StringBuilder();
         String a[] = para.split(UNDERLINE);
         for (String s : a) {
@@ -38,7 +41,7 @@ public class NameUtil {
      *
      * @param para 驼峰命名的字符串
      */
-    public static String HumpToMiddleline(String para) {
+    public static String humpToMiddleline(String para) {
         StringBuilder sb = new StringBuilder(para);
         int temp = 0;
         if (!para.contains(MIDDLELINE)) {
