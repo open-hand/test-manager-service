@@ -216,7 +216,7 @@ public class TestNgUtil {
                 String field = method.getName();
                 field = field.substring(field.indexOf("set") + 3);
                 field = field.toLowerCase().charAt(0) + field.substring(1);
-                String value = attrMap.get(NameUtil.HumpToMiddleline(field));
+                String value = attrMap.get(NameUtil.humpToMiddleline(field));
                 try {
                     if (value != null) {
                         if (method.getParameterTypes()[0] == Long.class) {

@@ -49,8 +49,8 @@ public class TestIssueFolderServiceImpl implements TestIssueFolderService {
     public TestTreeIssueFolderVO queryTreeFolder(Long projectId) {
         List<TestIssueFolderDTO> testIssueFolderDTOList = testIssueFolderMapper.selectListByProjectId(projectId);
         //根目录
-        List<Long> rootFolderId = testIssueFolderDTOList.stream().filter(IssueFolder ->
-                IssueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
+        List<Long> rootFolderId = testIssueFolderDTOList.stream().filter(issueFolder ->
+                issueFolder.getParentId() == 0).map(TestIssueFolderDTO::getFolderId).collect(Collectors.toList());
 
         List<TestTreeFolderVO> list = new ArrayList<>();
         testIssueFolderDTOList.forEach(testIssueFolderDTO -> {

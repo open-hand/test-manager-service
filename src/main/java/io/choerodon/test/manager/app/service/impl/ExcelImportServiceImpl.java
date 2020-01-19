@@ -14,7 +14,6 @@ import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.enums.ExcelTitleName;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
 import io.choerodon.test.manager.infra.enums.TestFileLoadHistoryEnums;
-import io.choerodon.test.manager.infra.feign.IssueFeignClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestFileLoadHistoryMapper;
 import io.choerodon.test.manager.infra.mapper.TestIssueFolderMapper;

@@ -93,7 +93,7 @@ public class ConvertUtils {
      */
     public static <S, D> List<D> convertList(List<S> source, Class<D> destinationClass) {
         if (source == null) {
-            return null;
+            return new ArrayList<>() ;
         }
         if (source.isEmpty()) {
             return new ArrayList<>();
@@ -112,7 +112,7 @@ public class ConvertUtils {
      */
     public static <S, D> List<D> convertList(List<S> source, Function<S, D> converter) {
         if (source == null) {
-            return null;
+            return new ArrayList<>();
         }
         if (source.isEmpty()) {
             return new ArrayList<>();

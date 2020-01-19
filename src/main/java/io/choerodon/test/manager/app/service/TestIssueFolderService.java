@@ -1,10 +1,8 @@
 package io.choerodon.test.manager.app.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import io.choerodon.test.manager.api.vo.TestIssueFolderVO;
-import io.choerodon.test.manager.api.vo.TestIssueFolderWithVersionNameVO;
 import io.choerodon.test.manager.api.vo.TestTreeIssueFolderVO;
 import io.choerodon.test.manager.api.vo.event.ProjectEvent;
 import io.choerodon.test.manager.infra.dto.TestIssueFolderDTO;

@@ -17,8 +17,6 @@ public interface TestCaseStepMapper extends Mapper<TestCaseStepDTO> {
 
     String getLastedRank(@Param("issueId") Long issueId);
 
-    String getLastedRank_oracle(@Param("issueId") Long issueId);
-
     int batchInsertTestCaseSteps(List<TestCaseStepDTO> testCaseStepDTOS);
 
     void updateAuditFields(@Param("issueIds") Long[] issueId, @Param("userId") Long userId, @Param("date") Date date);

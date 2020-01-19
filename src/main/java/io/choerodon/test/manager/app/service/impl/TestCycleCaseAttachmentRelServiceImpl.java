@@ -31,10 +31,8 @@ import io.choerodon.test.manager.infra.dto.TestCaseDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.enums.TestAttachmentCode;
-import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
-import io.choerodon.test.manager.infra.util.DBValidateUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -61,15 +59,10 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
     private TestCycleCaseAttachmentRelUploadService testCycleCaseAttachmentRelUploadService;
 
 
-    private final FileFeignClient fileFeignClient;
-
     @Value("${services.attachment.url}")
     private String attachmentUrl;
 
-    @Autowired
-    public TestCycleCaseAttachmentRelServiceImpl(FileFeignClient fileFeignClient) {
-        this.fileFeignClient = fileFeignClient;
-    }
+
 
     @Override
     public void deleteAttachmentRel(Long attachId) {
@@ -205,22 +198,4 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
         testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);
     }
 
-    private TestCycleCaseAttachmentRelDTO baseUpload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-        TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
-        testCycleCaseAttachmentRelDTO.setAttachmentLinkId(attachmentLinkId);
-        testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
-        testCycleCaseAttachmentRelDTO.setComment(comment);
-
-        ResponseEntity<String> response = fileService.uploadFile(bucketName, fileName, file);
-        if (response == null || response.getStatusCode() != HttpStatus.OK) {
-            throw new CommonException("error.attachment.upload");
-        }
-
-        testCycleCaseAttachmentRelDTO.setUrl(response.getBody());
-        testCycleCaseAttachmentRelDTO.setUrl("response.getBody()");
-        testCycleCaseAttachmentRelDTO.setAttachmentType(attachmentType);
-        DBValidateUtil.executeAndvalidateUpdateNum(testCycleCaseAttachmentRelMapper::insert, testCycleCaseAttachmentRelDTO, 1, "error.attachment.insert");
-
-        return testCycleCaseAttachmentRelDTO;
-    }
 }

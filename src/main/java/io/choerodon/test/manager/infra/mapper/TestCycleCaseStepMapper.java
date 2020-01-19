@@ -15,10 +15,6 @@ public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
 
     List<TestCycleCaseStepDTO> queryWithTestCaseStep(@Param("dto") TestCycleCaseStepDTO testCycleCaseStepDTO, @Param("page") Integer page, @Param("pageSize") Integer pageSize);
 
-    List<TestCycleCaseStepDTO> queryWithTestCaseStep_oracle(@Param("dto") TestCycleCaseStepDTO testCycleCaseStepDTO, @Param("page") int page, @Param("pageSize") int pageSize);
-
-    Long queryWithTestCaseStep_count(@Param("executeId") Long executeId);
-
     List<TestCycleCaseStepDTO> queryCycleCaseForReporter(@Param("ids") Long[] ids);
 
     int batchInsertTestCycleCaseSteps(List<TestCycleCaseStepDTO> testCycleCaseStepDTOS);
