@@ -96,6 +96,7 @@ class TestPlanTree extends Component {
       cycleName: value,
     };
     const result = await handleRequestFailed(addFolder(data));
+    testPlanStore.loadIssueTree();
     return {
       id: `${planId}-${result.cycleId}`,
       data: {

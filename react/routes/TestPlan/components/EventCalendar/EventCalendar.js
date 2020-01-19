@@ -65,6 +65,7 @@ class EventCalendar extends Component {
     const { baseDate, endDate } = this.state;
     const start = moment(baseDate).startOf('day');
     const end = moment(endDate).endOf('day');
+    console.log({ start, end });
     return { start, end };
   }
 
@@ -130,6 +131,7 @@ class EventCalendar extends Component {
    * @memberof EventCalendar
    */
   handleRangeChange = (range) => {
+    console.log(range);
     this.setState({
       baseDate: range[0],
       endDate: range[1],
@@ -184,6 +186,7 @@ class EventCalendar extends Component {
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}
+                  defaultValue={[start, end]}
                   value={[start, end]}
                   format={dateFormat}
                   allowClear={false}
