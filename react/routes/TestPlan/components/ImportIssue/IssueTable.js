@@ -59,11 +59,26 @@ function IssueTable({
         SelectIssueStore.removeFolderSelectedCase(caseFolderId, caseId);
       },
       selectAll: () => {
-        if (dataSet.length > 0) {
+        const selectedFolders = SelectIssueStore.getSelectedFolders();
+        // 有禁用且选中的项时，全选之后会无法取消全选，这里做一些判断
+        const shouldUnSelectAll = dataSet.some((record) => {
+          // eslint-disable-next-line no-shadow
+          const folderId = record.get('folderId');
+          if (record.selectable && selectedFolders[folderId]) {
+            const folder = selectedFolders[folderId];
+            if (!folder.custom || folder.selected.includes(record.get('id'))) {
+              return true;
+            }
+          }
+          return false;
+        });
+        if (shouldUnSelectAll) {
+          dataSet.unSelectAll();
+        } else if (dataSet.length > 0) {
           SelectIssueStore.handleCheckChange(true, folderId);
         }
       },
-      unSelectAll: () => {
+      unSelectAll: () => {        
         SelectIssueStore.handleCheckChange(false, folderId);
       },
     },
