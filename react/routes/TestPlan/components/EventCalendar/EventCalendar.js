@@ -40,6 +40,7 @@ class EventCalendar extends Component {
       }
 
       return {
+        times,
         baseDate, // 显示的开始时间
         endDate, // 显示的结束时间
       };
@@ -65,7 +66,6 @@ class EventCalendar extends Component {
     const { baseDate, endDate } = this.state;
     const start = moment(baseDate).startOf('day');
     const end = moment(endDate).endOf('day');
-    console.log({ start, end });
     return { start, end };
   }
 
@@ -131,7 +131,6 @@ class EventCalendar extends Component {
    * @memberof EventCalendar
    */
   handleRangeChange = (range) => {
-    console.log(range);
     this.setState({
       baseDate: range[0],
       endDate: range[1],
