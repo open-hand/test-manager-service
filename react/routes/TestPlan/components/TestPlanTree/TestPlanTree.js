@@ -71,14 +71,16 @@ class TestPlanTree extends Component {
     return isPlan ? this.editPlanName(newName, item) : this.editFolderName(newName, item);
   }
 
-  handleDelete = (item) => {
+  handleDelete = async (item) => {
     const { context: { testPlanStore } } = this.props;
     const isPlan = testPlanStore.isPlan(item.id);
     if (isPlan) {
-      handleRequestFailed(deletePlan(item.id));
+      await handleRequestFailed(deletePlan(item.id));
+      testPlanStore.loadIssueTree();
     } else {
       const [, folderId] = testPlanStore.getId(item.id);
-      handleRequestFailed(deleteFolder(folderId));
+      await handleRequestFailed(deleteFolder(folderId));
+      testPlanStore.loadIssueTree();
     }
     // 只移除跟节点，作用是删除目录后可以正确判断是不是没目录了，来显示空插画
     // testPlanStore.removeRootItem(item.id);

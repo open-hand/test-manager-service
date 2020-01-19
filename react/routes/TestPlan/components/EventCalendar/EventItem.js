@@ -141,7 +141,6 @@ class EventItem extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log(props);
     // 调整大小时以state为准
     if (!state.done) {
       return null;
