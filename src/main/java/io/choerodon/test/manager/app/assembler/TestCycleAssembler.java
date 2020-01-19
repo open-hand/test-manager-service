@@ -1,5 +1,6 @@
 package io.choerodon.test.manager.app.assembler;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -114,7 +115,7 @@ public class TestCycleAssembler {
     private Boolean replaceTime(TestCycleDTO cycleDTO, TestCycleDTO compareCycle,Boolean isUp){
         Boolean isChange = false;
         if (Boolean.TRUE.equals(isUp)) {
-            if (cycleDTO.getFromDate().before(compareCycle.getFromDate())) {
+            if (cycleDTO.getFromDate().before(compareCycle.getFromDate()) ) {
                 isChange = true;
                 compareCycle.setFromDate(cycleDTO.getFromDate());
             }
@@ -130,6 +131,13 @@ public class TestCycleAssembler {
             if (cycleDTO.getToDate().before(compareCycle.getToDate())) {
                 isChange = true;
                 compareCycle.setToDate(cycleDTO.getToDate());
+            }
+            if(cycleDTO.getFromDate().after(compareCycle.getToDate())){
+                isChange = true;
+                Calendar c = Calendar.getInstance();
+                c.setTime(cycleDTO.getFromDate());
+                c.add(Calendar.DAY_OF_MONTH,1);
+                compareCycle.setToDate(c.getTime());
             }
         }
         return isChange;
@@ -151,6 +159,13 @@ public class TestCycleAssembler {
             if (testPlanDTO.getEndDate().before(cycleDTO.getToDate())) {
                 isChange = true;
                 cycleDTO.setToDate(testPlanDTO.getEndDate());
+            }
+            if(testPlanDTO.getStartDate().after(cycleDTO.getToDate())){
+                isChange = true;
+                Calendar c = Calendar.getInstance();
+                c.setTime(testPlanDTO.getStartDate());
+                c.add(Calendar.DAY_OF_MONTH,1);
+                cycleDTO.setToDate(c.getTime());
             }
         }
         if (Boolean.TRUE.equals(isChange)) {
