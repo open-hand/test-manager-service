@@ -178,7 +178,7 @@ public class TestCycleAssembler {
         long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
         Calendar c = Calendar.getInstance();
         c.setTime(testPlanDTO.getStartDate());
-        if(planDays >= cycleDays){
+        if (planDays >= cycleDays){
 
             c.add(Calendar.DAY_OF_MONTH,(int)cycleDays);
             cycleDTO.setToDate(c.getTime());
