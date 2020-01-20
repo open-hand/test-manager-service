@@ -30,7 +30,7 @@ class EventCalendar extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, state) {
-    if (!isEqual(state.times, nextProps.times)) {
+    if (JSON.stringify(nextProps.times) !== JSON.stringify(state.times)) {
       let baseDate = moment();
       let endDate = moment();
       const { times } = nextProps;
@@ -62,9 +62,9 @@ class EventCalendar extends Component {
   }
 
   calculateTime = () => {
-    const { data: { fromDate, toDate } } = this.props.times[0] || {};
-    const start = moment(fromDate).startOf('day');
-    const end = moment(toDate).endOf('day');
+    const { baseDate, endDate } = this.state;
+    const start = moment(baseDate).startOf('day');
+    const end = moment(endDate).endOf('day');
     return { start, end };
   }
 
@@ -184,7 +184,6 @@ class EventCalendar extends Component {
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}
-                  // defaultValue={[start, end]}
                   value={[start, end]}
                   format={dateFormat}
                   allowClear={false}
