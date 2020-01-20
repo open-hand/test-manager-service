@@ -30,6 +30,7 @@ public class TestCycleAssembler {
     private TestPlanMapper testPlanMapper;
 
     public void updatePlanTime(Long projectId,TestPlanVO testPlanVO){
+        if(testPlanVO.getStartDate() != null || testPlanVO.getEndDate() != null ){
         List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, testPlanVO.getPlanId());
         if (CollectionUtils.isEmpty(testCycleDTOS)) {
             return;
@@ -40,6 +41,7 @@ public class TestCycleAssembler {
             return;
         }
         testCycle.forEach(v -> planLookDown(cycleMap,testPlanVO,v));
+        }
     }
 
     private void planLookDown(Map<Long, List<TestCycleDTO>> cycleMap,TestPlanVO testPlanVO,TestCycleDTO testCycleDTO){
