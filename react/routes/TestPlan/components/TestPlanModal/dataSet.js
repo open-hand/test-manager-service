@@ -17,7 +17,7 @@ export default function DataSetFactory({ initValue = {} } = {}) {
       },
       {
         name: 'range',
-        type: 'dateTime',
+        type: 'date',
         range: true,
         label: '持续时间',
         required: true,
