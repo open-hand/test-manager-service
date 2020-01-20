@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Modal, Form, DataSet, TextArea, DateTimePicker, Select, Radio,
+  Modal, Form, DataSet, TextArea, DatePicker, Select, Radio,
 } from 'choerodon-ui/pro';
 import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
@@ -90,7 +90,7 @@ function TestPlanModal({
           optionRenderer={({ record }) => <UserHead user={record.toData()} />}
         // renderer={({ record }) => <UserHead user={record.toData()} />}
         />
-        <DateTimePicker range name="range" min={Date.now()} />
+        <DatePicker range name="range" min={Date.now()} />
         {mode === 'create' && (
           <div>
             <div>
