@@ -1,6 +1,7 @@
 package io.choerodon.test.manager.app.assembler;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -164,16 +165,34 @@ public class TestCycleAssembler {
             }
             if(testPlanDTO.getStartDate().after(cycleDTO.getToDate())){
                 isChange = true;
-                Calendar c = Calendar.getInstance();
-                c.setTime(testPlanDTO.getStartDate());
-                c.add(Calendar.DAY_OF_MONTH,1);
-                cycleDTO.setToDate(c.getTime());
+                operateTime(cycleDTO,testPlanDTO);
             }
         }
         if (Boolean.TRUE.equals(isChange)) {
             updateCycle(cycleDTO);
         }
         return isChange;
+    }
+    private void operateTime(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO){
+        long planDays = diffTime(testPlanDTO.getStartDate(), testPlanDTO.getEndDate());
+        long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
+        Calendar c = Calendar.getInstance();
+        c.setTime(testPlanDTO.getStartDate());
+        if(planDays >= cycleDays){
+
+            c.add(Calendar.DAY_OF_MONTH,(int)cycleDays);
+            cycleDTO.setToDate(c.getTime());
+        }
+        else {
+            c.add(Calendar.DAY_OF_MONTH,1);
+        }
+        cycleDTO.setToDate(c.getTime());
+    }
+    
+    private long diffTime(Date startTime,Date endTime){
+        long diff = endTime.getTime() - startTime.getTime();//这样得到的差值是毫秒级别
+        long days = diff / (1000 * 60 * 60 * 24);
+        return days;
     }
 
     private void checkPlanTime(TestCycleDTO cycleDTO, TestPlanDTO testPlanDTO) {
