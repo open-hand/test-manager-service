@@ -38,7 +38,6 @@ class EventCalendar extends Component {
         baseDate = times[0].start ? moment(times[0].start).startOf('day') : moment();
         endDate = times[0].end ? moment(times[0].end).startOf('day') : moment();
       }
-
       return {
         times,
         baseDate, // 显示的开始时间
@@ -63,9 +62,9 @@ class EventCalendar extends Component {
   }
 
   calculateTime = () => {
-    const { baseDate, endDate } = this.state;
-    const start = moment(baseDate).startOf('day');
-    const end = moment(endDate).endOf('day');
+    const { data: { fromDate, toDate } } = this.props.times[0] || {};
+    const start = moment(fromDate).startOf('day');
+    const end = moment(toDate).endOf('day');
     return { start, end };
   }
 
@@ -185,7 +184,7 @@ class EventCalendar extends Component {
                 <RangePicker
                   // placement="bottomRight"
                   onChange={this.handleRangeChange}
-                  defaultValue={[start, end]}
+                  // defaultValue={[start, end]}
                   value={[start, end]}
                   format={dateFormat}
                   allowClear={false}
