@@ -126,13 +126,9 @@ public class TestCycleAssembler {
                 compareCycle.setToDate(cycleDTO.getToDate());
             }
         } else {
-            if (cycleDTO.getFromDate().after(compareCycle.getToDate())) {
+            if (cycleDTO.getFromDate().after(compareCycle.getToDate()) || cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
                 isChange = true;
                 operateCycleTime(compareCycle, cycleDTO);
-            }
-            if (cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
-                isChange = true;
-                compareCycle.setFromDate(cycleDTO.getFromDate());
             }
             if (cycleDTO.getToDate().before(compareCycle.getToDate())) {
                 isChange = true;
@@ -150,17 +146,13 @@ public class TestCycleAssembler {
             cycleDTO.setFromDate(testPlanDTO.getStartDate());
             cycleDTO.setToDate(testPlanDTO.getEndDate());
         } else {
-            if (testPlanDTO.getStartDate().after(cycleDTO.getFromDate())) {
+            if (testPlanDTO.getStartDate().after(cycleDTO.getToDate()) || testPlanDTO.getStartDate().after(cycleDTO.getFromDate())) {
                 isChange = true;
-                cycleDTO.setFromDate(testPlanDTO.getStartDate());
+                operateTime(cycleDTO, testPlanDTO);
             }
             if (testPlanDTO.getEndDate().before(cycleDTO.getToDate())) {
                 isChange = true;
                 cycleDTO.setToDate(testPlanDTO.getEndDate());
-            }
-            if (testPlanDTO.getStartDate().after(cycleDTO.getToDate())) {
-                isChange = true;
-                operateTime(cycleDTO, testPlanDTO);
             }
         }
         if (Boolean.TRUE.equals(isChange)) {
@@ -176,10 +168,10 @@ public class TestCycleAssembler {
         c.setTime(parentCycle.getFromDate());
         if (parentDays >= cycleDays) {
             c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
-            cycleDTO.setToDate(c.getTime());
         } else {
-            c.add(Calendar.DAY_OF_MONTH, 1);
+            c.add(Calendar.DAY_OF_MONTH, (int) parentDays);
         }
+        cycleDTO.setFromDate(parentCycle.getFromDate());
         cycleDTO.setToDate(c.getTime());
     }
 
@@ -190,10 +182,10 @@ public class TestCycleAssembler {
         c.setTime(testPlanDTO.getStartDate());
         if (planDays >= cycleDays) {
             c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
-            cycleDTO.setToDate(c.getTime());
         } else {
-            c.add(Calendar.DAY_OF_MONTH, 1);
+            c.add(Calendar.DAY_OF_MONTH, (int) planDays);
         }
+        cycleDTO.setFromDate(testPlanDTO.getStartDate());
         cycleDTO.setToDate(c.getTime());
     }
 
