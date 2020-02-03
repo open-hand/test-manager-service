@@ -30,27 +30,27 @@ public class TestCycleAssembler {
     @Autowired
     private TestPlanMapper testPlanMapper;
 
-    public void updatePlanTime(Long projectId,TestPlanVO testPlanVO){
-        if(testPlanVO.getStartDate() != null || testPlanVO.getEndDate() != null ){
-        List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, testPlanVO.getPlanId());
-        if (CollectionUtils.isEmpty(testCycleDTOS)) {
-            return;
-        }
-        Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
-        List<TestCycleDTO> testCycle = cycleMap.get(0L);
-        if (CollectionUtils.isEmpty(testCycle)) {
-            return;
-        }
-        testCycle.forEach(v -> planLookDown(cycleMap,testPlanVO,v));
+    public void updatePlanTime(Long projectId, TestPlanVO testPlanVO) {
+        if (testPlanVO.getStartDate() != null || testPlanVO.getEndDate() != null) {
+            List<TestCycleDTO> testCycleDTOS = cycleMapper.listByPlanIdAndProjectId(projectId, testPlanVO.getPlanId());
+            if (CollectionUtils.isEmpty(testCycleDTOS)) {
+                return;
+            }
+            Map<Long, List<TestCycleDTO>> cycleMap = testCycleDTOS.stream().collect(Collectors.groupingBy(TestCycleDTO::getParentCycleId));
+            List<TestCycleDTO> testCycle = cycleMap.get(0L);
+            if (CollectionUtils.isEmpty(testCycle)) {
+                return;
+            }
+            testCycle.forEach(v -> planLookDown(cycleMap, testPlanVO, v));
         }
     }
 
-    private void planLookDown(Map<Long, List<TestCycleDTO>> cycleMap,TestPlanVO testPlanVO,TestCycleDTO testCycleDTO){
+    private void planLookDown(Map<Long, List<TestCycleDTO>> cycleMap, TestPlanVO testPlanVO, TestCycleDTO testCycleDTO) {
         Boolean isChange = checkPlanTimeToLookDown(testCycleDTO, testPlanVO);
-        if(Boolean.TRUE.equals(isChange)){
+        if (Boolean.TRUE.equals(isChange)) {
             List<TestCycleDTO> testCycleDTOS = cycleMap.get(testCycleDTO.getCycleId());
-            if(!CollectionUtils.isEmpty(testCycleDTOS)){
-                testCycleDTOS.forEach(v -> planLookDown(cycleMap,testPlanVO,v));
+            if (!CollectionUtils.isEmpty(testCycleDTOS)) {
+                testCycleDTOS.forEach(v -> planLookDown(cycleMap, testPlanVO, v));
             }
         }
     }
@@ -105,9 +105,8 @@ public class TestCycleAssembler {
             isChange = true;
             compareCycle.setFromDate(cycleDTO.getFromDate());
             compareCycle.setToDate(cycleDTO.getToDate());
-        }
-        else {
-            isChange = replaceTime(cycleDTO,compareCycle,isUp);
+        } else {
+            isChange = replaceTime(cycleDTO, compareCycle, isUp);
         }
         if (Boolean.TRUE.equals(isChange)) {
             updateCycle(compareCycle);
@@ -115,10 +114,10 @@ public class TestCycleAssembler {
         return isChange;
     }
 
-    private Boolean replaceTime(TestCycleDTO cycleDTO, TestCycleDTO compareCycle,Boolean isUp){
+    private Boolean replaceTime(TestCycleDTO cycleDTO, TestCycleDTO compareCycle, Boolean isUp) {
         Boolean isChange = false;
         if (Boolean.TRUE.equals(isUp)) {
-            if (cycleDTO.getFromDate().before(compareCycle.getFromDate()) ) {
+            if (cycleDTO.getFromDate().before(compareCycle.getFromDate())) {
                 isChange = true;
                 compareCycle.setFromDate(cycleDTO.getFromDate());
             }
@@ -127,6 +126,10 @@ public class TestCycleAssembler {
                 compareCycle.setToDate(cycleDTO.getToDate());
             }
         } else {
+            if (cycleDTO.getFromDate().after(compareCycle.getToDate())) {
+                isChange = true;
+                operateCycleTime(compareCycle, cycleDTO);
+            }
             if (cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
                 isChange = true;
                 compareCycle.setFromDate(cycleDTO.getFromDate());
@@ -135,26 +138,18 @@ public class TestCycleAssembler {
                 isChange = true;
                 compareCycle.setToDate(cycleDTO.getToDate());
             }
-            if(cycleDTO.getFromDate().after(compareCycle.getToDate())){
-                isChange = true;
-                Calendar c = Calendar.getInstance();
-                c.setTime(cycleDTO.getFromDate());
-                c.add(Calendar.DAY_OF_MONTH,1);
-                compareCycle.setToDate(c.getTime());
-            }
         }
         return isChange;
     }
 
-    private Boolean checkPlanTimeToLookDown(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO){
+    private Boolean checkPlanTimeToLookDown(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO) {
         Boolean isChange = false;
         if (cycleDTO.getFromDate() == null || cycleDTO.getToDate() == null) {
             // 更新
             isChange = true;
             cycleDTO.setFromDate(testPlanDTO.getStartDate());
             cycleDTO.setToDate(testPlanDTO.getEndDate());
-        }
-        else {
+        } else {
             if (testPlanDTO.getStartDate().after(cycleDTO.getFromDate())) {
                 isChange = true;
                 cycleDTO.setFromDate(testPlanDTO.getStartDate());
@@ -163,9 +158,9 @@ public class TestCycleAssembler {
                 isChange = true;
                 cycleDTO.setToDate(testPlanDTO.getEndDate());
             }
-            if(testPlanDTO.getStartDate().after(cycleDTO.getToDate())){
+            if (testPlanDTO.getStartDate().after(cycleDTO.getToDate())) {
                 isChange = true;
-                operateTime(cycleDTO,testPlanDTO);
+                operateTime(cycleDTO, testPlanDTO);
             }
         }
         if (Boolean.TRUE.equals(isChange)) {
@@ -173,23 +168,36 @@ public class TestCycleAssembler {
         }
         return isChange;
     }
-    private void operateTime(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO){
+
+    private void operateCycleTime(TestCycleDTO cycleDTO, TestCycleDTO parentCycle) {
+        long parentDays = diffTime(parentCycle.getFromDate(), parentCycle.getToDate());
+        long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
+        Calendar c = Calendar.getInstance();
+        c.setTime(parentCycle.getFromDate());
+        if (parentDays >= cycleDays) {
+            c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
+            cycleDTO.setToDate(c.getTime());
+        } else {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        cycleDTO.setToDate(c.getTime());
+    }
+
+    private void operateTime(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO) {
         long planDays = diffTime(testPlanDTO.getStartDate(), testPlanDTO.getEndDate());
         long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
         Calendar c = Calendar.getInstance();
         c.setTime(testPlanDTO.getStartDate());
-        if (planDays >= cycleDays){
-
-            c.add(Calendar.DAY_OF_MONTH,(int)cycleDays);
+        if (planDays >= cycleDays) {
+            c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
             cycleDTO.setToDate(c.getTime());
-        }
-        else {
-            c.add(Calendar.DAY_OF_MONTH,1);
+        } else {
+            c.add(Calendar.DAY_OF_MONTH, 1);
         }
         cycleDTO.setToDate(c.getTime());
     }
-    
-    private long diffTime(Date startTime,Date endTime){
+
+    private long diffTime(Date startTime, Date endTime) {
         long diff = endTime.getTime() - startTime.getTime();//这样得到的差值是毫秒级别
         long days = diff / (1000 * 60 * 60 * 24);
         return days;
@@ -210,19 +218,19 @@ public class TestCycleAssembler {
         }
     }
 
-     private void updatePlan(TestPlanDTO testPlanDTO){
-         if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
-             throw new CommonException("error.update.plan");
-         }
-     }
+    private void updatePlan(TestPlanDTO testPlanDTO) {
+        if (testPlanMapper.updateByPrimaryKeySelective(testPlanDTO) != 1) {
+            throw new CommonException("error.update.plan");
+        }
+    }
 
-    private void updateCycle(TestCycleDTO cycleDTO){
+    private void updateCycle(TestCycleDTO cycleDTO) {
         if (cycleMapper.updateByPrimaryKeySelective(cycleDTO) != 1) {
             throw new CommonException("error.update.cycle");
         }
     }
 
-    public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO){
+    public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO) {
         if (testCycleDTO == null || testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
             TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
             testCycleVO.setFromDate(testPlanDTO.getStartDate());
