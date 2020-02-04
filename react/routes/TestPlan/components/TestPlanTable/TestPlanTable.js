@@ -137,7 +137,7 @@ const TestPlanTable = observer(({
     key: 'summary',
     filters: [],
     filteredValue: getSummaryFilterValue(),
-    flex: 2,
+    flex: 1.6,
     style: {
       overflow: 'hidden',
     },
@@ -146,12 +146,14 @@ const TestPlanTable = observer(({
     title: '执行人',
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
-    flex: 1,
+    flex: 1.2,
+    style: {
+      overflow: 'hidden',
+    },
     render(lastUpdateUser) {
       return (
         <div
           className="c7ntest-text-dot"
-          style={{ marginLeft: 5 }}
         >
           <User user={lastUpdateUser} />
         </div>
@@ -225,12 +227,14 @@ const TestPlanTable = observer(({
         title: '被指派人',
         dataIndex: 'assignedUser',
         key: 'assignedUser',
-        flex: 1,
+        flex: 1.2,
+        style: {
+          overflow: 'hidden',
+        },
         render(assignedUser) {
           return (
             <div
               className="c7ntest-text-dot"
-              style={{ marginLeft: 5 }}
             >
               <User user={assignedUser} />
             </div>
