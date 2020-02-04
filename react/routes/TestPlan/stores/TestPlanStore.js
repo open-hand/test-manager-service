@@ -242,7 +242,6 @@ class TestPlanStore extends TestPlanTreeStore {
       const { orderField, orderType } = order;
       const { mineOrderField, mineOrderType } = mineOrder;
       const { current, pageSize } = executePagination;
-      console.log(toJS(current), toJS(pageSize));
       const { mineCurrent, minePageSize } = mineExecutePagination;
       const search = getSearchObj;
       const mineSearch = getMineSearchObj;

@@ -9,6 +9,7 @@ const User = ({
     <div
       style={{
         display: 'inline-block',
+        // display: 'flex',
         // padding: 2,
         paddingRight: 6,
         paddingBottom: 2,
