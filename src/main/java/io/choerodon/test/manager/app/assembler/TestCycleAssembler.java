@@ -126,13 +126,10 @@ public class TestCycleAssembler {
                 compareCycle.setToDate(cycleDTO.getToDate());
             }
         } else {
-            if (cycleDTO.getFromDate().after(compareCycle.getToDate()) || cycleDTO.getFromDate().after(compareCycle.getFromDate())) {
+            boolean isOperate = cycleDTO.getFromDate().after(compareCycle.getToDate()) || cycleDTO.getFromDate().after(compareCycle.getFromDate()) || cycleDTO.getToDate().before(compareCycle.getFromDate()) || cycleDTO.getToDate().before(compareCycle.getToDate());
+            if (Boolean.TRUE.equals(isOperate)) {
                 isChange = true;
                 operateCycleTime(compareCycle, cycleDTO);
-            }
-            if (cycleDTO.getToDate().before(compareCycle.getToDate())) {
-                isChange = true;
-                compareCycle.setToDate(cycleDTO.getToDate());
             }
         }
         return isChange;
@@ -146,13 +143,10 @@ public class TestCycleAssembler {
             cycleDTO.setFromDate(testPlanDTO.getStartDate());
             cycleDTO.setToDate(testPlanDTO.getEndDate());
         } else {
-            if (testPlanDTO.getStartDate().after(cycleDTO.getToDate()) || testPlanDTO.getStartDate().after(cycleDTO.getFromDate())) {
+            boolean isOperate = testPlanDTO.getStartDate().after(cycleDTO.getToDate()) || testPlanDTO.getStartDate().after(cycleDTO.getFromDate()) || testPlanDTO.getEndDate().before(cycleDTO.getFromDate()) || testPlanDTO.getEndDate().before(cycleDTO.getToDate());
+            if (Boolean.TRUE.equals(isOperate)) {
                 isChange = true;
                 operateTime(cycleDTO, testPlanDTO);
-            }
-            if (testPlanDTO.getEndDate().before(cycleDTO.getToDate())) {
-                isChange = true;
-                cycleDTO.setToDate(testPlanDTO.getEndDate());
             }
         }
         if (Boolean.TRUE.equals(isChange)) {
@@ -166,13 +160,22 @@ public class TestCycleAssembler {
         long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
         Calendar c = Calendar.getInstance();
         c.setTime(parentCycle.getFromDate());
-        if (parentDays >= cycleDays) {
-            c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
+        if (parentDays > cycleDays) {
+            if (parentCycle.getToDate().before(cycleDTO.getFromDate()) || parentCycle.getToDate().before(cycleDTO.getToDate())) {
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTime(parentCycle.getToDate());
+                endTime.add(Calendar.DAY_OF_MONTH, (int) -cycleDays);
+                cycleDTO.setFromDate(endTime.getTime());
+                cycleDTO.setToDate(parentCycle.getToDate());
+            } else {
+                cycleDTO.setFromDate(parentCycle.getFromDate());
+                c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
+                cycleDTO.setToDate(c.getTime());
+            }
         } else {
-            c.add(Calendar.DAY_OF_MONTH, (int) parentDays);
+            cycleDTO.setFromDate(parentCycle.getFromDate());
+            cycleDTO.setToDate(parentCycle.getToDate());
         }
-        cycleDTO.setFromDate(parentCycle.getFromDate());
-        cycleDTO.setToDate(c.getTime());
     }
 
     private void operateTime(TestCycleDTO cycleDTO, TestPlanVO testPlanDTO) {
@@ -180,13 +183,22 @@ public class TestCycleAssembler {
         long cycleDays = diffTime(cycleDTO.getFromDate(), cycleDTO.getToDate());
         Calendar c = Calendar.getInstance();
         c.setTime(testPlanDTO.getStartDate());
-        if (planDays >= cycleDays) {
-            c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
+        if (planDays > cycleDays) {
+            if (testPlanDTO.getEndDate().before(cycleDTO.getFromDate()) || testPlanDTO.getEndDate().before(cycleDTO.getToDate())) {
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTime(testPlanDTO.getEndDate());
+                endTime.add(Calendar.DAY_OF_MONTH, (int) -cycleDays);
+                cycleDTO.setFromDate(endTime.getTime());
+                cycleDTO.setToDate(testPlanDTO.getEndDate());
+            } else {
+                cycleDTO.setFromDate(testPlanDTO.getStartDate());
+                c.add(Calendar.DAY_OF_MONTH, (int) cycleDays);
+                cycleDTO.setToDate(c.getTime());
+            }
         } else {
-            c.add(Calendar.DAY_OF_MONTH, (int) planDays);
+            cycleDTO.setFromDate(testPlanDTO.getStartDate());
+            cycleDTO.setToDate(testPlanDTO.getEndDate());
         }
-        cycleDTO.setFromDate(testPlanDTO.getStartDate());
-        cycleDTO.setToDate(c.getTime());
     }
 
     private long diffTime(Date startTime, Date endTime) {
