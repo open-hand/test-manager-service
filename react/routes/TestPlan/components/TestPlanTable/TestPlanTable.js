@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite';
 import {
   Tooltip, Card, Button, Icon,
 } from 'choerodon-ui';
-import { Action } from '@choerodon/boot';
+import { Action, stores } from '@choerodon/boot';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable,
@@ -17,6 +17,8 @@ import './TestPlanTable.less';
 
 import Store from '../../stores';
 
+const { AppState } = stores;
+
 const propTypes = {
   onDragEnd: PropTypes.func.isRequired,
   onTableChange: PropTypes.func.isRequired,
@@ -25,8 +27,6 @@ const propTypes = {
   onQuickPass: PropTypes.func.isRequired,
   onQuickFail: PropTypes.func.isRequired,
   onOpenUpdateRemind: PropTypes.func.isRequired,
-  onAssignToChange: PropTypes.func.isRequired,
-  onSearchAssign: PropTypes.func.isRequired,
 };
 const TestPlanTable = observer(({
   onDragEnd,
@@ -38,13 +38,15 @@ const TestPlanTable = observer(({
   onOpenUpdateRemind,
   onAssignToChange,
   onSearchAssign,
+  hasCheckBox,
+  isMine,
 }) => {
   const {
     testPlanStore,
   } = useContext(Store);
 
   const {
-    tableLoading, statusList, executePagination, testList, checkIdMap, testPlanStatus,
+    tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus,
   } = testPlanStore;
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
     <span style={{ display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
@@ -106,7 +108,7 @@ const TestPlanTable = observer(({
           ) : (
             <span style={{ display: 'flex', alignItems: 'center' }}>
               <Icon style={{ color: '#4D90FE', fontSize: 20 }} type="test-case" />
-                手动测试
+              手动测试
             </span>
           )}
         </div>
@@ -114,11 +116,19 @@ const TestPlanTable = observer(({
     }
   };
 
-  const getStatusFilteredValue = () => {
-    if (testPlanStore.filter && testPlanStore.filter.executionStatus) {
-      return [testPlanStore.filter.executionStatus];
+  const getSummaryFilterValue = () => {
+    if (!isMine) {
+      return testPlanStore.filter && testPlanStore.filter.summary ? [testPlanStore.filter.summary] : [];
     } else {
-      return [];
+      return testPlanStore.mineFilter && testPlanStore.mineFilter.summary ? [testPlanStore.mineFilter.summary] : [];
+    }
+  };
+
+  const getStatusFilteredValue = () => {
+    if (!isMine) {
+      return testPlanStore.filter && testPlanStore.filter.executionStatus ? [testPlanStore.filter.executionStatus] : [];
+    } else {
+      return testPlanStore.mineFilter && testPlanStore.mineFilter.executionStatus ? [testPlanStore.mineFilter.executionStatus] : [];
     }
   };
   const columns = [{
@@ -126,25 +136,12 @@ const TestPlanTable = observer(({
     dataIndex: 'summary',
     key: 'summary',
     filters: [],
+    filteredValue: getSummaryFilterValue(),
     flex: 2,
     style: {
       overflow: 'hidden',
     },
     render: (text, record) => renderMenu(record.summary, record),
-  }, {
-    title: '被指派人',
-    dataIndex: 'assignedUser',
-    key: 'assignedUser',
-    flex: 1,
-    render(assignedUser) {
-      return (
-        <div
-          className="c7ntest-text-dot"
-        >
-          <User user={assignedUser} />
-        </div>
-      );
-    },
   }, {
     title: '执行人',
     dataIndex: 'lastUpdateUser',
@@ -154,6 +151,7 @@ const TestPlanTable = observer(({
       return (
         <div
           className="c7ntest-text-dot"
+          style={{ marginLeft: 5 }}
         >
           <User user={lastUpdateUser} />
         </div>
@@ -202,26 +200,52 @@ const TestPlanTable = observer(({
   }];
 
   if (testPlanStatus !== 'done') {
-    columns.unshift({
-      title: '',
-      key: 'checkbox',
-      width: 40,
-      render: (text, record) => (
-        <CustomCheckBox
-          checkedMap={checkIdMap}
-          value={record.executeId}
-          field="executeId"
-          dataSource={testList}
-        />
-      ),
-    });
-    columns.splice(2, 0, {
-      title: '',
-      dataIndex: 'more',
-      key: 'more',
-      width: 55,
-      render: (text, record) => renderMoreAction(record),
-    });
+    if (hasCheckBox && !isMine) {
+      columns.unshift({
+        title: '',
+        key: 'checkbox',
+        width: 40,
+        render: (text, record) => (
+          <CustomCheckBox
+            checkedMap={checkIdMap}
+            value={record.executeId}
+            field="executeId"
+            dataSource={testList}
+          />
+        ),
+      });
+      columns.splice(2, 0, {
+        title: '',
+        dataIndex: 'more',
+        key: 'more',
+        width: 55,
+        render: (text, record) => renderMoreAction(record),
+      });
+      columns.splice(3, 0, {
+        title: '被指派人',
+        dataIndex: 'assignedUser',
+        key: 'assignedUser',
+        flex: 1,
+        render(assignedUser) {
+          return (
+            <div
+              className="c7ntest-text-dot"
+              style={{ marginLeft: 5 }}
+            >
+              <User user={assignedUser} />
+            </div>
+          );
+        },
+      });
+    } else {
+      columns.splice(1, 0, {
+        title: '',
+        dataIndex: 'more',
+        key: 'more',
+        width: 55,
+        render: (text, record) => renderMoreAction(record),
+      });
+    }
   }
 
   if (testPlanStatus === 'doing') {
@@ -254,36 +278,40 @@ const TestPlanTable = observer(({
   //     render: (text, record) => renderSource(text),
   //   });
   // }
-  const data = toJS(testList);
+  const data = isMine ? testList.filter(item => Number(item.assignedTo) === Number(AppState.userInfo.id)) : testList;
   return (
-    <div>
-      <div style={{
-        marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none'
-      }}
-      >
-        <SelectFocusLoad
-          allowClear
-          style={{ width: 216, zIndex: 100, marginLeft: 10 }}
-          placeholder="被指派人"
-          loadWhenMount
-          getPopupContainer={trigger => trigger.parentNode}
-          type="user"
-          onChange={onSearchAssign}
-          value={testPlanStore.filter.assignUser}
-        />
-        <SelectFocusLoad
-          allowClear
-          disabled={!checkIdMap.size}
-          style={{ width: 216, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
-          placeholder="批量指派"
-          getPopupContainer={trigger => trigger.parentNode}
-          type="user"
-          onChange={onAssignToChange}
-          value={testPlanStore.assignToUserId}
-        />
-      </div>
+    <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
+      {
+        !isMine && (
+          <div style={{
+            marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none'
+          }}
+          >
+            <SelectFocusLoad
+              allowClear
+              style={{ width: 180, zIndex: 100, marginLeft: 10 }}
+              placeholder="被指派人"
+              loadWhenMount
+              getPopupContainer={trigger => trigger.parentNode}
+              type="user"
+              onChange={onSearchAssign}
+              value={testPlanStore.filter.assignUser}
+            />
+            <SelectFocusLoad
+              allowClear
+              // disabled={!checkIdMap.size}
+              style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
+              placeholder="批量指派"
+              getPopupContainer={trigger => trigger.parentNode}
+              type="user"
+              onChange={onAssignToChange}
+              value={testPlanStore.assignToUserId}
+            />
+          </div>
+        )
+      }
       <DragTable
-        pagination={executePagination}
+        pagination={isMine ? mineExecutePagination : executePagination}
         loading={tableLoading}
         onChange={onTableChange}
         dataSource={data}

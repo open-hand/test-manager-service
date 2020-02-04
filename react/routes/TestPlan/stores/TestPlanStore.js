@@ -1,14 +1,15 @@
 import {
   observable, action, computed, toJS,
 } from 'mobx';
-import { Choerodon } from '@choerodon/boot';
-import TestPlanTreeStore from './TestPlanTreeStore';
+import { Choerodon, stores } from '@choerodon/boot';
+
 import { getStatusList } from '@/api/TestStatusApi';
 import {
   getExecutesByFolder, getStatusByFolder, getPlanDetail, executesAssignTo,
 } from '@/api/TestPlanApi';
+import TestPlanTreeStore from './TestPlanTreeStore';
 
-
+const { AppState } = stores;
 class TestPlanStore extends TestPlanTreeStore {
     @observable loading = true;
 
@@ -101,6 +102,49 @@ class TestPlanStore extends TestPlanTreeStore {
       return this.filter;
     }
 
+    // 我的执行
+    @observable mineExecutePagination = {
+      mineCurrent: 1,
+      mineTotal: 0,
+      minePageSize: 20,
+    };
+
+    @action setMineExecutePagination(mineExecutePagination) {
+      this.executePagination = { ...this.mineExecutePagination, ...mineExecutePagination };
+    }
+
+    @computed get getMineExecutePagination() {
+      return toJS(this.mineExecutePagination);
+    }
+
+    @observable mineFilter = {};
+
+    @action setMineFilter = (mineFilter) => {
+      this.mineFilter = mineFilter;
+    }
+
+    @observable mineBarFilter = [];
+
+    @action setMineBarFilter = (mineBarFilter) => {
+      this.mineBarFilter = mineBarFilter;
+    }
+
+    @observable mineOrder = {
+      mineOrderField: '',
+      mineOrderType: '',
+    };
+
+    @computed get getMineSearchObj() {
+      return {
+        searchArgs: { ...this.mineFilter, ...{ assignUser: AppState.userInfo.id } },
+        contents: this.mineBarFilter,
+      };
+    }
+
+    @computed get getMineFilters() {
+      return this.mineFilter;
+    }
+
     @observable assignToUserId;
 
     @action setAssignToUserId = (assignToUserId) => {
@@ -191,23 +235,39 @@ class TestPlanStore extends TestPlanTreeStore {
      *
      * @memberof TestPlanStore
      */
-    async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1]) {
+    async loadExecutes(planId = this.getId()[0], folderId = this.getId()[1], isMine = false) {
       const {
-        executePagination, order, getSearchObj,
+        executePagination, mineExecutePagination, order, mineOrder, getSearchObj, getMineSearchObj,
       } = this;
       const { orderField, orderType } = order;
+      const { mineOrderField, mineOrderType } = mineOrder;
       const { current, pageSize } = executePagination;
+      console.log(toJS(current), toJS(pageSize));
+      const { mineCurrent, minePageSize } = mineExecutePagination;
       const search = getSearchObj;
+      const mineSearch = getMineSearchObj;
       this.setTableLoading(true);
-      const executes = await getExecutesByFolder({
-        planId, folderId, current, pageSize, search, orderField, orderType,
-      });
+      let executes = {};
+      if (!isMine) {
+        executes = await getExecutesByFolder({
+          planId, folderId, current, pageSize, search, orderField, orderType,
+        });
+        this.setExecutePagination({
+          current: executePagination.current,
+          pageSize: executePagination.pageSize,
+          total: executes.total,
+        });
+      } else {
+        executes = await getExecutesByFolder({
+          planId, folderId, current: mineCurrent, pageSize: minePageSize, search: mineSearch, orderField: mineOrderField, orderType: mineOrderType,
+        });
+        this.setMineExecutePagination({
+          mineCurrent: executePagination.current,
+          minePageSize: executePagination.pageSize,
+          mineTotal: executes.total,
+        });
+      }
       this.setTestList(executes.list || []);
-      this.setExecutePagination({
-        current: executePagination.current,
-        pageSize: executePagination.pageSize,
-        total: executes.total,
-      });
       this.setTableLoading(false);
     }
 
