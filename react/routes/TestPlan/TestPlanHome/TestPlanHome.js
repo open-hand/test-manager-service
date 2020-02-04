@@ -53,7 +53,13 @@ function TestPlanHome({ history }) {
     testPlanStore.setMainActiveTab(value);
     if (value === 'testPlanTable') {
       testPlanStore.setFilter({});
+      testPlanStore.setBarFilter([]);
       testPlanStore.loadExecutes();
+    }
+    if (value === 'mineTestPlanTable') {
+      testPlanStore.setMineFilter({});
+      testPlanStore.setMineBarFilter([]);
+      testPlanStore.loadExecutes(undefined, undefined, true);
     }
   };
 
@@ -164,6 +170,24 @@ function TestPlanHome({ history }) {
       testPlanStore.setFilter(filter);
       testPlanStore.setExecutePagination(pagination);
       testPlanStore.loadExecutes();
+    }
+  };
+
+  const handleMineExecuteTableChange = (pagination, filters, sorter, barFilters) => {
+    let { mineFilter } = testPlanStore;
+    // eslint-disable-next-line array-callback-return
+    Object.keys(filters).map((key) => {
+      if (filters[key] && filters[key].length > 0) {
+        mineFilter = { ...mineFilter, [key]: filters[key][0] };
+      } else {
+        mineFilter[key] = null;
+      }
+    });
+    testPlanStore.setMineBarFilter(barFilters || []);
+    if (pagination.current) {
+      testPlanStore.setMineFilter(mineFilter);
+      testPlanStore.setMineExecutePagination(pagination);
+      testPlanStore.loadExecutes(undefined, undefined, true);
     }
   };
 
@@ -368,6 +392,19 @@ function TestPlanHome({ history }) {
                             onTableSummaryClick={handleTableSummaryClick}
                             onAssignToChange={handleAssignToChange}
                             onSearchAssign={handleSearchAssign}
+                            hasCheckBox
+                          />
+                        </TabPane>
+                        <TabPane tab="我的执行" key="mineTestPlanTable">
+                          <TestPlanTable
+                            onDragEnd={onDragEnd}
+                            onTableChange={handleMineExecuteTableChange}
+                            onDeleteExecute={handleDeleteExecute}
+                            onQuickPass={handleQuickPassOrFail}
+                            onQuickFail={handleQuickPassOrFail}
+                            onOpenUpdateRemind={handleOpenUpdateRemind}
+                            onTableSummaryClick={handleTableSummaryClick}
+                            isMine
                           />
                         </TabPane>
                       </Tabs>
