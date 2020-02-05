@@ -55,7 +55,7 @@ export function importIssueToFolder(planId, folderId, data) {
 export function getExecutesByFolder({
   planId, folderId, search, orderField, orderType, current, pageSize,
 }) {
-  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?cycle_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current || 1}&size=${pageSize || 20}`, search, {
+  return request.post(`/test/v1/projects/${getProjectId()}/cycle/case/query/caseList?cycle_id=${planId !== folderId ? folderId : ''}&plan_id=${planId}&page=${current}&size=${pageSize}`, search, {
     params: {
       sort: `${orderField && orderType ? `${orderField},${orderType}` : ''}`,
     },

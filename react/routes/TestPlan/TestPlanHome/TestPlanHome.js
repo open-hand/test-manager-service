@@ -53,11 +53,13 @@ function TestPlanHome({ history }) {
     if (value === 'testPlanTable') {
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
+      testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
       testPlanStore.loadExecutes();
     }
     if (value === 'mineTestPlanTable') {
       testPlanStore.setMineFilter({});
       testPlanStore.setMineBarFilter([]);
+      testPlanStore.setMineExecutePagination({ current: 1, pageSize: 20 });
       testPlanStore.loadExecutes(undefined, undefined, true);
     }
   };
@@ -231,7 +233,11 @@ function TestPlanHome({ history }) {
 
     };
     updateExecute(data).then(() => {
-      testPlanStore.loadExecutes();
+      if (mainActiveTab === 'mineTestPlanTable') {
+        testPlanStore.loadExecutes(undefined, undefined, true);
+      } else {
+        testPlanStore.loadExecutes();
+      }
       testPlanStore.loadStatusRes();
     }).catch(() => {
       if (isPass) {
