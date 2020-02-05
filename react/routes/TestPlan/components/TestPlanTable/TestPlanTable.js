@@ -1,12 +1,11 @@
-import React, { memo, useContext } from 'react';
+import React, { useContext, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { toJS } from 'mobx';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Card, Button, Icon,
+  Tooltip, Card, Button, Icon, message, Popover,
 } from 'choerodon-ui';
-import { Action, stores } from '@choerodon/boot';
+import { Action, stores, Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
 import {
   SelectFocusLoad, StatusTags, DragTable,
@@ -48,6 +47,43 @@ const TestPlanTable = observer(({
   const {
     tableLoading, statusList, executePagination, mineExecutePagination, testList, checkIdMap, testPlanStatus,
   } = testPlanStore;
+
+  const divRef = useRef();
+  const [tipVisible, setTipVisible] = useState(false);
+
+  useEffect(() => {
+    if (divRef.current) {
+      divRef.current.addEventListener('mousedown', (e) => {
+        if (!checkIdMap.size) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }, true);
+  
+      divRef.current.addEventListener('click', (e) => {
+        if (!checkIdMap.size) {
+          e.stopPropagation();
+          setTipVisible(true);
+        }
+      }, true);
+  
+      return () => {
+        divRef.current.removeEventListener('mousedown', (e) => {
+          if (!checkIdMap.size) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }, true);
+      };
+    }
+  }, []);
+
+  const handleCheckBoxChange = () => {
+    if (checkIdMap.size && tipVisible) {
+      setTipVisible(false);
+    }
+  };
+
   const renderMenu = (text, record) => (testPlanStatus !== 'done' ? (
     <span style={{ display: 'flex', overflow: 'hidden', alignItems: 'center' }}>
       <Tooltip title={text}><span style={{ cursor: 'pointer' }} className="c7ntest-testPlan-table-summary" role="none" onClick={onTableSummaryClick.bind(this, record)}>{text}</span></Tooltip>
@@ -143,7 +179,7 @@ const TestPlanTable = observer(({
     },
     render: (text, record) => renderMenu(record.summary, record),
   }, {
-    title: '执行人',
+    title: <span>执行人</span>,
     dataIndex: 'lastUpdateUser',
     key: 'lastUpdateUser',
     flex: 1.2,
@@ -213,6 +249,7 @@ const TestPlanTable = observer(({
             value={record.executeId}
             field="executeId"
             dataSource={testList}
+            onChangeCallBack={handleCheckBoxChange}
           />
         ),
       });
@@ -224,7 +261,7 @@ const TestPlanTable = observer(({
         render: (text, record) => renderMoreAction(record),
       });
       columns.splice(3, 0, {
-        title: '被指派人',
+        title: <span>被指派人</span>,
         dataIndex: 'assignedUser',
         key: 'assignedUser',
         flex: 1.2,
@@ -288,7 +325,7 @@ const TestPlanTable = observer(({
       {
         !isMine && (
           <div style={{
-            marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none'
+            marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
           }}
           >
             <SelectFocusLoad
@@ -301,16 +338,29 @@ const TestPlanTable = observer(({
               onChange={onSearchAssign}
               value={testPlanStore.filter.assignUser}
             />
-            <SelectFocusLoad
-              allowClear
-              // disabled={!checkIdMap.size}
-              style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
-              placeholder="批量指派"
-              getPopupContainer={trigger => trigger.parentNode}
-              type="user"
-              onChange={onAssignToChange}
-              value={testPlanStore.assignToUserId}
-            />
+            <Popover
+              content="请先选择测试用例"
+              title=""
+              trigger="click"
+              visible={tipVisible}
+            >
+              <div
+                ref={divRef} 
+                role="none" 
+                style={{ width: 180, zIndex: 100, display: `${testPlanStatus === 'done' ? 'none' : 'unset'}` }}
+              >
+                <SelectFocusLoad
+                  allowClear
+                // disabled={!checkIdMap.size}
+                  style={{ display: 'flex' }}
+                  placeholder="批量指派"
+                  getPopupContainer={trigger => trigger.parentNode}
+                  type="user"
+                  onChange={onAssignToChange}
+                  value={testPlanStore.assignToUserId}
+                />
+              </div>
+            </Popover>
           </div>
         )
       }
@@ -325,6 +375,7 @@ const TestPlanTable = observer(({
         checkedMap={checkIdMap}
         checkField="executeId"
         key={testPlanStore.currentCycle.id}
+        onChangeCallBack={handleCheckBoxChange}
       />
     </div>
   );
