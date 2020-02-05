@@ -183,6 +183,7 @@ function TestPlanHome({ history }) {
       }
     });
     testPlanStore.setMineBarFilter(barFilters || []);
+    console.log('pagination:', pagination);
     if (pagination.current) {
       testPlanStore.setMineFilter(mineFilter);
       testPlanStore.setMineExecutePagination(pagination);
@@ -231,7 +232,11 @@ function TestPlanHome({ history }) {
 
     };
     updateExecute(data).then(() => {
-      testPlanStore.loadExecutes();
+      if (mainActiveTab === 'mineTestPlanTable') {
+        testPlanStore.loadExecutes(undefined, undefined, true);
+      } else {
+        testPlanStore.loadExecutes();
+      }
       testPlanStore.loadStatusRes();
     }).catch(() => {
       if (isPass) {

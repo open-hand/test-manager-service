@@ -1,9 +1,10 @@
 import React, { useContext, useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { toJS } from 'mobx';
 import { FormattedMessage } from 'react-intl';
 import { observer } from 'mobx-react-lite';
 import {
-  Tooltip, Card, Button, Icon, message, Popover,
+  Tooltip, Button, Icon, Popover,
 } from 'choerodon-ui';
 import { Action, stores, Choerodon } from '@choerodon/boot';
 import _ from 'lodash';
@@ -319,6 +320,7 @@ const TestPlanTable = observer(({
   //     render: (text, record) => renderSource(text),
   //   });
   // }
+  
   const data = isMine ? testList.filter(item => Number(item.assignedTo) === Number(AppState.userInfo.id)) : testList;
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>

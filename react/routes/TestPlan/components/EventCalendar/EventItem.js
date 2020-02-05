@@ -56,10 +56,10 @@ const styles = {
     lineHeight: '34px',
   },
   5: {
-    borderTop: '4px solid #38A5FF',
-    background: '#E9F5FF',
-    color: '#38A5FF',
-    tipBackground: 'rgba(56,165,255,0.6)',
+    borderTop: '4px solid #1CA9C9',
+    background: '#DCF9FF',
+    color: '#1CA9C9',
+    tipBackground: 'rgba(28,169,201,0.6)',
     lineHeight: '34px',
   },
   6: {
@@ -70,10 +70,10 @@ const styles = {
     lineHeight: '34px',
   },
   7: {
-    borderTop: '4px solid #1CA9C9',
-    background: '#DCF9FF',
-    color: '#1CA9C9',
-    tipBackground: 'rgba(28,169,201,0.6)',
+    borderTop: '4px solid #38A5FF',
+    background: '#E9F5FF',
+    color: '#38A5FF',
+    tipBackground: 'rgba(56,165,255,0.6)',
     lineHeight: '34px',
   },
   8: {

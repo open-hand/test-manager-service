@@ -104,13 +104,13 @@ class TestPlanStore extends TestPlanTreeStore {
 
     // 我的执行
     @observable mineExecutePagination = {
-      mineCurrent: 1,
-      mineTotal: 0,
-      minePageSize: 20,
+      current: 1,
+      total: 0,
+      pageSize: 20,
     };
 
     @action setMineExecutePagination(mineExecutePagination) {
-      this.executePagination = { ...this.mineExecutePagination, ...mineExecutePagination };
+      this.mineExecutePagination = { ...this.mineExecutePagination, ...mineExecutePagination };
     }
 
     @computed get getMineExecutePagination() {
@@ -239,31 +239,34 @@ class TestPlanStore extends TestPlanTreeStore {
       const {
         executePagination, mineExecutePagination, order, mineOrder, getSearchObj, getMineSearchObj,
       } = this;
-      const { orderField, orderType } = order;
-      const { mineOrderField, mineOrderType } = mineOrder;
-      const { current, pageSize } = executePagination;
-      const { mineCurrent, minePageSize } = mineExecutePagination;
-      const search = getSearchObj;
-      const mineSearch = getMineSearchObj;
       this.setTableLoading(true);
       let executes = {};
       if (!isMine) {
+        const { orderField, orderType } = order;
+        const { current, pageSize } = executePagination;
+        const search = getSearchObj;
         executes = await getExecutesByFolder({
           planId, folderId, current, pageSize, search, orderField, orderType,
         });
         this.setExecutePagination({
-          current: executePagination.current,
-          pageSize: executePagination.pageSize,
-          total: executes.total,
+          ...executePagination,
+          ...{ total: executes.total },
         });
       } else {
+        const { mineOrderField, mineOrderType } = mineOrder;
+        const { current, pageSize } = mineExecutePagination;
+        const mineSearch = getMineSearchObj;
         executes = await getExecutesByFolder({
-          planId, folderId, current: mineCurrent, pageSize: minePageSize, search: mineSearch, orderField: mineOrderField, orderType: mineOrderType,
+          planId, folderId, current, pageSize, search: mineSearch, orderField: mineOrderField, orderType: mineOrderType,
         });
+        
         this.setMineExecutePagination({
-          mineCurrent: executePagination.current,
-          minePageSize: executePagination.pageSize,
-          mineTotal: executes.total,
+          ...mineExecutePagination,
+          ...{ total: executes.total },
+        });
+        console.log({
+          ...mineExecutePagination,
+          ...{ total: executes.total },
         });
       }
       this.setTestList(executes.list || []);
