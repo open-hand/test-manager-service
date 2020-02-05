@@ -393,6 +393,7 @@ function TestPlanHome({ history }) {
                             onAssignToChange={handleAssignToChange}
                             onSearchAssign={handleSearchAssign}
                             hasCheckBox
+                            key="testPlanSchedule"
                           />
                         </TabPane>
                         <TabPane tab="我的执行" key="mineTestPlanTable">
@@ -405,6 +406,7 @@ function TestPlanHome({ history }) {
                             onOpenUpdateRemind={handleOpenUpdateRemind}
                             onTableSummaryClick={handleTableSummaryClick}
                             isMine
+                            key="mineTestPlanTable"
                           />
                         </TabPane>
                       </Tabs>

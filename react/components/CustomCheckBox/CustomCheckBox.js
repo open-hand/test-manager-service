@@ -11,7 +11,7 @@ const propTypes = {
 };
 const CustomCheckBox = observer((props) => {
   const {
-    field, checkedMap, value, dataSource, ...restProps 
+    field, checkedMap, value, dataSource, onChangeCallBack, ...restProps 
   } = props;
   const handleChange = (newValue, oldValue) => {
     if (newValue) {
@@ -26,6 +26,7 @@ const CustomCheckBox = observer((props) => {
       } else {
         checkedMap.set(newValue, true);
       }
+      onChangeCallBack();
     } else if (oldValue) {
       if (oldValue === 'all') {
         if (dataSource && dataSource.length) {
