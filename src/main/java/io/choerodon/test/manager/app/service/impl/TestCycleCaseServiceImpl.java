@@ -331,7 +331,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
         if(defaultCaseStatus.getStatusId().equals(testCycleCaseVO.getExecutionStatus())){
             List<TestCycleCaseStepDTO> testCycleCaseStepDTOList = testCycleCaseStepMapper.queryStepByExecuteId(testCycleCaseDTO.getExecuteId());
             if(!CollectionUtils.isEmpty(testCycleCaseStepDTOList)){
-                if(testCycleCaseStepMapper.updateCycleCaseStepStatus(testCycleCaseDTO.getExecuteId())!=1){
+                if(testCycleCaseStepMapper.updateCycleCaseStepStatus(testCycleCaseDTO.getExecuteId()) < 1){
                     throw new CommonException("error.update.step.status");
                 }
             }
