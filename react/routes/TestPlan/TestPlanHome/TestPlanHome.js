@@ -53,11 +53,13 @@ function TestPlanHome({ history }) {
     if (value === 'testPlanTable') {
       testPlanStore.setFilter({});
       testPlanStore.setBarFilter([]);
+      testPlanStore.setExecutePagination({ current: 1, pageSize: 20 });
       testPlanStore.loadExecutes();
     }
     if (value === 'mineTestPlanTable') {
       testPlanStore.setMineFilter({});
       testPlanStore.setMineBarFilter([]);
+      testPlanStore.setMineExecutePagination({ current: 1, pageSize: 20 });
       testPlanStore.loadExecutes(undefined, undefined, true);
     }
   };
@@ -183,7 +185,6 @@ function TestPlanHome({ history }) {
       }
     });
     testPlanStore.setMineBarFilter(barFilters || []);
-    console.log('pagination:', pagination);
     if (pagination.current) {
       testPlanStore.setMineFilter(mineFilter);
       testPlanStore.setMineExecutePagination(pagination);
