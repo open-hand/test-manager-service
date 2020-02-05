@@ -42,7 +42,6 @@ function TestPlanHome({ history }) {
     loading, checkIdMap, testList, testPlanStatus, planInfo, statusList, currentCycle, mainActiveTab, times, calendarLoading,
   } = testPlanStore;
   const handleTabsChange = (value) => {
-    // testPlanStore.clearStore();
     testPlanStore.setTestPlanStatus(value);
     testPlanStore.setCurrentCycle({});
     testPlanStore.setFilter({});
@@ -381,10 +380,14 @@ function TestPlanHome({ history }) {
                             </TabPane>
                           ) : ''
                         }
-                        <TabPane tab="测试用例" key="testPlanTable">
+                        <TabPane tab="测试用例" key="testPlanTable" />
+                        <TabPane tab="我的执行" key="mineTestPlanTable" />
+                      </Tabs>
+                      {
+                        mainActiveTab !== 'testPlanSchedule' && (
                           <TestPlanTable
                             onDragEnd={onDragEnd}
-                            onTableChange={handleExecuteTableChange}
+                            onTableChange={mainActiveTab === 'testPlanTable' ? handleExecuteTableChange : handleMineExecuteTableChange}
                             onDeleteExecute={handleDeleteExecute}
                             onQuickPass={handleQuickPassOrFail}
                             onQuickFail={handleQuickPassOrFail}
@@ -392,24 +395,12 @@ function TestPlanHome({ history }) {
                             onTableSummaryClick={handleTableSummaryClick}
                             onAssignToChange={handleAssignToChange}
                             onSearchAssign={handleSearchAssign}
-                            hasCheckBox
-                            key="testPlanSchedule"
+                            hasCheckBox={mainActiveTab === 'testPlanTable'}
+                            isMine={mainActiveTab === 'mineTestPlanTable'}
+                            key={mainActiveTab}
                           />
-                        </TabPane>
-                        <TabPane tab="我的执行" key="mineTestPlanTable">
-                          <TestPlanTable
-                            onDragEnd={onDragEnd}
-                            onTableChange={handleMineExecuteTableChange}
-                            onDeleteExecute={handleDeleteExecute}
-                            onQuickPass={handleQuickPassOrFail}
-                            onQuickFail={handleQuickPassOrFail}
-                            onOpenUpdateRemind={handleOpenUpdateRemind}
-                            onTableSummaryClick={handleTableSummaryClick}
-                            isMine
-                            key="mineTestPlanTable"
-                          />
-                        </TabPane>
-                      </Tabs>
+                        )
+                      }
                     </Card>
                   </div>
                 </div>

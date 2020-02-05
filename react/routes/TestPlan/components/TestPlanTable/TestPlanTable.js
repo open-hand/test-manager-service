@@ -343,6 +343,7 @@ const TestPlanTable = observer(({
               title=""
               trigger="click"
               visible={tipVisible}
+              getPopupContainer={trigger => trigger.parentNode}
             >
               <div
                 ref={divRef} 
@@ -351,7 +352,6 @@ const TestPlanTable = observer(({
               >
                 <SelectFocusLoad
                   allowClear
-                // disabled={!checkIdMap.size}
                   style={{ display: 'flex' }}
                   placeholder="批量指派"
                   getPopupContainer={trigger => trigger.parentNode}
