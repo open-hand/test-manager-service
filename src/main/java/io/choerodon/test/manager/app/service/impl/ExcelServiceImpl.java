@@ -46,6 +46,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private static final String EXPORT_ERROR = "error.issue.export";
     private static final String EXPORT_ERROR_WORKBOOK_CLOSE = "error.issue.close.workbook";
+    private static final String EXPORT_ERROR_NOCASE_IN_FOLDER= "no-case-in-folder";
     private static final String NOTIFYISSUECODE = "test-issue-export";
     private static final String NOTIFYCYCLECODE = "test-cycle-export";
     private static final String EXPORTSUCCESSINFO = "导出测试详情：创建workbook成功，类型:";
@@ -223,6 +224,7 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
             testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
             testFileLoadHistoryWithRateVO.setMessage("文件夹下无用例");
+            testFileLoadHistoryWithRateVO.setCode(EXPORT_ERROR_NOCASE_IN_FOLDER);
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
             notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
@@ -385,7 +387,7 @@ public class ExcelServiceImpl implements ExcelService {
     private List<ExcelCaseVO> handleCase(Long projectId,Long folderId){
         List<ExcelCaseVO> excelCaseVOS = new ArrayList<>();
         List<Long> caseIdList = testCaseService.listAllCaseByFolderId(projectId, folderId);
-        if(!CollectionUtils.isEmpty(caseIdList)){
+        if(CollectionUtils.isEmpty(caseIdList)){
             return excelCaseVOS;
         }
         excelCaseVOS = testCaseMapper.excelCaseList(projectId, caseIdList);
