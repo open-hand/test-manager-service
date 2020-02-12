@@ -13,9 +13,9 @@ import _ from 'lodash';
 import moment from 'moment';
 import { exportRetry } from '@/api/IssueManageApi';
 import './ExportSide.less';
+import { humanizeDuration, renameDownload } from '@/common/utils';
 import SelectTree from '../SelectTree';
 import ExportSideDataSet from './store';
-import { humanizeDuration, renameDownload } from '@/common/utils';
 
 const { Column } = Table;
 const { AppState } = stores;
@@ -101,7 +101,7 @@ function ExportSide(props) {
     }
     const data = JSON.parse(res);
     const { id, rate, successfulCount } = data;
-    if (data.message === '目录下无用例') {
+    if (data.code === 'no-case-in-folder') {
       const record = exportSideDataSet.find(item => item.get('id') === id);
       exportSideDataSet.remove(record);
       message.warn(data.message);
