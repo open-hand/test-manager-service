@@ -7,6 +7,7 @@ const alias = require('./alias').gulp;
 const cwd = process.cwd();
 const libDir = path.join(cwd, 'lib');
 
+
 function compileAssets() {
   return gulp.src(['react/**/*.@(jpg|png|gif|svg|scss|less|html|ico|json)']).pipe(gulp.dest(libDir));
 }
