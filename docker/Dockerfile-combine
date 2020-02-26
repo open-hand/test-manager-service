@@ -1,6 +1,8 @@
-FROM registry.cn-shanghai.aliyuncs.com/choerodon-tools/javabase:0.8.2
+FROM registry.cn-shanghai.aliyuncs.com/c7n/javabase:0.9.0
 COPY app.jar /test-manager-service.jar
 COPY dist /dist
 COPY enterpoint.sh /enterpoint.sh
-RUN chmod 777 /enterpoint.sh
+RUN chmod 777 /enterpoint.sh \
+   && chown -R www-data:www-data  /dist /test-manager-service.jar
+USER www-data
 CMD /enterpoint.sh java $JAVA_OPTS $SKYWALKING_OPTS -jar /test-manager-service.jar
