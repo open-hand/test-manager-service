@@ -40,6 +40,7 @@ spec:
           -Dspring.datasource.username={{ .Values.preJob.preInitDB.datasource.username }}
           -Dspring.datasource.password={{ .Values.preJob.preInitDB.datasource.password }}
           -Ddata.jar=/choerodon/{{ .Chart.Name }}.jar
+          -Ddata.jar.init=false
           -jar /var/choerodon/choerodon-tool-liquibase.jar;
         volumeMounts:
         - mountPath: /var/choerodon
