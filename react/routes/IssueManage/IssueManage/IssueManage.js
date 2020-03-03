@@ -6,10 +6,11 @@ import {
 import { Button, Icon } from 'choerodon-ui';
 import { Modal } from 'choerodon-ui/pro/lib';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import Empty from '@/components/Empty';
+import empty from '@/assets/empty.png';
 import IssueStore from '../stores/IssueStore';
 import { getParams } from '../../../common/utils';
 import RunWhenProjectChange from '../../../common/RunWhenProjectChange';
-import Empty from '@/components/Empty';
 import CreateIssue from '../components/CreateIssue';
 import IssueTree from '../components/IssueTree';
 import IssueTable from '../components/IssueTable';
@@ -19,7 +20,6 @@ import TestCaseDetail from '../components/TestCaseDetail';
 import openCreateFolder from '../components/CreateFolder';
 import './IssueManage.less';
 import IssueTreeStore from '../stores/IssueTreeStore';
-import empty from '@/assets/empty.png';
 @injectIntl
 @observer
 export default class IssueManage extends Component {
@@ -123,7 +123,7 @@ export default class IssueManage extends Component {
         width: 380,
       },
       children: (
-        <ImportSide defaultFolderValue={IssueTreeStore.getCurrentFolder} />
+        <ImportSide defaultFolderValue={IssueTreeStore.getCurrentFolder} onOk={IssueStore.loadIssues} />
       ),
       footer: () => '',
       className: 'c7ntest-Issue-import-modal',

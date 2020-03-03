@@ -122,7 +122,7 @@ class DragTable extends Component {
     const Columns = columns.filter(column => this.shouldColumnShow(column));
     const ths = Columns.map(column => (
       <th style={{ flex: column.width ? 'unset' : (column.flex || 1), width: column.width }}>
-        {column.key !== 'checkbox' ? column.title : (
+        {(column.key !== 'checkbox' || dataSource.length === 0) ? column.title : (
           <CustomCheckBox value="all" checkedMap={checkedMap} dataSource={dataSource} field={checkField} onChangeCallBack={onChangeCallBack} />
         )}
       </th>

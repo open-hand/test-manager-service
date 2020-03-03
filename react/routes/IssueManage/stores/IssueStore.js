@@ -63,14 +63,14 @@ class IssueStore {
     this.tableDraging = false;
   }
 
-  loadIssues = async (page, size = this.pagination.pageSize) => {
+  loadIssues = async (page, size = this.pagination.pageSize, folderId) => {
     const Page = page === undefined ? this.pagination.current : Math.max(page, 1);
     this.setLoading(true);
     const { orderField, orderType } = this.order;
     const { currentFolder } = IssueTreeStore;
     const { id } = currentFolder;
     try {
-      const res = await handleRequestFailed(getIssuesByFolder(id, Page, size, this.getFilter, orderField, orderType));
+      const res = await handleRequestFailed(getIssuesByFolder(folderId || id, Page, size, this.getFilter, orderField, orderType));
       this.setIssues(res.list);
       if (Page > 1) {
         this.setPagination({
