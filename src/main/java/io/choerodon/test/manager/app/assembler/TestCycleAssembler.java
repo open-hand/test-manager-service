@@ -237,16 +237,28 @@ public class TestCycleAssembler {
     public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO) {
         if (testCycleDTO == null || testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
             TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
-            testCycleVO.setFromDate(testPlanDTO.getStartDate());
-            testCycleVO.setToDate(testPlanDTO.getEndDate());
+            testCycleVO.setFromDate(covertTime(testPlanDTO.getStartDate(),false));
+            testCycleVO.setToDate(covertTime(testPlanDTO.getEndDate(),true));
         } else {
             if (testCycleDTO.getFromDate() != null && testCycleDTO.getToDate() != null) {
-                testCycleVO.setFromDate(testCycleDTO.getFromDate());
-                testCycleVO.setToDate(testCycleDTO.getToDate());
+                testCycleVO.setFromDate(covertTime(testCycleDTO.getFromDate(),false));
+                testCycleVO.setToDate(covertTime(testCycleDTO.getToDate(),true));
             } else {
                 TestCycleDTO testCycle = cycleMapper.selectByPrimaryKey(testCycleDTO.getParentCycleId());
                 assignmentTime(testCycleVO, testCycle);
             }
         }
+    }
+
+    private Date covertTime(Date date,Boolean isEnd){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        if(Boolean.FALSE.equals(isEnd)){
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),0,0,0);
+        }
+        else {
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),23,59,59);
+        }
+        return calendar.getTime();
     }
 }
