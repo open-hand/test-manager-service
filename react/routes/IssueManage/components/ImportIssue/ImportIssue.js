@@ -10,12 +10,15 @@ import {
   DataSet, Form, Button, message,
 } from 'choerodon-ui/pro';
 import moment from 'moment';
-import _ from 'lodash';
+import _, { find } from 'lodash';
 import FileSaver from 'file-saver';
 import { FormattedMessage } from 'react-intl';
 import { importIssue } from '@/api/FileApi';
 import { humanizeDuration } from '@/common/utils';
 import { getImportHistory, cancelImport, downloadTemplate } from '@/api/IssueManageApi';
+import IssueStore from '../../stores/IssueStore';
+import IssueTreeStore from '../../stores/IssueTreeStore';
+
 import './ImportIssue.less';
 import SelectTree from '../SelectTree';
 
@@ -313,6 +316,10 @@ function ImportIssue(props) {
   const handleCloseModal = () => {
     // 根据取消按钮可见状态 判断是否销毁modal
     modal.close(!visibleCancelBtn);
+    if (dataSet.current.get('folderId')) {
+      IssueTreeStore.setCurrentFolder(find(IssueTreeStore.treeData.treeFolder, { id: dataSet.current.get('folderId') }) || {});
+      props.onOk(1, 10, dataSet.current.get('folderId'));
+    }
   };
 
   return (

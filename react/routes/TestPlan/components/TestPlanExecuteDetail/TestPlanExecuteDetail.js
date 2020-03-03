@@ -14,10 +14,10 @@ import { FormattedMessage } from 'react-intl';
 import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
+import { uploadFile, deleteFile } from '@/api/FileApi';
 import { StatusTags } from '../../../../components';
 import { executeDetailLink, returnBeforeTextUpload } from '../../../../common/utils';
 import { updateDetail, updateSidebarDetail } from '../../../../api/ExecuteDetailApi';
-import { uploadFile, deleteFile } from '@/api/FileApi';
 import './TestPlanExecuteDetail.less';
 import {
   ExecuteDetailSide, CreateBug, StepTable, QuickOperate, ExecuteHistoryTable,
@@ -82,6 +82,7 @@ function TestPlanExecuteDetail(props) {
     const newData = { ...detailData, ...updateData };
     updateDetail(newData).then(() => {
       ExecuteDetailStore.getInfo();
+      executeHistoryDataSet.query();
     }).catch(() => {
       Choerodon.prompt('网络异常');
     });
@@ -361,7 +362,7 @@ function TestPlanExecuteDetail(props) {
         <Breadcrumb title={detailData ? renderBreadcrumbTitle(summary) : null} />
         <Content style={{ padding: visible ? '0 437px 0 0' : 0 }}>
 
-          <Spin spinning={loading} style={{ display: 'flex' }}>
+          <Spin spinning={false} style={{ display: 'flex' }}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
               {/* 左边内容区域 */}
               <div

@@ -1,4 +1,6 @@
-import React, { useContext, useRef, useEffect, useState } from 'react';
+import React, {
+  useContext, useRef, useEffect, useState, 
+} from 'react';
 import PropTypes from 'prop-types';
 import { toJS } from 'mobx';
 import { FormattedMessage } from 'react-intl';
@@ -325,7 +327,7 @@ const TestPlanTable = observer(({
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
-        !isMine && (
+        (!isMine && data.length > 0) && (
           <div style={{
             marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
           }}
