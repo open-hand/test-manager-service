@@ -28,7 +28,6 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
     autoQuery: true,
     selection: false,
     paging: true,
-    dataKey: null,
     data: [{
       testData: 'testData', expectedResult: 'expectedResult', stepStatus: '3', stepAttachment: [], defects: [], comment: '2222',
     }],
@@ -138,12 +137,12 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         method: 'get',
         transformResponse: (res) => {
           if (typeof res === 'string') {
-            const data = JSON.parse(res).list;
-            data.map(item => ({
+            const newRes = JSON.parse(res);
+            newRes.list.map(item => ({
               ...item,
               stepStatus: item.stepStatus === null ? 4 : item.stepStatus,
             }));
-            return data;
+            return newRes;
           }
           return res;
         },
