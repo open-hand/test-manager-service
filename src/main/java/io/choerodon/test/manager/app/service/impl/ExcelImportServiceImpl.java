@@ -46,7 +46,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private static final String IMPORT_NOTIFY_CODE = "test-issue-import";
     private static final String IMPORT_ERROR = "test-issue-import-error";
     private static final String HIDDEN_USER = "hidden_user";
-    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[6];
+    private static final ExcelReadMeOptionVO[] README_OPTIONS = new ExcelReadMeOptionVO[5];
     private static final TestCaseStepDTO[] EXAMPLE_TEST_CASE_STEPS = new TestCaseStepDTO[3];
     private static final IssueCreateDTO[] EXAMPLE_ISSUES = new IssueCreateDTO[3];
     private static final String TYPE_CYCLE = "cycle";
@@ -56,12 +56,12 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         README_OPTIONS[0] = new ExcelReadMeOptionVO("用例概要*", true);
         README_OPTIONS[1] = new ExcelReadMeOptionVO("用例描述", false);
         //README_OPTIONS[2] = new ExcelReadMeOptionVO("优先级", false);
-        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
+//        README_OPTIONS[2] = new ExcelReadMeOptionVO("被指定人", false);
         //README_OPTIONS[3] = new ExcelReadMeOptionVO("模块", false);
 //        README_OPTIONS[3] = new ExcelReadMeOptionVO("关联的issue", false);
-        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试步骤", false);
-        README_OPTIONS[4] = new ExcelReadMeOptionVO("测试数据", false);
-        README_OPTIONS[5] = new ExcelReadMeOptionVO("预期结果", false);
+        README_OPTIONS[2] = new ExcelReadMeOptionVO("测试步骤", false);
+        README_OPTIONS[3] = new ExcelReadMeOptionVO("测试数据", false);
+        README_OPTIONS[4] = new ExcelReadMeOptionVO("预期结果", false);
 
         for (int i = 0; i < EXAMPLE_TEST_CASE_STEPS.length; i++) {
             EXAMPLE_TEST_CASE_STEPS[i] = new TestCaseStepDTO();
@@ -315,15 +315,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         Row row = ExcelUtil.getOrCreateRow(sheet, rowNum);
         row.createCell(colNum, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getSummary());
         row.createCell(colNum + 1, CELL_TYPE_STRING).setCellValue(issueCreateDTO.getDescription());
-        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("1234张三");
+//        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("1234张三");
         //row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("测试模块");
-        row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue("XX-111");
+//        row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue("XX-111");
 
         for (int i = 0; i < steps.length; i++) {
             row = ExcelUtil.getOrCreateRow(sheet, i + rowNum);
-            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
-            row.createCell(colNum + 5, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
-            row.createCell(colNum + 6, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
+            row.createCell(colNum + 2, CELL_TYPE_STRING).setCellValue(steps[i].getTestStep());
+            row.createCell(colNum + 3, CELL_TYPE_STRING).setCellValue(steps[i].getTestData());
+            row.createCell(colNum + 4, CELL_TYPE_STRING).setCellValue(steps[i].getExpectedResult());
         }
     }
 
