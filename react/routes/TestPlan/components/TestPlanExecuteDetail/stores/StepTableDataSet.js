@@ -137,15 +137,15 @@ function StepTableDataSet(projectId, orgId, intl, caseId, testStatusDataSet, exe
         url: `test/v1/projects/${projectId}/cycle/case/step/query/${caseId}?organizationId=${orgId}`,
         method: 'get',
         transformResponse: (res) => {
-          const data = JSON.parse(res);
-          if (Array.isArray(data)) {
-            const newData = data.map(i => ({
-              ...i,
-              stepStatus: i.stepStatus === null ? 4 : i.stepStatus,
+          if (typeof res === 'string') {
+            const data = JSON.parse(res).list;
+            data.map(item => ({
+              ...item,
+              stepStatus: item.stepStatus === null ? 4 : item.stepStatus,
             }));
-            return newData;
+            return data;
           }
-          return data;
+          return res;
         },
       },
     },
