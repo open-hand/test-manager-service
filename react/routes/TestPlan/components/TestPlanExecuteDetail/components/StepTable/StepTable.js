@@ -44,7 +44,7 @@ const DefectSelectText = ({
     </Tooltip>
   );
 
-  if (defects.length > 0) {
+  if (defects && defects.length > 0) {
     return (
       <ul className="c7n-test-execute-detail-step-table-defects">
         {
@@ -133,7 +133,7 @@ function StepTable(props) {
     return nameArr.length > length ? nameArr.slice(0, length).join('') + ellipsis + suffix : text;
   }
 
-  const getFileList = attachments => attachments.map((attachment) => {
+  const getFileList = attachments => attachments && attachments.map((attachment) => {
     const attachmentName = limitAttachmentLength(attachment.attachmentName);
     const {
       attachmentLinkId, attachmentType, comment, id, objectVersionNumber, url,
@@ -158,7 +158,7 @@ function StepTable(props) {
   function renderAttachment({ record, value }) {
     return (
       <UploadInTable
-        fileList={getFileList(value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
+        fileList={getFileList(value && value.filter(attachment => attachment.attachmentType === 'CYCLE_STEP'))}
         readOnly={readOnly}
         handleUpdateFileList={onAddFile.bind(this, record)}
         handleDeleteFile={handleDeleteFile.bind(this, record)}
@@ -197,7 +197,7 @@ function StepTable(props) {
         onSubmit={() => {
           handleAddDefects(record);
         }}
-        originData={{ defects: defects.map(i => i) }}
+        originData={{ defects: defects && defects.map(i => i) }}
       >
         <Text>
           <DefectSelectText
