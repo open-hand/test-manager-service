@@ -950,7 +950,7 @@ public class TestCycleCaseServiceImpl implements TestCycleCaseService {
     private void doRank(List<TestCycleCaseStepVO> newTestCycleCaseStepVOS) {
         String preRank = null;
         for (TestCycleCaseStepVO testCycleCaseStepVO : newTestCycleCaseStepVOS) {
-            testCycleCaseStepVO.setRank(RankUtil.Operation.INSERT.getRank(null, preRank));
+            testCycleCaseStepVO.setRank(RankUtil.Operation.INSERT.getRank(preRank,null));
             preRank = testCycleCaseStepVO.getRank();
         }
     }

@@ -76,7 +76,7 @@ class TestPlanTreeStore {
   isPlan(id) {
     if (typeof id === 'number') {
       return true;
-    } else if (id.split('-').length === 2) {
+    } else if (id && id.split('-').length === 2) {
       return false;
     }
     return false;
@@ -118,7 +118,7 @@ class TestPlanTreeStore {
       const node = data[i];
       const {
         fromDate, toDate, children,
-      } = node.data;
+      } = node.data || {};
 
       times.push({
         ...node,

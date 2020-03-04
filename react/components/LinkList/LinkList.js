@@ -19,10 +19,10 @@ function LinkList(props) {
   }
 
   function render() {
-    const { issue, i } = props;
+    const { issue, i, deleteLink } = props;
     const {
       priorityVO, issueTypeVO, issueNum, summary, issueId, assigneeId, assigneeName, imageUrl,
-      linkId, ward, statusVO, deleteLink,
+      linkId, ward, statusVO,
     } = issue;
     const { colour: priorityColor, name: priorityName } = priorityVO || {};
     const { colour: typeColor, name: typeName, typeCode } = issueTypeVO || {};
@@ -98,7 +98,7 @@ function LinkList(props) {
         >
           {
             deleteLink && <Popconfirm
-              title="确认要删除吗?"
+              title="确认要删除该问题链接吗?"
               placement="left"
               onConfirm={confirm.bind(this, linkId)}
               onCancel={null}

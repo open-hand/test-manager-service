@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseStepMapper;
+import io.choerodon.test.manager.infra.util.PageUtil;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
@@ -107,7 +108,7 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
     }
 
     @Override
-    public List<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId) {
+    public PageInfo<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,Pageable pageable) {
         if (cycleCaseId == null) {
             throw new CommonException("error.test.cycle.case.step.caseId.not.null");
         }
@@ -125,9 +126,10 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
                 testCycleCaseStepVOS.add(testCycleCaseStepVO);
             });
             testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
-            return testCycleCaseStepVOS;
+            PageInfo<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageable);
+            return pageFromList;
         } else {
-            return new ArrayList<>();
+            return new PageInfo<>();
         }
     }
 
