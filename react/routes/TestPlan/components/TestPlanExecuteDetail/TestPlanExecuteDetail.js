@@ -11,6 +11,7 @@ import { Choerodon } from '@choerodon/boot';
 import { observer } from 'mobx-react-lite';
 import { withRouter } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
+import { toJS } from 'mobx';
 import _ from 'lodash';
 import { Modal, Button, message } from 'choerodon-ui/pro';
 import queryString from 'query-string';
