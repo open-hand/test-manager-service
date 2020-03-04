@@ -48,7 +48,7 @@ const QuickOperate = ({
   readOnly,
 }) => {
   const menuItems = statusList.map(item => (
-    <Menu.Item key={item.statusId} style={{ display: 'flex', alignItems: 'center' }}>
+    <Menu.Item key={`${item.statusId}-${item.statusName}`} style={{ display: 'flex', alignItems: 'center' }}>
       <StatusTags
         color={item.statusColor}
         name={item.statusName}
@@ -58,7 +58,14 @@ const QuickOperate = ({
   const menu = (
     <Menu onClick={(item) => {
       if (!readOnly) {
-        onSubmit({ executionStatus: Number(item.key) });
+        onSubmit({
+          executionStatus: Number(item.key.split(
+            '-',
+          )[0]),
+          executionStatusName: item.key.split(
+            '-',
+          )[1], 
+        });
       }
     }}
     >
