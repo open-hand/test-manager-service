@@ -52,11 +52,12 @@ public class TestCycleCaseStepController {
     @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
-    public ResponseEntity<List<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
+    public ResponseEntity<PageInfo<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
                                                                   @ApiParam(value = "cycleCaseId", required = true)
                                                                   @PathVariable(name = "cycleCaseId") Long cycleCaseId,
-                                                                  @RequestParam Long organizationId) {
-        return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId))
+                                                                  @RequestParam Long organizationId,
+                                                                  Pageable pageable) {
+        return Optional.ofNullable(testCycleCaseStepService.querySubStep(cycleCaseId, projectId, organizationId,pageable))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.testCycleCaseStep.query"));
 

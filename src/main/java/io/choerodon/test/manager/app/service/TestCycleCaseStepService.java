@@ -33,7 +33,7 @@ public interface TestCycleCaseStepService {
      * @param organizationId organizationId
      * @return TestCycleCaseStepVO
      */
-    List<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId);
+    PageInfo<TestCycleCaseStepVO> querySubStep(Long cycleCaseId, Long projectId, Long organizationId,Pageable pageable);
 
     /**
      * 查询用例下的步骤

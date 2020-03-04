@@ -316,17 +316,6 @@ public class DemoServiceImpl implements DemoService {
 
 
 
-    private Long insertCycle(Long projectId, String cycleName, Long versionId, String environment, Date fromDate, Date toDate) {
-        TestCycleVO testCycleVO = new TestCycleVO();
-        testCycleVO.setCycleName(cycleName);
-        testCycleVO.setVersionId(versionId);
-        testCycleVO.setEnvironment(environment);
-        testCycleVO.setFromDate(fromDate);
-        testCycleVO.setToDate(toDate);
-        testCycleVO.setType("cycle");
-        testCycleVO.setProjectId(projectId);
-        return testCycleService.insert(projectId, testCycleVO).getCycleId();
-    }
 
     private List<Long> initCycleFolders(Long planId, Long projectId, Long versionId, Date dateOne, Date dateTwo, Date dateThree, Date dateFour, Date dateFive, Date dateSix, List<Long> issueFolderIds, Long userId) {
         List<Long> cycleFolderIdsOne = new ArrayList<>();
@@ -375,49 +364,4 @@ public class DemoServiceImpl implements DemoService {
     }
 
 
-    private void updateExecutionAuditFields(List<Long> executionIds, Long userId, Date date) {
-        testCycleCaseMapper.updateAuditFields(executionIds.toArray(new Long[executionIds.size()]), userId, date);
-        testCycleCaseStepMapper.updateAuditFields(executionIds.toArray(new Long[executionIds.size()]), userId, date);
-        testCycleCaseHistoryMapper.updateAuditFields(executionIds.toArray(new Long[executionIds.size()]), userId, date);
-    }
-
-    private void updateExecutionStepStatus(Long caseId, int flag, Long projectId, Long organizationId) {
-        List<TestCycleCaseStepVO> testCaseStepDTOs = testCycleCaseStepService.querySubStep(caseId, projectId, organizationId);
-        switch (flag) {
-            case 2:
-                testCaseStepDTOs.get(0).setStepStatus(5L);
-                testCaseStepDTOs.get(1).setStepStatus(6L);
-                testCaseStepDTOs.get(2).setStepStatus(5L);
-                testCaseStepDTOs.get(3).setStepStatus(6L);
-                testCaseStepDTOs.get(4).setStepStatus(5L);
-                testCaseStepDTOs.get(5).setStepStatus(6L);
-                break;
-            case 4:
-                testCaseStepDTOs.get(0).setStepStatus(5L);
-                testCaseStepDTOs.get(1).setStepStatus(5L);
-                testCaseStepDTOs.get(2).setStepStatus(5L);
-                testCaseStepDTOs.get(3).setStepStatus(5L);
-                testCaseStepDTOs.get(4).setStepStatus(6L);
-                break;
-            default:
-                for (TestCycleCaseStepVO testCycleCaseStepVO : testCaseStepDTOs) {
-                    testCycleCaseStepVO.setStepStatus(5L);
-                }
-                break;
-        }
-//        testCycleCaseStepService.update(testCaseStepDTOs);
-    }
-
-    private void initExecutionDefect(Long[] defectExecution, Long projectId, Long organizationId, Long userId, Date date) {
-        TestCycleCaseDefectRelVO testCycleCaseDefectRelVO = new TestCycleCaseDefectRelVO();
-        testCycleCaseDefectRelVO.setDefectType("CYCLE_CASE");
-        testCycleCaseDefectRelVO.setDefectLinkId(defectExecution[0]);
-        testCycleCaseDefectRelVO.setIssueId(defectExecution[1]);
-        testCycleCaseDefectRelVO.setProjectId(projectId);
-
-        Long defectId = testCycleCaseDefectRelService.insert(testCycleCaseDefectRelVO, projectId, organizationId).getId();
-
-        testCycleCaseDefectRelMapper.updateAuditFields(defectId, userId, date);
-        testCycleCaseHistoryMapper.updateAuditFields(defectExecution, userId, date);
-    }
 }
