@@ -85,9 +85,21 @@ function ImportIssue(props) {
   const [folder, setFolder] = useState(null);
   const uploadInput = useRef(null);
   const wsRef = useRef();
+  const autoDownRef = useRef();
   const { modal, defaultFolderValue } = props;
-  const loadImportHistory = () => getImportHistory().then((data) => {
+  /**
+   * 加载导入历史
+   * @param {boolean} isAutoDown 是否自动下载错误详情（前提 最近一次历史存在错误详情时）
+   */
+  const loadImportHistory = (isAutoDown = false) => getImportHistory().then((data) => {
     setLastRecord(data);
+    const { fileUrl } = data;
+    if (fileUrl && isAutoDown && autoDownRef.current) {
+      autoDownRef.current.click();
+      return true;
+    } else {
+      return false;
+    }
   });
   const [importBtn, dispatch] = useReducer((state, action) => {
     switch (action.type) {
@@ -106,7 +118,7 @@ function ImportIssue(props) {
           };
         }
       case 'finish':
-        loadImportHistory();
+        loadImportHistory(true);
         return {
           visibleImportBtn: true,
           visibleCancelBtn: false,
@@ -189,7 +201,7 @@ function ImportIssue(props) {
           </span>
           {fileUrl
             ? (
-              <a href={fileUrl}>
+              <a className="c7ntest-ImportIssue-text c7ntest-ImportIssue-text-down-load" href={fileUrl} ref={autoDownRef}>
                 点击下载失败详情
               </a>
             ) : ''
