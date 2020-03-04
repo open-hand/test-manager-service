@@ -235,7 +235,7 @@ public class TestCycleAssembler {
     }
 
     public void assignmentTime(TestCycleVO testCycleVO, TestCycleDTO testCycleDTO) {
-        if (testCycleDTO == null || testCycleDTO.getParentCycleId() == null || testCycleDTO.getParentCycleId() == 0L) {
+        if (testCycleDTO == null) {
             TestPlanDTO testPlanDTO = testPlanMapper.selectByPrimaryKey(testCycleVO.getPlanId());
             testCycleVO.setFromDate(covertTime(testPlanDTO.getStartDate(),false));
             testCycleVO.setToDate(covertTime(testPlanDTO.getEndDate(),true));
