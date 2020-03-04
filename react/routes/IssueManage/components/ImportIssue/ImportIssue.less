@@ -1,3 +1,4 @@
+@import '~choerodon-ui/lib/style/themes/default';
 @circle-trail-stroke: rgba(207, 212, 245, 0.90);
 @circle-path-stroke: rgba(48, 63, 159, 0.64);
 @progress-text-color: rgba(0, 0, 0, 0.65);
@@ -77,8 +78,14 @@
     font-size: 13px;
     color: rgba(0, 0, 0, 0.65);
     line-height: 18px;
+
     span {
       color: #000000;
+    }
+
+    &-down-load {
+      color: @primary-color;
+      margin-top: .17rem;
     }
   }
 
@@ -128,6 +135,7 @@
         padding-left: 0;
       }
     }
+
     &-modal-footer {
       position: absolute;
       bottom: 0;
