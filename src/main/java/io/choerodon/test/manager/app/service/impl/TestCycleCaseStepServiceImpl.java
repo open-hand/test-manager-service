@@ -127,7 +127,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             });
             testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
             PageInfo<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageable);
-            return pageFromList;
+            if (pageFromList == null) {
+                return new PageInfo<>();
+            } else {
+                return pageFromList;
+            }
         } else {
             return new PageInfo<>();
         }
