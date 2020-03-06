@@ -127,13 +127,11 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             });
             testCycleCaseDefectRelService.populateCaseStepDefectInfo(testCycleCaseStepVOS, projectId, organizationId);
             PageInfo<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageable);
-            if (pageFromList == null) {
-                return new PageInfo<>();
-            } else {
-                return pageFromList;
-            }
+            return pageFromList;
         } else {
-            return new PageInfo<>();
+            PageInfo<TestCycleCaseStepVO> emptyPage = new PageInfo<>();
+            emptyPage.setList(new ArrayList<>());
+            return emptyPage;
         }
     }
 
