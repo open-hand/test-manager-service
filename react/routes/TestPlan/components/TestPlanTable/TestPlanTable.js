@@ -71,12 +71,14 @@ const TestPlanTable = observer(({
       }, true);
   
       return () => {
-        divRef.current.removeEventListener('mousedown', (e) => {
-          if (!checkIdMap.size) {
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        }, true);
+        if (divRef.current) {
+          divRef.current.removeEventListener('mousedown', (e) => {
+            if (!checkIdMap.size) {
+              e.stopPropagation();
+              e.preventDefault();
+            }
+          }, true);
+        }
       };
     }
   }, []);

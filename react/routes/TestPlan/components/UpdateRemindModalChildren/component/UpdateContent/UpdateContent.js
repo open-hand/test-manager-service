@@ -1,12 +1,12 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tooltip } from 'choerodon-ui';
-import SingleFileUpload from '../../../../../../components/SingleFileUpload';
-import TestStepTable from '../TestStepTable';
 import {
   delta2Html,
 } from '@/common/utils';
 import RichTextShow from '@/components/RichTextShow';
+import SingleFileUpload from '../../../../../../components/SingleFileUpload';
+import TestStepTable from '../TestStepTable';
 import './UpdateContent.less';
 
 const prefix = 'c7ntest-testPlan-updateRemind-updateContent';
@@ -28,7 +28,12 @@ function UpdateContent(props) {
         </div>
         <div className={`${prefix}-item`}>
           <div className={`${prefix}-item-field`}>描述</div>
-          <div className={`${prefix}-item-value`}>
+          <div
+            className={`${prefix}-item-value`}
+            style={{
+              width: 'calc(100% - 1.36rem)',
+            }}
+          >
             <RichTextShow data={(updateData && delta2Html(updateData.description)) || ''} />
           </div>
         </div>
