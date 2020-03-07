@@ -129,7 +129,9 @@ public class TestCycleCaseStepServiceImpl implements TestCycleCaseStepService {
             PageInfo<TestCycleCaseStepVO> pageFromList = PageUtil.createPageFromList(testCycleCaseStepVOS, pageable);
             return pageFromList;
         } else {
-            return new PageInfo<>();
+            PageInfo<TestCycleCaseStepVO> emptyPage = new PageInfo<>();
+            emptyPage.setList(new ArrayList<>());
+            return emptyPage;
         }
     }
 
