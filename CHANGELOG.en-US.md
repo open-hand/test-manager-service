@@ -2,6 +2,25 @@
 
 All notable changes to choerodon-front-agile will be documented in this file.
 
+## [0.21.0] - 2020-03-06
+
+### Add
+
+- Test plan supports planning calendar, and testers can plan the execution time of test cases.
+- Test cases support removing issue links.
+- The test plan supports viewing my execution, and testers can only view the test cases assigned to my execution.  
+
+### Changed
+
+- Partial views style optimization. 
+- Partial report optimization.
+
+### Fixed
+
+- Fix test case step paging errors.
+- Fix the problem of importing test case template field redundancy.  
+
+
 ## [0.20.0] - 2019-12-20
 
 ### Add
