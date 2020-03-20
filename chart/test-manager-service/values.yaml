@@ -177,5 +177,6 @@ metrics:
 
 ## 日志收集
 logs:
+  enabled: true
   # 日志收集格式
   parser: spring-boot
