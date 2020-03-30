@@ -66,7 +66,7 @@ function ConfirmCompleteModalChildren({ planName, testPlanStore }) {
     <div className="c7ntest-completePlan-confirm-modal-children">
       <div>
         <p style={{ marginBottom: 6, fontSize: 14 }}>{`${planName}测试状态如图所示`}</p>
-        <p style={{ marginBottom: 0, fontSize: 14 }}>确定要结束次计划</p>
+        <p style={{ marginBottom: 0, fontSize: 14 }}>确定要结束此次计划</p>
       </div>
       <div>
         <ReactEcharts
