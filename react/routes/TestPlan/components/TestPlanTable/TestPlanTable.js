@@ -191,6 +191,7 @@ const TestPlanTable = observer(({
     style: {
       overflow: 'hidden',
     },
+    // filters: [],
     render(lastUpdateUser) {
       return (
         <div
@@ -329,7 +330,7 @@ const TestPlanTable = observer(({
   return (
     <div className={`c7ntest-testPlanTable ${isMine ? 'c7ntest-mineTestPlanTable' : ''}`}>
       {
-        (!isMine && data.length > 0) && (
+        (!isMine && (data.length > 0 || testPlanStore.filter.assignUser)) && (
           <div style={{
             marginTop: '-55px', marginBottom: 10, flexDirection: 'row-reverse', alignItems: 'center', display: testPlanStore.mainActiveTab === 'testPlanTable' ? 'flex' : 'none',
           }}
