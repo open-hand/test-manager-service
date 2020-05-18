@@ -119,7 +119,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
-        // 创建计划
+        // 创建计划o
         testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
         testPlan.setStatusCode(TestPlanStatus.TODO.getStatus());

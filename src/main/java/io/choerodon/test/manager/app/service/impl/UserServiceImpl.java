@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 import io.choerodon.test.manager.api.vo.TestCycleCaseHistoryVO;
 import io.choerodon.test.manager.app.service.UserService;
@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<PageInfo<UserDTO>> list(Pageable pageable, Long projectId, String param, Long userId) {
-        return baseFeignClient.list(projectId, pageable.getPageNumber(), pageable.getPageSize());
+    public ResponseEntity<Page<UserDTO>> list(PageRequest pageRequest, Long projectId, String param, Long userId) {
+        return baseFeignClient.list(projectId, pageRequest.getPage(), pageRequest.getSize());
     }
 
     public void populateUsersInHistory(List<TestCycleCaseHistoryVO> dto) {
@@ -54,13 +54,13 @@ public class UserServiceImpl implements UserService {
         });
     }
 
-    public void populateTestAutomationHistory(PageInfo<TestAutomationHistoryVO> dto) {
-        Long[] users = dto.getList().stream().map(TestAutomationHistoryVO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
+    public void populateTestAutomationHistory(Page<TestAutomationHistoryVO> dto) {
+        Long[] users = dto.getContent().stream().map(TestAutomationHistoryVO::getCreatedBy).filter(LongUtils::isUserId).distinct().toArray(Long[]::new);
         if (ObjectUtils.isEmpty(users)) {
             return;
         }
         Map<Long, UserDO> user = query(users);
-        dto.getList().forEach(v -> {
+        dto.getContent().forEach(v -> {
             if (LongUtils.isUserId(v.getCreatedBy())) {
                 v.setCreateUser(user.get(v.getCreatedBy()));
             }

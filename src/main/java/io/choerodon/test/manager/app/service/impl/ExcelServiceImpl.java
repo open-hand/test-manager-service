@@ -12,10 +12,14 @@ import java.util.stream.Stream;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
+import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
+import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.hzero.boot.file.FileClient;
+import org.hzero.boot.message.MessageClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -67,11 +71,11 @@ public class ExcelServiceImpl implements ExcelService {
     @Autowired
     private TestCaseMapper testCaseMapper;
 
-    @Autowired
-    private FileService fileService;
+//    @Autowired
+//    private FileService fileService;
 
-    @Autowired
-    private NotifyService notifyService;
+//    @Autowired
+//    private NotifyService notifyService;
 
     @Autowired
     private TestFileLoadHistoryMapper testFileLoadHistoryMapper;
@@ -96,6 +100,15 @@ public class ExcelServiceImpl implements ExcelService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileClient fileClient;
+
+    @Autowired
+    private BaseFeignClient baseFeignClient;
+
+    @Autowired
+    private MessageClient messageClient;
     /**
      * 失败导出重试
      *
@@ -136,25 +149,28 @@ public class ExcelServiceImpl implements ExcelService {
         Assert.notNull(cycleId, "error.export.cycle.in.one.cycleId.not.be.null");
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = insertHistory(projectId, cycleId,
                 TestFileLoadHistoryEnums.Source.CYCLE, TestFileLoadHistoryEnums.Action.DOWNLOAD_CYCLE);
-
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         TestCycleDTO testCycleDTO = new TestCycleDTO();
         testCycleDTO.setCycleId(cycleId);
 
         List<TestCycleDTO> testCycleDTOList = cycleMapper.queryChildCycle(testCycleDTO);
         List<Long> cycleIds = Stream.concat(testCycleDTOList.stream().map(TestCycleDTO::getCycleId), Stream.of(cycleId)).collect(Collectors.toList());
         testFileLoadHistoryWithRateVO.setRate(15.0);
-        notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         TestCycleVO cycle = modelMapper.map(cycleMapper.selectOne(testCycleDTO), TestCycleVO.class);
 
         testFileLoadHistoryWithRateVO.setName(cycle.getCycleName());
 
         testCycleService.populateVersion(cycle, projectId);
         testFileLoadHistoryWithRateVO.setRate(35.0);
-        notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         testCycleService.populateUsers(Lists.newArrayList(cycle));
 
         testFileLoadHistoryWithRateVO.setRate(55.0);
-        notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         Map<Long, List<TestCycleCaseVO>> cycleCaseMap = Optional.ofNullable(testCycleCaseService.queryCaseAllInfoInCyclesOrVersions(cycleIds.toArray(new Long[cycleIds.size()]), null, projectId, organizationId))
                 .orElseGet(ArrayList::new).stream().collect(Collectors.groupingBy(TestCycleCaseVO::getCycleId));
         int sum = 0;
@@ -162,16 +178,18 @@ public class ExcelServiceImpl implements ExcelService {
             sum += list.size();
         }
         testFileLoadHistoryWithRateVO.setRate(65.0);
-        notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         ExcelExportService service = new <TestCycleVO, TestCycleCaseVO>CycleCaseExcelExportServiceImpl();
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
         String projectName = testCaseService.getProjectInfo(projectId).getName();
         service.exportWorkBookWithOneSheet(cycleCaseMap, projectName, cycle, workbook);
         testFileLoadHistoryWithRateVO.setRate(95.0);
-        notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         String fileName = projectName + "-" + cycle.getCycleName() + FILESUFFIX;
-        downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYCYCLECODE);
+        downloadWorkBook(projectDTO.getOrganizationId(),workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYCYCLECODE);
     }
 
     /**
@@ -188,6 +206,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Async
     public void exportCaseFolderByTransaction(Long projectId, Long folderId, HttpServletRequest request, HttpServletResponse response, Long userId,Boolean retry,Long fileHistoryId) {
         TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO = null;
+        ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
         if (Boolean.TRUE.equals(retry)) {
             TestFileLoadHistoryDTO testFileLoadHistoryDTO = new TestFileLoadHistoryDTO();
             testFileLoadHistoryDTO.setId(fileHistoryId);
@@ -217,8 +236,8 @@ public class ExcelServiceImpl implements ExcelService {
         //表格头部生成当前项目名称所属文件夹目录
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
-        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
+        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         List<ExcelCaseVO> excelCaseVOS = handleCase(projectId,folderId);
         if(CollectionUtils.isEmpty(excelCaseVOS)){
             testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
@@ -227,20 +246,20 @@ public class ExcelServiceImpl implements ExcelService {
             testFileLoadHistoryWithRateVO.setCode(EXPORT_ERROR_NOCASE_IN_FOLDER);
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
-            notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
             throw new CommonException("error.folder.no.has.case");
         }
         int sum = excelCaseVOS.size();
         Map<Long, List<ExcelCaseVO>> map = new HashMap<>();
         map.put(1L, excelCaseVOS);
         testFileLoadHistoryWithRateVO.setRate(15.0);
-        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
+        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(80.0);
-        notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
+        //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
 //        workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
 //        workbook.setSheetName(0, LOOKUPSHEETNAME);
@@ -248,7 +267,7 @@ public class ExcelServiceImpl implements ExcelService {
         workbook.removeSheetAt(0);
         String fileName = projectName + "-" + workbook.getSheetName(0).substring(2) + "-" + folderName + FILESUFFIX;
         // 将workbook上载到对象存储服务中
-        downloadWorkBook(workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
+        downloadWorkBook(projectDTO.getOrganizationId(),workbook, fileName, testFileLoadHistoryWithRateVO, userId, sum, NOTIFYISSUECODE);
     }
 
     /**
@@ -311,6 +330,7 @@ public class ExcelServiceImpl implements ExcelService {
     /**
      * 上载文件到minio
      *
+     * @param organizationId
      * @param workbook
      * @param fileName
      * @param testFileLoadHistoryWithRateVO
@@ -318,30 +338,30 @@ public class ExcelServiceImpl implements ExcelService {
      * @param sum
      * @param code
      */
-    private void downloadWorkBook(Workbook workbook, String fileName, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long userId, int sum, String code) {
+    private void downloadWorkBook(Long organizationId,Workbook workbook, String fileName, TestFileLoadHistoryWithRateVO testFileLoadHistoryWithRateVO, Long userId, int sum, String code) {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             workbook.write(os);
             byte[] content = os.toByteArray();
             MultipartFile file = new MultipartExcel("file", fileName, EXCELCONTENTTYPE, content);
 
             testFileLoadHistoryWithRateVO.setRate(99.9);
-            notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-
+            //notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,code,JSON.toJSONString(testFileLoadHistoryWithRateVO));
             testFileLoadHistoryWithRateVO.setLastUpdateDate(new Date());
             testFileLoadHistoryWithRateVO.setFileStream(Arrays.toString(content));
 
             //返回上载结果
-            ResponseEntity<String> res = fileService.uploadFile(TestAttachmentCode.ATTACHMENT_BUCKET, fileName, file);
+            String path = fileClient.uploadFile(organizationId,TestAttachmentCode.ATTACHMENT_BUCKET,null, fileName, file);
 
             //判断是否返回是url
             String regex = "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]+[.]xlsx";//设置正则表达式
             Pattern pat = Pattern.compile(regex.trim());//比对
-            Matcher mat = pat.matcher(Optional.ofNullable(res.getBody()).orElseGet(String::new).trim());
+            Matcher mat = pat.matcher(Optional.ofNullable(path).orElseGet(String::new).trim());
             if (mat.matches()) {
                 testFileLoadHistoryWithRateVO.setFileStream(null);
                 testFileLoadHistoryWithRateVO.setSuccessfulCount(Integer.toUnsignedLong(sum));
                 testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.SUCCESS.getTypeValue());
-                testFileLoadHistoryWithRateVO.setFileUrl(res.getBody());
+                testFileLoadHistoryWithRateVO.setFileUrl(path);
             } else {
                 testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(sum));
                 testFileLoadHistoryWithRateVO.setStatus(TestFileLoadHistoryEnums.Status.FAILURE.getTypeValue());
@@ -355,7 +375,8 @@ public class ExcelServiceImpl implements ExcelService {
                 TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
                 testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
 
-                notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+                //notifyService.postWebSocket(code, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+                messageClient.sendByUserId(userId,code,JSON.toJSONString(testFileLoadHistoryWithRateVO));
                 workbook.close();
             } catch (IOException e) {
                 log.warn(EXPORT_ERROR_WORKBOOK_CLOSE, e);

@@ -9,9 +9,9 @@ import java.util.List;
 import io.swagger.annotations.ApiModelProperty;
 
 import io.choerodon.test.manager.api.vo.agile.UserDO;
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.domain.AuditDomain;
 
-public class TestAutomationHistoryVO extends BaseDTO {
+public class TestAutomationHistoryVO extends AuditDomain {
 
     public enum Status {
         NONEXECUTION(0L), COMPLETE(1L), PARTIALEXECUTION(2L);
@@ -27,7 +27,7 @@ public class TestAutomationHistoryVO extends BaseDTO {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @ApiModelProperty(value = "主键id")
     private Long id;
 

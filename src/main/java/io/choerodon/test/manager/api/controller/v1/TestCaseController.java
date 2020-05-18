@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.TestCaseInfoVO;
 import io.choerodon.test.manager.api.vo.TestCaseRepVO;
 import io.choerodon.test.manager.api.vo.TestCaseVO;
@@ -14,7 +15,7 @@ import io.choerodon.test.manager.infra.util.VerifyUpdateUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import org.springframework.data.domain.Sort;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.core.oauth.DetailsHelper;
-import io.choerodon.core.annotation.Permission;
-import org.springframework.data.web.SortDefault;
+import io.choerodon.swagger.annotation.Permission;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
 import io.choerodon.test.manager.app.service.*;
 import io.choerodon.test.manager.infra.util.ExcelUtil;
 
@@ -65,7 +66,7 @@ public class TestCaseController {
         this.excelServiceHandler = excelServiceHandler;
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成报表从issue到缺陷")
     @PostMapping("/get/reporter/from/issue")
     public ResponseEntity createFormsFromIssueToDefect(@PathVariable(name = "project_id") Long projectId,
@@ -73,16 +74,16 @@ public class TestCaseController {
                                                                SearchDTO searchDTO,
                                                        @ApiIgnore
                                                        @ApiParam(value = "分页信息", required = true)
-                                                       @SortDefault(value = "issueId", direction = Sort.Direction.DESC) Pageable pageable,
+                                                       @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
                                                        @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageable, organizationId))
+        return Optional.ofNullable(reporterFormService.createFromIssueToDefect(projectId, searchDTO, pageRequest, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
 
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("通过缺陷Id生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect/by/issueId")
     public ResponseEntity createFormDefectFromIssueById(@PathVariable(name = "project_id") Long projectId,
@@ -95,14 +96,14 @@ public class TestCaseController {
     }
 
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成报表从缺陷到issue")
     @PostMapping("/get/reporter/from/defect")
     public ResponseEntity createFormDefectFromIssue(@PathVariable(name = "project_id") Long projectId, @RequestBody SearchDTO searchDTO,
-                                                    @SortDefault(value = "issueId", direction = Sort.Direction.DESC) Pageable pageable,
+                                                    @SortDefault(value = "issueId", direction = Sort.Direction.DESC) PageRequest pageRequest,
                                                     @RequestParam Long organizationId) {
 
-        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageable, organizationId))
+        return Optional.ofNullable(reporterFormService.createFormDefectFromIssue(projectId, searchDTO, pageRequest, organizationId))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.Issue.createForm.toDefect"));
     }
@@ -111,7 +112,7 @@ public class TestCaseController {
     /**
      *   导出选择文件夹下的所有用例
      */
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成整个文件夹的excel")
     @GetMapping("/download/excel/folder")
     public ResponseEntity downLoadByFolder(@PathVariable(name = "project_id") Long projectId,
@@ -123,7 +124,7 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成excel模板")
     @GetMapping("/download/excel/template")
     public void downLoadTemplate(@PathVariable(name = "project_id") Long projectId,
@@ -132,7 +133,7 @@ public class TestCaseController {
         excelService.exportCaseTemplate(projectId, request, response);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("导出之前失败过的excel")
     @GetMapping("/download/excel/fail")
     public ResponseEntity downExcelFail(@PathVariable(name = "project_id") Long projectId,
@@ -141,7 +142,7 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("生成excel导入模板")
     @GetMapping("/download/excel/import_template")
     public void downloadImportTemplate(@PathVariable("project_id") Long projectId,
@@ -152,7 +153,7 @@ public class TestCaseController {
     }
 
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("从excel导入模板导入issue以及测试步骤")
     @PostMapping("/import/testCase")
     public ResponseEntity importIssues(@PathVariable("project_id") Long projectId,
@@ -164,7 +165,7 @@ public class TestCaseController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("创建测试用例")
     @PostMapping("/create")
     public ResponseEntity<TestCaseRepVO> createTestCase(@PathVariable("project_id") Long projectId,
@@ -172,7 +173,7 @@ public class TestCaseController {
         return new ResponseEntity<>(testCaseService.createTestCase(projectId, testCaseVO), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询用例详情")
     @GetMapping("/{case_id}/info")
     public ResponseEntity<TestCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
@@ -180,7 +181,7 @@ public class TestCaseController {
         return new ResponseEntity<>(testCaseService.queryCaseInfo(projectId, caseId), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除测试用例")
     @DeleteMapping("/{case_id}/delete")
     public ResponseEntity deleteCase(@PathVariable("project_id") Long projectId,
@@ -189,18 +190,18 @@ public class TestCaseController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/list_by_folder_id")
-    public ResponseEntity<PageInfo<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
+    public ResponseEntity<Page<TestCaseRepVO>> listCaseByFolderId(@PathVariable("project_id") Long projectId,
                                                                       @RequestParam(name = "folder_id") Long folderId,
-                                                                      @SortDefault Pageable pageable,
+                                                                      @SortDefault PageRequest pageRequest,
                                                                       @RequestParam(name = "plan_id",required = false) Long planId,
                                                                       @RequestBody(required = false) SearchDTO searchDTO) {
-        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageable, searchDTO,planId), HttpStatus.OK);
+        return new ResponseEntity<>(testCaseService.listAllCaseByFolderId(projectId, folderId, pageRequest, searchDTO,planId), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改测试用例")
     @PutMapping("/update")
     public ResponseEntity<TestCaseRepVO> updateCase(@PathVariable("project_id") Long projectId,
@@ -210,7 +211,7 @@ public class TestCaseController {
         return new ResponseEntity<>(testCaseService.updateCase(projectId, testCaseRepVO, fieldList.toArray(new String[fieldList.size()])), HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("批量移动测试用例")
     @PostMapping("/batch_move")
     public ResponseEntity batchMoveCase(@PathVariable("project_id") Long projectId,
@@ -221,7 +222,7 @@ public class TestCaseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("批量复制测试用例")
     @PostMapping("/batch_clone")
     public ResponseEntity batchCloneCase(@PathVariable("project_id") Long projectId,

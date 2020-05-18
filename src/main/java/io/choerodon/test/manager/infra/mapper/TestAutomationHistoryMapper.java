@@ -6,10 +6,10 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestAutomationHistoryDTO;
 
-public interface TestAutomationHistoryMapper extends Mapper<TestAutomationHistoryDTO> {
+public interface TestAutomationHistoryMapper extends BaseMapper<TestAutomationHistoryDTO> {
 
     int updateTestStatusByInstanceId(TestAutomationHistoryDTO automationHistoryDTO);
 

@@ -17,7 +17,16 @@ spring:
     multipart:
       max-file-size: 30MB
       max-request-size: 30MB
-
+hzero:
+  websocket:
+    # 用于连接websocket的路径
+    websocket: /websocket
+    # 与当前服务的redis数据库一致
+    redisDb: ${SPRING_REDIS_DATABASE:1}
+    # 这个可以不需要
+    secretKey: hzero
+    # oauth服务用于查询用户信息的接口
+    oauthUrl: http://example/oauth/api/user
 choerodon:
   saga:
     consumer:

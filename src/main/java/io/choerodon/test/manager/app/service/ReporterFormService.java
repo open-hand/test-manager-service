@@ -2,10 +2,10 @@ package io.choerodon.test.manager.app.service;
 
 import java.util.List;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.DefectReporterFormVO;
 import io.choerodon.test.manager.api.vo.ReporterFormVO;
 
@@ -14,9 +14,9 @@ import io.choerodon.test.manager.api.vo.ReporterFormVO;
  */
 public interface ReporterFormService {
 
-    PageInfo<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
+    Page<ReporterFormVO> createFromIssueToDefect(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 
     List<DefectReporterFormVO> createFormDefectFromIssue(Long projectId, Long[] issueIds, Long organizationId);
 
-    PageInfo createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, Pageable pageable, Long organizationId);
+    Page createFormDefectFromIssue(Long projectId, SearchDTO searchDTO, PageRequest pageRequest, Long organizationId);
 }

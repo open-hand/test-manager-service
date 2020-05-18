@@ -1,17 +1,17 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.core.domain.Page;
 import com.google.common.collect.Lists;
 import io.choerodon.test.manager.api.vo.asgard.QuartzTask;
 import io.choerodon.test.manager.api.vo.asgard.ScheduleTaskDTO;
 import io.choerodon.asgard.schedule.annotation.JobParam;
 import io.choerodon.asgard.schedule.annotation.JobTask;
 import io.choerodon.test.manager.infra.util.TypeUtil;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.core.oauth.DetailsHelper;
@@ -321,11 +321,10 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     private List<TestEnvCommandDTO> queryEnvCommand(TestEnvCommandDTO envCommand) {
-        Pageable pageable = PageRequest.of(1, 99999999, Sort.Direction.DESC, "creation_date");
-        PageInfo<TestEnvCommandDTO> pageInfo = PageHelper.startPage(pageable.getPageNumber(),
-                pageable.getPageSize()).doSelectPageInfo(() -> envCommandMapper.select(envCommand));
+        PageRequest pageRequest = new PageRequest(1, 99999999, Sort.Direction.DESC, "creation_date");
+        Page<TestEnvCommandDTO> pageInfo = PageHelper.doPageAndSort(pageRequest,() -> envCommandMapper.select(envCommand));
 
-        return pageInfo.getList();
+        return pageInfo.getContent();
     }
 
     private TestEnvCommandDTO insertOne(TestEnvCommandDTO envCommand) {

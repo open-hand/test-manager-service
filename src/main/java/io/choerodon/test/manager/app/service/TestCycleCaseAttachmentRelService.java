@@ -16,11 +16,11 @@ import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
  */
 public interface TestCycleCaseAttachmentRelService {
 
-    TestCycleCaseAttachmentRelVO upload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
+    TestCycleCaseAttachmentRelVO upload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
 
-    void deleteAttachmentRel(Long attachId);
+    void deleteAttachmentRel(Long projectId,Long attachId);
 
-    void delete(Long linkedId, String type);
+    void delete(Long projectId,Long linkedId, String type);
 
     /**
      * 上传多个附件

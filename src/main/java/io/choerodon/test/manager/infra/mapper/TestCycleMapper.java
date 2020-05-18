@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleMapper extends Mapper<TestCycleDTO> {
+public interface TestCycleMapper extends BaseMapper<TestCycleDTO> {
 
     List<TestCycleDTO> query(@Param("projectId") Long projectId, @Param("versionIds") Long[] versionId, @Param("assignedTo") Long assignedTo);
 

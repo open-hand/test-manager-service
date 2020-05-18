@@ -3,12 +3,11 @@ package io.choerodon.test.manager.infra.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageInfo;
-
-import io.choerodon.web.util.PageableHelper;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.utils.PageableHelper;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
 /**
  * Created by WangZhe@choerodon.io on 2019-06-13.
@@ -23,41 +22,44 @@ public class PageUtil {
         }
     }
 
-    public static PageInfo buildPageInfoWithPageInfoList(PageInfo pageInfo, List list) {
-        Page page = new Page<>(pageInfo.getPageNum(), pageInfo.getPageSize());
-        page.setTotal(pageInfo.getTotal());
-        page.addAll(list);
-
-        return page.toPageInfo();
+    public static Page buildPageInfoWithPageInfoList(Page pageInfo, List list) {
+        Page page = new Page<>();
+        page.setNumber(pageInfo.getNumber());
+        page.setSize(pageInfo.getSize());
+        page.setNumberOfElements(pageInfo.getNumberOfElements());
+        page.setTotalElements(pageInfo.getTotalElements());
+        page.setTotalPages(pageInfo.getTotalPages());
+        page.setContent(list);
+        return page;
     }
     /**
      * 装配Page对象
      *
      * @param all         包含所有内容的列表
-     * @param Pageable 分页参数
-     * @return PageInfo
+     * @param pageRequest 分页参数
+     * @return Page
      */
-    public static <T> PageInfo<T> createPageFromList(List<T> all, Pageable Pageable) {
-        PageInfo<T> result = new PageInfo<>();
-        boolean queryAll = Pageable.getPageNumber() == 0 || Pageable.getPageSize() == 0;
-        result.setPageSize(queryAll ? all.size() : Pageable.getPageSize());
-        result.setPageNum(Pageable.getPageNumber());
-        result.setTotal(all.size());
-        result.setPages(queryAll ? 1 : (int) (Math.ceil(all.size() / (Pageable.getPageSize() * 1.0))));
-        int fromIndex = Pageable.getPageSize() * (Pageable.getPageNumber() - 1);
+    public static <T> Page<T> createPageFromList(List<T> all, PageRequest pageRequest) {
+        Page<T> result = new Page<>();
+        boolean queryAll = pageRequest.getPage() == 0 || pageRequest.getSize() == 0;
+        result.setSize(queryAll ? all.size() : pageRequest.getSize());
+        result.setNumber(pageRequest.getPage());
+        result.setTotalElements(all.size());
+        result.setTotalPages(queryAll ? 1 : (int) (Math.ceil(all.size() / (pageRequest.getSize() * 1.0))));
+        int fromIndex = pageRequest.getSize() * (pageRequest.getPage() - 1);
         int size;
         if (all.size() >= fromIndex) {
-            if (all.size() <= fromIndex + Pageable.getPageSize()) {
+            if (all.size() <= fromIndex + pageRequest.getSize()) {
                 size = all.size() - fromIndex;
             } else {
-                size = Pageable.getPageSize();
+                size = pageRequest.getSize();
             }
             result.setSize(queryAll ? all.size() : size);
-            result.setList(queryAll ? all : all.subList(fromIndex, fromIndex + result.getSize()));
+            result.setContent(queryAll ? all : all.subList(fromIndex, fromIndex + result.getSize()));
         } else {
             size = 0;
             result.setSize(queryAll ? all.size() : size);
-            result.setList(new ArrayList<>());
+            result.setContent(new ArrayList<>());
         }
         return result;
     }

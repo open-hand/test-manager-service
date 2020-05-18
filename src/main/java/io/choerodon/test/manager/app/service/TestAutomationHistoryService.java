@@ -1,14 +1,14 @@
 package io.choerodon.test.manager.app.service;
 
-import com.github.pagehelper.PageInfo;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import io.choerodon.test.manager.api.vo.TestAutomationHistoryVO;
 
 import java.util.Map;
 
 public interface TestAutomationHistoryService {
 
-    PageInfo<TestAutomationHistoryVO> queryWithInstance(Map map, Pageable pageable, Long projectId);
+    Page<TestAutomationHistoryVO> queryWithInstance(Map map, PageRequest pageRequest, Long projectId);
 
     String queryFrameworkByResultId(Long projectId, Long resultId);
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestPlanDTO;
 
 /**
@@ -12,6 +12,6 @@ import io.choerodon.test.manager.infra.dto.TestPlanDTO;
  * @date: 2019/11/26 14:14
  * @description:
  */
-public interface TestPlanMapper extends Mapper<TestPlanDTO> {
+public interface TestPlanMapper extends BaseMapper<TestPlanDTO> {
     void batchInsert(@Param("testPlanDTOList") List<TestPlanDTO> testPlanDTOList);
 }

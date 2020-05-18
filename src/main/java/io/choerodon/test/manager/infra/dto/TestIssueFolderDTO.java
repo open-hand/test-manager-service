@@ -2,16 +2,20 @@ package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.*;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by zongw.lee@gmail.com on 08/30/2018
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_issue_folder")
-public class TestIssueFolderDTO extends BaseDTO {
+public class TestIssueFolderDTO extends AuditDomain {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long folderId;
 
     private String name;

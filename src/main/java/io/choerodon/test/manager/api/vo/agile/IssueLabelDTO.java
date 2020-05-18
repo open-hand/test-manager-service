@@ -7,7 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * 敏捷开发Issue标签
@@ -15,8 +17,10 @@ import io.choerodon.mybatis.entity.BaseDTO;
  * @author dinghuang123@gmail.com
  * @since 2018-05-14 21:04:00
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "agile_issue_label")
-public class IssueLabelDTO extends BaseDTO {
+public class IssueLabelDTO extends AuditDomain {
 
     public IssueLabelDTO() {}
 
@@ -27,7 +31,7 @@ public class IssueLabelDTO extends BaseDTO {
 
     /***/
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long labelId;
 
     /**
