@@ -5,14 +5,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 import io.choerodon.test.manager.api.vo.ApplicationDeployVO;
 
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_app_instance")
-public class TestAppInstanceDTO extends BaseDTO {
+public class TestAppInstanceDTO extends AuditDomain {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private String code;

@@ -3,8 +3,10 @@ package io.choerodon.test.manager.api.controller.v1;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.TestCaseAttachmentService;
@@ -27,7 +29,7 @@ public class TestCaseAttachmentController {
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("上传附件")
     @PostMapping
     public ResponseEntity<List<TestCaseAttachmentDTO>> uploadAttachment(@ApiParam(value = "项目id", required = true)
@@ -40,7 +42,7 @@ public class TestCaseAttachmentController {
                 .orElseThrow(() -> new CommonException("error.attachment.upload"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除附件")
     @DeleteMapping(value = "/{issueAttachment_id}")
     public ResponseEntity deleteAttachment(@ApiParam(value = "项目id", required = true)
@@ -51,7 +53,7 @@ public class TestCaseAttachmentController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("上传附件，直接返回地址")
     @PostMapping(value = "/upload_for_address")
     public ResponseEntity<List<String>> uploadForAddress(@ApiParam(value = "project id", required = true)

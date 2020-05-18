@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.Optional;
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleVO;
@@ -27,7 +29,7 @@ public class TestCycleController {
     @Autowired
     TestPlanServcie testPlanServcie;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("增加计划文件夹")
     @PostMapping
     public ResponseEntity<TestCycleVO> insert(@PathVariable(name = "project_id") Long projectId,
@@ -37,7 +39,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.testCycle.insert"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除计划文件夹")
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -47,7 +49,7 @@ public class TestCycleController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("修改计划文件夹")
     @PutMapping
     public ResponseEntity<TestCycleVO> update(@PathVariable(name = "project_id") Long projectId,
@@ -57,7 +59,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.error.testCycle.update"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询树")
     @GetMapping(value = "/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
@@ -65,7 +67,7 @@ public class TestCycleController {
         return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId,projectId),HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
@@ -76,7 +78,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("操作计划日历")
     @PostMapping("/operate_calendar")
     public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,

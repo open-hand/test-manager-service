@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseStepDTO;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
-public interface TestCycleCaseStepMapper extends Mapper<TestCycleCaseStepDTO> {
+public interface TestCycleCaseStepMapper extends BaseMapper<TestCycleCaseStepDTO> {
 
     List<TestCycleCaseStepDTO> queryWithTestCaseStep(@Param("dto") TestCycleCaseStepDTO testCycleCaseStepDTO, @Param("page") Integer page, @Param("pageSize") Integer pageSize);
 

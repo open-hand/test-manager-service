@@ -5,16 +5,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by zongw.lee@gmail.com on 08/31/2018
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_issue_folder_rel")
-public class TestIssueFolderRelDTO extends BaseDTO {
+public class TestIssueFolderRelDTO extends AuditDomain {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     private Long folderId;

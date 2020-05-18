@@ -1,7 +1,7 @@
 package io.choerodon.test.manager.app.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.app.service.DevopsService;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
@@ -60,8 +60,8 @@ public class DevopsServiceImpl implements DevopsService {
     @Override
     public List<Long> getAppVersionId(String appName, Long projectId, Long appId) {
 
-        ResponseEntity<PageInfo<AppServiceVersionRespVO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, true, "id", appId, appName);
-        return list.getBody().getList().stream().map(AppServiceVersionRespVO::getId).collect(Collectors.toList());
+        ResponseEntity<Page<AppServiceVersionRespVO>> list = applicationFeignClient.pageByOptions(projectId, 0, 9999999, true, "id", appId, appName);
+        return list.getBody().getContent().stream().map(AppServiceVersionRespVO::getId).collect(Collectors.toList());
     }
 
     @Override

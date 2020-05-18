@@ -2,7 +2,7 @@ package io.choerodon.test.manager.infra.feign.callback;
 
 import java.util.List;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class BaseFeignClientFallback implements BaseFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<UserDTO>> list(Long id, int page, int size) {
+    public ResponseEntity<Page<UserDTO>> list(Long id, int page, int size) {
         throw new CommonException(QUERY_ERROR);
     }
 

@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign.callback;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
@@ -30,7 +30,7 @@ public class ApplicationFeignClientFallback implements ApplicationFeignClient {
     }
 
     @Override
-    public ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(Long projectId, int page, int size, Boolean deployOnly, String orders, Long appServiceId, String searchParam) {
+    public ResponseEntity<Page<AppServiceVersionRespVO>> pageByOptions(Long projectId, int page, int size, Boolean deployOnly, String orders, Long appServiceId, String searchParam) {
         throw new CommonException("error.ApplicationFeignClient.pageByOptions");
     }
 

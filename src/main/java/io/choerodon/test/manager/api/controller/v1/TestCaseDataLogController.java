@@ -1,8 +1,10 @@
 package io.choerodon.test.manager.api.controller.v1;
 
 import java.util.List;
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+
+import io.choerodon.core.iam.ResourceLevel;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.DataLogVO;
 import io.choerodon.test.manager.app.service.TestDataLogService;
@@ -22,7 +24,7 @@ public class TestCaseDataLogController {
     @Autowired
     private TestDataLogService dataLogService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("根据caseId 查询日志记录")
     @GetMapping
     public ResponseEntity<List<DataLogVO>> queryByCaseId(@PathVariable(name = "project_id") Long projectId,

@@ -3,19 +3,20 @@ package io.choerodon.test.manager.api.controller.v1;
 import java.util.List;
 import java.util.Optional;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.core.enums.ResourceType;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
-import io.choerodon.core.annotation.Permission;
+import io.choerodon.swagger.annotation.Permission;
 import io.choerodon.test.manager.api.vo.TestIssuesUploadHistoryVO;
 import io.choerodon.test.manager.api.vo.TestFileLoadHistoryVO;
 import io.choerodon.test.manager.app.service.ExcelImportService;
@@ -30,19 +31,19 @@ public class TestFileLoadHistoryController {
     @Autowired
     private ExcelImportService excelImportService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询用例导出历史")
     @PostMapping("/case")
-    public ResponseEntity<PageInfo<TestFileLoadHistoryVO>> queryIssues(
+    public ResponseEntity<Page<TestFileLoadHistoryVO>> queryIssues(
             @PathVariable(name = "project_id") Long projectId,
-             Pageable pageable,
+             PageRequest pageRequest,
             @RequestBody(required = false) SearchDTO searchDTO) {
-        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,searchDTO,pageable))
+        return Optional.ofNullable(testFileLoadHistoryService.pageFileHistoryByoptions(projectId,searchDTO,pageRequest))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.OK))
                 .orElseThrow(() -> new CommonException("error.file.history.query"));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询最近一次导入记录")
     @GetMapping("/latest")
     public ResponseEntity<TestIssuesUploadHistoryVO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
@@ -51,7 +52,7 @@ public class TestFileLoadHistoryController {
                 .orElse(new ResponseEntity<>(HttpStatus.OK));
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("将指定导入记录置为取消")
     @PutMapping("/cancel")
     public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId, @RequestParam Long historyId) {
@@ -59,7 +60,7 @@ public class TestFileLoadHistoryController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("查询cycle上传历史")
     @GetMapping("/cycle")
     public ResponseEntity<List<TestFileLoadHistoryVO>> queryCycles(@PathVariable(name = "project_id") Long projectId) {

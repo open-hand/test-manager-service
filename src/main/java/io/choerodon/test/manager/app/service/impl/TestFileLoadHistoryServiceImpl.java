@@ -5,13 +5,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.choerodon.mybatis.pagehelper.PageHelper;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -113,12 +113,11 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
     }
 
     @Override
-    public PageInfo<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, SearchDTO searchDTO, Pageable pageable) {
-        return ConvertUtils.convertPage(listExportHistory(projectId,TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE.getTypeValue(),searchDTO,pageable), TestFileLoadHistoryVO.class);
+    public Page<TestFileLoadHistoryVO> pageFileHistoryByoptions(Long projectId, SearchDTO searchDTO, PageRequest pageRequest) {
+        return ConvertUtils.convertPage(listExportHistory(projectId,TestFileLoadHistoryEnums.Action.DOWNLOAD_CASE.getTypeValue(),searchDTO,pageRequest), TestFileLoadHistoryVO.class);
     }
 
-    private PageInfo<TestFileLoadHistoryDTO> listExportHistory(Long projectId, Long actionType,SearchDTO searchDTO, Pageable pageable) {
-           return  PageHelper.startPage(pageable.getPageNumber(), pageable.getPageSize())
-                   .doSelectPageInfo(() -> testFileLoadHistoryMapper.listExportHistory(projectId,actionType, searchDTO.getAdvancedSearchArgs()));
+    private Page<TestFileLoadHistoryDTO> listExportHistory(Long projectId, Long actionType,SearchDTO searchDTO, PageRequest pageRequest) {
+           return  PageHelper.doPageAndSort(pageRequest,() -> testFileLoadHistoryMapper.listExportHistory(projectId,actionType, searchDTO.getAdvancedSearchArgs()));
     }
 }

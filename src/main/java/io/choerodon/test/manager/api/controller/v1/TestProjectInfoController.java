@@ -1,8 +1,9 @@
 package io.choerodon.test.manager.api.controller.v1;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.choerodon.test.manager.api.vo.agile.ProjectInfoVO;
-import io.choerodon.core.annotation.Permission;
-import io.choerodon.core.enums.ResourceType;
+import io.choerodon.swagger.annotation.Permission;
+
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.app.service.TestProjectInfoService;
@@ -22,7 +23,7 @@ public class TestProjectInfoController {
     @Autowired
     private TestProjectInfoService testProjectInfoService;
 
-    @Permission(type = ResourceType.PROJECT, roles = InitRoleCode.PROJECT_OWNER)
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("更新projectInfo")
     @PutMapping
     public ResponseEntity<ProjectInfoVO> updateProjectInfo(@ApiParam(value = "项目id", required = true)

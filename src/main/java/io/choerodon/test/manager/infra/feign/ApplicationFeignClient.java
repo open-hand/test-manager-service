@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.devops.AppServiceDeployVO;
 import io.choerodon.test.manager.api.vo.devops.AppServiceVersionRespVO;
 import io.choerodon.test.manager.api.vo.devops.ApplicationRepDTO;
@@ -56,7 +56,7 @@ public interface ApplicationFeignClient {
      * @return
      */
     @PostMapping(value = "/v1/projects/{project_id}/app_service_versions/page_by_options")
-    ResponseEntity<PageInfo<AppServiceVersionRespVO>> pageByOptions(
+    ResponseEntity<Page<AppServiceVersionRespVO>> pageByOptions(
             @PathVariable(value = "project_id") Long projectId,
             @RequestParam(name = "page") int page, @RequestParam(name = "size") int size,
             @RequestParam(value = "deploy_only") Boolean deployOnly,

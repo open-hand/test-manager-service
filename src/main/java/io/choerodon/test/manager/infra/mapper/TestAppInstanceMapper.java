@@ -6,10 +6,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 
-import io.choerodon.mybatis.common.Mapper;
+import io.choerodon.mybatis.common.BaseMapper;
 import io.choerodon.test.manager.infra.dto.TestAppInstanceDTO;
 
-public interface TestAppInstanceMapper extends Mapper<TestAppInstanceDTO> {
+public interface TestAppInstanceMapper extends BaseMapper<TestAppInstanceDTO> {
     String queryValueByEnvIdAndAppId(@Param("envId") Long envId, @Param("appId") Long appId);
 
     List<TestAppInstanceDTO> queryDelayInstance(@Param("delayTiming") Date time);

@@ -2,15 +2,19 @@ package io.choerodon.test.manager.infra.dto;
 
 import javax.persistence.*;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_cycle_case_attach_rel")
-public class TestCycleCaseAttachmentRelDTO extends BaseDTO {
+public class TestCycleCaseAttachmentRelDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     private String attachmentType;
     private Long attachmentLinkId;

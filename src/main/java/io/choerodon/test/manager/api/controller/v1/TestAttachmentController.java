@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
+import io.choerodon.core.iam.ResourceLevel;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import io.choerodon.core.enums.ResourceType;
+
 import io.choerodon.core.iam.InitRoleCode;
 import io.choerodon.test.manager.api.vo.TestCycleCaseAttachmentRelVO;
 import io.choerodon.test.manager.app.service.TestCycleCaseAttachmentRelService;
 import io.choerodon.core.exception.CommonException;
-import io.choerodon.core.annotation.Permission;
+import io.choerodon.swagger.annotation.Permission;
 
 /**
  * Created by 842767365@qq.com on 6/21/18.
@@ -28,7 +29,7 @@ public class TestAttachmentController {
     @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("增加附件")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
@@ -41,12 +42,12 @@ public class TestAttachmentController {
 
     }
 
-    @Permission(type = ResourceType.PROJECT, roles = {InitRoleCode.PROJECT_MEMBER, InitRoleCode.PROJECT_OWNER})
+    @Permission(level = ResourceLevel.PROJECT)
     @ApiOperation("删除附件")
     @DeleteMapping("/{attachId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "attachId") Long attachId,
                                            @PathVariable(name = "project_id") Long projectId) {
-        testCycleCaseAttachmentRelService.deleteAttachmentRel(attachId);
+        testCycleCaseAttachmentRelService.deleteAttachmentRel(projectId,attachId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

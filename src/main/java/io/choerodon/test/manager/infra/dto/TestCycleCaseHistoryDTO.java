@@ -5,15 +5,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import io.choerodon.mybatis.entity.BaseDTO;
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.choerodon.mybatis.domain.AuditDomain;
 
 /**
  * Created by 842767365@qq.com on 6/11/18.
  */
+@VersionAudit
+@ModifyAudit
 @Table(name = "test_cycle_case_history")
-public class TestCycleCaseHistoryDTO extends BaseDTO {
+public class TestCycleCaseHistoryDTO extends AuditDomain {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
     private Long executeId;
     private String oldValue;

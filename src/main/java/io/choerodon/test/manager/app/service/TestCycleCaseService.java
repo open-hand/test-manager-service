@@ -3,12 +3,12 @@ package io.choerodon.test.manager.app.service;
 import java.util.List;
 import java.util.Map;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 
 import io.choerodon.test.manager.api.vo.agile.SearchDTO;
 import io.choerodon.test.manager.api.vo.*;
 import io.choerodon.test.manager.infra.dto.TestCycleDTO;
-import org.springframework.data.domain.Pageable;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 
@@ -42,7 +42,7 @@ public interface TestCycleCaseService {
 
     void createTestCycleCaseStep(TestCycleCaseDTO testCycleCaseDTO);
 
-    List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, Pageable pageable);
+    List<TestCycleCaseDTO> queryWithAttachAndDefect(TestCycleCaseDTO convert, PageRequest pageRequest);
 
     /**
      * 创建计划引入测试用例相关信息
@@ -74,7 +74,7 @@ public interface TestCycleCaseService {
 
     void update(TestCycleCaseVO testCycleCaseVO);
 
-    PageInfo<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long folderId, Pageable pageable, SearchDTO searchDTO);
+    Page<TestFolderCycleCaseVO> listAllCaseByCycleId(Long projectId, Long planId, Long folderId, PageRequest pageRequest, SearchDTO searchDTO);
 
 
     List<TestCycleCaseDTO> listByCycleIds(List<Long> cycleId);

@@ -1,6 +1,6 @@
 package io.choerodon.test.manager.infra.feign;
 
-import com.github.pagehelper.PageInfo;
+import io.choerodon.core.domain.Page;
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.api.vo.agile.UserDO;
 import io.choerodon.test.manager.api.vo.agile.UserDTO;
@@ -17,20 +17,20 @@ import java.util.List;
  * @since 2018/5/24
  */
 @Component
-@FeignClient(value = "base-service", fallback = BaseFeignClientFallback.class)
+@FeignClient(value = "hzero-iam", fallback = BaseFeignClientFallback.class)
 public interface BaseFeignClient {
 
-    @PostMapping(value = "/v1/users/ids")
+    @PostMapping(value = "/choerodon/v1/users/ids")
     ResponseEntity<List<UserDO>> listUsersByIds(@RequestBody Long[] ids,
                                                 @RequestParam(value = "only_enabled", defaultValue = "true", required = false) Boolean onlyEnabled);
 
 
-    @GetMapping(value = "/v1/projects/{project_id}/users")
-    ResponseEntity<PageInfo<UserDTO>> list(@PathVariable(name = "project_id") Long id,
+    @GetMapping(value = "/choerodon/v1/projects/{project_id}/users")
+    ResponseEntity<Page<UserDTO>> list(@PathVariable(name = "project_id") Long id,
                                            @RequestParam(value = "page") int page,
                                            @RequestParam(value = "size") int size);
 
-    @GetMapping(value = "/v1/projects/{project_id}")
+    @GetMapping(value = "/choerodon/v1/projects/{project_id}")
     ResponseEntity<ProjectDTO> queryProject(@PathVariable(name = "project_id") Long id);
 }
 
