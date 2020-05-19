@@ -11,7 +11,7 @@ const { Option } = Select;
 
 export default {
   user: {
-    request: ({ filter, page }) => new Promise(resolve => getUsers(filter, undefined, page).then((UserData) => { resolve({ ...UserData, list: UserData.list.filter(user => user.enabled) }); })),
+    request: ({ filter, page }) => new Promise(resolve => getUsers(filter, undefined, page).then((UserData) => { resolve({ ...UserData, list: UserData.content }); })),
     render: user => (
       <Option key={user.id} value={user.id}>
         <div style={{ display: 'inline-flex', alignItems: 'center', padding: 2 }}>

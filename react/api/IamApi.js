@@ -8,7 +8,7 @@ import { getProjectId, getOrganizationId, request } from '../common/utils';
  * @returns
  */
 export function getSelf() {
-  return request.get('/base/v1/users/self');
+  return request.get('/iam/choerodon/v1/users/self');
 }
 /**
  *获取指定用户
@@ -18,7 +18,7 @@ export function getSelf() {
  * @returns
  */
 export function getUser(userId) {
-  return request.get(`base/v1/projects/${getProjectId()}/users?id=${userId}`);
+  return request.get(`/iam/choerodon/v1/projects/${getProjectId()}/users?id=${userId}`);
 }
 /**
  *获取用户列表
@@ -28,11 +28,11 @@ export function getUser(userId) {
  * @returns
  */
 export function getUsers(param, size, page) {
-  return request.get(`/base/v1/projects/${getProjectId()}/users?size=20${page ? `&page=${page}` : ''}${param ? `&param=${param}` : ''}`);
+  return request.get(`/iam/choerodon/v1/projects/${getProjectId()}/users?size=20${page ? `&page=${page}` : ''}${param ? `&param=${param}` : ''}`);
 }
 
 export function getUpdateProjectInfoPermission() {
-  return request.post('/base/v1/permissions/checkPermission', [{
+  return request.post('/iam/choerodon/v1/permissions/checkPermission', [{
     code: 'agile-service.project-info.updateProjectInfo',
     organizationId: getOrganizationId(),
     projectId: getProjectId(),

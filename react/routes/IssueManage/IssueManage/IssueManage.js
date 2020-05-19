@@ -66,7 +66,12 @@ export default class IssueManage extends Component {
       IssueTreeStore.setCurrentFolderById(folderId);
       IssueTreeStore.updateHasCase(folderId, true);// 设置含有用例
     }
-    IssueStore.loadIssues();
+    IssueStore.setPagination({
+      current: 1,
+      pageSize: 10,
+      total: IssueStore.pagination.total,
+    });
+    IssueStore.loadIssues(1, 10);
   }
 
 
