@@ -496,6 +496,7 @@ public class TestCaseServiceImpl implements TestCaseService {
             throw new CommonException("error.test.case.insert.caseId.should.be.null");
         }
         TestCaseDTO testCaseDTO = modelMapper.map(testCaseVO, TestCaseDTO.class);
+        testCaseDTO.setVersionNum(1L);
         DBValidateUtil.executeAndvalidateUpdateNum(testCaseMapper::insert, testCaseDTO, 1, "error.testcase.insert");
         return testCaseDTO;
     }
