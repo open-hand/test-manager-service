@@ -115,5 +115,5 @@ export function importIssue(data, versionId) {
   const axiosConfig = {
     headers: { 'content-type': 'multipart/form-data' },
   };
-  return request.post(`/zuul/test/v1/projects/${getProjectId()}/case/import/testCase?folder_id=${versionId}`, data, axiosConfig);
+  return request.post(`/test/v1/projects/${getProjectId()}/case/import/testCase?folder_id=${versionId}`, data, axiosConfig);
 }

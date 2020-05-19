@@ -16,7 +16,6 @@ import { FormattedMessage } from 'react-intl';
 import { importIssue } from '@/api/FileApi';
 import { humanizeDuration } from '@/common/utils';
 import { getImportHistory, cancelImport, downloadTemplate } from '@/api/IssueManageApi';
-import IssueStore from '../../stores/IssueStore';
 import IssueTreeStore from '../../stores/IssueTreeStore';
 
 import './ImportIssue.less';
@@ -155,7 +154,7 @@ function ImportIssue(props) {
         status: 1,
       });
     }).catch((e) => {
-      Choerodon.prompt('网络错误');
+      Choerodon.prompt('导入失败');
     });
   };
 
