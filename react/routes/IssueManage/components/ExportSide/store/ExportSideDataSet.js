@@ -111,7 +111,7 @@ const ExportSideDataSet = (folderId, queryStatus = new DataSet({
           Choerodon.prompt(resObj.message);
           return resObj;
         }
-        const newList = resObj.list.map(item => ({
+        const newList = (resObj.content || []).map(item => ({
           ...item,
           during: onHumanizeDuration(item),
         }));

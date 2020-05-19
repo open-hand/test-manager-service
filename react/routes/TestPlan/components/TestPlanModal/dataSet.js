@@ -38,7 +38,7 @@ export default function DataSetFactory({ initValue = {} } = {}) {
               managerId = record.data.managerId;
             }
             return {
-              url: `/base/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
+              url: `/iam/choerodon/v1/projects/${getProjectId()}/users${managerId && managerId === initValue.managerId ? `?id=${managerId}` : ''}`,
             };
           },
         },   
