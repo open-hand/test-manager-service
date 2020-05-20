@@ -45,9 +45,9 @@ public interface TestCaseService {
 
     List<IssueLinkDTO> listIssueLinkByIssueId(Long projectId, List<Long> issueId);
 
-    Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
-
-    Long[] getVersionIds(Long projectId);
+//    Map<Long, ProductVersionDTO> getVersionInfo(Long projectId);
+//
+//    Long[] getVersionIds(Long projectId);
 
     ProjectDTO getProjectInfo(Long projectId);
 

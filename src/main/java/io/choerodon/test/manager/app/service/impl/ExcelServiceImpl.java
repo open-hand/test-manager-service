@@ -162,7 +162,7 @@ public class ExcelServiceImpl implements ExcelService {
 
         testFileLoadHistoryWithRateVO.setName(cycle.getCycleName());
 
-        testCycleService.populateVersion(cycle, projectId);
+//        testCycleService.populateVersion(cycle, projectId);
         testFileLoadHistoryWithRateVO.setRate(35.0);
         //notifyService.postWebSocket(NOTIFYCYCLECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
         messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
@@ -289,7 +289,7 @@ public class ExcelServiceImpl implements ExcelService {
         Workbook workbook = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
         printDebug(EXPORTSUCCESSINFO + ExcelUtil.Mode.XSSF);
 
-        Long[] versionsId = testCaseService.getVersionIds(projectId);
+//        Long[] versionsId = testCaseService.getVersionIds(projectId);
 
         Map<Long, List<TestIssueFolderRelVO>> map = new HashMap<>();
         List<TestIssueFolderRelVO> testIssueFolderRelVOS = new ArrayList<>();
@@ -306,11 +306,11 @@ public class ExcelServiceImpl implements ExcelService {
         //准备lookup页
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName,
                 modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
-        for (Long versionId : versionsId) {
-            Object needMap = ((HashMap<Long, List<TestIssueFolderRelVO>>) map).clone();
-            service.exportWorkBookWithOneSheet((Map<Long, List>) needMap, projectName,
-                    modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
-        }
+//        for (Long versionId : versionsId) {
+//            Object needMap = ((HashMap<Long, List<TestIssueFolderRelVO>>) map).clone();
+//            service.exportWorkBookWithOneSheet((Map<Long, List>) needMap, projectName,
+//                    modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
+//        }
         //准备README页
         ExcelExportService readMeService = new <ExcelReadMeVO, ExcelReadMeOptionVO>ReadMeExcelExportServiceImpl();
         Map<String, List<ExcelReadMeOptionVO>> readMeMap = new HashMap<>();
@@ -318,7 +318,7 @@ public class ExcelServiceImpl implements ExcelService {
         readMeMap.put(readMeDTO.getHeader(), populateReadMeOptions());
         readMeService.exportWorkBookWithOneSheet(readMeMap, projectName, readMeDTO, workbook);
 
-        workbook.setSheetName(versionsId.length + 1, "README");
+//        workbook.setSheetName(versionsId.length + 1, "README");
         workbook.setSheetName(0, LOOKUPSHEETNAME);
         workbook.setSheetOrder(LOOKUPSHEETNAME, workbook.getNumberOfSheets() - 1);
         workbook.setSheetHidden(workbook.getNumberOfSheets() - 1, true);
