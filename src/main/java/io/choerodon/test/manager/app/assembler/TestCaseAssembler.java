@@ -89,7 +89,9 @@ public class TestCaseAssembler {
         if (assignedTo != null && !Objects.equals(assignedTo, 0L)) {
             UserMessageDTO userMessage = userMap.get(assignedTo);
             if(ObjectUtils.isEmpty(userMessage)){
-                Map<Long, UserMessageDTO> userMap1 = getUserMap(testCycleCaseDTO, null);
+                TestCycleCaseDTO cycleCaseDTO = new TestCycleCaseDTO();
+                cycleCaseDTO.setCreatedBy(testCycleCaseDTO.getAssignedTo());
+                Map<Long, UserMessageDTO> userMap1 = getUserMap(cycleCaseDTO, null);
                 testFolderCycleCaseVO.setAssignedUser(userMap1.get(assignedTo));
                 userMap.putAll(userMap1);
             }
