@@ -34,7 +34,6 @@ import io.choerodon.test.manager.infra.constant.DataLogConstants;
 import io.choerodon.test.manager.infra.dto.*;
 import io.choerodon.test.manager.infra.feign.ApplicationFeignClient;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
-import io.choerodon.test.manager.infra.feign.ProductionVersionClient;
 import io.choerodon.test.manager.infra.feign.TestCaseFeignClient;
 import io.choerodon.test.manager.infra.mapper.*;
 import io.choerodon.test.manager.infra.util.ConvertUtils;
@@ -52,9 +51,9 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Autowired
     private TestCaseFeignClient testCaseFeignClient;
-
-    @Autowired
-    private ProductionVersionClient productionVersionClient;
+//
+//    @Autowired
+//    private ProductionVersionClient productionVersionClient;
 
     @Autowired
     private BaseFeignClient baseFeignClient;
@@ -446,17 +445,17 @@ public class TestCaseServiceImpl implements TestCaseService {
         return listIssueLinkByIssueId(projectId, issueId).stream().collect(Collectors.toList());
     }
 
-    @Override
-    public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.getVersionInfo.param.projectId.not.be.null");
-        return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
-    }
+//    @Override
+//    public Map<Long, ProductVersionDTO> getVersionInfo(Long projectId) {
+//        Assert.notNull(projectId, "error.TestCaseService.getVersionInfo.param.projectId.not.be.null");
+//        return productionVersionClient.listByProjectId(projectId).getBody().stream().collect(Collectors.toMap(ProductVersionDTO::getVersionId, Function.identity()));
+//    }
 
-    public Long[] getVersionIds(Long projectId) {
-        Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
-        return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
-
-    }
+//    public Long[] getVersionIds(Long projectId) {
+//        Assert.notNull(projectId, "error.TestCaseService.getVersionIds.param.projectId.not.be.null");
+//        return productionVersionClient.listByProjectId(projectId).getBody().stream().map(ProductVersionDTO::getVersionId).distinct().toArray(Long[]::new);
+//
+//    }
 
     @Override
     public ProjectDTO getProjectInfo(Long projectId) {

@@ -85,14 +85,14 @@ public class TestFileLoadHistoryServiceImpl implements TestFileLoadHistoryServic
 
         TestIssuesUploadHistoryVO testIssuesUploadHistoryVO = modelMapper.map(testFileLoadHistoryDTO, TestIssuesUploadHistoryVO.class);
 
-        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
-        testIssueFolderDTO.setFolderId(testFileLoadHistoryDTO.getLinkedId());
-        testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testFileLoadHistoryDTO.getLinkedId());
-
-        if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
-            testIssuesUploadHistoryVO.setVersionName(testCaseService.getVersionInfo(projectId)
-                    .get(testIssueFolderDTO.getVersionId()).getName());
-        }
+//        TestIssueFolderDTO testIssueFolderDTO = new TestIssueFolderDTO();
+//        testIssueFolderDTO.setFolderId(testFileLoadHistoryDTO.getLinkedId());
+//        testIssueFolderDTO = testIssueFolderMapper.selectByPrimaryKey(testFileLoadHistoryDTO.getLinkedId());
+//
+//        if (!ObjectUtils.isEmpty(testIssueFolderDTO)) {
+//            testIssuesUploadHistoryVO.setVersionName(testCaseService.getVersionInfo(projectId)
+//                    .get(testIssueFolderDTO.getVersionId()).getName());
+//        }
 
         return testIssuesUploadHistoryVO;
     }

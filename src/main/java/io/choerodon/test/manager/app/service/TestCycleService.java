@@ -18,7 +18,7 @@ public interface TestCycleService {
 
     TestCycleVO update(Long projectId, TestCycleVO testCycleVO);
 
-    void populateVersion(TestCycleVO cycle, Long projectId);
+//    void populateVersion(TestCycleVO cycle, Long projectId);
 
     void populateUsers(List<TestCycleVO> dtos);
 

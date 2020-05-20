@@ -88,7 +88,7 @@ public class TestCaseExcelExportServiceImpl extends AbstarctExcelExportServiceIm
     @Override
     public int populateVersionHeader(Sheet sheet, String projectName, TestIssueFolderVO folder, CellStyle rowStyle) {
         if (sheet.getWorkbook().getNumberOfSheets() == 1) {
-            versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
+//            versionInfo = testCaseService.getVersionInfo(folder.getProjectId());
             return 0;
         }
         StringBuilder stringBuilder = new StringBuilder(folder.getName());
