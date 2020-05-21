@@ -41,7 +41,7 @@ const SelectFocusLoad = (props) => {
   } = totalProps;
   const [loading, setLoading] = useState(false);
   const [List, setList] = useState(defaultOption ? [defaultOption] : []);
-  const [extraList, setExtraList] = useState(false);
+  const [extraList, setExtraList] = useState([]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState(1);
   const [canLoadMore, setCanLoadMore] = useState(false);
