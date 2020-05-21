@@ -24,7 +24,7 @@ public class TestCaseDataLogController {
     @Autowired
     private TestDataLogService dataLogService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("根据caseId 查询日志记录")
     @GetMapping
     public ResponseEntity<List<DataLogVO>> queryByCaseId(@PathVariable(name = "project_id") Long projectId,

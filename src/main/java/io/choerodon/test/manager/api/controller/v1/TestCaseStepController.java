@@ -29,7 +29,7 @@ public class TestCaseStepController {
     TestCaseStepService testCaseStepService;
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询")
     @GetMapping("/query/{caseId}")
     public ResponseEntity<List<TestCaseStepVO>> query(@PathVariable(name = "project_id") Long projectId,
@@ -42,7 +42,7 @@ public class TestCaseStepController {
     }
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("变动一个测试步骤(添加|修改)")
     @PutMapping("/change")
     public ResponseEntity<TestCaseStepVO> changeOneStep(@PathVariable(name = "project_id") Long projectId,
@@ -55,7 +55,7 @@ public class TestCaseStepController {
     }
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除测试步骤")
     @DeleteMapping
     public ResponseEntity<Boolean> removeStep(@PathVariable(name = "project_id") Long projectId,
@@ -64,7 +64,7 @@ public class TestCaseStepController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("克隆")
     @PostMapping("/clone")
     public ResponseEntity clone(@PathVariable(name = "project_id") Long projectId,

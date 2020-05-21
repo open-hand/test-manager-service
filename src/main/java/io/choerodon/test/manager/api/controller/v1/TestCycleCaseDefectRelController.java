@@ -36,7 +36,7 @@ public class TestCycleCaseDefectRelController {
     @Autowired
     TestCaseService testCaseService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("增加缺陷")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseDefectRelVO>> insert(@PathVariable(name = "project_id") Long projectId,
@@ -52,7 +52,7 @@ public class TestCycleCaseDefectRelController {
                 .orElseThrow(() -> new CommonException("error.testDefect.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除缺陷")
     @DeleteMapping("/delete/{defectId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "project_id") Long projectId,
@@ -64,7 +64,7 @@ public class TestCycleCaseDefectRelController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建一个缺陷并且关联到对应case或者step")
     @PostMapping("/createIssueAndDefect/{defectType}/{id}")
     public TestCycleCaseDefectRelVO createIssueAndLinkDefect(@RequestBody IssueCreateDTO issueCreateDTO,
@@ -84,7 +84,7 @@ public class TestCycleCaseDefectRelController {
         return defect;
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("修改缺陷的projectId")
     @PutMapping("/fix")
     public void fixDefectData(@PathVariable(name = "project_id") Long projectId,
@@ -94,7 +94,7 @@ public class TestCycleCaseDefectRelController {
         testCycleCaseDefectRelService.updateIssuesProjectId(testCycleCaseDefectRelVO, organizationId);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除缺陷后解除对应关系")
     @DeleteMapping("/delete_relation/{defectId}")
     public ResponseEntity deleteCaseRel(@PathVariable(name = "project_id") Long projectId,

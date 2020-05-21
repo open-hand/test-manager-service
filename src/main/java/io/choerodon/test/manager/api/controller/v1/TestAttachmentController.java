@@ -29,7 +29,7 @@ public class TestAttachmentController {
     @Autowired
     TestCycleCaseAttachmentRelService testCycleCaseAttachmentRelService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("增加附件")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
@@ -43,7 +43,7 @@ public class TestAttachmentController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除附件")
     @DeleteMapping("/{attachId}")
     public ResponseEntity removeAttachment(@PathVariable(name = "attachId") Long attachId,

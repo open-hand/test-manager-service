@@ -29,7 +29,7 @@ public class TestCaseAttachmentController {
     @Autowired
     private TestCaseAttachmentService testCaseAttachmentService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("上传附件")
     @PostMapping
     public ResponseEntity<List<TestCaseAttachmentDTO>> uploadAttachment(@ApiParam(value = "项目id", required = true)
@@ -42,7 +42,7 @@ public class TestCaseAttachmentController {
                 .orElseThrow(() -> new CommonException("error.attachment.upload"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除附件")
     @DeleteMapping(value = "/{issueAttachment_id}")
     public ResponseEntity deleteAttachment(@ApiParam(value = "项目id", required = true)
@@ -53,7 +53,7 @@ public class TestCaseAttachmentController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("上传附件，直接返回地址")
     @PostMapping(value = "/upload_for_address")
     public ResponseEntity<List<String>> uploadForAddress(@ApiParam(value = "project id", required = true)

@@ -25,7 +25,7 @@ public class TestIssueFolderController {
     @Autowired
     private TestIssueFolderService testIssueFolderService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询文件夹，返回树结构")
     @GetMapping("/query")
     public ResponseEntity query(@PathVariable(name = "project_id") Long projectId) {
@@ -35,7 +35,7 @@ public class TestIssueFolderController {
     }
 
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除文件夹")
     @DeleteMapping("/{folderId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -44,7 +44,7 @@ public class TestIssueFolderController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建文件夹")
     @PostMapping
     public ResponseEntity<TestIssueFolderVO> create(@PathVariable(name = "project_id") Long projectId,
@@ -54,7 +54,7 @@ public class TestIssueFolderController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新文件夹")
     @PutMapping("/update")
     public ResponseEntity<TestIssueFolderVO> update(@PathVariable(name = "project_id") Long projectId,
@@ -64,7 +64,7 @@ public class TestIssueFolderController {
                 .orElseThrow(() -> new CommonException("error.testIssueFolder.update"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
