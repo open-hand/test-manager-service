@@ -81,7 +81,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Override
     public TestCycleCaseAttachmentRelVO upload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
-        return modelMapper.map(testCycleCaseAttachmentRelUploadService.baseUpload(organizationId,bucketName, fileName, file, attachmentLinkId, attachmentType, comment), TestCycleCaseAttachmentRelVO.class);
+        return modelMapper.map(testCycleCaseAttachmentRelUploadService.baseUpload(bucketName, fileName, file, attachmentLinkId, attachmentType, comment,organizationId), TestCycleCaseAttachmentRelVO.class);
     }
 
     @Override
