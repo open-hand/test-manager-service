@@ -33,7 +33,7 @@ public class TestAutomationHistoryController {
     TestAppInstanceLogService testAppInstanceLogService;
 
     @PostMapping("/queryWithHistroy")
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity<Page<TestAutomationHistoryVO>> queryWithInstance(@RequestBody(required = false) Map map,
                                                                                @SortDefault(value = "id", direction = Sort.Direction.DESC)
                                                                                        PageRequest pageRequest,
@@ -44,7 +44,7 @@ public class TestAutomationHistoryController {
     }
 
     @GetMapping("/queryLog/{logId}")
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     public ResponseEntity queryLog(@PathVariable("logId") Long logId, @PathVariable("project_id") Long projectId) {
         TestAppInstanceLogDTO logE = new TestAppInstanceLogDTO();
         logE.setId(logId);

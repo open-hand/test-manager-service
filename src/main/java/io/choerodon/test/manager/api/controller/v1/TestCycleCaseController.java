@@ -36,7 +36,7 @@ public class TestCycleCaseController {
     @Autowired
     TestCycleCaseService testCycleCaseService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除测试循环用例")
     @DeleteMapping
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -56,7 +56,7 @@ public class TestCycleCaseController {
         this.excelServiceHandler = excelServiceHandler;
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("excel")
     @GetMapping("/download/excel/{cycleId}")
     public ResponseEntity downLoad(@PathVariable(name = "project_id") Long projectId,
@@ -68,7 +68,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询测试执行详情")
     @PostMapping("/{executeId}/info")
     public ResponseEntity<TestCycleCaseInfoVO> queryCaseInfo(@PathVariable("project_id") Long projectId,
@@ -79,7 +79,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(testCycleCaseService.queryCycleCaseInfo(executeId,projectId,planId,cycleId,searchDTO), HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询计划下的执行状态总览")
     @GetMapping("/query/status")
     public ResponseEntity<ExecutionStatusVO> queryExecutionStatus(@PathVariable(name = "project_id") Long projectId,
@@ -93,7 +93,7 @@ public class TestCycleCaseController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新测试执行和其对应步骤")
     @PutMapping("/case_step")
     public ResponseEntity updateCaseAndStep(@PathVariable(name = "project_id") Long projectId,
@@ -104,7 +104,7 @@ public class TestCycleCaseController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新测试执行信息")
     @PutMapping("/cycle_case")
     public ResponseEntity update(@PathVariable(name = "project_id") Long projectId,
@@ -114,7 +114,7 @@ public class TestCycleCaseController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询当前文件夹下面所有子文件夹中用例")
     @PostMapping("/query/caseList")
     public ResponseEntity<Page<TestFolderCycleCaseVO>> listCaseByCycleId(@PathVariable("project_id") Long projectId,
@@ -125,7 +125,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(testCycleCaseService.listAllCaseByCycleId(projectId, planId, cycleId, pageRequest, searchDTO), HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("批量指派用例")
     @PostMapping("/batchAssign/cycleCase")
     public ResponseEntity batchAssignCase(@PathVariable("project_id") Long projectId,
@@ -135,7 +135,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询一个执行和步骤")
     @GetMapping("/case_step/{execute_id}")
     public ResponseEntity<TestCycleCaseUpdateVO> queryCaseAndStep(@PathVariable(name = "project_id") Long projectId,
@@ -145,7 +145,7 @@ public class TestCycleCaseController {
                 .orElseThrow(() -> new CommonException("error.testCycleCase.query.executeId"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询更新对比")
     @GetMapping("/{execute_id}/compared")
     public ResponseEntity<CaseChangeVO> selectUpdateCompare(@PathVariable("project_id") Long projectId,
@@ -154,7 +154,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(testCycleCaseService.selectUpdateCompare(projectId,executeId),HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新用例")
     @PostMapping("/compared")
     public ResponseEntity updateCompare(@PathVariable("project_id") Long projectId,
@@ -163,7 +163,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("忽略用例更新")
     @PostMapping("/{execute_id}/ignore/update")
     public ResponseEntity ignoreUpdate(@PathVariable("project_id") Long projectId,
@@ -172,7 +172,7 @@ public class TestCycleCaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("导入用例")
     @PostMapping("/import")
     public ResponseEntity importCase(@PathVariable("project_id") Long projectId,

@@ -36,7 +36,7 @@ public class TestCycleCaseHistoryController {
     @Autowired
     TestCycleCaseHistoryService testCycleCaseHistoryService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环历史")
     @GetMapping
     public ResponseEntity<Page<TestCycleCaseHistoryVO>> query(@PathVariable(name = "project_id") Long projectId,

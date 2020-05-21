@@ -31,7 +31,7 @@ public class TestFileLoadHistoryController {
     @Autowired
     private ExcelImportService excelImportService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询用例导出历史")
     @PostMapping("/case")
     public ResponseEntity<Page<TestFileLoadHistoryVO>> queryIssues(
@@ -43,7 +43,7 @@ public class TestFileLoadHistoryController {
                 .orElseThrow(() -> new CommonException("error.file.history.query"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询最近一次导入记录")
     @GetMapping("/latest")
     public ResponseEntity<TestIssuesUploadHistoryVO> queryLatestLoadHistory(@PathVariable("project_id") Long projectId) {
@@ -52,7 +52,7 @@ public class TestFileLoadHistoryController {
                 .orElse(new ResponseEntity<>(HttpStatus.OK));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("将指定导入记录置为取消")
     @PutMapping("/cancel")
     public ResponseEntity cancelUpLoad(@PathVariable("project_id") Long projectId, @RequestParam Long historyId) {
@@ -60,7 +60,7 @@ public class TestFileLoadHistoryController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询cycle上传历史")
     @GetMapping("/cycle")
     public ResponseEntity<List<TestFileLoadHistoryVO>> queryCycles(@PathVariable(name = "project_id") Long projectId) {

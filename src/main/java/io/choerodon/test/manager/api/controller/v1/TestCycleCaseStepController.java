@@ -36,7 +36,7 @@ public class TestCycleCaseStepController {
      * @param testCycleCaseStepVO
      * @return
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新一个循环步骤")
     @PutMapping
     public ResponseEntity update(@RequestBody TestCycleCaseStepVO testCycleCaseStepVO) {
@@ -50,7 +50,7 @@ public class TestCycleCaseStepController {
      * @param cycleCaseId cycleCaseId
      * @return TestCycleCaseStepVO
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query/{cycleCaseId}")
     public ResponseEntity<Page<TestCycleCaseStepVO>> querySubStep(@PathVariable(name = "project_id") Long projectId,
@@ -64,7 +64,7 @@ public class TestCycleCaseStepController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询循环步骤")
     @GetMapping("/query_list/{execute_id}")
     public ResponseEntity<Page<TestCycleCaseStepVO>> queryCaseStep(@PathVariable(name = "project_id") Long projectId,
@@ -77,7 +77,7 @@ public class TestCycleCaseStepController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除一个循环步骤")
     @DeleteMapping("/{execute_step_id}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -86,7 +86,7 @@ public class TestCycleCaseStepController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("创建一个循环步骤")
     @PostMapping
     public ResponseEntity create(@PathVariable(name = "project_id") Long projectId,

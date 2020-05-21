@@ -29,7 +29,7 @@ public class TestCycleController {
     @Autowired
     TestPlanServcie testPlanServcie;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("增加计划文件夹")
     @PostMapping
     public ResponseEntity<TestCycleVO> insert(@PathVariable(name = "project_id") Long projectId,
@@ -39,7 +39,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.testCycle.insert"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除计划文件夹")
     @DeleteMapping("/delete/{cycleId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -49,7 +49,7 @@ public class TestCycleController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("修改计划文件夹")
     @PutMapping
     public ResponseEntity<TestCycleVO> update(@PathVariable(name = "project_id") Long projectId,
@@ -59,7 +59,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.error.testCycle.update"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询树")
     @GetMapping(value = "/tree")
     public ResponseEntity<TestTreeIssueFolderVO> queryTree(@PathVariable(name = "project_id") Long projectId,
@@ -67,7 +67,7 @@ public class TestCycleController {
         return new ResponseEntity<>(testCycleService.queryTreeByPlanId(planId,projectId),HttpStatus.OK);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("移动文件夹")
     @PutMapping("/move")
     public ResponseEntity<String> moveFolder(@PathVariable(name = "project_id") Long projectId,
@@ -78,7 +78,7 @@ public class TestCycleController {
                 .orElseThrow(() -> new CommonException("error.cycle.move"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("操作计划日历")
     @PostMapping("/operate_calendar")
     public ResponseEntity operatePlanCalendar(@PathVariable(name = "project_id") Long projectId,

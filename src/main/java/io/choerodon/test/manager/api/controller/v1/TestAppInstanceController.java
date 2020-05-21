@@ -39,7 +39,7 @@ public class TestAppInstanceController {
      * @param versionId 版本id
      * @return ReplaceResult
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation(value = "查询value列表")
     @GetMapping("/value")
     public ResponseEntity<InstanceValueVO> queryValues(
@@ -59,7 +59,7 @@ public class TestAppInstanceController {
      * @param applicationDeployVO 部署信息
      * @return ApplicationInstanceDTO
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping
     public ResponseEntity<TestAppInstanceVO> deploy(
             @PathVariable(value = "project_id") Long projectId,
@@ -77,7 +77,7 @@ public class TestAppInstanceController {
      * @param scheduleTaskDTO 定时信息
      * @return QuartzTask
      */
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @PostMapping("/schedule")
     public ResponseEntity<QuartzTask> deployBySchedule(
             @PathVariable(value = "project_id") Long projectId,

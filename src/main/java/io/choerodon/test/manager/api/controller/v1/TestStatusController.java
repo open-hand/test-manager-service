@@ -26,7 +26,7 @@ public class TestStatusController {
     @Autowired
     TestStatusService testStatusService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("查询状态")
     @PostMapping("/query")
     public ResponseEntity<List<TestStatusVO>> query(@PathVariable(name = "project_id") Long projectId,
@@ -37,7 +37,7 @@ public class TestStatusController {
 
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新状态")
     @PutMapping("/update")
     public ResponseEntity<TestStatusVO> update(@PathVariable(name = "project_id") Long projectId,
@@ -47,7 +47,7 @@ public class TestStatusController {
                 .orElseThrow(() -> new CommonException("error.testStatus.update"));
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("删除状态")
     @DeleteMapping("/{statusId}")
     public ResponseEntity delete(@PathVariable(name = "project_id") Long projectId,
@@ -58,7 +58,7 @@ public class TestStatusController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("插入状态")
     @PostMapping
     public ResponseEntity<TestStatusVO> insert(@PathVariable(name = "project_id") Long projectId,

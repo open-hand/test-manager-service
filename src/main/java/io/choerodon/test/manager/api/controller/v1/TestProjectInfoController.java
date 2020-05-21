@@ -23,7 +23,7 @@ public class TestProjectInfoController {
     @Autowired
     private TestProjectInfoService testProjectInfoService;
 
-    @Permission(level = ResourceLevel.PROJECT)
+    @Permission(level = ResourceLevel.ORGANIZATION)
     @ApiOperation("更新projectInfo")
     @PutMapping
     public ResponseEntity<ProjectInfoVO> updateProjectInfo(@ApiParam(value = "项目id", required = true)
