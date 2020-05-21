@@ -152,7 +152,7 @@ public class TestCaseServiceImpl implements TestCaseService {
 
     @Override
     public Map<Long, IssueInfosVO> getIssueInfoMap(Long projectId, SearchDTO searchDTO, boolean needDetail, Long organizationId) {
-        PageRequest pageRequest = new PageRequest(1, 999999999, Sort.Direction.DESC, "issueId");
+        PageRequest pageRequest = new PageRequest(0, 999999999, Sort.Direction.DESC, "issueId");
         if (needDetail) {
             return listIssueWithoutSubDetail(projectId, searchDTO, pageRequest, organizationId).getBody().getContent().stream().collect(Collectors.toMap(IssueComponentDetailVO::getIssueId, IssueInfosVO::new));
         } else {
