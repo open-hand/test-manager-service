@@ -33,10 +33,11 @@ public class TestAttachmentController {
     @ApiOperation("增加附件")
     @PostMapping
     public ResponseEntity<List<TestCycleCaseAttachmentRelVO>> uploadFile(HttpServletRequest request,
+                                                                         @PathVariable(name = "project_id") Long projectId,
                                                                          @Param("attachmentType") String attachmentType,
                                                                          @Param("attachmentLinkId")Long attachmentLinkId,
                                                                          @Param("comment") String comment) {
-        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(request,attachmentType,attachmentLinkId,comment))
+        return Optional.ofNullable(testCycleCaseAttachmentRelService.uploadMultipartFile(projectId,request,attachmentType,attachmentLinkId,comment))
                 .map(result -> new ResponseEntity<>(result, HttpStatus.CREATED))
                 .orElseThrow(() -> new CommonException("error.upload.file"));
 

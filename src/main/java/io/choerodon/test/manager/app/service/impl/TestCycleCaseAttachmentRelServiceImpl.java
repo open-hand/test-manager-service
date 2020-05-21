@@ -99,8 +99,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
 
     @Override
-    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
-        Long projectId =Long.valueOf(request.getParameter("project_id"));
+    public List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(Long projectId,HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment) {
         List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
         if (CollectionUtils.isEmpty(files)) {
             throw new CommonException("error.files.null");

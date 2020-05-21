@@ -29,7 +29,7 @@ public interface TestCycleCaseAttachmentRelService {
      * @param
      * @return TestCycleCaseAttachmentRelVO
      */
-    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment);
+    List<TestCycleCaseAttachmentRelVO> uploadMultipartFile(Long projectId,HttpServletRequest request,String attachmentType,Long attachmentLinkId,String comment);
 
     void batchInsert(List<TestCycleCaseDTO> testCycleCaseDTOS, Map<Long, List<TestCaseAttachmentDTO>> attachmentMap);
 
