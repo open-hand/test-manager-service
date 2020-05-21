@@ -3,7 +3,6 @@ import { Select } from 'choerodon-ui';
 import { find } from 'lodash';
 import User from '../User';
 import { getUsers, getUser } from '../../api/IamApi';
-import { getFoldersByVersion, getLabels } from '../../api/IssueManageApi';
 import { getProjectVersion } from '../../api/agileApi';
 import { getApps, getAppVersions } from '../../api/AutoTestApi';
 
@@ -51,20 +50,6 @@ export default {
       </Option>
     ),
   },
-  folder: {
-    propArg: 'versionId',
-    request: ({ filter }, ...args) => getFoldersByVersion(...args),
-    render: folder => (
-      <Option value={folder.folderId} key={folder.folderId} name={`${folder.versionName}-${folder.name}`}>
-        {folder.versionName}
-        -
-        {folder.name}
-      </Option>
-    ),
-    props: {
-      filterOption: (input, option) => option.props.name.toLowerCase().indexOf(input.toLowerCase()) >= 0,
-    },
-  },
   app: {
     request: ({ page, filter }) => getApps({
       page,
@@ -84,19 +69,5 @@ export default {
     // { version: filter }),
     { }),
     render: appVersion => <Option value={appVersion.id} key={appVersion.id}>{appVersion.version}</Option>,
-  },
-  label: {
-    props: {
-      getPopupContainer: triggerNode => triggerNode.parentNode,
-      filter: false,
-      filterOption: false,
-      loadWhenMount: true,
-    },
-    request: getLabels,
-    render: label => (
-      <Option key={label.labelName} value={label.labelName}>
-        {label.labelName}
-      </Option>
-    ),
   },
 };

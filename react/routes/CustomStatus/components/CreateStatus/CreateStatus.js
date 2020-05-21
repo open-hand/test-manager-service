@@ -30,10 +30,6 @@ const propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 class CreateStatus extends Component {
-  componentDidMount() {
-    this.validateColor();
-  }
-
   componentWillReceiveProps(nextProps) {
     const { resetFields } = this.props.form;
     if (this.props.visible === false && nextProps.visible === true) {
