@@ -10,6 +10,6 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
  * @description:
  */
 public interface TestCycleCaseAttachmentRelUploadService {
-    TestCycleCaseAttachmentRelDTO baseUpload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment);
+    TestCycleCaseAttachmentRelDTO baseUpload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment,Long organizationId);
 
 }
