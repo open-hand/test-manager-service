@@ -92,7 +92,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         issueAttachmentDTO.setProjectId(projectId);
         issueAttachmentDTO.setCaseId(issueId);
         issueAttachmentDTO.setFileName(fileName);
-        issueAttachmentDTO.setUrl(String.format("/%s/%s",BACKETNAME,url));
+        issueAttachmentDTO.setUrl(url);
         iIssueAttachmentService.createBase(issueAttachmentDTO);
     }
 
@@ -120,7 +120,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         String dealUrl = null;
         try {
             URL netUrl = new URL(url);
-            dealUrl = netUrl.getFile().substring(BACKETNAME.length() + 2);
+            dealUrl = netUrl.getFile();
         } catch (MalformedURLException e) {
             throw new CommonException(e.getMessage());
         }
@@ -193,7 +193,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
         for (MultipartFile multipartFile : files) {
             String fileName = multipartFile.getOriginalFilename();
             String path = fileClient.uploadFile(projectDTO.getOrganizationId(),BACKETNAME, null,fileName, multipartFile);
-            result.add(attachmentUrl + "/" + BACKETNAME + "/" + dealUrl(path));
+            result.add(path);
         }
         return result;
     }
