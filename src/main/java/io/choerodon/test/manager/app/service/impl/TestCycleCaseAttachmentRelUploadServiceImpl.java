@@ -29,7 +29,7 @@ public class TestCycleCaseAttachmentRelUploadServiceImpl implements TestCycleCas
     @Autowired
     private FileClient fileClient;
     @Override
-    public TestCycleCaseAttachmentRelDTO baseUpload(Long organizationId,String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment) {
+    public TestCycleCaseAttachmentRelDTO baseUpload(String bucketName, String fileName, MultipartFile file, Long attachmentLinkId, String attachmentType, String comment,Long organizationId) {
         TestCycleCaseAttachmentRelDTO testCycleCaseAttachmentRelDTO = new TestCycleCaseAttachmentRelDTO();
         testCycleCaseAttachmentRelDTO.setAttachmentLinkId(attachmentLinkId);
         testCycleCaseAttachmentRelDTO.setAttachmentName(fileName);
