@@ -237,7 +237,7 @@ public class ExcelServiceImpl implements ExcelService {
         service.exportWorkBookWithOneSheet(new HashMap<>(), projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(5.0);
         //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYISSUECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         List<ExcelCaseVO> excelCaseVOS = handleCase(projectId,folderId);
         if(CollectionUtils.isEmpty(excelCaseVOS)){
             testFileLoadHistoryWithRateVO.setFailedCount(Integer.toUnsignedLong(0));
@@ -247,6 +247,7 @@ public class ExcelServiceImpl implements ExcelService {
             TestFileLoadHistoryDTO testIssueFolderRelDO = modelMapper.map(testFileLoadHistoryWithRateVO, TestFileLoadHistoryDTO.class);
             testFileLoadHistoryMapper.updateByPrimaryKey(testIssueFolderRelDO);
             //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
+            messageClient.sendByUserId(userId,NOTIFYISSUECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
             throw new CommonException("error.folder.no.has.case");
         }
         int sum = excelCaseVOS.size();
@@ -254,12 +255,12 @@ public class ExcelServiceImpl implements ExcelService {
         map.put(1L, excelCaseVOS);
         testFileLoadHistoryWithRateVO.setRate(15.0);
         //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYISSUECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
         //表格生成相关的文件内容
         service.exportWorkBookWithOneSheet(map, projectName, modelMapper.map(testIssueFolderDTO, TestIssueFolderVO.class), workbook);
         testFileLoadHistoryWithRateVO.setRate(80.0);
         //notifyService.postWebSocket(NOTIFYISSUECODE, String.valueOf(userId), JSON.toJSONString(testFileLoadHistoryWithRateVO));
-        messageClient.sendByUserId(userId,NOTIFYCYCLECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
+        messageClient.sendByUserId(userId,NOTIFYISSUECODE,JSON.toJSONString(testFileLoadHistoryWithRateVO));
 //        workbook.setSheetHidden(0, true);
         workbook.setActiveSheet(1);
 //        workbook.setSheetName(0, LOOKUPSHEETNAME);
