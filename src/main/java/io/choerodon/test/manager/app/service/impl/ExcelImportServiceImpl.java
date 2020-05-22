@@ -212,7 +212,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     public Workbook buildImportTemp(Long organizationId, Long projectId) {
 
         Workbook importTemp = ExcelUtil.getWorkBook(ExcelUtil.Mode.XSSF);
-        List<UserDTO> userDTOS = userService.list(new PageRequest(1, 99999), projectId, null, null).getBody().getContent();
+        List<UserDTO> userDTOS = userService.list(new PageRequest(0, 99999), projectId, null, null).getBody().getContent();
 
         List<String> userNameList = new ArrayList<>();
         for (UserDTO userDTO : userDTOS) {
