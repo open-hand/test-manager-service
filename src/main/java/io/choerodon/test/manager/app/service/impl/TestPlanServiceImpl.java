@@ -119,6 +119,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
     @Saga(code = SagaTopicCodeConstants.TEST_MANAGER_CREATE_PLAN,
             description = "test-manager创建测试计划", inputSchema = "{}")
     public TestPlanDTO create(Long projectId, TestPlanVO testPlanVO) {
+        checkPlan(testPlanVO);
         // 创建计划
         testPlanVO.setProjectId(projectId);
         TestPlanDTO testPlan = modelMapper.map(testPlanVO, TestPlanDTO.class);
@@ -140,6 +141,16 @@ public class TestPlanServiceImpl implements TestPlanServcie {
                 });
 
         return testPlanDTO;
+    }
+
+    private void checkPlan(TestPlanVO testPlanVO){
+        if (ObjectUtils.isEmpty(testPlanVO.getManagerId())) {
+            throw new CommonException("error.create.plan.manager.null");
+        }
+
+        if (ObjectUtils.isEmpty(testPlanVO.getStartDate()) || ObjectUtils.isEmpty(testPlanVO.getEndDate())) {
+            throw new CommonException("error.create.plan.date.scope.null");
+        }
     }
     @Override
     public TestTreeIssueFolderVO buildPlanTree(Long projectId, String statusCode) {
@@ -383,7 +394,7 @@ public class TestPlanServiceImpl implements TestPlanServcie {
             throw new CommonException("error.test.plan.is.not.null");
         }
         if(testPlanMapper.insertSelective(testPlanDTO) != 1){
-            new CommonException("error.insert.test.plan");
+           throw  new CommonException("error.insert.test.plan");
         }
         return testPlanMapper.selectByPrimaryKey(testPlanDTO.getPlanId());
     }
