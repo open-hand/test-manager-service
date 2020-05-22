@@ -70,7 +70,7 @@ public class TestCaseCountRecordAspect {
     public Object updateTestCase(ProceedingJoinPoint pjp, TestCycleCaseDTO testCycleCaseDTO, Long projectId) throws Throwable {
         TestCycleCaseDTO case1 = new TestCycleCaseDTO();
         case1.setExecuteId(testCycleCaseDTO.getExecuteId());
-        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, new PageRequest(1, 1)).get(0);
+        TestCycleCaseDTO before = testCycleCaseService.queryWithAttachAndDefect(case1, new PageRequest(0, 1)).get(0);
         TestCycleCaseVO beforeCeaseDTO = modelMapper.map(before, TestCycleCaseVO.class);
         testStatusService.populateStatus(beforeCeaseDTO);
         Object o = pjp.proceed();
@@ -110,7 +110,7 @@ public class TestCaseCountRecordAspect {
     public Object deleteTestCase(ProceedingJoinPoint pjp, Long cycleCaseId, Long projectId) throws Throwable {
         TestCycleCaseDTO cycleCaseE = new TestCycleCaseDTO();
         cycleCaseE.setExecuteId(cycleCaseId);
-        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, new PageRequest(1, 1)).get(0);
+        TestCycleCaseDTO oldCase = testCycleCaseService.queryWithAttachAndDefect(cycleCaseE, new PageRequest(0, 1)).get(0);
         Object o = pjp.proceed();
         countCaseToRedis(oldCase, projectId);
         return o;
@@ -143,7 +143,7 @@ public class TestCaseCountRecordAspect {
         e.setExecuteId(executeId);
         e.setOldValue(TestStatusType.STATUS_UN_EXECUTED);
         e.setField(FIELD_STATUS);
-        PageRequest pageRequest =  new PageRequest(1, 1,new Sort(Sort.Direction.DESC, "id"));
+        PageRequest pageRequest =  new PageRequest(0, 1,new Sort(Sort.Direction.DESC, "id"));
         Page<TestCycleCaseHistoryDTO> page = PageHelper.doPageAndSort(pageRequest,() -> testCycleCaseHistoryMapper.query(e));
         if (page != null && !page.getContent().isEmpty()) {
             time = LocalDateTime.ofInstant(page.getContent().get(0).getLastUpdateDate().toInstant(), ZoneId.systemDefault());

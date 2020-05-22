@@ -321,7 +321,7 @@ public class TestAppInstanceServiceImpl implements TestAppInstanceService {
     }
 
     private List<TestEnvCommandDTO> queryEnvCommand(TestEnvCommandDTO envCommand) {
-        PageRequest pageRequest = new PageRequest(1, 99999999, Sort.Direction.DESC, "creation_date");
+        PageRequest pageRequest = new PageRequest(0, 99999999, Sort.Direction.DESC, "creation_date");
         Page<TestEnvCommandDTO> pageInfo = PageHelper.doPageAndSort(pageRequest,() -> envCommandMapper.select(envCommand));
 
         return pageInfo.getContent();
