@@ -293,7 +293,7 @@ function ImportIssue(props) {
     if (status === 1) {
       return (
         <WSHandler
-          messageKey={`choerodon:msg:test-issue-import:${AppState.userInfo.id}`}
+          messageKey="test-issue-import"
           onMessage={handleMessage}
           ref={wsRef}
         >
