@@ -31,14 +31,10 @@
   },
   "devDependencies": {
     "@choerodon/agile": "^0.20.0",
-    "@choerodon/boot": "0.20.0",
+    "@choerodon/boot": "^0.21.0",
     "@choerodon/master": "0.21.0",
     "babel-plugin-module-resolver": "^3.2.0",
-    "eslint-plugin-react-hooks": "^2.3.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1",
-    "through2": "^2.0.3",
-    "webpack-filter-warnings-plugin": "^1.2.1"
+    "eslint-plugin-react-hooks": "^2.3.0"
   },
   "scripts": {
     "start": "node --max_old_space_size=4096 node_modules/@choerodon/boot/bin/choerodon-front-boot-start --config ./react/config.js",
@@ -59,9 +55,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "peerDependencies": {
-    "@choerodon/boot": "0.19.0",
-    "@choerodon/master": "0.19.0"
   }
 }
