@@ -545,14 +545,9 @@ class ReportStory extends Component {
 
     return (
       <Page className="c7ntest-report-story"
-        // service={[
-        //   'test-manager-service.test-case.createFormsFromIssueToDefect',
-        //   'test-manager-service.test-status.query',
-        //   'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
-        //   'agile-service.scheme.queryStatusByProjectId',
-        //   'agile-service.product-version.listByProjectId',
-        //   'agile-service.sprint.queryNameByOptions',
-        // ]}
+        service={[
+          'choerodon.code.project.operation.chart.ps.choerodon.code.project.operation.chart.ps.reportfromissue',
+        ]}
       >
         <Header
           title={<FormattedMessage id="report_demandToDefect" />}

@@ -551,11 +551,9 @@ class ReportTest extends Component {
     return (
       <Page
         className="c7ntest-report-test"
-        // service={[
-        //   'test-manager-service.test-status.query',
-        //   'test-manager-service.test-case.createFormDefectFromIssue',
-        //   'agile-service.scheme.queryStatusByProjectId',
-        // ]}
+        service={[
+          'choerodon.code.project.operation.chart.ps.choerodon.code.project.operation.chart.ps.reportfromdefect',
+        ]}
       >
         <Header
           title={<FormattedMessage id="report_defectToDemand" />}
