@@ -25,6 +25,7 @@ import io.choerodon.test.manager.infra.dto.TestCycleCaseAttachmentRelDTO;
 import io.choerodon.test.manager.infra.dto.TestCycleCaseDTO;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
 //import io.choerodon.test.manager.infra.feign.FileFeignClient;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import io.choerodon.test.manager.infra.mapper.TestAttachmentMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseAttachmentRelMapper;
 import io.choerodon.test.manager.infra.mapper.TestCycleCaseMapper;
@@ -53,15 +54,10 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
 
     private static final String BACKETNAME = "test";
 
-
-//    private final FileFeignClient fileFeignClient;
+    @Autowired
+    private  FileFeignClient fileFeignClient;
     @Autowired
     private BaseFeignClient baseFeignClient;
-
-//    @Autowired
-//    public TestCaseAttachmentServiceImpl(FileFeignClient fileFeignClient) {
-//        this.fileFeignClient = fileFeignClient;
-//    }
 
     @Autowired
     private TestAttachmentMapper testAttachmentMapper;
@@ -169,7 +165,7 @@ public class TestCaseAttachmentServiceImpl implements TestCaseAttachmentService 
             try {
                 ProjectDTO projectDTO = baseFeignClient.queryProject(projectId).getBody();
                 url = URLDecoder.decode(issueAttachmentDTO.getUrl(), "UTF-8");
-                fileClient.deleteFileByUrl(projectDTO.getOrganizationId(),BACKETNAME, Arrays.asList(attachmentUrl + url));
+                fileFeignClient.deleteFileByUrl(projectDTO.getOrganizationId(),BACKETNAME, Arrays.asList(attachmentUrl + url));
             } catch (Exception e) {
                 LOGGER.error("error.attachment.delete", e);
             }
