@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.choerodon.test.manager.api.vo.agile.ProjectDTO;
 import io.choerodon.test.manager.infra.feign.BaseFeignClient;
+import io.choerodon.test.manager.infra.feign.FileFeignClient;
 import org.hzero.boot.file.FileClient;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -63,6 +64,9 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
 
     @Autowired
     private FileClient fileClient;
+
+    @Autowired
+    private FileFeignClient fileFeignClient;
 
     @Autowired
     private TestCycleCaseAttachmentRelUploadService testCycleCaseAttachmentRelUploadService;
@@ -201,7 +205,7 @@ public class TestCycleCaseAttachmentRelServiceImpl implements TestCycleCaseAttac
                 } catch (IOException i) {
                     throw new CommonException(i);
                 }
-                fileClient.deleteFileByUrl(organizationId,bucketName,Arrays.asList(url));
+                fileFeignClient.deleteFileByUrl(organizationId,bucketName,Arrays.asList(url));
             }
         }
         testCycleCaseAttachmentRelMapper.deleteByPrimaryKey(attachId);
