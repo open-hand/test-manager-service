@@ -301,29 +301,7 @@ function TestPlanExecuteDetail(props) {
       <Page
         className="c7n-test-execute-detail"
         service={[
-          'test-manager-service.test-status.query',
-          'test-manager-service.test-cycle-case-history.query',
-          'test-manager-service.test-cycle-case.queryCaseInfo',
-          'test-manager-service.test-cycle-case-step.querySubStep',
-          'agile-service.issue-attachment.uploadForAddress',
-          'test-manager-service.test-cycle-case.updateCaseAndStep',
-          'test-manager-service.test-attachment.uploadFile',
-          'test-manager-service.test-attachment.removeAttachment',
-          'test-manager-service.test-cycle-case.queryCaseAndStep',
-          'test-manager-service.test-cycle-case-step.update',
-          'test-manager-service.test-cycle-case-defect-rel.removeAttachment',
-          'test-manager-service.test-cycle-case.update',
-          'test-manager-service.test-cycle-case-defect-rel.insert',
-          'agile-service.scheme.queryIssueTypesWithStateMachineIdByProjectId',
-          'test-manager-service.test-cycle-case-defect-rel.createIssueAndLinkDefect',
-          'base-service.project.list',
-          'agile-service.issue.listEpicSelectData',
-          'agile-service.sprint.queryNameByOptions',
-          'agile-service.issue.queryIssueByOptionForAgile',
-          'agile-service.issue-link-type.listIssueLinkType',
-          'agile-service.field-value.queryPageFieldViewList',
-          'agile-service.scheme.queryByOrganizationIdList',
-          'agile-service.issue-attachment.uploadAttachment',
+          'choerodon.code.project.test.test-plan.ps.default',
         ]}
       >
         <Header
