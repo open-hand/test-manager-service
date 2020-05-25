@@ -82,10 +82,7 @@ const CustomStatusHome = ({
     <Page
       className="c7ntest-custom-status"
       service={[
-        'test-manager-service.test-status.query',
-        'test-manager-service.test-status.insert',
-        'test-manager-service.test-status.delete',
-        'test-manager-service.test-status.update',
+        'choerodon.code.project.setting.test.ps.default',
       ]}
     >
       <Header>

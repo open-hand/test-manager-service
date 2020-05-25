@@ -284,33 +284,7 @@ function TestPlanHome({ history }) {
     <Page
       className={prefixCls}
       service={[
-        'test-manager-service.test-status.query',
-        'test-manager-service.test-plan.queryTree',
-        'test-manager-service.test-plan.queryInfo',
-        'test-manager-service.test-plan.create',
-        'test-manager-service.test-plan.query',
-        'test-manager-service.test-plan.deletePlan',
-        'test-manager-service.test-plan.clonePlan',
-        'test-manager-service.test-plan.updateStatus',
-        'test-manager-service.test-plan.allPlan',
-        'test-manager-service.test-plan.formStatus',
-        'test-manager-service.test-issue-folder.query',
-        'test-manager-service.test-case.listCaseByFolderId',
-        'test-manager-service.test-cycle-case.update',
-        'base-service.project-user.listProjectUsersByProjectIdAndRoleLable',
-        'base-service.project.list',
-        'test-manager-service.test-cycle.insert',
-        'test-manager-service.test-cycle.update',
-        'test-manager-service.test-cycle.batchChangeAssignedInOneCycle',
-        'test-manager-service.test-cycle.queryLatestLoadHistory',
-        'test-manager-service.test-cycle-case.importCase',
-        'test-manager-service.test-cycle.moveFolder',
-        'test-manager-service.test-cycle-case.delete',
-        'test-manager-service.test-cycle-case.listCaseByCycleId',
-        'test-manager-service.test-cycle-case.ignoreUpdate',
-        'test-manager-service.test-cycle-case.updateCompare',
-        'test-manager-service.test-cycle-case.selectUpdateCompare',
-        'test-manager-service.test-cycle-case.queryExecutionStatus',
+        'choerodon.code.project.test.test-plan.ps.default',
       ]}
     >
       <Header
